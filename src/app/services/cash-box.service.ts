@@ -1,0 +1,35 @@
+import { Injectable } from '@angular/core';
+import { Http, Response, Headers } from '@angular/http';
+import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
+import { CashBox } from './../models/cash-box';
+
+@Injectable()
+export class CashBoxService {
+
+  private url: string;
+
+  constructor(private _http: Http) {
+    this.url = 'http://localhost:3000/api/';
+  }
+
+  getCashBox (id) {
+		return this._http.get(this.url+"cash-box/"+id).map (res => res.json());
+	}
+
+  getCashBoxes () {
+		return this._http.get(this.url+"cash-boxes").map (res => res.json());
+	}
+
+  saveCashBox (cashBox: CashBox) {
+		return this._http.post(this.url+"cash-box", cashBox).map (res => res.json());
+	}
+
+  deleteCashBox (id: string) {
+    return this._http.delete(this.url+"cash-box/"+id).map (res => res.json());
+  }
+
+  updateCashBox (id: string, cashBox: CashBox){
+    return this._http.put(this.url+"cash-box/"+id, cashBox).map (res => res.json());
+  }
+}
