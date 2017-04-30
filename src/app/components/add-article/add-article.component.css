@@ -1,4 +1,5 @@
 .center-content {
+      margin-top: 30px;
       display: -webkit-flex;
       display: flex;
       -webkit-flex-wrap: wrap;

@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import {NgbAlertConfig} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CustomValidation } from './../../utilities/custom-validation';
 

@@ -1,0 +1,29 @@
+<table class="table">
+  <thead class="thead-default">
+    <tr>
+      <th style="cursor:pointer" (click)="orderBy('code')">Codigo</th>
+      <th style="cursor:pointer" (click)="orderBy('description')">Description</th>
+      <th>Observation</th>
+      <th style="cursor:pointer" (click)="orderBy('salePrice')">Precio de Venta</th>
+      <th style="cursor:pointer" (click)="orderBy('make')">Marca</th>
+      <th style="cursor:pointer" (click)="orderBy('category')">Categoria</th>
+      <th>Unidad de Medida</th>
+      <th>Cantidad</th>
+      <th>Codigo de Barra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tbody *ngFor="let article of articles">
+      <tr>
+        <td>{{article.code}}</td>
+        <td>{{article.description}}</td>
+        <td>{{article.observation}}</td>
+        <td>{{article.salePrice}}</td>
+        <td>{{article.make}}</td>
+        <td>{{article.category}}</td>
+        <td>{{article.unitOfMeasure}}</td>
+        <td>{{article.cant}}</td>
+        <td>{{article.barCode}}</td>
+      </tr>
+    </tbody>
+</table>

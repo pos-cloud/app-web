@@ -15,13 +15,15 @@ import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
 import { AppComponent } from './app.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
+import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AddArticleComponent,
     HeaderComponent,
-    HomeComponent
+    HomeComponent,
+    ListArticlesComponent
   ],
   imports: [
     BrowserModule,

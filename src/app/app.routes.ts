@@ -4,11 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
 import { HomeComponent } from './components/home/home.component';
+import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'admin/add-article', component: AddArticleComponent },
+  { path: 'list-articles', component: ListArticlesComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 
