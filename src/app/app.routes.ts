@@ -9,7 +9,8 @@ import { ListArticlesComponent } from './components/list-articles/list-articles.
 const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'list-articles', component: ListArticlesComponent },
+  { path: 'admin/list-articles', component: ListArticlesComponent },
+  { path: 'admin/add-article', component: AddArticleComponent},
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 

@@ -1,83 +1,80 @@
-<section class="container-fluid" *ngIf="userType=='admin'">
-	<div class="center-content">
-		<h5>Agregar un Artículo</h5>
-	</div>
+<div class="modal-header">
+	<h4 class="modal-title">Agregar Artículo</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+	<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<section class="container-fluid">
 	<div class="center-content"  *ngIf="errorMessage">
 		<ngb-alert (close)="errorMessage=''">
 			{{errorMessage}}
 		</ngb-alert>
 	</div>
 	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()">
-		<div class="row">
-			<div class="form-group col-md-4">
-				<label for="make" class="control-label">Marca:</label>
-				<input type="text" class="form-control" formControlName="make" name="make" id="make" required autofocus/>
-				<div *ngIf="formErrors.make" class="alert alert-danger">
-					{{ formErrors.make }}
+		<div class="modal-body">
+			<div class="row">
+				<div class="form-group col-md-4">
+					<label for="make" class="control-label">Marca:</label>
+					<input type="text" class="form-control" formControlName="make" name="make" id="make" required autofocus/>
+					<div *ngIf="formErrors.make" class="alert alert-danger">
+						{{ formErrors.make }}
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="code" class="control-label">Código:</label>
+					<input type="number" class="form-control" formControlName="code" name="code" id="code" required/>
+					<div *ngIf="formErrors.code" class="alert alert-danger">
+						{{ formErrors.code }}
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="barcode">Código de Barra:</label>
+					<input type="text" class="form-control" name="barcode" id="barcode"/>
 				</div>
 			</div>
-			<div class="form-group col-md-4">
-				<label for="code" class="control-label">Código:</label>
-				<input type="number" class="form-control" formControlName="code" name="code" id="code" required/>
-				<div *ngIf="formErrors.code" class="alert alert-danger">
-					{{ formErrors.code }}
+			<div class="row">
+				<div class="form-group col-md-8">
+					<label for="description" class="control-label">Descripción:</label>
+					<input type="text" class="form-control" formControlName="description" name="description" id="description" required/>
+					<div *ngIf="formErrors.description" class="alert alert-danger">
+						{{ formErrors.description }}
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="unitOfMeasure" class="control-label">Unidad de Medida:</label>
+					<input type="text" class="form-control" formControlName="unitOfMeasure" name="unitOfMeasure" id="unitOfMeasure" placeholder="Ej: Kgs" required/>
+					<div *ngIf="formErrors.unitOfMeasure" class="alert alert-danger">
+						{{ formErrors.unitOfMeasure }}
+					</div>
 				</div>
 			</div>
-			<div class="form-group col-md-4">
-				<label for="barcode">Código de Barra:</label>
-				<input type="text" class="form-control" name="barcode" id="barcode"/>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="category" class="control-label">Rubro:</label>
+					<div class="input-group">
+						<input type="text" class="form-control" formControlName="category" name="category" id="category" required/>
+					</div>
+					<div *ngIf="formErrors.category" class="alert alert-danger">
+						{{ formErrors.category }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="salePrice" class="control-label">Precio de Venta:</label>
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="text" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" required/>
+					</div>
+					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
+						{{ formErrors.salePrice }}
+					</div>
+				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="form-group col-md-8">
-				<label for="description" class="control-label">Descripción:</label>
-				<input type="text" class="form-control" formControlName="description" name="description" id="description" required/>
-				<div *ngIf="formErrors.description" class="alert alert-danger">
-					{{ formErrors.description }}
-				</div>
-			</div>
-			<div class="form-group col-md-4">
-				<label for="unitOfMeasure" class="control-label">Unidad de Medida:</label>
-				<input type="text" class="form-control" formControlName="unitOfMeasure" name="unitOfMeasure" id="unitOfMeasure" placeholder="Ej: Kgs" required/>
-				<div *ngIf="formErrors.unitOfMeasure" class="alert alert-danger">
-					{{ formErrors.unitOfMeasure }}
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="form-group col-md-12">
-				<label for="category" class="control-label">Rubro:</label>
-				<div class="input-group">
-					<input type="text" class="form-control" formControlName="category" name="category" id="category" required/>
-				</div>
-				<div *ngIf="formErrors.category" class="alert alert-danger">
-					{{ formErrors.category }}
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="form-group col-md-12">
-				<label for="salePrice" class="control-label">Precio de Venta:</label>
-				<div class="input-group">
-					<span class="input-group-addon">$</span>
-					<input type="text" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" required/>
-				</div>
-				<div *ngIf="formErrors.salePrice" class="alert alert-danger">
-					{{ formErrors.salePrice }}
-				</div>
-			</div>
-		</div>
-		<div class="row right-content">
-			<div class="form-group col-md-2 col-sm-3 col-xs-4">
-				<button type="button" class="btn btn-default">Cancelar</button>
-			</div>
-			<div class="form-group col-md-2 col-sm-3 col-xs-4">
-				<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid">Guardar</button>
-			</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
+			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid" >Guardar</button>
 		</div>
 	</form>
-{{articleForm.value |json}}
-<hr>
-
-{{article|json}}
 </section>

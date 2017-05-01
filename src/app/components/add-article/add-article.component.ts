@@ -3,6 +3,8 @@ import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms'
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
+import { NgbModal, NgbActiveModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+
 import { CustomValidation } from './../../utilities/custom-validation';
 
 import { Article } from './../../models/article';
@@ -57,7 +59,8 @@ export class AddArticleComponent  implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _route: ActivatedRoute,
-    alertConfig: NgbAlertConfig
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -132,13 +135,9 @@ export class AddArticleComponent  implements OnInit {
   }
 
   private addArticle (): void {
-
-    if(!this.articleExists()) {
-      this.article = this.articleForm.value;
-      this.saveArticle();
-    } else {
-      this.errorMessage = "El código del artículo ya existe.";
-    }
+    
+    this.article = this.articleForm.value;
+    this.saveArticle();
   }
 
   private articleExists(): boolean {
@@ -180,6 +179,8 @@ export class AddArticleComponent  implements OnInit {
           this.errorMessage = 'Ha ocurrido un error al querer crear el artículo.';
         } else {
           this.article = result.article;
+          this.alertConfig.type = 'success';
+          this.errorMessage = "El artículo se ha añadido con éxito.";
           this.buildForm();
         }
       },

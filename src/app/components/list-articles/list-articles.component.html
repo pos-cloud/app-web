@@ -1,29 +1,45 @@
-<table class="table">
-  <thead class="thead-default">
-    <tr>
-      <th style="cursor:pointer" (click)="orderBy('code')">Codigo</th>
-      <th style="cursor:pointer" (click)="orderBy('description')">Description</th>
-      <th>Observation</th>
-      <th style="cursor:pointer" (click)="orderBy('salePrice')">Precio de Venta</th>
-      <th style="cursor:pointer" (click)="orderBy('make')">Marca</th>
-      <th style="cursor:pointer" (click)="orderBy('category')">Categoria</th>
-      <th>Unidad de Medida</th>
-      <th>Cantidad</th>
-      <th>Codigo de Barra</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tbody *ngFor="let article of articles">
+<section *ngIf="userType=='admin'">
+  <div class="row center-content">
+    <h5>Lista de Artículos</h5>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <button class="btn btn-primary" (click)="openModal()" >Agregar Artículo</button>
+    </div>
+    <div class="col-md-3 offset-md-6">
+      <input class="" type="text" placeholder="Search" [(ngModel)]= "filterText"/>
+    </div>
+  </div>
+  <table class="table">
+    <thead class="thead-default">
       <tr>
-        <td>{{article.code}}</td>
-        <td>{{article.description}}</td>
-        <td>{{article.observation}}</td>
-        <td>{{article.salePrice}}</td>
-        <td>{{article.make}}</td>
-        <td>{{article.category}}</td>
-        <td>{{article.unitOfMeasure}}</td>
-        <td>{{article.cant}}</td>
-        <td>{{article.barCode}}</td>
+        <th style="cursor:pointer" (click)="orderBy('code')"> Codigo <i class="fa fa-fw fa-sort"></i></th>
+        <th style="cursor:pointer" (click)="orderBy('description')">Description </th>
+        <th>Observation</th>
+        <th style="cursor:pointer" (click)="orderBy('salePrice')">Precio de Venta</th>
+        <th style="cursor:pointer" (click)="orderBy('make')">Marca</th>
+        <th style="cursor:pointer" (click)="orderBy('category')">Categoria</th>
+        <th>Unidad de Medida</th>
+        <th>Cantidad</th>
+        <th>Codigo de Barra</th>
+        <th>Acciones</th>
       </tr>
-    </tbody>
-</table>
+    </thead>
+    <tbody>
+      <tbody *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterText ">
+        <tr>
+          <td>{{article.code}}</td>
+          <td>{{article.description}}</td>
+          <td>{{article.observation}}</td>
+          <td>{{article.salePrice}}</td>
+          <td>{{article.make}}</td>
+          <td>{{article.category}}</td>
+          <td>{{article.unitOfMeasure}}</td>
+          <td>{{article.cant}}</td>
+          <td>{{article.barCode}}</td>
+          <td>
+            <button type="button" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i></button>
+            <button type="button" class="btn btn-primary" (click)="deleteArticle(article._id)"><i class="fa fa-trash-o"></i></button>
+          </td>
+  </table>
+</section>

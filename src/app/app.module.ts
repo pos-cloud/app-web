@@ -17,13 +17,19 @@ import { AppComponent } from './app.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 
+//pipe
+import { FilterPipe } from './pipes/filter.pipe';
+import { OrderByPipe } from './pipes/order-by.pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
     AddArticleComponent,
     HeaderComponent,
     HomeComponent,
-    ListArticlesComponent
+    ListArticlesComponent,
+    FilterPipe,
+    OrderByPipe
   ],
   imports: [
     BrowserModule,
