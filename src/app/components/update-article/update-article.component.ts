@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -9,15 +9,15 @@ import { Article } from './../../models/article';
 import { ArticleService } from './../../services/article.service';
 
 @Component({
-  selector: 'app-add-article',
-  templateUrl: './add-article.component.html',
-  styleUrls: ['./add-article.component.css'],
+  selector: 'app-update-article',
+  templateUrl: './update-article.component.html',
+  styleUrls: ['./update-article.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddArticleComponent  implements OnInit {
+export class UpdateArticleComponent implements OnInit {
 
-  private article: Article;
+  @Input() article: Article;
   private articleForm: FormGroup;
   private alertMessage: any;
   private userType: string;
@@ -71,13 +71,26 @@ export class AddArticleComponent  implements OnInit {
       locationPathURL = data.url.split('/');
       this.userType = locationPathURL[1];
     });
-    this.article = new Article ();
     this.buildForm();
+    this.articleForm.setValue({
+      '_id':this.article._id,
+      'code':this.article.code,
+      'make': this.article.make,
+      'description': this.article.description,
+      'salePrice': this.article.salePrice,
+      'category': this.article.category,
+      'unitOfMeasure': this.article.unitOfMeasure,
+      'observation': this.article.observation,
+      'barcode': this.article.barcode
+    });
   }
 
   private buildForm(): void {
 
     this.articleForm = this._fb.group({
+      '_id': [this.article.code, [
+        ]
+      ],
       'code': [this.article.code, [
           Validators.required,
           Validators.pattern("[0-9]{1,5}")
@@ -136,31 +149,31 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
-  private addArticle (): void {
+  private updateArticle (): void {
     
     this.article = this.articleForm.value;
-    this.saveArticle();
+    this.saveChanges();
   }
 
-  private saveArticle(): void {
+  private saveChanges(): void {
     
-    this._articleService.saveArticle(this.article).subscribe(
+  this._articleService.updateArticle(this.article).subscribe(
     result => {
-        if (!this.article) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
-        } else {
-          this.article = result.article;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha añadido con éxito.";
-          this.buildForm();
-        }
-      },
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+      this.article = result.article;
+      if (!this.article) {
+        this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
+      } else {
+        this.alertConfig.type = 'success';
+        this.alertMessage = "El artículo se ha actualizado con éxito.";
+        this.activeModal.close('save_close');
       }
+    },
+    error => {
+      this.alertMessage = error;
+      if(!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+      }
+    }
     );
   }
 }

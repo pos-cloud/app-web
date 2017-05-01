@@ -15,21 +15,25 @@ import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
 import { AppComponent } from './app.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
+import { UpdateArticleComponent } from './components/update-article/update-article.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 
 //pipe
 import { FilterPipe } from './pipes/filter.pipe';
 import { OrderByPipe } from './pipes/order-by.pipe';
+import { DeleteArticleComponent } from './components/delete-article/delete-article.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AddArticleComponent,
-    HeaderComponent,
     HomeComponent,
+    HeaderComponent,
+    AddArticleComponent,
+    UpdateArticleComponent,
     ListArticlesComponent,
     FilterPipe,
-    OrderByPipe
+    OrderByPipe,
+    DeleteArticleComponent
   ],
   imports: [
     BrowserModule,

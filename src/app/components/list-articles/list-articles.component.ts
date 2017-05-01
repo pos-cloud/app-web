@@ -1,65 +1,63 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { NgbModal, NgbActiveModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { Article } from './../../models/article';
 import { ArticleService } from './../../services/article.service';
-import { AddArticleComponent } from './../../components/add-article/add-article.component'
-import { Pipe, PipeTransform } from '@angular/core';
-import { FilterPipe } from './../../pipes/filter.pipe';
-import { OrderByPipe } from './../../pipes/order-by.pipe';
 
+import { AddArticleComponent } from './../../components/add-article/add-article.component';
+import { UpdateArticleComponent } from './../../components/update-article/update-article.component';
 
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
   styleUrls: ['./list-articles.component.css']
 })
+
 export class ListArticlesComponent implements OnInit {
 
   private articles: Article[];
-  private errorMessage;closeResult;
-  private location: string;
+  private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
-  private articleSelectedId: string;
 
   constructor(
     private _articleService: ArticleService,
     private _router: Router,
-    private modalService: NgbModal
+    private _modalService: NgbModal
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     
     this._router.events.subscribe((data:any) => { 
-      this.location = data.url.split('/');
-      this.userType = this.location[1];
+      let pathLocation: string;
+      pathLocation = data.url.split('/');
+      this.userType = pathLocation[1];
     });
     this.getArticles();
   }
 
+  private getArticles(): void {  
 
-  private getArticles() {  
     this._articleService.getArticles().subscribe(
         result => {
-
 					this.articles = result.articles;
-          
 					if(!this.articles) {
-						alert("Error al traer artículos. Error en el servidor.");
+						this.alertMessage = "Error al traer artículos. Error en el servidor.";
 					}
 				},
 				error => {
-					this.errorMessage = <any> error;
-
-					if(!this.errorMessage) {
-						alert("Error en la petición.");
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
 					}
 				}
       );
    }
 
-  orderBy (term: string) {
+  private orderBy (term: string): void {
+
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
@@ -67,24 +65,56 @@ export class ListArticlesComponent implements OnInit {
     }
   }
 
-  openModal() {
-      console.log("openMOdal");
-      const modalRef = this.modalService.open(AddArticleComponent, { size: 'lg' }).result.then((result) => {
-        this.closeResult = `Closed with: ${result}`;
-        this.getArticles();
-      }, (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        this.getArticles();
-      });
-    };
-
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return  `with: ${reason}`;
-    }
+  private deleteArticle(article: Article): void {
+    console.log(article);
   }
+
+  private openModal(op: string, article:Article): void {
+
+      let modalRef;
+      switch(op) {
+        case 'add' :
+          modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' }).result.then((result) => {
+            this.getArticles();
+          }, (reason) => {
+            this.getArticles();
+          });
+          break;
+        case 'update' :
+            modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' })
+            modalRef.componentInstance.article = article;
+            this.getArticles();
+          break;
+        case 'delete' :
+            modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg' })
+            this.getArticles();
+          break;
+        default : ;
+
+      }
+    };
+}
+
+
+@Component({
+  selector: 'app-delete-article',
+  template: `
+            <div class="modal-header">
+              <h4 class="modal-title">Eliminar Artículo</h4>
+              <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <h6>¿Estás seguro de eliminar el Artículo?</h6>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+              <button type="submit" class="btn btn-primary" (click)="deleteArticle(article)" >Aceptar</button>
+            </div>
+            `
+})
+
+export class DeleteArticleComponent {
+  constructor(public activeModal: NgbActiveModal) {}
 }

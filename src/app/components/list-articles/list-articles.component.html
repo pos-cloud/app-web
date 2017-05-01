@@ -4,7 +4,7 @@
   </div>
   <div class="row">
     <div class="col-md-3">
-      <button class="btn btn-primary" (click)="openModal()" >Agregar Artículo</button>
+      <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Artículo</button>
     </div>
     <div class="col-md-3 offset-md-6">
       <input class="" type="text" placeholder="Search" [(ngModel)]= "filterText"/>
@@ -38,8 +38,8 @@
           <td>{{article.cant}}</td>
           <td>{{article.barCode}}</td>
           <td>
-            <button type="button" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i></button>
-            <button type="button" class="btn btn-primary" (click)="deleteArticle(article._id)"><i class="fa fa-trash-o"></i></button>
+            <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil-square-o"></i></button>
+            <button type="button" class="btn btn-primary" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
           </td>
   </table>
 </section>

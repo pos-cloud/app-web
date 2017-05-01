@@ -2,6 +2,7 @@ import { Validators } from '@angular/forms';
 
 export class Article {
 
+    public _id: string;
     public code: number = 0;
     public description: string;
     public observation: string;

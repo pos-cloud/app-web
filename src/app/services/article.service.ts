@@ -33,7 +33,7 @@ export class ArticleService {
     return this._http.delete(this.url+"article/"+id).map (res => res.json());
   }
 
-  updateArticle (id: string, article: Article){
-    return this._http.put(this.url+"article/"+id, article).map (res => res.json());
+  updateArticle (article: Article){
+    return this._http.put(this.url+"article/"+article._id, article).map (res => res.json());
   }
 }

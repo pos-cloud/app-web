@@ -1,6 +1,6 @@
 <div class="modal-header">
-	<h4 class="modal-title">Agregar Artículo</h4>
-	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+	<h4 class="modal-title">Editar Artículo</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
 </div>
@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()">
+	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="updateArticle()">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-4">
@@ -84,8 +84,8 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid" >Guardar</button>
+			<button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
+			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid" >Guardar Cambios</button>
 		</div>
 	</form>
 </section>
