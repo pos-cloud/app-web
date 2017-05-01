@@ -58,7 +58,7 @@ export class UpdateArticleComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;

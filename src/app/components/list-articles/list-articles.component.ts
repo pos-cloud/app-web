@@ -8,6 +8,7 @@ import { ArticleService } from './../../services/article.service';
 
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
 import { UpdateArticleComponent } from './../../components/update-article/update-article.component';
+import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -64,11 +65,7 @@ export class ListArticlesComponent implements OnInit {
       this.orderTerm[0] = term; 
     }
   }
-
-  private deleteArticle(article: Article): void {
-    console.log(article);
-  }
-
+  
   private openModal(op: string, article:Article): void {
 
       let modalRef;
@@ -83,38 +80,26 @@ export class ListArticlesComponent implements OnInit {
         case 'update' :
             modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' })
             modalRef.componentInstance.article = article;
-            this.getArticles();
+            modalRef.result.then((result) => {
+              if(result === 'save_close') {
+                this.getArticles();
+              }
+            }, (reason) => {
+              
+            });
           break;
         case 'delete' :
             modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg' })
-            this.getArticles();
+            modalRef.componentInstance.article = article;
+            modalRef.result.then((result) => {
+              if(result === 'delete_close') {
+                this.getArticles();
+              }
+            }, (reason) => {
+              
+            });
           break;
         default : ;
-
       }
     };
-}
-
-
-@Component({
-  selector: 'app-delete-article',
-  template: `
-            <div class="modal-header">
-              <h4 class="modal-title">Eliminar Artículo</h4>
-              <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <h6>¿Estás seguro de eliminar el Artículo?</h6>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-              <button type="submit" class="btn btn-primary" (click)="deleteArticle(article)" >Aceptar</button>
-            </div>
-            `
-})
-
-export class DeleteArticleComponent {
-  constructor(public activeModal: NgbActiveModal) {}
 }

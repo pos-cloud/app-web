@@ -21,6 +21,7 @@ export class AddArticleComponent  implements OnInit {
   private articleForm: FormGroup;
   private alertMessage: any;
   private userType: string;
+  private loadding: boolean = false;
 
   private formErrors = {
     'code': 0,
@@ -137,7 +138,7 @@ export class AddArticleComponent  implements OnInit {
   }
 
   private addArticle (): void {
-    
+    this.loadding = true;
     this.article = this.articleForm.value;
     this.saveArticle();
   }
@@ -151,8 +152,10 @@ export class AddArticleComponent  implements OnInit {
         } else {
           this.article = result.article;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha añadido con éxito.";
+          this.alertMessage = "El artículo se ha añadido con éxito.";      
+          this.article = new Article ();
           this.buildForm();
+          this.loadding = false;
         }
       },
       error => {
