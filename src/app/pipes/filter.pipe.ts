@@ -12,19 +12,19 @@ export class FilterPipe implements PipeTransform {
   terms: string[];
   valueAux: any[];
 
-  transform(value: any[], args: any): any {
-    if (args === undefined || !(args)) {
+  transform(value: any[], arg1: string, arg2: string): any {
+    if (arg1 === undefined || !(arg1)) {
         this.result = value;
     } else if (value) {
-        this.terms = args.split(';');
+        this.terms = arg1.split(';');
         if (this.terms.length == 1){
             this.valueAux = value;
         }
         this.result = this.valueAux.filter(item => {
             for (let key in item) {
-                if(key != "_id"){
-                this.strVal = ""+item[key];
-                this.strArg = ""+this.terms[this.terms.length-1];
+                if(key != "_id" && key === arg2){
+                    this.strVal = ""+item[key];
+                    this.strArg = ""+this.terms[this.terms.length-1];
                     if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
                         return true;
                     }

@@ -22,6 +22,7 @@ export class ListArticlesComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
+  private filters: boolean = false;
 
   constructor(
     private _articleService: ArticleService,
@@ -37,6 +38,11 @@ export class ListArticlesComponent implements OnInit {
       this.userType = pathLocation[1];
     });
     this.getArticles();
+  }
+
+  private getBadge(term: string): boolean {
+
+    return true;
   }
 
   private getArticles(): void {  

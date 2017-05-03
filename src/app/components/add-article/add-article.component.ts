@@ -21,7 +21,7 @@ export class AddArticleComponent  implements OnInit {
   private articleForm: FormGroup;
   private alertMessage: any;
   private userType: string;
-  private loadding: boolean = false;
+  private loading: boolean = false;
 
   private formErrors = {
     'code': 0,
@@ -138,7 +138,7 @@ export class AddArticleComponent  implements OnInit {
   }
 
   private addArticle (): void {
-    this.loadding = true;
+    this.loading = true;
     this.article = this.articleForm.value;
     this.saveArticle();
   }
@@ -155,14 +155,15 @@ export class AddArticleComponent  implements OnInit {
           this.alertMessage = "El artículo se ha añadido con éxito.";      
           this.article = new Article ();
           this.buildForm();
-          this.loadding = false;
         }
+        this.loading = false;
       },
       error => {
         this.alertMessage = error;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }
+        this.loading = false;
       }
     );
   }

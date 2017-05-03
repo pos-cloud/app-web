@@ -21,6 +21,7 @@ export class UpdateArticleComponent implements OnInit {
   private articleForm: FormGroup;
   private alertMessage: any;
   private userType: string;
+  private loading: boolean = false;
 
   private formErrors = {
     'code': 0,
@@ -151,6 +152,7 @@ export class UpdateArticleComponent implements OnInit {
 
   private updateArticle (): void {
     
+    this.loading = true;
     this.article = this.articleForm.value;
     this.saveChanges();
   }
@@ -167,12 +169,14 @@ export class UpdateArticleComponent implements OnInit {
         this.alertMessage = "El artículo se ha actualizado con éxito.";
         this.activeModal.close('save_close');
       }
+      this.loading = false;
     },
     error => {
       this.alertMessage = error;
       if(!this.alertMessage) {
           this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
       }
+      this.loading = false;
     }
     );
   }

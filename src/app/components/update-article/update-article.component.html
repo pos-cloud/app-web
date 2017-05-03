@@ -85,7 +85,11 @@
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid" >Guardar Cambios</button>
+			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading" >
+				<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+				<span *ngIf="!loading">Guardar Cambios</span>
+				<span *ngIf="loading">Espere por favor</span>
+			</button>
 		</div>
 	</form>
 </section>

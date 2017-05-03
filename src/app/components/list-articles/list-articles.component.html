@@ -1,45 +1,70 @@
-<section *ngIf="userType=='admin'">
-  <div class="row center-content">
-    <h5>Lista de Artículos</h5>
-  </div>
-  <div class="row">
-    <div class="col-md-3">
-      <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Artículo</button>
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Lista de Artículos
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Artículo</button>
+        <span (click)="filters = !filters">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
     </div>
-    <div class="col-md-3 offset-md-6">
-      <input class="pull-right" type="text" placeholder="Search" [(ngModel)]= "filterText"/>
-    </div>
+      <div class="card-block">
+          <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
+              <th (click)="orderBy('description')">Description </th>
+              <th (click)="orderBy('make')">Marca</th>
+              <th (click)="orderBy('category')">Rubro</th>
+              <th (click)="orderBy('salePrice')">Precio de Venta</th>
+              <th>Unidad de Medida</th>
+              <th>Observation</th>
+              <th>Codigo de Barra</th>
+              <th><em class="fa fa-cog"></em></th>
+            </tr>
+            <tr *ngIf="filters">
+                <th>
+                  <div class="input-group">
+                    <!--
+                    <span class="badge badge-success">Success
+                      <button type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </span>
+                    -->
+                    <input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1">
+                  </div>
+                </th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterMake" placeholder="Marca..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCategory" placeholder="Rubro..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterSalePrice" placeholder="Precio de Venta..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterUnitOfMeasure" placeholder="Unidad de Medida..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterTermObservation" placeholder="Observación..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterTermBarcode" placeholder="Código de Barra..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tbody *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'make'
+                                                                          | filter: filterCategory:'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
+                                                                          | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' ">
+              <tr>
+                <td>{{article.code}}</td>
+                <td>{{article.description}}</td>
+                <td>{{article.make}}</td>
+                <td>{{article.category}}</td>
+                <td>{{article.salePrice}}</td>
+                <td>{{article.unitOfMeasure}}</td>
+                <td>{{article.observation}}</td>
+                <td>{{article.barcode}}</td>
+                <td align="center">
+                  <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
+                  <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
+                </td>
+        </table>
+      </div>
+      <div class="card-footer bg-primary card-inverse">
+        Page 1 of 5
+      </div>
   </div>
-  <table class="table table-bordered table-hover table-sm">
-    <thead class="bg-danger">
-      <tr>
-        <th style="cursor:pointer" (click)="orderBy('code')"> Codigo <i class="fa fa-fw fa-sort"></i></th>
-        <th style="cursor:pointer" (click)="orderBy('description')">Description </th>
-        <th style="cursor:pointer" (click)="orderBy('make')">Marca</th>
-        <th style="cursor:pointer" (click)="orderBy('category')">Categoria</th>
-        <th style="cursor:pointer" (click)="orderBy('salePrice')">Precio de Venta</th>
-        <th>Unidad de Medida</th>
-        <th>Observation</th>
-        <th>Codigo de Barra</th>
-        <th>Stock</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tbody *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterText ">
-        <tr>
-          <td>{{article.code}}</td>
-          <td>{{article.description}}</td>
-          <td>{{article.make}}</td>
-          <td>{{article.category}}</td>
-          <td>{{article.salePrice}}</td>
-          <td>{{article.unitOfMeasure}}</td>
-          <td>{{article.observation}}</td>
-          <td>{{article.barcode}}</td>
-          <td>{{article.stock}}</td>
-          <td>
-            <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil-square-o"></i></button>
-            <button type="button" class="btn btn-primary" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
-          </td>
-  </table>
 </section>
