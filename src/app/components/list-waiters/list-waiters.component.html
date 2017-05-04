@@ -17,12 +17,8 @@
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="filters">
-                <th>
-                  <div class="input-group">
-                    <input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1">
-                  </div>
-                </th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Name..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1"></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
             </tr>
           </thead>
           <tbody>
@@ -34,6 +30,7 @@
                   <button type="button" class="btn btn-primary" (click)="openModal('update', waiter)"><i class="fa fa-pencil"></i></button>
                   <button type="button" class="btn btn-danger" (click)="openModal('delete', waiter)"><i class="fa fa-trash-o"></i></button>
                 </td>
+              </tr>
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">

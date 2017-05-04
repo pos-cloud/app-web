@@ -4,37 +4,46 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Waiter } from './../../models/waiter';
+import { Table } from './../../models/table';
 
-import { WaiterService } from './../../services/waiter.service';
+import { TableService } from './../../services/table.service';
 
 @Component({
-  selector: 'app-add-waiter',
-  templateUrl: './add-waiter.component.html',
-  styleUrls: ['./add-waiter.component.css'],
+  selector: 'app-add-table',
+  templateUrl: './add-table.component.html',
+  styleUrls: ['./add-table.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddWaiterComponent  implements OnInit {
+export class AddTableComponent  implements OnInit {
 
-  private waiter: Waiter;
-  private waiterForm: FormGroup;
+  private table: Table;
+  private tableForm: FormGroup;
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
 
   private formErrors = {
-    'name': ''
+    'code': 1,
+    'room': '',
+    'chair': 1,
   };
 
   private validationMessages = {
-    'name': {
+    'code': {
+      'required':       'Este campo es requerido.',
+      'pattern':        'No puede exceder los 5 dígitos.',
+    },
+    'room': {
+      'required':       'Este campo es requerido.'
+    },
+    'chair': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _waiterService: WaiterService,
+    private _tableService: TableService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -51,23 +60,35 @@ export class AddWaiterComponent  implements OnInit {
       locationPathURL = data.url.split('/');
       this.userType = locationPathURL[1];
     });
-    this.waiter = new Waiter ();
+    this.table = new Table ();
     this.buildForm();
   }
 
   private buildForm(): void {
 
-    this.waiterForm = this._fb.group({
-      'code': [this.waiter.code, [
+    this.tableForm = this._fb.group({
+      'code': [this.table.code, [
+          Validators.required,
+          Validators.pattern("[0-9]{1,5}")
         ]
       ],
-      'name': [this.waiter.name, [
+      'room': [this.table.room, [
           Validators.required
+        ]
+      ],
+      'description': [this.table.description, [
+        ]
+      ],
+      'chair': [this.table.chair, [
+          Validators.required
+        ]
+      ],
+      'status': [this.table.status, [
         ]
       ]
     });
 
-    this.waiterForm.valueChanges
+    this.tableForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged(); // (re)set validation messages now
@@ -75,8 +96,8 @@ export class AddWaiterComponent  implements OnInit {
 
   private onValueChanged(data?: any): void {
 
-    if (!this.waiterForm) { return; }
-    const form = this.waiterForm;
+    if (!this.tableForm) { return; }
+    const form = this.tableForm;
 
     for (const field in this.formErrors) {
       // clear previous error message (if any)
@@ -92,46 +113,23 @@ export class AddWaiterComponent  implements OnInit {
     }
   }
 
-  private addWaiter(): void {
-    
+  private addTable(): void {
     this.loading = true;
-    this.waiter = this.waiterForm.value;
-    this.getLastWaiter();
+    this.table = this.tableForm.value;
+    this.saveTable();
   }
 
-  private getLastWaiter(): void {
-
-    this._waiterService.getLastWaiter().subscribe(
-      result => {
-        if (!result.waiter[0]) {
-          this.waiter.code = 1;
-          this.saveWaiter();
-        } else {
-          this.waiter.code = (result.waiter[0].code + 1);
-          this.saveWaiter();
-        }
-			},
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
-        this.loading = false;
-      }
-    );
-  }
-
-  private saveWaiter(): void {
+  private saveTable(): void {
     
-    this._waiterService.saveWaiter(this.waiter).subscribe(
+    this._tableService.saveTable(this.table).subscribe(
     result => {
-        if (!this.waiter) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el mozo.';
+        if (!this.table) {
+          this.alertMessage = 'Ha ocurrido un error al querer crear la mesa.';
         } else {
-          this.waiter = result.waiter;
+          this.table = result.table;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El mozo se ha añadido con éxito.";      
-          this.waiter = new Waiter ();
+          this.alertMessage = "La mesa se ha añadido con éxito.";      
+          this.table = new Table ();
           this.buildForm();
         }
         this.loading = false;

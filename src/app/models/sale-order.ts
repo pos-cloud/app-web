@@ -1,6 +1,6 @@
 export class SaleOrder {
 	
-	public code: number = 0;
+	public code: number = 1;
 	public date: Date = new Date();
 	public status: any = SaleOrderStatus.Open;
 	public observation: string;

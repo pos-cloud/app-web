@@ -23,18 +23,7 @@
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="filters">
-                <th>
-                  <div class="input-group">
-                    <!--
-                    <span class="badge badge-success">Success
-                      <button type="button" class="close" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </span>
-                    -->
-                    <input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1">
-                  </div>
-                </th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1"></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterMake" placeholder="Marca..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCategory" placeholder="Rubro..." ></th>
@@ -61,6 +50,7 @@
                   <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
                   <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
                 </td>
+              </tr>
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">

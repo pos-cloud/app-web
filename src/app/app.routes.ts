@@ -11,6 +11,10 @@ import { ListWaitersComponent } from './components/list-waiters/list-waiters.com
 import { AddWaiterComponent } from './components/add-waiter/add-waiter.component';
 import { UpdateWaiterComponent } from './components/update-waiter/update-waiter.component';
 import { DeleteWaiterComponent } from './components/delete-waiter/delete-waiter.component';
+import { ListTablesComponent } from './components/list-tables/list-tables.component';
+import { AddTableComponent } from './components/add-table/add-table.component';
+import { UpdateTableComponent } from './components/update-table/update-table.component';
+import { DeleteTableComponent } from './components/delete-table/delete-table.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,6 +27,10 @@ const _routes: Routes = [
   { path: 'admin/add-waiter', component: AddWaiterComponent},
   { path: 'admin/update-waiter', component: UpdateWaiterComponent},
   { path: 'admin/delete-waiter', component: DeleteWaiterComponent},
+  { path: 'admin/list-tables', component: ListTablesComponent },
+  { path: 'admin/add-table', component: AddTableComponent},
+  { path: 'admin/update-table', component: UpdateTableComponent},
+  { path: 'admin/delete-table', component: DeleteTableComponent},
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 

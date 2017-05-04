@@ -10,6 +10,7 @@ import { RoutingModule } from './app.routes';
 //servicios
 import { ArticleService } from './services/article.service';
 import { WaiterService } from './services/waiter.service';
+import { TableService } from './services/table.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -23,6 +24,10 @@ import { ListWaitersComponent } from './components/list-waiters/list-waiters.com
 import { AddWaiterComponent } from './components/add-waiter/add-waiter.component';
 import { UpdateWaiterComponent } from './components/update-waiter/update-waiter.component';
 import { DeleteWaiterComponent } from './components/delete-waiter/delete-waiter.component';
+import { ListTablesComponent } from './components/list-tables/list-tables.component';
+import { AddTableComponent } from './components/add-table/add-table.component';
+import { UpdateTableComponent } from './components/update-table/update-table.component';
+import { DeleteTableComponent } from './components/delete-table/delete-table.component';
 
 //pipe
 import { FilterPipe } from './pipes/filter.pipe';
@@ -41,8 +46,12 @@ import { OrderByPipe } from './pipes/order-by.pipe';
     AddWaiterComponent,
     UpdateWaiterComponent,
     DeleteWaiterComponent,
+    ListTablesComponent,
+    AddTableComponent,
+    UpdateTableComponent,
+    DeleteTableComponent,
     FilterPipe,
-    OrderByPipe
+    OrderByPipe,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +63,8 @@ import { OrderByPipe } from './pipes/order-by.pipe';
   ],
   providers: [
     ArticleService,
-    WaiterService
+    WaiterService,
+    TableService
   ],
   bootstrap: [AppComponent]
 })

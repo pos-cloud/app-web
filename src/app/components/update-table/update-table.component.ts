@@ -1,35 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article } from './../../models/article';
+import { Table } from './../../models/table';
 
-import { ArticleService } from './../../services/article.service';
+import { TableService } from './../../services/table.service';
 
 @Component({
-  selector: 'app-add-article',
-  templateUrl: './add-article.component.html',
-  styleUrls: ['./add-article.component.css'],
-  providers: [NgbAlertConfig]
+  selector: 'app-update-table',
+  templateUrl: './update-table.component.html',
+  styleUrls: ['./update-table.component.css']
 })
+export class UpdateTableComponent implements OnInit {
 
-export class AddArticleComponent  implements OnInit {
-
-  private article: Article;
-  private articleForm: FormGroup;
+  @Input() table: Table;
+  private tableForm: FormGroup;
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
 
   private formErrors = {
     'code': 1,
-    'make': '',
-    'description': '',
-    'salePrice': 0.00,
-    'category': '',
-    'unitOfMeasure': 'Unidad'
+    'room': '',
+    'chair' : 1
   };
 
   private validationMessages = {
@@ -37,29 +32,20 @@ export class AddArticleComponent  implements OnInit {
       'required':       'Este campo es requerido.',
       'pattern':        'No puede exceder los 5 dígitos.',
     },
-    'make': {
+    'room': {
       'required':       'Este campo es requerido.'
     },
-    'description': {
-      'required':       'Este campo es requerido.'
-    },
-    'salePrice': {
-      'required':       'Este campo es requerido.'
-    },
-    'category': {
-      'required':       'Este campo es requerido.'
-    },
-    'unitOfMeasure': {
+    'chair': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _articleService: ArticleService,
+    private _tableService: TableService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -72,47 +58,45 @@ export class AddArticleComponent  implements OnInit {
       locationPathURL = data.url.split('/');
       this.userType = locationPathURL[1];
     });
-    this.article = new Article ();
     this.buildForm();
+    this.tableForm.setValue({
+      '_id':this.table._id,
+      'code':this.table.code,
+      'room': this.table.room,
+      'description': this.table.description,
+      'chair': this.table.chair,
+      'status': this.table.status
+    });
   }
 
   private buildForm(): void {
 
-    this.articleForm = this._fb.group({
-      'code': [this.article.code, [
+    this.tableForm = this._fb.group({
+      '_id': [this.table._id, [
+        ]
+      ],
+      'code': [this.table.code, [
           Validators.required,
           Validators.pattern("[0-9]{1,5}")
         ]
       ],
-      'make': [this.article.make, [
+      'room': [this.table.room, [
           Validators.required
         ]
       ],
-      'description': [this.article.description, [
+      'description': [this.table.description, [
+        ]
+      ],
+      'chair': [this.table.chair, [
           Validators.required
         ]
       ],
-      'salePrice': [this.article.salePrice, [
-          Validators.required
+      'status': [this.table.status, [
         ]
-      ],
-      'category': [this.article.category, [
-          Validators.required
-        ]
-      ],
-      'unitOfMeasure': [this.article.unitOfMeasure, [
-          Validators.required
-        ]
-      ],
-      'observation': [this.article.observation, [
-        ]
-      ],
-      'barcode': [this.article.barcode, [
-        ]
-      ],
+      ]
     });
 
-    this.articleForm.valueChanges
+    this.tableForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged(); // (re)set validation messages now
@@ -120,8 +104,8 @@ export class AddArticleComponent  implements OnInit {
 
   private onValueChanged(data?: any): void {
 
-    if (!this.articleForm) { return; }
-    const form = this.articleForm;
+    if (!this.tableForm) { return; }
+    const form = this.tableForm;
 
     for (const field in this.formErrors) {
       // clear previous error message (if any)
@@ -137,24 +121,23 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
-  private addArticle(): void {
+  private updateTable(): void {
     this.loading = true;
-    this.article = this.articleForm.value;
-    this.saveArticle();
+    this.table = this.tableForm.value;
+    this.saveChanges();
   }
 
-  private saveArticle(): void {
+  private saveChanges(): void {
     
-    this._articleService.saveArticle(this.article).subscribe(
-    result => {
-        if (!this.article) {
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        this.table = result.table;
+        if (!this.table) {
           this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
         } else {
-          this.article = result.article;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha añadido con éxito.";      
-          this.article = new Article ();
-          this.buildForm();
+          this.alertMessage = "El artículo se ha actualizado con éxito.";
+          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

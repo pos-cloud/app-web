@@ -29,8 +29,8 @@ export class TableService {
     return this._http.delete(this.url+"table/"+id).map (res => res.json());
   }
 
-  updateTable (id: string, table: Table){
-    return this._http.put(this.url+"table/"+id, table).map (res => res.json());
+  updateTable (table: Table){
+    return this._http.put(this.url+"table/"+table._id, table).map (res => res.json());
   }
   
   getLastTable () {

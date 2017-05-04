@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 export class Article {
 
     public _id: string;
-    public code: number = 0;
+    public code: number = 1;
     public description: string;
     public observation: string;
     public salePrice: number = 0.00;

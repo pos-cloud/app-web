@@ -24,7 +24,7 @@ export class UpdateArticleComponent implements OnInit {
   private loading: boolean = false;
 
   private formErrors = {
-    'code': 0,
+    'code': 1,
     'make': '',
     'description': '',
     'salePrice': 0.00,
