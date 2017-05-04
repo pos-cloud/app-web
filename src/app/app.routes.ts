@@ -15,6 +15,10 @@ import { ListTablesComponent } from './components/list-tables/list-tables.compon
 import { AddTableComponent } from './components/add-table/add-table.component';
 import { UpdateTableComponent } from './components/update-table/update-table.component';
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
+import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
+import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
+import { UpdateCashBoxComponent } from './components/update-cash-box/update-cash-box.component';
+import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -31,6 +35,10 @@ const _routes: Routes = [
   { path: 'admin/add-table', component: AddTableComponent},
   { path: 'admin/update-table', component: UpdateTableComponent},
   { path: 'admin/delete-table', component: DeleteTableComponent},
+  { path: 'admin/list-cash-boxes', component: ListCashBoxesComponent },
+  { path: 'admin/add-cash-box', component: AddCashBoxComponent},
+  { path: 'admin/update-cash-box', component: UpdateCashBoxComponent},
+  { path: 'admin/delete-cash-box', component: DeleteCashBoxComponent},
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 

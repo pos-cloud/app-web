@@ -11,6 +11,7 @@ import { RoutingModule } from './app.routes';
 import { ArticleService } from './services/article.service';
 import { WaiterService } from './services/waiter.service';
 import { TableService } from './services/table.service';
+import { CashBoxService } from './services/cash-box.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -32,6 +33,10 @@ import { DeleteTableComponent } from './components/delete-table/delete-table.com
 //pipe
 import { FilterPipe } from './pipes/filter.pipe';
 import { OrderByPipe } from './pipes/order-by.pipe';
+import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
+import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
+import { UpdateCashBoxComponent } from './components/update-cash-box/update-cash-box.component';
+import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +57,10 @@ import { OrderByPipe } from './pipes/order-by.pipe';
     DeleteTableComponent,
     FilterPipe,
     OrderByPipe,
+    ListCashBoxesComponent,
+    DeleteCashBoxComponent,
+    UpdateCashBoxComponent,
+    AddCashBoxComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,7 +73,8 @@ import { OrderByPipe } from './pipes/order-by.pipe';
   providers: [
     ArticleService,
     WaiterService,
-    TableService
+    TableService,
+    CashBoxService
   ],
   bootstrap: [AppComponent]
 })

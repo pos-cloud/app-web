@@ -35,7 +35,7 @@
                 <td>{{table.description}}</td>
                 <td>{{table.room}}</td>
                 <td>{{table.chair}}</td>
-                <td>{{table.status}}</td>
+                <td><h6><span class="badge badge-default">{{table.status}}</span></h6></td>
                 <td align="center">
                   <button type="button" class="btn btn-primary" (click)="openModal('update', table)"><i class="fa fa-pencil"></i></button>
                   <button type="button" class="btn btn-danger" (click)="openModal('delete', table)"><i class="fa fa-trash-o"></i></button>

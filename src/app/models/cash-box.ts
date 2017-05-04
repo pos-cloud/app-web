@@ -1,16 +1,17 @@
 import { Waiter } from './waiter';
 
 export class CashBox {
-	
-    private code: number = 1;
-    private openingDate: Date = new Date();
-    private closingDate: Date;
-    private openingCash: number = 0.00;
-    private closingCash: number = 0.00;
-    private invoicedCash: number = 0.00;
-    private difference: number = 0.00;
-    private status: any = CashBoxStatus.Open;
-    private waiter: Waiter = null;
+    
+    public _id: string;
+    public code: number = 1;
+    public openingDate: Date = new Date();
+    public closingDate: Date;
+    public openingCash: number = 0.00;
+    public closingCash: number = 0.00;
+    public invoicedCash: number = 0.00;
+    public difference: number = 0.00;
+    public status: any = CashBoxStatus.Open;
+    public waiter: Waiter = null;
 
 	constructor () {}
 }
