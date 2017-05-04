@@ -33,7 +33,7 @@ export class WaiterService {
     return this._http.delete(this.url+"waiter/"+id).map (res => res.json());
   }
 
-  updateWaiter (id: string, waiter: Waiter){
-    return this._http.put(this.url+"waiter/"+id, waiter).map (res => res.json());
+  updateWaiter (waiter: Waiter){
+    return this._http.put(this.url+"waiter/"+waiter._id, waiter).map (res => res.json());
   }
 }

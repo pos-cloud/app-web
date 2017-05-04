@@ -89,7 +89,7 @@ export class UpdateArticleComponent implements OnInit {
   private buildForm(): void {
 
     this.articleForm = this._fb.group({
-      '_id': [this.article.code, [
+      '_id': [this.article._id, [
         ]
       ],
       'code': [this.article.code, [

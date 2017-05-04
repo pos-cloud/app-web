@@ -14,8 +14,4 @@ export class Article {
     public barcode: string;
 
     constructor() {}
-
-    public setCode(code: number): void {
-        this.code = code;
-    }
 }

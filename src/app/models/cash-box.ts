@@ -13,10 +13,6 @@ export class CashBox {
     private Waiter: Waiter = null;
 
 	constructor () {}
-    
-    public setCode(code: number): void {
-        this.code = code;
-    }
 }
 
 export enum CashBoxStatus {

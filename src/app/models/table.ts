@@ -3,18 +3,14 @@ import { Waiter } from './waiter';
 export class Table {
 	
 	public _id: string;
-	private code: number = 0;
-	private room: string;
-	private description: string;
-	private chair: number = 1;
-	private status: any = TableStatus.Enabled;
-	private Waiter: Waiter = null;
+	public code: number = 0;
+	public room: string;
+	public description: string;
+	public chair: number = 1;
+	public status: any = TableStatus.Enabled;
+	public Waiter: Waiter = null;
 
 	constructor () {}
-
-	public setCode(code: number): void {
-        this.code = code;
-    }
 }
 
 export enum TableStatus {

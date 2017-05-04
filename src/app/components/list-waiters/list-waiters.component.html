@@ -1,0 +1,43 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Lista de Mozos
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Mozo</button>
+        <span (click)="filters = !filters">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block">
+          <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
+              <th (click)="orderBy('name')">Nombre </th>
+              <th><em class="fa fa-cog"></em></th>
+            </tr>
+            <tr *ngIf="filters">
+                <th>
+                  <div class="input-group">
+                    <input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1">
+                  </div>
+                </th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Name..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tbody *ngFor="let waiter of waiters | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterName:'name'">
+              <tr>
+                <td>{{waiter.code}}</td>
+                <td>{{waiter.name}}</td>
+                <td align="center">
+                  <button type="button" class="btn btn-primary" (click)="openModal('update', waiter)"><i class="fa fa-pencil"></i></button>
+                  <button type="button" class="btn btn-danger" (click)="openModal('delete', waiter)"><i class="fa fa-trash-o"></i></button>
+                </td>
+        </table>
+      </div>
+      <div class="card-footer bg-primary card-inverse">
+        Page 1 of 5
+      </div>
+  </div>
+</section>

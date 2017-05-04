@@ -1,0 +1,36 @@
+<div class="modal-header">
+	<h4 class="modal-title">Agregar Mozo</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+	<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<section class="container-fluid">
+	<div class="center-content"  *ngIf="alertMessage">
+		<ngb-alert (close)="alertMessage=''">
+			{{alertMessage}}
+		</ngb-alert>
+	</div>
+	<form [formGroup]="waiterForm" #formAddWaiter="ngForm" (ngSubmit)="addWaiter()">
+		<div class="modal-body">
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="name" class="control-label">Nombre:</label>
+					<div class="input-group">
+						<input type="text" class="form-control" formControlName="name" name="name" id="name" required/>
+					</div>
+					<div *ngIf="formErrors.name" class="alert alert-danger">
+						{{ formErrors.name }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+			<button type="submit" class="btn btn-primary" [disabled]="!waiterForm.valid || loading" >
+				<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+				<span *ngIf="!loading">Guardar</span>
+				<span *ngIf="loading">Espere por favor</span>
+			</button>
+		</div>
+	</form>
+</section>
