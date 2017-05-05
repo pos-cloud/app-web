@@ -16,7 +16,7 @@
 				<div class="form-group col-md-12">
 					<label for="openingCash" class="control-label">Importe Apertura:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="openingCash" name="openingCash" id="openingCash" required/>
+						<input type="text" class="form-control" formControlName="openingCash" name="openingCash" id="openingCash" required autofocus/>
 					</div>
 					<div *ngIf="formErrors.openingCash" class="alert alert-danger">
 						{{ formErrors.openingCash }}

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/login/login.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
 import { UpdateArticleComponent } from './components/update-article/update-article.component';
@@ -19,10 +20,12 @@ import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-b
 import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
 import { UpdateCashBoxComponent } from './components/update-cash-box/update-cash-box.component';
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
+import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'admin/productos', component: ListArticlesComponent },
   { path: 'admin/agregar-producto', component: AddArticleComponent},
   { path: 'admin/editar-producto', component: UpdateArticleComponent},
@@ -39,6 +42,7 @@ const _routes: Routes = [
   { path: 'admin/agregar-caja', component: AddCashBoxComponent},
   { path: 'admin/editar-caja', component: UpdateCashBoxComponent},
   { path: 'admin/eliminar-caja', component: DeleteCashBoxComponent},
+  { path: 'pos', component: PointOfSaleComponent},
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 

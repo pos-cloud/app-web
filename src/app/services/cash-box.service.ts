@@ -13,6 +13,10 @@ export class CashBoxService {
     this.url = 'http://localhost:3000/api/';
   }
 
+  getOpenCashBoxes () {
+		return this._http.get(this.url+"open-cash-boxes").map (res => res.json());
+	}
+
   getLastCashBox () {
 		return this._http.get(this.url+"last-cash-box").map (res => res.json());
 	}

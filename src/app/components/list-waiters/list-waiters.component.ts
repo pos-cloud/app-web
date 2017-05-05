@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Waiter } from './../../models/waiter';
 import { WaiterService } from './../../services/waiter.service';
@@ -74,38 +74,38 @@ export class ListWaitersComponent implements OnInit {
   
   private openModal(op: string, waiter:Waiter): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddWaiterComponent, { size: 'lg' }).result.then((result) => {
-            this.getWaiters();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddWaiterComponent, { size: 'lg' }).result.then((result) => {
+          this.getWaiters();
+        }, (reason) => {
+          this.getWaiters();
+        });
+        break;
+      case 'update' :
+          modalRef = this._modalService.open(UpdateWaiterComponent, { size: 'lg' })
+          modalRef.componentInstance.waiter = waiter;
+          modalRef.result.then((result) => {
+            if(result === 'save_close') {
+              this.getWaiters();
+            }
           }, (reason) => {
-            this.getWaiters();
+            
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateWaiterComponent, { size: 'lg' })
-            modalRef.componentInstance.waiter = waiter;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getWaiters();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteWaiterComponent, { size: 'lg' })
-            modalRef.componentInstance.waiter = waiter;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getWaiters();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteWaiterComponent, { size: 'lg' })
+          modalRef.componentInstance.waiter = waiter;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getWaiters();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
+    }
+  };
 }

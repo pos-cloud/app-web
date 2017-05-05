@@ -51,7 +51,7 @@ export class AddCashBoxComponent  implements OnInit {
       locationPathURL = data.url.split('/');
       this.userType = locationPathURL[1];
     });
-    this.cashBox = new CashBox ();
+    this.cashBox = new CashBox();
     this.buildForm();
   }
 
