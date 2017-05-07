@@ -1,4 +1,4 @@
-addSaleOrder<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid" *ngIf="userType=='admin'">
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Lista de Mesas
       <div class="pull-right">
@@ -56,6 +56,48 @@ addSaleOrder<section class="container-fluid" *ngIf="userType=='admin'">
 <section class="row" *ngIf="userType=='pos'">
     <div class="itable" *ngFor="let table of tables | orderBy:[orderTerm]" (click)="addSaleOrder(table._id)">
         <p>{{table.code}}</p>
+        <p *ngIf="table.waiter">{{table.waiter.name}}</p>
     </div>
     <!--<p *ngIf="amountOfTables == 0">No se encontraron mesas</p>-->
 </section>
+
+
+<!--MODAL SELECCIONAR VENDEDOR-->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div  class="modal-header">
+    <h4 class="modal-title">Mozo</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <section class="container-fluid">
+    <div class="center-content"  *ngIf="alertMessage">
+      <ngb-alert (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <form [formGroup]="selectWaiterForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')">
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="selectWaiter" class="control-label">Seleccione el mozo</label>
+            <select class="form-control">
+              <option>Mozo 1</option>
+            </select>
+            <div *ngIf="formErrors.selectWaiter" class="alert alert-danger">
+              {{ formErrors.selectWaiter }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!selectWaiterForm.valid || loading" >
+          <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+          <span *ngIf="!loading">Guardar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</ng-template>

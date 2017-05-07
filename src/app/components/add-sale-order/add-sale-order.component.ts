@@ -25,13 +25,13 @@ export class AddSaleOrderComponent implements OnInit {
   private saleOrder: SaleOrder;
   private alertMessage: any;
   private movementOfArticle: MovementOfArticle;
-  private movementsOfArticles: MovementOfArticle[];
+  private movementsOfArticles: MovementOfArticle[] = [];
   private amountOfItemForm: FormGroup;
   private areMovementsOfArticlesEmpty: boolean = true;
   private userType: string;
   private table: Table;
   private loading: boolean = false;
-  @ViewChild('content') el:ElementRef;  
+  @ViewChild('content') content:ElementRef;
 
   private formErrors = {
     'amount': ''
@@ -58,7 +58,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.saleOrder = new SaleOrder();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
-    this.movementsOfArticles = [this.movementOfArticle];
   }
 
   ngOnInit(): void {
@@ -155,7 +154,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   private openModal(): void {
-    let modalRef = this._modalService.open(this.el).result.then((result) => {
+    let modalRef = this._modalService.open(this.content).result.then((result) => {
       if(result  === "add_item"){
         this.confirmAmount();
       }
@@ -198,6 +197,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.movementsOfArticles.push(this.movementOfArticle);
     this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
+    this.areMovementsOfArticlesEmpty = false;
   }
 
   // private getMovementsOfArticles(): void {
