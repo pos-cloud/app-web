@@ -94,6 +94,7 @@ export class AddCashBoxComponent  implements OnInit {
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
+    this.focusEvent.emit(true);
   }
 
   private onValueChanged(data?: any): void {
