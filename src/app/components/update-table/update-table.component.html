@@ -15,7 +15,7 @@
 			<div class="row">
 				<div class="form-group col-md-4">
 					<label for="code" class="control-label">Número:</label>
-					<input type="number" class="form-control" formControlName="code" name="code" id="code" required autofocus/>
+					<input type="number" class="form-control" formControlName="code" name="code" id="code" required [focus]="focusEvent"/>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
 						{{ formErrors.code }}
 					</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ export class AddCashBoxComponent  implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
     'openingCash': ''
@@ -53,6 +54,10 @@ export class AddCashBoxComponent  implements OnInit {
     });
     this.cashBox = new CashBox();
     this.buildForm();
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private buildForm(): void {
@@ -149,8 +154,7 @@ export class AddCashBoxComponent  implements OnInit {
           this.cashBox = result.cashBox;
           this.alertConfig.type = 'success';
           this.alertMessage = "La caja se ha añadido con éxito.";      
-          this.cashBox = new CashBox ();
-          this.buildForm();
+          this.activeModal.close();
         }
         this.loading = false;
       },

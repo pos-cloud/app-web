@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -20,6 +20,7 @@ export class UpdateTableComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
     'code': 1,
@@ -67,6 +68,10 @@ export class UpdateTableComponent implements OnInit {
       'chair': this.table.chair,
       'status': this.table.status
     });
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private buildForm(): void {

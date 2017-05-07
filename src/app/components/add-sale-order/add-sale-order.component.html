@@ -59,7 +59,7 @@
           <div class="form-group col-md-12">
             <label for="amount" class="control-label">Ingrese la Cantidad:</label>
             <div class="input-group">
-              <input type="text" class="form-control" formControlName="amount" name="amount" id="amount" required autofocus/>
+              <input type="text" class="form-control" formControlName="amount" name="amount" required/>
             </div>
             <div *ngIf="formErrors.amount" class="alert alert-danger">
               {{ formErrors.amount }}

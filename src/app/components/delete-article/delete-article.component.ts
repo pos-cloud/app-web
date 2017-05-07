@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -17,6 +17,7 @@ export class DeleteArticleComponent implements OnInit {
 
   @Input() article: Article;
   private alertMessage: any;
+  public focusEvent = new EventEmitter<boolean>();
 
   constructor(
     public _articleService: ArticleService,
@@ -28,6 +29,10 @@ export class DeleteArticleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private deleteArticle(): void {

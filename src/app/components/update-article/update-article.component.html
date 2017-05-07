@@ -15,7 +15,7 @@
 			<div class="row">
 				<div class="form-group col-md-4">
 					<label for="make" class="control-label">Marca:</label>
-					<input type="text" class="form-control" formControlName="make" name="make" id="make" required autofocus/>
+					<input type="text" class="form-control" formControlName="make" name="make" id="make" required [focus]="focusEvent"/>
 					<div *ngIf="formErrors.make" class="alert alert-danger">
 						{{ formErrors.make }}
 					</div>

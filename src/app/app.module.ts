@@ -46,6 +46,7 @@ import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-orde
 import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
 import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
 import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
+import { FocusDirective } from './directives/focus.directive';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-
     ListSaleOrdersComponent,
     UpdateSaleOrderComponent,
     DeleteSaleOrderComponent,
+    FocusDirective,
   ],
   imports: [
     BrowserModule,

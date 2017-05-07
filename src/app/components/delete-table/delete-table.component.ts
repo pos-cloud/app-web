@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -17,6 +17,7 @@ export class DeleteTableComponent implements OnInit {
 
   @Input() table: Table;
   private alertMessage: any;
+  public focusEvent = new EventEmitter<boolean>();
 
   constructor(
     public _tableService: TableService,
@@ -28,6 +29,10 @@ export class DeleteTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private deleteTable(): void {

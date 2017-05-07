@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ export class AddArticleComponent  implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  private focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
     'code': 1,
@@ -74,6 +75,10 @@ export class AddArticleComponent  implements OnInit {
     });
     this.article = new Article ();
     this.buildForm();
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private buildForm(): void {
