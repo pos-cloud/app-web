@@ -40,7 +40,7 @@
 <ng-template #content let-c="close" let-d="dismiss">
   <div  class="modal-header">
     <h4 class="modal-title">Cantidad</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
     <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -50,7 +50,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="confirmAmount()">
+    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')">
       <div class="modal-body">
         <div class="row">
           <div class="form-group col-md-12">
@@ -65,7 +65,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+        <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
         <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
           <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
           <span *ngIf="!loading">Guardar</span>

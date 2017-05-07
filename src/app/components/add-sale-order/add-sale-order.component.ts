@@ -152,27 +152,16 @@ export class AddSaleOrderComponent implements OnInit {
     this.movementOfArticle = itemData;
     this.movementOfArticle.saleOrder = this.saleOrder;
     this.openModal();
-    // if (this.movementsOfArticles === undefined) {
-    //   this.movementsOfArticles[0] = dataItem;
-    //   // this.movementsOfArticles[0].amount = dataItem[1];
-    //   // this.saleOrder.totalPrice = this.saleOrder.totalPrice + (parseFloat(""+dataItem[0].salePrice))*dataItem[1];
-    // } else {
-    //   let i = this.movementsOfArticles.length;
-    //   this.movementsOfArticles[i] = dataItem;
-    //   // this.movementsOfArticles[i].amount = dataItem[1];
-    //   // this.saleOrder.totalPrice = this.saleOrder.totalPrice + (parseFloat(""+dataItem[0].salePrice))*dataItem[1];
-    // }
   }
 
   private openModal(): void {
-    console.log("abre modal");
     let modalRef = this._modalService.open(this.el).result.then((result) => {
-    console.log("cierra modal");
+      if(result  === "add_item"){
+        this.confirmAmount();
+      }
     }, (reason) => {
-    console.log("cierra modal");
+      
     });
-    
-    console.log("termina modal");
   }
 
   private confirmAmount(){
@@ -206,15 +195,9 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   private addItemToOrder(): void {
-    
-    if (this.movementsOfArticles === undefined) {
-      this.movementsOfArticles[0] = this.movementOfArticle;
-      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
-    } else {
-      let i = this.movementsOfArticles.length;
-      this.movementsOfArticles[i] = this.movementOfArticle;
-      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
-    }
+
+    this.movementsOfArticles.push(this.movementOfArticle);
+    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
   }
 
   // private getMovementsOfArticles(): void {
