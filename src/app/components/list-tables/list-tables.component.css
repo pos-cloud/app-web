@@ -1,3 +1,23 @@
 .card {
       margin-top: 50px;
 }
+
+.itable {
+    background: green;
+    width: 200px;
+    height: 200px;
+    margin: 20px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+}
+
+.itable p{
+    font-size: 50px;
+} 
+
+.table {
+    box-shadow: 0px 0px 5px;
+    border-radius: 10px;
+    cursor: pointer;
+ }

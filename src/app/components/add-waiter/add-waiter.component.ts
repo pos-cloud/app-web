@@ -70,7 +70,7 @@ export class AddWaiterComponent  implements OnInit {
     this.waiterForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
   }
 
   private onValueChanged(data?: any): void {

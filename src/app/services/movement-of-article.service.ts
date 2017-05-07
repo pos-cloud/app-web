@@ -21,8 +21,8 @@ export class MovementOfArticleService {
 		return this._http.get(this.url+"movement-of-article/"+id).map (res => res.json());
 	}
 
-  getMovementsOfArticle () {
-		return this._http.get(this.url+"movement-of-article").map (res => res.json());
+  getMovementsOfArticles () {
+		return this._http.get(this.url+"movements-of-articles").map (res => res.json());
 	}
 
   saveMovementOfArticle (movementOfArticle: MovementOfArticle) {

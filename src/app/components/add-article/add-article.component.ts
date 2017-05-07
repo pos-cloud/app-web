@@ -115,7 +115,7 @@ export class AddArticleComponent  implements OnInit {
     this.articleForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
   }
 
   private onValueChanged(data?: any): void {

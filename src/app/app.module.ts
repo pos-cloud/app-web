@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //rutas
 import { RoutingModule } from './app.routes';
@@ -12,6 +12,8 @@ import { ArticleService } from './services/article.service';
 import { WaiterService } from './services/waiter.service';
 import { TableService } from './services/table.service';
 import { CashBoxService } from './services/cash-box.service';
+import { SaleOrderService } from './services/sale-order.service';
+import { MovementOfArticleService } from "./services/movement-of-article.service";
 import { UserService } from './services/user.service';
 
 //componentes
@@ -40,6 +42,10 @@ import { LoginComponent } from './components/login/login.component';
 //pipe
 import { FilterPipe } from './pipes/filter.pipe';
 import { OrderByPipe } from './pipes/order-by.pipe';
+import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
+import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
+import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
+import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +72,10 @@ import { OrderByPipe } from './pipes/order-by.pipe';
     LoginComponent,
     FilterPipe,
     OrderByPipe,
+    AddSaleOrderComponent,
+    ListSaleOrdersComponent,
+    UpdateSaleOrderComponent,
+    DeleteSaleOrderComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,10 +86,13 @@ import { OrderByPipe } from './pipes/order-by.pipe';
     NgbModule.forRoot()
   ],
   providers: [
+    NgbActiveModal,
     ArticleService,
     WaiterService,
     TableService,
     CashBoxService,
+    SaleOrderService,
+    MovementOfArticleService,
     UserService
   ],
   bootstrap: [AppComponent]

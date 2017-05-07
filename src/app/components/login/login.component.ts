@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
     this.loginForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
   }
 
   private onValueChanged(data?: any): void {

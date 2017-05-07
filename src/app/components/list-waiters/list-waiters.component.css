@@ -1,3 +1,9 @@
 .card {
       margin-top: 50px;
 }
+
+.table {
+    box-shadow: 0px 0px 5px;
+    border-radius: 10px;
+    cursor: pointer;
+ }

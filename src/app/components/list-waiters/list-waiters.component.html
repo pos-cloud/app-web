@@ -9,7 +9,7 @@
       </div>
     </div>
       <div class="card-block">
-          <table class="table table-hover">
+        <table class="table table-hover">
           <thead>
             <tr>
               <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
@@ -17,20 +17,23 @@
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="filters">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1"></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tbody *ngFor="let waiter of waiters | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterName:'name'">
-              <tr>
-                <td>{{waiter.code}}</td>
-                <td>{{waiter.name}}</td>
-                <td align="center">
-                  <button type="button" class="btn btn-primary" (click)="openModal('update', waiter)"><i class="fa fa-pencil"></i></button>
-                  <button type="button" class="btn btn-danger" (click)="openModal('delete', waiter)"><i class="fa fa-trash-o"></i></button>
-                </td>
-              </tr>
+            <tr *ngFor="let waiter of waiters | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterName:'name'">
+              <td>{{waiter.code}}</td>
+              <td>{{waiter.name}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', waiter)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', waiter)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="areWaitersEmpty">
+              <td colspan="3">No se encontraron mozos</td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">

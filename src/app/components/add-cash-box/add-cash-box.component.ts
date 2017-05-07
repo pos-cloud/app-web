@@ -38,7 +38,7 @@ export class AddCashBoxComponent  implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -88,7 +88,7 @@ export class AddCashBoxComponent  implements OnInit {
     this.cashBoxForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
   }
 
   private onValueChanged(data?: any): void {

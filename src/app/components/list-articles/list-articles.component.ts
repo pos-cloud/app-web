@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,10 +19,12 @@ import { DeleteArticleComponent } from './../../components/delete-article/delete
 export class ListArticlesComponent implements OnInit {
 
   private articles: Article[];
+  private areArticlesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
   private filters: boolean = false;
+  @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
 
   constructor(
     private _articleService: ArticleService,
@@ -51,8 +53,13 @@ export class ListArticlesComponent implements OnInit {
         result => {
 					this.articles = result.articles;
 					if(!this.articles) {
-						this.alertMessage = "Error al traer artículos. Error en el servidor.";
-					}
+						this.alertMessage = "Error al traer los productos. Error en el servidor.";
+            this.areArticlesEmpty = true;
+					} else if(this.articles.length !== 0){
+             this.areArticlesEmpty = false;
+          } else {
+            this.areArticlesEmpty = true;
+          }
 				},
 				error => {
 					this.alertMessage = error;
@@ -108,4 +115,8 @@ export class ListArticlesComponent implements OnInit {
         default : ;
       }
     };
+
+    private addItem(articleSelected) {
+      this.eventAddItem.emit(articleSelected);
+    }
 }

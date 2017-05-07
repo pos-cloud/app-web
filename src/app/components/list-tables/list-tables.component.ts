@@ -19,6 +19,7 @@ import { DeleteTableComponent } from './../../components/delete-table/delete-tab
 export class ListTablesComponent implements OnInit {
 
   private tables: Table[];
+  private areTablesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
@@ -48,19 +49,24 @@ export class ListTablesComponent implements OnInit {
   private getTables(): void {  
 
     this._tableService.getTables().subscribe(
-        result => {
-					this.tables = result.tables;
-					if(!this.tables) {
-						this.alertMessage = "Error al traer mesas. Error en el servidor.";
-					}
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
+      result => {
+        this.tables = result.tables;
+        if(!this.tables) {
+          this.alertMessage = "Error al traer mesas. Error en el servidor.";
+          this.areTablesEmpty = true;
+        } else if(this.tables.length !== 0){
+            this.areTablesEmpty = false;
+        } else {
+          this.areTablesEmpty = true;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
    }
 
   private orderBy (term: string): void {
@@ -108,4 +114,8 @@ export class ListTablesComponent implements OnInit {
         default : ;
       }
     };
+
+    private addSaleOrder(tableId: number) {
+      this._router.navigate(['/pos/mesas/'+tableId+'/agregar-pedido']);
+    }
 }

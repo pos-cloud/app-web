@@ -7,10 +7,10 @@ export class MovementOfArticle {
     public description: string;
     public observation: string;
     public salePrice: number = 0.00;
+    public totalPrice: number = 0.00;
     public make: string;
     public category: string;
     public unitOfMeasure: string;
-    public stock: number = 0;
     public barcode: string;
     public amount: number = 1;
     public saleOrder: SaleOrder = null;

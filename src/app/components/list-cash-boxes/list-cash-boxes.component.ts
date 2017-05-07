@@ -19,6 +19,7 @@ import { DeleteCashBoxComponent } from './../../components/delete-cash-box/delet
 export class ListCashBoxesComponent implements OnInit {
 
   private cashBoxes: CashBox[];
+  private areCashBoxesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
@@ -52,7 +53,12 @@ export class ListCashBoxesComponent implements OnInit {
 					this.cashBoxes = result.cashBoxes;
 					if(!this.cashBoxes) {
 						this.alertMessage = "Error al traer cajas. Error en el servidor.";
-					}
+            this.areCashBoxesEmpty = true;
+					} else if(this.cashBoxes.length !== 0){
+             this.areCashBoxesEmpty = false;
+          } else {
+            this.areCashBoxesEmpty = true;
+          }
 				},
 				error => {
 					this.alertMessage = error;

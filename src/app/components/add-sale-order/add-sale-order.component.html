@@ -1,0 +1,77 @@
+<!--POS-->
+<section class="container-fluid">
+  <div class="row">
+      <div class="col-md-12 center-content">
+          <h5>Agregar un Pedido:</h5>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 scroll">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th (click)="orderBy('amount')">Cantidad</th>
+            <th (click)="orderBy('description')">Description</th>
+            <th (click)="orderBy('salePrice')">Precio de Venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <div class="scroll-table">
+            <tr *ngFor="let movementOfArticle of movementsOfArticles">
+              <td>{{movementOfArticle.amount}}</td>
+              <td>{{movementOfArticle.description}}</td>
+              <td>{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</td>
+            </tr>
+            <tr align="center" *ngIf="areMovementsOfArticlesEmpty">
+              <td colspan="3">Todavía no se han facturado artículos</td>
+            </tr>
+          </div>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-9">
+          <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+    </div>
+
+  <h4>PRECIO TOTAL {{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</h4>
+  </div>
+</section>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div  class="modal-header">
+    <h4 class="modal-title">Cantidad</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <section class="container-fluid">
+    <div class="center-content"  *ngIf="alertMessage">
+      <ngb-alert (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="confirmAmount()">
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="amount" class="control-label">Ingrese la Cantidad:</label>
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="amount" name="amount" id="amount" required autofocus/>
+            </div>
+            <div *ngIf="formErrors.amount" class="alert alert-danger">
+              {{ formErrors.amount }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
+          <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+          <span *ngIf="!loading">Guardar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</ng-template>

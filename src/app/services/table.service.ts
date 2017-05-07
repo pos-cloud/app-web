@@ -13,7 +13,7 @@ export class TableService {
     this.url = 'http://localhost:3000/api/';
   }
 
-  getTable (id) {
+  getTable (id: string) {
 		return this._http.get(this.url+"table/"+id).map (res => res.json());
 	}
 

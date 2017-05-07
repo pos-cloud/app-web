@@ -22,14 +22,23 @@ export class FilterPipe implements PipeTransform {
         }
         this.result = this.valueAux.filter(item => {
             for (let key in item) {
-                if(key != "_id" && key === arg2){
-                    this.strVal = ""+item[key];
-                    this.strArg = ""+this.terms[this.terms.length-1];
-                    if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
-                        return true;
+                if(arg2 === ""){
+                    if(key != "_id" && key === arg2){
+                        this.strVal = ""+item[key];
+                        this.strArg = ""+this.terms[this.terms.length-1];
+                        if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
+                            return true;
+                        }
+                    }
+                } else {
+                    if(key != "_id"){
+                        this.strVal = ""+item[key];
+                        this.strArg = ""+this.terms[this.terms.length-1];
+                        if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
+                            return true;
+                        }
                     }
                 }
-                
             }
         });
         this.valueAux = this.result;

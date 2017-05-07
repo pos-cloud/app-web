@@ -1,3 +1,4 @@
+<!--ADMIN-->
 <section class="container-fluid" *ngIf="userType=='admin'">
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Lista de Artículos
@@ -9,7 +10,7 @@
       </div>
     </div>
       <div class="card-block">
-          <table class="table table-hover">
+        <table class="table table-hover">
           <thead>
             <tr>
               <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
@@ -23,7 +24,7 @@
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="filters">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1"></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterMake" placeholder="Marca..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCategory" placeholder="Rubro..." ></th>
@@ -34,27 +35,63 @@
             </tr>
           </thead>
           <tbody>
-            <tbody *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'make'
-                                                                          | filter: filterCategory:'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
-                                                                          | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' ">
-              <tr>
-                <td>{{article.code}}</td>
-                <td>{{article.description}}</td>
-                <td>{{article.make}}</td>
-                <td>{{article.category}}</td>
-                <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
-                <td>{{article.unitOfMeasure}}</td>
-                <td>{{article.observation}}</td>
-                <td>{{article.barcode}}</td>
-                <td align="center">
-                  <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
-                  <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
-                </td>
-              </tr>
+            <tr *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'make'
+                                                                        | filter: filterCategory:'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
+                                                                        | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' ">
+              <td>{{article.code}}</td>
+              <td>{{article.description}}</td>
+              <td>{{article.make}}</td>
+              <td>{{article.category}}</td>
+              <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{article.unitOfMeasure}}</td>
+              <td>{{article.observation}}</td>
+              <td>{{article.barcode}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="areArticlesEmpty">
+              <td colspan="9">No se encontraron artículos</td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
         Page 1 of 5
       </div>
   </div>
+</section>
+
+<!--POS-->
+<section class="container-fluid" *ngIf="userType=='pos'">
+  <div class="row">
+    <div class="col-md-12 center-content">
+      <h4>Lista de Productos</h4>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-12 input-group">
+        <input type="text" class="form-control" [(ngModel)]= "filterText" placeholder="Buscar..." autofocus>
+      </div>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th (click)="orderBy('description')">Description </th>
+        <th (click)="orderBy('code')"> Código <i class="fa fa-fw fa-sort"></i></th>
+        <th (click)="orderBy('salePrice')">Precio de Venta</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterText" (click)="addItem(article)">
+        <td>{{article.description}}</td>
+        <td>{{article.code}}</td>
+        <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
+      </tr>
+      <tr align="center" *ngIf="areArticlesEmpty">
+        <td colspan="3">No se encontraron artículos</td>
+      </tr>
+    </tbody>
+  </table>
 </section>
