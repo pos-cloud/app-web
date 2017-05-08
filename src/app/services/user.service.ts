@@ -14,7 +14,7 @@ export class UserService {
   }
 
   getLastUser () {
-		return this._http.get(this.url+"last-user").map (res => res.json());
+		return this._http.get(this.url+'users/sort="code":-1&limit=1').map (res => res.json());
 	}
 
   getUser (id) {

@@ -12,6 +12,10 @@ export class TableService {
   constructor(private _http: Http) {
     this.url = 'http://localhost:3000/api/';
   }
+  
+  getLastTable () {
+    return this._http.get(this.url+'tables/sort="code":-1&limit=1').map (res => res.json());
+  }
 
   getTable (id: string) {
 		return this._http.get(this.url+"table/"+id).map (res => res.json());
@@ -32,8 +36,4 @@ export class TableService {
   updateTable (table: Table){
     return this._http.put(this.url+"table/"+table._id, table).map (res => res.json());
   }
-  
-  getLastTable () {
-		return this._http.get(this.url+"last-table").map (res => res.json());
-	}
 }

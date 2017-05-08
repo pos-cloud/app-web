@@ -127,11 +127,11 @@ export class AddCashBoxComponent  implements OnInit {
 
     this._cashBoxService.getLastCashBox().subscribe(
       result => {
-        if (!result.cashBox[0]) {
+        if (!result.cashBoxes[0]) {
           this.cashBox.code = 1;
           this.saveCashBox();
         } else {
-          this.cashBox.code = (result.cashBox[0].code + 1);
+          this.cashBox.code = (result.cashBoxes[0].code + 1);
           this.saveCashBox();
         }
 			},

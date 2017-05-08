@@ -109,11 +109,11 @@ export class AddWaiterComponent  implements OnInit {
 
     this._waiterService.getLastWaiter().subscribe(
       result => {
-        if (!result.waiter[0]) {
+        if (!result.waiters[0]) {
           this.waiter.code = 1;
           this.saveWaiter();
         } else {
-          this.waiter.code = (result.waiter[0].code + 1);
+          this.waiter.code = (result.waiters[0].code + 1);
           this.saveWaiter();
         }
 			},

@@ -14,7 +14,7 @@ export class MovementOfArticleService {
   }
 
   getLastMovementOfArticle () {
-		return this._http.get(this.url+"last-movement-of-article").map (res => res.json());
+		return this._http.get(this.url+'movements-of-articles/sort="code":-1&limit=1').map (res => res.json());
 	}
 
   getMovementOfArticle (id) {
