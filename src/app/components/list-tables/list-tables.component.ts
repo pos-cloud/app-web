@@ -22,7 +22,7 @@ export class ListTablesComponent implements OnInit {
   private areTablesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
-  private orderTerm: string[] = ['code'];
+  private orderTerm: string[] = ['description'];
   private filters: boolean = false;
 
   constructor(
@@ -115,7 +115,7 @@ export class ListTablesComponent implements OnInit {
       }
     };
 
-    private addSaleOrder(tableId: number) {
+    private addSaleOrder(tableId: string) {
       this._router.navigate(['/pos/mesas/'+tableId+'/agregar-pedido']);
     }
 }

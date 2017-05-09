@@ -22,7 +22,7 @@ export class ListSaleOrdersComponent implements OnInit {
   private areSaleOrdersEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
-  private orderTerm: string[] = ['code'];
+  private orderTerm: string[] = ['number'];
   private filters: boolean = false;
 
   constructor(

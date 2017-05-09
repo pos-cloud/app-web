@@ -4,7 +4,8 @@ import { Table } from './table';
 export class SaleOrder {
 	
 	public _id: string;
-	public code: number = 0;
+	public origin: number = 0;
+	public number: number = 0;
 	public date: Date = new Date();
 	public status: any = SaleOrderStatus.Open;
 	public observation: string;

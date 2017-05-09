@@ -3,9 +3,8 @@ import { Waiter } from './waiter';
 export class Table {
 	
 	public _id: string;
-	public code: number = 1;
-	public room: string;
 	public description: string;
+	public room: string;
 	public chair: number = 1;
 	public status: any = TableStatus.Enabled;
 	public waiter: Waiter = null;

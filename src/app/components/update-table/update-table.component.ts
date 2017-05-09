@@ -23,15 +23,14 @@ export class UpdateTableComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
-    'code': 1,
+    'description': '',
     'room': '',
     'chair' : 1
   };
 
   private validationMessages = {
-    'code': {
-      'required':       'Este campo es requerido.',
-      'pattern':        'No puede exceder los 5 dígitos.',
+    'description': {
+      'required':       'Este campo es requerido.'
     },
     'room': {
       'required':       'Este campo es requerido.'
@@ -62,9 +61,8 @@ export class UpdateTableComponent implements OnInit {
     this.buildForm();
     this.tableForm.setValue({
       '_id':this.table._id,
-      'code':this.table.code,
+      'description':this.table.description,
       'room': this.table.room,
-      'description': this.table.description,
       'chair': this.table.chair,
       'status': this.table.status
     });
@@ -80,16 +78,12 @@ export class UpdateTableComponent implements OnInit {
       '_id': [this.table._id, [
         ]
       ],
-      'code': [this.table.code, [
-          Validators.required,
-          Validators.pattern("[0-9]{1,5}")
+      'description': [this.table.description, [
+          Validators.required
         ]
       ],
       'room': [this.table.room, [
           Validators.required
-        ]
-      ],
-      'description': [this.table.description, [
         ]
       ],
       'chair': [this.table.chair, [

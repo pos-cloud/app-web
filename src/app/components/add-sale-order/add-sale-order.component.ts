@@ -30,6 +30,7 @@ export class AddSaleOrderComponent implements OnInit {
   private areMovementsOfArticlesEmpty: boolean = true;
   private userType: string;
   private table: Table;
+  private tableId: string;
   private loading: boolean = false;
   @ViewChild('content') content:ElementRef;
 
@@ -61,18 +62,23 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let tableId: string;
+
     this._router.events.subscribe((data:any) => {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
-      tableId = locationPathURL[3];
-      this.getTable(tableId);
+      if(this.tableId === undefined) {
+        this.tableId = locationPathURL[3];
+        if(this.tableId !== undefined){
+          this.getTable(this.tableId);
+        }
+      }
     });
     this.buildForm();
   }
 
   private getTable(id: string): void  {
 
+      console.log("entro GET"+id);
     this._tableService.getTable(id).subscribe(
       result => {
         this.table = result.table;
@@ -127,7 +133,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   private addSaleOrder(): void {
-
+    
     this._saleOrderService.saveSaleOrder(this.saleOrder).subscribe(
       result => {
           if(!this.saleOrder) {

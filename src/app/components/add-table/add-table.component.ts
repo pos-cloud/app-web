@@ -25,15 +25,14 @@ export class AddTableComponent  implements OnInit {
   private focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
-    'code': 1,
+    'description': '',
     'room': '',
     'chair': 1,
   };
 
   private validationMessages = {
-    'code': {
-      'required':       'Este campo es requerido.',
-      'pattern':        'No puede exceder los 5 dígitos.',
+    'description': {
+      'required':       'Este campo es requerido.'
     },
     'room': {
       'required':       'Este campo es requerido.'
@@ -72,16 +71,12 @@ export class AddTableComponent  implements OnInit {
   private buildForm(): void {
 
     this.tableForm = this._fb.group({
-      'code': [this.table.code, [
-          Validators.required,
-          Validators.pattern("[0-9]{1,5}")
+      'description': [this.table.description, [
+          Validators.required
         ]
       ],
       'room': [this.table.room, [
           Validators.required
-        ]
-      ],
-      'description': [this.table.description, [
         ]
       ],
       'chair': [this.table.chair, [

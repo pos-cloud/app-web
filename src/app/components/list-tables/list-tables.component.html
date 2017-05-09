@@ -12,7 +12,6 @@
         <table class="table table-hover">
           <thead>
             <tr>
-            	<th (click)="orderBy('code')">#</th>
 	            <th (click)="orderBy('description')">Descripción</th>
 	            <th (click)="orderBy('room')">Salón</th>
 	            <th (click)="orderBy('chair')">Sillas</th>
@@ -20,7 +19,6 @@
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="filters">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterRoom" placeholder="Salón..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterChair" placeholder="Sillas..." ></th>
@@ -28,9 +26,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let table of tables | orderBy: [orderTerm] 	| filter: filterCode:'code' | filter: filterDescription:'description'
-            															| filter: filterRoom:'room' | filter: filterChair:'chair' | filter: filterStatus:'status'">
-              <td>{{table.code}}</td>
+            <tr *ngFor="let table of tables | orderBy: [orderTerm]  | filter: filterDescription:'description' | filter: filterRoom:'room' 
+                                                                    | filter: filterChair:'chair' | filter: filterStatus:'status'">
               <td>{{table.description}}</td>
               <td>{{table.room}}</td>
               <td>{{table.chair}}</td>
@@ -41,7 +38,7 @@
               </td>
             </tr>
             <tr align="center" *ngIf="areTablesEmpty">
-              <td colspan="6">No se encontraron mesas</td>
+              <td colspan="5">No se encontraron mesas</td>
             </tr>
           </tbody>
         </table>
@@ -54,9 +51,11 @@
 
 <!--POS-->
 <section class="row" *ngIf="userType=='pos'">
-    <div class="itable" *ngFor="let table of tables | orderBy:[orderTerm]" (click)="addSaleOrder(table._id)">
-        <p>{{table.code}}</p>
+    <div *ngFor="let table of tables | orderBy:[orderTerm]" >
+      <div class="itable" (click)="addSaleOrder(table._id)">
+        <p>{{table.description}}</p>
         <p *ngIf="table.waiter">{{table.waiter.name}}</p>
+      </div>
     </div>
     <!--<p *ngIf="amountOfTables == 0">No se encontraron mesas</p>-->
 </section>
