@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Table } from './../../models/table';
 import { TableService } from './../../services/table.service';
+import { Waiter } from './../../models/waiter';
+import { WaiterService } from './../../services/waiter.service';
 
 import { AddTableComponent } from './../../components/add-table/add-table.component';
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
@@ -24,26 +27,76 @@ export class ListTablesComponent implements OnInit {
   private userType: string;
   private orderTerm: string[] = ['description'];
   private filters: boolean = false;
+  private waiter: Waiter;
+  private waiterId: string;
+  @ViewChild('content') content:ElementRef;
+  private selectWaiterForm: FormGroup;
+
+  private formErrors = {
+    'waiter': ''
+  };
+
+  private validationMessages = {
+    'waiter': {
+      'required':       'Este campo es requerido.'
+    }
+  };
 
   constructor(
+    private _fb: FormBuilder,
     private _tableService: TableService,
+    private _waiterService: WaiterService,
     private _router: Router,
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
     private _modalService: NgbModal
-  ) { }
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
-    this._router.events.subscribe((data:any) => { 
-      let pathLocation: string;
-      pathLocation = data.url.split('/');
-      this.userType = pathLocation[1];
+    this._router.events.subscribe((data:any) => {
+      let locationPathURL: string = data.url.split('/');
+      this.userType = locationPathURL[1];
     });
+    this.waiter = new Waiter();
+    this.buildForm();
     this.getTables();
   }
 
-  private getBadge(term: string): boolean {
+  private buildForm(): void {
 
-    return true;
+    this.selectWaiterForm = this._fb.group({
+      'waiter': [this.waiter.name, [
+          //Validators.required
+        ]
+      ]
+    });
+
+    this.selectWaiterForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged();
+  }
+
+  private onValueChanged(data?: any): void {
+
+    if (!this.selectWaiterForm) { return; }
+    const form = this.selectWaiterForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
   }
 
   private getTables(): void {  
@@ -110,6 +163,19 @@ export class ListTablesComponent implements OnInit {
             }, (reason) => {
               
             });
+          break;
+        case 'select_waiter' :
+            modalRef = this._modalService.open(this.content).result.then((result) => {
+              if(result  === "select_waiter"){
+                console.log("entro a select");
+                  this.waiter = new Waiter();
+                  this.waiter.name = "Mozo 1";
+                  table.waiter = this.waiter;
+                  this.addSaleOrder(table._id);
+                }
+              }, (reason) => {
+                
+              });
           break;
         default : ;
       }

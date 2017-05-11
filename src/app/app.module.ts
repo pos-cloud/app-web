@@ -15,6 +15,7 @@ import { CashBoxService } from './services/cash-box.service';
 import { SaleOrderService } from './services/sale-order.service';
 import { MovementOfArticleService } from "./services/movement-of-article.service";
 import { UserService } from './services/user.service';
+import { RoomService } from './services/room.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -47,6 +48,10 @@ import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale
 import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
 import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
 import { FocusDirective } from './directives/focus.directive';
+import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
+import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
+import { UpdateRoomComponent } from './components/update-room/update-room.component';
+import { AddRoomComponent } from './components/add-room/add-room.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +83,10 @@ import { FocusDirective } from './directives/focus.directive';
     UpdateSaleOrderComponent,
     DeleteSaleOrderComponent,
     FocusDirective,
+    ListRoomsComponent,
+    AddRoomComponent,
+    DeleteRoomComponent,
+    UpdateRoomComponent,
   ],
   imports: [
     BrowserModule,
@@ -95,7 +104,8 @@ import { FocusDirective } from './directives/focus.directive';
     CashBoxService,
     SaleOrderService,
     MovementOfArticleService,
-    UserService
+    UserService,
+    RoomService
   ],
   bootstrap: [AppComponent]
 })

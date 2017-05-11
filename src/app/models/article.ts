@@ -1,5 +1,3 @@
-import { Validators } from '@angular/forms';
-
 export class Article {
 
     public _id: string;

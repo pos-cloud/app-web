@@ -24,6 +24,10 @@ import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
 import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
+import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
+import { AddRoomComponent } from './components/add-room/add-room.component';
+import { UpdateRoomComponent } from './components/update-room/update-room.component';
+import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 
 const _routes: Routes = [
@@ -50,6 +54,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'admin/editar-pedido', component: UpdateSaleOrderComponent },
   { path: 'admin/eliminar-pedido', component: DeleteSaleOrderComponent },
+  { path: 'admin/salones', component: ListRoomsComponent },
+  { path: 'admin/agregar-salon', component: AddRoomComponent },
+  { path: 'admin/editar-salon', component: UpdateRoomComponent },
+  { path: 'admin/eliminar-salon', component: DeleteRoomComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/mesas', component: ListTablesComponent },
   { path: 'pos/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },

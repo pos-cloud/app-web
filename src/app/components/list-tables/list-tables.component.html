@@ -27,7 +27,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let table of tables | orderBy: [orderTerm]  | filter: filterDescription:'description' | filter: filterRoom:'room' 
-                                                                    | filter: filterChair:'chair' | filter: filterStatus:'status'">
+                                                                    | filter: filterChair:'chair' | filter: filterStatus:'status'" >
               <td>{{table.description}}</td>
               <td>{{table.room}}</td>
               <td>{{table.chair}}</td>
@@ -52,14 +52,13 @@
 <!--POS-->
 <section class="row" *ngIf="userType=='pos'">
     <div *ngFor="let table of tables | orderBy:[orderTerm]" >
-      <div class="itable" (click)="addSaleOrder(table._id)">
+      <div class="itable" (click)="openModal('select_waiter', table)">
         <p>{{table.description}}</p>
         <p *ngIf="table.waiter">{{table.waiter.name}}</p>
       </div>
     </div>
     <!--<p *ngIf="amountOfTables == 0">No se encontraron mesas</p>-->
 </section>
-
 
 <!--MODAL SELECCIONAR VENDEDOR-->
 <ng-template #content let-c="close" let-d="dismiss">
@@ -75,16 +74,16 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="selectWaiterForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')">
+    <form [formGroup]="selectWaiterForm" #formConfirmCant="ngForm" (ngSubmit)="c('select_waiter')">
       <div class="modal-body">
         <div class="row">
           <div class="form-group col-md-12">
-            <label for="selectWaiter" class="control-label">Seleccione el mozo</label>
+            <label for="name" class="control-label">Seleccione el mozo</label>
             <select class="form-control">
               <option>Mozo 1</option>
             </select>
-            <div *ngIf="formErrors.selectWaiter" class="alert alert-danger">
-              {{ formErrors.selectWaiter }}
+            <div *ngIf="formErrors.name" class="alert alert-danger">
+              {{ formErrors.name }}
             </div>
           </div>
         </div>
