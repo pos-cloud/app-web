@@ -16,6 +16,7 @@ import { SaleOrderService } from './services/sale-order.service';
 import { MovementOfArticleService } from "./services/movement-of-article.service";
 import { UserService } from './services/user.service';
 import { RoomService } from './services/room.service';
+import { MakeService } from './services/make.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -52,6 +53,10 @@ import { ListRoomsComponent } from './components/list-rooms/list-rooms.component
 import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
 import { UpdateRoomComponent } from './components/update-room/update-room.component';
 import { AddRoomComponent } from './components/add-room/add-room.component';
+import { ListMakesComponent } from './components/list-makes/list-makes.component';
+import { AddMakeComponent } from './components/add-make/add-make.component';
+import { DeleteMakeComponent } from './components/delete-make/delete-make.component';
+import { UpdateMakeComponent } from './components/update-make/update-make.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +92,10 @@ import { AddRoomComponent } from './components/add-room/add-room.component';
     AddRoomComponent,
     DeleteRoomComponent,
     UpdateRoomComponent,
+    ListMakesComponent,
+    AddMakeComponent,
+    DeleteMakeComponent,
+    UpdateMakeComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,7 +114,8 @@ import { AddRoomComponent } from './components/add-room/add-room.component';
     SaleOrderService,
     MovementOfArticleService,
     UserService,
-    RoomService
+    RoomService,
+    MakeService
   ],
   bootstrap: [AppComponent]
 })

@@ -28,6 +28,10 @@ import { ListRoomsComponent } from './components/list-rooms/list-rooms.component
 import { AddRoomComponent } from './components/add-room/add-room.component';
 import { UpdateRoomComponent } from './components/update-room/update-room.component';
 import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
+import { ListMakesComponent } from './components/list-makes/list-makes.component';
+import { AddMakeComponent } from './components/add-make/add-make.component';
+import { UpdateMakeComponent } from './components/update-make/update-make.component';
+import { DeleteMakeComponent } from './components/delete-make/delete-make.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 
 const _routes: Routes = [
@@ -58,6 +62,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-salon', component: AddRoomComponent },
   { path: 'admin/editar-salon', component: UpdateRoomComponent },
   { path: 'admin/eliminar-salon', component: DeleteRoomComponent },
+  { path: 'admin/marcas', component: ListMakesComponent },
+  { path: 'admin/agregar-marca', component: AddMakeComponent },
+  { path: 'admin/editar-marca', component: UpdateMakeComponent },
+  { path: 'admin/eliminar-marca', component: DeleteMakeComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/mesas', component: ListTablesComponent },
   { path: 'pos/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
