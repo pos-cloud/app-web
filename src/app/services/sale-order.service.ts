@@ -22,7 +22,6 @@ export class SaleOrderService {
 	}
 
   saveSaleOrder (saleOrder: SaleOrder) {
-    console.log("entro a guardar2");
 		return this._http.post(this.url+"sale-order",saleOrder).map (res => res.json());
 	}
     

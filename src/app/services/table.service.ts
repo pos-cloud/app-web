@@ -18,7 +18,6 @@ export class TableService {
   }
 
   getTable (id: string) {
-    console.log(this.url+"table/"+id);
 		return this._http.get(this.url+"table/"+id).map (res => res.json());
 	}
 

@@ -40,8 +40,8 @@
                                                                         | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' ">
               <td class="flat">{{article.code}}</td>
               <td class="flat">{{article.description}}</td>
-              <td class="flat">{{article.make}}</td>
-              <td class="flat">{{article.category}}</td>
+              <td class="flat">{{article.make.description}}</td>
+              <td class="flat">{{article.category.description}}</td>
               <td class="flat">{{article.salePrice | currency:'USD':'1.2-2'}}</td>
               <td class="flat">{{article.unitOfMeasure}}</td>
               <td class="flat">{{article.observation}}</td>

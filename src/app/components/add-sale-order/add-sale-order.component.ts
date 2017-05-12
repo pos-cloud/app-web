@@ -78,7 +78,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   private getTable(id: string): void  {
 
-      console.log("entro GET"+id);
     this._tableService.getTable(id).subscribe(
       result => {
         this.table = result.table;

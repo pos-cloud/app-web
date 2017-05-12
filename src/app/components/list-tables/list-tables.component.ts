@@ -167,7 +167,6 @@ export class ListTablesComponent implements OnInit {
         case 'select_waiter' :
             modalRef = this._modalService.open(this.content).result.then((result) => {
               if(result  === "select_waiter"){
-                console.log("entro a select");
                   this.waiter = new Waiter();
                   this.waiter.name = "Mozo 1";
                   table.waiter = this.waiter;

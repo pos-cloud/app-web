@@ -5,8 +5,12 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from './../../models/article';
+import { Make } from './../../models/make';
+import { Category } from './../../models/category';
 
 import { ArticleService } from './../../services/article.service';
+import { MakeService } from './../../services/make.service';
+import { CategoryService } from './../../services/category.service';
 
 @Component({
   selector: 'app-add-article',
@@ -19,6 +23,8 @@ export class AddArticleComponent  implements OnInit {
 
   private article: Article;
   private articleForm: FormGroup;
+  private makes: Make[];
+  private categories: Category[];
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
@@ -57,10 +63,12 @@ export class AddArticleComponent  implements OnInit {
 
   constructor(
     private _articleService: ArticleService,
+    public _makeService: MakeService,
+    public _categoryService: CategoryService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -74,6 +82,8 @@ export class AddArticleComponent  implements OnInit {
       this.userType = locationPathURL[1];
     });
     this.article = new Article ();
+    this.getMakes();
+    this.getCategories();
     this.buildForm();
   }
 
@@ -143,11 +153,87 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
+  private getMakes(): void {  
+
+    this._makeService.getMakes().subscribe(
+        result => {
+          this.makes = result.makes;
+          if(!this.makes) {
+            this.alertMessage = "Error al traer las marcas.";
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
+  private getCategories(): void {  
+    
+    this._categoryService.getCategories().subscribe(
+        result => {
+          this.categories = result.categories;
+          if(!this.categories) {
+            this.alertMessage = "Error al traer los rubros.";
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
   private addArticle(): void {
     this.loading = true;
     this.article = this.articleForm.value;
-    this.saveArticle();
+    this.getMake();
   }
+
+  private getMake(): void {  
+    
+    this._makeService.getMake(this.articleForm.value.make).subscribe(
+        result => {
+          this.article.make = result.make;
+          if(!this.article.make) {
+            this.alertMessage = "Error al cargar la marca. Error en el servidor.";
+          } else {
+            this.getCategory();
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
+  private getCategory(): void {  
+    
+    this._categoryService.getCategory(this.articleForm.value.category).subscribe(
+        result => {
+          this.article.category = result.category;
+          if(!this.article.category) {
+            this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
+          } else {
+            this.saveArticle();
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private saveArticle(): void {
     
