@@ -53,7 +53,7 @@ export class ListMakesComponent implements OnInit {
         result => {
           this.makes = result.makes;
           if(!this.makes) {
-            this.alertMessage = "Error al traer los salones. Error en el servidor.";
+            this.alertMessage = "Error al traer las marcas. Error en el servidor.";
             this.areMakesEmpty = true;
           } else if(this.makes.length !== 0){
              this.areMakesEmpty = false;

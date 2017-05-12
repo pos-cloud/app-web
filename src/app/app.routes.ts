@@ -32,6 +32,10 @@ import { ListMakesComponent } from './components/list-makes/list-makes.component
 import { AddMakeComponent } from './components/add-make/add-make.component';
 import { UpdateMakeComponent } from './components/update-make/update-make.component';
 import { DeleteMakeComponent } from './components/delete-make/delete-make.component';
+import { ListCategoriesComponent } from './components/list-categories/list-categories.component';
+import { AddCategoryComponent } from './components/add-category/add-category.component';
+import { UpdateCategoryComponent } from './components/update-category/update-category.component';
+import { DeleteCategoryComponent } from './components/delete-category/delete-category.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 
 const _routes: Routes = [
@@ -66,6 +70,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-marca', component: AddMakeComponent },
   { path: 'admin/editar-marca', component: UpdateMakeComponent },
   { path: 'admin/eliminar-marca', component: DeleteMakeComponent },
+  { path: 'admin/rubros', component: ListCategoriesComponent },
+  { path: 'admin/agregar-rubro', component: AddCategoryComponent },
+  { path: 'admin/editar-rubro', component: UpdateCategoryComponent },
+  { path: 'admin/eliminar-rubro', component: DeleteCategoryComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/mesas', component: ListTablesComponent },
   { path: 'pos/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },

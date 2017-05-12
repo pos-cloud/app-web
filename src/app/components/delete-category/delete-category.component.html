@@ -1,13 +1,13 @@
 <div class="modal-header">
-  <h4 class="modal-title">Eliminar Artículo</h4>
+  <h4 class="modal-title">Eliminar Rubro</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
   <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
-  <p>¿Está seguro de eliminar el artículo?</p>
+  <p>¿Está seguro de eliminar el rubro?</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
-  <button type="submit" class="btn btn-primary" (click)="deleteArticle()" [focus]="focusEvent">Eliminar</button>
+  <button type="submit" class="btn btn-primary" (click)="deleteCategory()" [focus]="focusEvent">Eliminar</button>
 </div>
