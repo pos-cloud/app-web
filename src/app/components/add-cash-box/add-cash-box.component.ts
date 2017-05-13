@@ -103,7 +103,6 @@ export class AddCashBoxComponent  implements OnInit {
     const form = this.cashBoxForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -127,7 +126,7 @@ export class AddCashBoxComponent  implements OnInit {
 
     this._cashBoxService.getLastCashBox().subscribe(
       result => {
-        if (!result.cashBoxes[0]) {
+        if (!result.cashBoxes) {
           this.cashBox.code = 1;
           this.saveCashBox();
         } else {

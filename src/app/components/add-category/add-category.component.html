@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Marca</h4>
+  <h4 class="modal-title">Agregar Rubro</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -13,7 +13,7 @@
   <form [formGroup]="categoryForm" #formAddCategory="ngForm" (ngSubmit)="addCategory()">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-12">
           <label for="description" class="control-label">Descripción:</label>
           <input type="text" class="form-control" formControlName="description" name="description" id="description" required [focus]="focusEvent"/>
           <div *ngIf="formErrors.description" class="alert alert-danger">

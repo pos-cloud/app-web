@@ -15,12 +15,12 @@
             <tr>
               <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
               <th (click)="orderBy('description')">Description </th>
-              <th (click)="orderBy('make')">Marca</th>
-              <th (click)="orderBy('category')">Rubro</th>
+              <th (click)="orderBy('make','description')">Marca</th>
+              <th (click)="orderBy('category','description')">Rubro</th>
               <th (click)="orderBy('salePrice')">Precio de Venta</th>
-              <th>Unidad de Medida</th>
-              <th>Observation</th>
-              <th>Codigo de Barra</th>
+              <th (click)="orderBy('unitOfMeasure')">Unidad de Medida</th>
+              <th (click)="orderBy('observation')">Observation</th>
+              <th (click)="orderBy('barcode')">Codigo de Barra</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="filters">
@@ -35,7 +35,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'make'
+            <tr *ngFor="let article of articles | orderBy: [orderTerm]:property | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'make'
                                                                         | filter: filterCategory:'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
                                                                         | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' ">
               <td class="flat">{{article.code}}</td>

@@ -29,7 +29,7 @@
             <tr *ngFor="let table of tables | orderBy: [orderTerm]  | filter: filterDescription:'description' | filter: filterRoom:'room' 
                                                                     | filter: filterChair:'chair' | filter: filterStatus:'status'" >
               <td>{{table.description}}</td>
-              <td>{{table.room}}</td>
+              <td>{{table.room.description}}</td>
               <td>{{table.chair}}</td>
               <td><h6><span class="badge badge-default">{{table.status}}</span></h6></td>
               <td align="center">

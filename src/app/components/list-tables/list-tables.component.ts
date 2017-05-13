@@ -21,7 +21,7 @@ import { DeleteTableComponent } from './../../components/delete-table/delete-tab
 
 export class ListTablesComponent implements OnInit {
 
-  private tables: Table[];
+  private tables: Table[] = new Array();
   private areTablesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -103,14 +103,12 @@ export class ListTablesComponent implements OnInit {
 
     this._tableService.getTables().subscribe(
       result => {
-        this.tables = result.tables;
-        if(!this.tables) {
-          this.alertMessage = "Error al traer mesas. Error en el servidor.";
+        if(!result.tables) {
+          this.alertMessage = result.message;
           this.areTablesEmpty = true;
-        } else if(this.tables.length !== 0){
-            this.areTablesEmpty = false;
         } else {
-          this.areTablesEmpty = true;
+          this.tables = result.tables;
+          this.areTablesEmpty = false;
         }
       },
       error => {

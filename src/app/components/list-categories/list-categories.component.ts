@@ -18,7 +18,7 @@ import { DeleteCategoryComponent } from './../../components/delete-category/dele
 
 export class ListCategoriesComponent implements OnInit {
 
-  private categories: Category[];
+  private categories: Category[] = new Array();
   private areCategoriesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -51,14 +51,12 @@ export class ListCategoriesComponent implements OnInit {
 
     this._categoryService.getCategories().subscribe(
         result => {
-          this.categories = result.categories;
-          if(!this.categories) {
-            this.alertMessage = "Error al traer los rubros. Error en el servidor.";
+          if(!result.categories) {
+            this.alertMessage = result.message;
             this.areCategoriesEmpty = true;
-          } else if(this.categories.length !== 0){
-             this.areCategoriesEmpty = false;
           } else {
-            this.areCategoriesEmpty = true;
+            this.categories = result.categories;
+            this.areCategoriesEmpty = false;
           }
         },
         error => {

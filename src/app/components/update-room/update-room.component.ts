@@ -87,7 +87,6 @@ export class UpdateRoomComponent implements OnInit {
     const form = this.roomForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 

@@ -8,6 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class OrderByPipe implements PipeTransform {
 
   static _orderByComparator(a:any, b:any):number{
+      
         if(a === undefined) {
             a="";
         }
@@ -28,7 +29,7 @@ export class OrderByPipe implements PipeTransform {
     return 0; //equal each other
     }
 
-    transform(input:any, [config = '+']): any{
+    transform(input:any, [config = '+'], arg2?: string): any{
         
         if(!Array.isArray(input)) return input;
 
@@ -39,16 +40,28 @@ export class OrderByPipe implements PipeTransform {
             //Basic array
             if(!propertyToCheck || propertyToCheck == '-' || propertyToCheck == '+'){
                 return !desc ? input.sort() : input.sort().reverse();
-            }
-            else {
+            } else {
                 var property:string = propertyToCheck.substr(0, 1) == '+' || propertyToCheck.substr(0, 1) == '-'
                     ? propertyToCheck.substr(1)
                     : propertyToCheck;
 
                 return input.sort(function(a:any,b:any){
-                    return !desc 
-                        ? OrderByPipe._orderByComparator(a[property], b[property]) 
-                        : -OrderByPipe._orderByComparator(a[property], b[property]);
+                    
+                    var response;
+                    if(!desc){
+                        if(arg2 !== undefined) {
+                            response = OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
+                        } else {
+                            response = OrderByPipe._orderByComparator(a[property], b[property]);
+                        }
+                    } else {
+                        if(arg2 !== undefined) {
+                            response = -OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
+                        } else {
+                            response = -OrderByPipe._orderByComparator(a[property], b[property]);
+                        }
+                    }
+                    return response;
                 });
             }
         }

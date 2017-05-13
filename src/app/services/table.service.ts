@@ -14,7 +14,7 @@ export class TableService {
   }
   
   getLastTable () {
-    return this._http.get(this.url+'tables/sort="code":-1&limit=1').map (res => res.json());
+    return this._http.get(this.url+'tables/sort="description":-1&limit=1').map (res => res.json());
   }
 
   getTable (id: string) {

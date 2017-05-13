@@ -10,7 +10,7 @@ import { CashBoxService } from './../../services/cash-box.service';
 })
 export class PointOfSaleComponent implements OnInit {
 
-  private cashBoxes: CashBox[];
+  private cashBoxes: CashBox[] = new Array();
   private alertMessage: any;
 
   constructor(private _cashBoxService: CashBoxService) { }
@@ -22,10 +22,11 @@ export class PointOfSaleComponent implements OnInit {
 
     this._cashBoxService.getOpenCashBoxes().subscribe(
         result => {
-					this.cashBoxes = result.cashBoxes;
-					if(!this.cashBoxes) {
-						this.alertMessage = "Error al traer cajas. Error en el servidor.";
-					}
+					if(!result.cashBoxes) {
+						this.alertMessage = result.message;
+					} else {
+            this.cashBoxes = result.cashBoxes;
+          }
 				},
 				error => {
 					this.alertMessage = error;

@@ -25,7 +25,7 @@ export class AddSaleOrderComponent implements OnInit {
   private saleOrder: SaleOrder;
   private alertMessage: any;
   private movementOfArticle: MovementOfArticle;
-  private movementsOfArticles: MovementOfArticle[] = [];
+  private movementsOfArticles: MovementOfArticle[] = new Array();
   private amountOfItemForm: FormGroup;
   private areMovementsOfArticlesEmpty: boolean = true;
   private userType: string;
@@ -211,7 +211,7 @@ export class AddSaleOrderComponent implements OnInit {
   //       result => {
 	// 				this.movementsOfArticles = result.movementsOfArticles;
 	// 				if(!this.movementsOfArticles) {
-	// 					this.alertMessage = "Error al traer artículos. Error en el servidor.";
+	// 					this.alertMessage = result.message;
   //           this.areMovementsOfArticlesEmpty = true;
 	// 				} else if(this.movementsOfArticles.length !== 0){
   //            this.areMovementsOfArticlesEmpty = false;

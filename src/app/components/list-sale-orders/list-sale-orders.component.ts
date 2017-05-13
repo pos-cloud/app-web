@@ -18,7 +18,7 @@ import { DeleteSaleOrderComponent } from './../../components/delete-sale-order/d
 
 export class ListSaleOrdersComponent implements OnInit {
 
-  private saleOrders: SaleOrder[];
+  private saleOrders: SaleOrder[] = new Array();
   private areSaleOrdersEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -50,14 +50,12 @@ export class ListSaleOrdersComponent implements OnInit {
 
     this._saleOrderService.getSaleOrders().subscribe(
         result => {
-					this.saleOrders = result.saleOrders;
-					if(!this.saleOrders) {
-						this.alertMessage = "Error al traer los pedidos. Error en el servidor.";
+					if(!result.saleOrders) {
+						this.alertMessage = result.message;
             this.areSaleOrdersEmpty = true;
-					} else if(this.saleOrders.length !== 0){
-             this.areSaleOrdersEmpty = false;
-          } else {
-            this.areSaleOrdersEmpty = true;
+					} else {
+					  this.saleOrders = result.saleOrders;
+            this.areSaleOrdersEmpty = false;
           }
 				},
 				error => {

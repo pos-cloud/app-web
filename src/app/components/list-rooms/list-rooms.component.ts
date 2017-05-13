@@ -18,7 +18,7 @@ import { DeleteRoomComponent } from './../../components/delete-room/delete-room.
 
 export class ListRoomsComponent implements OnInit {
 
-  private rooms: Room[];
+  private rooms: Room[] = new Array();
   private areRoomsEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -51,14 +51,12 @@ export class ListRoomsComponent implements OnInit {
 
     this._roomService.getRooms().subscribe(
         result => {
-          this.rooms = result.rooms;
-          if(!this.rooms) {
-            this.alertMessage = "Error al traer los salones. Error en el servidor.";
+          if(!result.rooms) {
+            this.alertMessage = result.message;
             this.areRoomsEmpty = true;
-          } else if(this.rooms.length !== 0){
-             this.areRoomsEmpty = false;
           } else {
-            this.areRoomsEmpty = true;
+            this.rooms = result.rooms;
+            this.areRoomsEmpty = false;
           }
         },
         error => {

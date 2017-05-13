@@ -18,7 +18,7 @@ import { DeleteMakeComponent } from './../../components/delete-make/delete-make.
 
 export class ListMakesComponent implements OnInit {
 
-  private makes: Make[];
+  private makes: Make[] = new Array();
   private areMakesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -51,14 +51,12 @@ export class ListMakesComponent implements OnInit {
 
     this._makeService.getMakes().subscribe(
         result => {
-          this.makes = result.makes;
-          if(!this.makes) {
-            this.alertMessage = "Error al traer las marcas. Error en el servidor.";
+          if(!result.makes) {
+            this.alertMessage = result.message;
             this.areMakesEmpty = true;
-          } else if(this.makes.length !== 0){
-             this.areMakesEmpty = false;
           } else {
-            this.areMakesEmpty = true;
+            this.makes = result.makes;
+            this.areMakesEmpty = false;
           }
         },
         error => {

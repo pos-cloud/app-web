@@ -107,7 +107,6 @@ export class UpdateTableComponent implements OnInit {
     const form = this.tableForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 

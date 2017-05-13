@@ -12,15 +12,15 @@
 	</div>
 	<form [formGroup]="tableForm" #formAddTable="ngForm" (ngSubmit)="addTable()">
 		<div class="modal-body">
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="room" class="control-label">Salón:</label>
-					<input type="text" class="form-control" formControlName="room" name="room" id="room" required/>
+			<div class="form-group col-md-12">
+					<label for="room" class="control-label">Salón</label>
+					<select class="form-control" formControlName="room">
+						<option *ngFor="let room of rooms" [ngValue]="room">{{room.description}}</option>
+					</select>
 					<div *ngIf="formErrors.room" class="alert alert-danger">
 						{{ formErrors.room }}
 					</div>
 				</div>
-			</div>
 			<div class="row">
 				<div class="form-group col-md-10">
 					<label for="description">Descripción:</label>

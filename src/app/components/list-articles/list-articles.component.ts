@@ -18,11 +18,12 @@ import { DeleteArticleComponent } from './../../components/delete-article/delete
 
 export class ListArticlesComponent implements OnInit {
 
-  private articles: Article[];
+  private articles: Article[] = new Array();
   private areArticlesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
+  private property: string;
   private filters: boolean = false;
   @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
 
@@ -51,14 +52,12 @@ export class ListArticlesComponent implements OnInit {
 
     this._articleService.getArticles().subscribe(
         result => {
-					this.articles = result.articles;
-					if(!this.articles) {
-						this.alertMessage = "Error al traer los productos. Error en el servidor.";
+					if(!result.articles) {
+						this.alertMessage = result.message;
             this.areArticlesEmpty = true;
-					} else if(this.articles.length !== 0){
-             this.areArticlesEmpty = false;
-          } else {
-            this.areArticlesEmpty = true;
+					} else {
+            this.articles = result.articles;
+            this.areArticlesEmpty = false;
           }
 				},
 				error => {
@@ -70,13 +69,14 @@ export class ListArticlesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string): void {
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.property = property;
   }
   
   private openModal(op: string, article:Article): void {

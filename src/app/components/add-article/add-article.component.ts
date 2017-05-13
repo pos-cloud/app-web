@@ -23,8 +23,8 @@ export class AddArticleComponent  implements OnInit {
 
   private article: Article;
   private articleForm: FormGroup;
-  private makes: Make[];
-  private categories: Category[];
+  private makes: Make[] = new Array();
+  private categories: Category[] = new Array();
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
@@ -82,9 +82,10 @@ export class AddArticleComponent  implements OnInit {
       this.userType = locationPathURL[1];
     });
     this.article = new Article ();
+    this.buildForm();
     this.getMakes();
     this.getCategories();
-    this.buildForm();
+    this.getLastArticle();
   }
 
   ngAfterViewInit() {
@@ -94,6 +95,9 @@ export class AddArticleComponent  implements OnInit {
   private buildForm(): void {
 
     this.articleForm = this._fb.group({
+      '_id': [this.article._id, [
+        ]
+      ],
       'code': [this.article.code, [
           Validators.required,
           Validators.pattern("[0-9]{1,5}")
@@ -140,7 +144,6 @@ export class AddArticleComponent  implements OnInit {
     const form = this.articleForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -153,13 +156,53 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
+  private getLastArticle(): void {  
+
+    this._articleService.getLastArticle().subscribe(
+        result => {
+          let code = 1;
+          let category: Category = new Category();
+          let make: Make  = new Make();
+          if(result.articles){
+            if(result.articles[0] !== undefined) {
+              code = result.articles[0].code;
+            }
+          }
+          if(this.categories[0] !== undefined) {
+            category = this.categories[0];
+          }
+          if(this.makes[0] !== undefined) {
+            make = this.makes[0];
+          }
+          this.articleForm.setValue({
+            '_id': '',
+            'code': code,
+            'make': make,
+            'description': '',
+            'salePrice': 0.00,
+            'category': category,
+            'unitOfMeasure': 'Unidad',
+            'observation': '',
+            'barcode': ''
+          });
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
   private getMakes(): void {  
 
     this._makeService.getMakes().subscribe(
         result => {
-          this.makes = result.makes;
-          if(!this.makes) {
-            this.alertMessage = "Error al traer las marcas.";
+          if(!result.makes) {
+            this.alertMessage = result.message;
+          } else {
+            this.makes = result.makes;
           }
         },
         error => {
@@ -175,9 +218,10 @@ export class AddArticleComponent  implements OnInit {
     
     this._categoryService.getCategories().subscribe(
         result => {
-          this.categories = result.categories;
-          if(!this.categories) {
-            this.alertMessage = "Error al traer los rubros.";
+          if(!result.categories) {
+            this.alertMessage = result.message;
+          } else {
+            this.categories = result.categories;
           }
         },
         error => {
@@ -192,48 +236,8 @@ export class AddArticleComponent  implements OnInit {
   private addArticle(): void {
     this.loading = true;
     this.article = this.articleForm.value;
-    this.getMake();
+    this.saveArticle();
   }
-
-  private getMake(): void {  
-    
-    this._makeService.getMake(this.articleForm.value.make).subscribe(
-        result => {
-          this.article.make = result.make;
-          if(!this.article.make) {
-            this.alertMessage = "Error al cargar la marca. Error en el servidor.";
-          } else {
-            this.getCategory();
-          }
-        },
-        error => {
-          this.alertMessage = error;
-          if(!this.alertMessage) {
-            this.alertMessage = "Error en la petición.";
-          }
-        }
-      );
-   }
-
-  private getCategory(): void {  
-    
-    this._categoryService.getCategory(this.articleForm.value.category).subscribe(
-        result => {
-          this.article.category = result.category;
-          if(!this.article.category) {
-            this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
-          } else {
-            this.saveArticle();
-          }
-        },
-        error => {
-          this.alertMessage = error;
-          if(!this.alertMessage) {
-            this.alertMessage = "Error en la petición.";
-          }
-        }
-      );
-   }
 
   private saveArticle(): void {
     

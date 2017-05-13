@@ -18,11 +18,11 @@ import { DeleteWaiterComponent } from './../../components/delete-waiter/delete-w
 
 export class ListWaitersComponent implements OnInit {
 
-  private waiters: Waiter[];
+  private waiters: Waiter[] = new Array();
   private areWaitersEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
-  private orderTerm: string[] = ['code'];
+  private orderTerm: string[] = ['name'];
   private filters: boolean = false;
 
   constructor(
@@ -50,14 +50,12 @@ export class ListWaitersComponent implements OnInit {
 
     this._waiterService.getWaiters().subscribe(
         result => {
-					this.waiters = result.waiters;
-					if(!this.waiters) {
-						this.alertMessage = "Error al traer artículos. Error en el servidor.";
+					if(!result.waiters) {
+						this.alertMessage = result.message;
             this.areWaitersEmpty = true;
-					} else if(this.waiters.length !== 0){
-             this.areWaitersEmpty = false;
-          } else {
-            this.areWaitersEmpty = true;
+					} else {
+					  this.waiters = result.waiters;
+            this.areWaitersEmpty = false;
           }
 				},
 				error => {

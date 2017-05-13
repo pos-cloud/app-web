@@ -5,8 +5,12 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from './../../models/article';
+import { Make } from './../../models/make';
+import { Category } from './../../models/category';
 
 import { ArticleService } from './../../services/article.service';
+import { MakeService } from './../../services/make.service';
+import { CategoryService } from './../../services/category.service';
 
 @Component({
   selector: 'app-update-article',
@@ -19,6 +23,8 @@ export class UpdateArticleComponent implements OnInit {
 
   @Input() article: Article;
   private articleForm: FormGroup;
+  private makes: Make[] = new Array();
+  private categories: Category[] = new Array();
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
@@ -57,6 +63,8 @@ export class UpdateArticleComponent implements OnInit {
 
   constructor(
     private _articleService: ArticleService,
+    public _makeService: MakeService,
+    public _categoryService: CategoryService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -74,13 +82,15 @@ export class UpdateArticleComponent implements OnInit {
       this.userType = locationPathURL[1];
     });
     this.buildForm();
+    this.getMakes();
+    this.getCategories();
     this.articleForm.setValue({
       '_id':this.article._id,
       'code':this.article.code,
-      'make': this.article.make,
+      'make': this.article.make._id,
       'description': this.article.description,
       'salePrice': this.article.salePrice,
-      'category': this.article.category,
+      'category': this.article.category._id,
       'unitOfMeasure': this.article.unitOfMeasure,
       'observation': this.article.observation,
       'barcode': this.article.barcode
@@ -142,7 +152,6 @@ export class UpdateArticleComponent implements OnInit {
     const form = this.articleForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -154,13 +163,91 @@ export class UpdateArticleComponent implements OnInit {
       }
     }
   }
+  
+  private getMakes(): void {  
+
+    this._makeService.getMakes().subscribe(
+        result => {
+          if(!result.makes) {
+            this.alertMessage = result.message;
+          } else {
+            this.makes = result.makes;
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
+  private getCategories(): void {  
+    
+    this._categoryService.getCategories().subscribe(
+        result => {
+          if(!result.categories) {
+            this.alertMessage = result.message;
+          } else {
+            this.categories = result.categories;
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private updateArticle (): void {
     
     this.loading = true;
     this.article = this.articleForm.value;
-    this.saveChanges();
+    this.getMake();
   }
+
+  private getMake(): void {  
+    
+    this._makeService.getMake(this.articleForm.value.make).subscribe(
+        result => {
+          this.article.make = result.make;
+          if(!this.article.make) {
+            this.alertMessage = "Error al cargar la marca. Error en el servidor.";
+          } else {
+            this.getCategory();
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
+  private getCategory(): void {  
+    
+    this._categoryService.getCategory(this.articleForm.value.category).subscribe(
+        result => {
+          this.article.category = result.category;
+          if(!this.article.category) {
+            this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
+          } else {
+            this.saveChanges();
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private saveChanges(): void {
     

@@ -63,9 +63,6 @@ export class AddWaiterComponent  implements OnInit {
   private buildForm(): void {
 
     this.waiterForm = this._fb.group({
-      'code': [this.waiter.code, [
-        ]
-      ],
       'name': [this.waiter.name, [
           Validators.required
         ]
@@ -85,7 +82,6 @@ export class AddWaiterComponent  implements OnInit {
     const form = this.waiterForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -102,29 +98,7 @@ export class AddWaiterComponent  implements OnInit {
     
     this.loading = true;
     this.waiter = this.waiterForm.value;
-    this.getLastWaiter();
-  }
-
-  private getLastWaiter(): void {
-
-    this._waiterService.getLastWaiter().subscribe(
-      result => {
-        if (!result.waiters[0]) {
-          this.waiter.code = 1;
-          this.saveWaiter();
-        } else {
-          this.waiter.code = (result.waiters[0].code + 1);
-          this.saveWaiter();
-        }
-			},
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
-        this.loading = false;
-      }
-    );
+    this.saveWaiter();
   }
 
   private saveWaiter(): void {

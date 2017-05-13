@@ -4,9 +4,11 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table } from './../../models/table';
+import { Table, TableStatus } from './../../models/table';
+import { Room } from './../../models/room';
 
 import { TableService } from './../../services/table.service';
+import { RoomService } from './../../services/room.service';
 
 @Component({
   selector: 'app-add-table',
@@ -18,6 +20,7 @@ import { TableService } from './../../services/table.service';
 export class AddTableComponent  implements OnInit {
 
   private table: Table;
+  private rooms: Room[] = new Array();
   private tableForm: FormGroup;
   private alertMessage: any;
   private userType: string;
@@ -44,6 +47,7 @@ export class AddTableComponent  implements OnInit {
 
   constructor(
     private _tableService: TableService,
+    private _roomService: RoomService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -62,6 +66,7 @@ export class AddTableComponent  implements OnInit {
     });
     this.table = new Table ();
     this.buildForm();
+    this.getRooms();
   }
 
   ngAfterViewInit() {
@@ -101,7 +106,6 @@ export class AddTableComponent  implements OnInit {
     const form = this.tableForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -113,6 +117,35 @@ export class AddTableComponent  implements OnInit {
       }
     }
   }
+
+  private getRooms(): void {  
+
+    this._roomService.getRooms().subscribe(
+        result => {
+          let room: Room  = new Room();
+          if(!result.rooms) {
+            this.alertMessage = result.message;
+          } else {
+            this.rooms = result.rooms;
+            if(this.rooms[0] !== undefined) {
+              room = this.rooms[0];
+            }
+          }
+          this.tableForm.setValue({
+            'room': room,
+            'description': '',
+            'chair': 1,
+            'status': TableStatus.Enabled,
+          });
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private addTable(): void {
     this.loading = true;
