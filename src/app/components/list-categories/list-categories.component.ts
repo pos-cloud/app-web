@@ -23,7 +23,8 @@ export class ListCategoriesComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['description'];
-  private filters: boolean = false;
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
 
   constructor(
@@ -68,13 +69,14 @@ export class ListCategoriesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string): void {
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, category:Category): void {

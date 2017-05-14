@@ -3,7 +3,7 @@
     <div class="card-header bg-primary card-inverse">Lista de Mozos
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Mozo</button>
-        <span (click)="filters = !filters">
+        <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>
       </div>
@@ -15,12 +15,12 @@
               <th (click)="orderBy('name')">Nombre </th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
-            <tr *ngIf="filters">
+            <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let waiter of waiters | orderBy: [orderTerm] | filter: filterName:'name'">
+            <tr *ngFor="let waiter of waiters | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{waiter.name}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', waiter)"><i class="fa fa-pencil"></i></button>
@@ -34,7 +34,13 @@
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        Page 1 of 5
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
       </div>
   </div>
 </section>

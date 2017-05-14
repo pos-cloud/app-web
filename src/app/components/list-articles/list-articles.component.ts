@@ -23,8 +23,8 @@ export class ListArticlesComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
-  private property: string;
-  private filters: boolean = false;
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
 
   constructor(
@@ -76,7 +76,7 @@ export class ListArticlesComponent implements OnInit {
     } else {
       this.orderTerm[0] = term; 
     }
-    this.property = property;
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, article:Article): void {

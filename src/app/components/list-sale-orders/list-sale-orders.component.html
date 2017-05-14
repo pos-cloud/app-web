@@ -3,7 +3,7 @@
     <div class="card-header bg-primary card-inverse">Lista de Pedidos de Venta
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Pedido</button>
-        <span (click)="filters = !filters">
+        <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>
       </div>
@@ -20,7 +20,7 @@
 	            <th (click)="orderBy('totalPrice')">Precio Total</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
-            <tr *ngIf="filters">
+            <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="#..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="#..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDate" placeholder="Fecha..." ></th>
@@ -32,7 +32,7 @@
           <tbody>
             <tr *ngFor="let saleOrder of saleOrders | orderBy: [orderTerm] 	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
                                         | filter: filterDate:'date' | filter: filterStatus:'c' | filter: filterObservation:'observation' 
-                                        | filter: filterTotalPrice:'totalPrice'">
+                                        | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{saleOrder.origin}}</td>
               <td>{{saleOrder.number}}</td>
               <td>{{saleOrder.date | date: ['dd/MM/yyyy'] }}</td>
@@ -51,7 +51,13 @@
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        Page 1 of 5
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
       </div>
   </div>
 </section>

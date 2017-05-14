@@ -75,8 +75,8 @@ const _routes: Routes = [
   { path: 'admin/editar-rubro', component: UpdateCategoryComponent },
   { path: 'admin/eliminar-rubro', component: DeleteCategoryComponent },
   { path: 'pos', component: PointOfSaleComponent },
-  { path: 'pos/mesas', component: ListTablesComponent },
-  { path: 'pos/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
+  { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
+  { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];

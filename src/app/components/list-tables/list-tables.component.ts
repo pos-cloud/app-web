@@ -1,13 +1,15 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Table } from './../../models/table';
-import { TableService } from './../../services/table.service';
+import { Room } from './../../models/room';
 import { Waiter } from './../../models/waiter';
+
 import { WaiterService } from './../../services/waiter.service';
+import { TableService } from './../../services/table.service';
 
 import { AddTableComponent } from './../../components/add-table/add-table.component';
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
@@ -26,11 +28,13 @@ export class ListTablesComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['description'];
-  private filters: boolean = false;
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
   private waiter: Waiter;
   private waiterId: string;
   @ViewChild('content') content:ElementRef;
   private selectWaiterForm: FormGroup;
+  private roomId: string;
 
   private formErrors = {
     'waiter': ''
@@ -60,10 +64,15 @@ export class ListTablesComponent implements OnInit {
     this._router.events.subscribe((data:any) => {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
+      this.roomId = locationPathURL[3];
+      if(this.roomId === undefined) {
+        this.getTables(); 
+      } else {
+        this.getTablesByRoom();
+      }
     });
     this.waiter = new Waiter();
     this.buildForm();
-    this.getTables();
   }
 
   private buildForm(): void {
@@ -100,7 +109,7 @@ export class ListTablesComponent implements OnInit {
   }
 
   private getTables(): void {  
-
+    
     this._tableService.getTables().subscribe(
       result => {
         if(!result.tables) {
@@ -120,13 +129,35 @@ export class ListTablesComponent implements OnInit {
     );
    }
 
-  private orderBy (term: string): void {
+   private getTablesByRoom(): void {  
+     
+    this._tableService.getTablesByRoom(this.roomId).subscribe(
+      result => {
+        if(!result.tables) {
+          this.alertMessage = result.message;
+          this.areTablesEmpty = true;
+        } else {
+          this.tables = result.tables;
+          this.areTablesEmpty = false;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+   }
+
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, table:Table): void {
@@ -179,6 +210,6 @@ export class ListTablesComponent implements OnInit {
     };
 
     private addSaleOrder(tableId: string) {
-      this._router.navigate(['/pos/mesas/'+tableId+'/agregar-pedido']);
+      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+tableId+'/agregar-pedido']);
     }
 }

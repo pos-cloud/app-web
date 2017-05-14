@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
+import { Ng2PaginationModule } from 'ng2-pagination';//https://www.npmjs.com/package/ng2-pagination
 
 //rutas
 import { RoutingModule } from './app.routes';
@@ -115,7 +116,8 @@ import { FocusDirective } from './directives/focus.directive';
     ReactiveFormsModule,
     HttpModule,
     RoutingModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    Ng2PaginationModule
   ],
   providers: [
     NgbActiveModal,

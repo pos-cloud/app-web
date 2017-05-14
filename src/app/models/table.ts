@@ -16,8 +16,7 @@ export class Table {
 export enum TableStatus {
 	Enabled = <any> "Habilitada",
 	Disabled = <any> "No Habilitada",
-	Wait = <any> "En espera",
-	Alert = <any> "Alerta",
+	Reserved = <any> "Reservada",
 	Busy = <any> "Ocupada",
 	Closed = <any> "Cerrada"
 }

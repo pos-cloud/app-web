@@ -25,6 +25,10 @@ export class TableService {
 		return this._http.get(this.url+"tables").map (res => res.json());
 	}
 
+  getTablesByRoom (roomId: string) {
+		return this._http.get(this.url+'tables/where="room":"'+roomId+'"&sort="description":1').map (res => res.json());
+	}
+
   saveTable (table: Table) {
 		return this._http.post(this.url+"table",table).map (res => res.json());
 	}

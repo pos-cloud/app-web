@@ -3,7 +3,7 @@
     <div class="card-header bg-primary card-inverse">Lista de Cajas
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Caja</button>
-        <span (click)="filters = !filters">
+        <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>
       </div>
@@ -22,7 +22,7 @@
               <th (click)="orderBy('status')">Estado</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
-            <tr *ngIf="filters">
+            <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterOpeningDate" placeholder="Fecha Apertura..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterClosingDate" placeholder="Fecha Cierre..." ></th>
@@ -37,7 +37,8 @@
             <tr *ngFor="let cashBox of cashBoxes | orderBy: [orderTerm]  | filter: filterCode:'code' | filter: filterOpeningDate:'openingDate'
                                                                           | filter: filterClosingDate:'closingDate' | filter: filterOpeningCash:'openingCash'
                                                                           | filter: filterClosingCash:'closingCash' | filter: filterInvoicedCash:'invoicedCash'
-                                                                          | filter: filterDifference:'difference' | filter: filterStatus:'status'">
+                                                                          | filter: filterDifference:'difference' | filter: filterStatus:'status'
+                                                                          | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{cashBox.code}}</td>
               <td>{{cashBox.openingDate | date: ['dd/MM/yyyy'] }}</td>
               <td>{{cashBox.closingDate | date: ['dd/MM/yyyy']}}</td>
@@ -58,7 +59,13 @@
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        Page 1 of 5
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
       </div>
   </div>
 </section>
