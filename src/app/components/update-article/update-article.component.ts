@@ -171,6 +171,7 @@ export class UpdateArticleComponent implements OnInit {
           if(!result.makes) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.makes = result.makes;
           }
         },
@@ -190,6 +191,7 @@ export class UpdateArticleComponent implements OnInit {
           if(!result.categories) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.categories = result.categories;
           }
         },
@@ -213,10 +215,11 @@ export class UpdateArticleComponent implements OnInit {
     
     this._makeService.getMake(this.articleForm.value.make).subscribe(
         result => {
-          this.article.make = result.make;
-          if(!this.article.make) {
-            this.alertMessage = "Error al cargar la marca. Error en el servidor.";
+          if(!result.make) {
+            this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
+            this.article.make = result.make;
             this.getCategory();
           }
         },
@@ -233,10 +236,10 @@ export class UpdateArticleComponent implements OnInit {
     
     this._categoryService.getCategory(this.articleForm.value.category).subscribe(
         result => {
-          this.article.category = result.category;
-          if(!this.article.category) {
+          if(!result.category) {
             this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
           } else {
+            this.article.category = result.category;
             this.saveChanges();
           }
         },
@@ -251,25 +254,25 @@ export class UpdateArticleComponent implements OnInit {
 
   private saveChanges(): void {
     
-  this._articleService.updateArticle(this.article).subscribe(
-    result => {
-      this.article = result.article;
-      if (!this.article) {
-        this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
-      } else {
-        this.alertConfig.type = 'success';
-        this.alertMessage = "El artículo se ha actualizado con éxito.";
-        this.activeModal.close('save_close');
+    this._articleService.updateArticle(this.article).subscribe(
+      result => {
+        if (!result.article) {
+          this.alertMessage = result.message;
+        } else {
+          this.article = result.article;
+          this.alertConfig.type = 'success';
+          this.alertMessage = "El artículo se ha actualizado con éxito.";
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
       }
-      this.loading = false;
-    },
-    error => {
-      this.alertMessage = error;
-      if(!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-      }
-      this.loading = false;
-    }
     );
   }
 }

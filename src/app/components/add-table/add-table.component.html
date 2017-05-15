@@ -12,7 +12,8 @@
 	</div>
 	<form [formGroup]="tableForm" #formAddTable="ngForm" (ngSubmit)="addTable()">
 		<div class="modal-body">
-			<div class="form-group col-md-12">
+			<div class="row">
+				<div class="form-group col-md-12">
 					<label for="room" class="control-label">Salón</label>
 					<select class="form-control" formControlName="room">
 						<option *ngFor="let room of rooms" [ngValue]="room">{{room.description}}</option>
@@ -21,6 +22,7 @@
 						{{ formErrors.room }}
 					</div>
 				</div>
+			</div>
 			<div class="row">
 				<div class="form-group col-md-10">
 					<label for="description">Descripción:</label>

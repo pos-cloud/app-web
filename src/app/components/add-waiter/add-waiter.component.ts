@@ -105,8 +105,8 @@ export class AddWaiterComponent  implements OnInit {
     
     this._waiterService.saveWaiter(this.waiter).subscribe(
     result => {
-        if (!this.waiter) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el mozo.';
+        if (!result.waiter) {
+          this.alertMessage = result.message;
         } else {
           this.waiter = result.waiter;
           this.alertConfig.type = 'success';

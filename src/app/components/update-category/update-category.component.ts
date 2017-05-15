@@ -110,10 +110,10 @@ export class UpdateCategoryComponent implements OnInit {
     
   this._categoryService.updateCategory(this.category).subscribe(
     result => {
-      this.category = result.category;
       if (!this.category) {
-        this.alertMessage = 'Ha ocurrido un error al querer crear el rubro.';
+        this.alertMessage = result.message;
       } else {
+        this.category = result.category;
         this.alertConfig.type = 'success';
         this.alertMessage = "El rubro se ha actualizado con éxito.";
         this.activeModal.close('save_close');

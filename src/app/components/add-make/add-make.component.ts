@@ -104,8 +104,8 @@ export class AddMakeComponent  implements OnInit {
     
     this._makeService.saveMake(this.make).subscribe(
     result => {
-        if (!this.make) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear la marca.';
+        if (!result.make) {
+          this.alertMessage = result.message;
         } else {
           this.make = result.make;
           this.alertConfig.type = 'success';

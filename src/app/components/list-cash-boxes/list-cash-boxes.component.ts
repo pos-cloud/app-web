@@ -55,6 +55,7 @@ export class ListCashBoxesComponent implements OnInit {
 						this.alertMessage = result.message;
             this.areCashBoxesEmpty = true;
 					} else {
+            this.alertMessage = null;
 					  this.cashBoxes = result.cashBoxes;
             this.areCashBoxesEmpty = false;
           }

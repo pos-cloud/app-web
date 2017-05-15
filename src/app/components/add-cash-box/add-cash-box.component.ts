@@ -148,8 +148,8 @@ export class AddCashBoxComponent  implements OnInit {
     
     this._cashBoxService.saveCashBox(this.cashBox).subscribe(
     result => {
-        if (!this.cashBox) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear la caja.';
+        if (!result.cashBox) {
+          this.alertMessage = result.message;
         } else {
           this.cashBox = result.cashBox;
           this.alertConfig.type = 'success';

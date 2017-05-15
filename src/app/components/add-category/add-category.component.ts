@@ -104,8 +104,8 @@ export class AddCategoryComponent  implements OnInit {
     
     this._categoryService.saveCategory(this.category).subscribe(
     result => {
-        if (!this.category) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el rubro.';
+        if (!result.category) {
+          this.alertMessage = result.message;
         } else {
           this.category = result.category;
           this.alertConfig.type = 'success';

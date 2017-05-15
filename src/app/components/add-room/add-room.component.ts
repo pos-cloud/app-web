@@ -104,8 +104,8 @@ export class AddRoomComponent  implements OnInit {
     
     this._roomService.saveRoom(this.room).subscribe(
     result => {
-        if (!this.room) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el salón.';
+        if (!result.room) {
+          this.alertMessage = result.message;
         } else {
           this.room = result.room;
           this.alertConfig.type = 'success';

@@ -23,6 +23,7 @@ import { DeleteTableComponent } from './../../components/delete-table/delete-tab
 
 export class ListTablesComponent implements OnInit {
 
+  private tableSelected: Table;
   private tables: Table[] = new Array();
   private areTablesEmpty: boolean = true;
   private alertMessage: any;
@@ -31,10 +32,11 @@ export class ListTablesComponent implements OnInit {
   private propertyTerm: string;
   private areFiltersVisible: boolean = false;
   private waiter: Waiter;
-  private waiterId: string;
+  private waiters: Waiter[] = new Array();
   @ViewChild('content') content:ElementRef;
   private selectWaiterForm: FormGroup;
   private roomId: string;
+  private loading: boolean = false;
 
   private formErrors = {
     'waiter': ''
@@ -65,21 +67,19 @@ export class ListTablesComponent implements OnInit {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
       this.roomId = locationPathURL[3];
-      if(this.roomId === undefined) {
+      if(this.userType === 'admin') {
         this.getTables(); 
-      } else {
+      } else if(this.roomId !== undefined) {
         this.getTablesByRoom();
       }
     });
     this.waiter = new Waiter();
-    this.buildForm();
   }
 
   private buildForm(): void {
 
     this.selectWaiterForm = this._fb.group({
       'waiter': [this.waiter.name, [
-          //Validators.required
         ]
       ]
     });
@@ -116,6 +116,7 @@ export class ListTablesComponent implements OnInit {
           this.alertMessage = result.message;
           this.areTablesEmpty = true;
         } else {
+          this.alertMessage = null;
           this.tables = result.tables;
           this.areTablesEmpty = false;
         }
@@ -136,7 +137,9 @@ export class ListTablesComponent implements OnInit {
         if(!result.tables) {
           this.alertMessage = result.message;
           this.areTablesEmpty = true;
+          this.tables = new Array();
         } else {
+          this.alertMessage = null;
           this.tables = result.tables;
           this.areTablesEmpty = false;
         }
@@ -162,6 +165,7 @@ export class ListTablesComponent implements OnInit {
   
   private openModal(op: string, table:Table): void {
 
+      this.tableSelected = table;
       let modalRef;
       switch(op) {
         case 'add' :
@@ -173,7 +177,7 @@ export class ListTablesComponent implements OnInit {
           break;
         case 'update' :
             modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' })
-            modalRef.componentInstance.table = table;
+            modalRef.componentInstance.table = this.tableSelected;
             modalRef.result.then((result) => {
               if(result === 'save_close') {
                 this.getTables();
@@ -184,7 +188,7 @@ export class ListTablesComponent implements OnInit {
           break;
         case 'delete' :
             modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' })
-            modalRef.componentInstance.table = table;
+            modalRef.componentInstance.table = this.tableSelected;
             modalRef.result.then((result) => {
               if(result === 'delete_close') {
                 this.getTables();
@@ -194,22 +198,74 @@ export class ListTablesComponent implements OnInit {
             });
           break;
         case 'select_waiter' :
+
+            this.buildForm();
+            this.getWaiters();
+            if(this.tableSelected.waiter !== undefined) {
+              this.selectWaiterForm.setValue({
+                'waiter':this.tableSelected.waiter._id,
+              });
+            }
             modalRef = this._modalService.open(this.content).result.then((result) => {
-              if(result  === "select_waiter"){
-                  this.waiter = new Waiter();
-                  this.waiter.name = "Mozo 1";
-                  table.waiter = this.waiter;
-                  this.addSaleOrder(table._id);
+                if(result  === "select_waiter"){
+                  this.loading = true;
+                  this.waiter = this.selectWaiterForm.value.waiter;
+                  this.tableSelected.waiter = this.waiter;
+                  this.assignWaiter();
                 }
               }, (reason) => {
                 
-              });
+              }
+            );
           break;
         default : ;
       }
     };
 
-    private addSaleOrder(tableId: string) {
-      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+tableId+'/agregar-pedido']);
+    private getWaiters(): void {  
+
+      this._waiterService.getWaiters().subscribe(
+        result => {
+					if(!result.waiters) {
+						this.alertMessage = result.message;
+					} else {
+            this.alertMessage = null;
+					  this.waiters = result.waiters;
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
+
+   private assignWaiter(): void {
+     
+     this._tableService.updateTable(this.tableSelected).subscribe(
+       result => {
+					if(!result.table) {
+            this.loading = false;
+						this.alertMessage = result.message;
+					} else {
+            this.alertMessage = null;
+            this.loading = false;
+					  this.addSaleOrder();
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+            this.loading = false;
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+     );
+   }
+
+    private addSaleOrder() {
+      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
     }
 }

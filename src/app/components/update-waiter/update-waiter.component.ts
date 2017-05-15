@@ -114,10 +114,10 @@ export class UpdateWaiterComponent implements OnInit {
     
     this._waiterService.updateWaiter(this.waiter).subscribe(
     result => {
-          this.waiter = result.waiter;
-        if (!this.waiter) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
+        if (!result.waiter) {
+          this.alertMessage = result.message;
         } else {
+          this.waiter = result.waiter;
           this.alertConfig.type = 'success';
           this.alertMessage = "El artículo se ha actualizado con éxito.";
           this.activeModal.close('save_close');

@@ -56,6 +56,7 @@ export class ListCategoriesComponent implements OnInit {
             this.alertMessage = result.message;
             this.areCategoriesEmpty = true;
           } else {
+            this.alertMessage = null;
             this.categories = result.categories;
             this.areCategoriesEmpty = false;
           }

@@ -110,10 +110,10 @@ export class UpdateRoomComponent implements OnInit {
     
   this._roomService.updateRoom(this.room).subscribe(
     result => {
-      this.room = result.room;
-      if (!this.room) {
-        this.alertMessage = 'Ha ocurrido un error al querer crear el salón.';
+      if (!result.room) {
+        this.alertMessage = result.message;
       } else {
+        this.room = result.room;
         this.alertConfig.type = 'success';
         this.alertMessage = "El salón se ha actualizado con éxito.";
         this.activeModal.close('save_close');

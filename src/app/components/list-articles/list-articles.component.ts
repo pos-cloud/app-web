@@ -56,6 +56,7 @@ export class ListArticlesComponent implements OnInit {
 						this.alertMessage = result.message;
             this.areArticlesEmpty = true;
 					} else {
+            this.alertMessage = null;
             this.articles = result.articles;
             this.areArticlesEmpty = false;
           }

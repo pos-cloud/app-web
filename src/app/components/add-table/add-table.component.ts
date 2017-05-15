@@ -126,6 +126,7 @@ export class AddTableComponent  implements OnInit {
           if(!result.rooms) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.rooms = result.rooms;
             if(this.rooms[0] !== undefined) {
               room = this.rooms[0];
@@ -157,8 +158,8 @@ export class AddTableComponent  implements OnInit {
     
     this._tableService.saveTable(this.table).subscribe(
     result => {
-        if (!this.table) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear la mesa.';
+        if (!result.table) {
+          this.alertMessage = result.message;
         } else {
           this.table = result.table;
           this.alertConfig.type = 'success';

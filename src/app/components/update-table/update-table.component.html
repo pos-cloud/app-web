@@ -14,8 +14,12 @@
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">
-					<label for="room" class="control-label">Salón:</label>
-					<input type="text" class="form-control" formControlName="room" name="room" id="room" required />
+					<label for="room" class="control-label">Salón</label>
+					<select class="form-control" formControlName="room">
+						<option *ngFor="let room of rooms" [selected]="room._id==table.room._id" [value]="room._id">
+							{{room.description}}
+						</option>
+					</select>
 					<div *ngIf="formErrors.room" class="alert alert-danger">
 						{{ formErrors.room }}
 					</div>
@@ -38,7 +42,7 @@
 				</div>
 			</div>
 		</div>
-    <div class="modal-footer">
+ 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!tableForm.valid || loading" >
 				<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>

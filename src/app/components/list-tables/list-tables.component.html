@@ -64,10 +64,9 @@
         <p *ngIf="table.waiter">{{table.waiter.name}}</p>
       </div>
     </div>
-    <!--<p *ngIf="amountOfTables == 0">No se encontraron mesas</p>-->
 </section>
 
-<!--MODAL SELECCIONAR VENDEDOR-->
+<!--MODAL SELECCIONAR MOZO-->
 <ng-template #content let-c="close" let-d="dismiss">
   <div  class="modal-header">
     <h4 class="modal-title">Mozo</h4>
@@ -81,16 +80,18 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="selectWaiterForm" #formConfirmCant="ngForm" (ngSubmit)="c('select_waiter')">
+    <form [formGroup]="selectWaiterForm" #formSelectWaiter="ngForm" (ngSubmit)="c('select_waiter')">
       <div class="modal-body">
         <div class="row">
           <div class="form-group col-md-12">
-            <label for="name" class="control-label">Seleccione el mozo</label>
-            <select class="form-control">
-              <option>Mozo 1</option>
+            <label for="waiter" class="control-label">Asignar el mozo</label>
+            <select class="form-control" formControlName="waiter">
+              <option *ngFor="let waiter of waiters" [selected]="waiter._id==tableSelected.waiter._id" [value]="waiter._id">
+                {{waiter.name}}
+              </option>
             </select>
-            <div *ngIf="formErrors.name" class="alert alert-danger">
-              {{ formErrors.name }}
+            <div *ngIf="formErrors.waiter" class="alert alert-danger">
+              {{ formErrors.waiter }}
             </div>
           </div>
         </div>

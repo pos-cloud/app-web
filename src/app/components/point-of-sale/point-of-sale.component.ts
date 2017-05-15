@@ -77,6 +77,7 @@ export class PointOfSaleComponent implements OnInit {
           if(!result.rooms) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.rooms = result.rooms;
             this.roomSelected = this.rooms[0];
             this._router.navigate(['/pos/salones/'+this.roomSelected._id+'/mesas']);

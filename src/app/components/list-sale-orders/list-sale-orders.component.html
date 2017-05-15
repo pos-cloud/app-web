@@ -67,5 +67,4 @@
     <div class="table" *ngFor="let saleOrder of saleOrders | orderBy:[orderTerm]" (click)="addSaleOrder(saleOrder.code)">
         <p>{{saleOrder.code}}</p>
     </div>
-    <!--<p *ngIf="amountOfTables == 0">No se encontraron mesas</p>-->
 </section>

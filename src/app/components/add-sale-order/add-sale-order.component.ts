@@ -67,7 +67,7 @@ export class AddSaleOrderComponent implements OnInit {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
       if(this.tableId === undefined) {
-        this.tableId = locationPathURL[3];
+        this.tableId = locationPathURL[5];
         if(this.tableId !== undefined){
           this.getTable(this.tableId);
         }
@@ -77,13 +77,14 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   private getTable(id: string): void  {
-
+    
     this._tableService.getTable(id).subscribe(
       result => {
-        this.table = result.table;
-        if(!this.table) {
-          this.alertMessage = "Error al traer mesas. Error en el servidor.";
+        if(!result.table) {
+          this.alertMessage = result.message;
         } else {
+          this.alertMessage = null;
+          this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
           this.addSaleOrder();
@@ -135,8 +136,8 @@ export class AddSaleOrderComponent implements OnInit {
     
     this._saleOrderService.saveSaleOrder(this.saleOrder).subscribe(
       result => {
-          if(!this.saleOrder) {
-            this.alertMessage = "Error en el servidor.";
+          if(!result.saleOrder) {
+            this.alertMessage = result.message;
           } else {
             this.saleOrder = result.saleOrder;
           }

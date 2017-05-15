@@ -55,6 +55,7 @@ export class ListWaitersComponent implements OnInit {
 						this.alertMessage = result.message;
             this.areWaitersEmpty = true;
 					} else {
+            this.alertMessage = null;
 					  this.waiters = result.waiters;
             this.areWaitersEmpty = false;
           }

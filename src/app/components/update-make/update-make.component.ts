@@ -110,10 +110,10 @@ export class UpdateMakeComponent implements OnInit {
     
   this._makeService.updateMake(this.make).subscribe(
     result => {
-      this.make = result.make;
-      if (!this.make) {
-        this.alertMessage = 'Ha ocurrido un error al querer crear la marca.';
+      if (!result.make) {
+        this.alertMessage = result.message;
       } else {
+        this.make = result.make;
         this.alertConfig.type = 'success';
         this.alertMessage = "La marca se ha actualizado con éxito.";
         this.activeModal.close('save_close');

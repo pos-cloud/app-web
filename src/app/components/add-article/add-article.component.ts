@@ -202,6 +202,7 @@ export class AddArticleComponent  implements OnInit {
           if(!result.makes) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.makes = result.makes;
           }
         },
@@ -221,6 +222,7 @@ export class AddArticleComponent  implements OnInit {
           if(!result.categories) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.categories = result.categories;
           }
         },
@@ -243,8 +245,8 @@ export class AddArticleComponent  implements OnInit {
     
     this._articleService.saveArticle(this.article).subscribe(
     result => {
-        if (!this.article) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
+        if (!result.article) {
+          this.alertMessage = result.message;
         } else {
           this.article = result.article;
           this.alertConfig.type = 'success';

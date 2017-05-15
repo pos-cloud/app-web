@@ -55,6 +55,7 @@ export class ListSaleOrdersComponent implements OnInit {
 						this.alertMessage = result.message;
             this.areSaleOrdersEmpty = true;
 					} else {
+            this.alertMessage = null;
 					  this.saleOrders = result.saleOrders;
             this.areSaleOrdersEmpty = false;
           }
