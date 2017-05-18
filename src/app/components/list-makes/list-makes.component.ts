@@ -54,6 +54,7 @@ export class ListMakesComponent implements OnInit {
         result => {
           if(!result.makes) {
             this.alertMessage = result.message;
+            this.makes = null;
             this.areMakesEmpty = true;
           } else {
             this.alertMessage = null;

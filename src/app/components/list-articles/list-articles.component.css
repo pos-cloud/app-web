@@ -18,3 +18,24 @@
       -webkit-justify-content: center;
       justify-content: center;
 }
+
+.articles-list {
+      height: 500px;
+      width: 300px;
+      overflow: scroll;
+}
+
+.iarticle {
+    background: #5cb85c;
+    width: 120px;
+    height: 120px;
+    margin: 4px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+}
+
+.iarticle p {
+    font-size: 20px;
+    margin-top: 20px;
+} 

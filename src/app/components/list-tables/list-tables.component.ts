@@ -114,6 +114,7 @@ export class ListTablesComponent implements OnInit {
       result => {
         if(!result.tables) {
           this.alertMessage = result.message;
+          this.tables = null;
           this.areTablesEmpty = true;
         } else {
           this.alertMessage = null;
@@ -136,8 +137,8 @@ export class ListTablesComponent implements OnInit {
       result => {
         if(!result.tables) {
           this.alertMessage = result.message;
+          this.tables = null;
           this.areTablesEmpty = true;
-          this.tables = new Array();
         } else {
           this.alertMessage = null;
           this.tables = result.tables;
@@ -199,24 +200,33 @@ export class ListTablesComponent implements OnInit {
           break;
         case 'select_waiter' :
 
-            this.buildForm();
-            this.getWaiters();
             if(this.tableSelected.waiter !== undefined) {
-              this.selectWaiterForm.setValue({
-                'waiter':this.tableSelected.waiter._id,
-              });
-            }
-            modalRef = this._modalService.open(this.content).result.then((result) => {
-                if(result  === "select_waiter"){
-                  this.loading = true;
-                  this.waiter = this.selectWaiterForm.value.waiter;
-                  this.tableSelected.waiter = this.waiter;
-                  this.assignWaiter();
-                }
-              }, (reason) => {
-                
+
+              this.addSaleOrder();
+            } else {
+
+              this.buildForm();
+              this.getWaiters();
+
+              if(this.waiters.length > 0) {
+                this.tableSelected.waiter = this.waiters[0];
+              } else {
+                this.tableSelected.waiter = new Waiter();
               }
-            );
+
+              modalRef = this._modalService.open(this.content).result.then((result) => {
+                  if(result  === "select_waiter"){
+                    this.loading = true;
+                    this.waiter = this.selectWaiterForm.value.waiter;
+                    this.tableSelected.waiter = this.waiter;
+                    this.assignWaiter();
+                  }
+                }, (reason) => {
+                  
+                }
+              );
+            }
+            
           break;
         default : ;
       }

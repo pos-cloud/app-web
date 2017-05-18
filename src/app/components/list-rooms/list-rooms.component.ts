@@ -54,6 +54,7 @@ export class ListRoomsComponent implements OnInit {
         result => {
           if(!result.rooms) {
             this.alertMessage = result.message;
+            this.rooms = null;
             this.areRoomsEmpty = true;
           } else {
             this.alertMessage = null;

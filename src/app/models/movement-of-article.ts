@@ -3,6 +3,7 @@ import { SaleOrder } from './sale-order';
 
 export class MovementOfArticle {
 
+    public _id: string;
     public code: number = 1;
     public description: string;
     public observation: string;

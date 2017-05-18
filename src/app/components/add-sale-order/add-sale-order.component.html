@@ -15,36 +15,62 @@
 <!--HEADER-->
 <section class="container-fluid">
   <div class="row">
-      <div class="col-md-12 center-content">
-          <h5>Agregar un Pedido:</h5>
+    <div class="col-md-3">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row center-content">
+            <h4>Mesa</h4>
+          </div>
+          <div class="row center-content">
+            <h4>1</h4>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row center-content">
+            <h4>Mozo</h4>
+          </div>
+          <div class="row center-content">
+            <h4>2</h4>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row center-content">
+            <h4>{{saleOrder.date | date:['dd/MM/yyyy hh:mm:ss']}}</h4>
+          </div>
+          <div class="row center-content">
+            <h4></h4>
+          </div>
+        </div>
       </div>
-  </div>
-   <h4>{{saleOrder.date | date:['dd/MM/yyyy hh:mm:ss']}}</h4>
-   <h4>Mesa  Mozo</h4>
-  <div class="row">
-    <div class="col-md-3 scroll">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th (click)="orderBy('amount')">Cantidad</th>
-            <th (click)="orderBy('description')">Description</th>
-            <th (click)="orderBy('salePrice')">Precio de Venta</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let movementOfArticle of movementsOfArticles">
-              <td>{{movementOfArticle.amount}}</td>
-              <td>{{movementOfArticle.description}}</td>
-              <td>{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</td>
-            </tr>
-            <tr align="center" *ngIf="areMovementsOfArticlesEmpty">
-              <td colspan="3">Todavía no se han facturado artículos</td>
-            </tr>
-        </tbody>
-      </table>
     </div>
     <div class="col-md-9">
-          <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+      <div class="row center-content">
+        <h4>Alta Pedido</h4>
+      </div>
+      <div class="row">
+        <input type="text" class="form-control" [(ngModel)]= "filterText" placeholder="Buscar artículo...">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 scroll">
+      <div class="row">
+        <div class="col-md-2 center-content">Cantidad</div>
+        <div class="col-md-7">Description</div>
+        <div class="col-md-3 center-content">Subtotal</div>
+      </div>
+      <hr>
+      <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
+        <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
+        <div class="col-md-7">{{movementOfArticle.description}}</div>
+        <div class="col-md-3 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+      </div>
+      <div class="center-content" *ngIf="areMovementsOfArticlesEmpty">
+        Todavía no se han facturado artículos
+      </div>
+    </div>
+    <div class="col-md-9">
+      <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
     </div>
 
   <h4>PRECIO TOTAL {{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</h4>
@@ -68,14 +94,20 @@
     <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')">
       <div class="modal-body">
         <div class="row">
-          <div class="form-group col-md-12">
-            <label for="amount" class="control-label">Ingrese la Cantidad:</label>
+          <label for="amount" class="control-label">Ingrese la Cantidad:</label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
             <div class="input-group">
               <input type="text" class="form-control" formControlName="amount" name="amount" required/>
             </div>
             <div *ngIf="formErrors.amount" class="alert alert-danger">
               {{ formErrors.amount }}
             </div>
+          </div>
+          <div class="col-md-4">
+            <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
+            <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
           </div>
         </div>
       </div>

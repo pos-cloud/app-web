@@ -71,34 +71,15 @@
 </section>
 
 <!--POS-->
-<section class="container-fluid" *ngIf="userType=='pos'">
-  <div class="row">
-    <div class="col-md-12 center-content">
-      <h4>Lista de Productos</h4>
+<section class="row" *ngIf="userType=='pos'">
+  <div > 
+    <div *ngFor="let article of articles | orderBy:[orderTerm]" >
+      <div class="iarticle" (click)="addItem(article)">
+        <p>{{article.description}}</p>
+      </div>
     </div>
   </div>
-  <div class="row">
-      <div class="col-md-12 input-group">
-        <input type="text" class="form-control" id="search" [(ngModel)]= "filterText" placeholder="Buscar..." >
-      </div>
-  </div>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th (click)="orderBy('description')">Description </th>
-        <th (click)="orderBy('code')"> Código <i class="fa fa-fw fa-sort"></i></th>
-        <th (click)="orderBy('salePrice')">Precio de Venta</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let article of articles | orderBy: [orderTerm] | filter: filterText" (click)="addItem(article)">
-        <td>{{article.description}}</td>
-        <td>{{article.code}}</td>
-        <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
-      </tr>
-      <tr align="center" *ngIf="areArticlesEmpty">
-        <td colspan="3">No se encontraron artículos</td>
-      </tr>
-    </tbody>
-  </table>
 </section>
+
+<!--align="center" *ngIf="areArticlesEmpty"
+No se encontraron artículos-->

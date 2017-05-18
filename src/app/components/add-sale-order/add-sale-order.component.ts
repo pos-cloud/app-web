@@ -206,6 +206,26 @@ export class AddSaleOrderComponent implements OnInit {
     this.areMovementsOfArticlesEmpty = false;
   }
 
+  private addAmount(): void {
+    this.amountOfItemForm.setValue({
+            'amount': this.amountOfItemForm.value.amount + 1
+    });
+  }
+
+  private subtractAmount(): void {
+
+    if (this.amountOfItemForm.value.amount > 1) {
+      this.amountOfItemForm.setValue({
+              'amount': this.amountOfItemForm.value.amount - 1
+      });
+    } else {
+      this.amountOfItemForm.setValue({
+              'amount': 1
+      });
+    }
+    
+  }
+
   // private getMovementsOfArticles(): void {
 
   //   this._movementOfArticleService.getMovementsOfArticles().subscribe(
