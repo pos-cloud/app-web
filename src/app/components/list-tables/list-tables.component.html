@@ -3,24 +3,22 @@
     <div class="card-header bg-primary card-inverse">Lista de Mesas
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Mesa</button>
-        <span (click)="filters = !filters">
+        <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>
       </div>
     </div>
       <div class="card-block">
-          <table class="table table-hover">
+        <table class="table table-hover">
           <thead>
             <tr>
-            	<th (click)="orderBy('code')">#</th>
 	            <th (click)="orderBy('description')">Descripción</th>
-	            <th (click)="orderBy('room')">Salón</th>
+	            <th (click)="orderBy('room','description')">Salón</th>
 	            <th (click)="orderBy('chair')">Sillas</th>
 	            <th (click)="orderBy('status')">Estado</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
-            <tr *ngIf="filters">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..." aria-describedby="basic-addon1"></th>
+            <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterRoom" placeholder="Salón..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterChair" placeholder="Sillas..." ></th>
@@ -28,23 +26,84 @@
             </tr>
           </thead>
           <tbody>
-            <tbody *ngFor="let table of tables | orderBy: [orderTerm] 	| filter: filterCode:'code' | filter: filterDescription:'description'
-            															| filter: filterRoom:'room' | filter: filterChair:'chair' | filter: filterStatus:'status'">
-              <tr>
-                <td>{{table.code}}</td>
-                <td>{{table.description}}</td>
-                <td>{{table.room}}</td>
-                <td>{{table.chair}}</td>
-                <td><h6><span class="badge badge-default">{{table.status}}</span></h6></td>
-                <td align="center">
-                  <button type="button" class="btn btn-primary" (click)="openModal('update', table)"><i class="fa fa-pencil"></i></button>
-                  <button type="button" class="btn btn-danger" (click)="openModal('delete', table)"><i class="fa fa-trash-o"></i></button>
-                </td>
-              </tr>
+            <tr *ngFor="let table of tables | orderBy: [orderTerm]  | filter: filterDescription:'description' | filter: filterRoom:'room' 
+                                                                    | filter: filterChair:'chair' | filter: filterStatus:'status' 
+                                                                    | paginate: {  itemsPerPage: 9, currentPage: p }" >
+              <td>{{table.description}}</td>
+              <td>{{table.room.description}}</td>
+              <td>{{table.chair}}</td>
+              <td><h6><span class="badge badge-default">{{table.status}}</span></h6></td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', table)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', table)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="areTablesEmpty">
+              <td colspan="5">No se encontraron mesas</td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        Page 1 of 5
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
       </div>
   </div>
 </section>
+
+<!--POS-->
+<section class="row" *ngIf="userType=='pos'">
+    <div *ngFor="let table of tables | orderBy:[orderTerm]" >
+      <div class="itable" (click)="openModal('select_waiter', table)">
+        <p>{{table.description}}</p>
+        <p *ngIf="table.waiter">{{table.waiter.name}}</p>
+      </div>
+    </div>
+</section>
+
+<!--MODAL SELECCIONAR MOZO-->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div  class="modal-header">
+    <h4 class="modal-title">Mozo</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <section class="container-fluid">
+    <div class="center-content"  *ngIf="alertMessage">
+      <ngb-alert (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <form [formGroup]="selectWaiterForm" #formSelectWaiter="ngForm" (ngSubmit)="c('select_waiter')">
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="waiter" class="control-label">Asignar el mozo</label>
+            <select class="form-control" formControlName="waiter">
+              <option *ngFor="let waiter of waiters" [selected]="waiter._id==tableSelected.waiter._id" [value]="waiter._id">
+                {{waiter.name}}
+              </option>
+            </select>
+            <div *ngIf="formErrors.waiter" class="alert alert-danger">
+              {{ formErrors.waiter }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!selectWaiterForm.valid || loading" >
+          <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+          <span *ngIf="!loading">Guardar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</ng-template>

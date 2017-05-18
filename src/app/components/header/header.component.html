@@ -1,4 +1,4 @@
-<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse bg-faded">
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse bg-faded" >
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -8,6 +8,9 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['inicio']" >Inicio</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['pos']">POS</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['admin','productos']" >Productos</a>
@@ -20,6 +23,18 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['admin','cajas']" >Cajas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['admin','pedidos']" >Pedidos de Venta</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['admin','salones']" >Salones</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['admin','marcas']" >Marcas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['admin','rubros']" >Rubros</a>
       </li>
     </ul>
 <!--

@@ -1,0 +1,47 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Lista de Marcas
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Marca</button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('description')">Description </th>
+              <th><em class="fa fa-cog"></em></th>
+            </tr>
+            <tr *ngIf="areFiltersVisible">
+                <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let make of makes | orderBy: [orderTerm] | filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td class="flat">{{make.description}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', make)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', make)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="areMakesEmpty">
+              <td colspan="2">No se encontraron marcas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary card-inverse">
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
+      </div>
+  </div>
+</section>

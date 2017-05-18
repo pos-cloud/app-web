@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
@@ -18,11 +18,13 @@ import { DeleteCashBoxComponent } from './../../components/delete-cash-box/delet
 
 export class ListCashBoxesComponent implements OnInit {
 
-  private cashBoxes: CashBox[];
+  private cashBoxes: CashBox[] = new Array();
+  private areCashBoxesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
-  private filters: boolean = false;
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
 
   constructor(
     private _cashBoxService: CashBoxService,
@@ -49,10 +51,15 @@ export class ListCashBoxesComponent implements OnInit {
 
     this._cashBoxService.getCashBoxes().subscribe(
         result => {
-					this.cashBoxes = result.cashBoxes;
-					if(!this.cashBoxes) {
-						this.alertMessage = "Error al traer cajas. Error en el servidor.";
-					}
+					if(!result.cashBoxes) {
+						this.alertMessage = result.message;
+					  this.cashBoxes = null;
+            this.areCashBoxesEmpty = true;
+					} else {
+            this.alertMessage = null;
+					  this.cashBoxes = result.cashBoxes;
+            this.areCashBoxesEmpty = false;
+          }
 				},
 				error => {
 					this.alertMessage = error;
@@ -63,13 +70,14 @@ export class ListCashBoxesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string): void {
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, cashBox:CashBox): void {

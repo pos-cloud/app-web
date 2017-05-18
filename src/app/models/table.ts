@@ -1,11 +1,11 @@
+import { Room } from './room';
 import { Waiter } from './waiter';
 
 export class Table {
 	
 	public _id: string;
-	public code: number = 1;
-	public room: string;
 	public description: string;
+	public room: Room = null;
 	public chair: number = 1;
 	public status: any = TableStatus.Enabled;
 	public waiter: Waiter = null;
@@ -16,8 +16,7 @@ export class Table {
 export enum TableStatus {
 	Enabled = <any> "Habilitada",
 	Disabled = <any> "No Habilitada",
-	Wait = <any> "En espera",
-	Alert = <any> "Alerta",
+	Reserved = <any> "Reservada",
 	Busy = <any> "Ocupada",
 	Closed = <any> "Cerrada"
 }

@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
+import { Ng2PaginationModule } from 'ng2-pagination';//https://www.npmjs.com/package/ng2-pagination
 
 //rutas
 import { RoutingModule } from './app.routes';
@@ -12,6 +13,12 @@ import { ArticleService } from './services/article.service';
 import { WaiterService } from './services/waiter.service';
 import { TableService } from './services/table.service';
 import { CashBoxService } from './services/cash-box.service';
+import { SaleOrderService } from './services/sale-order.service';
+import { MovementOfArticleService } from "./services/movement-of-article.service";
+import { UserService } from './services/user.service';
+import { RoomService } from './services/room.service';
+import { MakeService } from './services/make.service';
+import { CategoryService } from './services/category.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -29,14 +36,36 @@ import { ListTablesComponent } from './components/list-tables/list-tables.compon
 import { AddTableComponent } from './components/add-table/add-table.component';
 import { UpdateTableComponent } from './components/update-table/update-table.component';
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
-
-//pipe
-import { FilterPipe } from './pipes/filter.pipe';
-import { OrderByPipe } from './pipes/order-by.pipe';
 import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
 import { UpdateCashBoxComponent } from './components/update-cash-box/update-cash-box.component';
 import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
+import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
+import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
+import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
+import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
+import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
+import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
+import { UpdateRoomComponent } from './components/update-room/update-room.component';
+import { AddRoomComponent } from './components/add-room/add-room.component';
+import { ListMakesComponent } from './components/list-makes/list-makes.component';
+import { AddMakeComponent } from './components/add-make/add-make.component';
+import { DeleteMakeComponent } from './components/delete-make/delete-make.component';
+import { UpdateMakeComponent } from './components/update-make/update-make.component';
+import { ListCategoriesComponent } from './components/list-categories/list-categories.component';
+import { AddCategoryComponent } from './components/add-category/add-category.component';
+import { UpdateCategoryComponent } from './components/update-category/update-category.component';
+import { DeleteCategoryComponent } from './components/delete-category/delete-category.component';
+
+import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
+import { LoginComponent } from './components/login/login.component';
+
+//pipes
+import { FilterPipe } from './pipes/filter.pipe';
+import { OrderByPipe } from './pipes/order-by.pipe';
+
+//directives
+import { FocusDirective } from './directives/focus.directive';
 
 @NgModule({
   declarations: [
@@ -55,12 +84,31 @@ import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.comp
     AddTableComponent,
     UpdateTableComponent,
     DeleteTableComponent,
-    FilterPipe,
-    OrderByPipe,
     ListCashBoxesComponent,
     DeleteCashBoxComponent,
     UpdateCashBoxComponent,
     AddCashBoxComponent,
+    ListSaleOrdersComponent,
+    AddSaleOrderComponent,
+    UpdateSaleOrderComponent,
+    DeleteSaleOrderComponent,
+    FocusDirective,
+    ListRoomsComponent,
+    AddRoomComponent,
+    DeleteRoomComponent,
+    UpdateRoomComponent,
+    ListMakesComponent,
+    AddMakeComponent,
+    DeleteMakeComponent,
+    UpdateMakeComponent,
+    ListCategoriesComponent,
+    AddCategoryComponent,
+    UpdateCategoryComponent,
+    DeleteCategoryComponent,
+    PointOfSaleComponent,
+    LoginComponent,
+    FilterPipe,
+    OrderByPipe,
   ],
   imports: [
     BrowserModule,
@@ -68,13 +116,21 @@ import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.comp
     ReactiveFormsModule,
     HttpModule,
     RoutingModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    Ng2PaginationModule
   ],
   providers: [
+    NgbActiveModal,
     ArticleService,
     WaiterService,
     TableService,
-    CashBoxService
+    CashBoxService,
+    SaleOrderService,
+    MovementOfArticleService,
+    UserService,
+    RoomService,
+    MakeService,
+    CategoryService
   ],
   bootstrap: [AppComponent]
 })

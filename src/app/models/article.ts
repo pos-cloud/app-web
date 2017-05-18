@@ -1,4 +1,5 @@
-import { Validators } from '@angular/forms';
+import { Make } from './make';
+import { Category } from './category';
 
 export class Article {
 
@@ -7,8 +8,8 @@ export class Article {
     public description: string;
     public observation: string;
     public salePrice: number = 0.00;
-    public make: string;
-    public category: String;
+    public make: Make;
+    public category: Category;
     public unitOfMeasure: string;
     public stock: number = 0;
     public barcode: string;

@@ -1,3 +1,41 @@
 .card {
       margin-top: 50px;
+      height: 820px;
+}
+
+.itable {
+    background: #5cb85c;
+    width: 150px;
+    height: 150px;
+    margin: 50px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0px 0px 5px;
+    border-radius: 10px;
+}
+
+.itable p {
+    font-size: 30px;
+    margin-top: 30px;
+} 
+
+.table {
+    box-shadow: 0px 0px 5px;
+    border-radius: 10px;
+    cursor: pointer;
+ }
+
+  .center-content {
+      margin-top: 30px;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-justify-content: center;
+      justify-content: center;
+}
+
+itable {
+    height: 300px ;
 }

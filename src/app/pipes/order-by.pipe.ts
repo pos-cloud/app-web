@@ -4,25 +4,32 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'orderBy',
   pure: false
 })
+
 export class OrderByPipe implements PipeTransform {
 
   static _orderByComparator(a:any, b:any):number{
-        
-      if((isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b))){
+      
+        if(a === undefined) {
+            a="";
+        }
+        if(b === undefined) {
+            b="";
+        }
+        if((isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b))){
         //Isn't a number so lowercase the string to properly compare
         if(a.toLowerCase() < b.toLowerCase()) return -1;
         if(a.toLowerCase() > b.toLowerCase()) return 1;
-      }
-      else{
+    }
+    else{
         //Parse strings as numbers to compare properly
         if(parseFloat(a) < parseFloat(b)) return -1;
         if(parseFloat(a) > parseFloat(b)) return 1;
-      }
-    
-      return 0; //equal each other
     }
 
-    transform(input:any, [config = '+']): any{
+    return 0; //equal each other
+    }
+
+    transform(input:any, [config = '+'], arg2?: string): any{
         
         if(!Array.isArray(input)) return input;
 
@@ -33,16 +40,28 @@ export class OrderByPipe implements PipeTransform {
             //Basic array
             if(!propertyToCheck || propertyToCheck == '-' || propertyToCheck == '+'){
                 return !desc ? input.sort() : input.sort().reverse();
-            }
-            else {
+            } else {
                 var property:string = propertyToCheck.substr(0, 1) == '+' || propertyToCheck.substr(0, 1) == '-'
                     ? propertyToCheck.substr(1)
                     : propertyToCheck;
 
                 return input.sort(function(a:any,b:any){
-                    return !desc 
-                        ? OrderByPipe._orderByComparator(a[property], b[property]) 
-                        : -OrderByPipe._orderByComparator(a[property], b[property]);
+                    
+                    var response;
+                    if(!desc){
+                        if(arg2 !== undefined) {
+                            response = OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
+                        } else {
+                            response = OrderByPipe._orderByComparator(a[property], b[property]);
+                        }
+                    } else {
+                        if(arg2 !== undefined) {
+                            response = -OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
+                        } else {
+                            response = -OrderByPipe._orderByComparator(a[property], b[property]);
+                        }
+                    }
+                    return response;
                 });
             }
         }

@@ -13,8 +13,12 @@ export class CashBoxService {
     this.url = 'http://localhost:3000/api/';
   }
 
+  getOpenCashBox () {
+		return this._http.get(this.url+'cash-boxes/where="closingDate":null').map (res => res.json());
+	}
+
   getLastCashBox () {
-		return this._http.get(this.url+"last-cash-box").map (res => res.json());
+		return this._http.get(this.url+'cash-boxes/sort="code":-1&limit=1').map (res => res.json());
 	}
 
   getCashBox (id) {

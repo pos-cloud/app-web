@@ -1,12 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Table } from './../../models/table';
+import { Room } from './../../models/room';
 
 import { TableService } from './../../services/table.service';
+import { RoomService } from './../../services/room.service';
 
 @Component({
   selector: 'app-update-table',
@@ -16,21 +18,22 @@ import { TableService } from './../../services/table.service';
 export class UpdateTableComponent implements OnInit {
 
   @Input() table: Table;
+  private rooms: Room[] = new Array();
   private tableForm: FormGroup;
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
-    'code': 1,
+    'description': '',
     'room': '',
     'chair' : 1
   };
 
   private validationMessages = {
-    'code': {
-      'required':       'Este campo es requerido.',
-      'pattern':        'No puede exceder los 5 dígitos.',
+    'description': {
+      'required':       'Este campo es requerido.'
     },
     'room': {
       'required':       'Este campo es requerido.'
@@ -42,6 +45,7 @@ export class UpdateTableComponent implements OnInit {
 
   constructor(
     private _tableService: TableService,
+    private _roomService: RoomService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -59,14 +63,18 @@ export class UpdateTableComponent implements OnInit {
       this.userType = locationPathURL[1];
     });
     this.buildForm();
+    this.getRooms();
     this.tableForm.setValue({
       '_id':this.table._id,
-      'code':this.table.code,
-      'room': this.table.room,
-      'description': this.table.description,
+      'description':this.table.description,
+      'room': this.table.room._id,
       'chair': this.table.chair,
       'status': this.table.status
     });
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private buildForm(): void {
@@ -75,16 +83,12 @@ export class UpdateTableComponent implements OnInit {
       '_id': [this.table._id, [
         ]
       ],
-      'code': [this.table.code, [
-          Validators.required,
-          Validators.pattern("[0-9]{1,5}")
+      'description': [this.table.description, [
+          Validators.required
         ]
       ],
       'room': [this.table.room, [
           Validators.required
-        ]
-      ],
-      'description': [this.table.description, [
         ]
       ],
       'chair': [this.table.chair, [
@@ -99,7 +103,7 @@ export class UpdateTableComponent implements OnInit {
     this.tableForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
   }
 
   private onValueChanged(data?: any): void {
@@ -108,7 +112,6 @@ export class UpdateTableComponent implements OnInit {
     const form = this.tableForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -121,20 +124,62 @@ export class UpdateTableComponent implements OnInit {
     }
   }
 
+  private getRooms(): void {  
+
+    this._roomService.getRooms().subscribe(
+        result => {
+          if(!result.rooms) {
+            this.alertMessage = result.message;
+          } else {
+            this.alertMessage = null;
+            this.rooms = result.rooms;
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
+
   private updateTable(): void {
     this.loading = true;
     this.table = this.tableForm.value;
-    this.saveChanges();
+    this.getRoom();
   }
+
+  private getRoom(): void {  
+    
+    this._roomService.getRoom(this.tableForm.value.room).subscribe(
+        result => {
+          if(!result.room) {
+            this.alertMessage = result.message;
+          } else {
+            this.alertMessage = null;
+            
+            this.table.room = result.room;
+            this.saveChanges();
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private saveChanges(): void {
     
     this._tableService.updateTable(this.table).subscribe(
       result => {
-        this.table = result.table;
-        if (!this.table) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
+        if (!result.table) {
+          this.alertMessage = result.message;
         } else {
+          this.table = result.table;
           this.alertConfig.type = 'success';
           this.alertMessage = "El artículo se ha actualizado con éxito.";
           this.activeModal.close('save_close');

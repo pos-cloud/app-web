@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ export class UpdateWaiterComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
     'name': ''
@@ -59,6 +60,10 @@ export class UpdateWaiterComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+
   private buildForm(): void {
 
     this.waiterForm = this._fb.group({
@@ -77,7 +82,7 @@ export class UpdateWaiterComponent implements OnInit {
     this.waiterForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
   }
 
   private onValueChanged(data?: any): void {
@@ -86,7 +91,6 @@ export class UpdateWaiterComponent implements OnInit {
     const form = this.waiterForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -110,10 +114,10 @@ export class UpdateWaiterComponent implements OnInit {
     
     this._waiterService.updateWaiter(this.waiter).subscribe(
     result => {
-          this.waiter = result.waiter;
-        if (!this.waiter) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el artículo.';
+        if (!result.waiter) {
+          this.alertMessage = result.message;
         } else {
+          this.waiter = result.waiter;
           this.alertConfig.type = 'success';
           this.alertMessage = "El artículo se ha actualizado con éxito.";
           this.activeModal.close('save_close');

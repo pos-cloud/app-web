@@ -1,0 +1,15 @@
+<section class="container-fluid">
+  <div class="row">
+    <div class="center-content"  *ngIf="alertMessage">
+      <ngb-alert (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+  </div>
+  <div class="row center-content">
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id, 'btn btn-secondary':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)">{{room.description}}</button>
+    </div>
+  </div>
+</section>
+<app-list-tables></app-list-tables>

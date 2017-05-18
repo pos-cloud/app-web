@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Waiter } from './../../models/waiter';
 import { WaiterService } from './../../services/waiter.service';
@@ -18,11 +18,13 @@ import { DeleteWaiterComponent } from './../../components/delete-waiter/delete-w
 
 export class ListWaitersComponent implements OnInit {
 
-  private waiters: Waiter[];
+  private waiters: Waiter[] = new Array();
+  private areWaitersEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
-  private orderTerm: string[] = ['code'];
-  private filters: boolean = false;
+  private orderTerm: string[] = ['name'];
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
 
   constructor(
     private _waiterService: WaiterService,
@@ -49,10 +51,15 @@ export class ListWaitersComponent implements OnInit {
 
     this._waiterService.getWaiters().subscribe(
         result => {
-					this.waiters = result.waiters;
-					if(!this.waiters) {
-						this.alertMessage = "Error al traer artículos. Error en el servidor.";
-					}
+					if(!result.waiters) {
+						this.alertMessage = result.message;
+					  this.waiters = null;
+            this.areWaitersEmpty = true;
+					} else {
+            this.alertMessage = null;
+					  this.waiters = result.waiters;
+            this.areWaitersEmpty = false;
+          }
 				},
 				error => {
 					this.alertMessage = error;
@@ -63,49 +70,50 @@ export class ListWaitersComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string): void {
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, waiter:Waiter): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddWaiterComponent, { size: 'lg' }).result.then((result) => {
-            this.getWaiters();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddWaiterComponent, { size: 'lg' }).result.then((result) => {
+          this.getWaiters();
+        }, (reason) => {
+          this.getWaiters();
+        });
+        break;
+      case 'update' :
+          modalRef = this._modalService.open(UpdateWaiterComponent, { size: 'lg' })
+          modalRef.componentInstance.waiter = waiter;
+          modalRef.result.then((result) => {
+            if(result === 'save_close') {
+              this.getWaiters();
+            }
           }, (reason) => {
-            this.getWaiters();
+            
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateWaiterComponent, { size: 'lg' })
-            modalRef.componentInstance.waiter = waiter;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getWaiters();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteWaiterComponent, { size: 'lg' })
-            modalRef.componentInstance.waiter = waiter;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getWaiters();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteWaiterComponent, { size: 'lg' })
+          modalRef.componentInstance.waiter = waiter;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getWaiters();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
+    }
+  };
 }

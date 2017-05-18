@@ -1,9 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Table } from './../../models/table';
+import { Room } from './../../models/room';
+import { Waiter } from './../../models/waiter';
+
+import { WaiterService } from './../../services/waiter.service';
 import { TableService } from './../../services/table.service';
 
 import { AddTableComponent } from './../../components/add-table/add-table.component';
@@ -18,62 +23,150 @@ import { DeleteTableComponent } from './../../components/delete-table/delete-tab
 
 export class ListTablesComponent implements OnInit {
 
-  private tables: Table[];
+  private tableSelected: Table;
+  private tables: Table[] = new Array();
+  private areTablesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
-  private orderTerm: string[] = ['code'];
-  private filters: boolean = false;
+  private orderTerm: string[] = ['description'];
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
+  private waiter: Waiter;
+  private waiters: Waiter[] = new Array();
+  @ViewChild('content') content:ElementRef;
+  private selectWaiterForm: FormGroup;
+  private roomId: string;
+  private loading: boolean = false;
+
+  private formErrors = {
+    'waiter': ''
+  };
+
+  private validationMessages = {
+    'waiter': {
+      'required':       'Este campo es requerido.'
+    }
+  };
 
   constructor(
+    private _fb: FormBuilder,
     private _tableService: TableService,
+    private _waiterService: WaiterService,
     private _router: Router,
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
     private _modalService: NgbModal
-  ) { }
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
-    this._router.events.subscribe((data:any) => { 
-      let pathLocation: string;
-      pathLocation = data.url.split('/');
-      this.userType = pathLocation[1];
+    this._router.events.subscribe((data:any) => {
+      let locationPathURL: string = data.url.split('/');
+      this.userType = locationPathURL[1];
+      this.roomId = locationPathURL[3];
+      if(this.userType === 'admin') {
+        this.getTables(); 
+      } else if(this.roomId !== undefined) {
+        this.getTablesByRoom();
+      }
     });
-    this.getTables();
+    this.waiter = new Waiter();
   }
 
-  private getBadge(term: string): boolean {
+  private buildForm(): void {
 
-    return true;
+    this.selectWaiterForm = this._fb.group({
+      'waiter': [this.waiter.name, [
+        ]
+      ]
+    });
+
+    this.selectWaiterForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged();
+  }
+
+  private onValueChanged(data?: any): void {
+
+    if (!this.selectWaiterForm) { return; }
+    const form = this.selectWaiterForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
   }
 
   private getTables(): void {  
-
+    
     this._tableService.getTables().subscribe(
-        result => {
-					this.tables = result.tables;
-					if(!this.tables) {
-						this.alertMessage = "Error al traer mesas. Error en el servidor.";
-					}
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
+      result => {
+        if(!result.tables) {
+          this.alertMessage = result.message;
+          this.tables = null;
+          this.areTablesEmpty = true;
+        } else {
+          this.alertMessage = null;
+          this.tables = result.tables;
+          this.areTablesEmpty = false;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
    }
 
-  private orderBy (term: string): void {
+   private getTablesByRoom(): void {  
+     
+    this._tableService.getTablesByRoom(this.roomId).subscribe(
+      result => {
+        if(!result.tables) {
+          this.alertMessage = result.message;
+          this.tables = null;
+          this.areTablesEmpty = true;
+        } else {
+          this.alertMessage = null;
+          this.tables = result.tables;
+          this.areTablesEmpty = false;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+   }
+
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, table:Table): void {
 
+      this.tableSelected = table;
       let modalRef;
       switch(op) {
         case 'add' :
@@ -85,7 +178,7 @@ export class ListTablesComponent implements OnInit {
           break;
         case 'update' :
             modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' })
-            modalRef.componentInstance.table = table;
+            modalRef.componentInstance.table = this.tableSelected;
             modalRef.result.then((result) => {
               if(result === 'save_close') {
                 this.getTables();
@@ -96,7 +189,7 @@ export class ListTablesComponent implements OnInit {
           break;
         case 'delete' :
             modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' })
-            modalRef.componentInstance.table = table;
+            modalRef.componentInstance.table = this.tableSelected;
             modalRef.result.then((result) => {
               if(result === 'delete_close') {
                 this.getTables();
@@ -105,7 +198,84 @@ export class ListTablesComponent implements OnInit {
               
             });
           break;
+        case 'select_waiter' :
+
+            if(this.tableSelected.waiter !== undefined) {
+
+              this.addSaleOrder();
+            } else {
+
+              this.buildForm();
+              this.getWaiters();
+
+              if(this.waiters.length > 0) {
+                this.tableSelected.waiter = this.waiters[0];
+              } else {
+                this.tableSelected.waiter = new Waiter();
+              }
+
+              modalRef = this._modalService.open(this.content).result.then((result) => {
+                  if(result  === "select_waiter"){
+                    this.loading = true;
+                    this.waiter = this.selectWaiterForm.value.waiter;
+                    this.tableSelected.waiter = this.waiter;
+                    this.assignWaiter();
+                  }
+                }, (reason) => {
+                  
+                }
+              );
+            }
+            
+          break;
         default : ;
       }
     };
+
+    private getWaiters(): void {  
+
+      this._waiterService.getWaiters().subscribe(
+        result => {
+					if(!result.waiters) {
+						this.alertMessage = result.message;
+					} else {
+            this.alertMessage = null;
+					  this.waiters = result.waiters;
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
+
+   private assignWaiter(): void {
+     
+     this._tableService.updateTable(this.tableSelected).subscribe(
+       result => {
+					if(!result.table) {
+            this.loading = false;
+						this.alertMessage = result.message;
+					} else {
+            this.alertMessage = null;
+            this.loading = false;
+					  this.addSaleOrder();
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+            this.loading = false;
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+     );
+   }
+
+    private addSaleOrder() {
+      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
+    }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ export class AddWaiterComponent  implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
     'name': ''
@@ -55,12 +56,13 @@ export class AddWaiterComponent  implements OnInit {
     this.buildForm();
   }
 
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+
   private buildForm(): void {
 
     this.waiterForm = this._fb.group({
-      'code': [this.waiter.code, [
-        ]
-      ],
       'name': [this.waiter.name, [
           Validators.required
         ]
@@ -70,7 +72,8 @@ export class AddWaiterComponent  implements OnInit {
     this.waiterForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
+    this.focusEvent.emit(true);
   }
 
   private onValueChanged(data?: any): void {
@@ -79,7 +82,6 @@ export class AddWaiterComponent  implements OnInit {
     const form = this.waiterForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -96,37 +98,15 @@ export class AddWaiterComponent  implements OnInit {
     
     this.loading = true;
     this.waiter = this.waiterForm.value;
-    this.getLastWaiter();
-  }
-
-  private getLastWaiter(): void {
-
-    this._waiterService.getLastWaiter().subscribe(
-      result => {
-        if (!result.waiter[0]) {
-          this.waiter.code = 1;
-          this.saveWaiter();
-        } else {
-          this.waiter.code = (result.waiter[0].code + 1);
-          this.saveWaiter();
-        }
-			},
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
-        this.loading = false;
-      }
-    );
+    this.saveWaiter();
   }
 
   private saveWaiter(): void {
     
     this._waiterService.saveWaiter(this.waiter).subscribe(
     result => {
-        if (!this.waiter) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear el mozo.';
+        if (!result.waiter) {
+          this.alertMessage = result.message;
         } else {
           this.waiter = result.waiter;
           this.alertConfig.type = 'success';

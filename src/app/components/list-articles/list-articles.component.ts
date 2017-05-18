@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from './../../models/article';
 import { ArticleService } from './../../services/article.service';
@@ -18,11 +18,14 @@ import { DeleteArticleComponent } from './../../components/delete-article/delete
 
 export class ListArticlesComponent implements OnInit {
 
-  private articles: Article[];
+  private articles: Article[] = new Array();
+  private areArticlesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
   private orderTerm: string[] = ['code'];
-  private filters: boolean = false;
+  private propertyTerm: string;
+  private areFiltersVisible: boolean = false;
+  @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
 
   constructor(
     private _articleService: ArticleService,
@@ -49,10 +52,15 @@ export class ListArticlesComponent implements OnInit {
 
     this._articleService.getArticles().subscribe(
         result => {
-					this.articles = result.articles;
-					if(!this.articles) {
-						this.alertMessage = "Error al traer artículos. Error en el servidor.";
-					}
+					if(!result.articles) {
+						this.alertMessage = result.message;
+            this.articles = null;
+            this.areArticlesEmpty = true;
+					} else {
+            this.alertMessage = null;
+            this.articles = result.articles;
+            this.areArticlesEmpty = false;
+          }
 				},
 				error => {
 					this.alertMessage = error;
@@ -63,13 +71,14 @@ export class ListArticlesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string): void {
+  private orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
     } else {
       this.orderTerm[0] = term; 
     }
+    this.propertyTerm = property;
   }
   
   private openModal(op: string, article:Article): void {
@@ -108,4 +117,8 @@ export class ListArticlesComponent implements OnInit {
         default : ;
       }
     };
+
+    private addItem(articleSelected) {
+      this.eventAddItem.emit(articleSelected);
+    }
 }

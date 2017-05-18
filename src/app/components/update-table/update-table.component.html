@@ -13,27 +13,27 @@
 	<form [formGroup]="tableForm" #formUpdateTable="ngForm" (ngSubmit)="updateTable()">
 		<div class="modal-body">
 			<div class="row">
-				<div class="form-group col-md-4">
-					<label for="code" class="control-label">Número:</label>
-					<input type="number" class="form-control" formControlName="code" name="code" id="code" required autofocus/>
-					<div *ngIf="formErrors.code" class="alert alert-danger">
-						{{ formErrors.code }}
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-					<label for="room" class="control-label">Salón:</label>
-					<input type="text" class="form-control" formControlName="room" name="room" id="room" required/>
+				<div class="form-group col-md-12">
+					<label for="room" class="control-label">Salón</label>
+					<select class="form-control" formControlName="room">
+						<option *ngFor="let room of rooms" [selected]="room._id==table.room._id" [value]="room._id">
+							{{room.description}}
+						</option>
+					</select>
 					<div *ngIf="formErrors.room" class="alert alert-danger">
 						{{ formErrors.room }}
 					</div>
 				</div>
-				<div class="form-group col-md-4">
-					<label for="description">Descripción:</label>
-					<input type="text" class="form-control" formControlName="description" name="description" id="description"/>
-				</div>
 			</div>
 			<div class="row">
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-10">
+					<label for="description">Descripción:</label>
+					<input type="text" class="form-control" formControlName="description" name="description" id="description" required [focus]="focusEvent"/>
+					<div *ngIf="formErrors.description" class="alert alert-danger">
+						{{ formErrors.description }}
+					</div>
+				</div>
+				<div class="form-group col-md-2">
 					<label for="chair" class="control-label">Sillas:</label>
 					<input type="number" class="form-control" formControlName="chair" name="chair" id="chair" required/>
 					<div *ngIf="formErrors.chair" class="alert alert-danger">
@@ -42,7 +42,7 @@
 				</div>
 			</div>
 		</div>
-    <div class="modal-footer">
+ 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!tableForm.valid || loading" >
 				<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>

@@ -1,10 +1,17 @@
+import { Waiter } from './waiter';
+import { Table } from './table';
+
 export class SaleOrder {
 	
-	public code: number = 1;
+	public _id: string;
+	public origin: number = 0;
+	public number: number = 0;
 	public date: Date = new Date();
 	public status: any = SaleOrderStatus.Open;
 	public observation: string;
 	public totalPrice: number = 0.00;
+	public waiter: Waiter;
+	public table: Table;
 
 	constructor () {}
 }
@@ -12,5 +19,6 @@ export class SaleOrder {
 export enum SaleOrderStatus {
 	Open = <any> "Abierto",
 	Pending = <any> "Pendiente",
+	Canceled = <any> "Anulado",
 	Closed = <any> "Cerrado"
 }

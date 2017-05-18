@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,6 +22,7 @@ export class AddCashBoxComponent  implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
     'openingCash': ''
@@ -38,7 +39,7 @@ export class AddCashBoxComponent  implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -51,8 +52,12 @@ export class AddCashBoxComponent  implements OnInit {
       locationPathURL = data.url.split('/');
       this.userType = locationPathURL[1];
     });
-    this.cashBox = new CashBox ();
+    this.cashBox = new CashBox();
     this.buildForm();
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   private buildForm(): void {
@@ -88,7 +93,8 @@ export class AddCashBoxComponent  implements OnInit {
     this.cashBoxForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChanged(); // (re)set validation messages now
+    this.onValueChanged();
+    this.focusEvent.emit(true);
   }
 
   private onValueChanged(data?: any): void {
@@ -97,7 +103,6 @@ export class AddCashBoxComponent  implements OnInit {
     const form = this.cashBoxForm;
 
     for (const field in this.formErrors) {
-      // clear previous error message (if any)
       this.formErrors[field] = '';
       const control = form.get(field);
 
@@ -121,11 +126,11 @@ export class AddCashBoxComponent  implements OnInit {
 
     this._cashBoxService.getLastCashBox().subscribe(
       result => {
-        if (!result.cashBox[0]) {
+        if (!result.cashBoxes) {
           this.cashBox.code = 1;
           this.saveCashBox();
         } else {
-          this.cashBox.code = (result.cashBox[0].code + 1);
+          this.cashBox.code = (result.cashBoxes[0].code + 1);
           this.saveCashBox();
         }
 			},
@@ -143,14 +148,13 @@ export class AddCashBoxComponent  implements OnInit {
     
     this._cashBoxService.saveCashBox(this.cashBox).subscribe(
     result => {
-        if (!this.cashBox) {
-          this.alertMessage = 'Ha ocurrido un error al querer crear la caja.';
+        if (!result.cashBox) {
+          this.alertMessage = result.message;
         } else {
           this.cashBox = result.cashBox;
           this.alertConfig.type = 'success';
           this.alertMessage = "La caja se ha añadido con éxito.";      
-          this.cashBox = new CashBox ();
-          this.buildForm();
+          this.activeModal.close();
         }
         this.loading = false;
       },

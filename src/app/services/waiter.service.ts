@@ -14,7 +14,7 @@ export class WaiterService {
   }
 
   getLastWaiter () {
-		return this._http.get(this.url+"last-waiter").map (res => res.json());
+		return this._http.get(this.url+'waiters/sort="_id":-1&limit=1').map (res => res.json());
 	}
 
   getWaiter (id) {
