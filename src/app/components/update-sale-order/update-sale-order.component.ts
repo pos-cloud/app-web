@@ -7,6 +7,7 @@ import { SaleOrder, SaleOrderStatus } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table } from './../../models/table';
+import { Waiter } from './../../models/waiter';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -54,6 +55,8 @@ export class UpdateSaleOrderComponent implements OnInit {
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
     this.saleOrder = new SaleOrder();
+    this.saleOrder.waiter = new Waiter();
+    this.saleOrder.table = new Table();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
   }
@@ -197,6 +200,9 @@ export class UpdateSaleOrderComponent implements OnInit {
 
     this.movementsOfArticles.push(this.movementOfArticle);
     this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
+    this.amountOfItemForm.setValue({
+            'amount': this.saleOrder.totalPrice
+    });
     this.areMovementsOfArticlesEmpty = false;
   }
 

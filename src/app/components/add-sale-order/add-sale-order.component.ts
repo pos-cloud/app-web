@@ -8,6 +8,7 @@ import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { CashBox, CashBoxStatus } from './../../models/cash-box';
 import { Table, TableStatus } from './../../models/table';
+import { Waiter } from './../../models/waiter';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -60,6 +61,8 @@ export class AddSaleOrderComponent implements OnInit {
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
     this.saleOrder = new SaleOrder();
+    this.saleOrder.waiter = new Waiter();
+    this.saleOrder.table = new Table();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
   }
@@ -88,6 +91,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.table = result.table;
+          console.log(this.table);
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
           this.getOpenCashBox();
@@ -231,9 +235,8 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.movementOfArticle = result.movementOfArticle;
-          this.addItemToOrder();
-          this.movementOfArticle = new MovementOfArticle();
-          this.buildForm();
+          this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
+          this.updateSaleOrder();
         }
         this.loading = false;
       },
@@ -250,8 +253,6 @@ export class AddSaleOrderComponent implements OnInit {
   private addItemToOrder(): void {
 
     this.movementsOfArticles.push(this.movementOfArticle);
-    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
-    this.updateSaleOrder();
     this.areMovementsOfArticlesEmpty = false;
   }
 
@@ -277,6 +278,9 @@ export class AddSaleOrderComponent implements OnInit {
             this.alertMessage = result.message;
           } else {
             this.alertMessage = null;
+            this.addItemToOrder();
+            this.movementOfArticle = new MovementOfArticle();
+            this.buildForm();
           }
         },
         error => {
