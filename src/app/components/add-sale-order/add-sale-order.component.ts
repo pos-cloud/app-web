@@ -6,11 +6,13 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { SaleOrder, SaleOrderStatus } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
+import { CashBox, CashBoxStatus } from './../../models/cash-box';
 import { Table, TableStatus } from './../../models/table';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
+import { CashBoxService } from './../../services/cash-box.service';
 
 
 @Component({
@@ -48,6 +50,7 @@ export class AddSaleOrderComponent implements OnInit {
     private _fb: FormBuilder,
     private _saleOrderService: SaleOrderService,
     private _movementOfArticleService: MovementOfArticleService,
+    private _cashBoxService: CashBoxService,
     private _tableService: TableService,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -87,7 +90,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
-          this.addSaleOrder();
+          this.getOpenCashBox();
         }
       },
       error => {
@@ -98,6 +101,26 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
+
+  private getOpenCashBox(): void {
+
+    this._cashBoxService.getOpenCashBox().subscribe(
+        result => {
+          if(!result.cashBoxes) {
+            this.alertMessage = "No tiene caja abierta";
+          } else {
+            this.saleOrder.cashBox = result.cashBoxes[0];
+            this.addSaleOrder();
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private buildForm(): void {
 
@@ -163,9 +186,6 @@ export class AddSaleOrderComponent implements OnInit {
           this.alertMessage = result.message;
         } else {
           this.table = result.table;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha actualizado con éxito.";
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

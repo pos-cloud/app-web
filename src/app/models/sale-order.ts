@@ -1,3 +1,4 @@
+import { CashBox } from './cash-box';
 import { Waiter } from './waiter';
 import { Table } from './table';
 
@@ -10,6 +11,7 @@ export class SaleOrder {
 	public status: any = SaleOrderStatus.Open;
 	public observation: string;
 	public totalPrice: number = 0.00;
+	public cashBox: CashBox;
 	public waiter: Waiter;
 	public table: Table;
 

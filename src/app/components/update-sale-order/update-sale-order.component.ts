@@ -64,7 +64,9 @@ export class UpdateSaleOrderComponent implements OnInit {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
       saleOrderId = locationPathURL[7];
-      this.getSaleOrder(saleOrderId);
+      if(saleOrderId !== undefined) {
+        this.getSaleOrder(saleOrderId);
+      } 
     });
     this.buildForm();
   }
@@ -78,7 +80,6 @@ export class UpdateSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.saleOrder = result.saleOrder;
-          console.log(this.saleOrder.table.description);
           this.getMovementsOfSaleOrder();
         }
       },
@@ -224,7 +225,6 @@ export class UpdateSaleOrderComponent implements OnInit {
     this._movementOfArticleService.getMovementsOfSaleOrder(this.saleOrder._id).subscribe(
         result => {
 					if(!result.movementsOfArticles) {
-						this.alertMessage = result.message;
             this.areMovementsOfArticlesEmpty = true;
 					} else {
             this.areMovementsOfArticlesEmpty = false;

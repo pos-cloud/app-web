@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { CashBox } from './../models/cash-box';
+import { CashBox, CashBoxStatus } from './../models/cash-box';
 
 @Injectable()
 export class CashBoxService {
@@ -14,7 +14,7 @@ export class CashBoxService {
   }
 
   getOpenCashBox () {
-		return this._http.get(this.url+'cash-boxes/where="closingDate":null').map (res => res.json());
+		return this._http.get(this.url+'cash-boxes/where="status":"'+CashBoxStatus.Open+'"').map (res => res.json());
 	}
 
   getLastCashBox () {

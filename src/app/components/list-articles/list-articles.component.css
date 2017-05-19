@@ -26,7 +26,8 @@
 }
 
 .iarticle {
-    background: #5cb85c;
+    background: blue;
+    color: white;
     width: 120px;
     height: 120px;
     margin: 4px;
