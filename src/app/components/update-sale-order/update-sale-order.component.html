@@ -1,3 +1,130 @@
-<p>
-  update-sale-order works!
-</p>
+<!--POS-->
+  <!--HEADER-->
+<!--<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse bg-faded" >
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['admin','productos']" >Productos</a>
+      </li>
+    </ul>
+  </div>
+</nav>-->
+<!--HEADER-->
+<section class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row center-content">
+            <h4>Mesa</h4>
+          </div>
+          <div class="row center-content">
+            <h4>1</h4>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row center-content">
+            <h4>Mozo</h4>
+          </div>
+          <div class="row center-content">
+            <h4>11</h4>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row center-content">
+            <h4>{{saleOrder.date | date:['dd/MM/yyyy hh:mm:ss']}}</h4>
+          </div>
+          <div class="row center-content">
+            <h4></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 center-content">
+        <h4>Editar Pedido</h4>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 scroll">
+      <div class="row">
+        <div class="col-md-2 center-content">Cantidad</div>
+        <div class="col-md-7">Description</div>
+        <div class="col-md-3 center-content">Subtotal</div>
+      </div>
+      <hr>
+      <div class="row items-list">
+        <div class="col-md-12">
+          <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
+            <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
+            <div class="col-md-7">{{movementOfArticle.description}}</div>
+            <div class="col-md-3 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+          </div>
+          <div class="center-content" *ngIf="areMovementsOfArticlesEmpty">
+            Todavía no se han facturado artículos
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-4 offset-md-4">
+          <h4>Total</h4>
+        </div>
+        <div class="col-md-4 center-content">
+          <h4>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+    </div>
+  </div>
+</section>
+
+<!--MODAL CANTIDAD-->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div  class="modal-header">
+    <h4 class="modal-title">Cantidad</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <section class="container-fluid">
+    <div class="center-content"  *ngIf="alertMessage">
+      <ngb-alert (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')">
+      <div class="modal-body">
+        <div class="row">
+          <label for="amount" class="control-label">Ingrese la Cantidad:</label>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-8">
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="amount" name="amount" required/>
+            </div>
+            <div *ngIf="formErrors.amount" class="alert alert-danger">
+              {{ formErrors.amount }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
+            <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
+          <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+          <span *ngIf="!loading">Guardar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</ng-template>

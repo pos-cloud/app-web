@@ -43,13 +43,8 @@
         </div>
       </div>
     </div>
-    <div class="col-md-9">
-      <div class="row center-content">
+    <div class="col-md-9 center-content">
         <h4>Alta Pedido</h4>
-      </div>
-      <div class="row">
-        <input type="text" class="form-control" [(ngModel)]= "filterText" placeholder="Buscar artículo...">
-      </div>
     </div>
   </div>
   <div class="row">
@@ -60,20 +55,31 @@
         <div class="col-md-3 center-content">Subtotal</div>
       </div>
       <hr>
-      <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
-        <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
-        <div class="col-md-7">{{movementOfArticle.description}}</div>
-        <div class="col-md-3 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+      <div class="row items-list">
+        <div class="col-md-12">
+          <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
+            <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
+            <div class="col-md-7">{{movementOfArticle.description}}</div>
+            <div class="col-md-3 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+          </div>
+          <div class="center-content" *ngIf="areMovementsOfArticlesEmpty">
+            Todavía no se han facturado artículos
+          </div>
+        </div>
       </div>
-      <div class="center-content" *ngIf="areMovementsOfArticlesEmpty">
-        Todavía no se han facturado artículos
+      <hr>
+      <div class="row">
+        <div class="col-md-4 offset-md-4">
+          <h4>Total</h4>
+        </div>
+        <div class="col-md-4 center-content">
+          <h4>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</h4>
+        </div>
       </div>
     </div>
     <div class="col-md-9">
       <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
     </div>
-
-  <h4>PRECIO TOTAL {{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</h4>
   </div>
 </section>
 

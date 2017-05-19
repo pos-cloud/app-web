@@ -35,8 +35,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let article of articles | orderBy: [orderTerm]:property | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'make'
-                                                                        | filter: filterCategory:'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
+            <tr *ngFor="let article of articles | orderBy: [orderTerm]:property | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'description':'make'
+                                                                        | filter: filterCategory:'description':'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
                                                                         | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode'
                                                                         | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td class="flat">{{article.code}}</td>
@@ -71,9 +71,12 @@
 </section>
 
 <!--POS-->
-<section class="row" *ngIf="userType=='pos'">
-  <div > 
-    <div *ngFor="let article of articles | orderBy:[orderTerm]" >
+<section  class="container-fluid" *ngIf="userType=='pos'">
+  <div class="row">
+    <input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." >
+  </div>
+  <div class="row"> 
+    <div *ngFor="let article of articles | filter: filterDescription:'description'" >
       <div class="iarticle" (click)="addItem(article)">
         <p>{{article.description}}</p>
       </div>
