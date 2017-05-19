@@ -136,7 +136,7 @@ export class AddTableComponent  implements OnInit {
             'room': room,
             'description': '',
             'chair': 1,
-            'status': TableStatus.Enabled,
+            'status': TableStatus.Available,
           });
         },
         error => {

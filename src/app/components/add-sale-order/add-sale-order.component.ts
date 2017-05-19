@@ -6,7 +6,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { SaleOrder, SaleOrderStatus } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
-import { Table } from './../../models/table';
+import { Table, TableStatus } from './../../models/table';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -141,6 +141,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
+            this.changeStatusOfTable();
           }
         },
         error => {
@@ -150,6 +151,31 @@ export class AddSaleOrderComponent implements OnInit {
           }
           this.loading = false;
         }
+    );
+  }
+
+  private changeStatusOfTable(): void {
+
+    this.table.status = TableStatus.Busy;
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        if (!result.table) {
+          this.alertMessage = result.message;
+        } else {
+          this.table = result.table;
+          this.alertConfig.type = 'success';
+          this.alertMessage = "El artículo se ha actualizado con éxito.";
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
     );
   }
   

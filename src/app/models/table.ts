@@ -7,16 +7,15 @@ export class Table {
 	public description: string;
 	public room: Room = null;
 	public chair: number = 1;
-	public status: any = TableStatus.Enabled;
+	public status: any = TableStatus.Available;
 	public waiter: Waiter = null;
 
 	constructor () {}
 }
 
 export enum TableStatus {
-	Enabled = <any> "Habilitada",
-	Disabled = <any> "No Habilitada",
-	Reserved = <any> "Reservada",
+	Available = <any> "Disponible",
 	Busy = <any> "Ocupada",
-	Closed = <any> "Cerrada"
+	Reserved = <any> "Reservada",
+	Disabled = <any> "No Habilitada"
 }
