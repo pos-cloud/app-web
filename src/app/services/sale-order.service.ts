@@ -29,7 +29,11 @@ export class SaleOrderService {
     return this._http.delete(this.url+"sale-order/"+id).map (res => res.json());
   }
 
-  updateSaleOrder (id: string, saleOrder: SaleOrder){
-    return this._http.put(this.url+"sale-order/"+id, saleOrder).map (res => res.json());
+  updateSaleOrder (saleOrder: SaleOrder){
+    return this._http.put(this.url+"sale-order/"+saleOrder._id, saleOrder).map (res => res.json());
   }
+
+  getOpenSaleOrder (tableId) {
+		return this._http.get(this.url+'sale-orders/where="table":"'+tableId+'","number":0&limit=1').map (res => res.json());
+	}
 }

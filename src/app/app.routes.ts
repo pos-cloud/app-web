@@ -77,6 +77,7 @@ const _routes: Routes = [
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
+  { path: 'pos/salones/:id/mesas/:id/editar-pedido/:id', component: UpdateSaleOrderComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];

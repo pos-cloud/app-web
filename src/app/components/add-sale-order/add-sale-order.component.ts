@@ -139,6 +139,7 @@ export class AddSaleOrderComponent implements OnInit {
           if(!result.saleOrder) {
             this.alertMessage = result.message;
           } else {
+            this.alertMessage = null;
             this.saleOrder = result.saleOrder;
           }
         },
@@ -179,9 +180,10 @@ export class AddSaleOrderComponent implements OnInit {
     
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
-        if (!this.movementOfArticle) {
-          this.alertMessage = 'Ha ocurrido un error al querer facturar el producto.';
+        if (!result.movementOfArticle) {
+          this.alertMessage = result.message;
         } else {
+          this.alertMessage = null;
           this.movementOfArticle = result.movementOfArticle;
           this.addItemToOrder();
           this.movementOfArticle = new MovementOfArticle();
@@ -203,49 +205,41 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.movementsOfArticles.push(this.movementOfArticle);
     this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
+    this.updateSaleOrder();
     this.areMovementsOfArticlesEmpty = false;
   }
 
   private addAmount(): void {
-    this.amountOfItemForm.setValue({
-            'amount': this.amountOfItemForm.value.amount + 1
+    this.amountOfItemForm.setValue({'amount': this.amountOfItemForm.value.amount + 1
     });
   }
 
   private subtractAmount(): void {
 
     if (this.amountOfItemForm.value.amount > 1) {
-      this.amountOfItemForm.setValue({
-              'amount': this.amountOfItemForm.value.amount - 1
-      });
+      this.amountOfItemForm.setValue({'amount': this.amountOfItemForm.value.amount - 1});
     } else {
-      this.amountOfItemForm.setValue({
-              'amount': 1
-      });
+      this.amountOfItemForm.setValue({'amount': 1});
     }
-    
   }
 
-  // private getMovementsOfArticles(): void {
-
-  //   this._movementOfArticleService.getMovementsOfArticles().subscribe(
-  //       result => {
-	// 				this.movementsOfArticles = result.movementsOfArticles;
-	// 				if(!this.movementsOfArticles) {
-	// 					this.alertMessage = result.message;
-  //           this.areMovementsOfArticlesEmpty = true;
-	// 				} else if(this.movementsOfArticles.length !== 0){
-  //            this.areMovementsOfArticlesEmpty = false;
-  //         } else {
-  //           this.areMovementsOfArticlesEmpty = true;
-  //         }
-	// 			},
-	// 			error => {
-	// 				this.alertMessage = error;
-	// 				if(!this.alertMessage) {
-	// 					this.alertMessage = "Error en la petición.";
-	// 				}
-	// 			}
-  //     );
-  //  }
+  private updateSaleOrder(): void {
+    
+    this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
+      result => {
+          if(!result.saleOrder) {
+            this.alertMessage = result.message;
+          } else {
+            this.alertMessage = null;
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+              this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+          }
+          this.loading = false;
+        }
+    );
+  }
 }

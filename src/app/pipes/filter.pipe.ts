@@ -9,31 +9,55 @@ export class FilterPipe implements PipeTransform {
   result: any;
   strVal: string = "";
   strArg: string = "";
-  terms: string[];
+//   terms: string[];
   valueAux: any[];
 
-  transform(value: any[], arg1: string, arg2: string): any {
-    if (arg1 === undefined || !(arg1)) {
+  transform(value: any[], term: string, property: string, subobject?:string, ): any {
+
+    if (term === undefined || !(term) || !value) {
+
         this.result = value;
-    } else if (value) {
-        this.terms = arg1.split(';');
-        if (this.terms.length == 1){
-            this.valueAux = value;
-        }
+    } else {
+
+        // this.terms = term.split(';');
+        // if (this.terms.length == 1){    //nos permite hacer busqueda por varios campos en un solo inpu seguido de ';'
+        //      this.valueAux = value;
+        // }
+
+        this.valueAux = value;
+
         this.result = this.valueAux.filter(item => {
+            
             for (let key in item) {
-                if(arg2 === ""){
-                    if(key != "_id" && key === arg2){
+
+                if(subobject !== undefined) {
+
+                    if(key === subobject) {  //rechaza buscar por _id, y verifica si cual es la propiedad del objeto
+                        
+                        this.strVal = ""+item[key][property];
+                        // this.strArg = ""+this.terms[this.terms.length-1];
+                        this.strArg = term;
+                        if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
+                            return true;
+                        }
+                    }
+                } else if(property !== undefined) {
+
+                    if(key != "_id" && key === property) {  //rechaza buscar por _id, y verifica si cual es la propiedad del objeto
+                        
                         this.strVal = ""+item[key];
-                        this.strArg = ""+this.terms[this.terms.length-1];
+                        this.strArg = term;
                         if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
                             return true;
                         }
                     }
                 } else {
-                    if(key != "_id"){
+                    
+                    if(key != "_id") {   //rechaza buscar por _id
+
                         this.strVal = ""+item[key];
-                        this.strArg = ""+this.terms[this.terms.length-1];
+                        this.strArg = term;
+                        
                         if(this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
                             return true;
                         }

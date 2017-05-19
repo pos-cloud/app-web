@@ -10,6 +10,7 @@ import { Waiter } from './../../models/waiter';
 
 import { WaiterService } from './../../services/waiter.service';
 import { TableService } from './../../services/table.service';
+import { SaleOrderService } from './../../services/sale-order.service';
 
 import { AddTableComponent } from './../../components/add-table/add-table.component';
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
@@ -52,6 +53,7 @@ export class ListTablesComponent implements OnInit {
     private _fb: FormBuilder,
     private _tableService: TableService,
     private _waiterService: WaiterService,
+    private _saleOrderService: SaleOrderService,
     private _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -202,7 +204,7 @@ export class ListTablesComponent implements OnInit {
 
             if(this.tableSelected.waiter !== undefined) {
 
-              this.addSaleOrder();
+              this.getOpenSaleOrder();
             } else {
 
               this.buildForm();
@@ -262,7 +264,7 @@ export class ListTablesComponent implements OnInit {
 					} else {
             this.alertMessage = null;
             this.loading = false;
-					  this.addSaleOrder();
+            this.getOpenSaleOrder();
           }
 				},
 				error => {
@@ -274,6 +276,31 @@ export class ListTablesComponent implements OnInit {
 				}
      );
    }
+
+    private getOpenSaleOrder(): void {
+
+      this._saleOrderService.getOpenSaleOrder(this.tableSelected._id).subscribe(
+        result => {
+          if(!result.saleOrders) {
+            this.alertMessage = null;
+            this.addSaleOrder();
+          } else {
+            this.alertMessage = null;
+            this.updateSaleOrder(result.saleOrders[0]._id);
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+    } 
+
+    private updateSaleOrder(saleOrderId: string) {
+      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/editar-pedido/'+saleOrderId]);
+    }
 
     private addSaleOrder() {
       this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);

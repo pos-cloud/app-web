@@ -1,0 +1,31 @@
+.center-content {
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-justify-content: center;
+      justify-content: center;
+}
+
+.table {
+      box-shadow: 0px 0px 5px;
+      border-radius: 10px;
+      cursor: pointer;
+ }
+
+ .scroll-table {
+      overflow-y: auto;
+      height: 500px;
+ }    
+
+.items-list {
+      height: 500px;
+}
+
+ /*.row{
+       border: 1px solid red;
+ }
+ .col-md-4, .col-md-8, .col-md-12, .col-md-3, .col-md-9 {
+       border: 1px solid blue;
+ }*/
+
