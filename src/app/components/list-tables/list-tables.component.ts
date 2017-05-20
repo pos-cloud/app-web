@@ -201,20 +201,14 @@ export class ListTablesComponent implements OnInit {
             });
           break;
         case 'select_waiter' :
-
             if(this.tableSelected.waiter !== undefined) {
 
               this.getOpenSaleOrder();
             } else {
-
+              
+              this.tableSelected.waiter = new Waiter();
               this.buildForm();
               this.getWaiters();
-
-              if(this.waiters.length > 0) {
-                this.tableSelected.waiter = this.waiters[0];
-              } else {
-                this.tableSelected.waiter = new Waiter();
-              }
 
               modalRef = this._modalService.open(this.content).result.then((result) => {
                   if(result  === "select_waiter"){
@@ -222,9 +216,11 @@ export class ListTablesComponent implements OnInit {
                     this.waiter = this.selectWaiterForm.value.waiter;
                     this.tableSelected.waiter = this.waiter;
                     this.assignWaiter();
+                  } else {
+                    this.tableSelected.waiter = undefined;
                   }
                 }, (reason) => {
-                  
+                  this.tableSelected.waiter = undefined;
                 }
               );
             }

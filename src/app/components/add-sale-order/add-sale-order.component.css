@@ -15,11 +15,11 @@
 
  .scroll-table {
       overflow-y: auto;
-      height: 500px;
+      height: 300px;
  }    
 
 .items-list {
-      height: 500px;
+      height: 300px;
 }
 
  /*.row{
