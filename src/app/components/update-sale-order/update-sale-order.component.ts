@@ -210,7 +210,7 @@ export class UpdateSaleOrderComponent implements OnInit {
   private addItemToOrder(): void {
 
     this.movementsOfArticles.push(this.movementOfArticle);
-    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
+    this.updateSaleOrder();
     this.amountOfItemForm.setValue({
             'amount': this.saleOrder.totalPrice
     });
@@ -243,9 +243,12 @@ export class UpdateSaleOrderComponent implements OnInit {
         result => {
 					if(!result.movementsOfArticles) {
             this.areMovementsOfArticlesEmpty = true;
+            this.movementsOfArticles = new Array();
+            this.updatePrices();
 					} else {
             this.areMovementsOfArticlesEmpty = false;
             this.movementsOfArticles = result.movementsOfArticles;
+            this.updatePrices();
           }
 				},
 				error => {
@@ -262,4 +265,30 @@ export class UpdateSaleOrderComponent implements OnInit {
      this.areCategoriesVisible = true;
      this.areArticlesVisible = false;
    }
+
+  private deleteMovementOfArticle(movementOfArticleId: string): void {
+    
+    this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
+      result => {
+        this.getMovementsOfSaleOrder();
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+      }
+    );
+  }
+
+  private updatePrices(): void {
+
+      this.saleOrder.totalPrice = 0;
+
+      for(let movementOfArticle of this.movementsOfArticles) {
+
+        this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
+      }
+   }
+
 }

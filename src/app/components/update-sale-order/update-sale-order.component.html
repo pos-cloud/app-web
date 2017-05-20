@@ -36,16 +36,20 @@
     <div class="col-md-3 scroll">
       <div class="row">
         <div class="col-md-2 center-content">Cantidad</div>
-        <div class="col-md-7">Description</div>
+        <div class="col-md-5">Description</div>
         <div class="col-md-3 center-content">Subtotal</div>
+        <div class="col-md-2"></div>
       </div>
       <hr>
       <div class="row items-list">
         <div class="col-md-12">
           <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
             <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
-            <div class="col-md-7">{{movementOfArticle.description}}</div>
+            <div class="col-md-5">{{movementOfArticle.description}}</div>
             <div class="col-md-3 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+            <div class="col-md-2">
+              <button type="button" (click)="deleteMovementOfArticle(movementOfArticle._id)"><i class="fa fa-trash-o"></i></button>
+            </div>
           </div>
           <div class="center-content" *ngIf="areMovementsOfArticlesEmpty">
             Todavía no se han facturado artículos

@@ -234,7 +234,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.movementOfArticle = result.movementOfArticle;
-          this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.movementOfArticle.totalPrice);
           this.updateSaleOrder();
         }
         this.loading = false;
@@ -291,4 +290,54 @@ export class AddSaleOrderComponent implements OnInit {
         }
     );
   }
+
+  private deleteMovementOfArticle(movementOfArticleId: string): void {
+    
+    this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
+      result => {
+        this.getMovementsOfSaleOrder();
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+      }
+    );
+  }
+
+  private getMovementsOfSaleOrder(): void {
+    
+    this._movementOfArticleService.getMovementsOfSaleOrder(this.saleOrder._id).subscribe(
+        result => {
+					if(!result.movementsOfArticles) {
+            this.areMovementsOfArticlesEmpty = true;
+            this.movementsOfArticles = new Array();
+            this.updatePrices();
+					} else {
+            this.areMovementsOfArticlesEmpty = false;
+            this.movementsOfArticles = result.movementsOfArticles;
+            this.updatePrices();
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
+
+
+   private updatePrices(): void {
+
+      this.saleOrder.totalPrice = 0;
+
+      for(let movementOfArticle of this.movementsOfArticles) {
+
+        this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
+      }
+   }
+
 }
