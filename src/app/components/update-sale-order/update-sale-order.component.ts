@@ -8,6 +8,7 @@ import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table } from './../../models/table';
 import { Waiter } from './../../models/waiter';
+import { Category } from './../../models/category';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -30,6 +31,9 @@ export class UpdateSaleOrderComponent implements OnInit {
   private table: Table;
   private tableId: string;
   private loading: boolean = false;
+  private areCategoriesVisible: boolean = true;
+  private areArticlesVisible: boolean = false;
+  private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
 
   private formErrors = {
@@ -155,6 +159,13 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.openModal();
   }
 
+  private showArticlesOfCategory(category: Category): void {
+    
+    this.categorySelected = category;
+    this.areArticlesVisible = true;
+    this.areCategoriesVisible = false;
+  }
+
   private openModal(): void {
     let modalRef = this._modalService.open(this.content).result.then((result) => {
       if(result  === "add_item"){
@@ -244,5 +255,11 @@ export class UpdateSaleOrderComponent implements OnInit {
 					}
 				}
       );
+   }
+
+   private showCategories(): void {
+
+     this.areCategoriesVisible = true;
+     this.areArticlesVisible = false;
    }
 }

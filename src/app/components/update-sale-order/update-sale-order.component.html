@@ -1,18 +1,3 @@
-<!--POS-->
-  <!--HEADER-->
-<!--<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse bg-faded" >
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','productos']" >Productos</a>
-      </li>
-    </ul>
-  </div>
-</nav>-->
-<!--HEADER-->
 <section class="container-fluid">
   <div class="row">
     <div class="col-md-3">
@@ -78,9 +63,25 @@
       </div>
     </div>
     <div class="col-md-9">
-      <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+      <div class="row">
+        <input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." >
+      </div>
+      <div class="row">
+        <nav class="breadcrumb">
+          <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
+          <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Artículos</span>
+        </nav>
+      </div>
+      <div class="row" *ngIf="areCategoriesVisible">
+        <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"></app-list-categories>
+      </div>
+      <div class="row" *ngIf="areArticlesVisible">
+        <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+      </div>
     </div>
   </div>
+  {{areCategoriesVisible}}
+  {{areArticlesVisible}}
 </section>
 
 <!--MODAL CANTIDAD-->

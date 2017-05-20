@@ -91,7 +91,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.table = result.table;
-          console.log(this.table);
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
           this.getOpenCashBox();

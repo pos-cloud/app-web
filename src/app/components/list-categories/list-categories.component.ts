@@ -26,6 +26,7 @@ export class ListCategoriesComponent implements OnInit {
   private propertyTerm: string;
   private areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
+  @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
 
   constructor(
     private _categoryService: CategoryService,
@@ -120,5 +121,9 @@ export class ListCategoriesComponent implements OnInit {
 
     private addItem(categorySelected) {
       this.eventAddItem.emit(categorySelected);
+    }
+
+    private selectCategory(categorySelected) {
+      this.eventSelectCategory.emit(categorySelected);
     }
 }

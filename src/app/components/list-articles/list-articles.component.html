@@ -72,9 +72,6 @@
 
 <!--POS-->
 <section  class="container-fluid" *ngIf="userType=='pos'">
-  <div class="row">
-    <input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." >
-  </div>
   <div class="row"> 
     <div *ngFor="let article of articles | filter: filterDescription:'description'" >
       <div class="iarticle" (click)="addItem(article)">
@@ -83,6 +80,3 @@
     </div>
   </div>
 </section>
-
-<!--align="center" *ngIf="areArticlesEmpty"
-No se encontraron artículos-->

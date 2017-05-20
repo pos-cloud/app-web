@@ -1,18 +1,3 @@
-<!--POS-->
-  <!--HEADER-->
-<!--<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse bg-faded" >
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','productos']" >Productos</a>
-      </li>
-    </ul>
-  </div>
-</nav>-->
-<!--HEADER-->
 <section class="container-fluid">
   <div class="row center-content"  *ngIf="alertMessage">
     <ngb-alert (close)="alertMessage=''">
@@ -27,7 +12,7 @@
             <h4>Mesa</h4>
           </div>
           <div class="row center-content">
-            <h4>{{saleOrder.table.description}}</h4>
+            <div [(ngModel)]="saleOrder.table.description" #description="ngModel"></div>
           </div>
         </div>
         <div class="col-md-3">
@@ -35,7 +20,7 @@
             <h4>Mozo</h4>
           </div>
           <div class="row center-content">
-            <h4>{{saleOrder.waiter.name}}</h4>
+            <div [(ngModel)]="saleOrder.waiter.name" #name="ngModel"></div>
           </div>
         </div>
         <div class="col-md-6">

@@ -45,3 +45,14 @@
       </div>
   </div>
 </section>
+
+<!--POS-->
+<section  class="container-fluid" *ngIf="userType=='pos'">
+  <div class="row"> 
+    <div *ngFor="let category of categories | filter: filterDescription:'description'" >
+      <div class="icategory" (click)="selectCategory(category)">
+        <p>{{category.description}}</p>
+      </div>
+    </div>
+  </div>
+</section>
