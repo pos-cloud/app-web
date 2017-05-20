@@ -131,6 +131,10 @@ export class AddSaleOrderComponent implements OnInit {
       'amount': [this.movementOfArticle.amount, [
           Validators.required
         ]
+      ],
+      'observation': [this.movementOfArticle.observation, [
+          
+        ]
       ]
     });
 
