@@ -1,0 +1,69 @@
+<div class="modal-header">
+  <h4 class="modal-title">Editar Usuario</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content"  *ngIf="alertMessage">
+    <ngb-alert (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="userForm" #formUpdateUser="ngForm" (ngSubmit)="updateUser()">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="name" class="control-label">Nombre:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="name" name="name" id="name" required [focus]="focusEvent"/>
+          </div>
+          <div *ngIf="formErrors.name" class="alert alert-danger">
+            {{ formErrors.name }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="status" class="control-label">Habilitado</label>
+          <select class="form-control" formControlName="status">
+            <option *ngFor="let status of states" [ngValue]="status">{{status}}</option>
+          </select>
+          <div *ngIf="formErrors.status" class="alert alert-danger">
+            {{ formErrors.status }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="type" class="control-label">Tipo de usuario</label>
+          <select class="form-control" formControlName="type">
+            <option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
+          </select>
+          <div *ngIf="formErrors.type" class="alert alert-danger">
+            {{ formErrors.type }}
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="userForm.value.type==='Mozo'">
+        <div class="form-group col-md-12">
+          <label for="waiter" class="control-label">Mozo Asociado</label>
+          <select class="form-control" formControlName="waiter">
+            <option *ngFor="let waiter of waiters" [selected]="waiter._id==user.waiter._id" [value]="waiter._id">{{waiter.name}}</option>
+          </select>
+          <div *ngIf="formErrors.waiter" class="alert alert-danger">
+            {{ formErrors.status }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid || loading" >
+        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar Cambios</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

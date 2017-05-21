@@ -36,6 +36,10 @@ import { ListCategoriesComponent } from './components/list-categories/list-categ
 import { AddCategoryComponent } from './components/add-category/add-category.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { DeleteCategoryComponent } from './components/delete-category/delete-category.component';
+import { AddUserComponent } from './components/add-user/add-user.component';
+import { UpdateUserComponent } from './components/update-user/update-user.component';
+import { ListUsersComponent } from './components/list-users/list-users.component';
+import { DeleteUserComponent } from './components/delete-user/delete-user.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 
 const _routes: Routes = [
@@ -74,6 +78,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-rubro', component: AddCategoryComponent },
   { path: 'admin/editar-rubro', component: UpdateCategoryComponent },
   { path: 'admin/eliminar-rubro', component: DeleteCategoryComponent },
+  { path: 'admin/usuarios', component: ListUsersComponent },
+  { path: 'admin/agregar-usuario', component: AddUserComponent },
+  { path: 'admin/editar-usuario', component: UpdateUserComponent },
+  { path: 'admin/eliminar-usuario', component: DeleteUserComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },

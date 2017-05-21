@@ -1,0 +1,55 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Lista de Usuarios
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Usuario</button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('name')">Nombre</th>
+              <th (click)="orderBy('status')">Estado</th>
+              <th (click)="orderBy('type')">Tipo</th>
+              <th (click)="orderBy('waiter')">Mozo</th>
+              <th><em class="fa fa-cog"></em></th>
+            </tr>
+            <tr *ngIf="areFiltersVisible">
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterStatus" placeholder="Estado..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterWaiter" placeholder="Mozo..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td>{{user.name}}</td>
+              <td>{{user.status}}</td>
+              <td>{{user.type}}</td>
+              <td>{{user.waiter.name}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', user)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', user)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="areUsersEmpty">
+              <td colspan="3">No se encontraron usuarios</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary card-inverse">
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
+      </div>
+  </div>
+</section>

@@ -1,3 +1,5 @@
+import { Waiter } from './waiter';
+
 export class User {
 	
 	public _id: string;
@@ -5,6 +7,7 @@ export class User {
 	public password: string;
 	public type: any = UserTypes.Supervisor;
 	public status: any = UserStatus.Enabled;
+	public waiter: Waiter = null;
 
 	constructor () {}
 }

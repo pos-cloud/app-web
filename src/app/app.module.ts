@@ -56,6 +56,10 @@ import { ListCategoriesComponent } from './components/list-categories/list-categ
 import { AddCategoryComponent } from './components/add-category/add-category.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { DeleteCategoryComponent } from './components/delete-category/delete-category.component';
+import { AddUserComponent } from './components/add-user/add-user.component';
+import { UpdateUserComponent } from './components/update-user/update-user.component';
+import { ListUsersComponent } from './components/list-users/list-users.component';
+import { DeleteUserComponent } from './components/delete-user/delete-user.component';
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -109,6 +113,10 @@ import { FocusDirective } from './directives/focus.directive';
     LoginComponent,
     FilterPipe,
     OrderByPipe,
+    AddUserComponent,
+    UpdateUserComponent,
+    ListUsersComponent,
+    DeleteUserComponent,
   ],
   imports: [
     BrowserModule,
