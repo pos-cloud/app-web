@@ -39,7 +39,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _userservice: UserService
     ) { 
       alertConfig.type = 'danger';
       alertConfig.dismissible = true;
@@ -95,6 +96,27 @@ export class LoginComponent implements OnInit {
   }
 
   private login(): void {
-    console.log("logueado");
+
+    this.user = this.loginForm.value;
+
+    this._userservice.login(this.user).subscribe(
+      result => {
+      if (!result.user) {
+          this.alertMessage = result.message;
+      } else {
+        this.alertMessage = null;
+        this.user = result.user;
+        this.activeModal.close();
+      }
+    },
+    error => {
+       this.alertMessage = error;
+      if(!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+      }
+      this.loading = false;
+    }
+    )
+    
   }
 }

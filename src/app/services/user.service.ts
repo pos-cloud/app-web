@@ -25,6 +25,10 @@ export class UserService {
 		return this._http.get(this.url+"users").map (res => res.json());
 	}
 
+  login (user : User) {
+		return this._http.post(this.url+"login",user).map (res => res.json());
+	}
+
   saveUser (user : User) {
     return this._http.post(this.url+"user",user).map (res => res.json());
   }
