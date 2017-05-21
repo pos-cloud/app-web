@@ -7,7 +7,6 @@ import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
 
 import { AddCashBoxComponent } from './../../components/add-cash-box/add-cash-box.component';
-import { UpdateCashBoxComponent } from './../../components/update-cash-box/update-cash-box.component';
 import { DeleteCashBoxComponent } from './../../components/delete-cash-box/delete-cash-box.component';
 
 @Component({
@@ -90,17 +89,6 @@ export class ListCashBoxesComponent implements OnInit {
           }, (reason) => {
             this.getCashBoxes();
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateCashBoxComponent, { size: 'lg' })
-            modalRef.componentInstance.cashBox = cashBox;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getCashBoxes();
-              }
-            }, (reason) => {
-              
-            });
           break;
         case 'delete' :
             modalRef = this._modalService.open(DeleteCashBoxComponent, { size: 'lg' })

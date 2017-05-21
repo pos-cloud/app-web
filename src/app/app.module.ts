@@ -19,6 +19,7 @@ import { UserService } from './services/user.service';
 import { RoomService } from './services/room.service';
 import { MakeService } from './services/make.service';
 import { CategoryService } from './services/category.service';
+import { TurnService } from './services/turn.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -38,7 +39,6 @@ import { UpdateTableComponent } from './components/update-table/update-table.com
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
 import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
-import { UpdateCashBoxComponent } from './components/update-cash-box/update-cash-box.component';
 import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
 import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
@@ -90,7 +90,6 @@ import { FocusDirective } from './directives/focus.directive';
     DeleteTableComponent,
     ListCashBoxesComponent,
     DeleteCashBoxComponent,
-    UpdateCashBoxComponent,
     AddCashBoxComponent,
     ListSaleOrdersComponent,
     AddSaleOrderComponent,
@@ -138,7 +137,8 @@ import { FocusDirective } from './directives/focus.directive';
     UserService,
     RoomService,
     MakeService,
-    CategoryService
+    CategoryService,
+    TurnService
   ],
   bootstrap: [AppComponent]
 })

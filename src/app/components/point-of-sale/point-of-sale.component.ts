@@ -38,36 +38,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOpenCashBox();
-  }
-
-  private getOpenCashBox(): void {
-
-    this._cashBoxService.getOpenCashBox().subscribe(
-        result => {
-					if(!result.cashBoxes) {
-						this.openModal();
-					} else {
-            this.cashBox = result.cashBoxes[0];
-            this.getRooms();
-          }
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
-   }
-
-   private openModal(): void {
-    
-    let modalRef = this._modalService.open(AddCashBoxComponent, { size: 'lg' }).result.then((result) => {
-      this.getOpenCashBox();
-    }, (reason) => {
-      this.getOpenCashBox();
-    });
+    this.getRooms();
   }
 
   private getRooms(): void {  

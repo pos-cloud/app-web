@@ -16,10 +16,6 @@ import { ListTablesComponent } from './components/list-tables/list-tables.compon
 import { AddTableComponent } from './components/add-table/add-table.component';
 import { UpdateTableComponent } from './components/update-table/update-table.component';
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
-import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
-import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
-import { UpdateCashBoxComponent } from './components/update-cash-box/update-cash-box.component';
-import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
 import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
@@ -58,10 +54,6 @@ const _routes: Routes = [
   { path: 'admin/agregar-mesa', component: AddTableComponent },
   { path: 'admin/editar-mesa', component: UpdateTableComponent },
   { path: 'admin/eliminar-mesa', component: DeleteTableComponent },
-  { path: 'admin/cajas', component: ListCashBoxesComponent },
-  { path: 'admin/agregar-caja', component: AddCashBoxComponent },
-  { path: 'admin/editar-caja', component: UpdateCashBoxComponent },
-  { path: 'admin/eliminar-caja', component: DeleteCashBoxComponent },
   { path: 'admin/pedidos', component: ListSaleOrdersComponent },
   { path: 'admin/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'admin/editar-pedido', component: UpdateSaleOrderComponent },

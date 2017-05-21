@@ -48,7 +48,6 @@
               <td>{{cashBox.difference | currency:'USD':'1.2-2'}}</td>
               <td><h6><span class="badge badge-default">{{cashBox.status}}</span></h6></td>
               <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', cashBox)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>

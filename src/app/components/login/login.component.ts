@@ -4,8 +4,10 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
+import { Turn } from './../../models/turn';
 
 import { UserService } from './../../services/user.service';
+import { TurnService } from './../../services/turn.service';
 
 @Component({
   selector: 'app-login',
@@ -37,10 +39,11 @@ export class LoginComponent implements OnInit {
   };
 
   constructor(
+    private _userservice: UserService,
+    private _turnService: TurnService,
     private _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _userservice: UserService
     ) { 
       alertConfig.type = 'danger';
       alertConfig.dismissible = true;
@@ -101,22 +104,66 @@ export class LoginComponent implements OnInit {
 
     this._userservice.login(this.user).subscribe(
       result => {
-      if (!result.user) {
-          this.alertMessage = result.message;
-      } else {
-        this.alertMessage = null;
-        this.user = result.user;
-        this.activeModal.close();
+        if (!result.user) {
+            this.alertMessage = result.message;
+        } else {
+          this.alertMessage = null;
+          this.user = result.user;
+          console.log(this.user);
+          this.getOpenTurn();
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
       }
-    },
-    error => {
-       this.alertMessage = error;
-      if(!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-      }
-      this.loading = false;
-    }
     )
+  }
+
+  private getOpenTurn(): void {
     
+    this._turnService.getOpenTurn().subscribe(
+        result => {
+					if(!result.turns) {
+						this.openTurn();
+					} else {
+            this.alertMessage = "El mozo " + this.user.waiter.name + " ya tiene el turno abierto" ;
+            this.alertConfig.type = "danger";
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
+
+  private openTurn(): void {
+
+    let turn: Turn = new Turn();
+    turn.waiter = this.user.waiter;
+
+    this._turnService.saveTurn(turn).subscribe(
+      result => {
+        if (!result.turn) {
+            this.alertMessage = result.message;
+        } else {
+          this.alertMessage = "Turno Abierto";
+          this.alertConfig.type = "success";
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
+    )
   }
 }
