@@ -36,6 +36,10 @@ import { AddUserComponent } from './components/add-user/add-user.component';
 import { UpdateUserComponent } from './components/update-user/update-user.component';
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
+import { ListCompaniesComponent } from './components/list-companies/list-companies.component';
+import { AddCompanyComponent } from './components/add-company/add-company.component';
+import { UpdateCompanyComponent } from './components/update-company/update-company.component';
+import { DeleteCompanyComponent } from './components/delete-company/delete-company.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 
 const _routes: Routes = [
@@ -74,6 +78,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-usuario', component: AddUserComponent },
   { path: 'admin/editar-usuario', component: UpdateUserComponent },
   { path: 'admin/eliminar-usuario', component: DeleteUserComponent },
+  { path: 'admin/empresas', component: ListCompaniesComponent },
+  { path: 'admin/agregar-empresa', component: AddCompanyComponent },
+  { path: 'admin/editar-empresa', component: UpdateCompanyComponent },
+  { path: 'admin/eliminar-empresa', component: DeleteCompanyComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },

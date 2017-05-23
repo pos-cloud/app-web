@@ -20,6 +20,7 @@ import { RoomService } from './services/room.service';
 import { MakeService } from './services/make.service';
 import { CategoryService } from './services/category.service';
 import { TurnService } from './services/turn.service';
+import { CompanyService } from './services/company.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -60,6 +61,10 @@ import { AddUserComponent } from './components/add-user/add-user.component';
 import { UpdateUserComponent } from './components/update-user/update-user.component';
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
+import { ListCompaniesComponent } from './components/list-companies/list-companies.component';
+import { UpdateCompanyComponent } from './components/update-company/update-company.component';
+import { DeleteCompanyComponent } from './components/delete-company/delete-company.component';
+import { AddCompanyComponent } from './components/add-company/add-company.component';
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -116,6 +121,10 @@ import { FocusDirective } from './directives/focus.directive';
     UpdateUserComponent,
     ListUsersComponent,
     DeleteUserComponent,
+    ListCompaniesComponent,
+    UpdateCompanyComponent,
+    DeleteCompanyComponent,
+    AddCompanyComponent,
   ],
   imports: [
     BrowserModule,
@@ -138,7 +147,8 @@ import { FocusDirective } from './directives/focus.directive';
     RoomService,
     MakeService,
     CategoryService,
-    TurnService
+    TurnService,
+    CompanyService
   ],
   bootstrap: [AppComponent]
 })

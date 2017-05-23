@@ -4,21 +4,21 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Waiter } from './../../models/waiter';
+import { Company } from './../../models/company';
 
-import { WaiterService } from './../../services/waiter.service';
+import { CompanyService } from './../../services/company.service';
 
 @Component({
-  selector: 'app-update-waiter',
-  templateUrl: './update-waiter.component.html',
-  styleUrls: ['./update-waiter.component.css'],
+  selector: 'app-update-company',
+  templateUrl: './update-company.component.html',
+  styleUrls: ['./update-company.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class UpdateWaiterComponent implements OnInit {
+export class UpdateCompanyComponent implements OnInit {
 
-  @Input() waiter: Waiter;
-  private waiterForm: FormGroup;
+  @Input() company: Company;
+  private companyForm: FormGroup;
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
@@ -35,7 +35,7 @@ export class UpdateWaiterComponent implements OnInit {
   };
 
   constructor(
-    private _waiterService: WaiterService,
+    private _companyService: CompanyService,
     private _fb: FormBuilder,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -53,9 +53,9 @@ export class UpdateWaiterComponent implements OnInit {
       this.userType = locationPathURL[1];
     });
     this.buildForm();
-    this.waiterForm.setValue({
-      '_id': this.waiter._id,
-      'name': this.waiter.name
+    this.companyForm.setValue({
+      '_id': this.company._id,
+      'name': this.company.name
     });
   }
 
@@ -65,17 +65,17 @@ export class UpdateWaiterComponent implements OnInit {
 
   private buildForm(): void {
 
-    this.waiterForm = this._fb.group({
-      '_id': [this.waiter._id, [
+    this.companyForm = this._fb.group({
+      '_id': [this.company._id, [
         ]
       ],
-      'name': [this.waiter.name, [
+      'name': [this.company.name, [
           Validators.required
         ]
       ]
     });
 
-    this.waiterForm.valueChanges
+    this.companyForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -83,8 +83,8 @@ export class UpdateWaiterComponent implements OnInit {
 
   private onValueChanged(data?: any): void {
 
-    if (!this.waiterForm) { return; }
-    const form = this.waiterForm;
+    if (!this.companyForm) { return; }
+    const form = this.companyForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -99,23 +99,23 @@ export class UpdateWaiterComponent implements OnInit {
     }
   }
 
-  private updateWaiter (): void {
+  private updateCompany (): void {
 
     this.loading = true;
-    this.waiter = this.waiterForm.value;
+    this.company = this.companyForm.value;
     this.saveChanges();
   }
 
   private saveChanges(): void {
     
-    this._waiterService.updateWaiter(this.waiter).subscribe(
+    this._companyService.updateCompany(this.company).subscribe(
     result => {
-        if (!result.waiter) {
+        if (!result.company) {
           this.alertMessage = result.message;
         } else {
-          this.waiter = result.waiter;
+          this.company = result.company;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha actualizado con éxito.";
+          this.alertMessage = "La empresa se ha actualizado con éxito.";
           this.activeModal.close('save_close');
         }
         this.loading = false;
