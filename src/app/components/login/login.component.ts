@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
 import { Turn } from './../../models/turn';
+import { Waiter } from './../../models/waiter';
 
 import { UserService } from './../../services/user.service';
 import { TurnService } from './../../services/turn.service';
+import { WaiterService } from './../../services/waiter.service';
+import { TableService } from './../../services/table.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +26,8 @@ export class LoginComponent implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
+  @Input() waiterSelected: Waiter;
+  private waiters: Waiter[] = new Array();
 
   private formErrors = {
     'name': '',
@@ -40,7 +45,9 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private _userservice: UserService,
+    private _waiterService: WaiterService,
     private _turnService: TurnService,
+    private _tableService: TableService,
     private _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -52,14 +59,71 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
 
     this.user = new User();
+    if(this.waiterSelected !== undefined){
+      this.getUserOfWaiter();
+    }
     this.buildForm();
+    this.getWaiters();
   }
+
+  private getUserOfWaiter(): void {  
+    
+    this._userservice.getUserOfWaiter(this.waiterSelected._id).subscribe(
+        result => {
+					if(!result.users) {
+						this.alertMessage = result.message;
+					  this.user = null;
+					} else {
+            this.alertMessage = null;
+					  this.user = result.users[0];
+            console.log(this.user);
+            this.loginForm.setValue({
+              '_id': this.user._id,
+              'name': this.user.name,
+              'password': '',
+              'type': this.user.type,
+              'status': this.user.status,
+              'waiter': this.user.waiter._id
+            });
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
+  
+  private getWaiters(): void {  
+
+    this._waiterService.getWaiters().subscribe(
+        result => {
+					if(!result.waiters) {
+						this.alertMessage = result.message;
+					  this.waiters = null;
+					} else {
+            this.alertMessage = null;
+					  this.waiters = result.waiters;
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
 
   private buildForm(): void {
 
     this.loginForm = this._fb.group({
+      '_id': [this.user._id, [
+        ]
+      ],
       'name': [this.user.name, [
-        Validators.required
         ]
       ],
       'password': [this.user.password, [
@@ -70,6 +134,9 @@ export class LoginComponent implements OnInit {
         ]
       ],
       'status': [this.user.status, [
+        ]
+      ],
+      'waiter': [this.user.waiter, [
         ]
       ]
     });
@@ -99,9 +166,9 @@ export class LoginComponent implements OnInit {
   }
 
   private login(): void {
-
+  
     this.user = this.loginForm.value;
-
+    
     this._userservice.login(this.user).subscribe(
       result => {
         if (!result.user) {
@@ -109,7 +176,6 @@ export class LoginComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.user = result.user;
-          console.log(this.user);
           this.getOpenTurn();
         }
       },
@@ -125,7 +191,7 @@ export class LoginComponent implements OnInit {
 
   private getOpenTurn(): void {
     
-    this._turnService.getOpenTurn().subscribe(
+    this._turnService.getOpenTurn(this.waiterSelected._id).subscribe(
         result => {
 					if(!result.turns) {
 						this.openTurn();
@@ -151,10 +217,9 @@ export class LoginComponent implements OnInit {
     this._turnService.saveTurn(turn).subscribe(
       result => {
         if (!result.turn) {
-            this.alertMessage = result.message;
+          this.alertMessage = result.message;
         } else {
-          this.alertMessage = "Turno Abierto";
-          this.alertConfig.type = "success";
+          this.activeModal.close("turn_open");
         }
       },
       error => {

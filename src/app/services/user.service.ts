@@ -26,7 +26,7 @@ export class UserService {
 	}
 
   login (user : User) {
-		return this._http.post(this.url+"login",user).map (res => res.json());
+    return this._http.post(this.url+"login",user).map (res => res.json());
 	}
 
   saveUser (user : User) {
@@ -40,4 +40,8 @@ export class UserService {
   updateUser (user: User){
     return this._http.put(this.url+"user/"+user._id, user).map (res => res.json());
   }
+
+  getUserOfWaiter (waiterId: string) {
+		return this._http.get(this.url+'users/where="waiter":"'+waiterId+'"&limit=1').map (res => res.json());
+	}
 }

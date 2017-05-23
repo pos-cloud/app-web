@@ -14,12 +14,14 @@
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">
-					<label for="name" class="control-label">Usuario:</label>
-					<div class="input-group">
-						<input type="text" class="form-control" formControlName="name" name="name" id="name" required autofocus/>
-					</div>
-					<div *ngIf="formErrors.name" class="alert alert-danger">
-						{{ formErrors.name }}
+					<label for="waiter" class="control-label">Mozo</label>
+					<select class="form-control" formControlName="waiter">
+						<option *ngFor="let waiter of waiters" [selected]="waiter._id==waiterSelected._id" [value]="waiter._id">
+							{{waiter.name}}
+						</option>
+					</select>
+					<div *ngIf="formErrors.waiter" class="alert alert-danger">
+						{{ formErrors.status }}
 					</div>
 				</div>
 			</div>

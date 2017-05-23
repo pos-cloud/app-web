@@ -89,7 +89,7 @@
           <div class="form-group col-md-12">
             <label for="waiter" class="control-label">Asignar el mozo</label>
             <select class="form-control" formControlName="waiter">
-              <option *ngFor="let waiter of waiters" [selected]="waiter._id==tableSelected.waiter._id" [value]="waiter._id">
+              <option *ngFor="let waiter of waiters" [selected]="waiter._id==tableSelected.waiter._id" [ngValue]="waiter">
                 {{waiter.name}}
               </option>
             </select>

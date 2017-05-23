@@ -30,14 +30,15 @@
               <td>{{user.name}}</td>
               <td>{{user.status}}</td>
               <td>{{user.type}}</td>
-              <td>{{user.waiter.name}}</td>
+              <td *ngIf="user.waiter">{{user.waiter.name}}</td>
+              <td *ngIf="!user.waiter"></td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', user)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', user)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>
             <tr align="center" *ngIf="areUsersEmpty">
-              <td colspan="3">No se encontraron usuarios</td>
+              <td colspan="4">No se encontraron usuarios</td>
             </tr>
           </tbody>
         </table>

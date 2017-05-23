@@ -11,15 +11,18 @@ import { Waiter } from './../../models/waiter';
 import { WaiterService } from './../../services/waiter.service';
 import { TableService } from './../../services/table.service';
 import { SaleOrderService } from './../../services/sale-order.service';
+import { TurnService } from './../../services/turn.service';
 
 import { AddTableComponent } from './../../components/add-table/add-table.component';
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
 import { DeleteTableComponent } from './../../components/delete-table/delete-table.component';
+import { LoginComponent } from './../../components/login/login.component';
 
 @Component({
   selector: 'app-list-tables',
   templateUrl: './list-tables.component.html',
-  styleUrls: ['./list-tables.component.css']
+  styleUrls: ['./list-tables.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListTablesComponent implements OnInit {
@@ -54,6 +57,7 @@ export class ListTablesComponent implements OnInit {
     private _tableService: TableService,
     private _waiterService: WaiterService,
     private _saleOrderService: SaleOrderService,
+    private _turnService: TurnService,
     private _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -190,7 +194,7 @@ export class ListTablesComponent implements OnInit {
             });
           break;
         case 'delete' :
-            modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' })
+            modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' });
             modalRef.componentInstance.table = this.tableSelected;
             modalRef.result.then((result) => {
               if(result === 'delete_close') {
@@ -201,7 +205,10 @@ export class ListTablesComponent implements OnInit {
             });
           break;
         case 'select_waiter' :
-            if(this.tableSelected.waiter !== undefined) {
+
+            if(this.tableSelected.waiter !== undefined && 
+              !this.tableSelected.waiter && 
+              this.tableSelected.waiter !== null) {
 
               this.getOpenSaleOrder();
             } else {
@@ -211,24 +218,63 @@ export class ListTablesComponent implements OnInit {
               this.getWaiters();
 
               modalRef = this._modalService.open(this.content).result.then((result) => {
-                  if(result  === "select_waiter"){
+                  if(result  === "select_waiter") {
                     this.loading = true;
-                    this.waiter = this.selectWaiterForm.value.waiter;
-                    this.tableSelected.waiter = this.waiter;
-                    this.assignWaiter();
+                    this.selectWaiter();
                   } else {
-                    this.tableSelected.waiter = undefined;
+                    this.tableSelected.waiter = null;
+                    this.loading = false;
                   }
                 }, (reason) => {
-                  this.tableSelected.waiter = undefined;
+                  this.tableSelected.waiter = null;
+                    this.loading = false;
                 }
               );
             }
-            
+          break;
+          case 'login' :
+            modalRef = this._modalService.open(LoginComponent, { size: 'lg' });
+            modalRef.componentInstance.waiterSelected = this.tableSelected.waiter;
+            modalRef.result.then((result) => {
+              if(result === "turn_open") {
+                this.assignWaiter();
+              } else {
+                this.tableSelected.waiter = null;
+              }
+            }, (reason) => {
+              this.tableSelected.waiter = null;
+            });
           break;
         default : ;
       }
     };
+
+    private selectWaiter(): void {
+      this.waiter = this.selectWaiterForm.value.waiter;
+      this.tableSelected.waiter = this.waiter;
+      this.getOpenTurn();
+    }
+
+    private getOpenTurn(): void {
+    
+      this._turnService.getOpenTurn(this.tableSelected.waiter._id).subscribe(
+        result => {
+					if(!result.turns) {
+            this.loading = false;
+						this.openModal('login', this.tableSelected);
+					} else {
+            this.loading = false;
+            this.assignWaiter();
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
 
     private getWaiters(): void {  
 
