@@ -12,23 +12,47 @@
         <table class="table table-hover">
           <thead>
             <tr>
+              <th (click)="orderBy('code')">Número </th>
               <th (click)="orderBy('name')">Nombre </th>
+              <th (click)="orderBy('fantasyName')">Nombre de Fantasía </th>
+              <th (click)="orderBy('type')">Tipo </th>
+              <th (click)="orderBy('CUIT')">CUIT </th>
+              <th (click)="orderBy('address')">Dirección </th>
+              <th (click)="orderBy('city')">Ciudad </th>
+              <th (click)="orderBy('phones')">Teléfonos </th>
+              <th (click)="orderBy('emails')">Emails </th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let company of companies | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td>{{company.code}}</td>
               <td>{{company.name}}</td>
+              <td>{{company.fantasyName}}</td>
+              <td>{{company.type}}</td>
+              <td>{{company.CUIT}}</td>
+              <td>{{company.address}}</td>
+              <td>{{company.city}}</td>
+              <td>{{company.phones}}</td>
+              <td>{{company.emails}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', company)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', company)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty">
-              <td colspan="3">No se encontraron empresas</td>
+              <td colspan="10">No se encontraron empresas</td>
             </tr>
           </tbody>
         </table>

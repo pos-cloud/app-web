@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Company } from './../../models/company';
+import { Company, CompanyType } from './../../models/company';
 
 import { CompanyService } from './../../services/company.service';
 
@@ -18,6 +18,7 @@ import { CompanyService } from './../../services/company.service';
 export class UpdateCompanyComponent implements OnInit {
 
   @Input() company: Company;
+  private types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
   private companyForm: FormGroup;
   private alertMessage: any;
   private userType: string;
@@ -25,12 +26,41 @@ export class UpdateCompanyComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
-    'name': ''
+    'code': 1,
+    'name': '',
+    'fantasyName': '',
+    'type': '',
+    'CUIT': '',
+    'address': '',
+    'city': '',
+    'phones': '',
+    'emails': ''
+
   };
 
   private validationMessages = {
+    'code': {
+      'required':       'Este campo es requerido.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
+    },
+    'fantasyName': {
+      'required':       'Este campo es requerido.'
+    },
+    'type': {
+      'required':       'Este campo es requerido.'
+    },
+    'CUIT': {
+      'required':       'Este campo es requerido.'
+    },
+    'address': {
+    },
+    'city': {
+    },
+    'phones': {
+    },
+    'emails': {
     }
   };
 
@@ -54,8 +84,16 @@ export class UpdateCompanyComponent implements OnInit {
     });
     this.buildForm();
     this.companyForm.setValue({
-      '_id': this.company._id,
-      'name': this.company.name
+      '_id':this.company._id,
+      'code': this.company.code,
+      'name': this.company.name,
+      'fantasyName': this.company.fantasyName,
+      'type': this.company.type,
+      'CUIT': this.company.CUIT,
+      'address': this.company.address,
+      'city': this.company.city,
+      'phones': this.company.phones,
+      'emails': this.company.emails
     });
   }
 
@@ -69,8 +107,35 @@ export class UpdateCompanyComponent implements OnInit {
       '_id': [this.company._id, [
         ]
       ],
+      'code': [this.company.code, [
+          Validators.required
+        ]
+      ],
       'name': [this.company.name, [
           Validators.required
+        ]
+      ],
+      'fantasyName': [this.company.fantasyName, [
+        ]
+      ],
+      'type': [this.company.type, [
+          Validators.required
+        ]
+      ],
+      'CUIT': [this.company.CUIT, [
+          Validators.required
+        ]
+      ],
+      'address': [this.company.address, [
+        ]
+      ],
+      'city': [this.company.city, [
+        ]
+      ],
+      'phones': [this.company.phones, [
+        ]
+      ],
+      'emails': [this.company.emails, [
         ]
       ]
     });

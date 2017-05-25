@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Company } from './../../models/company';
+import { Company, CompanyType } from './../../models/company';
 
 import { CompanyService } from './../../services/company.service';
 
@@ -18,6 +18,7 @@ import { CompanyService } from './../../services/company.service';
 export class AddCompanyComponent  implements OnInit {
 
   private company: Company;
+  private types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
   private companyForm: FormGroup;
   private alertMessage: any;
   private userType: string;
@@ -25,12 +26,40 @@ export class AddCompanyComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   private formErrors = {
-    'name': ''
+    'code': 1,
+    'name': '',
+    'fantasyName': '',
+    'type': '',
+    'CUIT': '',
+    'address': '',
+    'city': '',
+    'phones': '',
+    'emails': ''
+
   };
 
   private validationMessages = {
+    'code': {
+      'required':       'Este campo es requerido.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
+    },
+    'fantasyName': {
+    },
+    'type': {
+      'required':       'Este campo es requerido.'
+    },
+    'CUIT': {
+      'required':       'Este campo es requerido.'
+    },
+    'address': {
+    },
+    'city': {
+    },
+    'phones': {
+    },
+    'emails': {
     }
   };
 
@@ -54,6 +83,7 @@ export class AddCompanyComponent  implements OnInit {
     });
     this.company = new Company ();
     this.buildForm();
+    this.getLastCompany();
   }
 
   ngAfterViewInit() {
@@ -63,8 +93,35 @@ export class AddCompanyComponent  implements OnInit {
   private buildForm(): void {
 
     this.companyForm = this._fb.group({
+      'code': [this.company.code, [
+          Validators.required
+        ]
+      ],
       'name': [this.company.name, [
           Validators.required
+        ]
+      ],
+      'fantasyName': [this.company.fantasyName, [
+        ]
+      ],
+      'type': [this.company.type, [
+          Validators.required
+        ]
+      ],
+      'CUIT': [this.company.CUIT, [
+          Validators.required
+        ]
+      ],
+      'address': [this.company.address, [
+        ]
+      ],
+      'city': [this.company.city, [
+        ]
+      ],
+      'phones': [this.company.phones, [
+        ]
+      ],
+      'emails': [this.company.emails, [
         ]
       ]
     });
@@ -93,6 +150,37 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
   }
+
+  private getLastCompany(): void {  
+
+    this._companyService.getLastCompany().subscribe(
+        result => {
+          let code = 1;
+          if(result.companies){
+            if(result.companies[0] !== undefined) {
+              code = result.companies[0].code;
+            }
+          }
+          // this.companyForm.setValue({
+          //   'code': code,
+          //   'name': '',
+          //   'fantasyName': '',
+          //   'type': '',
+          //   'CUIT': '',
+          //   'address': '',
+          //   'city': '',
+          //   'phones': '',
+          //   'emails': ''
+          // });
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   private addCompany(): void {
     

@@ -24,7 +24,7 @@
 				</div>
 				<div class="form-group col-md-4">
 					<label for="code" class="control-label">Código:</label>
-					<input type="number" class="form-control" formControlName="code" name="code" id="code" required/>
+					<input type="number" class="form-control" formControlName="code" name="code" id="code"/>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
 						{{ formErrors.code }}
 					</div>
@@ -37,14 +37,14 @@
 			<div class="row">
 				<div class="form-group col-md-8">
 					<label for="description" class="control-label">Descripción:</label>
-					<input type="text" class="form-control" formControlName="description" name="description" id="description" required/>
+					<input type="text" class="form-control" formControlName="description" name="description" id="description"/>
 					<div *ngIf="formErrors.description" class="alert alert-danger">
 						{{ formErrors.description }}
 					</div>
 				</div>
 				<div class="form-group col-md-4">
 					<label for="unitOfMeasure" class="control-label">Unidad de Medida:</label>
-					<input type="text" class="form-control" formControlName="unitOfMeasure" name="unitOfMeasure" id="unitOfMeasure" placeholder="Ej: Kgs" required/>
+					<input type="text" class="form-control" formControlName="unitOfMeasure" name="unitOfMeasure" id="unitOfMeasure" placeholder="Ej: Kgs"/>
 					<div *ngIf="formErrors.unitOfMeasure" class="alert alert-danger">
 						{{ formErrors.unitOfMeasure }}
 					</div>
@@ -77,7 +77,7 @@
 					<label for="salePrice" class="control-label">Precio de Venta:</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
-						<input type="text" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" required/>
+						<input type="text" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice"/>
 					</div>
 					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
 						{{ formErrors.salePrice }}

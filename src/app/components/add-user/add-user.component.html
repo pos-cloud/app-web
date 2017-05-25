@@ -16,7 +16,7 @@
         <div class="form-group col-md-12">
           <label for="name" class="control-label">Nombre:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="name" name="name" id="name" required [focus]="focusEvent"/>
+            <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
           </div>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
@@ -26,7 +26,7 @@
       <div class="row">
 				<div class="form-group col-md-12">
 					<label for="password" class="control-label">Contraseña:</label>
-					<input type="password" class="form-control" formControlName="password" name="password" id="password" required/>
+					<input type="password" class="form-control" formControlName="password" name="password" id="password"/>
 					<div *ngIf="formErrors.password" class="alert alert-danger">
 						{{ formErrors.password }}
 					</div>

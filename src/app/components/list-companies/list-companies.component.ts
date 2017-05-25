@@ -39,7 +39,6 @@ export class ListCompaniesComponent implements OnInit {
       pathLocation = data.url.split('/');
       this.userType = pathLocation[1];
     });
-    console.log("entro");
     this.getCompanies();
   }
 
@@ -50,18 +49,15 @@ export class ListCompaniesComponent implements OnInit {
 
   private getCompanies(): void {  
 
-    console.log("entro2");
     this._companyService.getCompanies().subscribe(
         result => {
 					if(!result.companies) {
-          console.log("error" +result.message);
 						this.alertMessage = result.message;
 					  this.companies = null;
             this.areCompaniesEmpty = true;
 					} else {
             this.alertMessage = null;
 					  this.companies = result.companies;
-            console.log(this.companies);
             this.areCompaniesEmpty = false;
           }
 				},

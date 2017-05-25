@@ -28,14 +28,14 @@
 			<div class="row">
 				<div class="form-group col-md-10">
 					<label for="description">Descripción:</label>
-					<input type="text" class="form-control" formControlName="description" name="description" id="description" required [focus]="focusEvent"/>
+					<input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
 					<div *ngIf="formErrors.description" class="alert alert-danger">
 						{{ formErrors.description }}
 					</div>
 				</div>
 				<div class="form-group col-md-2">
 					<label for="chair" class="control-label">Sillas:</label>
-					<input type="number" class="form-control" formControlName="chair" name="chair" id="chair" required/>
+					<input type="number" class="form-control" formControlName="chair" name="chair" id="chair"/>
 					<div *ngIf="formErrors.chair" class="alert alert-danger">
 						{{ formErrors.chair }}
 					</div>
