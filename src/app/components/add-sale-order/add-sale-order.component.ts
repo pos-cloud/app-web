@@ -93,7 +93,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
-          this.getOpenCashBox();
+          this.addSaleOrder();
         }
       },
       error => {
@@ -104,26 +104,6 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
-
-  private getOpenCashBox(): void {
-
-    this._cashBoxService.getOpenCashBox().subscribe(
-        result => {
-          if(!result.cashBoxes) {
-            this.alertMessage = "No tiene caja abierta";
-          } else {
-            this.saleOrder.cashBox = result.cashBoxes[0];
-            this.addSaleOrder();
-          }
-        },
-        error => {
-          this.alertMessage = error;
-          if(!this.alertMessage) {
-            this.alertMessage = "Error en la petición.";
-          }
-        }
-      );
-   }
 
   private buildForm(): void {
 

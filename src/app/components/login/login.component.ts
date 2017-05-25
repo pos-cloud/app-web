@@ -59,11 +59,11 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
 
     this.user = new User();
+    this.getWaiters();
     if(this.waiterSelected !== undefined){
       this.getUserOfWaiter();
     }
     this.buildForm();
-    this.getWaiters();
   }
 
   private getUserOfWaiter(): void {  
@@ -71,9 +71,8 @@ export class LoginComponent implements OnInit {
     this._userservice.getUserOfWaiter(this.waiterSelected._id).subscribe(
         result => {
 					if(!result.users) {
-            console.log(result);
 						this.alertMessage = result.message;
-            console.log(this.alertMessage);
+            this.alertConfig.type = "danger";
 					  this.user = null;
 					} else {
             this.alertMessage = null;
@@ -181,10 +180,7 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.alertMessage = "El mozo seleccionado no tiene asignado un usuario" ;
         this.loading = false;
       }
     )
@@ -197,7 +193,7 @@ export class LoginComponent implements OnInit {
 					if(!result.turns) {
 						this.openTurn();
 					} else {
-            this.alertMessage = "El mozo " + this.user.waiter.name + " ya tiene el turno abierto" ;
+            this.alertMessage = "El mozo seleccionado ya tiene el turno abierto" ;
             this.alertConfig.type = "danger";
           }
 				},

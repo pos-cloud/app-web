@@ -170,12 +170,15 @@ export class ListTablesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, table:Table): void {
-
+  private openModal(op: string, table: Table, waiter: Waiter): void {
+      
       this.tableSelected = table;
+      this.tableSelected.waiter = waiter;
       let modalRef;
+      
       switch(op) {
         case 'add' :
+
           modalRef = this._modalService.open(AddTableComponent, { size: 'lg' }).result.then((result) => {
             this.getTables();
           }, (reason) => {
@@ -194,6 +197,7 @@ export class ListTablesComponent implements OnInit {
             });
           break;
         case 'delete' :
+
             modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' });
             modalRef.componentInstance.table = this.tableSelected;
             modalRef.result.then((result) => {
@@ -206,8 +210,7 @@ export class ListTablesComponent implements OnInit {
           break;
         case 'select_waiter' :
 
-            if(this.tableSelected.waiter !== undefined && 
-              !this.tableSelected.waiter && 
+            if(this.tableSelected.waiter !== undefined &&
               this.tableSelected.waiter !== null) {
 
               this.getOpenSaleOrder();
@@ -261,7 +264,7 @@ export class ListTablesComponent implements OnInit {
         result => {
 					if(!result.turns) {
             this.loading = false;
-						this.openModal('login', this.tableSelected);
+						this.openModal('login', this.tableSelected, this.tableSelected.waiter);
 					} else {
             this.loading = false;
             this.assignWaiter();

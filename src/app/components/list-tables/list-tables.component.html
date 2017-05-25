@@ -62,7 +62,7 @@
       <div  [ngClass]="{'itable itable-disabled':table.state==='No Habilitada',
                         'itable itable-enabled':table.state==='Disponible',
                         'itable itable-disabled':table.state==='Ocupada'}"
-            (click)="openModal('select_waiter', table)">
+            (click)="openModal('select_waiter', table, table.waiter)">
         <p>{{table.description}}</p>
         <b *ngIf="table.waiter">{{table.waiter.name}}</b>
       </div>
