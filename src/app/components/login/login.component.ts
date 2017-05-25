@@ -71,18 +71,19 @@ export class LoginComponent implements OnInit {
     this._userservice.getUserOfWaiter(this.waiterSelected._id).subscribe(
         result => {
 					if(!result.users) {
+            console.log(result);
 						this.alertMessage = result.message;
+            console.log(this.alertMessage);
 					  this.user = null;
 					} else {
             this.alertMessage = null;
 					  this.user = result.users[0];
-            console.log(this.user);
             this.loginForm.setValue({
               '_id': this.user._id,
               'name': this.user.name,
               'password': '',
               'type': this.user.type,
-              'status': this.user.status,
+              'state': this.user.state,
               'waiter': this.user.waiter._id
             });
           }
@@ -133,7 +134,7 @@ export class LoginComponent implements OnInit {
       'type': [this.user.type, [
         ]
       ],
-      'status': [this.user.status, [
+      'state': [this.user.state, [
         ]
       ],
       'waiter': [this.user.waiter, [

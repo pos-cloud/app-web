@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table, TableStatus } from './../../models/table';
+import { Table, TableState } from './../../models/table';
 import { Room } from './../../models/room';
 
 import { TableService } from './../../services/table.service';
@@ -88,7 +88,7 @@ export class AddTableComponent  implements OnInit {
           Validators.required
         ]
       ],
-      'status': [this.table.status, [
+      'state': [this.table.state, [
         ]
       ]
     });
@@ -136,7 +136,7 @@ export class AddTableComponent  implements OnInit {
             'room': room,
             'description': '',
             'chair': 1,
-            'status': TableStatus.Available,
+            'state': TableState.Available,
           });
         },
         error => {

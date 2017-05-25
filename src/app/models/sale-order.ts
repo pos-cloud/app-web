@@ -9,7 +9,7 @@ export class SaleOrder {
 	public origin: number = 0;
 	public number: number = 0;
 	public date: Date = new Date();
-	public status: any = SaleOrderStatus.Open;
+	public state: any = SaleOrderState.Open;
 	public observation: string;
 	public totalPrice: number = 0.00;
 	public company: Company;
@@ -20,7 +20,7 @@ export class SaleOrder {
 	constructor () {}
 }
 
-export enum SaleOrderStatus {
+export enum SaleOrderState {
 	Open = <any> "Abierto",
 	Pending = <any> "Pendiente",
 	Canceled = <any> "Anulado",

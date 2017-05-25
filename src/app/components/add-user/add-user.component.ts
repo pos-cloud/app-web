@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { User, UserTypes, UserStatus } from './../../models/user';
+import { User, UserTypes, UserState } from './../../models/user';
 import { Waiter } from './../../models/waiter';
 
 import { UserService } from './../../services/user.service';
@@ -24,7 +24,7 @@ export class AddUserComponent  implements OnInit {
   private alertMessage: any;
   private userType: string;
   private loading: boolean = false;
-  private states: UserStatus[] = [UserStatus.Enabled, UserStatus.Disabled];
+  private states: UserState[] = [UserState.Enabled, UserState.Disabled];
   private types: UserTypes[] = [UserTypes.Supervisor, UserTypes.Waiter];
   private waiters: Waiter[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
@@ -33,7 +33,7 @@ export class AddUserComponent  implements OnInit {
     'name': '',
     'password': '',
     'type': '',
-    'status': '',
+    'state': '',
     'waiter': ''
   };
 
@@ -46,7 +46,7 @@ export class AddUserComponent  implements OnInit {
     },
     'type': {
     },
-    'status': {
+    'state': {
     },
     'waiter': {
     }
@@ -94,7 +94,7 @@ export class AddUserComponent  implements OnInit {
       'type': [this.user.type, [
         ]
       ],
-      'status': [this.user.status, [
+      'state': [this.user.state, [
         ]
       ],
       'waiter': [this.user.waiter, [

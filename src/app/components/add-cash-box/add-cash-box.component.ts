@@ -85,7 +85,7 @@ export class AddCashBoxComponent  implements OnInit {
       'difference': [this.cashBox.difference, [
         ]
       ],
-      'status': [this.cashBox.status, [
+      'state': [this.cashBox.state, [
         ]
       ],
     });

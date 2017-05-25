@@ -15,24 +15,24 @@
 	            <th (click)="orderBy('description')">Descripción</th>
 	            <th (click)="orderBy('room','description')">Salón</th>
 	            <th (click)="orderBy('chair')">Sillas</th>
-	            <th (click)="orderBy('status')">Estado</th>
+	            <th (click)="orderBy('state')">Estado</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterRoom" placeholder="Salón..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterChair" placeholder="Sillas..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterStatus" placeholder="Estado..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let table of tables | orderBy: [orderTerm]  | filter: filterDescription:'description' | filter: filterRoom:'description':'room' 
-                                                                    | filter: filterChair:'chair' | filter: filterStatus:'status' 
+                                                                    | filter: filterChair:'chair' | filter: filterState:'state' 
                                                                     | paginate: {  itemsPerPage: 9, currentPage: p }" >
               <td>{{table.description}}</td>
               <td>{{table.room.description}}</td>
               <td>{{table.chair}}</td>
-              <td><h6><span class="badge badge-default">{{table.status}}</span></h6></td>
+              <td><h6><span class="badge badge-default">{{table.state}}</span></h6></td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', table)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', table)"><i class="fa fa-trash-o"></i></button>
@@ -59,9 +59,9 @@
 <!--POS-->
 <section class="row" *ngIf="userType=='pos'">
     <div *ngFor="let table of tables | orderBy:[orderTerm]" >
-      <div  [ngClass]="{'itable itable-disabled':table.status==='No Habilitada',
-                        'itable itable-enabled':table.status==='Disponible',
-                        'itable itable-disabled':table.status==='Ocupada'}"
+      <div  [ngClass]="{'itable itable-disabled':table.state==='No Habilitada',
+                        'itable itable-enabled':table.state==='Disponible',
+                        'itable itable-disabled':table.state==='Ocupada'}"
             (click)="openModal('select_waiter', table)">
         <p>{{table.description}}</p>
         <b *ngIf="table.waiter">{{table.waiter.name}}</b>
@@ -83,7 +83,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="selectWaiterForm" #formSelectWaiter="ngForm" (ngSubmit)="c('select_waiter')">
+    <form [formGroup]="selectWaiterForm" #formSelectWaiter="ngForm" (ngSubmit)="c('select_waiter')" autocomplete="off">
       <div class="modal-body">
         <div class="row">
           <div class="form-group col-md-12">

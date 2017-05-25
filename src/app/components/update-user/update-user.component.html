@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="userForm" #formUpdateUser="ngForm" (ngSubmit)="updateUser()">
+  <form [formGroup]="userForm" #formUpdateUser="ngForm" (ngSubmit)="updateUser()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">
@@ -25,12 +25,12 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="status" class="control-label">Habilitado</label>
-          <select class="form-control" formControlName="status">
-            <option *ngFor="let status of states" [ngValue]="status">{{status}}</option>
+          <label for="state" class="control-label">Habilitado</label>
+          <select class="form-control" formControlName="state">
+            <option *ngFor="let state of states" [ngValue]="state">{{state}}</option>
           </select>
-          <div *ngIf="formErrors.status" class="alert alert-danger">
-            {{ formErrors.status }}
+          <div *ngIf="formErrors.state" class="alert alert-danger">
+            {{ formErrors.state }}
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
             <option *ngFor="let waiter of waiters" [selected]="waiter._id==user.waiter._id" [value]="waiter._id">{{waiter.name}}</option>
           </select>
           <div *ngIf="formErrors.waiter" class="alert alert-danger">
-            {{ formErrors.status }}
+            {{ formErrors.state }}
           </div>
         </div>
       </div>

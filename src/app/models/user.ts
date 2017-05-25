@@ -6,7 +6,7 @@ export class User {
 	public name: string;
 	public password: string;
 	public type: any = UserTypes.Supervisor;
-	public status: any = UserStatus.Enabled;
+	public state: any = UserState.Enabled;
 	public waiter: Waiter = null;
 
 	constructor () {}
@@ -17,7 +17,7 @@ export enum UserTypes {
 	Waiter = <any> "Mozo",
 }
 
-export enum UserStatus {
+export enum UserState {
 	Enabled = <any> "Habilitado",
 	Disabled = <any> "No Habilitado",
 }

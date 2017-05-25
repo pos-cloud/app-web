@@ -91,7 +91,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')">
+    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')" autocomplete="off">
       <div class="modal-body">
         <div class="row">
           <label for="amount" class="control-label">Ingrese la Cantidad:</label>

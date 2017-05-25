@@ -69,7 +69,7 @@ export class UpdateTableComponent implements OnInit {
       'description':this.table.description,
       'room': this.table.room._id,
       'chair': this.table.chair,
-      'status': this.table.status
+      'state': this.table.state
     });
   }
 
@@ -95,7 +95,7 @@ export class UpdateTableComponent implements OnInit {
           Validators.required
         ]
       ],
-      'status': [this.table.status, [
+      'state': [this.table.state, [
         ]
       ]
     });

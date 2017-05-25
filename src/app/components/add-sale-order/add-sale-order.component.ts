@@ -3,11 +3,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SaleOrder, SaleOrderStatus } from './../../models/sale-order';
+import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
-import { CashBox, CashBoxStatus } from './../../models/cash-box';
-import { Table, TableStatus } from './../../models/table';
+import { CashBox, CashBoxState } from './../../models/cash-box';
+import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -171,7 +171,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
-            this.changeStatusOfTable();
+            this.changeStateOfTable();
           }
         },
         error => {
@@ -184,9 +184,9 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  private changeStatusOfTable(): void {
+  private changeStateOfTable(): void {
 
-    this.table.status = TableStatus.Busy;
+    this.table.state = TableState.Busy;
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {

@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()">
+	<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">
@@ -21,7 +21,7 @@
 						</option>
 					</select>
 					<div *ngIf="formErrors.waiter" class="alert alert-danger">
-						{{ formErrors.status }}
+						{{ formErrors.state }}
 					</div>
 				</div>
 			</div>

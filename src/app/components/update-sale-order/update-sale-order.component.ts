@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SaleOrder, SaleOrderStatus } from './../../models/sale-order';
+import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table } from './../../models/table';

@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="waiterForm" #formAddWaiter="ngForm" (ngSubmit)="addWaiter()">
+	<form [formGroup]="waiterForm" #formAddWaiter="ngForm" (ngSubmit)="addWaiter()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">

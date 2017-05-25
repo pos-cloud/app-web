@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="companyForm" #formUpdateCompany="ngForm" (ngSubmit)="updateCompany()">
+	<form [formGroup]="companyForm" #formUpdateCompany="ngForm" (ngSubmit)="updateCompany()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-4">

@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="makeForm" #formAddMake="ngForm" (ngSubmit)="addMake()">
+  <form [formGroup]="makeForm" #formAddMake="ngForm" (ngSubmit)="addMake()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">

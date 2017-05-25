@@ -13,14 +13,14 @@
           <thead>
             <tr>
               <th (click)="orderBy('name')">Nombre</th>
-              <th (click)="orderBy('status')">Estado</th>
+              <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('type')">Tipo</th>
               <th (click)="orderBy('waiter')">Mozo</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterStatus" placeholder="Estado..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterWaiter" placeholder="Mozo..." ></th>
             </tr>
@@ -28,7 +28,7 @@
           <tbody>
             <tr *ngFor="let user of users | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{user.name}}</td>
-              <td>{{user.status}}</td>
+              <td>{{user.state}}</td>
               <td>{{user.type}}</td>
               <td *ngIf="user.waiter">{{user.waiter.name}}</td>
               <td *ngIf="!user.waiter"></td>

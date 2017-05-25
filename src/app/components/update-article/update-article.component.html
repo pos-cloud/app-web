@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="articleForm" #formUpdateArticle="ngForm" (ngSubmit)="updateArticle()">
+	<form [formGroup]="articleForm" #formUpdateArticle="ngForm" (ngSubmit)="updateArticle()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-4">

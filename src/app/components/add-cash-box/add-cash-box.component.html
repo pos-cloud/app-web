@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="cashBoxForm" #formAddCashBox="ngForm" (ngSubmit)="addCashBox()">
+	<form [formGroup]="cashBoxForm" #formAddCashBox="ngForm" (ngSubmit)="addCashBox()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">

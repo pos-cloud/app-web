@@ -7,13 +7,13 @@ export class Table {
 	public description: string;
 	public room: Room = null;
 	public chair: number = 1;
-	public status: any = TableStatus.Available;
+	public state: any = TableState.Available;
 	public waiter: Waiter = null;
 
 	constructor () {}
 }
 
-export enum TableStatus {
+export enum TableState {
 	Available = <any> "Disponible",
 	Busy = <any> "Ocupada",
 	Reserved = <any> "Reservada",

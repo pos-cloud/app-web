@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="categoryForm" #formAddCategory="ngForm" (ngSubmit)="addCategory()">
+  <form [formGroup]="categoryForm" #formAddCategory="ngForm" (ngSubmit)="addCategory()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">

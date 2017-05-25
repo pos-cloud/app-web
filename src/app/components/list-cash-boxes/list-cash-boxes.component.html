@@ -19,7 +19,7 @@
               <th (click)="orderBy('closingCash')">Importe Cierre</th>
               <th (click)="orderBy('invoicedCash')">Facturado</th>
               <th (click)="orderBy('difference')">Diferencia</th>
-              <th (click)="orderBy('status')">Estado</th>
+              <th (click)="orderBy('state')">Estado</th>
               <th><em class="fa fa-cog"></em></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
@@ -30,14 +30,14 @@
                 <th><input type="text" class="form-control" [(ngModel)]= "filterClosingCash" placeholder="Importe Cierre..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterInvoicedCash" placeholder="Facturado..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDifference" placeholder="Diferencia..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterStatus" placeholder="Estado..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let cashBox of cashBoxes | orderBy: [orderTerm]  | filter: filterCode:'code' | filter: filterOpeningDate:'openingDate'
                                                                           | filter: filterClosingDate:'closingDate' | filter: filterOpeningCash:'openingCash'
                                                                           | filter: filterClosingCash:'closingCash' | filter: filterInvoicedCash:'invoicedCash'
-                                                                          | filter: filterDifference:'difference' | filter: filterStatus:'status'
+                                                                          | filter: filterDifference:'difference' | filter: filterState:'state'
                                                                           | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{cashBox.code}}</td>
               <td>{{cashBox.openingDate | date: ['dd/MM/yyyy'] }}</td>
@@ -46,7 +46,7 @@
               <td>{{cashBox.closingCash | currency:'USD':'1.2-2'}}</td>
               <td>{{cashBox.invoicedCash | currency:'USD':'1.2-2'}}</td>
               <td>{{cashBox.difference | currency:'USD':'1.2-2'}}</td>
-              <td><h6><span class="badge badge-default">{{cashBox.status}}</span></h6></td>
+              <td><h6><span class="badge badge-default">{{cashBox.state}}</span></h6></td>
               <td align="center">
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
               </td>
