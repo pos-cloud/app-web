@@ -120,4 +120,6 @@ export class ListSaleOrdersComponent implements OnInit {
     private addSaleOrder(saleOrderCode: number) {
       this._router.navigate(['/pos/mesas/'+saleOrderCode+'/add-sale-order']);
     }
+
+    
 }

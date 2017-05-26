@@ -41,6 +41,7 @@ import { AddCompanyComponent } from './components/add-company/add-company.compon
 import { UpdateCompanyComponent } from './components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './components/delete-company/delete-company.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
+import { ReportsComponent } from './components/reports/reports.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -88,6 +89,7 @@ const _routes: Routes = [
   { path: 'pos/salones/:id/mesas/:id/editar-pedido/:id', component: UpdateSaleOrderComponent },
   // { path: 'pos/salones/:id/mesas/:id/editar-pedido/:id', component: ListCategoriesComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
+  { path: 'reports', component: ReportsComponent},
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 

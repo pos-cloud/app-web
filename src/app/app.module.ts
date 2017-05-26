@@ -75,6 +75,7 @@ import { OrderByPipe } from './pipes/order-by.pipe';
 
 //directives
 import { FocusDirective } from './directives/focus.directive';
+import { ReportsComponent } from './components/reports/reports.component';
 
 @NgModule({
   declarations: [
@@ -125,6 +126,7 @@ import { FocusDirective } from './directives/focus.directive';
     UpdateCompanyComponent,
     DeleteCompanyComponent,
     AddCompanyComponent,
+    ReportsComponent,
   ],
   imports: [
     BrowserModule,
