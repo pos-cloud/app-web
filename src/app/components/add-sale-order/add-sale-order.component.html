@@ -72,7 +72,18 @@
       </div>
     </div>
     <div class="col-md-9">
-      <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+      <div class="row">
+        <nav class="breadcrumb">
+          <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
+          <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Artículos</span>
+        </nav>
+      </div>
+      <div class="row">
+        <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible] = "areArticlesVisible" [filterCategory]="categorySelected"></app-list-articles>
+      </div>
+      <div class="row">
+        <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"  [areCategoriesVisible]="areCategoriesVisible"></app-list-categories>
+      </div>
     </div>
   </div>
 </section>
@@ -112,12 +123,12 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <label for="observation" class="control-label">Observación:</label>
+            <label for="notes" class="control-label">Notas:</label>
             <div class="input-group">
-              <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
+              <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
             </div>
-            <div *ngIf="formErrors.observation" class="alert alert-danger">
-              {{ formErrors.observation }}
+            <div *ngIf="formErrors.notes" class="alert alert-danger">
+              {{ formErrors.notes }}
             </div>
           </div>
         </div>

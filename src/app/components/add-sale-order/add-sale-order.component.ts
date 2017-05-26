@@ -9,6 +9,7 @@ import { MovementOfArticle } from './../../models/movement-of-article';
 import { CashBox, CashBoxState } from './../../models/cash-box';
 import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
+import { Category } from './../../models/category';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -35,6 +36,9 @@ export class AddSaleOrderComponent implements OnInit {
   private table: Table;
   private tableId: string;
   private loading: boolean = false;
+  private areCategoriesVisible: boolean = true;
+  private areArticlesVisible: boolean = false;
+  private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
 
   private formErrors = {
@@ -65,6 +69,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.saleOrder.table = new Table();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
+    this.categorySelected = new Category();
   }
 
   ngOnInit(): void {
@@ -112,8 +117,7 @@ export class AddSaleOrderComponent implements OnInit {
           Validators.required
         ]
       ],
-      'observation': [this.movementOfArticle.observation, [
-          
+      'notes': [this.movementOfArticle.notes, [
         ]
       ]
     });
@@ -164,6 +168,19 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
+  private showArticlesOfCategory(category: Category): void {
+    
+    this.categorySelected = category;
+    this.areArticlesVisible = true;
+    this.areCategoriesVisible = false;
+  }
+
+  private showCategories(): void {
+
+    this.areCategoriesVisible = true;
+    this.areArticlesVisible = false;
+  }
+
   private changeStateOfTable(): void {
 
     this.table.state = TableState.Busy;
@@ -205,12 +222,12 @@ export class AddSaleOrderComponent implements OnInit {
 
   private confirmAmount(){
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
+    this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
     this.saveMovementOfArticle();
   }
 
   private saveMovementOfArticle(): void {
-    
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {

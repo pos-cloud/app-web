@@ -1,9 +1,11 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from './../../models/article';
+import { Category } from './../../models/category';
+
 import { ArticleService } from './../../services/article.service';
 
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
@@ -26,12 +28,18 @@ export class ListArticlesComponent implements OnInit {
   private propertyTerm: string;
   private areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
+  @Input() areArticlesVisible: boolean = true;
+  @Input() filterCategory: string;
 
   constructor(
     private _articleService: ArticleService,
     private _router: Router,
     private _modalService: NgbModal
-  ) { }
+  ) { 
+    if(this.filterCategory === undefined) {
+      this.filterCategory = "";
+    }
+  }
 
   ngOnInit(): void {
     
@@ -40,12 +48,8 @@ export class ListArticlesComponent implements OnInit {
       pathLocation = data.url.split('/');
       this.userType = pathLocation[1];
     });
+    
     this.getArticles();
-  }
-
-  private getBadge(term: string): boolean {
-
-    return true;
   }
 
   private getArticles(): void {  

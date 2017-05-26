@@ -26,7 +26,7 @@
 				</div>
 				<div class="form-group col-md-4">
 					<label for="code" class="control-label">Código:</label>
-					<input type="number" class="form-control" formControlName="code" name="code" id="code" disabled/>
+					<input type="number" class="form-control" formControlName="code" name="code" id="code" readonly/>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
 						{{ formErrors.code }}
 					</div>
@@ -81,7 +81,7 @@
 					<label for="salePrice" class="control-label">Precio de Venta:</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
-						<input type="text" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice"/>
+						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01"/>
 					</div>
 					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
 						{{ formErrors.salePrice }}

@@ -36,4 +36,8 @@ export class ArticleService {
   updateArticle (article: Article){
     return this._http.put(this.url+"article/"+article._id, article).map (res => res.json());
   }
+
+  getArticlesByCategory (categoryId: string) {
+		return this._http.get(this.url+'articles/where="category":"'+categoryId+'"').map (res => res.json());
+	}
 }

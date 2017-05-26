@@ -170,10 +170,10 @@ export class ListTablesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, table: Table, waiter: Waiter): void {
+  private openModal(op: string, table: Table, waiter?: Waiter): void {
       
       this.tableSelected = table;
-      this.tableSelected.waiter = waiter;
+      if(waiter !== undefined) this.tableSelected.waiter = waiter;
       let modalRef;
       
       switch(op) {
@@ -264,7 +264,7 @@ export class ListTablesComponent implements OnInit {
         result => {
 					if(!result.turns) {
             this.loading = false;
-						this.openModal('login', this.tableSelected, this.tableSelected.waiter);
+						this.openModal('login', this.tableSelected);
 					} else {
             this.loading = false;
             this.assignWaiter();

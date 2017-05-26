@@ -84,8 +84,6 @@ export class AddArticleComponent  implements OnInit {
     this.article = new Article ();
     this.buildForm();
     this.getMakes();
-    this.getCategories();
-    this.getLastArticle();
   }
 
   ngAfterViewInit() {
@@ -204,6 +202,7 @@ export class AddArticleComponent  implements OnInit {
           } else {
             this.alertMessage = null;
             this.makes = result.makes;
+            this.getCategories();
           }
         },
         error => {
@@ -224,6 +223,7 @@ export class AddArticleComponent  implements OnInit {
           } else {
             this.alertMessage = null;
             this.categories = result.categories;
+            this.getLastArticle();
           }
         },
         error => {
@@ -249,8 +249,8 @@ export class AddArticleComponent  implements OnInit {
           this.alertMessage = result.message;
         } else {
           this.article = result.article;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha añadido con éxito.";      
+          this.alertMessage = "El artículo se ha añadido con éxito."; 
+          this.alertConfig.type = 'success';     
           this.article = new Article ();
           this.buildForm();
         }

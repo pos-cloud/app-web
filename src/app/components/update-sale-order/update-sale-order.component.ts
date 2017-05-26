@@ -63,6 +63,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.saleOrder.table = new Table();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
+    this.categorySelected = new Category();
   }
 
   ngOnInit(): void {
@@ -104,6 +105,10 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.amountOfItemForm = this._fb.group({
       'amount': [this.movementOfArticle.amount, [
           Validators.required
+        ]
+      ],
+      'notes': [this.movementOfArticle.notes, [
+          
         ]
       ]
     });
@@ -191,7 +196,7 @@ export class UpdateSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.movementOfArticle = result.movementOfArticle;
-          this.addItemToOrder();
+          this.getMovementsOfSaleOrder();
           this.movementOfArticle = new MovementOfArticle();
           this.buildForm();
         }
@@ -205,16 +210,6 @@ export class UpdateSaleOrderComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  private addItemToOrder(): void {
-
-    this.movementsOfArticles.push(this.movementOfArticle);
-    this.updateSaleOrder();
-    this.amountOfItemForm.setValue({
-            'amount': this.saleOrder.totalPrice
-    });
-    this.areMovementsOfArticlesEmpty = false;
   }
 
   private addAmount(): void {
@@ -282,13 +277,14 @@ export class UpdateSaleOrderComponent implements OnInit {
   }
 
   private updatePrices(): void {
-
+    
       this.saleOrder.totalPrice = 0;
 
       for(let movementOfArticle of this.movementsOfArticles) {
 
         this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
+
    }
 
 }

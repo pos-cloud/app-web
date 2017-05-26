@@ -72,8 +72,9 @@
 
 <!--POS-->
 <section  class="container-fluid" *ngIf="userType=='pos'">
-  <div class="row"> 
-    <div *ngFor="let article of articles | filter: filterDescription:'description'" >
+  <!--<input type="search" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." (onfocus)="showArticles()">-->
+  <div class="row" *ngIf="areArticlesVisible"> 
+    <div *ngFor="let article of articles | filter: filterCategory.description:'description':'category'" >
       <div class="iarticle" (click)="addItem(article)">
         <p>{{article.description}}</p>
       </div>

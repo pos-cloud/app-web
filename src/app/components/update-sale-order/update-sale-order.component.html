@@ -68,24 +68,19 @@
     </div>
     <div class="col-md-9">
       <div class="row">
-        <input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." >
-      </div>
-      <div class="row">
         <nav class="breadcrumb">
           <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
           <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Artículos</span>
         </nav>
       </div>
-      <div class="row" *ngIf="areCategoriesVisible">
-        <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"></app-list-categories>
+      <div class="row">
+        <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible] = "areArticlesVisible" [filterCategory]="categorySelected"></app-list-articles>
       </div>
-      <div class="row" *ngIf="areArticlesVisible">
-        <app-list-articles (eventAddItem)="addItem($event)"></app-list-articles>
+      <div class="row">
+        <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"  [areCategoriesVisible]="areCategoriesVisible"></app-list-categories>
       </div>
     </div>
   </div>
-  {{areCategoriesVisible}}
-  {{areArticlesVisible}}
 </section>
 
 <!--MODAL CANTIDAD-->
@@ -119,6 +114,17 @@
           <div class="col-md-4">
             <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
             <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="notes" class="control-label">Notas:</label>
+            <div class="input-group">
+              <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
+            </div>
+            <div *ngIf="formErrors.notes" class="alert alert-danger">
+              {{ formErrors.notes }}
+            </div>
           </div>
         </div>
       </div>

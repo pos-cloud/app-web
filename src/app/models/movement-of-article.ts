@@ -14,6 +14,7 @@ export class MovementOfArticle {
     public unitOfMeasure: string;
     public barcode: string;
     public amount: number = 1;
+    public notes: string;
     public saleOrder: SaleOrder = null;
 
 	constructor () {}

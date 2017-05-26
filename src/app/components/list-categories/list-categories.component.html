@@ -48,8 +48,8 @@
 
 <!--POS-->
 <section  class="container-fluid" *ngIf="userType=='pos'">
-  <div class="row"> 
-    <div *ngFor="let category of categories | filter: filterDescription:'description'" >
+  <div class="row" *ngIf="areCategoriesVisible"> 
+    <div *ngFor="let category of categories">
       <div class="icategory" (click)="selectCategory(category)">
         <p>{{category.description}}</p>
       </div>

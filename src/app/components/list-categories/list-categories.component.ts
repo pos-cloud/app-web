@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -27,6 +27,7 @@ export class ListCategoriesComponent implements OnInit {
   private areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
   @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
+  @Input() areCategoriesVisible: boolean = true;
 
   constructor(
     private _categoryService: CategoryService,
