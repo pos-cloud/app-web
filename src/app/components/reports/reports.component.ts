@@ -32,26 +32,26 @@ export class ReportsComponent implements OnInit {
 
   private reportByWaiterByDay(): void {
 
-   this._saleOrderService.getSaleOrdersByWaiter("592748f8711a6015901d8176","25-05-17").subscribe(
-        result => {
-					if(!result.saleOrders) {
-						this.alertMessage = result.message;
-					  this.saleOrders = null;
-					} else {
-            this.alertMessage = null;
-					  this.saleOrders = result.waiters;
-          }
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
+    this._saleOrderService.getSaleOrdersByWaiter("592748f8711a6015901d8176","25-05-17").subscribe(
+      result => {
+        if(!result.saleOrders) {
+          this.alertMessage = result.message;
+          this.saleOrders = null;
+        } else {
+          this.alertMessage = null;
+          this.saleOrders = result.waiters;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
   }
 
-private getWaiters(): void {  
+  private getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
         result => {
@@ -71,6 +71,4 @@ private getWaiters(): void {
 				}
       );
    }
-
-
 }

@@ -5,40 +5,25 @@
     </ngb-alert>
   </div>
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-12">
       <div class="row">
         <div class="col-md-3">
-          <div class="row center-content">
-            <h4>Mesa</h4>
-          </div>
-          <div class="row center-content">
-            <!--<div [(ngModel)]="saleOrder.table.description" #description="ngModel"></div>-->
-          </div>
+          <b>Mesa:</b> {{saleOrder.table.description}}
         </div>
         <div class="col-md-3">
-          <div class="row center-content">
-            <h4>Mozo</h4>
-          </div>
-          <div class="row center-content">
-            <!--<div [(ngModel)]="saleOrder.waiter.name" #name="ngModel"></div>-->
-          </div>
+          <b>Mozo:</b> {{saleOrder.waiter.name}}
         </div>
-        <div class="col-md-6">
-          <div class="row center-content">
-            <h4>{{saleOrder.date | date:['dd/MM/yyyy hh:mm:ss']}}</h4>
-          </div>
-          <div class="row center-content">
-            <h4></h4>
-          </div>
+        <div class="col-md-3">
+          <b>Cliente: </b><span *ngIf="!saleOrder.company">Consumidor final</span><span *ngIf="saleOrder.company">{{saleOrder.company.name}}</span>
+        </div>
+        <div class="col-md-3">
+          {{saleOrder.date | date:['dd/MM/yyyy hh:mm:ss']}}
         </div>
       </div>
     </div>
-    <div class="col-md-9 center-content">
-        <h4>Alta Pedido</h4>
-    </div>
   </div>
   <div class="row">
-    <div class="col-md-3 scroll">
+    <div class="col-md-4 scroll">
       <div class="row">
         <div class="col-md-2 center-content">Cantidad</div>
         <div class="col-md-5">Description</div>
@@ -63,6 +48,31 @@
       </div>
       <hr>
       <div class="row">
+        <div class="col-md-3">
+          <button type="button" class="btn btn-secondary" (click)="cancelSaleOrder()">Clientes</button>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-secondary" (click)="cancelSaleOrder()">Descuento</button>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary" (click)="cancelSaleOrder()">Cuenta</button>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary" (click)="cancelSaleOrder()">Cobrar</button>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary" (click)="cancelSaleOrder()">Cancelar</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 offset-md-4">
+          <h6>Descuento</h6>
+        </div>
+        <div class="col-md-4 center-content">
+          <h6>{{saleOrder.discount | currency:'USD':'1.2-2'}}</h6>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-4 offset-md-4">
           <h4>Total</h4>
         </div>
@@ -71,7 +81,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-7">
       <div class="row">
         <nav class="breadcrumb">
           <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
