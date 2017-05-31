@@ -59,10 +59,10 @@
       <hr>
       <div class="row">
         <div class="col-md-3">
-          <button type="button" class="btn btn-secondary" >Clientes</button>
+          <button type="button" class="btn btn-secondary">Clientes</button>
         </div>
         <div class="col-md-3">
-          <button type="button" class="btn btn-secondary" (click)="openModal('discount')">Descuento</button>
+          <button type="button" class="btn btn-secondary" (click)="openModal('apply_discunt')">Descuento</button>
         </div>
         <div class="col-md-2">
           <button type="button" class="btn btn-secondary">Cuenta</button>
@@ -79,7 +79,7 @@
           <h6>Descuento</h6>
         </div>
         <div class="col-md-4 center-content">
-          <h6>{{saleOrder.discount | currency:'USD':'1.2-2'}}</h6>
+          <h6>-{{saleOrder.discount | currency:'USD':'1.2-2'}}</h6>
         </div>
       </div>
       <div class="row">
@@ -91,7 +91,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-7">
+    <div class="col-md-8">
       <div class="row">
         <nav class="breadcrumb">
           <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
@@ -106,13 +106,10 @@
       </div>
     </div>
   </div>
-  {{movementOfArticle | json}}
-  {{amountOfItemForm.value | json}}
-  {{discountForm.value | json}}
 </section>
 
 <!--MODAL CANTIDAD-->
-<ng-template #contentAmount let-c="close" let-d="dismiss">
+<ng-template #content let-c="close" let-d="dismiss">
   <div  class="modal-header">
     <h4 class="modal-title">Cantidad</h4>
     <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
@@ -128,15 +125,15 @@
     <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')" autocomplete="off">
       <div class="modal-body">
         <div class="row">
-          <label for="amount1" class="control-label">Ingrese la Cantidad:</label>
+          <label for="amount" class="control-label">Ingrese la Cantidad:</label>
         </div>
         <div class="row">
           <div class="form-group col-md-8">
             <div class="input-group">
-              <input type="number" class="form-control" formControlName="amount1" name="amount1"/>
+              <input type="text" class="form-control" formControlName="amount" name="amount"/>
             </div>
-            <div *ngIf="formErrors.amount1" class="alert alert-danger">
-              {{ formErrors.amount1 }}
+            <div *ngIf="formErrors.amount" class="alert alert-danger">
+              {{ formErrors.amount }}
             </div>
           </div>
           <div class="col-md-4">
@@ -168,7 +165,7 @@
   </section>
 </ng-template>
 
-<!--MODAL Descuento-->
+<!--MODAL DESCUENTO-->
 <ng-template #contentDiscount let-c="close" let-d="dismiss">
   <div  class="modal-header">
     <h4 class="modal-title">Descuento</h4>
@@ -182,15 +179,15 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('discount')" autocomplete="off">
+    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discunt')" autocomplete="off">
       <div class="modal-body">
         <div class="row">
           <label for="amount" class="control-label">Monto de descuento:</label>
         </div>
         <div class="row">
-          <div class="form-group col-md-8">
+          <div class="form-group col-md-12">
             <div class="input-group">
-              <input type="number" class="form-control" formControlName="amount" name="amount" step="0.01"/>
+              <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" autofocus/>
             </div>
             <div *ngIf="formErrors.amount" class="alert alert-danger">
               {{ formErrors.amount }}
@@ -201,7 +198,7 @@
           <label for="porcent" class="control-label">Porcentaje de descuento:</label>
         </div>
         <div class="row">
-          <div class="form-group col-md-8">
+          <div class="form-group col-md-12">
             <div class="input-group">
               <input type="number" class="form-control" formControlName="porcent" name="porcent" step="0.01"/>
             </div>

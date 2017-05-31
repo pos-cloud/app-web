@@ -37,7 +37,7 @@ export class UpdateSaleOrderComponent implements OnInit {
   private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
-  private discounPorcent: number = 0.00;
+  private discountPorcent: number = 0.00;
   private discountAmount: number = 0.00;
 
   private formErrors = {
@@ -57,8 +57,10 @@ export class UpdateSaleOrderComponent implements OnInit {
 
   private validationMessagesDiscount = {
     'amount': {
+      'required':       'Este campo es requerido.'
     },
     'porcent': {
+      'required':       'Este campo es requerido.'
     }
   };
 
@@ -105,6 +107,8 @@ export class UpdateSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.saleOrder = result.saleOrder;
+          this.discountAmount = this.saleOrder.discount;
+          
           this.getMovementsOfSaleOrder();
         }
       },
@@ -125,7 +129,6 @@ export class UpdateSaleOrderComponent implements OnInit {
         ]
       ],
       'notes': [this.movementOfArticle.notes, [
-          
         ]
       ]
     });
@@ -158,9 +161,11 @@ export class UpdateSaleOrderComponent implements OnInit {
 
     this.discountForm = this._fb.group({
       'amount': [this.discountAmount, [
+           Validators.required
         ]
       ],
-      'porcent': [this.discounPorcent, [
+      'porcent': [this.discountPorcent, [
+           Validators.required
         ]
       ]
     });
@@ -208,19 +213,19 @@ export class UpdateSaleOrderComponent implements OnInit {
         }
     );
   }
-  
-  private addItem(itemData): void {
-
-    this.movementOfArticle = itemData;
-    this.movementOfArticle.saleOrder = this.saleOrder;
-    this.openModal('add_item');
-  }
 
   private showArticlesOfCategory(category: Category): void {
     
     this.categorySelected = category;
     this.areArticlesVisible = true;
     this.areCategoriesVisible = false;
+  }
+  
+  private addItem(itemData): void {
+
+    this.movementOfArticle = itemData;
+    this.movementOfArticle.saleOrder = this.saleOrder;
+    this.openModal('add_item');
   }
 
   private openModal(op: string): void {
@@ -238,38 +243,54 @@ export class UpdateSaleOrderComponent implements OnInit {
           });
           break;
         case 'apply_discunt' :
+        
           modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
             if(result  === "apply_discunt"){
-              this.applyDiscount();
+
+              this.discountPorcent = this.discountForm.value.porcent;
+              this.discountAmount = this.discountForm.value.amount;
+              this.updatePrices();
             }
           }, (reason) => {
             
           });
           break;
-    }
+        default : ;
+    };
   }
 
   private confirmAmount(){
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
+    this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
     this.saveMovementOfArticle();
   }
 
   private applyDiscount(): void {
-    
-    this.discounPorcent = this.discountForm.value.porcent;
-    this.discountAmount = this.discountForm.value.amount;
-    
-    if(this.discounPorcent !== 0 && this.discountAmount === 0){
-      this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;   
-    } else if(this.discounPorcent === 0 && this.discountAmount !== 0){
+
+    if( this.discountPorcent > 0 &&
+        this.discountPorcent <= 100 && 
+        this.discountPorcent !== null && 
+        (this.discountAmount === 0 || this.discountAmount === null)){
+
+      this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
+
+    } else if(( this.discountPorcent === 0 || 
+                this.discountPorcent === null) && 
+                this.discountAmount > 0  && 
+                this.discountAmount <= this.saleOrder.totalPrice  &&
+                this.discountAmount !== null){
+
       this.saleOrder.discount = this.discountAmount;
     } else {
+      
+      this.saleOrder.discount = 0;
       this.alertMessage = "Solo debe cargar un solo dato";
       this.alertConfig.type = "danger";
     }
 
-    this.updatePrices();
+    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+    
     this.updateSaleOrder();
   }
 
@@ -300,7 +321,8 @@ export class UpdateSaleOrderComponent implements OnInit {
 
   private addAmount(): void {
     this.amountOfItemForm.setValue({
-            'amount': this.amountOfItemForm.value.amount + 1
+            'amount': this.amountOfItemForm.value.amount + 1,
+            'notes': this.amountOfItemForm.value.notes
     });
   }
 
@@ -308,11 +330,13 @@ export class UpdateSaleOrderComponent implements OnInit {
 
     if (this.amountOfItemForm.value.amount > 1) {
       this.amountOfItemForm.setValue({
-              'amount': this.amountOfItemForm.value.amount - 1
+              'amount': this.amountOfItemForm.value.amount - 1,
+              'notes': this.amountOfItemForm.value.notes
       });
     } else {
       this.amountOfItemForm.setValue({
-              'amount': 1
+              'amount': 1,
+              'notes': this.amountOfItemForm.value.notes
       });
     }
     
@@ -371,7 +395,7 @@ export class UpdateSaleOrderComponent implements OnInit {
         this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
 
-      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+      this.applyDiscount();
    }
 
 }

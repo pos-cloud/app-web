@@ -2,13 +2,10 @@ import { Component, OnInit, ElementRef, ViewChild, EventEmitter } from '@angular
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/interval';
 
 import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
-import { CashBox, CashBoxState } from './../../models/cash-box';
 import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 import { Category } from './../../models/category';
@@ -16,7 +13,6 @@ import { Category } from './../../models/category';
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
-import { CashBoxService } from './../../services/cash-box.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -41,30 +37,32 @@ export class AddSaleOrderComponent implements OnInit {
   private areCategoriesVisible: boolean = true;
   private areArticlesVisible: boolean = false;
   private categorySelected: Category;
-  @ViewChild('contentAmount') contentAmount:ElementRef;
+  @ViewChild('content') content:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
-  private discountAmount: number;
-  private discountPorcent: number;
+  private discountPorcent: number = 0.00;
+  private discountAmount: number = 0.00;
 
-  private formErrorsAmountOfItem = {
-    'amount1': ''
+  private formErrors = {
+    'amount': ''
   };
 
-  private validationMessagesAmountOfItem = {
-    'amount1': {
+  private validationMessages = {
+    'amount': {
       'required':       'Este campo es requerido.'
     }
   };
 
   private formErrorsDiscount = {
-    'amount': 0.00,
-    'porcent': 0.00
+    'amount': '',
+    'porcent': ''
   };
 
   private validationMessagesDiscount = {
     'amount': {
+      'required':       'Este campo es requerido.'
     },
     'porcent': {
+      'required':       'Este campo es requerido.'
     }
   };
 
@@ -72,7 +70,6 @@ export class AddSaleOrderComponent implements OnInit {
     private _fb: FormBuilder,
     private _saleOrderService: SaleOrderService,
     private _movementOfArticleService: MovementOfArticleService,
-    private _cashBoxService: CashBoxService,
     private _tableService: TableService,
     private _router: Router,
     public activeModal: NgbActiveModal,
@@ -87,8 +84,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
     this.categorySelected = new Category();
-    this.discountAmount = 0.00;
-    this.discountPorcent = 0.00;
   }
 
   ngOnInit(): void {
@@ -103,7 +98,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     });
-    this.buildFormAmountOfItem();
+    this.buildForm();
     this.buildFormDiscount();
   }
 
@@ -130,10 +125,10 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  private buildFormAmountOfItem(): void {
+  private buildForm(): void {
 
     this.amountOfItemForm = this._fb.group({
-      'amount1': [this.movementOfArticle.amount, [
+      'amount': [this.movementOfArticle.amount, [
           Validators.required
         ]
       ],
@@ -143,45 +138,46 @@ export class AddSaleOrderComponent implements OnInit {
     });
 
     this.amountOfItemForm.valueChanges
-      .subscribe(data => this.onValueChangedAmountOfItem(data));
+      .subscribe(data => this.onValueChanged(data));
 
-    this.onValueChangedAmountOfItem();
+    this.onValueChanged();
+  }
+
+  private onValueChanged(data?: any): void {
+
+    if (!this.amountOfItemForm) { return; }
+    const form = this.amountOfItemForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
   }
 
   private buildFormDiscount(): void {
 
     this.discountForm = this._fb.group({
       'amount': [this.discountAmount, [
-          Validators.required
+           Validators.required
         ]
       ],
       'porcent': [this.discountPorcent, [
+           Validators.required
         ]
       ]
     });
 
     this.discountForm.valueChanges
-      .subscribe(data => this.onValueChangedAmountOfItem(data));
+      .subscribe(data => this.onValueChangedDiscount(data));
 
-    this.onValueChangedAmountOfItem();
-  }
-
-  private onValueChangedAmountOfItem(data?: any): void {
-
-    if (!this.amountOfItemForm) { return; }
-    const form = this.amountOfItemForm;
-
-    for (const field in this.formErrorsAmountOfItem) {
-      this.formErrorsAmountOfItem[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessagesAmountOfItem[field];
-        for (const key in control.errors) {
-          this.formErrorsAmountOfItem[field] += messages[key] + ' ';
-        }
-      }
-    }
+    this.onValueChangedDiscount();
   }
 
   private onValueChangedDiscount(data?: any): void {
@@ -224,17 +220,31 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
+  private updateSaleOrder(): void {
+    
+    this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
+      result => {
+          if(!result.saleOrder) {
+            this.alertMessage = result.message;
+          } else {
+            this.alertMessage = null;
+          }
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+              this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+          }
+          this.loading = false;
+        }
+    );
+  }
+
   private showArticlesOfCategory(category: Category): void {
     
     this.categorySelected = category;
     this.areArticlesVisible = true;
     this.areCategoriesVisible = false;
-  }
-
-  private showCategories(): void {
-
-    this.areCategoriesVisible = true;
-    this.areArticlesVisible = false;
   }
 
   private changeStateOfTable(): void {
@@ -269,27 +279,30 @@ export class AddSaleOrderComponent implements OnInit {
   private openModal(op: string): void {
 
     let modalRef;
+
       switch(op) {
         case 'add_item' :
-            this.buildFormAmountOfItem();
-            modalRef = this._modalService.open(this.contentAmount).result.then((result) => {
-              if(result === 'add_item') {
-                this.confirmAmount();
-              }
-            }, (reason) => {
-              
-            });
+          modalRef = this._modalService.open(this.content).result.then((result) => {
+            if(result  === "add_item"){
+              this.confirmAmount();
+            }
+          }, (reason) => {
+            
+          });
           break;
-        case 'discount' : 
-          this.buildFormDiscount();
+        case 'apply_discunt' :
+        
           modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
-              if(result === 'discount') {
-                this.confirmAmount();
-              }
-            }, (reason) => {
-              
-            });
-        break;
+            if(result  === "apply_discunt"){
+
+              this.discountPorcent = this.discountForm.value.porcent;
+              this.discountAmount = this.discountForm.value.amount;
+              this.updatePrices();
+            }
+          }, (reason) => {
+            
+          });
+          break;
         default : ;
     };
   }
@@ -301,7 +314,36 @@ export class AddSaleOrderComponent implements OnInit {
     this.saveMovementOfArticle();
   }
 
+  private applyDiscount(): void {
+
+    if( this.discountPorcent > 0 && 
+        this.discountPorcent <= 100 && 
+        this.discountPorcent !== null && 
+        (this.discountAmount === 0 || this.discountAmount === null)){
+
+      this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
+
+    } else if(( this.discountPorcent === 0 || 
+                this.discountPorcent === null) && 
+                this.discountAmount > 0  && 
+                this.discountAmount <= this.saleOrder.totalPrice  &&
+                this.discountAmount !== null){
+
+      this.saleOrder.discount = this.discountAmount;
+    } else {
+      
+      this.saleOrder.discount = 0;
+      this.alertMessage = "Solo debe cargar un solo dato";
+      this.alertConfig.type = "danger";
+    }
+    
+    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+    
+    this.updateSaleOrder();
+  }
+
   private saveMovementOfArticle(): void {
+
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
@@ -309,7 +351,9 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.movementOfArticle = result.movementOfArticle;
-          this.updateSaleOrder();
+          this.getMovementsOfSaleOrder();
+          this.movementOfArticle = new MovementOfArticle();
+          this.buildForm();
         }
         this.loading = false;
       },
@@ -323,63 +367,27 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  private addItemToOrder(): void {
-
-    this.movementsOfArticles.push(this.movementOfArticle);
-    this.areMovementsOfArticlesEmpty = false;
-  }
-
   private addAmount(): void {
-    this.amountOfItemForm.setValue({'amount': this.amountOfItemForm.value.amount + 1
+    this.amountOfItemForm.setValue({
+            'amount': this.amountOfItemForm.value.amount + 1,
+            'notes': this.amountOfItemForm.value.notes
     });
   }
 
   private subtractAmount(): void {
 
     if (this.amountOfItemForm.value.amount > 1) {
-      this.amountOfItemForm.setValue({'amount': this.amountOfItemForm.value.amount - 1});
+      this.amountOfItemForm.setValue({
+              'amount': this.amountOfItemForm.value.amount - 1,
+              'notes': this.amountOfItemForm.value.notes
+      });
     } else {
-      this.amountOfItemForm.setValue({'amount': 1});
+      this.amountOfItemForm.setValue({
+              'amount': 1,
+              'notes': this.amountOfItemForm.value.notes
+      });
     }
-  }
-
-  private updateSaleOrder(): void {
     
-    this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
-      result => {
-          if(!result.saleOrder) {
-            this.alertMessage = result.message;
-          } else {
-            this.alertMessage = null;
-            this.addItemToOrder();
-            this.movementOfArticle = new MovementOfArticle();
-            this.buildFormAmountOfItem();
-            this.buildFormDiscount();
-          }
-        },
-        error => {
-          this.alertMessage = error;
-          if(!this.alertMessage) {
-              this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          }
-          this.loading = false;
-        }
-    );
-  }
-
-  private deleteMovementOfArticle(movementOfArticleId: string): void {
-    
-    this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
-      result => {
-        this.getMovementsOfSaleOrder();
-      },
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
-      }
-    );
   }
 
   private getMovementsOfSaleOrder(): void {
@@ -405,6 +413,26 @@ export class AddSaleOrderComponent implements OnInit {
       );
    }
 
+  private showCategories(): void {
+
+    this.areCategoriesVisible = true;
+    this.areArticlesVisible = false;
+  }
+
+  private deleteMovementOfArticle(movementOfArticleId: string): void {
+    
+    this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
+      result => {
+        this.getMovementsOfSaleOrder();
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+      }
+    );
+  }
 
    private updatePrices(): void {
 
@@ -414,6 +442,8 @@ export class AddSaleOrderComponent implements OnInit {
 
         this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
+
+      this.applyDiscount();
    }
 
 }
