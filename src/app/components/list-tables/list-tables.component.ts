@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table } from './../../models/table';
+import { Table, TableState } from './../../models/table';
 import { Room } from './../../models/room';
 import { Waiter } from './../../models/waiter';
 

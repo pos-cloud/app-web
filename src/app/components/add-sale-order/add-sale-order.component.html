@@ -71,7 +71,7 @@
           <button type="button" class="btn btn-secondary">Cobrar</button>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary">Cancelar</button>
+          <button type="button" class="btn btn-secondary" (click)="openModal('cancel_order')">Cancelar</button>
         </div>
       </div>
       <div class="row">
@@ -179,7 +179,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discunt')" autocomplete="off">
+    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discount')" autocomplete="off">
       <div class="modal-body">
         <div class="row">
           <label for="amount" class="control-label">Monto de descuento:</label>
@@ -218,4 +218,21 @@
       </div>
     </form>
   </section>
+</ng-template>
+
+<!--MODAL CANCEL-->
+<ng-template #contentCancelOrder let-c="close" let-d="dismiss">
+  <div  class="modal-header">
+    <h4 class="modal-title">Cancelar Pedido</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h6>¿Estás seguro de cancelar el pedido?</h6>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+    <button type="submit" class="btn btn-primary" (click)="c('cancel_order')">Aceptar</button>
+  </div>
 </ng-template>

@@ -39,6 +39,7 @@ export class AddSaleOrderComponent implements OnInit {
   private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
+  @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   private discountPorcent: number = 0.00;
   private discountAmount: number = 0.00;
 
@@ -207,7 +208,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
-            this.changeStateOfTable();
+            this.changeStateOfTable(TableState.Busy);
           }
         },
         error => {
@@ -228,6 +229,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.alertMessage = result.message;
           } else {
             this.alertMessage = null;
+            this.changeStateOfTable(TableState.Available);
           }
         },
         error => {
@@ -247,9 +249,9 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = false;
   }
 
-  private changeStateOfTable(): void {
+  private changeStateOfTable(state: any): void {
 
-    this.table.state = TableState.Busy;
+    this.table.state = state;
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
@@ -298,6 +300,17 @@ export class AddSaleOrderComponent implements OnInit {
               this.discountPorcent = this.discountForm.value.porcent;
               this.discountAmount = this.discountForm.value.amount;
               this.updatePrices();
+            }
+          }, (reason) => {
+            
+          });
+          break;
+        case 'cancel_order' :
+        
+          modalRef = this._modalService.open(this.contentCancelOrder).result.then((result) => {
+            if(result  === "cancel_order"){
+              this.saleOrder.state = SaleOrderState.Canceled;
+              this.updateSaleOrder();
             }
           }, (reason) => {
             
