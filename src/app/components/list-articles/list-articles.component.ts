@@ -97,7 +97,7 @@ export class ListArticlesComponent implements OnInit {
           });
           break;
         case 'update' :
-            modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' })
+            modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' });
             modalRef.componentInstance.article = article;
             modalRef.result.then((result) => {
               if(result === 'save_close') {
@@ -108,7 +108,7 @@ export class ListArticlesComponent implements OnInit {
             });
           break;
         case 'delete' :
-            modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg' })
+            modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg' });
             modalRef.componentInstance.article = article;
             modalRef.result.then((result) => {
               if(result === 'delete_close') {

@@ -26,6 +26,7 @@ export class UpdateSaleOrderComponent implements OnInit {
   private movementOfArticle: MovementOfArticle;
   private movementsOfArticles: MovementOfArticle[] = new Array();
   private amountOfItemForm: FormGroup;
+  private discountForm: FormGroup;
   private areMovementsOfArticlesEmpty: boolean = true;
   private userType: string;
   private table: Table;
@@ -35,6 +36,9 @@ export class UpdateSaleOrderComponent implements OnInit {
   private areArticlesVisible: boolean = false;
   private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
+  @ViewChild('contentDiscount') contentDiscount:ElementRef;
+  private discounPorcent: number = 0.00;
+  private discountAmount: number = 0.00;
 
   private formErrors = {
     'amount': ''
@@ -43,6 +47,18 @@ export class UpdateSaleOrderComponent implements OnInit {
   private validationMessages = {
     'amount': {
       'required':       'Este campo es requerido.'
+    }
+  };
+
+  private formErrorsDiscount = {
+    'amount': '',
+    'porcent': ''
+  };
+
+  private validationMessagesDiscount = {
+    'amount': {
+    },
+    'porcent': {
     }
   };
 
@@ -77,6 +93,7 @@ export class UpdateSaleOrderComponent implements OnInit {
       } 
     });
     this.buildForm();
+    this.buildFormDiscount();
   }
 
   private getSaleOrder(id: string): void {
@@ -137,6 +154,41 @@ export class UpdateSaleOrderComponent implements OnInit {
     }
   }
 
+  private buildFormDiscount(): void {
+
+    this.discountForm = this._fb.group({
+      'amount': [this.discountAmount, [
+        ]
+      ],
+      'porcent': [this.discounPorcent, [
+        ]
+      ]
+    });
+
+    this.discountForm.valueChanges
+      .subscribe(data => this.onValueChangedDiscount(data));
+
+    this.onValueChangedDiscount();
+  }
+
+  private onValueChangedDiscount(data?: any): void {
+
+    if (!this.discountForm) { return; }
+    const form = this.discountForm;
+
+    for (const field in this.formErrorsDiscount) {
+      this.formErrorsDiscount[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessagesDiscount[field];
+        for (const key in control.errors) {
+          this.formErrorsDiscount[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
   private updateSaleOrder(): void {
     
     this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
@@ -161,7 +213,7 @@ export class UpdateSaleOrderComponent implements OnInit {
 
     this.movementOfArticle = itemData;
     this.movementOfArticle.saleOrder = this.saleOrder;
-    this.openModal();
+    this.openModal('add_item');
   }
 
   private showArticlesOfCategory(category: Category): void {
@@ -171,20 +223,54 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = false;
   }
 
-  private openModal(): void {
-    let modalRef = this._modalService.open(this.content).result.then((result) => {
-      if(result  === "add_item"){
-        this.confirmAmount();
-      }
-    }, (reason) => {
-      
-    });
+  private openModal(op: string): void {
+
+    let modalRef;
+    
+    switch(op) {
+        case 'add_item' :
+          modalRef = this._modalService.open(this.content).result.then((result) => {
+            if(result  === "add_item"){
+              this.confirmAmount();
+            }
+          }, (reason) => {
+            
+          });
+          break;
+        case 'apply_discunt' :
+          modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
+            if(result  === "apply_discunt"){
+              this.applyDiscount();
+            }
+          }, (reason) => {
+            
+          });
+          break;
+    }
   }
 
   private confirmAmount(){
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
     this.saveMovementOfArticle();
+  }
+
+  private applyDiscount(): void {
+    
+    this.discounPorcent = this.discountForm.value.porcent;
+    this.discountAmount = this.discountForm.value.amount;
+    
+    if(this.discounPorcent !== 0 && this.discountAmount === 0){
+      this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;   
+    } else if(this.discounPorcent === 0 && this.discountAmount !== 0){
+      this.saleOrder.discount = this.discountAmount;
+    } else {
+      this.alertMessage = "Solo debe cargar un solo dato";
+      this.alertConfig.type = "danger";
+    }
+
+    this.updatePrices();
+    this.updateSaleOrder();
   }
 
   private saveMovementOfArticle(): void {
@@ -285,6 +371,7 @@ export class UpdateSaleOrderComponent implements OnInit {
         this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
 
+      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
    }
 
 }

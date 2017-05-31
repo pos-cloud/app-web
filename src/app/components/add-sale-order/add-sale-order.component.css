@@ -22,9 +22,17 @@
       height: 300px;
 }
 
+.header-sale-order {
+      padding: 15px;
+      background: #292B2C;
+      color: white;
+      margin-bottom: 15px;
+}
+
  /*.row{
        border: 1px solid red;
  }
+ 
  .col-md-4, .col-md-8, .col-md-12, .col-md-3, .col-md-9 {
        border: 1px solid blue;
  }*/

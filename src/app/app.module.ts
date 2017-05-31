@@ -21,6 +21,7 @@ import { MakeService } from './services/make.service';
 import { CategoryService } from './services/category.service';
 import { TurnService } from './services/turn.service';
 import { CompanyService } from './services/company.service';
+import { ClockService } from './services/clock.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -68,6 +69,7 @@ import { AddCompanyComponent } from './components/add-company/add-company.compon
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
+import { ClockComponent } from './components/clock/clock.component';
 
 //pipes
 import { FilterPipe } from './pipes/filter.pipe';
@@ -127,6 +129,7 @@ import { ReportsComponent } from './components/reports/reports.component';
     DeleteCompanyComponent,
     AddCompanyComponent,
     ReportsComponent,
+    ClockComponent,
   ],
   imports: [
     BrowserModule,
@@ -150,7 +153,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     MakeService,
     CategoryService,
     TurnService,
-    CompanyService
+    CompanyService,
+    ClockService
   ],
   bootstrap: [AppComponent]
 })

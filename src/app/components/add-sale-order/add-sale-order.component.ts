@@ -2,6 +2,8 @@ import { Component, OnInit, ElementRef, ViewChild, EventEmitter } from '@angular
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
 
 import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { Article } from './../../models/article';
@@ -15,7 +17,6 @@ import { MovementOfArticleService } from './../../services/movement-of-article.s
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
 import { CashBoxService } from './../../services/cash-box.service';
-
 
 @Component({
   selector: 'app-add-sale-order',
@@ -31,6 +32,7 @@ export class AddSaleOrderComponent implements OnInit {
   private movementOfArticle: MovementOfArticle;
   private movementsOfArticles: MovementOfArticle[] = new Array();
   private amountOfItemForm: FormGroup;
+  private discountForm: FormGroup;
   private areMovementsOfArticlesEmpty: boolean = true;
   private userType: string;
   private table: Table;
@@ -39,15 +41,30 @@ export class AddSaleOrderComponent implements OnInit {
   private areCategoriesVisible: boolean = true;
   private areArticlesVisible: boolean = false;
   private categorySelected: Category;
-  @ViewChild('content') content:ElementRef;
+  @ViewChild('contentAmount') contentAmount:ElementRef;
+  @ViewChild('contentDiscount') contentDiscount:ElementRef;
+  private discountAmount: number;
+  private discountPorcent: number;
 
-  private formErrors = {
-    'amount': ''
+  private formErrorsAmountOfItem = {
+    'amount1': ''
   };
 
-  private validationMessages = {
-    'amount': {
+  private validationMessagesAmountOfItem = {
+    'amount1': {
       'required':       'Este campo es requerido.'
+    }
+  };
+
+  private formErrorsDiscount = {
+    'amount': 0.00,
+    'porcent': 0.00
+  };
+
+  private validationMessagesDiscount = {
+    'amount': {
+    },
+    'porcent': {
     }
   };
 
@@ -70,6 +87,8 @@ export class AddSaleOrderComponent implements OnInit {
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
     this.categorySelected = new Category();
+    this.discountAmount = 0.00;
+    this.discountPorcent = 0.00;
   }
 
   ngOnInit(): void {
@@ -84,7 +103,8 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     });
-    this.buildForm();
+    this.buildFormAmountOfItem();
+    this.buildFormDiscount();
   }
 
   private getTable(id: string): void  {
@@ -110,10 +130,10 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  private buildForm(): void {
+  private buildFormAmountOfItem(): void {
 
     this.amountOfItemForm = this._fb.group({
-      'amount': [this.movementOfArticle.amount, [
+      'amount1': [this.movementOfArticle.amount, [
           Validators.required
         ]
       ],
@@ -123,24 +143,60 @@ export class AddSaleOrderComponent implements OnInit {
     });
 
     this.amountOfItemForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+      .subscribe(data => this.onValueChangedAmountOfItem(data));
 
-    this.onValueChanged();
+    this.onValueChangedAmountOfItem();
   }
 
-  private onValueChanged(data?: any): void {
+  private buildFormDiscount(): void {
+
+    this.discountForm = this._fb.group({
+      'amount': [this.discountAmount, [
+          Validators.required
+        ]
+      ],
+      'porcent': [this.discountPorcent, [
+        ]
+      ]
+    });
+
+    this.discountForm.valueChanges
+      .subscribe(data => this.onValueChangedAmountOfItem(data));
+
+    this.onValueChangedAmountOfItem();
+  }
+
+  private onValueChangedAmountOfItem(data?: any): void {
 
     if (!this.amountOfItemForm) { return; }
     const form = this.amountOfItemForm;
 
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
+    for (const field in this.formErrorsAmountOfItem) {
+      this.formErrorsAmountOfItem[field] = '';
       const control = form.get(field);
 
       if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
+        const messages = this.validationMessagesAmountOfItem[field];
         for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+          this.formErrorsAmountOfItem[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  private onValueChangedDiscount(data?: any): void {
+
+    if (!this.discountForm) { return; }
+    const form = this.discountForm;
+
+    for (const field in this.formErrorsDiscount) {
+      this.formErrorsDiscount[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessagesDiscount[field];
+        for (const key in control.errors) {
+          this.formErrorsDiscount[field] += messages[key] + ' ';
         }
       }
     }
@@ -207,17 +263,35 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.movementOfArticle = itemData;
     this.movementOfArticle.saleOrder = this.saleOrder;
-    this.openModal();
+    this.openModal('add_item');
   }
 
-  private openModal(): void {
-    let modalRef = this._modalService.open(this.content).result.then((result) => {
-      if(result  === "add_item"){
-        this.confirmAmount();
-      }
-    }, (reason) => {
-      
-    });
+  private openModal(op: string): void {
+
+    let modalRef;
+      switch(op) {
+        case 'add_item' :
+            this.buildFormAmountOfItem();
+            modalRef = this._modalService.open(this.contentAmount).result.then((result) => {
+              if(result === 'add_item') {
+                this.confirmAmount();
+              }
+            }, (reason) => {
+              
+            });
+          break;
+        case 'discount' : 
+          this.buildFormDiscount();
+          modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
+              if(result === 'discount') {
+                this.confirmAmount();
+              }
+            }, (reason) => {
+              
+            });
+        break;
+        default : ;
+    };
   }
 
   private confirmAmount(){
@@ -279,7 +353,8 @@ export class AddSaleOrderComponent implements OnInit {
             this.alertMessage = null;
             this.addItemToOrder();
             this.movementOfArticle = new MovementOfArticle();
-            this.buildForm();
+            this.buildFormAmountOfItem();
+            this.buildFormDiscount();
           }
         },
         error => {

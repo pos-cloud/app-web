@@ -22,6 +22,13 @@
       height: 300px;
 }
 
+.header-sale-order {
+      padding: 15px;
+      background: #292B2C;
+      color: white;
+      margin-bottom: 15px;
+}
+
  /*.row{
        border: 1px solid red;
  }

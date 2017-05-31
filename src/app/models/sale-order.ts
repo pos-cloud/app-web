@@ -11,6 +11,7 @@ export class SaleOrder {
 	public date: Date = new Date();
 	public state: any = SaleOrderState.Open;
 	public observation: string;
+	public discount: number = 0.00;
 	public totalPrice: number = 0.00;
 	public company: Company;
 	public cashBox: CashBox;
