@@ -171,7 +171,7 @@ export class ListTablesComponent implements OnInit {
   }
   
   private openModal(op: string, table: Table, waiter?: Waiter): void {
-      
+
       this.tableSelected = table;
       if(waiter !== undefined) this.tableSelected.waiter = waiter;
       let modalRef;

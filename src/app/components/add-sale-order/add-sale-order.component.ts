@@ -229,7 +229,6 @@ export class AddSaleOrderComponent implements OnInit {
             this.alertMessage = result.message;
           } else {
             this.alertMessage = null;
-            this.changeStateOfTable(TableState.Available);
           }
         },
         error => {
@@ -284,7 +283,7 @@ export class AddSaleOrderComponent implements OnInit {
 
       switch(op) {
         case 'add_item' :
-          modalRef = this._modalService.open(this.content).result.then((result) => {
+          modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
             if(result  === "add_item"){
               this.confirmAmount();
             }
@@ -294,7 +293,7 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         case 'apply_discunt' :
         
-          modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
+          modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if(result  === "apply_discunt"){
 
               this.discountPorcent = this.discountForm.value.porcent;
@@ -307,10 +306,12 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         case 'cancel_order' :
         
-          modalRef = this._modalService.open(this.contentCancelOrder).result.then((result) => {
+          modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
             if(result  === "cancel_order"){
               this.saleOrder.state = SaleOrderState.Canceled;
               this.updateSaleOrder();
+              this.changeStateOfTable(TableState.Available);
+              this.backToRooms();
             }
           }, (reason) => {
             
@@ -320,7 +321,11 @@ export class AddSaleOrderComponent implements OnInit {
     };
   }
 
-  private confirmAmount(){
+  private backToRooms(): void {
+    this._router.navigate(['/pos/salones/'+this.table.room+'/mesas']);
+  }
+
+  private confirmAmount(): void {
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;

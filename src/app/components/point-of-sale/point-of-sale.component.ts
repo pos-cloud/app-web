@@ -22,7 +22,7 @@ export class PointOfSaleComponent implements OnInit {
 
   private cashBox: CashBox;
   private rooms: Room[] = new Array();
-  private roomSelected: Room;
+  private roomId: string;
   private existsCashBoxOpen: boolean = false;
   private alertMessage: any;
 
@@ -38,6 +38,12 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._router.events.subscribe((data:any) => {
+      let locationPathURL: string = data.url.split('/');
+      if(locationPathURL[3] !== undefined) {
+        this.roomId = locationPathURL[3];
+      }
+    });
     this.getRooms();
   }
 
@@ -50,9 +56,11 @@ export class PointOfSaleComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.rooms = result.rooms;
-            this.roomSelected = this.rooms[0];
-            this._router.navigate(['/pos/salones/'+this.roomSelected._id+'/mesas']);
+            if(this.roomId === undefined){
+              this.roomId = this.rooms[0]._id;
+            }
             this.existsCashBoxOpen = true;
+            this.showTables();
           }
         },
         error => {
@@ -62,10 +70,14 @@ export class PointOfSaleComponent implements OnInit {
           }
         }
       );
-   }
+  }
+
+  private showTables(): void {
+    this._router.navigate(['/pos/salones/'+this.roomId+'/mesas']);
+  }
 
   private changeRoom(room: Room): void {
-    this.roomSelected = room;
-    this._router.navigate(['/pos/salones/'+room._id+'/mesas']);
+    this.roomId = room._id;
+    this.showTables();
   }
 }

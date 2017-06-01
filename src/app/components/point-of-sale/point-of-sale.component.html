@@ -8,7 +8,7 @@
   </div>
   <div class="row center-content">
     <div class="btn-group" role="group" aria-label="Basic example">
-      <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id, 'btn btn-secondary':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)">{{room.description}}</button>
+      <button type="button" [ngClass]="{'btn btn-primary':roomId===room._id, 'btn btn-secondary':roomId!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)">{{room.description}}</button>
     </div>
   </div>
 </section>
