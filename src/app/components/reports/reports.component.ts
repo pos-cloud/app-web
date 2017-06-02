@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,7 @@ export class ReportsComponent implements OnInit {
   private saleOrders: SaleOrder[] = new Array();
   private alertMessage: any;
   private waiters: Waiter[] = new Array();
+  @Input() waiterSelected: Waiter;
 
   constructor(
     private _saleOrderService: SaleOrderService,
