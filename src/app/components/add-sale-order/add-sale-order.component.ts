@@ -114,7 +114,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
-          this.addSaleOrder();
+          this.getLastSaleOrder();
         }
       },
       error => {
@@ -310,6 +310,7 @@ export class AddSaleOrderComponent implements OnInit {
             if(result  === "cancel_order"){
               this.saleOrder.state = SaleOrderState.Canceled;
               this.updateSaleOrder();
+              this.table.waiter = null;
               this.changeStateOfTable(TableState.Available);
               this.backToRooms();
             }
@@ -319,6 +320,43 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         default : ;
     };
+  }
+
+  private getLastSaleOrder(): void {
+    
+    this._saleOrderService.getLastSaleOrderByOrigen(this.saleOrder.origin).subscribe(
+      result => {
+        let number;
+        
+        if(result.saleOrders){
+          if(result.saleOrders[0] !== undefined) {
+            number = result.saleOrders[0].number + 1;
+          } else {
+            number = 1;
+          }
+        } else if(result.message = "No se encontraron pedidos") {
+          number = 1;
+        } else {
+          number = 0;
+        }
+
+        if(number != 0) {
+
+          this.saleOrder.number = number;
+          this.addSaleOrder();
+        } else {
+          this.alertMessage = "Ha ocurrido un error en obtener el último pedido";
+          this.alertConfig.type = "danger";
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+          this.alertConfig.type = "danger";
+        }
+      }
+    );
   }
 
   private backToRooms(): void {

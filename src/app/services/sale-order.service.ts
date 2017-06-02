@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { SaleOrder } from './../models/sale-order';
+import { SaleOrder, SaleOrderState } from './../models/sale-order';
 
 @Injectable()
 export class SaleOrderService {
@@ -40,5 +40,9 @@ export class SaleOrderService {
   getSaleOrdersByWaiter (waiterId: string, date: string) {
 		return this._http.get(this.url+'sale-orders/where="date:"'+date+'",waiter:"'+waiterId+'').map (res => res.json());
 
+	}
+  
+  getLastSaleOrderByOrigen (origin: number) {
+		return this._http.get(this.url+'sale-orders/where="origin":"'+origin+'"&sort="number":-1&limit=1').map (res => res.json());
 	}
 }

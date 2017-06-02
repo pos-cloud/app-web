@@ -28,7 +28,7 @@ import { LoginComponent } from './../../components/login/login.component';
 export class ListTablesComponent implements OnInit {
 
   private tableSelected: Table;
-  private tables: Table[] = new Array();
+  private tables: Table[];
   private areTablesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -68,7 +68,8 @@ export class ListTablesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
+    this.tables = null;
     this._router.events.subscribe((data:any) => {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
