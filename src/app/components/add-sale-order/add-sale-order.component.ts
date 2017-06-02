@@ -39,6 +39,7 @@ export class AddSaleOrderComponent implements OnInit {
   private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
+  @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   private discountPorcent: number = 0.00;
   private discountAmount: number = 0.00;
 
@@ -113,7 +114,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
-          this.addSaleOrder();
+          this.getLastSaleOrder();
         }
       },
       error => {
@@ -207,7 +208,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
-            this.changeStateOfTable();
+            this.changeStateOfTable(TableState.Busy);
           }
         },
         error => {
@@ -247,9 +248,9 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = false;
   }
 
-  private changeStateOfTable(): void {
+  private changeStateOfTable(state: any): void {
 
-    this.table.state = TableState.Busy;
+    this.table.state = state;
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
@@ -282,7 +283,7 @@ export class AddSaleOrderComponent implements OnInit {
 
       switch(op) {
         case 'add_item' :
-          modalRef = this._modalService.open(this.content).result.then((result) => {
+          modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
             if(result  === "add_item"){
               this.confirmAmount();
             }
@@ -292,7 +293,7 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         case 'apply_discunt' :
         
-          modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
+          modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if(result  === "apply_discunt"){
 
               this.discountPorcent = this.discountForm.value.porcent;
@@ -303,11 +304,66 @@ export class AddSaleOrderComponent implements OnInit {
             
           });
           break;
+        case 'cancel_order' :
+        
+          modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
+            if(result  === "cancel_order"){
+              this.saleOrder.state = SaleOrderState.Canceled;
+              this.updateSaleOrder();
+              this.table.waiter = null;
+              this.changeStateOfTable(TableState.Available);
+              this.backToRooms();
+            }
+          }, (reason) => {
+            
+          });
+          break;
         default : ;
     };
   }
 
-  private confirmAmount(){
+  private getLastSaleOrder(): void {
+    
+    this._saleOrderService.getLastSaleOrderByOrigen(this.saleOrder.origin).subscribe(
+      result => {
+        let number;
+        
+        if(result.saleOrders){
+          if(result.saleOrders[0] !== undefined) {
+            number = result.saleOrders[0].number + 1;
+          } else {
+            number = 1;
+          }
+        } else if(result.message = "No se encontraron pedidos") {
+          number = 1;
+        } else {
+          number = 0;
+        }
+
+        if(number != 0) {
+
+          this.saleOrder.number = number;
+          this.addSaleOrder();
+        } else {
+          this.alertMessage = "Ha ocurrido un error en obtener el último pedido";
+          this.alertConfig.type = "danger";
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+          this.alertConfig.type = "danger";
+        }
+      }
+    );
+  }
+
+  private backToRooms(): void {
+    this._router.navigate(['/pos/salones/'+this.table.room+'/mesas']);
+  }
+
+  private confirmAmount(): void {
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;

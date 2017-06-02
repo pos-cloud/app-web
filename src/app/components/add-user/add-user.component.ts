@@ -163,8 +163,8 @@ export class AddUserComponent  implements OnInit {
           this.alertMessage = result.message;
         } else {
           this.user = result.user;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El usuario se ha añadido con éxito.";      
+          this.alertMessage = "El usuario se ha añadido con éxito.";  
+          this.alertConfig.type = 'success';    
           this.user = new User ();
           this.buildForm();
         }

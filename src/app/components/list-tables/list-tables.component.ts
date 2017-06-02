@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table } from './../../models/table';
+import { Table, TableState } from './../../models/table';
 import { Room } from './../../models/room';
 import { Waiter } from './../../models/waiter';
 
@@ -28,7 +28,7 @@ import { LoginComponent } from './../../components/login/login.component';
 export class ListTablesComponent implements OnInit {
 
   private tableSelected: Table;
-  private tables: Table[] = new Array();
+  private tables: Table[];
   private areTablesEmpty: boolean = true;
   private alertMessage: any;
   private userType: string;
@@ -68,7 +68,8 @@ export class ListTablesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
+    this.tables = null;
     this._router.events.subscribe((data:any) => {
       let locationPathURL: string = data.url.split('/');
       this.userType = locationPathURL[1];
@@ -171,7 +172,7 @@ export class ListTablesComponent implements OnInit {
   }
   
   private openModal(op: string, table: Table, waiter?: Waiter): void {
-      
+
       this.tableSelected = table;
       if(waiter !== undefined) this.tableSelected.waiter = waiter;
       let modalRef;

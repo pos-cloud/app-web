@@ -64,7 +64,7 @@
                         'itable itable-disabled':table.state==='Ocupada'}"
             (click)="openModal('select_waiter', table, table.waiter)">
         <p>{{table.description}}</p>
-        <b *ngIf="table.waiter">{{table.waiter.name}}</b>
+        <b *ngIf="table.waiter && table.state !== 'Disponible'">{{table.waiter.name}}</b>
       </div>
     </div>
 </section>
