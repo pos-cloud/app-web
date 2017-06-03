@@ -16,7 +16,7 @@
     <div class="row">
         <div class= "form-group col-md-6">
           <label class="control-label">Fecha</label>
-          <input class= "form-control" formControlName="date" type="date">
+          <input class= "form-control" formControlName="date" type="date" [value]="date">
         </div>
     </div>
     <div class = "row">
@@ -29,7 +29,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Lista de Pedidos de Venta
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Pedido</button>
+        <button class="btn btn-primary"  >Agregar Pedido</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>

@@ -56,7 +56,7 @@ export class ReportsComponent implements OnInit {
     this.waiter = this.saleOrderForm.value.waiter;
     console.log(this.waiter);
 
-    this._saleOrderService.getSaleOrdersByWaiter(this.saleOrderForm.value.waiter,"2017-06-02").subscribe(
+    this._saleOrderService.getSaleOrdersByWaiter(this.saleOrderForm.value.waiter,"2017-06-03").subscribe(
       result => {
         if(!result.saleOrders) {
           this.alertMessage = result.message;
