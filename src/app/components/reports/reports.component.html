@@ -1,6 +1,3 @@
-<p>
-  reports works!
-</p>
 <section class="container-fluid">
   <form [formGroup]="saleOrderForm" #formSaleOrder="ngForm" (ngSubmit)="reportByWaiterByDay()" autocomplete="off">
     <div class="row" >
@@ -15,8 +12,13 @@
     </div>
     <div class="row">
         <div class= "form-group col-md-6">
+<<<<<<< HEAD
           <label class="control-label">Fecha</label>
           <input class= "form-control" formControlName="date" type="date" [value]="date">
+=======
+          <label for="date" class="control-label">Fecha</label>
+          <input type="date" class= "form-control" formControlName="date">
+>>>>>>> 34cd5b180d959dbfa2c6fe1b757b2c2f68fd08d3
         </div>
     </div>
     <div class = "row">
@@ -27,6 +29,7 @@
   </form>
 <!-- list -->
   <div class="card card-outline-primary">
+<<<<<<< HEAD
     <div class="card-header bg-primary card-inverse">Lista de Pedidos de Venta
       <div class="pull-right">
         <button class="btn btn-primary"  >Agregar Pedido</button>
@@ -34,6 +37,10 @@
           <i class="fa fa-filter"></i>
         </span>
       </div>
+=======
+    <div class="card-header bg-primary card-inverse">
+      Lista de Pedidos de Venta
+>>>>>>> 34cd5b180d959dbfa2c6fe1b757b2c2f68fd08d3
     </div>
       <div class="card-block">
         <table class="table table-hover">

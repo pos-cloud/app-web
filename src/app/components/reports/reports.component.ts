@@ -17,13 +17,12 @@ import { WaiterService } from './../../services/waiter.service';
 })
 export class ReportsComponent implements OnInit {
 
-  private date: Date = new Date();
+  private date: Date;
   private waiter: Waiter;
   private saleOrderForm : FormGroup;
   private saleOrders: SaleOrder[] = new Array();
   private alertMessage: any;
   private waiters: Waiter[] = new Array();
-  @Input() waiterSelected: Waiter;
 
   private formErrors = {
     'waiter': '',
@@ -47,10 +46,13 @@ export class ReportsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.waiter = new Waiter();
+    this.date = new Date();
     this.getWaiters();
     this.buildForm();
   }
 
+<<<<<<< HEAD
   private reportByWaiterByDay(): void {
 
     this.waiter = this.saleOrderForm.value.waiter;
@@ -75,6 +77,8 @@ export class ReportsComponent implements OnInit {
     );
   }
 
+=======
+>>>>>>> 34cd5b180d959dbfa2c6fe1b757b2c2f68fd08d3
   private getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
@@ -96,11 +100,10 @@ export class ReportsComponent implements OnInit {
       );
    }
 
-   
   private buildForm(): void {
 
     this.saleOrderForm = this._fb.group({
-      'waiter': [this.waiter.name, [
+      'waiter': [this.waiter, [
           Validators.required
         ]
       ],
@@ -134,4 +137,26 @@ export class ReportsComponent implements OnInit {
     }
   }
 
+  private reportByWaiterByDay(): void {
+
+    this.waiter = this.saleOrderForm.value.waiter;
+
+    this._saleOrderService.getSaleOrdersByWaiter(this.waiter._id,"2017-06-02").subscribe(
+      result => {
+        if(!result.saleOrders) {
+          this.alertMessage = result.message;
+          this.saleOrders = null;
+        } else {
+          this.alertMessage = null;
+          this.saleOrders = result.saleOrders;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+  }
 }
