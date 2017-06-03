@@ -52,7 +52,6 @@ export class ReportsComponent implements OnInit {
     this.buildForm();
   }
 
-
   private getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
