@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,31 +17,53 @@ import { WaiterService } from './../../services/waiter.service';
 })
 export class ReportsComponent implements OnInit {
 
-
+  private date: Date = new Date();
+  private waiter: Waiter;
+  private saleOrderForm : FormGroup;
   private saleOrders: SaleOrder[] = new Array();
   private alertMessage: any;
   private waiters: Waiter[] = new Array();
   @Input() waiterSelected: Waiter;
 
+  private formErrors = {
+    'waiter': '',
+    'date': ''
+  };
+
+  private validationMessages = {
+    'waiter': {
+      'required':       'Este campo es requerido.'
+    },
+    'date' : {
+      'required':       'Este campo es requerido'
+    }
+  };
+
   constructor(
     private _saleOrderService: SaleOrderService,
     private _waiterService: WaiterService,
     private _router: Router,
+    private _fb: FormBuilder
   ) { }
 
   ngOnInit() {
+    this.getWaiters();
+    this.buildForm();
   }
 
   private reportByWaiterByDay(): void {
 
-    this._saleOrderService.getSaleOrdersByWaiter("592748f8711a6015901d8176","25-05-17").subscribe(
+    this.waiter = this.saleOrderForm.value.waiter;
+    console.log(this.waiter);
+
+    this._saleOrderService.getSaleOrdersByWaiter(this.saleOrderForm.value.waiter,"2017-06-02").subscribe(
       result => {
         if(!result.saleOrders) {
           this.alertMessage = result.message;
           this.saleOrders = null;
         } else {
           this.alertMessage = null;
-          this.saleOrders = result.waiters;
+          this.saleOrders = result.saleOrders;
         }
       },
       error => {
@@ -72,4 +95,43 @@ export class ReportsComponent implements OnInit {
 				}
       );
    }
+
+   
+  private buildForm(): void {
+
+    this.saleOrderForm = this._fb.group({
+      'waiter': [this.waiter.name, [
+          Validators.required
+        ]
+      ],
+      'date' : [this.date, [
+          Validators.required
+        ]
+      ]
+    });
+
+    this.saleOrderForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged();
+  }
+
+  private onValueChanged(data?: any): void {
+
+    if (!this.saleOrderForm) { return; }
+    const form = this.saleOrderForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
 }
