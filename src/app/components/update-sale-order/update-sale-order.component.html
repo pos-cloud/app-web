@@ -62,7 +62,7 @@
           <button type="button" class="btn btn-secondary">Clientes</button>
         </div>
         <div class="col-md-3">
-          <button type="button" class="btn btn-secondary" (click)="openModal('apply_discunt')">Descuento</button>
+          <button type="button" class="btn btn-secondary" (click)="openModal('apply_discount')">Descuento</button>
         </div>
         <div class="col-md-2">
           <button type="button" class="btn btn-secondary">Cuenta</button>
@@ -179,7 +179,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discunt')" autocomplete="off">
+    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discount')" autocomplete="off">
       <div class="modal-body">
         <div class="row">
           <label for="amount" class="control-label">Monto de descuento:</label>

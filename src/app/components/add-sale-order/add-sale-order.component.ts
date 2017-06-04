@@ -291,11 +291,11 @@ export class AddSaleOrderComponent implements OnInit {
             
           });
           break;
-        case 'apply_discunt' :
+        case 'apply_discount' :
         
           modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
-            if(result  === "apply_discunt"){
-
+            if(result  === "apply_discount"){
+              console.log("apply_discount");
               this.discountPorcent = this.discountForm.value.porcent;
               this.discountAmount = this.discountForm.value.amount;
               this.updatePrices();
@@ -394,6 +394,8 @@ export class AddSaleOrderComponent implements OnInit {
     }
     
     this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+    console.log("descuento "+this.saleOrder.discount);
+    console.log("total precio" +this.saleOrder.totalPrice);
     
     this.updateSaleOrder();
   }
@@ -492,6 +494,7 @@ export class AddSaleOrderComponent implements OnInit {
 
    private updatePrices(): void {
 
+              console.log("updatePrices");
       this.saleOrder.totalPrice = 0;
 
       for(let movementOfArticle of this.movementsOfArticles) {

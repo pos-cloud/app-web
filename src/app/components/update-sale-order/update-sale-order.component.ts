@@ -242,10 +242,10 @@ export class UpdateSaleOrderComponent implements OnInit {
             
           });
           break;
-        case 'apply_discunt' :
+        case 'apply_discount' :
         
           modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
-            if(result  === "apply_discunt"){
+            if(result  === "apply_discount"){
 
               this.discountPorcent = this.discountForm.value.porcent;
               this.discountAmount = this.discountForm.value.amount;
