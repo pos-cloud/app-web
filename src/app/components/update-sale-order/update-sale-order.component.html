@@ -71,7 +71,7 @@
           <button type="button" class="btn btn-secondary">Cobrar</button>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary">Cancelar</button>
+          <button type="button" class="btn btn-secondary" (click)="openModal('cancel_order')">Cancelar</button>
         </div>
       </div>
       <div class="row">
@@ -218,4 +218,34 @@
       </div>
     </form>
   </section>
+</ng-template>
+
+<!--MODAL CANCEL-->
+<ng-template #contentCancelOrder let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Cancelar Pedido</h4>
+    <button type="button" class="close" aria-label="Close" (click)="c(close_click)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="center-content"  *ngIf="alertMessage">
+          <ngb-alert (close)="alertMessage=''">
+            {{alertMessage}}
+          </ngb-alert>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p>¿Está seguro de anular el pedido?</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+    <button type="submit" class="btn btn-primary" (click)="c('cancel_order')">Aceptar</button>
+  </div>
 </ng-template>

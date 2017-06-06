@@ -39,7 +39,6 @@ export class SaleOrderService {
 
   getSaleOrdersByWaiter (waiterId: string, date: string) {
 		return this._http.get(this.url+'sale-orders/'+waiterId+'/'+date).map (res => res.json());
-
 	}
   
   getLastSaleOrderByOrigen (origin: number) {

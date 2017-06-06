@@ -6,7 +6,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
-import { Table } from './../../models/table';
+import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 import { Category } from './../../models/category';
 
@@ -36,6 +36,7 @@ export class UpdateSaleOrderComponent implements OnInit {
   private areArticlesVisible: boolean = false;
   private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
+  @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
   private discountPorcent: number = 0.00;
   private discountAmount: number = 0.00;
@@ -108,6 +109,7 @@ export class UpdateSaleOrderComponent implements OnInit {
           this.alertMessage = null;
           this.saleOrder = result.saleOrder;
           this.discountAmount = this.saleOrder.discount;
+          this.table = this.saleOrder.table;
           
           this.getMovementsOfSaleOrder();
         }
@@ -255,8 +257,48 @@ export class UpdateSaleOrderComponent implements OnInit {
             
           });
           break;
+        case 'cancel_order' :
+        
+          modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
+            if(result  === "cancel_order"){
+              this.saleOrder.state = SaleOrderState.Canceled;
+              this.updateSaleOrder();
+              this.table.waiter = null;
+              this.changeStateOfTable(TableState.Available);
+              this.backToRooms();
+            }
+          }, (reason) => {
+            
+          });
+          break;
         default : ;
     };
+  }
+
+  private changeStateOfTable(state: any): void {
+
+    this.table.state = state;
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        if (!result.table) {
+          this.alertMessage = result.message;
+        } else {
+          this.table = result.table;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
+    );
+  }
+
+  private backToRooms(): void {
+    this._router.navigate(['/pos/salones/'+this.table.room+'/mesas']);
   }
 
   private confirmAmount(){
