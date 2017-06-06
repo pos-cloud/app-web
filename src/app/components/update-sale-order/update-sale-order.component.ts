@@ -14,6 +14,8 @@ import { MovementOfArticleService } from './../../services/movement-of-article.s
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
 
+import { ListCompaniesComponent } from './../list-companies/list-companies.component';
+
 @Component({
   selector: 'app-update-sale-order',
   templateUrl: './update-sale-order.component.html',
@@ -270,6 +272,15 @@ export class UpdateSaleOrderComponent implements OnInit {
           }, (reason) => {
             
           });
+          break;
+        case 'add_client' :
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef.componentInstance.userType = this.userType;
+        modalRef.result.then((result) => {
+          
+        }, (reason) => {
+          
+        });
           break;
         default : ;
     };
