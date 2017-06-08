@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -25,7 +25,6 @@ export class ListCompaniesComponent implements OnInit {
   private orderTerm: string[] = ['name'];
   private propertyTerm: string;
   private areFiltersVisible: boolean = false;
-  @Output() eventSelectCompany: EventEmitter<Company> = new EventEmitter<Company>();
 
   constructor(
     private _companyService: CompanyService,
@@ -119,8 +118,7 @@ export class ListCompaniesComponent implements OnInit {
     }
   };
   
-  private selectCompany(companySelected) {
-    this.activeModal.close("add_client");
-    this.eventSelectCompany.emit(companySelected);
+  private selectCompany(companySelected: Company): void {
+    this.activeModal.close(companySelected);
   }
 }

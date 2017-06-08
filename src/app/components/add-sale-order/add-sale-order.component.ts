@@ -325,8 +325,9 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
           modalRef.componentInstance.userType = this.userType;
           modalRef.result.then((result) => {
-            console.log(result);
-            if(result  === "add_client"){
+            if(result){
+              this.saleOrder.company = result;
+              this.updateSaleOrder();
             }
           }, (reason) => {
             

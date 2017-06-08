@@ -274,13 +274,17 @@ export class UpdateSaleOrderComponent implements OnInit {
           });
           break;
         case 'add_client' :
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        modalRef.componentInstance.userType = this.userType;
-        modalRef.result.then((result) => {
-          
-        }, (reason) => {
-          
-        });
+        
+          modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+          modalRef.componentInstance.userType = this.userType;
+          modalRef.result.then((result) => {
+            if(result){
+              this.saleOrder.company = result;
+              this.updateSaleOrder();
+            }
+          }, (reason) => {
+            
+          });
           break;
         default : ;
     };
