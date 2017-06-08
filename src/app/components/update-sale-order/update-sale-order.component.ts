@@ -19,8 +19,10 @@ import { ListCompaniesComponent } from './../list-companies/list-companies.compo
 @Component({
   selector: 'app-update-sale-order',
   templateUrl: './update-sale-order.component.html',
-  styleUrls: ['./update-sale-order.component.css']
+  styleUrls: ['./update-sale-order.component.css'],
+  providers: [NgbAlertConfig]
 })
+
 export class UpdateSaleOrderComponent implements OnInit {
 
   private saleOrder: SaleOrder;
@@ -205,7 +207,7 @@ export class UpdateSaleOrderComponent implements OnInit {
           if(!result.saleOrder) {
             this.alertMessage = result.message;
           } else {
-            this.alertMessage = null;
+            //No anulamos el mensaje para que figuren en el pos.
           }
         },
         error => {
@@ -224,6 +226,28 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.areArticlesVisible = true;
     this.areCategoriesVisible = false;
   }
+
+  private changeStateOfTable(state: any): void {
+
+    this.table.state = state;
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        if (!result.table) {
+          this.alertMessage = result.message;
+        } else {
+          this.table = result.table;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
+    );
+  }
   
   private addItem(itemData): void {
 
@@ -238,7 +262,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     
     switch(op) {
         case 'add_item' :
-          modalRef = this._modalService.open(this.content).result.then((result) => {
+          modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
             if(result  === "add_item"){
               this.confirmAmount();
             }
@@ -248,7 +272,7 @@ export class UpdateSaleOrderComponent implements OnInit {
           break;
         case 'apply_discount' :
         
-          modalRef = this._modalService.open(this.contentDiscount).result.then((result) => {
+          modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if(result  === "apply_discount"){
 
               this.discountPorcent = this.discountForm.value.porcent;
@@ -290,33 +314,11 @@ export class UpdateSaleOrderComponent implements OnInit {
     };
   }
 
-  private changeStateOfTable(state: any): void {
-
-    this.table.state = state;
-    this._tableService.updateTable(this.table).subscribe(
-      result => {
-        if (!result.table) {
-          this.alertMessage = result.message;
-        } else {
-          this.table = result.table;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
-        this.loading = false;
-      }
-    );
-  }
-
   private backToRooms(): void {
     this._router.navigate(['/pos/salones/'+this.table.room+'/mesas']);
   }
 
-  private confirmAmount(){
+  private confirmAmount(): void {
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
@@ -331,7 +333,7 @@ export class UpdateSaleOrderComponent implements OnInit {
         (this.discountAmount === 0 || this.discountAmount === null)){
 
       this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
-
+      this.alertMessage = null;
     } else if(( this.discountPorcent === 0 || 
                 this.discountPorcent === null) && 
                 this.discountAmount > 0  && 
@@ -339,14 +341,19 @@ export class UpdateSaleOrderComponent implements OnInit {
                 this.discountAmount !== null){
 
       this.saleOrder.discount = this.discountAmount;
-    } else {
+      this.alertMessage = null;
+    } else if(this.discountAmount !== 0 && this.discountPorcent !== 0){
       
       this.saleOrder.discount = 0;
-      this.alertMessage = "Solo debe cargar un solo dato";
+      this.alertMessage = "Solo debe cargar un solo descuento.";
       this.alertConfig.type = "danger";
+    } else {
+      this.alertMessage = null;
     }
 
-    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+    if(this.saleOrder.discount != 0) {
+      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+    }
     
     this.updateSaleOrder();
   }
@@ -448,7 +455,6 @@ export class UpdateSaleOrderComponent implements OnInit {
       this.saleOrder.totalPrice = 0;
 
       for(let movementOfArticle of this.movementsOfArticles) {
-
         this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
 
