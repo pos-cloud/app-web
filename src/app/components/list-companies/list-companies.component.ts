@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company } from './../../models/company';
 import { CompanyService } from './../../services/company.service';
@@ -21,7 +21,7 @@ export class ListCompaniesComponent implements OnInit {
   private companies: Company[] = new Array();
   private areCompaniesEmpty: boolean = true;
   private alertMessage: any;
-  private userType: string;
+  @Input() userType: string;
   private orderTerm: string[] = ['name'];
   private propertyTerm: string;
   private areFiltersVisible: boolean = false;
@@ -29,7 +29,8 @@ export class ListCompaniesComponent implements OnInit {
   constructor(
     private _companyService: CompanyService,
     private _router: Router,
-    private _modalService: NgbModal
+    private _modalService: NgbModal,
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit(): void {
@@ -116,4 +117,8 @@ export class ListCompaniesComponent implements OnInit {
       default : ;
     }
   };
+  
+  private selectCompany(companySelected: Company): void {
+    this.activeModal.close(companySelected);
+  }
 }

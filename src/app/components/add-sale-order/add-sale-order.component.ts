@@ -9,6 +9,9 @@ import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 import { Category } from './../../models/category';
+import { Company } from './../../models/company';
+
+import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -295,7 +298,6 @@ export class AddSaleOrderComponent implements OnInit {
         
           modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if(result  === "apply_discount"){
-              console.log("apply_discount");
               this.discountPorcent = this.discountForm.value.porcent;
               this.discountAmount = this.discountForm.value.amount;
               this.updatePrices();
@@ -313,6 +315,19 @@ export class AddSaleOrderComponent implements OnInit {
               this.table.waiter = null;
               this.changeStateOfTable(TableState.Available);
               this.backToRooms();
+            }
+          }, (reason) => {
+            
+          });
+          break;
+        case 'add_client' :
+        
+          modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+          modalRef.componentInstance.userType = this.userType;
+          modalRef.result.then((result) => {
+            if(result){
+              this.saleOrder.company = result;
+              this.updateSaleOrder();
             }
           }, (reason) => {
             
@@ -394,8 +409,6 @@ export class AddSaleOrderComponent implements OnInit {
     }
     
     this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
-    console.log("descuento "+this.saleOrder.discount);
-    console.log("total precio" +this.saleOrder.totalPrice);
     
     this.updateSaleOrder();
   }
@@ -494,14 +507,11 @@ export class AddSaleOrderComponent implements OnInit {
 
    private updatePrices(): void {
 
-              console.log("updatePrices");
       this.saleOrder.totalPrice = 0;
 
       for(let movementOfArticle of this.movementsOfArticles) {
-
         this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
-
       this.applyDiscount();
    }
 

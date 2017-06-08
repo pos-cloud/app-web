@@ -68,3 +68,38 @@
       </div>
   </div>
 </section>
+
+<section class="container-fluid pos" *ngIf="userType=='pos'">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th (click)="orderBy('code')">Número </th>
+        <th (click)="orderBy('name')">Nombre </th>
+        <th (click)="orderBy('CUIT')">CUIT </th>
+      </tr>
+      <tr>
+          <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
+          <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+          <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let company of companies | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 10, currentPage: p }"
+          (click)="selectCompany(company)">
+        <td>{{company.code}}</td>
+        <td>{{company.name}}</td>
+        <td>{{company.CUIT}}</td>
+      </tr>
+      <tr align="center" *ngIf="areCompaniesEmpty">
+        <td colspan="3">No se encontraron empresas</td>
+      </tr>
+    </tbody>
+  </table>
+  <pagination-controls 
+    (pageChange)="p=$event" 
+    #api 
+    previousLabel="Anterior"
+    nextLabel="Siguiente"
+    nextLabel="Next">
+  </pagination-controls>
+</section>
