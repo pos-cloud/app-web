@@ -18,15 +18,63 @@
       height: 300px;
  }    
 
-.items-list {
-      height: 300px;
-}
-
 .header-sale-order {
       padding: 15px;
       background: #292B2C;
       color: white;
       margin-bottom: 15px;
+}
+
+.btn-action {
+      width: 100%;
+      border: 1px solid white;
+      padding: 10px;
+      cursor: pointer;
+      background: #0275d8;
+      color: white;
+      height: 40px;
+}
+
+.btn-action:hover {
+      background: #025aa5;
+}
+
+.breadcrumb {
+      cursor: pointer;
+}
+
+.negro {
+      border: 1px solid black;
+}
+
+.ticket {
+      height: 400px;
+}
+
+.btn-large {
+      height: 50px;
+}
+
+.color-default {
+      background: #ffffff;
+      border: 1px solid #292b2c;
+}
+
+.color-default:hover {
+      background: #e6e6e6;
+}
+
+.color-red {
+      background: #d9534f;
+}
+
+.color-red:hover {
+      background: #c9302c;
+}
+
+.scroll {
+      height: 500px;
+      overflow-y: scroll;
 }
 
  /*.row{

@@ -84,7 +84,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let company of companies | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 10, currentPage: p }"
+      <tr *ngFor="let company of companies  | orderBy: [orderTerm] 
+                                            | filter: filterCode:'code' 
+                                            | filter: filterName:'name' 
+                                            | filter: filterCUIT:'CUIT' 
+                                            | paginate: {  itemsPerPage: 10, currentPage: p }"
           (click)="selectCompany(company)">
         <td>{{company.code}}</td>
         <td>{{company.name}}</td>

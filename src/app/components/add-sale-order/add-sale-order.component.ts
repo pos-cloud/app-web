@@ -9,13 +9,12 @@ import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 import { Category } from './../../models/category';
-import { Company } from './../../models/company';
-
-import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
+
+import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -41,8 +40,8 @@ export class AddSaleOrderComponent implements OnInit {
   private areArticlesVisible: boolean = false;
   private categorySelected: Category;
   @ViewChild('content') content:ElementRef;
-  @ViewChild('contentDiscount') contentDiscount:ElementRef;
   @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
+  @ViewChild('contentDiscount') contentDiscount:ElementRef;
   private discountPorcent: number = 0.00;
   private discountAmount: number = 0.00;
 
@@ -231,7 +230,7 @@ export class AddSaleOrderComponent implements OnInit {
           if(!result.saleOrder) {
             this.alertMessage = result.message;
           } else {
-            this.alertMessage = null;
+            //No anulamos el mensaje para que figuren en el pos.
           }
         },
         error => {
@@ -298,6 +297,7 @@ export class AddSaleOrderComponent implements OnInit {
         
           modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if(result  === "apply_discount"){
+
               this.discountPorcent = this.discountForm.value.porcent;
               this.discountAmount = this.discountForm.value.amount;
               this.updatePrices();
@@ -393,7 +393,7 @@ export class AddSaleOrderComponent implements OnInit {
         (this.discountAmount === 0 || this.discountAmount === null)){
 
       this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
-
+      this.alertMessage = null;
     } else if(( this.discountPorcent === 0 || 
                 this.discountPorcent === null) && 
                 this.discountAmount > 0  && 
@@ -401,14 +401,19 @@ export class AddSaleOrderComponent implements OnInit {
                 this.discountAmount !== null){
 
       this.saleOrder.discount = this.discountAmount;
-    } else {
+      this.alertMessage = null;
+    } else if(this.discountAmount !== 0 && this.discountPorcent !== 0){
       
       this.saleOrder.discount = 0;
-      this.alertMessage = "Solo debe cargar un solo dato";
+      this.alertMessage = "Solo debe cargar un solo descuento.";
       this.alertConfig.type = "danger";
+    } else {
+      this.alertMessage = null;
     }
-    
-    this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+
+    if(this.saleOrder.discount != 0) {
+      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+    }
     
     this.updateSaleOrder();
   }

@@ -11,12 +11,9 @@
         <div class="col-md-3">
           <b>Cliente: </b><span *ngIf="!saleOrder.company">Consumidor final</span><span *ngIf="saleOrder.company">{{saleOrder.company.name}}</span>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <b>Apertura: </b>{{saleOrder.date | date:['HH:mm']}}
           <!--<app-clock [startTime]="saleOrder.date"></app-clock>-->
-        </div>
-        <div class="col-md-1">
-          <button class="btn btn-primary" (click)="backToRooms()">Volver</button>
         </div>
       </div>
     </div>
@@ -27,54 +24,52 @@
     </ngb-alert>
   </div>
   <div class="row">
-    <div class="col-md-4 scroll">
+    <div class="col-md-4">
       <div class="row">
         <div class="col-md-2 center-content">Cantidad</div>
         <div class="col-md-5">Description</div>
-        <div class="col-md-3 center-content">Subtotal</div>
-        <div class="col-md-2"></div>
+        <div class="col-md-4 center-content">Subtotal</div>
+        <div class="col-md-1"></div>
       </div>
       <hr>
-      <div class="row items-list">
+      <div [ngClass]="{'row scroll':!areMovementsOfArticlesEmpty}" >
         <div class="col-md-12">
           <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
-            <div class="col-md-12">
-              <div class="row">
-                <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
-                <div class="col-md-5">{{movementOfArticle.description}}</div>
-                <div class="col-md-3 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
-                <div class="col-md-2">
-                  <button type="button" (click)="deleteMovementOfArticle(movementOfArticle._id)"><i class="fa fa-trash-o"></i></button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12 offset-md-2">
-                  <i>{{movementOfArticle.notes}}</i>
-                </div>
-              </div>
+            <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
+            <div class="col-md-5">{{movementOfArticle.description}}</div>
+            <div class="col-md-4 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+            <div class="col-md-1 btn-action color-red center-content" (click)="deleteMovementOfArticle(movementOfArticle._id)">
+              <i class="fa fa-trash-o"></i>
             </div>
           </div>
-          <div class="center-content" *ngIf="areMovementsOfArticlesEmpty">
-            Todavía no se han facturado artículos
+          <div class="row">
+            <div class="col-md-12 offset-md-2">
+              <i>{{movementOfArticle.notes}}</i>
+            </div>
           </div>
         </div>
+      </div>
+      <div [ngClass]="{'row scroll center-content':areMovementsOfArticlesEmpty}" *ngIf="areMovementsOfArticlesEmpty">
+        Todavía no se han facturado artículos
       </div>
       <hr>
       <div class="row">
-        <div class="col-md-3">
-          <button type="button" class="btn btn-secondary" (click)="openModal('add_client')">Cliente</button>
+        <div class="col-md-6 btn-action btn-large center-content">
+          Cuenta
         </div>
-        <div class="col-md-3">
-          <button type="button" class="btn btn-secondary" (click)="openModal('apply_discount')">Descuento</button>
+        <div class="col-md-6 btn-action btn-large center-content">
+          Cobrar
         </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-secondary">Cuenta</button>
+      </div>
+      <div class="row">
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('add_client')">
+          Cliente
         </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-secondary">Cobrar</button>
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
+          Descuento
         </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-secondary" (click)="openModal('cancel_order')">Cancelar</button>
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel_order')">
+          Cancelar
         </div>
       </div>
       <div class="row">
@@ -96,16 +91,28 @@
     </div>
     <div class="col-md-8">
       <div class="row">
-        <nav class="breadcrumb">
-          <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
-          <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Artículos</span>
-        </nav>
+        <div class="col-md-8">
+          <nav class="breadcrumb">
+            <span [ngClass]="{'breadcrumb-item active':'areCategoriesVisible', 'breadcrumb-item':'!areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
+            <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Artículos</span>
+          </nav>
+        </div>
+        <div class="col-md-2 btn-action btn-large center-content" (click)="backToRooms()">
+          Agregar Artículo
+        </div>
+        <div class="col-md-1 btn-action btn-large center-content" (click)="backToRooms()">
+          Volver
+        </div>
       </div>
-      <div class="row">
-        <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible] = "areArticlesVisible" [filterCategory]="categorySelected"></app-list-articles>
+      <div [ngClass]="{'row scroll':areArticlesVisible}">
+        <div class="col-md-12">
+          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible] = "areArticlesVisible" [filterCategory]="categorySelected"></app-list-articles>
+        </div>
       </div>
-      <div class="row">
-        <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"  [areCategoriesVisible]="areCategoriesVisible"></app-list-categories>
+      <div [ngClass]="{'row scroll':areCategoriesVisible}">
+        <div class="col-md-12">
+          <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"  [areCategoriesVisible]="areCategoriesVisible"></app-list-categories>
+        </div>
       </div>
     </div>
   </div>
@@ -116,56 +123,51 @@
   <div  class="modal-header">
     <h4 class="modal-title">Cantidad</h4>
     <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-    <span aria-hidden="true">&times;</span>
+      <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <section class="container-fluid">
-    <div class="center-content"  *ngIf="alertMessage">
-      <ngb-alert (close)="alertMessage=''">
-        {{alertMessage}}
-      </ngb-alert>
-    </div>
-    <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')" autocomplete="off">
-      <div class="modal-body">
-        <div class="row">
+  <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')" autocomplete="off">
+    <div class="modal-body container-fluid">
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="amount" class="control-label">Ingrese la Cantidad:</label>
         </div>
-        <div class="row">
-          <div class="form-group col-md-8">
-            <div class="input-group">
-              <input type="text" class="form-control" formControlName="amount" name="amount"/>
-            </div>
-            <div *ngIf="formErrors.amount" class="alert alert-danger">
-              {{ formErrors.amount }}
-            </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-10">
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="amount" name="amount"/>
           </div>
-          <div class="col-md-4">
-            <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
-            <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
           </div>
         </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <label for="notes" class="control-label">Notas:</label>
-            <div class="input-group">
-              <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
-            </div>
-            <div *ngIf="formErrors.notes" class="alert alert-danger">
-              {{ formErrors.notes }}
-            </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
+          <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="notes" class="control-label">Notas:</label>
+          <div class="input-group">
+            <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
+          </div>
+          <div *ngIf="formErrors.notes" class="alert alert-danger">
+            {{ formErrors.notes }}
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
-          <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
-          <span *ngIf="!loading">Guardar</span>
-          <span *ngIf="loading">Espere por favor</span>
-        </button>
-      </div>
-    </form>
-  </section>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
+        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <span *ngIf="!loading">Aceptar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
 </ng-template>
 
 <!--MODAL DESCUENTO-->
@@ -176,51 +178,40 @@
     <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <section class="container-fluid">
-    <div class="center-content"  *ngIf="alertMessage">
-      <ngb-alert (close)="alertMessage=''">
-        {{alertMessage}}
-      </ngb-alert>
-    </div>
-    <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discount')" autocomplete="off">
-      <div class="modal-body">
-        <div class="row">
+  <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discount')" autocomplete="off">
+    <div class="modal-body container-fluid">
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="amount" class="control-label">Monto de descuento:</label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" autofocus/>
-            </div>
-            <div *ngIf="formErrors.amount" class="alert alert-danger">
-              {{ formErrors.amount }}
-            </div>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" autofocus/>
+          </div>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
           </div>
         </div>
-        <div class="row">
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="porcent" class="control-label">Porcentaje de descuento:</label>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <input type="number" class="form-control" formControlName="porcent" name="porcent" step="0.01"/>
-            </div>
-            <div *ngIf="formErrors.porcent" class="alert alert-danger">
-              {{ formErrors.porcent }}
-            </div>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="porcent" name="porcent" step="0.01"/>
+          </div>
+          <div *ngIf="formErrors.porcent" class="alert alert-danger">
+            {{ formErrors.porcent }}
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
-          <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
-          <span *ngIf="!loading">Aceptar</span>
-          <span *ngIf="loading">Espere por favor</span>
-        </button>
-      </div>
-    </form>
-  </section>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
+        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <span *ngIf="!loading">Aceptar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
 </ng-template>
 
 <!--MODAL CANCEL-->
