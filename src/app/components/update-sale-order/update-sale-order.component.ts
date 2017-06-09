@@ -44,13 +44,23 @@ export class UpdateSaleOrderComponent implements OnInit {
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
   private discountPorcent: number = 0.00;
   private discountAmount: number = 0.00;
+  private isNewItem: boolean;
 
   private formErrors = {
-    'amount': ''
+    'description':'',
+    'amount': '',
+    'salePrice':''
+
   };
 
   private validationMessages = {
+    'description': {
+      'required':       'Este campo es requerido.'
+    },
     'amount': {
+      'required':       'Este campo es requerido.'
+    },
+    'salePrice': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -130,7 +140,15 @@ export class UpdateSaleOrderComponent implements OnInit {
   private buildForm(): void {
 
     this.amountOfItemForm = this._fb.group({
+      'description': [this.movementOfArticle.description, [
+          Validators.required
+        ]
+      ],
       'amount': [this.movementOfArticle.amount, [
+          Validators.required
+        ]
+      ],
+      'salePrice': [this.movementOfArticle.salePrice, [
           Validators.required
         ]
       ],
@@ -249,11 +267,32 @@ export class UpdateSaleOrderComponent implements OnInit {
     );
   }
   
-  private addItem(itemData): void {
+  private addItem(itemData?: MovementOfArticle): void {
 
-    this.movementOfArticle = itemData;
-    this.movementOfArticle.saleOrder = this.saleOrder;
-    this.openModal('add_item');
+    if(itemData) {
+      this.isNewItem = false;
+      this.movementOfArticle = itemData;
+      this.movementOfArticle.amount = 1;
+      this.amountOfItemForm.setValue({
+        'description': this.movementOfArticle.description,
+        'amount': this.movementOfArticle.amount,
+        'salePrice': this.movementOfArticle.salePrice,
+        'notes':''
+      });
+      this.movementOfArticle.saleOrder = this.saleOrder;
+      this.openModal('add_item');
+    } else {
+      this.isNewItem = true;
+      this.movementOfArticle = new MovementOfArticle();
+      this.amountOfItemForm.setValue({
+        'description':this.movementOfArticle.description,
+        'amount':this.movementOfArticle.amount,
+        'salePrice': this.movementOfArticle.salePrice,
+        'notes':''
+      });
+      this.movementOfArticle.saleOrder = this.saleOrder;
+      this.openModal('add_new_item');
+    }
   }
 
   private openModal(op: string): void {
@@ -262,6 +301,15 @@ export class UpdateSaleOrderComponent implements OnInit {
     
     switch(op) {
         case 'add_item' :
+          modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
+            if(result  === "add_item"){
+              this.confirmAmount();
+            }
+          }, (reason) => {
+            
+          });
+          break;
+        case 'add_new_item' :
           modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
             if(result  === "add_item"){
               this.confirmAmount();
@@ -319,7 +367,10 @@ export class UpdateSaleOrderComponent implements OnInit {
   }
 
   private confirmAmount(): void {
+    
+    this.movementOfArticle.description = this.amountOfItemForm.value.description;
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
+    this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
     this.saveMovementOfArticle();

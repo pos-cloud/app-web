@@ -5,7 +5,7 @@ export class MovementOfArticle {
 
     public _id: string;
     public code: number = 1;
-    public description: string;
+    public description: string = '';
     public observation: string;
     public salePrice: number = 0.00;
     public totalPrice: number = 0.00;
