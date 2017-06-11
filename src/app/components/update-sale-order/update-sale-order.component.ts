@@ -441,25 +441,30 @@ export class UpdateSaleOrderComponent implements OnInit {
 
   private addAmount(): void {
     this.amountOfItemForm.setValue({
+            'description': this.amountOfItemForm.value.description,
             'amount': this.amountOfItemForm.value.amount + 1,
+            'salePrice': this.amountOfItemForm.value.salePrice,
             'notes': this.amountOfItemForm.value.notes
     });
   }
 
   private subtractAmount(): void {
-
+    console.log("subtractAmount");
     if (this.amountOfItemForm.value.amount > 1) {
       this.amountOfItemForm.setValue({
+              'description':this.amountOfItemForm.value.description,
               'amount': this.amountOfItemForm.value.amount - 1,
+              'salePrice': this.amountOfItemForm.value.salePrice,
               'notes': this.amountOfItemForm.value.notes
       });
     } else {
       this.amountOfItemForm.setValue({
+              'description':this.amountOfItemForm.value.description,
               'amount': 1,
+              'salePrice': this.amountOfItemForm.value.salePrice,
               'notes': this.amountOfItemForm.value.notes
       });
     }
-    
   }
 
   private getMovementsOfSaleOrder(): void {

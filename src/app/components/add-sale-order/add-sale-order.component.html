@@ -32,19 +32,23 @@
         <div class="col-md-1"></div>
       </div>
       <hr>
-      <div [ngClass]="{'row scroll':!areMovementsOfArticlesEmpty}" >
+      <div [ngClass]="{'row scroll':!areMovementsOfArticlesEmpty}">
         <div class="col-md-12">
           <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
-            <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
-            <div class="col-md-5">{{movementOfArticle.description}}</div>
-            <div class="col-md-4 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
-            <div class="col-md-1 btn-action color-red center-content" (click)="deleteMovementOfArticle(movementOfArticle._id)">
-              <i class="fa fa-trash-o"></i>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12 offset-md-2">
-              <i>{{movementOfArticle.notes}}</i>
+            <div class="col-md-12">
+              <div class="row">
+                  <div class="col-md-2 center-content">{{movementOfArticle.amount}}</div>
+                  <div class="col-md-5">{{movementOfArticle.description}}</div>
+                  <div class="col-md-4 center-content">{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</div>
+                  <div class="col-md-1 btn-action color-red center-content" (click)="deleteMovementOfArticle(movementOfArticle._id)">
+                    <i class="fa fa-trash-o"></i>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 offset-md-2">
+                  <i>{{movementOfArticle.notes}}</i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
