@@ -61,6 +61,7 @@
     <div *ngFor="let table of tables | orderBy:[orderTerm]" >
       <div  [ngClass]="{'itable itable-disabled':table.state==='No Habilitada',
                         'itable itable-enabled':table.state==='Disponible',
+                        'itable itable-pending':table.state==='Pendiente',
                         'itable itable-disabled':table.state==='Ocupada'}"
             (click)="openModal('select_waiter', table, table.waiter)">
         <p>{{table.description}}</p>

@@ -9,18 +9,22 @@ import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 import { Category } from './../../models/category';
+import { Print } from './../../models/print';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
+import { PrintService } from './../../services/print.service';
 
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
+
+import { DatePipe, DecimalPipe } from '@angular/common'; 
 
 @Component({
   selector: 'app-add-sale-order',
   templateUrl: './add-sale-order.component.html',
   styleUrls: ['./add-sale-order.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, DatePipe, DecimalPipe]
 })
 
 export class AddSaleOrderComponent implements OnInit {
@@ -84,6 +88,7 @@ export class AddSaleOrderComponent implements OnInit {
     private _saleOrderService: SaleOrderService,
     private _movementOfArticleService: MovementOfArticleService,
     private _tableService: TableService,
+    private _printService: PrintService,
     private _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -427,6 +432,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   private confirmAmount(): void {
+    
     this.movementOfArticle.description = this.amountOfItemForm.value.description;
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
@@ -571,4 +577,62 @@ export class AddSaleOrderComponent implements OnInit {
       this.applyDiscount();
    }
 
+   private toPrintBill(): void {
+
+      if(this.movementsOfArticles.length !== 0) {
+        let datePipe = new DatePipe('es-AR');
+        let decimalPipe = new DecimalPipe('ARS');
+        let content: string;
+        content =
+          'CONFITERIA LA PALMA - CASA DE TE\n' +
+          'CUIT Nro.: 30-61432547-6\n' +
+          '25 de Mayo 2028 - San Francisco - Córdoba\n' +
+          'Tel: (03564) 424423\n' +
+          'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
+          'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
+          'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
+          'Mesa: ' + this.saleOrder.table.description + '\n' +
+          'Mozo: ' + this.saleOrder.table.waiter.name + '\n\n';
+          if(this.saleOrder.company) {
+            content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+          } else {
+            content += 'Cliente: Consumidor Final\n\n';
+          }
+          content += 'DESC.			CANT	MONTO\n' +
+          '----------------------------------------\n';
+          for (let movementOfArticle of this.movementsOfArticles) {
+            content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
+          }
+          content += '----------------------------------------\n' +
+          'Subtotal:				 ' + decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.saleOrder.discount), '1.2-2') + '\n' +
+          'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
+          'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n\n' +
+          'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
+          '----Gracias por su visita.----\n\n\n';
+
+        let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+        
+        let print: Print = new Print();
+        print.fileName = fileName;
+        print.content = content;
+        this._printService.toPrintBill(print).subscribe(
+          result => {
+            if(result.message === 'ok'){
+              this.changeStateOfTable(TableState.Pending);
+              this.backToRooms();
+            } else {
+              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+              this.alertConfig.type = "danger";
+            }
+          },
+          error => {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+            this.alertConfig.type = 'danger';
+          }
+        );
+      } else {
+        this.alertMessage = "No existen artículos en el pedido.";
+        this.alertConfig.type = "danger";
+      }
+   }
 }

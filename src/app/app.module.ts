@@ -22,6 +22,7 @@ import { CategoryService } from './services/category.service';
 import { TurnService } from './services/turn.service';
 import { CompanyService } from './services/company.service';
 import { ClockService } from './services/clock.service';
+import { PrintService } from './services/print.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -129,7 +130,7 @@ import { ReportsComponent } from './components/reports/reports.component';
     DeleteCompanyComponent,
     AddCompanyComponent,
     ReportsComponent,
-    ClockComponent,
+    ClockComponent
   ],
   imports: [
     BrowserModule,
@@ -154,7 +155,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     CategoryService,
     TurnService,
     CompanyService,
-    ClockService
+    ClockService,
+    PrintService
   ],
   bootstrap: [AppComponent]
 })

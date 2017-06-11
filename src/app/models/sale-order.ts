@@ -24,5 +24,6 @@ export class SaleOrder {
 export enum SaleOrderState {
 	Open = <any> "Abierto",
 	Canceled = <any> "Anulado",
-	Closed = <any> "Cerrado"
+	Closed = <any> "Cerrado",
+	Pending = <any> "Pendiente"
 }
