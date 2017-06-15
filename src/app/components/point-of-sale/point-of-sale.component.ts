@@ -23,6 +23,7 @@ export class PointOfSaleComponent implements OnInit {
   private cashBox: CashBox;
   private rooms: Room[] = new Array();
   private roomId: string;
+  private userType: string;
   private existsCashBoxOpen: boolean = false;
   private alertMessage: any;
 
@@ -38,12 +39,9 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._router.events.subscribe((data:any) => {
-      let locationPathURL: string = data.url.split('/');
-      if(locationPathURL[3] !== undefined) {
-        this.roomId = locationPathURL[3];
-      }
-    });
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.roomId = pathLocation[3];
     this.getRooms();
   }
 

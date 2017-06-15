@@ -70,17 +70,15 @@ export class ListTablesComponent implements OnInit {
   ngOnInit(): void {
 
     this.tables = null;
-    this._router.events.subscribe((data:any) => {
-      let locationPathURL: string = data.url.split('/');
-      this.userType = locationPathURL[1];
-      this.roomId = locationPathURL[3];
-      if(this.userType === 'admin') {
-        this.getTables(); 
-      } else if(this.roomId !== undefined) {
-        this.getTablesByRoom();
-      }
-    });
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.roomId = pathLocation[3];
     this.waiter = new Waiter();
+    if(this.userType === 'admin') {
+      this.getTables(); 
+    } else if(this.roomId !== undefined) {
+      this.getTablesByRoom();
+    }
   }
 
   private buildForm(): void {

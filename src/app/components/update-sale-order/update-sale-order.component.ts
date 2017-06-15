@@ -105,15 +105,11 @@ export class UpdateSaleOrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let saleOrderId: string;
-    this._router.events.subscribe((data:any) => {
-      let locationPathURL: string = data.url.split('/');
-      this.userType = locationPathURL[1];
-      saleOrderId = locationPathURL[7];
-      if(saleOrderId !== undefined) {
-        this.getSaleOrder(saleOrderId);
-      } 
-    });
+    
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    let saleOrderId: string = pathLocation[7];
+    this.getSaleOrder(saleOrderId);
     this.buildForm();
     this.buildFormDiscount();
   }

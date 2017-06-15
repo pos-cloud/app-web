@@ -106,16 +106,12 @@ export class AddSaleOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this._router.events.subscribe((data:any) => {
-      let locationPathURL: string = data.url.split('/');
-      this.userType = locationPathURL[1];
-      if(this.tableId === undefined) {
-        this.tableId = locationPathURL[5];
-        if(this.tableId !== undefined){
-          this.getTable(this.tableId);
-        }
-      }
-    });
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    if(this.tableId === undefined) {
+      this.tableId = pathLocation[5];
+      this.getTable(this.tableId);
+    }
     this.buildForm();
     this.buildFormDiscount();
   }

@@ -35,11 +35,8 @@ export class ListRoomsComponent implements OnInit {
 
   ngOnInit(): void {
     
-    this._router.events.subscribe((data:any) => { 
-      let pathLocation: string;
-      pathLocation = data.url.split('/');
-      this.userType = pathLocation[1];
-    });
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
     this.getRooms();
   }
 

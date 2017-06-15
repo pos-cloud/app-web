@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
+import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
@@ -47,6 +48,7 @@ const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'admin', component: HeaderComponent },
   { path: 'admin/productos', component: ListArticlesComponent },
   { path: 'admin/agregar-producto', component: AddArticleComponent },
   { path: 'admin/editar-producto', component: UpdateArticleComponent },

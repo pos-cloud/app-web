@@ -20,12 +20,8 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    
-    let locationPathURL: string;
-    this._router.events.subscribe((data:any) => { 
-      locationPathURL = data.url.split('/');
-      this.userType = locationPathURL[1];
-    });
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
   }
 
   private openModal(): void {
