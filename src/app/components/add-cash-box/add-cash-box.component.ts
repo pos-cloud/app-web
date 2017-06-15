@@ -17,27 +17,27 @@ import { CashBoxService } from './../../services/cash-box.service';
 
 export class AddCashBoxComponent  implements OnInit {
 
-  private cashBox: CashBox;
-  private cashBoxForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public cashBox: CashBox;
+  public cashBoxForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'openingCash': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'openingCash': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _cashBoxService: CashBoxService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _cashBoxService: CashBoxService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -57,7 +57,7 @@ export class AddCashBoxComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.cashBoxForm = this._fb.group({
       'code': [this.cashBox.code, [
@@ -94,7 +94,7 @@ export class AddCashBoxComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.cashBoxForm) { return; }
     const form = this.cashBoxForm;
@@ -112,14 +112,14 @@ export class AddCashBoxComponent  implements OnInit {
     }
   }
 
-  private addCashBox(): void {
+  public addCashBox(): void {
     
     this.loading = true;
     this.cashBox = this.cashBoxForm.value;
     this.getLastCashBox();
   }
 
-  private getLastCashBox(): void {
+  public getLastCashBox(): void {
 
     this._cashBoxService.getLastCashBox().subscribe(
       result => {
@@ -141,7 +141,7 @@ export class AddCashBoxComponent  implements OnInit {
     );
   }
 
-  private saveCashBox(): void {
+  public saveCashBox(): void {
     
     this._cashBoxService.saveCashBox(this.cashBox).subscribe(
     result => {

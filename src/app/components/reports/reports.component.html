@@ -49,7 +49,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let saleOrder of saleOrders | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let saleOrder of saleOrders">
               <td>{{saleOrder.origin}}</td>
               <td>{{saleOrder.number}}</td>
               <td>{{saleOrder.date | date: ['dd/MM/yyyy'] }}</td>
@@ -68,13 +68,6 @@
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        <pagination-controls 
-          (pageChange)="p=$event" 
-          #api 
-          previousLabel="Anterior"
-          nextLabel="Siguiente"
-          nextLabel="Next">
-        </pagination-controls>
       </div>
   </div>
 </section>

@@ -20,21 +20,21 @@ import { DeleteArticleComponent } from './../../components/delete-article/delete
 
 export class ListArticlesComponent implements OnInit {
 
-  private articles: Article[] = new Array();
-  private areArticlesEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['code'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public articles: Article[] = new Array();
+  public areArticlesEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['code'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategory: string;
 
   constructor(
-    private _articleService: ArticleService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _articleService: ArticleService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { 
     if(this.filterCategory === undefined) {
       this.filterCategory = "";
@@ -48,7 +48,7 @@ export class ListArticlesComponent implements OnInit {
     this.getArticles();
   }
 
-  private getArticles(): void {  
+  public getArticles(): void {  
 
     this._articleService.getArticles().subscribe(
         result => {
@@ -71,7 +71,7 @@ export class ListArticlesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -81,7 +81,7 @@ export class ListArticlesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, article:Article): void {
+  public openModal(op: string, article:Article): void {
 
       let modalRef;
       switch(op) {
@@ -118,7 +118,7 @@ export class ListArticlesComponent implements OnInit {
       }
     };
 
-    private addItem(articleSelected) {
+    public addItem(articleSelected) {
       this.eventAddItem.emit(articleSelected);
     }
 }

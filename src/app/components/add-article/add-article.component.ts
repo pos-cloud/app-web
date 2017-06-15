@@ -21,16 +21,16 @@ import { CategoryService } from './../../services/category.service';
 
 export class AddArticleComponent  implements OnInit {
 
-  private article: Article;
-  private articleForm: FormGroup;
-  private makes: Make[] = new Array();
-  private categories: Category[] = new Array();
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
-  private focusEvent = new EventEmitter<boolean>();
+  public article: Article;
+  public articleForm: FormGroup;
+  public makes: Make[] = new Array();
+  public categories: Category[] = new Array();
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'code': 1,
     'make': '',
     'description': '',
@@ -39,7 +39,7 @@ export class AddArticleComponent  implements OnInit {
     'unitOfMeasure': 'Unidad'
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'code': {
       'required':       'Este campo es requerido.',
       'pattern':        'No puede exceder los 5 dígitos.',
@@ -62,11 +62,11 @@ export class AddArticleComponent  implements OnInit {
   };
 
   constructor(
-    private _articleService: ArticleService,
+    public _articleService: ArticleService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -87,7 +87,7 @@ export class AddArticleComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.articleForm = this._fb.group({
       '_id': [this.article._id, [
@@ -133,7 +133,7 @@ export class AddArticleComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.articleForm) { return; }
     const form = this.articleForm;
@@ -151,7 +151,7 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
-  private getLastArticle(): void {  
+  public getLastArticle(): void {  
 
     this._articleService.getLastArticle().subscribe(
         result => {
@@ -190,7 +190,7 @@ export class AddArticleComponent  implements OnInit {
       );
    }
 
-  private getMakes(): void {  
+  public getMakes(): void {  
 
     this._makeService.getMakes().subscribe(
         result => {
@@ -211,7 +211,7 @@ export class AddArticleComponent  implements OnInit {
       );
    }
 
-  private getCategories(): void {  
+  public getCategories(): void {  
     
     this._categoryService.getCategories().subscribe(
         result => {
@@ -232,13 +232,13 @@ export class AddArticleComponent  implements OnInit {
       );
    }
 
-  private addArticle(): void {
+  public addArticle(): void {
     this.loading = true;
     this.article = this.articleForm.value;
     this.saveArticle();
   }
 
-  private saveArticle(): void {
+  public saveArticle(): void {
     
     this._articleService.saveArticle(this.article).subscribe(
     result => {

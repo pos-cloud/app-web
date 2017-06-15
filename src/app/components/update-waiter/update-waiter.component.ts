@@ -18,26 +18,26 @@ import { WaiterService } from './../../services/waiter.service';
 export class UpdateWaiterComponent implements OnInit {
 
   @Input() waiter: Waiter;
-  private waiterForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public waiterForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'name': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'name': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _waiterService: WaiterService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _waiterService: WaiterService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -60,7 +60,7 @@ export class UpdateWaiterComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.waiterForm = this._fb.group({
       '_id': [this.waiter._id, [
@@ -78,7 +78,7 @@ export class UpdateWaiterComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.waiterForm) { return; }
     const form = this.waiterForm;
@@ -96,14 +96,14 @@ export class UpdateWaiterComponent implements OnInit {
     }
   }
 
-  private updateWaiter (): void {
+  public updateWaiter (): void {
 
     this.loading = true;
     this.waiter = this.waiterForm.value;
     this.saveChanges();
   }
 
-  private saveChanges(): void {
+  public saveChanges(): void {
     
     this._waiterService.updateWaiter(this.waiter).subscribe(
     result => {

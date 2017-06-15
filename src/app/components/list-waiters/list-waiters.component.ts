@@ -18,18 +18,18 @@ import { DeleteWaiterComponent } from './../../components/delete-waiter/delete-w
 
 export class ListWaitersComponent implements OnInit {
 
-  private waiters: Waiter[] = new Array();
-  private areWaitersEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['name'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public waiters: Waiter[] = new Array();
+  public areWaitersEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['name'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
 
   constructor(
-    private _waiterService: WaiterService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _waiterService: WaiterService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -39,12 +39,12 @@ export class ListWaitersComponent implements OnInit {
     this.getWaiters();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getWaiters(): void {  
+  public getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
         result => {
@@ -67,7 +67,7 @@ export class ListWaitersComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -77,7 +77,7 @@ export class ListWaitersComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, waiter:Waiter): void {
+  public openModal(op: string, waiter:Waiter): void {
 
     let modalRef;
     switch(op) {

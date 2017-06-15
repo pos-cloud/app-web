@@ -18,18 +18,18 @@ import { DeleteSaleOrderComponent } from './../../components/delete-sale-order/d
 
 export class ListSaleOrdersComponent implements OnInit {
 
-  private saleOrders: SaleOrder[] = new Array();
-  private areSaleOrdersEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['number'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public saleOrders: SaleOrder[] = new Array();
+  public areSaleOrdersEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['number'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
 
   constructor(
-    private _saleOrderService: SaleOrderService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _saleOrderService: SaleOrderService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -39,12 +39,12 @@ export class ListSaleOrdersComponent implements OnInit {
     this.getSaleOrders();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getSaleOrders(): void {  
+  public getSaleOrders(): void {  
 
     this._saleOrderService.getSaleOrders().subscribe(
         result => {
@@ -67,7 +67,7 @@ export class ListSaleOrdersComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -77,7 +77,7 @@ export class ListSaleOrdersComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, saleOrder:SaleOrder): void {
+  public openModal(op: string, saleOrder:SaleOrder): void {
 
       let modalRef;
       switch(op) {
@@ -114,7 +114,7 @@ export class ListSaleOrdersComponent implements OnInit {
       }
     };
 
-    private addSaleOrder(saleOrderCode: number) {
+    public addSaleOrder(saleOrderCode: number) {
       this._router.navigate(['/pos/mesas/'+saleOrderCode+'/add-sale-order']);
     }
 

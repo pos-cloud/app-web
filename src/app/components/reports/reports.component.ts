@@ -17,19 +17,21 @@ import { WaiterService } from './../../services/waiter.service';
 })
 export class ReportsComponent implements OnInit {
 
-  private date: Date;
-  private waiter: Waiter;
-  private saleOrderForm : FormGroup;
-  private saleOrders: SaleOrder[] = new Array();
-  private alertMessage: any;
-  private waiters: Waiter[] = new Array();
+  public date: Date;
+  public waiter: Waiter;
+  public saleOrderForm : FormGroup;
+  public saleOrders: SaleOrder[] = new Array();
+  public alertMessage: any;
+  public waiters: Waiter[] = new Array();
+  public areSaleOrdersEmpty: boolean = true;
+  public areFiltersVisible: boolean = false;
 
-  private formErrors = {
+  public formErrors = {
     'waiter': '',
     'date': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'waiter': {
       'required':       'Este campo es requerido.'
     },
@@ -39,10 +41,10 @@ export class ReportsComponent implements OnInit {
   };
 
   constructor(
-    private _saleOrderService: SaleOrderService,
-    private _waiterService: WaiterService,
-    private _router: Router,
-    private _fb: FormBuilder
+    public _saleOrderService: SaleOrderService,
+    public _waiterService: WaiterService,
+    public _router: Router,
+    public _fb: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -52,7 +54,7 @@ export class ReportsComponent implements OnInit {
     this.buildForm();
   }
 
-  private getWaiters(): void {  
+  public getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
         result => {
@@ -73,7 +75,7 @@ export class ReportsComponent implements OnInit {
       );
    }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.saleOrderForm = this._fb.group({
       'waiter': [this.waiter, [
@@ -92,7 +94,7 @@ export class ReportsComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.saleOrderForm) { return; }
     const form = this.saleOrderForm;
@@ -110,7 +112,7 @@ export class ReportsComponent implements OnInit {
     }
   }
 
-  private reportByWaiterByDay(): void {
+  public reportByWaiterByDay(): void {
 
     this.waiter = this.saleOrderForm.value.waiter;
 
@@ -119,9 +121,11 @@ export class ReportsComponent implements OnInit {
         if(!result.saleOrders) {
           this.alertMessage = result.message;
           this.saleOrders = null;
+          this.areSaleOrdersEmpty = true;
         } else {
           this.alertMessage = null;
           this.saleOrders = result.saleOrders;
+          this.areSaleOrdersEmpty = false;
         }
       },
       error => {

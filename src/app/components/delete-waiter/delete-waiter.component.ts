@@ -16,7 +16,7 @@ import { WaiterService } from './../../services/waiter.service';
 export class DeleteWaiterComponent implements OnInit {
 
   @Input() waiter: Waiter;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteWaiterComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteWaiter(): void {
+  public deleteWaiter(): void {
 
     this._waiterService.deleteWaiter(this.waiter._id).subscribe(
       result => {

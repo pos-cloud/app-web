@@ -18,18 +18,18 @@ import { DeleteCompanyComponent } from './../../components/delete-company/delete
 
 export class ListCompaniesComponent implements OnInit {
 
-  private companies: Company[] = new Array();
-  private areCompaniesEmpty: boolean = true;
-  private alertMessage: any;
+  public companies: Company[] = new Array();
+  public areCompaniesEmpty: boolean = true;
+  public alertMessage: any;
   @Input() userType: string;
-  private orderTerm: string[] = ['name'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public orderTerm: string[] = ['name'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
 
   constructor(
-    private _companyService: CompanyService,
-    private _router: Router,
-    private _modalService: NgbModal,
+    public _companyService: CompanyService,
+    public _router: Router,
+    public _modalService: NgbModal,
     public activeModal: NgbActiveModal
   ) { }
 
@@ -40,12 +40,12 @@ export class ListCompaniesComponent implements OnInit {
     this.getCompanies();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getCompanies(): void {  
+  public getCompanies(): void {  
 
     this._companyService.getCompanies().subscribe(
         result => {
@@ -68,7 +68,7 @@ export class ListCompaniesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -78,7 +78,7 @@ export class ListCompaniesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, company:Company): void {
+  public openModal(op: string, company:Company): void {
 
     let modalRef;
     switch(op) {
@@ -115,7 +115,7 @@ export class ListCompaniesComponent implements OnInit {
     }
   };
   
-  private selectCompany(companySelected: Company): void {
+  public selectCompany(companySelected: Company): void {
     this.activeModal.close(companySelected);
   }
 }

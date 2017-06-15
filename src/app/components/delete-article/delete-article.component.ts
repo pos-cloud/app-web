@@ -16,7 +16,7 @@ import { ArticleService } from './../../services/article.service';
 export class DeleteArticleComponent implements OnInit {
 
   @Input() article: Article;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteArticleComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteArticle(): void {
+  public deleteArticle(): void {
 
     this._articleService.deleteArticle(this.article._id).subscribe(
       result => {

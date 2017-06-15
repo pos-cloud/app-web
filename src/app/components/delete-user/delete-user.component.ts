@@ -16,7 +16,7 @@ import { UserService } from './../../services/user.service';
 export class DeleteUserComponent implements OnInit {
 
   @Input() user: User;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteUserComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteUser(): void {
+  public deleteUser(): void {
 
     this._userService.deleteUser(this.user._id).subscribe(
       result => {

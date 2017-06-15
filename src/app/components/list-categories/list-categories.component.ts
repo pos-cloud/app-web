@@ -18,21 +18,21 @@ import { DeleteCategoryComponent } from './../../components/delete-category/dele
 
 export class ListCategoriesComponent implements OnInit {
 
-  private categories: Category[] = new Array();
-  private areCategoriesEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['description'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public categories: Category[] = new Array();
+  public areCategoriesEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['description'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
   @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
   @Input() areCategoriesVisible: boolean = true;
 
   constructor(
-    private _categoryService: CategoryService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _categoryService: CategoryService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -42,12 +42,12 @@ export class ListCategoriesComponent implements OnInit {
     this.getCategories();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getCategories(): void {  
+  public getCategories(): void {  
 
     this._categoryService.getCategories().subscribe(
         result => {
@@ -70,7 +70,7 @@ export class ListCategoriesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -80,7 +80,7 @@ export class ListCategoriesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, category:Category): void {
+  public openModal(op: string, category:Category): void {
 
       let modalRef;
       switch(op) {
@@ -117,11 +117,11 @@ export class ListCategoriesComponent implements OnInit {
       }
     };
 
-    private addItem(categorySelected) {
+    public addItem(categorySelected) {
       this.eventAddItem.emit(categorySelected);
     }
 
-    private selectCategory(categorySelected) {
+    public selectCategory(categorySelected) {
       this.eventSelectCategory.emit(categorySelected);
     }
 }

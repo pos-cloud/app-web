@@ -18,26 +18,26 @@ import { MakeService } from './../../services/make.service';
 export class UpdateMakeComponent implements OnInit {
 
   @Input() make: Make;
-  private makeForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public makeForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _makeService: MakeService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _makeService: MakeService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -60,7 +60,7 @@ export class UpdateMakeComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.makeForm = this._fb.group({
       '_id': [this.make._id, [
@@ -78,7 +78,7 @@ export class UpdateMakeComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.makeForm) { return; }
     const form = this.makeForm;
@@ -96,14 +96,14 @@ export class UpdateMakeComponent implements OnInit {
     }
   }
 
-  private updateMake (): void {
+  public updateMake (): void {
     
     this.loading = true;
     this.make = this.makeForm.value;
     this.saveChanges();
   }
 
-  private saveChanges(): void {
+  public saveChanges(): void {
     
   this._makeService.updateMake(this.make).subscribe(
     result => {

@@ -29,35 +29,35 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 
 export class UpdateSaleOrderComponent implements OnInit {
 
-  private saleOrder: SaleOrder;
-  private alertMessage: any;
-  private movementOfArticle: MovementOfArticle;
-  private movementsOfArticles: MovementOfArticle[] = new Array();
-  private amountOfItemForm: FormGroup;
-  private discountForm: FormGroup;
-  private areMovementsOfArticlesEmpty: boolean = true;
-  private userType: string;
-  private table: Table;
-  private tableId: string;
-  private loading: boolean = false;
-  private areCategoriesVisible: boolean = true;
-  private areArticlesVisible: boolean = false;
-  private categorySelected: Category;
+  public saleOrder: SaleOrder;
+  public alertMessage: any;
+  public movementOfArticle: MovementOfArticle;
+  public movementsOfArticles: MovementOfArticle[] = new Array();
+  public amountOfItemForm: FormGroup;
+  public discountForm: FormGroup;
+  public areMovementsOfArticlesEmpty: boolean = true;
+  public userType: string;
+  public table: Table;
+  public tableId: string;
+  public loading: boolean = false;
+  public areCategoriesVisible: boolean = true;
+  public areArticlesVisible: boolean = false;
+  public categorySelected: Category;
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
-  private discountPorcent: number = 0.00;
-  private discountAmount: number = 0.00;
-  private isNewItem: boolean;
+  public discountPorcent: number = 0.00;
+  public discountAmount: number = 0.00;
+  public isNewItem: boolean;
 
-  private formErrors = {
+  public formErrors = {
     'description':'',
     'amount': '',
     'salePrice':''
 
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     },
@@ -69,12 +69,12 @@ export class UpdateSaleOrderComponent implements OnInit {
     }
   };
 
-  private formErrorsDiscount = {
+  public formErrorsDiscount = {
     'amount': '',
     'porcent': ''
   };
 
-  private validationMessagesDiscount = {
+  public validationMessagesDiscount = {
     'amount': {
       'required':       'Este campo es requerido.'
     },
@@ -84,15 +84,15 @@ export class UpdateSaleOrderComponent implements OnInit {
   };
 
   constructor(
-    private _fb: FormBuilder,
-    private _saleOrderService: SaleOrderService,
-    private _movementOfArticleService: MovementOfArticleService,
-    private _tableService: TableService,
-    private _printService: PrintService,
-    private _router: Router,
+    public _fb: FormBuilder,
+    public _saleOrderService: SaleOrderService,
+    public _movementOfArticleService: MovementOfArticleService,
+    public _tableService: TableService,
+    public _printService: PrintService,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    private _modalService: NgbModal
+    public _modalService: NgbModal
   ) {
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -114,7 +114,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.buildFormDiscount();
   }
 
-  private getSaleOrder(id: string): void {
+  public getSaleOrder(id: string): void {
 
     this._saleOrderService.getSaleOrder(id).subscribe(
       result => {
@@ -138,7 +138,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     );
   } 
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.amountOfItemForm = this._fb.group({
       'description': [this.movementOfArticle.description, [
@@ -164,7 +164,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.amountOfItemForm) { return; }
     const form = this.amountOfItemForm;
@@ -182,7 +182,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     }
   }
 
-  private buildFormDiscount(): void {
+  public buildFormDiscount(): void {
 
     this.discountForm = this._fb.group({
       'amount': [this.discountAmount, [
@@ -201,7 +201,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.onValueChangedDiscount();
   }
 
-  private onValueChangedDiscount(data?: any): void {
+  public onValueChangedDiscount(data?: any): void {
 
     if (!this.discountForm) { return; }
     const form = this.discountForm;
@@ -219,7 +219,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     }
   }
 
-  private updateSaleOrder(): void {
+  public updateSaleOrder(): void {
     
     this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
       result => {
@@ -239,14 +239,14 @@ export class UpdateSaleOrderComponent implements OnInit {
     );
   }
 
-  private showArticlesOfCategory(category: Category): void {
+  public showArticlesOfCategory(category: Category): void {
     
     this.categorySelected = category;
     this.areArticlesVisible = true;
     this.areCategoriesVisible = false;
   }
 
-  private changeStateOfTable(state: any): void {
+  public changeStateOfTable(state: any): void {
 
     this.table.state = state;
     this._tableService.updateTable(this.table).subscribe(
@@ -268,7 +268,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     );
   }
   
-  private addItem(itemData?: MovementOfArticle): void {
+  public addItem(itemData?: MovementOfArticle): void {
 
     if(itemData) {
       this.isNewItem = false;
@@ -296,7 +296,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     }
   }
 
-  private openModal(op: string): void {
+  public openModal(op: string): void {
 
     let modalRef;
     
@@ -363,11 +363,11 @@ export class UpdateSaleOrderComponent implements OnInit {
     };
   }
 
-  private backToRooms(): void {
+  public backToRooms(): void {
     this._router.navigate(['/pos/salones/'+this.table.room+'/mesas']);
   }
 
-  private confirmAmount(): void {
+  public confirmAmount(): void {
     
     this.movementOfArticle.description = this.amountOfItemForm.value.description;
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
@@ -377,7 +377,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.saveMovementOfArticle();
   }
 
-  private applyDiscount(): void {
+  public applyDiscount(): void {
 
     if( this.discountPorcent > 0 &&
         this.discountPorcent <= 100 && 
@@ -410,7 +410,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     this.updateSaleOrder();
   }
 
-  private saveMovementOfArticle(): void {
+  public saveMovementOfArticle(): void {
     
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
@@ -435,7 +435,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     );
   }
 
-  private addAmount(): void {
+  public addAmount(): void {
     this.amountOfItemForm.setValue({
             'description': this.amountOfItemForm.value.description,
             'amount': this.amountOfItemForm.value.amount + 1,
@@ -444,7 +444,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     });
   }
 
-  private subtractAmount(): void {
+  public subtractAmount(): void {
     console.log("subtractAmount");
     if (this.amountOfItemForm.value.amount > 1) {
       this.amountOfItemForm.setValue({
@@ -463,7 +463,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     }
   }
 
-  private getMovementsOfSaleOrder(): void {
+  public getMovementsOfSaleOrder(): void {
     
     this._movementOfArticleService.getMovementsOfSaleOrder(this.saleOrder._id).subscribe(
         result => {
@@ -486,13 +486,13 @@ export class UpdateSaleOrderComponent implements OnInit {
       );
    }
 
-   private showCategories(): void {
+   public showCategories(): void {
 
      this.areCategoriesVisible = true;
      this.areArticlesVisible = false;
    }
 
-  private deleteMovementOfArticle(movementOfArticleId: string): void {
+  public deleteMovementOfArticle(movementOfArticleId: string): void {
     
     this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
       result => {
@@ -507,7 +507,7 @@ export class UpdateSaleOrderComponent implements OnInit {
     );
   }
 
-  private updatePrices(): void {
+  public updatePrices(): void {
     
       this.saleOrder.totalPrice = 0;
 
@@ -518,7 +518,7 @@ export class UpdateSaleOrderComponent implements OnInit {
       this.applyDiscount();
    }
 
-   private toPrintBill(): void {
+   public toPrintBill(): void {
 
       if(this.movementsOfArticles.length !== 0) {
         let datePipe = new DatePipe('es-AR');

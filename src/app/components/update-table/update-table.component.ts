@@ -18,20 +18,20 @@ import { RoomService } from './../../services/room.service';
 export class UpdateTableComponent implements OnInit {
 
   @Input() table: Table;
-  private rooms: Room[] = new Array();
-  private tableForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public rooms: Room[] = new Array();
+  public tableForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': '',
     'room': '',
     'chair' : 1
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     },
@@ -44,10 +44,10 @@ export class UpdateTableComponent implements OnInit {
   };
 
   constructor(
-    private _tableService: TableService,
-    private _roomService: RoomService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _tableService: TableService,
+    public _roomService: RoomService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -74,7 +74,7 @@ export class UpdateTableComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.tableForm = this._fb.group({
       '_id': [this.table._id, [
@@ -103,7 +103,7 @@ export class UpdateTableComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.tableForm) { return; }
     const form = this.tableForm;
@@ -121,7 +121,7 @@ export class UpdateTableComponent implements OnInit {
     }
   }
 
-  private getRooms(): void {  
+  public getRooms(): void {  
 
     this._roomService.getRooms().subscribe(
         result => {
@@ -141,13 +141,13 @@ export class UpdateTableComponent implements OnInit {
       );
    }
 
-  private updateTable(): void {
+  public updateTable(): void {
     this.loading = true;
     this.table = this.tableForm.value;
     this.getRoom();
   }
 
-  private getRoom(): void {  
+  public getRoom(): void {  
     
     this._roomService.getRoom(this.tableForm.value.room).subscribe(
         result => {
@@ -169,7 +169,7 @@ export class UpdateTableComponent implements OnInit {
       );
    }
 
-  private saveChanges(): void {
+  public saveChanges(): void {
     
     this._tableService.updateTable(this.table).subscribe(
       result => {

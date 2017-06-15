@@ -16,7 +16,7 @@ import { CategoryService } from './../../services/category.service';
 export class DeleteCategoryComponent implements OnInit {
 
   @Input() category: Category;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteCategoryComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteCategory(): void {
+  public deleteCategory(): void {
 
     this._categoryService.deleteCategory(this.category._id).subscribe(
       result => {

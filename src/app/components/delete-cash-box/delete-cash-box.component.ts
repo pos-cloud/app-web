@@ -16,7 +16,7 @@ import { CashBoxService } from './../../services/cash-box.service';
 export class DeleteCashBoxComponent implements OnInit {
 
   @Input() cashBox: CashBox;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteCashBoxComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteCashBox(): void {
+  public deleteCashBox(): void {
 
     this._cashBoxService.deleteCashBox(this.cashBox._id).subscribe(
       result => {

@@ -20,18 +20,18 @@ import { AddCashBoxComponent } from './../add-cash-box/add-cash-box.component';
 
 export class PointOfSaleComponent implements OnInit {
 
-  private cashBox: CashBox;
-  private rooms: Room[] = new Array();
-  private roomId: string;
-  private userType: string;
-  private existsCashBoxOpen: boolean = false;
-  private alertMessage: any;
+  public cashBox: CashBox;
+  public rooms: Room[] = new Array();
+  public roomId: string;
+  public userType: string;
+  public existsCashBoxOpen: boolean = false;
+  public alertMessage: any;
 
   constructor(
-    private _cashBoxService: CashBoxService,
-    private _roomService: RoomService,
-    private _router: Router,
-    private _modalService: NgbModal,
+    public _cashBoxService: CashBoxService,
+    public _roomService: RoomService,
+    public _router: Router,
+    public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
@@ -45,7 +45,7 @@ export class PointOfSaleComponent implements OnInit {
     this.getRooms();
   }
 
-  private getRooms(): void {  
+  public getRooms(): void {  
 
     this._roomService.getRooms().subscribe(
         result => {
@@ -70,11 +70,11 @@ export class PointOfSaleComponent implements OnInit {
       );
   }
 
-  private showTables(): void {
+  public showTables(): void {
     this._router.navigate(['/pos/salones/'+this.roomId+'/mesas']);
   }
 
-  private changeRoom(room: Room): void {
+  public changeRoom(room: Room): void {
     this.roomId = room._id;
     this.showTables();
   }

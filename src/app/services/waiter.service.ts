@@ -7,9 +7,9 @@ import { Waiter } from './../models/waiter';
 @Injectable()
 export class WaiterService {
 
-  private url: string;
+  public url: string;
 
-  constructor(private _http: Http) {
+  constructor(public _http: Http) {
     this.url = 'http://localhost:3000/api/';
   }
 

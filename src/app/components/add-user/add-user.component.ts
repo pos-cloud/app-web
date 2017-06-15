@@ -19,17 +19,17 @@ import { WaiterService } from './../../services/waiter.service';
 
 export class AddUserComponent  implements OnInit {
 
-  private user: User;
-  private userForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
-  private states: UserState[] = [UserState.Enabled, UserState.Disabled];
-  private types: UserTypes[] = [UserTypes.Supervisor, UserTypes.Waiter];
-  private waiters: Waiter[] = new Array();
+  public user: User;
+  public userForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
+  public states: UserState[] = [UserState.Enabled, UserState.Disabled];
+  public types: UserTypes[] = [UserTypes.Supervisor, UserTypes.Waiter];
+  public waiters: Waiter[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'name': '',
     'password': '',
     'type': '',
@@ -37,7 +37,7 @@ export class AddUserComponent  implements OnInit {
     'waiter': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'name': {
       'required':       'Este campo es requerido.'
     },
@@ -53,10 +53,10 @@ export class AddUserComponent  implements OnInit {
   };
 
   constructor(
-    private _userService: UserService,
-    private _waiterService: WaiterService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _userService: UserService,
+    public _waiterService: WaiterService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -77,7 +77,7 @@ export class AddUserComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.userForm = this._fb.group({
       'name': [this.user.name, [
@@ -106,7 +106,7 @@ export class AddUserComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.userForm) { return; }
     const form = this.userForm;
@@ -124,7 +124,7 @@ export class AddUserComponent  implements OnInit {
     }
   }
 
-  private getWaiters(): void {  
+  public getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
         result => {
@@ -145,14 +145,14 @@ export class AddUserComponent  implements OnInit {
       );
    }
 
-  private addUser(): void {
+  public addUser(): void {
     
     this.loading = true;
     this.user = this.userForm.value;
     this.saveUser();
   }
 
-  private saveUser(): void {
+  public saveUser(): void {
     
     this._userService.saveUser(this.user).subscribe(
     result => {

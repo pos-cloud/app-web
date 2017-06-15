@@ -18,14 +18,14 @@ import { CompanyService } from './../../services/company.service';
 export class UpdateCompanyComponent implements OnInit {
 
   @Input() company: Company;
-  private types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
-  private companyForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
+  public companyForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'code': 1,
     'name': '',
     'fantasyName': '',
@@ -38,7 +38,7 @@ export class UpdateCompanyComponent implements OnInit {
 
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'code': {
       'required':       'Este campo es requerido.'
     },
@@ -65,9 +65,9 @@ export class UpdateCompanyComponent implements OnInit {
   };
 
   constructor(
-    private _companyService: CompanyService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _companyService: CompanyService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -98,7 +98,7 @@ export class UpdateCompanyComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.companyForm = this._fb.group({
       '_id': [this.company._id, [
@@ -143,7 +143,7 @@ export class UpdateCompanyComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.companyForm) { return; }
     const form = this.companyForm;
@@ -161,14 +161,14 @@ export class UpdateCompanyComponent implements OnInit {
     }
   }
 
-  private updateCompany (): void {
+  public updateCompany (): void {
 
     this.loading = true;
     this.company = this.companyForm.value;
     this.saveChanges();
   }
 
-  private saveChanges(): void {
+  public saveChanges(): void {
     
     this._companyService.updateCompany(this.company).subscribe(
     result => {

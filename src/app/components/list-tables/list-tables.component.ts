@@ -27,41 +27,41 @@ import { LoginComponent } from './../../components/login/login.component';
 
 export class ListTablesComponent implements OnInit {
 
-  private tableSelected: Table;
-  private tables: Table[];
-  private areTablesEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['description'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
-  private waiter: Waiter;
-  private waiters: Waiter[] = new Array();
+  public tableSelected: Table;
+  public tables: Table[];
+  public areTablesEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['description'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
+  public waiter: Waiter;
+  public waiters: Waiter[] = new Array();
   @ViewChild('content') content:ElementRef;
-  private selectWaiterForm: FormGroup;
-  private roomId: string;
-  private loading: boolean = false;
+  public selectWaiterForm: FormGroup;
+  public roomId: string;
+  public loading: boolean = false;
 
-  private formErrors = {
+  public formErrors = {
     'waiter': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'waiter': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _fb: FormBuilder,
-    private _tableService: TableService,
-    private _waiterService: WaiterService,
-    private _saleOrderService: SaleOrderService,
-    private _turnService: TurnService,
-    private _router: Router,
+    public _fb: FormBuilder,
+    public _tableService: TableService,
+    public _waiterService: WaiterService,
+    public _saleOrderService: SaleOrderService,
+    public _turnService: TurnService,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    private _modalService: NgbModal
+    public _modalService: NgbModal
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -81,7 +81,7 @@ export class ListTablesComponent implements OnInit {
     }
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.selectWaiterForm = this._fb.group({
       'waiter': [this.waiter.name, [
@@ -95,7 +95,7 @@ export class ListTablesComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.selectWaiterForm) { return; }
     const form = this.selectWaiterForm;
@@ -113,7 +113,7 @@ export class ListTablesComponent implements OnInit {
     }
   }
 
-  private getTables(): void {  
+  public getTables(): void {  
     
     this._tableService.getTables().subscribe(
       result => {
@@ -136,7 +136,7 @@ export class ListTablesComponent implements OnInit {
     );
    }
 
-   private getTablesByRoom(): void {  
+   public getTablesByRoom(): void {  
      
     this._tableService.getTablesByRoom(this.roomId).subscribe(
       result => {
@@ -159,7 +159,7 @@ export class ListTablesComponent implements OnInit {
     );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -169,7 +169,7 @@ export class ListTablesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, table: Table, waiter?: Waiter): void {
+  public openModal(op: string, table: Table, waiter?: Waiter): void {
 
       this.tableSelected = table;
       if(waiter !== undefined) this.tableSelected.waiter = waiter;
@@ -251,13 +251,13 @@ export class ListTablesComponent implements OnInit {
       }
     };
 
-    private selectWaiter(): void {
+    public selectWaiter(): void {
       this.waiter = this.selectWaiterForm.value.waiter;
       this.tableSelected.waiter = this.waiter;
       this.getOpenTurn();
     }
 
-    private getOpenTurn(): void {
+    public getOpenTurn(): void {
     
       this._turnService.getOpenTurn(this.tableSelected.waiter._id).subscribe(
         result => {
@@ -278,7 +278,7 @@ export class ListTablesComponent implements OnInit {
       );
    }
 
-    private getWaiters(): void {  
+    public getWaiters(): void {  
 
       this._waiterService.getWaiters().subscribe(
         result => {
@@ -298,7 +298,7 @@ export class ListTablesComponent implements OnInit {
       );
    }
 
-   private assignWaiter(): void {
+   public assignWaiter(): void {
      
      this._tableService.updateTable(this.tableSelected).subscribe(
        result => {
@@ -321,7 +321,7 @@ export class ListTablesComponent implements OnInit {
      );
    }
 
-    private getOpenSaleOrder(): void {
+    public getOpenSaleOrder(): void {
 
       this._saleOrderService.getOpenSaleOrder(this.tableSelected._id).subscribe(
         result => {
@@ -342,11 +342,11 @@ export class ListTablesComponent implements OnInit {
       );
     } 
 
-    private updateSaleOrder(saleOrderId: string) {
+    public updateSaleOrder(saleOrderId: string) {
       this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/editar-pedido/'+saleOrderId]);
     }
 
-    private addSaleOrder() {
+    public addSaleOrder() {
       this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
     }
 }

@@ -19,21 +19,21 @@ import { RoomService } from './../../services/room.service';
 
 export class AddTableComponent  implements OnInit {
 
-  private table: Table;
-  private rooms: Room[] = new Array();
-  private tableForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
-  private focusEvent = new EventEmitter<boolean>();
+  public table: Table;
+  public rooms: Room[] = new Array();
+  public tableForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': '',
     'room': '',
     'chair': 1,
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     },
@@ -46,10 +46,10 @@ export class AddTableComponent  implements OnInit {
   };
 
   constructor(
-    private _tableService: TableService,
-    private _roomService: RoomService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _tableService: TableService,
+    public _roomService: RoomService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -70,7 +70,7 @@ export class AddTableComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.tableForm = this._fb.group({
       'description': [this.table.description, [
@@ -97,7 +97,7 @@ export class AddTableComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.tableForm) { return; }
     const form = this.tableForm;
@@ -115,7 +115,7 @@ export class AddTableComponent  implements OnInit {
     }
   }
 
-  private getRooms(): void {  
+  public getRooms(): void {  
 
     this._roomService.getRooms().subscribe(
         result => {
@@ -145,13 +145,13 @@ export class AddTableComponent  implements OnInit {
       );
    }
 
-  private addTable(): void {
+  public addTable(): void {
     this.loading = true;
     this.table = this.tableForm.value;
     this.saveTable();
   }
 
-  private saveTable(): void {
+  public saveTable(): void {
     
     this._tableService.saveTable(this.table).subscribe(
     result => {

@@ -16,7 +16,7 @@ import { RoomService } from './../../services/room.service';
 export class DeleteRoomComponent implements OnInit {
 
   @Input() room: Room;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteRoomComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteRoom(): void {
+  public deleteRoom(): void {
 
     this._roomService.deleteRoom(this.room._id).subscribe(
       result => {

@@ -18,18 +18,18 @@ import { DeleteUserComponent } from './../../components/delete-user/delete-user.
 
 export class ListUsersComponent implements OnInit {
 
-  private users: User[] = new Array();
-  private areUsersEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['name'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public users: User[] = new Array();
+  public areUsersEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['name'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
 
   constructor(
-    private _userService: UserService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _userService: UserService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -39,12 +39,12 @@ export class ListUsersComponent implements OnInit {
     this.getUsers();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getUsers(): void {  
+  public getUsers(): void {  
 
     this._userService.getUsers().subscribe(
         result => {
@@ -67,7 +67,7 @@ export class ListUsersComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -77,7 +77,7 @@ export class ListUsersComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, user:User): void {
+  public openModal(op: string, user:User): void {
 
     let modalRef;
     switch(op) {

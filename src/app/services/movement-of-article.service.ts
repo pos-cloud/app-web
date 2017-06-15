@@ -7,9 +7,9 @@ import { MovementOfArticle } from './../models/movement-of-article';
 @Injectable()
 export class MovementOfArticleService {
 
-  private url: string;
+  public url: string;
 
-  constructor(private _http: Http) {
+  constructor(public _http: Http) {
     this.url = 'http://localhost:3000/api/';
   }
 

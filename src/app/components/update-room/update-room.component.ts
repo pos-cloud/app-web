@@ -18,26 +18,26 @@ import { RoomService } from './../../services/room.service';
 export class UpdateRoomComponent implements OnInit {
 
   @Input() room: Room;
-  private roomForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public roomForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _roomService: RoomService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _roomService: RoomService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -60,7 +60,7 @@ export class UpdateRoomComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.roomForm = this._fb.group({
       '_id': [this.room._id, [
@@ -78,7 +78,7 @@ export class UpdateRoomComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.roomForm) { return; }
     const form = this.roomForm;
@@ -96,14 +96,14 @@ export class UpdateRoomComponent implements OnInit {
     }
   }
 
-  private updateRoom (): void {
+  public updateRoom (): void {
     
     this.loading = true;
     this.room = this.roomForm.value;
     this.saveChanges();
   }
 
-  private saveChanges(): void {
+  public saveChanges(): void {
     
   this._roomService.updateRoom(this.room).subscribe(
     result => {

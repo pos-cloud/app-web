@@ -16,7 +16,7 @@ import { SaleOrderService } from './../../services/sale-order.service';
 export class DeleteSaleOrderComponent implements OnInit {
 
   @Input() saleOrder: SaleOrder;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteSaleOrderComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteSaleOrder(): void {
+  public deleteSaleOrder(): void {
 
     this._saleOrderService.deleteSaleOrder(this.saleOrder._id).subscribe(
       result => {

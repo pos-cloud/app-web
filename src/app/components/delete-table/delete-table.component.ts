@@ -16,7 +16,7 @@ import { TableService } from './../../services/table.service';
 export class DeleteTableComponent implements OnInit {
 
   @Input() table: Table;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteTableComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteTable(): void {
+  public deleteTable(): void {
 
     this._tableService.deleteTable(this.table._id).subscribe(
       result => {

@@ -17,18 +17,18 @@ import { DeleteCashBoxComponent } from './../../components/delete-cash-box/delet
 
 export class ListCashBoxesComponent implements OnInit {
 
-  private cashBoxes: CashBox[] = new Array();
-  private areCashBoxesEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['code'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public cashBoxes: CashBox[] = new Array();
+  public areCashBoxesEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['code'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
 
   constructor(
-    private _cashBoxService: CashBoxService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _cashBoxService: CashBoxService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -38,12 +38,12 @@ export class ListCashBoxesComponent implements OnInit {
     this.getCashBoxes();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getCashBoxes(): void {  
+  public getCashBoxes(): void {  
 
     this._cashBoxService.getCashBoxes().subscribe(
         result => {
@@ -66,7 +66,7 @@ export class ListCashBoxesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -76,7 +76,7 @@ export class ListCashBoxesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, cashBox:CashBox): void {
+  public openModal(op: string, cashBox:CashBox): void {
 
       let modalRef;
       switch(op) {

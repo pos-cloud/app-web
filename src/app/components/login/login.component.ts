@@ -21,20 +21,20 @@ import { TableService } from './../../services/table.service';
 
 export class LoginComponent implements OnInit {
 
-  private user: User;
-  private loginForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public user: User;
+  public loginForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   @Input() waiterSelected: Waiter;
-  private waiters: Waiter[] = new Array();
+  public waiters: Waiter[] = new Array();
 
-  private formErrors = {
+  public formErrors = {
     'name': '',
     'password': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'name': {
       'required':       'Este campo es requerido.'
     },
@@ -44,11 +44,11 @@ export class LoginComponent implements OnInit {
   };
 
   constructor(
-    private _userservice: UserService,
-    private _waiterService: WaiterService,
-    private _turnService: TurnService,
-    private _tableService: TableService,
-    private _fb: FormBuilder,
+    public _userservice: UserService,
+    public _waiterService: WaiterService,
+    public _turnService: TurnService,
+    public _tableService: TableService,
+    public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     ) { 
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
     this.buildForm();
   }
 
-  private getUserOfWaiter(): void {  
+  public getUserOfWaiter(): void {  
     
     this._userservice.getUserOfWaiter(this.waiterSelected._id).subscribe(
         result => {
@@ -96,7 +96,7 @@ export class LoginComponent implements OnInit {
       );
    }
   
-  private getWaiters(): void {  
+  public getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
         result => {
@@ -117,7 +117,7 @@ export class LoginComponent implements OnInit {
       );
    }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.loginForm = this._fb.group({
       '_id': [this.user._id, [
@@ -147,7 +147,7 @@ export class LoginComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.loginForm) { return; }
     const form = this.loginForm;
@@ -165,7 +165,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  private login(): void {
+  public login(): void {
   
     this.user = this.loginForm.value;
     
@@ -186,7 +186,7 @@ export class LoginComponent implements OnInit {
     )
   }
 
-  private getOpenTurn(): void {
+  public getOpenTurn(): void {
     
     this._turnService.getOpenTurn(this.waiterSelected._id).subscribe(
         result => {
@@ -206,7 +206,7 @@ export class LoginComponent implements OnInit {
       );
    }
 
-  private openTurn(): void {
+  public openTurn(): void {
 
     let turn: Turn = new Turn();
     turn.waiter = this.user.waiter;

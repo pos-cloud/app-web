@@ -18,26 +18,26 @@ import { CategoryService } from './../../services/category.service';
 export class UpdateCategoryComponent implements OnInit {
 
   @Input() category: Category;
-  private categoryForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public categoryForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _categoryService: CategoryService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _categoryService: CategoryService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -60,7 +60,7 @@ export class UpdateCategoryComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.categoryForm = this._fb.group({
       '_id': [this.category._id, [
@@ -78,7 +78,7 @@ export class UpdateCategoryComponent implements OnInit {
     this.onValueChanged();
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.categoryForm) { return; }
     const form = this.categoryForm;
@@ -96,14 +96,14 @@ export class UpdateCategoryComponent implements OnInit {
     }
   }
 
-  private updateCategory (): void {
+  public updateCategory (): void {
     
     this.loading = true;
     this.category = this.categoryForm.value;
     this.saveChanges();
   }
 
-  private saveChanges(): void {
+  public saveChanges(): void {
     
   this._categoryService.updateCategory(this.category).subscribe(
     result => {

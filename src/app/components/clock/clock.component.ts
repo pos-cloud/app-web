@@ -9,12 +9,12 @@ import {ClockService} from "./../../services/clock.service";
 })
 export class ClockComponent implements OnInit, OnDestroy {
 
-  private _clockSubscription: Subscription;
-  private endTime: Date;
+  public _clockSubscription: Subscription;
+  public endTime: Date;
   @Input() startTime: Date;
-  private difference: Number;
+  public difference: Number;
 
-  constructor(private clockSubscription: ClockService) {
+  constructor(public clockSubscription: ClockService) {
     // if(this.startTime === undefined) {
     //   this.startTime = new Date();
     //   console.log(this.startTime);
@@ -36,14 +36,14 @@ export class ClockComponent implements OnInit, OnDestroy {
     this._clockSubscription.unsubscribe();
   }
 
-  // private calc() {
+  // public calc() {
   //   // this.difference = this.endTime.getMilliseconds() - this.startTime.getMilliseconds();
   //   this.endTime.diff(this.startTime, 'h');
   //   console.log("hora");
   //   console.log(this.difference); 
   // }
 
-  private calcularDiasDiferencia() {
+  public calcularDiasDiferencia() {
 
     let horasDif = this.endTime.getTime() - this.startTime.getTime();
     let horas = Math.round(horasDif/(1000 * 60 * 60));

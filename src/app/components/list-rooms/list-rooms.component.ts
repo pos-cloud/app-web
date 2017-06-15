@@ -18,19 +18,19 @@ import { DeleteRoomComponent } from './../../components/delete-room/delete-room.
 
 export class ListRoomsComponent implements OnInit {
 
-  private rooms: Room[] = new Array();
-  private areRoomsEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['description'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public rooms: Room[] = new Array();
+  public areRoomsEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['description'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Room> = new EventEmitter<Room>();
 
   constructor(
-    private _roomService: RoomService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _roomService: RoomService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -40,12 +40,12 @@ export class ListRoomsComponent implements OnInit {
     this.getRooms();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getRooms(): void {  
+  public getRooms(): void {  
 
     this._roomService.getRooms().subscribe(
         result => {
@@ -68,7 +68,7 @@ export class ListRoomsComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -78,7 +78,7 @@ export class ListRoomsComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, room:Room): void {
+  public openModal(op: string, room:Room): void {
 
       let modalRef;
       switch(op) {
@@ -115,7 +115,7 @@ export class ListRoomsComponent implements OnInit {
       }
     };
 
-    private addItem(roomSelected) {
+    public addItem(roomSelected) {
       this.eventAddItem.emit(roomSelected);
     }
 }

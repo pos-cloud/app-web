@@ -18,19 +18,19 @@ import { DeleteMakeComponent } from './../../components/delete-make/delete-make.
 
 export class ListMakesComponent implements OnInit {
 
-  private makes: Make[] = new Array();
-  private areMakesEmpty: boolean = true;
-  private alertMessage: any;
-  private userType: string;
-  private orderTerm: string[] = ['description'];
-  private propertyTerm: string;
-  private areFiltersVisible: boolean = false;
+  public makes: Make[] = new Array();
+  public areMakesEmpty: boolean = true;
+  public alertMessage: any;
+  public userType: string;
+  public orderTerm: string[] = ['description'];
+  public propertyTerm: string;
+  public areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Make> = new EventEmitter<Make>();
 
   constructor(
-    private _makeService: MakeService,
-    private _router: Router,
-    private _modalService: NgbModal
+    public _makeService: MakeService,
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -40,12 +40,12 @@ export class ListMakesComponent implements OnInit {
     this.getMakes();
   }
 
-  private getBadge(term: string): boolean {
+  public getBadge(term: string): boolean {
 
     return true;
   }
 
-  private getMakes(): void {  
+  public getMakes(): void {  
 
     this._makeService.getMakes().subscribe(
         result => {
@@ -68,7 +68,7 @@ export class ListMakesComponent implements OnInit {
       );
    }
 
-  private orderBy (term: string, property?: string): void {
+  public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-"+term;  
@@ -78,7 +78,7 @@ export class ListMakesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  private openModal(op: string, make:Make): void {
+  public openModal(op: string, make:Make): void {
 
       let modalRef;
       switch(op) {
@@ -115,7 +115,7 @@ export class ListMakesComponent implements OnInit {
       }
     };
 
-    private addItem(makeSelected) {
+    public addItem(makeSelected) {
       this.eventAddItem.emit(makeSelected);
     }
 }

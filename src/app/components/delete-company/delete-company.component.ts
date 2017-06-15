@@ -16,7 +16,7 @@ import { CompanyService } from './../../services/company.service';
 export class DeleteCompanyComponent implements OnInit {
 
   @Input() company: Company;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteCompanyComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteCompany(): void {
+  public deleteCompany(): void {
 
     this._companyService.deleteCompany(this.company._id).subscribe(
       result => {

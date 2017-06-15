@@ -17,15 +17,15 @@ import { CompanyService } from './../../services/company.service';
 
 export class AddCompanyComponent  implements OnInit {
 
-  private company: Company;
-  private types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
-  private companyForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
+  public company: Company;
+  public types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
+  public companyForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'code': 1,
     'name': '',
     'fantasyName': '',
@@ -38,7 +38,7 @@ export class AddCompanyComponent  implements OnInit {
 
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'code': {
       'required':       'Este campo es requerido.'
     },
@@ -64,9 +64,9 @@ export class AddCompanyComponent  implements OnInit {
   };
 
   constructor(
-    private _companyService: CompanyService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _companyService: CompanyService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -87,7 +87,7 @@ export class AddCompanyComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.companyForm = this._fb.group({
       'code': [this.company.code, [
@@ -130,7 +130,7 @@ export class AddCompanyComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.companyForm) { return; }
     const form = this.companyForm;
@@ -148,7 +148,7 @@ export class AddCompanyComponent  implements OnInit {
     }
   }
 
-  private getLastCompany(): void {  
+  public getLastCompany(): void {  
 
     this._companyService.getLastCompany().subscribe(
         result => {
@@ -179,14 +179,14 @@ export class AddCompanyComponent  implements OnInit {
       );
    }
 
-  private addCompany(): void {
+  public addCompany(): void {
     
     this.loading = true;
     this.company = this.companyForm.value;
     this.saveCompany();
   }
 
-  private saveCompany(): void {
+  public saveCompany(): void {
     
     this._companyService.saveCompany(this.company).subscribe(
     result => {

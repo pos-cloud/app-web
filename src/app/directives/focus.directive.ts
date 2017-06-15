@@ -6,10 +6,10 @@ import {Directive, Input, EventEmitter, ElementRef, Renderer, Inject} from '@ang
 
 export class FocusDirective {
   
-  private inputType: string;
+  public inputType: string;
   @Input('focus') focusEvent: EventEmitter<boolean>;
 
-  constructor(@Inject(ElementRef) private element: ElementRef, private renderer: Renderer) {
+  constructor(@Inject(ElementRef) public element: ElementRef, public renderer: Renderer) {
   }
  
   ngOnInit() {

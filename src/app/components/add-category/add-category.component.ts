@@ -17,27 +17,27 @@ import { CategoryService } from './../../services/category.service';
 
 export class AddCategoryComponent  implements OnInit {
 
-  private category: Category;
-  private categoryForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
-  private focusEvent = new EventEmitter<boolean>();
+  public category: Category;
+  public categoryForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _categoryService: CategoryService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _categoryService: CategoryService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -57,7 +57,7 @@ export class AddCategoryComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.categoryForm = this._fb.group({
       'description': [this.category.description, [
@@ -73,7 +73,7 @@ export class AddCategoryComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.categoryForm) { return; }
     const form = this.categoryForm;
@@ -91,13 +91,13 @@ export class AddCategoryComponent  implements OnInit {
     }
   }
 
-  private addCategory(): void {
+  public addCategory(): void {
     this.loading = true;
     this.category = this.categoryForm.value;
     this.saveCategory();
   }
 
-  private saveCategory(): void {
+  public saveCategory(): void {
     
     this._categoryService.saveCategory(this.category).subscribe(
     result => {

@@ -16,7 +16,7 @@ import { MakeService } from './../../services/make.service';
 export class DeleteMakeComponent implements OnInit {
 
   @Input() make: Make;
-  private alertMessage: any;
+  public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
@@ -35,7 +35,7 @@ export class DeleteMakeComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private deleteMake(): void {
+  public deleteMake(): void {
 
     this._makeService.deleteMake(this.make._id).subscribe(
       result => {

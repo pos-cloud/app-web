@@ -12,11 +12,11 @@ import { LoginComponent } from './../login/login.component';
 })
 export class HeaderComponent implements OnInit {
 
-  private userType: string;
+  public userType: string;
 
   constructor(
-    private _router: Router,
-    private _modalService: NgbModal
+    public _router: Router,
+    public _modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
     this.userType = pathLocation[1];
   }
 
-  private openModal(): void {
+  public openModal(): void {
 
     let modalRef = this._modalService.open(LoginComponent, { size: 'lg' }).result.then((result) => {
       

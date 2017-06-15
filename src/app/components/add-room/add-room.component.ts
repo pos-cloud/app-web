@@ -17,27 +17,27 @@ import { RoomService } from './../../services/room.service';
 
 export class AddRoomComponent  implements OnInit {
 
-  private room: Room;
-  private roomForm: FormGroup;
-  private alertMessage: any;
-  private userType: string;
-  private loading: boolean = false;
-  private focusEvent = new EventEmitter<boolean>();
+  public room: Room;
+  public roomForm: FormGroup;
+  public alertMessage: any;
+  public userType: string;
+  public loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
 
-  private formErrors = {
+  public formErrors = {
     'description': ''
   };
 
-  private validationMessages = {
+  public validationMessages = {
     'description': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
-    private _roomService: RoomService,
-    private _fb: FormBuilder,
-    private _router: Router,
+    public _roomService: RoomService,
+    public _fb: FormBuilder,
+    public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) { 
@@ -57,7 +57,7 @@ export class AddRoomComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private buildForm(): void {
+  public buildForm(): void {
 
     this.roomForm = this._fb.group({
       'description': [this.room.description, [
@@ -73,7 +73,7 @@ export class AddRoomComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  private onValueChanged(data?: any): void {
+  public onValueChanged(data?: any): void {
 
     if (!this.roomForm) { return; }
     const form = this.roomForm;
@@ -91,13 +91,13 @@ export class AddRoomComponent  implements OnInit {
     }
   }
 
-  private addRoom(): void {
+  public addRoom(): void {
     this.loading = true;
     this.room = this.roomForm.value;
     this.saveRoom();
   }
 
-  private saveRoom(): void {
+  public saveRoom(): void {
     
     this._roomService.saveRoom(this.room).subscribe(
     result => {
