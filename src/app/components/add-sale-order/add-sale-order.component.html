@@ -61,7 +61,7 @@
         <div class="col-md-6 btn-action btn-large center-content" (click)="toPrintBill()">
           Cuenta
         </div>
-        <div class="col-md-6 btn-action btn-large center-content">
+        <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('charge')">
           Cobrar
         </div>
       </div>
@@ -74,6 +74,14 @@
         </div>
         <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel_order')">
           Cancelar
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 offset-md-4">
+          <h4>Subtotal</h4>
+        </div>
+        <div class="col-md-4 center-content">
+          <h4>{{saleOrder.subtotalPrice | currency:'USD':'1.2-2'}}</h4>
         </div>
       </div>
       <div class="row">
@@ -269,4 +277,53 @@
     <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
     <button type="submit" class="btn btn-primary" (click)="c('cancel_order')">Aceptar</button>
   </div>
+</ng-template>
+
+<!--MODAL COBRO-->
+<ng-template #contentPayment let-c="close" let-d="dismiss">
+  <div  class="modal-header">
+    <h4 class="modal-title">Cobro</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="paymentForm" #formPayment="ngForm" (ngSubmit)="c('charge')" autocomplete="off">
+    <div class="modal-body container-fluid">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="totalPrice" class="control-label">Importe de venta:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" readonly/>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="amount" class="control-label">Importe de cobro:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" autofocus/>
+          </div>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-12">
+        <label for="cashChange" class="control-label">Su vuelto es:</label>
+        <div class="input-group">
+          <input type="number" class="form-control"  name="cashChange" formControlName="cashChange" min="0" step="0.01" [(ngModel)]="paymentChange" readonly/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!paymentForm.valid || loading" >
+        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <span *ngIf="!loading">Aceptar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
 </ng-template>

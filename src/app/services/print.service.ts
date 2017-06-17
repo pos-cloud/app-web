@@ -16,4 +16,8 @@ export class PrintService {
   toPrintBill (print: Print) {
     return this._http.post(this.url+'to-print',print).map (res => res.json());
   }
+
+   toPrintCharge (print: Print) {
+    return this._http.post(this.url+'to-print',print).map (res => res.json());
+  }
 }

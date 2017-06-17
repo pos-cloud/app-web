@@ -35,6 +35,7 @@ export class AddSaleOrderComponent implements OnInit {
   public movementsOfArticles: MovementOfArticle[] = new Array();
   public amountOfItemForm: FormGroup;
   public discountForm: FormGroup;
+  public paymentForm: FormGroup;
   public areMovementsOfArticlesEmpty: boolean = true;
   public userType: string;
   public table: Table;
@@ -46,9 +47,12 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
+  @ViewChild('contentPayment') contentPayment:ElementRef;
   public discountPorcent: number = 0.00;
   public discountAmount: number = 0.00;
   public isNewItem: boolean;
+  public paymentAmount: number = 0.00;
+  public paymentChange: string = '0.00';
 
   public formErrors = {
     'description':'',
@@ -79,6 +83,20 @@ export class AddSaleOrderComponent implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'porcent': {
+      'required':       'Este campo es requerido.'
+    }
+  };
+
+   public formErrorsPayment = {
+    'amount': '',
+    'cashChange': ''
+  };
+
+  public validationMessagesPayment = {
+    'amount': {
+      'required':       'Este campo es requerido.'
+    },
+    'cashChange': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -114,6 +132,7 @@ export class AddSaleOrderComponent implements OnInit {
     }
     this.buildForm();
     this.buildFormDiscount();
+    this.buildFormPayment();
   }
 
   public getTable(id: string): void  {
@@ -218,6 +237,49 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     }
+  }
+
+  public buildFormPayment(): void {
+
+    this.paymentForm = this._fb.group({
+      'totalPrice': [this.saleOrder.totalPrice, [
+           Validators.required
+        ]
+      ],
+      'amount': [this.paymentAmount, [
+           Validators.required
+        ]
+      ],
+      'cashChange': [this.paymentChange, [
+           Validators.required
+        ]
+      ]
+    });
+
+    this.paymentForm.valueChanges
+      .subscribe(data => this.onValueChangedPayment(data));
+
+    this.onValueChangedPayment();
+  }
+
+  public onValueChangedPayment(data?: any): void {
+
+    if (!this.paymentForm) { return; }
+    const form = this.paymentForm;
+
+    for (const field in this.formErrorsPayment) {
+      this.formErrorsPayment[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessagesPayment[field];
+        for (const key in control.errors) {
+          this.formErrorsPayment[field] += messages[key] + ' ';
+        }
+      }
+    }
+    
+    this.paymentChange = (this.paymentForm.value.amount -this.paymentForm.value.totalPrice).toFixed(2);
   }
 
   public addSaleOrder(): void {
@@ -382,6 +444,26 @@ export class AddSaleOrderComponent implements OnInit {
             
           });
           break;
+        case 'charge' :
+        
+          this.paymentForm.setValue({
+            'totalPrice' :  parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
+            'amount' : parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
+            'cashChange' : parseFloat(this.paymentChange).toFixed(2),
+          });
+          
+          modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
+            if(result  === "charge"){
+              this.saleOrder.state = SaleOrderState.Closed;
+              this.saleOrder.cashChange = this.paymentForm.value.cashChange;
+              this.updateSaleOrder();
+              this.table.waiter = null;
+              this.toPrintCharge();
+            }
+          }, (reason) => {
+            
+          });
+          break;
         default : ;
     };
   }
@@ -438,18 +520,18 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public applyDiscount(): void {
-
+    
     if( this.discountPorcent > 0 && 
         this.discountPorcent <= 100 && 
         this.discountPorcent !== null && 
         (this.discountAmount === 0 || this.discountAmount === null)){
 
-      this.saleOrder.discount = parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
+      this.saleOrder.discount = parseFloat(""+this.saleOrder.subtotalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
       this.alertMessage = null;
     } else if(( this.discountPorcent === 0 || 
                 this.discountPorcent === null) && 
                 this.discountAmount > 0  && 
-                this.discountAmount <= this.saleOrder.totalPrice  &&
+                this.discountAmount <= this.saleOrder.subtotalPrice  &&
                 this.discountAmount !== null){
 
       this.saleOrder.discount = this.discountAmount;
@@ -464,7 +546,9 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     if(this.saleOrder.discount != 0) {
-      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) - parseFloat(""+this.saleOrder.discount);
+      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.subtotalPrice) - parseFloat(""+this.saleOrder.discount);
+    } else {
+      this.saleOrder.totalPrice = this.saleOrder.subtotalPrice;
     }
     
     this.updateSaleOrder();
@@ -569,10 +653,10 @@ export class AddSaleOrderComponent implements OnInit {
 
    public updatePrices(): void {
 
-      this.saleOrder.totalPrice = 0;
+      this.saleOrder.subtotalPrice = 0;
 
       for(let movementOfArticle of this.movementsOfArticles) {
-        this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+movementOfArticle.totalPrice);
+        this.saleOrder.subtotalPrice = parseFloat(""+this.saleOrder.subtotalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
       
       this.applyDiscount();
@@ -605,7 +689,7 @@ export class AddSaleOrderComponent implements OnInit {
             content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
           }
           content += '----------------------------------------\n' +
-          'Subtotal:				 ' + decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) + parseFloat(""+this.saleOrder.discount), '1.2-2') + '\n' +
+          'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
           'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
           'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n\n' +
           'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
@@ -620,6 +704,68 @@ export class AddSaleOrderComponent implements OnInit {
           result => {
             if(result.message === 'ok'){
               this.changeStateOfTable(TableState.Pending);
+              this.backToRooms();
+            } else {
+              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+              this.alertConfig.type = "danger";
+            }
+          },
+          error => {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+            this.alertConfig.type = 'danger';
+          }
+        );
+      } else {
+        this.alertMessage = "No existen artículos en el pedido.";
+        this.alertConfig.type = "danger";
+      }
+   }
+
+   public toPrintCharge(): void {
+
+      if(this.movementsOfArticles.length !== 0) {
+        let datePipe = new DatePipe('es-AR');
+        let decimalPipe = new DecimalPipe('ARS');
+        let content: string;
+        content =
+          'CONFITERIA LA PALMA - CASA DE TE\n' +
+          'CUIT Nro.: 30-61432547-6\n' +
+          '25 de Mayo 2028 - San Francisco - Córdoba\n' +
+          'Tel: (03564) 424423\n' +
+          'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
+          'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
+          'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
+          'Mesa: ' + this.saleOrder.table.description + '\n' +
+          'Mozo: ' + this.saleOrder.table.waiter.name + '\n\n';
+          if(this.saleOrder.company) {
+            content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+          } else {
+            content += 'Cliente: Consumidor Final\n\n';
+          }
+          content += 'DESC.			CANT	MONTO\n' +
+          '----------------------------------------\n';
+          for (let movementOfArticle of this.movementsOfArticles) {
+            content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
+          }
+          content += '----------------------------------------\n' +
+          'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
+          'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
+          'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
+          'Su pago:					 '+ decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.saleOrder.cashChange), '1.2-2') + '\n' +
+          'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
+          'Su vuelto:					 '+ decimalPipe.transform(this.saleOrder.cashChange, '1.2-2') + '\n\n' +
+          'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
+          '----Gracias por su visita.----\n\n\n';
+
+        let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+        
+        let print: Print = new Print();
+        print.fileName = fileName;
+        print.content = content;
+        this._printService.toPrintCharge(print).subscribe(
+          result => {
+            if(result.message === 'ok'){
+              this.changeStateOfTable(TableState.Available);
               this.backToRooms();
             } else {
               this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
