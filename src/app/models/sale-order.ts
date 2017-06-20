@@ -1,7 +1,8 @@
 import { Company } from './company';
 import { CashBox } from './cash-box';
-import { Waiter } from './waiter';
 import { Table } from './table';
+import { Waiter } from './waiter';
+import { Turn } from './turn';
 
 export class SaleOrder {
 	
@@ -17,8 +18,9 @@ export class SaleOrder {
 	public totalPrice: number = 0.00;
 	public company: Company;
 	public cashBox: CashBox;
-	public waiter: Waiter;
 	public table: Table;
+	public waiter: Waiter;
+	public turn: Turn;
 
 	constructor () {}
 }

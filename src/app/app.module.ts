@@ -45,7 +45,6 @@ import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash
 import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
 import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { UpdateSaleOrderComponent } from './components/update-sale-order/update-sale-order.component';
 import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
 import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
 import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
@@ -102,7 +101,6 @@ import { ReportsComponent } from './components/reports/reports.component';
     AddCashBoxComponent,
     ListSaleOrdersComponent,
     AddSaleOrderComponent,
-    UpdateSaleOrderComponent,
     DeleteSaleOrderComponent,
     FocusDirective,
     ListRoomsComponent,

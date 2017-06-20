@@ -7,7 +7,6 @@ import { SaleOrder } from './../../models/sale-order';
 import { SaleOrderService } from './../../services/sale-order.service';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
-import { UpdateSaleOrderComponent } from './../../components/update-sale-order/update-sale-order.component';
 import { DeleteSaleOrderComponent } from './../../components/delete-sale-order/delete-sale-order.component';
 
 @Component({
@@ -81,24 +80,6 @@ export class ListSaleOrdersComponent implements OnInit {
 
       let modalRef;
       switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddSaleOrderComponent, { size: 'lg' }).result.then((result) => {
-            this.getSaleOrders();
-          }, (reason) => {
-            this.getSaleOrders();
-          });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateSaleOrderComponent, { size: 'lg' })
-            modalRef.componentInstance.saleOrder = saleOrder;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getSaleOrders();
-              }
-            }, (reason) => {
-              
-            });
-          break;
         case 'delete' :
             modalRef = this._modalService.open(DeleteSaleOrderComponent, { size: 'lg' })
             modalRef.componentInstance.saleOrder = saleOrder;

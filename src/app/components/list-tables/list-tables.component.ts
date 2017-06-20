@@ -212,7 +212,7 @@ export class ListTablesComponent implements OnInit {
             if(this.tableSelected.waiter !== undefined &&
               this.tableSelected.waiter !== null) {
 
-              this.getOpenSaleOrder();
+              this.addSaleOrder();
             } else {
               
               this.tableSelected.waiter = new Waiter();
@@ -296,54 +296,29 @@ export class ListTablesComponent implements OnInit {
 					}
 				}
       );
-   }
+    }
 
-   public assignWaiter(): void {
-     
-     this._tableService.updateTable(this.tableSelected).subscribe(
-       result => {
-					if(!result.table) {
-            this.loading = false;
-						this.alertMessage = result.message;
-					} else {
-            this.alertMessage = null;
-            this.loading = false;
-            this.getOpenSaleOrder();
-          }
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-            this.loading = false;
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-     );
-   }
-
-    public getOpenSaleOrder(): void {
-
-      this._saleOrderService.getOpenSaleOrder(this.tableSelected._id).subscribe(
+    public assignWaiter(): void {
+      
+      this._tableService.updateTable(this.tableSelected).subscribe(
         result => {
-          if(!result.saleOrders) {
-            this.alertMessage = null;
-            this.addSaleOrder();
-          } else {
-            this.alertMessage = null;
-            this.updateSaleOrder(result.saleOrders[0]._id);
+            if(!result.table) {
+              this.loading = false;
+              this.alertMessage = result.message;
+            } else {
+              this.alertMessage = null;
+              this.loading = false;
+              this.addSaleOrder();
+            }
+          },
+          error => {
+            this.alertMessage = error;
+            if(!this.alertMessage) {
+              this.loading = false;
+              this.alertMessage = "Error en la petición.";
+            }
           }
-        },
-        error => {
-          this.alertMessage = error;
-          if(!this.alertMessage) {
-            this.alertMessage = "Error en la petición.";
-          }
-        }
       );
-    } 
-
-    public updateSaleOrder(saleOrderId: string) {
-      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/editar-pedido/'+saleOrderId]);
     }
 
     public addSaleOrder() {

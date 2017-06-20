@@ -44,4 +44,8 @@ export class SaleOrderService {
   getLastSaleOrderByOrigen (origin: number) {
 		return this._http.get(this.url+'sale-orders/where="origin":"'+origin+'"&sort="number":-1&limit=1').map (res => res.json());
 	}
+  
+  getLastSaleOrderByTable (tableId: string) {
+		return this._http.get(this.url+'sale-orders/where="table":"'+tableId+'"&sort="number":-1&limit=1').map (res => res.json());
+	}
 }

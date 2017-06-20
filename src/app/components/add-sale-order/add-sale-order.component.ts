@@ -14,6 +14,7 @@ import { Print } from './../../models/print';
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
+import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
 
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
@@ -106,6 +107,7 @@ export class AddSaleOrderComponent implements OnInit {
     public _saleOrderService: SaleOrderService,
     public _movementOfArticleService: MovementOfArticleService,
     public _tableService: TableService,
+    public _turnService: TurnService,
     public _printService: PrintService,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -128,11 +130,92 @@ export class AddSaleOrderComponent implements OnInit {
     this.userType = pathLocation[1];
     if(this.tableId === undefined) {
       this.tableId = pathLocation[5];
-      this.getTable(this.tableId);
     }
+
+    this.getLastSaleOrderByTable();
     this.buildForm();
     this.buildFormDiscount();
     this.buildFormPayment();
+  }
+
+  public getLastSaleOrderByTable(): void {
+
+    this._saleOrderService.getLastSaleOrderByTable(this.tableId).subscribe(
+      result => {
+
+        let saleOrderState: SaleOrderState;
+        
+        if(result.saleOrders){
+          if(result.saleOrders[0] !== undefined) {
+            saleOrderState = result.saleOrders[0].state;
+          } else {
+            saleOrderState = SaleOrderState.Closed;
+          }
+        } else if(result.message = "No se encontraron pedidos") {
+          saleOrderState = SaleOrderState.Closed;
+        } else {
+          saleOrderState = SaleOrderState.Closed;
+        }
+        
+        if(saleOrderState !== SaleOrderState.Open) {
+          this.alertMessage = null;
+          this.getTable(this.tableId);
+        } else {
+          this.alertMessage = null;
+          this.saleOrder = result.saleOrders[0];
+          this.discountAmount = this.saleOrder.discount;
+          this.table = this.saleOrder.table;
+          saleOrderState = SaleOrderState.Open;
+          this.getMovementsOfSaleOrder();
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+          this.alertConfig.type = "danger";
+        }
+      }
+    );
+  }
+
+  public getLastSaleOrderByOrigen(): void {
+    
+    let origin = 0;
+
+    this._saleOrderService.getLastSaleOrderByOrigen(origin).subscribe(
+      result => {
+        let number;
+        
+        if(result.saleOrders){
+          if(result.saleOrders[0] !== undefined) {
+            number = result.saleOrders[0].number + 1;
+          } else {
+            number = 1;
+          }
+        } else if(result.message = "No se encontraron pedidos") {
+          number = 1;
+        } else {
+          number = 0;
+        }
+
+        if(number != 0) {
+
+          this.saleOrder.number = number;
+          this.addSaleOrder();
+        } else {
+          this.alertMessage = "Ha ocurrido un error en obtener el último pedido";
+          this.alertConfig.type = "danger";
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+          this.alertConfig.type = "danger";
+        }
+      }
+    );
   }
 
   public getTable(id: string): void  {
@@ -146,7 +229,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.waiter = this.table.waiter;
-          this.getLastSaleOrder();
+          this.getOpenTurn();
         }
       },
       error => {
@@ -157,6 +240,27 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
+
+  public getOpenTurn(): void {
+    
+      this._turnService.getOpenTurn(this.saleOrder.waiter._id).subscribe(
+        result => {
+					if(!result.turns) {
+            this.alertMessage = result.message;
+					} else {
+            this.loading = false;
+            this.saleOrder.turn = result.turns[0];
+            this.getLastSaleOrderByOrigen();
+          }
+				},
+				error => {
+					this.alertMessage = error;
+					if(!this.alertMessage) {
+						this.alertMessage = "Error en la petición.";
+					}
+				}
+      );
+   }
 
   public buildForm(): void {
 
@@ -406,16 +510,21 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         case 'apply_discount' :
         
-          modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
-            if(result  === "apply_discount"){
+          if(this.movementsOfArticles.length !== 0) {
+            modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
+              if(result  === "apply_discount"){
 
-              this.discountPorcent = this.discountForm.value.porcent;
-              this.discountAmount = this.discountForm.value.amount;
-              this.updatePrices();
-            }
-          }, (reason) => {
-            
-          });
+                this.discountPorcent = this.discountForm.value.porcent;
+                this.discountAmount = this.discountForm.value.amount;
+                this.updatePrices();
+              }
+            }, (reason) => {
+              
+            });
+          } else {
+            this.alertMessage = "No existen artículos en el pedido.";
+            this.alertConfig.type = "danger";
+          }
           break;
         case 'cancel_order' :
         
@@ -445,64 +554,31 @@ export class AddSaleOrderComponent implements OnInit {
           });
           break;
         case 'charge' :
-        
-          this.paymentForm.setValue({
-            'totalPrice' :  parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
-            'amount' : parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
-            'cashChange' : parseFloat(this.paymentChange).toFixed(2),
-          });
-          
-          modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
-            if(result  === "charge"){
-              this.saleOrder.state = SaleOrderState.Closed;
-              this.saleOrder.cashChange = this.paymentForm.value.cashChange;
-              this.updateSaleOrder();
-              this.table.waiter = null;
-              this.toPrintCharge();
-            }
-          }, (reason) => {
-            
-          });
+
+          if(this.movementsOfArticles.length !== 0) {
+            this.paymentForm.setValue({
+              'totalPrice' :  parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
+              'amount' : parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
+              'cashChange' : parseFloat(this.paymentChange).toFixed(2),
+            });
+            modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
+              if(result  === "charge"){
+                this.saleOrder.state = SaleOrderState.Closed;
+                this.saleOrder.cashChange = this.paymentForm.value.cashChange;
+                this.updateSaleOrder();
+                this.table.waiter = null;
+                this.toPrintCharge();
+              }
+            }, (reason) => {
+              
+            });
+          } else {
+            this.alertMessage = "No existen artículos en el pedido.";
+            this.alertConfig.type = "danger";
+          }
           break;
         default : ;
     };
-  }
-
-  public getLastSaleOrder(): void {
-    
-    this._saleOrderService.getLastSaleOrderByOrigen(this.saleOrder.origin).subscribe(
-      result => {
-        let number;
-        
-        if(result.saleOrders){
-          if(result.saleOrders[0] !== undefined) {
-            number = result.saleOrders[0].number + 1;
-          } else {
-            number = 1;
-          }
-        } else if(result.message = "No se encontraron pedidos") {
-          number = 1;
-        } else {
-          number = 0;
-        }
-
-        if(number != 0) {
-
-          this.saleOrder.number = number;
-          this.addSaleOrder();
-        } else {
-          this.alertMessage = "Ha ocurrido un error en obtener el último pedido";
-          this.alertConfig.type = "danger";
-        }
-      },
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-          this.alertMessage = "Error en la petición.";
-          this.alertConfig.type = "danger";
-        }
-      }
-    );
   }
 
   public backToRooms(): void {
@@ -589,7 +665,6 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public subtractAmount(): void {
-    console.log("subtractAmount");
     if (this.amountOfItemForm.value.amount > 1) {
       this.amountOfItemForm.setValue({
               'description':this.amountOfItemForm.value.description,
@@ -628,7 +703,7 @@ export class AddSaleOrderComponent implements OnInit {
 					}
 				}
       );
-   }
+  }
 
   public showCategories(): void {
 
@@ -663,7 +738,7 @@ export class AddSaleOrderComponent implements OnInit {
    }
 
    public toPrintBill(): void {
-
+     
       if(this.movementsOfArticles.length !== 0) {
         let datePipe = new DatePipe('es-AR');
         let decimalPipe = new DecimalPipe('ARS');
@@ -677,7 +752,7 @@ export class AddSaleOrderComponent implements OnInit {
           'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
           'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
           'Mesa: ' + this.saleOrder.table.description + '\n' +
-          'Mozo: ' + this.saleOrder.table.waiter.name + '\n\n';
+          'Mozo: ' + this.saleOrder.waiter.name + '\n\n';
           if(this.saleOrder.company) {
             content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
           } else {
@@ -736,7 +811,7 @@ export class AddSaleOrderComponent implements OnInit {
           'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
           'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
           'Mesa: ' + this.saleOrder.table.description + '\n' +
-          'Mozo: ' + this.saleOrder.table.waiter.name + '\n\n';
+          'Mozo: ' + this.saleOrder.waiter.name + '\n\n';
           if(this.saleOrder.company) {
             content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
           } else {
@@ -752,7 +827,6 @@ export class AddSaleOrderComponent implements OnInit {
           'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
           'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
           'Su pago:					 '+ decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.saleOrder.cashChange), '1.2-2') + '\n' +
-          'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
           'Su vuelto:					 '+ decimalPipe.transform(this.saleOrder.cashChange, '1.2-2') + '\n\n' +
           'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
           '----Gracias por su visita.----\n\n\n';
