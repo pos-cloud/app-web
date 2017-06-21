@@ -147,6 +147,7 @@ export class AddCashBoxComponent  implements OnInit {
     result => {
         if (!result.cashBox) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.cashBox = result.cashBox;
           this.alertConfig.type = 'success';

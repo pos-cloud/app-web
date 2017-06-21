@@ -109,6 +109,7 @@ export class UpdateCategoryComponent implements OnInit {
     result => {
       if (!this.category) {
         this.alertMessage = result.message;
+        this.alertConfig.type = 'danger';
       } else {
         this.category = result.category;
         this.alertConfig.type = 'success';

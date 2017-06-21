@@ -12,7 +12,7 @@ export class FilterPipe implements PipeTransform {
 //   terms: string[];
   valueAux: any[];
 
-  transform(value: any[], term: string, property: string, subobject?:string, ): any {
+  transform(value: any[], term: string, property: string, subobject?:string): any {
 
     if (term === undefined || !(term) || !value) {
 

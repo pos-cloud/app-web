@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, EventEmitter } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Waiter } from './../../models/waiter';
 import { Category } from './../../models/category';
+import { Room } from './../../models/room';
 import { Print } from './../../models/print';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -224,6 +225,7 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
         if(!result.table) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.alertMessage = null;
           this.table = result.table;
@@ -247,6 +249,7 @@ export class AddSaleOrderComponent implements OnInit {
         result => {
 					if(!result.turns) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					} else {
             this.loading = false;
             this.saleOrder.turn = result.turns[0];
@@ -392,6 +395,7 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
           if(!result.saleOrder) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
@@ -414,6 +418,7 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
           if(!result.saleOrder) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             //No anulamos el mensaje para que figuren en el pos.
           }
@@ -442,6 +447,7 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
         if (!result.table) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.table = result.table;
         }
@@ -582,7 +588,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public backToRooms(): void {
-    this._router.navigate(['/pos/salones/'+this.table.room+'/mesas']);
+    this._router.navigate(['/pos/salones/'+this.saleOrder.table.room+'/mesas']);
   }
 
   public confirmAmount(): void {
@@ -636,6 +642,7 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
         if (!result.movementOfArticle) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.alertMessage = null;
           this.movementOfArticle = result.movementOfArticle;

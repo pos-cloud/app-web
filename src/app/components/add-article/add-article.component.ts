@@ -196,6 +196,7 @@ export class AddArticleComponent  implements OnInit {
         result => {
           if(!result.makes) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.makes = result.makes;
@@ -217,6 +218,7 @@ export class AddArticleComponent  implements OnInit {
         result => {
           if(!result.categories) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.categories = result.categories;
@@ -244,6 +246,7 @@ export class AddArticleComponent  implements OnInit {
     result => {
         if (!result.article) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.article = result.article;
           this.alertMessage = "El artículo se ha añadido con éxito."; 

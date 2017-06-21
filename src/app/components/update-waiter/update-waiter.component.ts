@@ -109,6 +109,7 @@ export class UpdateWaiterComponent implements OnInit {
     result => {
         if (!result.waiter) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.waiter = result.waiter;
           this.alertConfig.type = 'success';

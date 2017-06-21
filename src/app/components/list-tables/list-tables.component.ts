@@ -39,7 +39,7 @@ export class ListTablesComponent implements OnInit {
   public waiters: Waiter[] = new Array();
   @ViewChild('content') content:ElementRef;
   public selectWaiterForm: FormGroup;
-  public roomId: string;
+  @Input() filterRoom: string;
   public loading: boolean = false;
 
   public formErrors = {
@@ -65,20 +65,18 @@ export class ListTablesComponent implements OnInit {
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
+    if(this.filterRoom === undefined) {
+      this.filterRoom = "";
+    }
   }
 
   ngOnInit(): void {
-
+    
     this.tables = null;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.roomId = pathLocation[3];
     this.waiter = new Waiter();
-    if(this.userType === 'admin') {
-      this.getTables(); 
-    } else if(this.roomId !== undefined) {
-      this.getTablesByRoom();
-    }
+    this.getTables(); 
   }
 
   public buildForm(): void {
@@ -119,29 +117,7 @@ export class ListTablesComponent implements OnInit {
       result => {
         if(!result.tables) {
           this.alertMessage = result.message;
-          this.tables = null;
-          this.areTablesEmpty = true;
-        } else {
-          this.alertMessage = null;
-          this.tables = result.tables;
-          this.areTablesEmpty = false;
-        }
-      },
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-          this.alertMessage = "Error en la petición.";
-        }
-      }
-    );
-   }
-
-   public getTablesByRoom(): void {  
-     
-    this._tableService.getTablesByRoom(this.roomId).subscribe(
-      result => {
-        if(!result.tables) {
-          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
           this.tables = null;
           this.areTablesEmpty = true;
         } else {
@@ -284,6 +260,7 @@ export class ListTablesComponent implements OnInit {
         result => {
 					if(!result.waiters) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					} else {
             this.alertMessage = null;
 					  this.waiters = result.waiters;
@@ -305,6 +282,7 @@ export class ListTablesComponent implements OnInit {
             if(!result.table) {
               this.loading = false;
               this.alertMessage = result.message;
+              this.alertConfig.type = 'danger';
             } else {
               this.alertMessage = null;
               this.loading = false;
@@ -322,6 +300,6 @@ export class ListTablesComponent implements OnInit {
     }
 
     public addSaleOrder() {
-      this._router.navigate(['/pos/salones/'+this.roomId+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
+      this._router.navigate(['/pos/salones/'+this.filterRoom+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
     }
 }

@@ -103,6 +103,7 @@ export class AddCategoryComponent  implements OnInit {
     result => {
         if (!result.category) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.category = result.category;
           this.alertConfig.type = 'success';

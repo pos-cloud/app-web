@@ -102,6 +102,7 @@ export class AddMakeComponent  implements OnInit {
     this._makeService.saveMake(this.make).subscribe(
     result => {
         if (!result.make) {
+          this.alertConfig.type = 'danger';
           this.alertMessage = result.message;
         } else {
           this.make = result.make;

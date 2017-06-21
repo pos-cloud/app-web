@@ -139,6 +139,7 @@ export class UpdateUserComponent implements OnInit {
         result => {
 					if(!result.waiters) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					  this.waiters = null;
 					} else {
             this.alertMessage = null;
@@ -167,6 +168,7 @@ export class UpdateUserComponent implements OnInit {
         result => {
           if(!result.waiter) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.user.waiter = result.waiter;
@@ -188,6 +190,7 @@ export class UpdateUserComponent implements OnInit {
     result => {
         if (!result.user) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.user = result.user;
           this.alertConfig.type = 'success';

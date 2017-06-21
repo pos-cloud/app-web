@@ -86,7 +86,6 @@ const _routes: Routes = [
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
-  // { path: 'pos/salones/:id/mesas/:id/editar-pedido/:id', component: ListCategoriesComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: 'reports', component: ReportsComponent},
   { path: '**',pathMatch: 'full', redirectTo: '' }

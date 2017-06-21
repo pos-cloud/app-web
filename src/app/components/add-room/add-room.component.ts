@@ -103,6 +103,7 @@ export class AddRoomComponent  implements OnInit {
     result => {
         if (!result.room) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.room = result.room;
           this.alertConfig.type = 'success';

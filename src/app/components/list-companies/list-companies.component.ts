@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company } from './../../models/company';
 import { CompanyService } from './../../services/company.service';
@@ -13,7 +13,8 @@ import { DeleteCompanyComponent } from './../../components/delete-company/delete
 @Component({
   selector: 'app-list-companies',
   templateUrl: './list-companies.component.html',
-  styleUrls: ['./list-companies.component.css']
+  styleUrls: ['./list-companies.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListCompaniesComponent implements OnInit {
@@ -30,8 +31,12 @@ export class ListCompaniesComponent implements OnInit {
     public _companyService: CompanyService,
     public _router: Router,
     public _modalService: NgbModal,
-    public activeModal: NgbActiveModal
-  ) { }
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -51,6 +56,7 @@ export class ListCompaniesComponent implements OnInit {
         result => {
 					if(!result.companies) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					  this.companies = null;
             this.areCompaniesEmpty = true;
 					} else {

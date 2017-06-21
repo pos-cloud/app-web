@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,8 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  public userType: string;
+
+  constructor(
+    public _router: Router
+  ) { }
 
   ngOnInit() {
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
   }
 }

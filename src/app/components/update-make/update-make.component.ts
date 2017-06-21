@@ -109,6 +109,7 @@ export class UpdateMakeComponent implements OnInit {
     result => {
       if (!result.make) {
         this.alertMessage = result.message;
+        this.alertConfig.type = 'danger';
       } else {
         this.make = result.make;
         this.alertConfig.type = 'success';

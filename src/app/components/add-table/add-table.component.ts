@@ -122,6 +122,7 @@ export class AddTableComponent  implements OnInit {
           let room: Room  = new Room();
           if(!result.rooms) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.rooms = result.rooms;
@@ -157,6 +158,7 @@ export class AddTableComponent  implements OnInit {
     result => {
         if (!result.table) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.table = result.table;
           this.alertConfig.type = 'success';

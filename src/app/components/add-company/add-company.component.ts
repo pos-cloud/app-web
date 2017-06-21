@@ -192,6 +192,7 @@ export class AddCompanyComponent  implements OnInit {
     result => {
         if (!result.company) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.company = result.company;
           this.alertConfig.type = 'success';

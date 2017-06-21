@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
@@ -12,7 +12,8 @@ import { DeleteCashBoxComponent } from './../../components/delete-cash-box/delet
 @Component({
   selector: 'app-list-cash-boxes',
   templateUrl: './list-cash-boxes.component.html',
-  styleUrls: ['./list-cash-boxes.component.css']
+  styleUrls: ['./list-cash-boxes.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListCashBoxesComponent implements OnInit {
@@ -28,8 +29,12 @@ export class ListCashBoxesComponent implements OnInit {
   constructor(
     public _cashBoxService: CashBoxService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -49,6 +54,7 @@ export class ListCashBoxesComponent implements OnInit {
         result => {
 					if(!result.cashBoxes) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					  this.cashBoxes = null;
             this.areCashBoxesEmpty = true;
 					} else {

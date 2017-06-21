@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { SaleOrder } from './../../models/sale-order';
 import { SaleOrderService } from './../../services/sale-order.service';
@@ -12,7 +12,8 @@ import { DeleteSaleOrderComponent } from './../../components/delete-sale-order/d
 @Component({
   selector: 'app-list-sale-orders',
   templateUrl: './list-sale-orders.component.html',
-  styleUrls: ['./list-sale-orders.component.css']
+  styleUrls: ['./list-sale-orders.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListSaleOrdersComponent implements OnInit {
@@ -28,8 +29,12 @@ export class ListSaleOrdersComponent implements OnInit {
   constructor(
     public _saleOrderService: SaleOrderService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -49,6 +54,7 @@ export class ListSaleOrdersComponent implements OnInit {
         result => {
 					if(!result.saleOrders) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
             this.saleOrders = null;
             this.areSaleOrdersEmpty = true;
 					} else {

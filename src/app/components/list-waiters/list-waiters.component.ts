@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Waiter } from './../../models/waiter';
 import { WaiterService } from './../../services/waiter.service';
@@ -13,7 +13,8 @@ import { DeleteWaiterComponent } from './../../components/delete-waiter/delete-w
 @Component({
   selector: 'app-list-waiters',
   templateUrl: './list-waiters.component.html',
-  styleUrls: ['./list-waiters.component.css']
+  styleUrls: ['./list-waiters.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListWaitersComponent implements OnInit {
@@ -29,8 +30,12 @@ export class ListWaitersComponent implements OnInit {
   constructor(
     public _waiterService: WaiterService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -50,6 +55,7 @@ export class ListWaitersComponent implements OnInit {
         result => {
 					if(!result.waiters) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					  this.waiters = null;
             this.areWaitersEmpty = true;
 					} else {

@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Room } from './../../models/room';
 import { RoomService } from './../../services/room.service';
@@ -13,7 +13,8 @@ import { DeleteRoomComponent } from './../../components/delete-room/delete-room.
 @Component({
   selector: 'app-list-rooms',
   templateUrl: './list-rooms.component.html',
-  styleUrls: ['./list-rooms.component.css']
+  styleUrls: ['./list-rooms.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListRoomsComponent implements OnInit {
@@ -30,8 +31,12 @@ export class ListRoomsComponent implements OnInit {
   constructor(
     public _roomService: RoomService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -51,6 +56,7 @@ export class ListRoomsComponent implements OnInit {
         result => {
           if(!result.rooms) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
             this.rooms = null;
             this.areRoomsEmpty = true;
           } else {

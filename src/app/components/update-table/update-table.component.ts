@@ -127,6 +127,7 @@ export class UpdateTableComponent implements OnInit {
         result => {
           if(!result.rooms) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.rooms = result.rooms;
@@ -153,6 +154,7 @@ export class UpdateTableComponent implements OnInit {
         result => {
           if(!result.room) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             
@@ -175,6 +177,7 @@ export class UpdateTableComponent implements OnInit {
       result => {
         if (!result.table) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.table = result.table;
           this.alertConfig.type = 'success';

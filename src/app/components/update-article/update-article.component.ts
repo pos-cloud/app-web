@@ -167,6 +167,7 @@ export class UpdateArticleComponent implements OnInit {
         result => {
           if(!result.makes) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.makes = result.makes;
@@ -187,6 +188,7 @@ export class UpdateArticleComponent implements OnInit {
         result => {
           if(!result.categories) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.categories = result.categories;
@@ -214,6 +216,7 @@ export class UpdateArticleComponent implements OnInit {
         result => {
           if(!result.make) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
           } else {
             this.alertMessage = null;
             this.article.make = result.make;
@@ -255,6 +258,7 @@ export class UpdateArticleComponent implements OnInit {
       result => {
         if (!result.article) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.article = result.article;
           this.alertConfig.type = 'success';

@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Make } from './../../models/make';
 import { MakeService } from './../../services/make.service';
@@ -13,7 +13,8 @@ import { DeleteMakeComponent } from './../../components/delete-make/delete-make.
 @Component({
   selector: 'app-list-makes',
   templateUrl: './list-makes.component.html',
-  styleUrls: ['./list-makes.component.css']
+  styleUrls: ['./list-makes.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListMakesComponent implements OnInit {
@@ -30,8 +31,12 @@ export class ListMakesComponent implements OnInit {
   constructor(
     public _makeService: MakeService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -51,6 +56,7 @@ export class ListMakesComponent implements OnInit {
         result => {
           if(!result.makes) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
             this.makes = null;
             this.areMakesEmpty = true;
           } else {

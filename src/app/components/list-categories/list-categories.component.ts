@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Category } from './../../models/category';
 import { CategoryService } from './../../services/category.service';
@@ -13,7 +13,8 @@ import { DeleteCategoryComponent } from './../../components/delete-category/dele
 @Component({
   selector: 'app-list-categories',
   templateUrl: './list-categories.component.html',
-  styleUrls: ['./list-categories.component.css']
+  styleUrls: ['./list-categories.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListCategoriesComponent implements OnInit {
@@ -32,8 +33,12 @@ export class ListCategoriesComponent implements OnInit {
   constructor(
     public _categoryService: CategoryService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -53,6 +58,7 @@ export class ListCategoriesComponent implements OnInit {
         result => {
           if(!result.categories) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
             this.categories = null;
             this.areCategoriesEmpty = true;
           } else {

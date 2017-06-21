@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
 import { UserService } from './../../services/user.service';
@@ -13,7 +13,8 @@ import { DeleteUserComponent } from './../../components/delete-user/delete-user.
 @Component({
   selector: 'app-list-users',
   templateUrl: './list-users.component.html',
-  styleUrls: ['./list-users.component.css']
+  styleUrls: ['./list-users.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListUsersComponent implements OnInit {
@@ -29,8 +30,12 @@ export class ListUsersComponent implements OnInit {
   constructor(
     public _userService: UserService,
     public _router: Router,
-    public _modalService: NgbModal
-  ) { }
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit(): void {
     
@@ -50,6 +55,7 @@ export class ListUsersComponent implements OnInit {
         result => {
 					if(!result.users) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					  this.users = null;
             this.areUsersEmpty = true;
 					} else {

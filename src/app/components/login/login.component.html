@@ -12,7 +12,18 @@
 	</div>
 	<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
 		<div class="modal-body">
-			<div class="row">
+			<div class="row" *ngIf="userType==='admin'">
+				<div class="form-group col-md-12">
+					<label for="user" class="control-label">Usuario</label>
+					<div class="input-group">
+						<input type="text" class="form-control" formControlName="user" name="user" id="user"/>
+					</div>
+					<div *ngIf="formErrors.user" class="alert alert-danger">
+						{{ formErrors.user }}
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="userType==='pos'">
 				<div class="form-group col-md-12">
 					<label for="waiter" class="control-label">Mozo</label>
 					<select class="form-control" formControlName="waiter">

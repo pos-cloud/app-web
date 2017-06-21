@@ -58,7 +58,7 @@
 
 <!--POS-->
 <section class="row" *ngIf="userType=='pos'">
-    <div *ngFor="let table of tables | orderBy:[orderTerm]" >
+    <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'" >
       <div  [ngClass]="{'itable itable-disabled':table.state==='No Habilitada',
                         'itable itable-enabled':table.state==='Disponible',
                         'itable itable-pending':table.state==='Pendiente',

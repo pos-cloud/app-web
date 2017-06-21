@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Waiter } from './../../models/waiter';
 import { SaleOrder } from './../../models/sale-order';
@@ -13,7 +13,8 @@ import { WaiterService } from './../../services/waiter.service';
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.css']
+  styleUrls: ['./reports.component.css'],
+  providers: [NgbAlertConfig]
 })
 export class ReportsComponent implements OnInit {
 
@@ -44,8 +45,12 @@ export class ReportsComponent implements OnInit {
     public _saleOrderService: SaleOrderService,
     public _waiterService: WaiterService,
     public _router: Router,
-    public _fb: FormBuilder
-  ) { }
+    public _fb: FormBuilder,
+    public alertConfig: NgbAlertConfig
+  ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
+  }
 
   ngOnInit() {
     this.waiter = new Waiter();
@@ -60,6 +65,7 @@ export class ReportsComponent implements OnInit {
         result => {
 					if(!result.waiters) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
 					  this.waiters = null;
 					} else {
             this.alertMessage = null;
@@ -120,6 +126,7 @@ export class ReportsComponent implements OnInit {
       result => {
         if(!result.saleOrders) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
           this.saleOrders = null;
           this.areSaleOrdersEmpty = true;
         } else {

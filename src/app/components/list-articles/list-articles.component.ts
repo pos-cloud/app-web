@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from './../../models/article';
 import { Category } from './../../models/category';
@@ -15,7 +15,8 @@ import { DeleteArticleComponent } from './../../components/delete-article/delete
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
-  styleUrls: ['./list-articles.component.css']
+  styleUrls: ['./list-articles.component.css'],
+  providers: [NgbAlertConfig]
 })
 
 export class ListArticlesComponent implements OnInit {
@@ -34,8 +35,11 @@ export class ListArticlesComponent implements OnInit {
   constructor(
     public _articleService: ArticleService,
     public _router: Router,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public alertConfig: NgbAlertConfig
   ) { 
+    alertConfig.type = 'danger';
+    alertConfig.dismissible = true;
     if(this.filterCategory === undefined) {
       this.filterCategory = "";
     }
@@ -54,6 +58,7 @@ export class ListArticlesComponent implements OnInit {
         result => {
 					if(!result.articles) {
 						this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
             this.articles = null;
             this.areArticlesEmpty = true;
 					} else {

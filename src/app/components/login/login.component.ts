@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -24,7 +25,7 @@ export class LoginComponent implements OnInit {
   public user: User;
   public loginForm: FormGroup;
   public alertMessage: any;
-  public userType: string;
+  public userType: string = "admin";
   public loading: boolean = false;
   @Input() waiterSelected: Waiter;
   public waiters: Waiter[] = new Array();
@@ -51,6 +52,7 @@ export class LoginComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
+    public _router: Router
     ) { 
       alertConfig.type = 'danger';
       alertConfig.dismissible = true;
@@ -58,6 +60,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
 
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
     this.user = new User();
     this.getWaiters();
     if(this.waiterSelected !== undefined){
@@ -69,53 +73,54 @@ export class LoginComponent implements OnInit {
   public getUserOfWaiter(): void {  
     
     this._userservice.getUserOfWaiter(this.waiterSelected._id).subscribe(
-        result => {
-					if(!result.users) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = "danger";
-					  this.user = null;
-					} else {
-            this.alertMessage = null;
-					  this.user = result.users[0];
-            this.loginForm.setValue({
-              '_id': this.user._id,
-              'name': this.user.name,
-              'password': '',
-              'type': this.user.type,
-              'state': this.user.state,
-              'waiter': this.user.waiter._id
-            });
-          }
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
-   }
+      result => {
+        if(!result.users) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+          this.user = null;
+        } else {
+          this.alertMessage = null;
+          this.user = result.users[0];
+          this.loginForm.setValue({
+            '_id': this.user._id,
+            'name': this.user.name,
+            'password': '',
+            'type': this.user.type,
+            'state': this.user.state,
+            'waiter': this.user.waiter._id
+          });
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+  }
   
   public getWaiters(): void {  
 
     this._waiterService.getWaiters().subscribe(
-        result => {
-					if(!result.waiters) {
-						this.alertMessage = result.message;
-					  this.waiters = null;
-					} else {
-            this.alertMessage = null;
-					  this.waiters = result.waiters;
-          }
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
-   }
+      result => {
+        if(!result.waiters) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+          this.waiters = null;
+        } else {
+          this.alertMessage = null;
+          this.waiters = result.waiters;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+  }
 
   public buildForm(): void {
 
@@ -173,6 +178,7 @@ export class LoginComponent implements OnInit {
       result => {
         if (!result.user) {
             this.alertMessage = result.message;
+            this.alertConfig.type = 'danger';
         } else {
           this.alertMessage = null;
           this.user = result.user;
@@ -189,22 +195,22 @@ export class LoginComponent implements OnInit {
   public getOpenTurn(): void {
     
     this._turnService.getOpenTurn(this.waiterSelected._id).subscribe(
-        result => {
-					if(!result.turns) {
-						this.openTurn();
-					} else {
-            this.alertMessage = "El mozo seleccionado ya tiene el turno abierto" ;
-            this.alertConfig.type = "danger";
-          }
-				},
-				error => {
-					this.alertMessage = error;
-					if(!this.alertMessage) {
-						this.alertMessage = "Error en la petición.";
-					}
-				}
-      );
-   }
+      result => {
+        if(!result.turns) {
+          this.openTurn();
+        } else {
+          this.alertMessage = "El mozo seleccionado ya tiene el turno abierto" ;
+          this.alertConfig.type = "danger";
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+          this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+  }
 
   public openTurn(): void {
 
@@ -215,6 +221,7 @@ export class LoginComponent implements OnInit {
       result => {
         if (!result.turn) {
           this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
         } else {
           this.activeModal.close("turn_open");
         }
