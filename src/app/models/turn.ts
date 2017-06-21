@@ -5,7 +5,7 @@ export class Turn {
 	public _id: string;
 	public startDate: Date = new Date();
 	public endDate: Date;
-	public state: any = TurnState.Open;
+	public state: TurnState = TurnState.Open;
 	public waiter: Waiter = null;
 
 	constructor () {}

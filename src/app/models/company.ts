@@ -4,7 +4,7 @@ export class Company {
     public code: number = 1;
     public name: string;
     public fantasyName: string;
-    public type: any = CompanyType.Client;
+    public type: CompanyType = CompanyType.Client;
     public IVACondition: string = "Responsable Inscripto";
     public CUIT: string;
     public address: string;

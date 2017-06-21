@@ -5,8 +5,8 @@ export class User {
 	public _id: string;
 	public name: string;
 	public password: string;
-	public type: any = UserTypes.Supervisor;
-	public state: any = UserState.Enabled;
+	public type: UserTypes = UserTypes.Supervisor;
+	public state: UserState = UserState.Enabled;
 	public waiter: Waiter = null;
 
 	constructor () {}

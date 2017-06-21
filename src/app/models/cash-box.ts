@@ -10,7 +10,7 @@ export class CashBox {
     public closingCash: number = 0.00;
     public invoicedCash: number = 0.00;
     public difference: number = 0.00;
-    public state: any = CashBoxState.Open;
+    public state: CashBoxState = CashBoxState.Open;
     public waiter: Waiter = null;
 
 	constructor () {}

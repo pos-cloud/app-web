@@ -10,7 +10,7 @@ export class SaleOrder {
 	public origin: number = 0;
 	public number: number = 0;
 	public date: Date = new Date();
-	public state: any = SaleOrderState.Open;
+	public state: SaleOrderState = SaleOrderState.Open;
 	public observation: string;
 	public subtotalPrice: number = 0.00;
 	public discount: number = 0.00;

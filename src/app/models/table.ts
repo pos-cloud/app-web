@@ -7,7 +7,7 @@ export class Table {
 	public description: string;
 	public room: Room = null;
 	public chair: number = 1;
-	public state: any = TableState.Available;
+	public state: TableState = TableState.Available;
 	public waiter: Waiter = null;
 
 	constructor () {}

@@ -13,6 +13,13 @@ export class Article {
     public unitOfMeasure: string;
     public stock: number = 0;
     public barcode: string;
+    public type: ArticleType = ArticleType.Counter;
 
     constructor() {}
+}
+
+export enum ArticleType {
+    Bar = <any> "Bar",
+    Kitchen = <any> "Cocina",
+    Counter = <any> "Mostrador"
 }
