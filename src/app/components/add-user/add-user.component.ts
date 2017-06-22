@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User, UserTypes, UserState } from './../../models/user';
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 
 import { UserService } from './../../services/user.service';
-import { WaiterService } from './../../services/waiter.service';
+import { EmployeeService } from './../../services/employee.service';
 
 @Component({
   selector: 'app-add-user',
@@ -25,8 +25,8 @@ export class AddUserComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
-  public types: UserTypes[] = [UserTypes.Supervisor, UserTypes.Waiter];
-  public waiters: Waiter[] = new Array();
+  public types: UserTypes[] = [UserTypes.Supervisor, UserTypes.Employee];
+  public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
@@ -34,7 +34,7 @@ export class AddUserComponent  implements OnInit {
     'password': '',
     'type': '',
     'state': '',
-    'waiter': ''
+    'employee': ''
   };
 
   public validationMessages = {
@@ -48,13 +48,13 @@ export class AddUserComponent  implements OnInit {
     },
     'state': {
     },
-    'waiter': {
+    'employee': {
     }
   };
 
   constructor(
     public _userService: UserService,
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -70,7 +70,7 @@ export class AddUserComponent  implements OnInit {
     this.userType = pathLocation[1];
     this.user = new User ();
     this.buildForm();
-    this.getWaiters();
+    this.getEmployees();
   }
 
   ngAfterViewInit() {
@@ -94,7 +94,7 @@ export class AddUserComponent  implements OnInit {
       'state': [this.user.state, [
         ]
       ],
-      'waiter': [this.user.waiter, [
+      'employee': [this.user.employee, [
         ]
       ]
     });
@@ -124,17 +124,17 @@ export class AddUserComponent  implements OnInit {
     }
   }
 
-  public getWaiters(): void {  
+  public getEmployees(): void {  
 
-    this._waiterService.getWaiters().subscribe(
+    this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.waiters) {
+					if(!result.employees) {
 						this.alertMessage = result.message;
             this.alertConfig.type = 'danger';
-					  this.waiters = null;
+					  this.employees = null;
 					} else {
             this.alertMessage = null;
-					  this.waiters = result.waiters;
+					  this.employees = result.employees;
           }
 				},
 				error => {

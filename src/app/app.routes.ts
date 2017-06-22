@@ -9,10 +9,14 @@ import { ListArticlesComponent } from './components/list-articles/list-articles.
 import { AddArticleComponent } from './components/add-article/add-article.component';
 import { UpdateArticleComponent } from './components/update-article/update-article.component';
 import { DeleteArticleComponent } from './components/delete-article/delete-article.component';
-import { ListWaitersComponent } from './components/list-waiters/list-waiters.component';
-import { AddWaiterComponent } from './components/add-waiter/add-waiter.component';
-import { UpdateWaiterComponent } from './components/update-waiter/update-waiter.component';
-import { DeleteWaiterComponent } from './components/delete-waiter/delete-waiter.component';
+import { ListEmployeesComponent } from './components/list-employees/list-employees.component';
+import { AddEmployeeComponent } from './components/add-employee/add-employee.component';
+import { UpdateEmployeeComponent } from './components/update-employee/update-employee.component';
+import { DeleteEmployeeComponent } from './components/delete-employee/delete-employee.component';
+import { ListEmployeeTypesComponent } from './components/list-employee-types/list-employee-types.component';
+import { AddEmployeeTypeComponent } from './components/add-employee-type/add-employee-type.component';
+import { UpdateEmployeeTypeComponent } from './components/update-employee-type/update-employee-type.component';
+import { DeleteEmployeeTypeComponent } from './components/delete-employee-type/delete-employee-type.component';
 import { ListTablesComponent } from './components/list-tables/list-tables.component';
 import { AddTableComponent } from './components/add-table/add-table.component';
 import { UpdateTableComponent } from './components/update-table/update-table.component';
@@ -52,10 +56,14 @@ const _routes: Routes = [
   { path: 'admin/agregar-producto', component: AddArticleComponent },
   { path: 'admin/editar-producto', component: UpdateArticleComponent },
   { path: 'admin/eliminar-producto', component: DeleteArticleComponent },
-  { path: 'admin/mozos', component: ListWaitersComponent },
-  { path: 'admin/agregar-mozo', component: AddWaiterComponent },
-  { path: 'admin/editar-mozo', component: UpdateWaiterComponent },
-  { path: 'admin/eliminar-mozo', component: DeleteWaiterComponent },
+  { path: 'admin/empleados', component: ListEmployeesComponent },
+  { path: 'admin/agregar-empleado', component: AddEmployeeComponent },
+  { path: 'admin/editar-empleado', component: UpdateEmployeeComponent },
+  { path: 'admin/eliminar-empleado', component: DeleteEmployeeComponent },
+  { path: 'admin/tipos-de-empleado', component: ListEmployeeTypesComponent },
+  { path: 'admin/agregar-tipo-de-empleado', component: AddEmployeeTypeComponent },
+  { path: 'admin/editar-tipo-de-empleado', component: UpdateEmployeeTypeComponent },
+  { path: 'admin/eliminar-tipo-de-empleado', component: DeleteEmployeeTypeComponent },
   { path: 'admin/mesas', component: ListTablesComponent },
   { path: 'admin/agregar-mesa', component: AddTableComponent },
   { path: 'admin/editar-mesa', component: UpdateTableComponent },

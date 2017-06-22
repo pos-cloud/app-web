@@ -13,8 +13,8 @@ export class TurnService {
     this.url = 'http://localhost:3000/api/';
   }
 
-  getOpenTurn (waiterId: string) {
-		return this._http.get(this.url+'turns/where="waiter":"'+waiterId+'","state":"'+TurnState.Open+'"').map (res => res.json());
+  getOpenTurn (employeeId: string) {
+		return this._http.get(this.url+'turns/where="employee":"'+employeeId+'","state":"'+TurnState.Open+'"').map (res => res.json());
 	}
 
   getLastTurn () {

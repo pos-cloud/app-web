@@ -1,7 +1,7 @@
 import { Company } from './company';
 import { CashBox } from './cash-box';
 import { Table } from './table';
-import { Waiter } from './waiter';
+import { Employee } from './employee';
 import { Turn } from './turn';
 
 export class SaleOrder {
@@ -19,7 +19,7 @@ export class SaleOrder {
 	public company: Company;
 	public cashBox: CashBox;
 	public table: Table;
-	public waiter: Waiter;
+	public employee: Employee;
 	public turn: Turn;
 
 	constructor () {}

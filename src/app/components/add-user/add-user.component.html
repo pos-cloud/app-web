@@ -54,13 +54,13 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="userForm.value.type==='Mozo'">
+      <div class="row" *ngIf="userForm.value.type==='Empleado'">
         <div class="form-group col-md-12">
-          <label for="waiter" class="control-label">Mozo Asociado</label>
-          <select class="form-control" formControlName="waiter">
-            <option *ngFor="let waiter of waiters" [ngValue]="waiter">{{waiter.name}}</option>
+          <label for="employee" class="control-label">Empleado Asociado</label>
+          <select class="form-control" formControlName="employee">
+            <option *ngFor="let employee of employees" [ngValue]="employee">{{employee.name}}</option>
           </select>
-          <div *ngIf="formErrors.waiter" class="alert alert-danger">
+          <div *ngIf="formErrors.employee" class="alert alert-danger">
             {{ formErrors.state }}
           </div>
         </div>

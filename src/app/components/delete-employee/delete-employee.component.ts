@@ -2,25 +2,25 @@ import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 
-import { WaiterService } from './../../services/waiter.service';
+import { EmployeeService } from './../../services/employee.service';
 
 @Component({
-  selector: 'app-delete-waiter',
-  templateUrl: './delete-waiter.component.html',
-  styleUrls: ['./delete-waiter.component.css'],
+  selector: 'app-delete-employee',
+  templateUrl: './delete-employee.component.html',
+  styleUrls: ['./delete-employee.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class DeleteWaiterComponent implements OnInit {
+export class DeleteEmployeeComponent implements OnInit {
 
-  @Input() waiter: Waiter;
+  @Input() employee: Employee;
   public alertMessage: any;
   public focusEvent = new EventEmitter<boolean>();
 
   constructor(
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -35,9 +35,9 @@ export class DeleteWaiterComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public deleteWaiter(): void {
+  public deleteEmployee(): void {
 
-    this._waiterService.deleteWaiter(this.waiter._id).subscribe(
+    this._employeeService.deleteEmployee(this.employee._id).subscribe(
       result => {
         this.activeModal.close('delete_close');
       },

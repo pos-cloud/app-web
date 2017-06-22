@@ -25,10 +25,10 @@
 			</div>
 			<div class="row" *ngIf="userType==='pos'">
 				<div class="form-group col-md-12">
-					<label for="waiter" class="control-label">Mozo</label>
-					<select class="form-control" formControlName="waiter">
-						<option *ngFor="let waiter of waiters" [selected]="waiter._id==waiterSelected._id" [value]="waiter._id">
-							{{waiter.name}}
+					<label for="employee" class="control-label">Empleado</label>
+					<select class="form-control" formControlName="employee">
+						<option *ngFor="let employee of employees" [selected]="employee._id==employeeSelected._id" [value]="employee._id">
+							{{employee.name}}
 						</option>
 					</select>
 				</div>

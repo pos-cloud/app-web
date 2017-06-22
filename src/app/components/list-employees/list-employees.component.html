@@ -1,0 +1,46 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Lista de Empleados
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Empleado</button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('name')">Nombre </th>
+              <th></th>
+            </tr>
+            <tr *ngIf="areFiltersVisible">
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of employees | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td>{{employee.name}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', employee)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', employee)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="areEmployeesEmpty">
+              <td colspan="3">No se encontraron empleados</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary card-inverse">
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          nextLabel="Next">
+        </pagination-controls>
+      </div>
+  </div>
+</section>

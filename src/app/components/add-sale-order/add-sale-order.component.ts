@@ -7,7 +7,7 @@ import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { Article } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 import { Category } from './../../models/category';
 import { Room } from './../../models/room';
 import { Print } from './../../models/print';
@@ -118,7 +118,7 @@ export class AddSaleOrderComponent implements OnInit {
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
     this.saleOrder = new SaleOrder();
-    this.saleOrder.waiter = new Waiter();
+    this.saleOrder.employee = new Employee();
     this.saleOrder.table = new Table();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
@@ -230,7 +230,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.alertMessage = null;
           this.table = result.table;
           this.saleOrder.table = this.table;
-          this.saleOrder.waiter = this.table.waiter;
+          this.saleOrder.employee = this.table.employee;
           this.getOpenTurn();
         }
       },
@@ -245,7 +245,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public getOpenTurn(): void {
     
-      this._turnService.getOpenTurn(this.saleOrder.waiter._id).subscribe(
+      this._turnService.getOpenTurn(this.saleOrder.employee._id).subscribe(
         result => {
 					if(!result.turns) {
             this.alertMessage = result.message;
@@ -538,7 +538,7 @@ export class AddSaleOrderComponent implements OnInit {
             if(result  === "cancel_order"){
               this.saleOrder.state = SaleOrderState.Canceled;
               this.updateSaleOrder();
-              this.table.waiter = null;
+              this.table.employee = null;
               this.changeStateOfTable(TableState.Available);
               this.backToRooms();
             }
@@ -572,7 +572,7 @@ export class AddSaleOrderComponent implements OnInit {
                 this.saleOrder.state = SaleOrderState.Closed;
                 this.saleOrder.cashChange = this.paymentForm.value.cashChange;
                 this.updateSaleOrder();
-                this.table.waiter = null;
+                this.table.employee = null;
                 this.toPrintCharge();
               }
             }, (reason) => {
@@ -759,7 +759,7 @@ export class AddSaleOrderComponent implements OnInit {
           'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
           'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
           'Mesa: ' + this.saleOrder.table.description + '\n' +
-          'Mozo: ' + this.saleOrder.waiter.name + '\n\n';
+          'Empleado: ' + this.saleOrder.employee.name + '\n\n';
           if(this.saleOrder.company) {
             content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
           } else {
@@ -818,7 +818,7 @@ export class AddSaleOrderComponent implements OnInit {
           'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
           'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
           'Mesa: ' + this.saleOrder.table.description + '\n' +
-          'Mozo: ' + this.saleOrder.waiter.name + '\n\n';
+          'Empleado: ' + this.saleOrder.employee.name + '\n\n';
           if(this.saleOrder.company) {
             content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
           } else {

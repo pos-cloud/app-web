@@ -1,8 +1,8 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary card-inverse">Lista de Mozos
+    <div class="card-header bg-primary card-inverse">Lista de Tipos de Empleado
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Mozo</button>
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Tipo de Empleado</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>
@@ -20,15 +20,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let waiter of waiters | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
-              <td>{{waiter.name}}</td>
+            <tr *ngFor="let employeeType of employeeTypes | orderBy: [orderTerm] | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td>{{employeeType.name}}</td>
               <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', waiter)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', waiter)"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-primary" (click)="openModal('update', employeeType)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', employeeType)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>
-            <tr align="center" *ngIf="areWaitersEmpty">
-              <td colspan="3">No se encontraron mozos</td>
+            <tr align="center" *ngIf="areEmployeeTypesEmpty">
+              <td colspan="3">No se encontraron tipos de empleados</td>
             </tr>
           </tbody>
         </table>

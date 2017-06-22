@@ -1,4 +1,4 @@
-import { Waiter } from './waiter';
+import { Employee } from './employee';
 
 export class User {
 	
@@ -7,14 +7,14 @@ export class User {
 	public password: string;
 	public type: UserTypes = UserTypes.Supervisor;
 	public state: UserState = UserState.Enabled;
-	public waiter: Waiter = null;
+	public employee: Employee = null;
 
 	constructor () {}
 }
 
 export enum UserTypes {
 	Supervisor = <any> "Supervisor",
-	Waiter = <any> "Mozo",
+	Employee = <any> "Empleado",
 }
 
 export enum UserState {

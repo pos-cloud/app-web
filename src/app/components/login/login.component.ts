@@ -6,11 +6,11 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
 import { Turn } from './../../models/turn';
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 
 import { UserService } from './../../services/user.service';
 import { TurnService } from './../../services/turn.service';
-import { WaiterService } from './../../services/waiter.service';
+import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
 
 @Component({
@@ -27,8 +27,8 @@ export class LoginComponent implements OnInit {
   public alertMessage: any;
   public userType: string = "admin";
   public loading: boolean = false;
-  @Input() waiterSelected: Waiter;
-  public waiters: Waiter[] = new Array();
+  @Input() employeeSelected: Employee;
+  public employees: Employee[] = new Array();
 
   public formErrors = {
     'name': '',
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     public _userservice: UserService,
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public _turnService: TurnService,
     public _tableService: TableService,
     public _fb: FormBuilder,
@@ -63,16 +63,16 @@ export class LoginComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.user = new User();
-    this.getWaiters();
-    if(this.waiterSelected !== undefined){
-      this.getUserOfWaiter();
+    this.getEmployees();
+    if(this.employeeSelected !== undefined){
+      this.getUserOfEmployee();
     }
     this.buildForm();
   }
 
-  public getUserOfWaiter(): void {  
+  public getUserOfEmployee(): void {  
     
-    this._userservice.getUserOfWaiter(this.waiterSelected._id).subscribe(
+    this._userservice.getUserOfEmployee(this.employeeSelected._id).subscribe(
       result => {
         if(!result.users) {
           this.alertMessage = result.message;
@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
             'password': '',
             'type': this.user.type,
             'state': this.user.state,
-            'waiter': this.user.waiter._id
+            'employee': this.user.employee._id
           });
         }
       },
@@ -100,17 +100,17 @@ export class LoginComponent implements OnInit {
     );
   }
   
-  public getWaiters(): void {  
+  public getEmployees(): void {  
 
-    this._waiterService.getWaiters().subscribe(
+    this._employeeService.getEmployees().subscribe(
       result => {
-        if(!result.waiters) {
+        if(!result.employees) {
           this.alertMessage = result.message;
           this.alertConfig.type = 'danger';
-          this.waiters = null;
+          this.employees = null;
         } else {
           this.alertMessage = null;
-          this.waiters = result.waiters;
+          this.employees = result.employees;
         }
       },
       error => {
@@ -141,7 +141,7 @@ export class LoginComponent implements OnInit {
       'state': [this.user.state, [
         ]
       ],
-      'waiter': [this.user.waiter, [
+      'employee': [this.user.employee, [
         ]
       ]
     });
@@ -186,7 +186,7 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = "El mozo seleccionado no tiene asignado un usuario" ;
+        this.alertMessage = "El empleado seleccionado no tiene asignado un usuario" ;
         this.loading = false;
       }
     )
@@ -194,12 +194,12 @@ export class LoginComponent implements OnInit {
 
   public getOpenTurn(): void {
     
-    this._turnService.getOpenTurn(this.waiterSelected._id).subscribe(
+    this._turnService.getOpenTurn(this.employeeSelected._id).subscribe(
       result => {
         if(!result.turns) {
           this.openTurn();
         } else {
-          this.alertMessage = "El mozo seleccionado ya tiene el turno abierto" ;
+          this.alertMessage = "El empleado seleccionado ya tiene el turno abierto" ;
           this.alertConfig.type = "danger";
         }
       },
@@ -215,7 +215,7 @@ export class LoginComponent implements OnInit {
   public openTurn(): void {
 
     let turn: Turn = new Turn();
-    turn.waiter = this.user.waiter;
+    turn.employee = this.user.employee;
 
     this._turnService.saveTurn(turn).subscribe(
       result => {

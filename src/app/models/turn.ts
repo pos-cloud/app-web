@@ -1,4 +1,4 @@
-import { Waiter } from './waiter';
+import { Employee } from './employee';
 
 export class Turn {
 	
@@ -6,7 +6,7 @@ export class Turn {
 	public startDate: Date = new Date();
 	public endDate: Date;
 	public state: TurnState = TurnState.Open;
-	public waiter: Waiter = null;
+	public employee: Employee = null;
 
 	constructor () {}
 }

@@ -1,4 +1,4 @@
-import { Waiter } from './waiter';
+import { Employee } from './employee';
 
 export class CashBox {
     
@@ -11,7 +11,7 @@ export class CashBox {
     public invoicedCash: number = 0.00;
     public difference: number = 0.00;
     public state: CashBoxState = CashBoxState.Open;
-    public waiter: Waiter = null;
+    public employee: Employee = null;
 
 	constructor () {}
 }

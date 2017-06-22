@@ -6,7 +6,7 @@
           <b>Mesa:</b> {{saleOrder.table.description}}
         </div>
         <div class="col-md-3">
-          <b>Mozo:</b> {{saleOrder.waiter.name}}
+          <b>Empleado:</b> {{saleOrder.employee.name}}
         </div>
         <div class="col-md-3">
           <b>Cliente: </b><span *ngIf="!saleOrder.company">Consumidor final</span><span *ngIf="saleOrder.company">{{saleOrder.company.name}}</span>

@@ -3,24 +3,24 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { Waiter } from './../../models/waiter';
-import { WaiterService } from './../../services/waiter.service';
+import { Employee } from './../../models/employee';
+import { EmployeeService } from './../../services/employee.service';
 
-import { AddWaiterComponent } from './../../components/add-waiter/add-waiter.component';
-import { UpdateWaiterComponent } from './../../components/update-waiter/update-waiter.component';
-import { DeleteWaiterComponent } from './../../components/delete-waiter/delete-waiter.component';
+import { AddEmployeeComponent } from './../../components/add-employee/add-employee.component';
+import { UpdateEmployeeComponent } from './../../components/update-employee/update-employee.component';
+import { DeleteEmployeeComponent } from './../../components/delete-employee/delete-employee.component';
 
 @Component({
-  selector: 'app-list-waiters',
-  templateUrl: './list-waiters.component.html',
-  styleUrls: ['./list-waiters.component.css'],
+  selector: 'app-list-employees',
+  templateUrl: './list-employees.component.html',
+  styleUrls: ['./list-employees.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class ListWaitersComponent implements OnInit {
+export class ListEmployeesComponent implements OnInit {
 
-  public waiters: Waiter[] = new Array();
-  public areWaitersEmpty: boolean = true;
+  public employees: Employee[] = new Array();
+  public areEmployeesEmpty: boolean = true;
   public alertMessage: any;
   public userType: string;
   public orderTerm: string[] = ['name'];
@@ -28,7 +28,7 @@ export class ListWaitersComponent implements OnInit {
   public areFiltersVisible: boolean = false;
 
   constructor(
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -41,7 +41,7 @@ export class ListWaitersComponent implements OnInit {
     
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getWaiters();
+    this.getEmployees();
   }
 
   public getBadge(term: string): boolean {
@@ -49,19 +49,19 @@ export class ListWaitersComponent implements OnInit {
     return true;
   }
 
-  public getWaiters(): void {  
+  public getEmployees(): void {  
 
-    this._waiterService.getWaiters().subscribe(
+    this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.waiters) {
+					if(!result.employees) {
 						this.alertMessage = result.message;
             this.alertConfig.type = 'danger';
-					  this.waiters = null;
-            this.areWaitersEmpty = true;
+					  this.employees = null;
+            this.areEmployeesEmpty = true;
 					} else {
             this.alertMessage = null;
-					  this.waiters = result.waiters;
-            this.areWaitersEmpty = false;
+					  this.employees = result.employees;
+            this.areEmployeesEmpty = false;
           }
 				},
 				error => {
@@ -83,34 +83,34 @@ export class ListWaitersComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  public openModal(op: string, waiter:Waiter): void {
+  public openModal(op: string, employee:Employee): void {
 
     let modalRef;
     switch(op) {
       case 'add' :
-        modalRef = this._modalService.open(AddWaiterComponent, { size: 'lg' }).result.then((result) => {
-          this.getWaiters();
+        modalRef = this._modalService.open(AddEmployeeComponent, { size: 'lg' }).result.then((result) => {
+          this.getEmployees();
         }, (reason) => {
-          this.getWaiters();
+          this.getEmployees();
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateWaiterComponent, { size: 'lg' })
-          modalRef.componentInstance.waiter = waiter;
+          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg' })
+          modalRef.componentInstance.employee = employee;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
-              this.getWaiters();
+              this.getEmployees();
             }
           }, (reason) => {
             
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteWaiterComponent, { size: 'lg' })
-          modalRef.componentInstance.waiter = waiter;
+          modalRef = this._modalService.open(DeleteEmployeeComponent, { size: 'lg' })
+          modalRef.componentInstance.employee = employee;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
-              this.getWaiters();
+              this.getEmployees();
             }
           }, (reason) => {
             

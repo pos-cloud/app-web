@@ -1,5 +1,5 @@
 import { Room } from './room';
-import { Waiter } from './waiter';
+import { Employee } from './employee';
 
 export class Table {
 	
@@ -8,7 +8,7 @@ export class Table {
 	public room: Room = null;
 	public chair: number = 1;
 	public state: TableState = TableState.Available;
-	public waiter: Waiter = null;
+	public employee: Employee = null;
 
 	constructor () {}
 }

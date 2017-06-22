@@ -1,11 +1,11 @@
 <section class="container-fluid">
-  <form [formGroup]="saleOrderForm" #formSaleOrder="ngForm" (ngSubmit)="reportByWaiterByDay()" autocomplete="off">
+  <form [formGroup]="saleOrderForm" #formSaleOrder="ngForm" (ngSubmit)="reportByEmployeeByDay()" autocomplete="off">
     <div class="row" >
       <div class="form-group col-md-6">
-        <label for="waiter" class="control-label">Mozo Asociado</label>
-        <select class="form-control" formControlName="waiter">
-            <option  *ngFor="let waiter of waiters" [value]="waiter._id">
-              {{waiter.name}}
+        <label for="employee" class="control-label">Empleado Asociado</label>
+        <select class="form-control" formControlName="employee">
+            <option  *ngFor="let employee of employees" [value]="employee._id">
+              {{employee.name}}
             </option>
         </select>
       </div>

@@ -1,7 +1,6 @@
-export class Waiter {
+export class EmployeeType {
 	
 	public _id: string;
-	public code: number = 1;
 	public name: string;
 	
 	constructor () {}

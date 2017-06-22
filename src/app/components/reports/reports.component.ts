@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 import { SaleOrder } from './../../models/sale-order';
 
 import { SaleOrderService } from './../../services/sale-order.service';
-import { WaiterService } from './../../services/waiter.service';
+import { EmployeeService } from './../../services/employee.service';
 
 @Component({
   selector: 'app-reports',
@@ -19,21 +19,21 @@ import { WaiterService } from './../../services/waiter.service';
 export class ReportsComponent implements OnInit {
 
   public date: Date;
-  public waiter: Waiter;
+  public employee: Employee;
   public saleOrderForm : FormGroup;
   public saleOrders: SaleOrder[] = new Array();
   public alertMessage: any;
-  public waiters: Waiter[] = new Array();
+  public employees: Employee[] = new Array();
   public areSaleOrdersEmpty: boolean = true;
   public areFiltersVisible: boolean = false;
 
   public formErrors = {
-    'waiter': '',
+    'employee': '',
     'date': ''
   };
 
   public validationMessages = {
-    'waiter': {
+    'employee': {
       'required':       'Este campo es requerido.'
     },
     'date' : {
@@ -43,7 +43,7 @@ export class ReportsComponent implements OnInit {
 
   constructor(
     public _saleOrderService: SaleOrderService,
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public _router: Router,
     public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig
@@ -53,23 +53,23 @@ export class ReportsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.waiter = new Waiter();
+    this.employee = new Employee();
     this.date = new Date();
-    this.getWaiters();
+    this.getEmployees();
     this.buildForm();
   }
 
-  public getWaiters(): void {  
+  public getEmployees(): void {  
 
-    this._waiterService.getWaiters().subscribe(
+    this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.waiters) {
+					if(!result.employees) {
 						this.alertMessage = result.message;
             this.alertConfig.type = 'danger';
-					  this.waiters = null;
+					  this.employees = null;
 					} else {
             this.alertMessage = null;
-					  this.waiters = result.waiters;
+					  this.employees = result.employees;
           }
 				},
 				error => {
@@ -84,7 +84,7 @@ export class ReportsComponent implements OnInit {
   public buildForm(): void {
 
     this.saleOrderForm = this._fb.group({
-      'waiter': [this.waiter, [
+      'employee': [this.employee, [
           Validators.required
         ]
       ],
@@ -118,11 +118,11 @@ export class ReportsComponent implements OnInit {
     }
   }
 
-  public reportByWaiterByDay(): void {
+  public reportByEmployeeByDay(): void {
 
-    this.waiter = this.saleOrderForm.value.waiter;
+    this.employee = this.saleOrderForm.value.employee;
 
-    this._saleOrderService.getSaleOrdersByWaiter(this.waiter._id,"2017-06-02").subscribe(
+    this._saleOrderService.getSaleOrdersByEmployee(this.employee._id,"2017-06-02").subscribe(
       result => {
         if(!result.saleOrders) {
           this.alertMessage = result.message;

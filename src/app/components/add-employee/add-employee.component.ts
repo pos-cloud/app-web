@@ -4,21 +4,21 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 
-import { WaiterService } from './../../services/waiter.service';
+import { EmployeeService } from './../../services/employee.service';
 
 @Component({
-  selector: 'app-add-waiter',
-  templateUrl: './add-waiter.component.html',
-  styleUrls: ['./add-waiter.component.css'],
+  selector: 'app-add-employee',
+  templateUrl: './add-employee.component.html',
+  styleUrls: ['./add-employee.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddWaiterComponent  implements OnInit {
+export class AddEmployeeComponent  implements OnInit {
 
-  public waiter: Waiter;
-  public waiterForm: FormGroup;
+  public employee: Employee;
+  public employeeForm: FormGroup;
   public alertMessage: any;
   public userType: string;
   public loading: boolean = false;
@@ -35,7 +35,7 @@ export class AddWaiterComponent  implements OnInit {
   };
 
   constructor(
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -49,7 +49,7 @@ export class AddWaiterComponent  implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.waiter = new Waiter ();
+    this.employee = new Employee();
     this.buildForm();
   }
 
@@ -59,14 +59,14 @@ export class AddWaiterComponent  implements OnInit {
 
   public buildForm(): void {
 
-    this.waiterForm = this._fb.group({
-      'name': [this.waiter.name, [
+    this.employeeForm = this._fb.group({
+      'name': [this.employee.name, [
           Validators.required
         ]
       ]
     });
 
-    this.waiterForm.valueChanges
+    this.employeeForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -75,8 +75,8 @@ export class AddWaiterComponent  implements OnInit {
 
   public onValueChanged(data?: any): void {
 
-    if (!this.waiterForm) { return; }
-    const form = this.waiterForm;
+    if (!this.employeeForm) { return; }
+    const form = this.employeeForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -91,25 +91,25 @@ export class AddWaiterComponent  implements OnInit {
     }
   }
 
-  public addWaiter(): void {
+  public addEmployee(): void {
     
     this.loading = true;
-    this.waiter = this.waiterForm.value;
-    this.saveWaiter();
+    this.employee = this.employeeForm.value;
+    this.saveEmployee();
   }
 
-  public saveWaiter(): void {
+  public saveEmployee(): void {
     
-    this._waiterService.saveWaiter(this.waiter).subscribe(
+    this._employeeService.saveEmployee(this.employee).subscribe(
     result => {
-        if (!result.waiter) {
+        if (!result.employee) {
           this.alertMessage = result.message;
           this.alertConfig.type = 'danger';
         } else {
-          this.waiter = result.waiter;
+          this.employee = result.employee;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El mozo se ha añadido con éxito.";      
-          this.waiter = new Waiter ();
+          this.alertMessage = "El tipo de empleado se ha añadido con éxito.";      
+          this.employee = new Employee();
           this.buildForm();
         }
         this.loading = false;

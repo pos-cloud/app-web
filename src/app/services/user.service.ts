@@ -41,7 +41,7 @@ export class UserService {
     return this._http.put(this.url+"user/"+user._id, user).map (res => res.json());
   }
 
-  getUserOfWaiter (waiterId: string) {
-		return this._http.get(this.url+'users/where="waiter":"'+waiterId+'"&limit=1').map (res => res.json());
+  getUserOfEmployee (employeeId: string) {
+		return this._http.get(this.url+'users/where="employee":"'+employeeId+'"&limit=1').map (res => res.json());
 	}
 }

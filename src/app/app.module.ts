@@ -10,7 +10,8 @@ import { RoutingModule } from './app.routes';
 
 //servicios
 import { ArticleService } from './services/article.service';
-import { WaiterService } from './services/waiter.service';
+import { EmployeeService } from './services/employee.service';
+import { EmployeeTypeService } from './services/employee-type.service';
 import { TableService } from './services/table.service';
 import { CashBoxService } from './services/cash-box.service';
 import { SaleOrderService } from './services/sale-order.service';
@@ -32,10 +33,10 @@ import { ListArticlesComponent } from './components/list-articles/list-articles.
 import { AddArticleComponent } from './components/add-article/add-article.component';
 import { UpdateArticleComponent } from './components/update-article/update-article.component';
 import { DeleteArticleComponent } from './components/delete-article/delete-article.component';
-import { ListWaitersComponent } from './components/list-waiters/list-waiters.component';
-import { AddWaiterComponent } from './components/add-waiter/add-waiter.component';
-import { UpdateWaiterComponent } from './components/update-waiter/update-waiter.component';
-import { DeleteWaiterComponent } from './components/delete-waiter/delete-waiter.component';
+import { ListEmployeesComponent } from './components/list-employees/list-employees.component';
+import { AddEmployeeComponent } from './components/add-employee/add-employee.component';
+import { UpdateEmployeeComponent } from './components/update-employee/update-employee.component';
+import { DeleteEmployeeComponent } from './components/delete-employee/delete-employee.component';
 import { ListTablesComponent } from './components/list-tables/list-tables.component';
 import { AddTableComponent } from './components/add-table/add-table.component';
 import { UpdateTableComponent } from './components/update-table/update-table.component';
@@ -66,6 +67,10 @@ import { ListCompaniesComponent } from './components/list-companies/list-compani
 import { UpdateCompanyComponent } from './components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './components/delete-company/delete-company.component';
 import { AddCompanyComponent } from './components/add-company/add-company.component';
+import { ListEmployeeTypesComponent } from './components/list-employee-types/list-employee-types.component';
+import { UpdateEmployeeTypeComponent } from './components/update-employee-type/update-employee-type.component';
+import { DeleteEmployeeTypeComponent } from './components/delete-employee-type/delete-employee-type.component';
+import { AddEmployeeTypeComponent } from './components/add-employee-type/add-employee-type.component';
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -88,10 +93,10 @@ import { ReportsComponent } from './components/reports/reports.component';
     AddArticleComponent,
     UpdateArticleComponent,
     DeleteArticleComponent,
-    ListWaitersComponent,
-    AddWaiterComponent,
-    UpdateWaiterComponent,
-    DeleteWaiterComponent,
+    ListEmployeesComponent,
+    AddEmployeeComponent,
+    UpdateEmployeeComponent,
+    DeleteEmployeeComponent,
     ListTablesComponent,
     AddTableComponent,
     UpdateTableComponent,
@@ -128,7 +133,11 @@ import { ReportsComponent } from './components/reports/reports.component';
     DeleteCompanyComponent,
     AddCompanyComponent,
     ReportsComponent,
-    ClockComponent
+    ClockComponent,
+    AddEmployeeTypeComponent,
+    UpdateEmployeeTypeComponent,
+    DeleteEmployeeTypeComponent,
+    ListEmployeeTypesComponent
   ],
   imports: [
     BrowserModule,
@@ -142,7 +151,8 @@ import { ReportsComponent } from './components/reports/reports.component';
   providers: [
     NgbActiveModal,
     ArticleService,
-    WaiterService,
+    EmployeeService,
+    EmployeeTypeService,
     TableService,
     CashBoxService,
     SaleOrderService,

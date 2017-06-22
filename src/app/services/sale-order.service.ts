@@ -37,8 +37,8 @@ export class SaleOrderService {
 		return this._http.get(this.url+'sale-orders/where="table":"'+tableId+'","state":"'+SaleOrderState.Open+'"&limit=1').map (res => res.json());
 	}
 
-  getSaleOrdersByWaiter (waiterId: string, date: string) {
-		return this._http.get(this.url+'sale-orders/'+waiterId+'/'+date).map (res => res.json());
+  getSaleOrdersByEmployee (employeeId: string, date: string) {
+		return this._http.get(this.url+'sale-orders/'+employeeId+'/'+date).map (res => res.json());
 	}
   
   getLastSaleOrderByOrigen (origin: number) {

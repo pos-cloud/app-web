@@ -1,5 +1,5 @@
 <div class="modal-header">
-	<h4 class="modal-title">Editar Mozo</h4>
+	<h4 class="modal-title">Agregar Empleado</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="waiterForm" #formUpdateWaiter="ngForm" (ngSubmit)="updateWaiter()" autocomplete="off">
+	<form [formGroup]="employeeForm" #formAddEmployee="ngForm" (ngSubmit)="addEmployee()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">
@@ -26,9 +26,9 @@
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!waiterForm.valid || loading" >
+			<button type="submit" class="btn btn-primary" [disabled]="!employeeForm.valid || loading" >
 				<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
-				<span *ngIf="!loading">Guardar Cambios</span>
+				<span *ngIf="!loading">Guardar</span>
 				<span *ngIf="loading">Espere por favor</span>
 			</button>
 		</div>

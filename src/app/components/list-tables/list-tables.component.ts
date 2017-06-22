@@ -6,9 +6,9 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 
 import { Table, TableState } from './../../models/table';
 import { Room } from './../../models/room';
-import { Waiter } from './../../models/waiter';
+import { Employee } from './../../models/employee';
 
-import { WaiterService } from './../../services/waiter.service';
+import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TurnService } from './../../services/turn.service';
@@ -35,19 +35,19 @@ export class ListTablesComponent implements OnInit {
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
-  public waiter: Waiter;
-  public waiters: Waiter[] = new Array();
+  public employee: Employee;
+  public employees: Employee[] = new Array();
   @ViewChild('content') content:ElementRef;
-  public selectWaiterForm: FormGroup;
+  public selectEmployeeForm: FormGroup;
   @Input() filterRoom: string;
   public loading: boolean = false;
 
   public formErrors = {
-    'waiter': ''
+    'employee': ''
   };
 
   public validationMessages = {
-    'waiter': {
+    'employee': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -55,7 +55,7 @@ export class ListTablesComponent implements OnInit {
   constructor(
     public _fb: FormBuilder,
     public _tableService: TableService,
-    public _waiterService: WaiterService,
+    public _employeeService: EmployeeService,
     public _saleOrderService: SaleOrderService,
     public _turnService: TurnService,
     public _router: Router,
@@ -75,19 +75,19 @@ export class ListTablesComponent implements OnInit {
     this.tables = null;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.waiter = new Waiter();
+    this.employee = new Employee();
     this.getTables(); 
   }
 
   public buildForm(): void {
 
-    this.selectWaiterForm = this._fb.group({
-      'waiter': [this.waiter.name, [
+    this.selectEmployeeForm = this._fb.group({
+      'employee': [this.employee.name, [
         ]
       ]
     });
 
-    this.selectWaiterForm.valueChanges
+    this.selectEmployeeForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -95,8 +95,8 @@ export class ListTablesComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
 
-    if (!this.selectWaiterForm) { return; }
-    const form = this.selectWaiterForm;
+    if (!this.selectEmployeeForm) { return; }
+    const form = this.selectEmployeeForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -145,10 +145,10 @@ export class ListTablesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
-  public openModal(op: string, table: Table, waiter?: Waiter): void {
+  public openModal(op: string, table: Table, employee?: Employee): void {
 
       this.tableSelected = table;
-      if(waiter !== undefined) this.tableSelected.waiter = waiter;
+      if(employee !== undefined) this.tableSelected.employee = employee;
       let modalRef;
       
       switch(op) {
@@ -183,28 +183,28 @@ export class ListTablesComponent implements OnInit {
               
             });
           break;
-        case 'select_waiter' :
+        case 'select_employee' :
 
-            if(this.tableSelected.waiter !== undefined &&
-              this.tableSelected.waiter !== null) {
+            if(this.tableSelected.employee !== undefined &&
+              this.tableSelected.employee !== null) {
 
               this.addSaleOrder();
             } else {
               
-              this.tableSelected.waiter = new Waiter();
+              this.tableSelected.employee = new Employee();
               this.buildForm();
-              this.getWaiters();
+              this.getEmployees();
 
               modalRef = this._modalService.open(this.content).result.then((result) => {
-                  if(result  === "select_waiter") {
+                  if(result  === "select_employee") {
                     this.loading = true;
-                    this.selectWaiter();
+                    this.selectEmployee();
                   } else {
-                    this.tableSelected.waiter = null;
+                    this.tableSelected.employee = null;
                     this.loading = false;
                   }
                 }, (reason) => {
-                  this.tableSelected.waiter = null;
+                  this.tableSelected.employee = null;
                     this.loading = false;
                 }
               );
@@ -212,37 +212,37 @@ export class ListTablesComponent implements OnInit {
           break;
           case 'login' :
             modalRef = this._modalService.open(LoginComponent, { size: 'lg' });
-            modalRef.componentInstance.waiterSelected = this.tableSelected.waiter;
+            modalRef.componentInstance.employeeSelected = this.tableSelected.employee;
             modalRef.result.then((result) => {
               if(result === "turn_open") {
-                this.assignWaiter();
+                this.assignEmployee();
               } else {
-                this.tableSelected.waiter = null;
+                this.tableSelected.employee = null;
               }
             }, (reason) => {
-              this.tableSelected.waiter = null;
+              this.tableSelected.employee = null;
             });
           break;
         default : ;
       }
     };
 
-    public selectWaiter(): void {
-      this.waiter = this.selectWaiterForm.value.waiter;
-      this.tableSelected.waiter = this.waiter;
+    public selectEmployee(): void {
+      this.employee = this.selectEmployeeForm.value.employee;
+      this.tableSelected.employee = this.employee;
       this.getOpenTurn();
     }
 
     public getOpenTurn(): void {
     
-      this._turnService.getOpenTurn(this.tableSelected.waiter._id).subscribe(
+      this._turnService.getOpenTurn(this.tableSelected.employee._id).subscribe(
         result => {
 					if(!result.turns) {
             this.loading = false;
 						this.openModal('login', this.tableSelected);
 					} else {
             this.loading = false;
-            this.assignWaiter();
+            this.assignEmployee();
           }
 				},
 				error => {
@@ -254,16 +254,16 @@ export class ListTablesComponent implements OnInit {
       );
    }
 
-    public getWaiters(): void {  
+    public getEmployees(): void {  
 
-      this._waiterService.getWaiters().subscribe(
+      this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.waiters) {
+					if(!result.employees) {
 						this.alertMessage = result.message;
             this.alertConfig.type = 'danger';
 					} else {
             this.alertMessage = null;
-					  this.waiters = result.waiters;
+					  this.employees = result.employees;
           }
 				},
 				error => {
@@ -275,7 +275,7 @@ export class ListTablesComponent implements OnInit {
       );
     }
 
-    public assignWaiter(): void {
+    public assignEmployee(): void {
       
       this._tableService.updateTable(this.tableSelected).subscribe(
         result => {
