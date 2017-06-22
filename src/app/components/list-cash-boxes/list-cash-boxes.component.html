@@ -20,7 +20,7 @@
               <th (click)="orderBy('invoicedCash')">Facturado</th>
               <th (click)="orderBy('difference')">Diferencia</th>
               <th (click)="orderBy('state')">Estado</th>
-              <th><em class="fa fa-cog"></em></th>
+              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>

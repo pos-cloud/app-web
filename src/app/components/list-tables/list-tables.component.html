@@ -16,7 +16,7 @@
 	            <th (click)="orderBy('room','description')">Salón</th>
 	            <th (click)="orderBy('chair')">Sillas</th>
 	            <th (click)="orderBy('state')">Estado</th>
-              <th><em class="fa fa-cog"></em></th>
+              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>

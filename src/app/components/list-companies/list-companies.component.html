@@ -21,7 +21,7 @@
               <th (click)="orderBy('city')">Ciudad </th>
               <th (click)="orderBy('phones')">Teléfonos </th>
               <th (click)="orderBy('emails')">Emails </th>
-              <th><em class="fa fa-cog"></em></th>
+              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>

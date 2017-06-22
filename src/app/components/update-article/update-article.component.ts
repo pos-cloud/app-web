@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article } from './../../models/article';
+import { Article, ArticleType } from './../../models/article';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
 
@@ -25,6 +25,7 @@ export class UpdateArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
+  public types: ArticleType[] = [ArticleType.Bar, ArticleType.Kitchen, ArticleType.Counter];
   public alertMessage: any;
   public userType: string;
   public loading: boolean = false;
@@ -90,7 +91,8 @@ export class UpdateArticleComponent implements OnInit {
       'category': this.article.category._id,
       'unitOfMeasure': this.article.unitOfMeasure,
       'observation': this.article.observation,
-      'barcode': this.article.barcode
+      'barcode': this.article.barcode,
+      'type': this.article.type
     });
   }
 
@@ -135,6 +137,9 @@ export class UpdateArticleComponent implements OnInit {
       'barcode': [this.article.barcode, [
         ]
       ],
+      'type': [this.article.type, [
+        ]
+      ]
     });
 
     this.articleForm.valueChanges

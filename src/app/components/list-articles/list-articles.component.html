@@ -21,7 +21,8 @@
               <th (click)="orderBy('unitOfMeasure')">Unidad de Medida</th>
               <th (click)="orderBy('observation')">Observation</th>
               <th (click)="orderBy('barcode')">Codigo de Barra</th>
-              <th><em class="fa fa-cog"></em></th>
+              <th (click)="orderBy('type')">Tipo</th>
+              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
@@ -32,12 +33,13 @@
                 <th><input type="text" class="form-control" [(ngModel)]= "filterUnitOfMeasure" placeholder="Unidad de Medida..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterTermObservation" placeholder="Observación..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterTermBarcode" placeholder="Código de Barra..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let article of articles | orderBy: [orderTerm]:property | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'description':'make'
                                                                         | filter: filterCategory:'description':'category' | filter: filterSalePrice:'salePrice' | filter: filterUnitOfMeasure:'unitOfMeasure'
-                                                                        | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode'
+                                                                        | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' | filter: filterType:'type'
                                                                         | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td class="flat">{{article.code}}</td>
               <td class="flat">{{article.description}}</td>
@@ -47,13 +49,14 @@
               <td class="flat">{{article.unitOfMeasure}}</td>
               <td class="flat">{{article.observation}}</td>
               <td class="flat">{{article.barcode}}</td>
+              <td class="flat">{{article.type}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>
             <tr align="center" *ngIf="areArticlesEmpty">
-              <td colspan="9">No se encontraron artículos</td>
+              <td colspan="10">No se encontraron artículos</td>
             </tr>
           </tbody>
         </table>

@@ -16,7 +16,7 @@
               <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('type')">Tipo</th>
               <th (click)="orderBy('waiter')">Mozo</th>
-              <th><em class="fa fa-cog"></em></th>
+              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
