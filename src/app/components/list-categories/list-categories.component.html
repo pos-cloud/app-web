@@ -21,7 +21,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let category of categories | orderBy: [orderTerm] | filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let category of categories | orderBy: orderTerm: propertyTerm| filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td class="flat">{{category.description}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', category)"><i class="fa fa-pencil"></i></button>

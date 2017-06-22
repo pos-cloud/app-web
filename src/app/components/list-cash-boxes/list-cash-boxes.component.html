@@ -34,7 +34,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let cashBox of cashBoxes | orderBy: [orderTerm]  | filter: filterCode:'code' | filter: filterOpeningDate:'openingDate'
+            <tr *ngFor="let cashBox of cashBoxes | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterOpeningDate:'openingDate'
                                                                           | filter: filterClosingDate:'closingDate' | filter: filterOpeningCash:'openingCash'
                                                                           | filter: filterClosingCash:'closingCash' | filter: filterInvoicedCash:'invoicedCash'
                                                                           | filter: filterDifference:'difference' | filter: filterState:'state'

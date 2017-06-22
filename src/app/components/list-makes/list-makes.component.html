@@ -21,7 +21,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let make of makes | orderBy: [orderTerm] | filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let make of makes | orderBy: orderTerm: propertyTerm| filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td class="flat">{{make.description}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', make)"><i class="fa fa-pencil"></i></button>

@@ -29,7 +29,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let saleOrder of saleOrders | orderBy: [orderTerm] 	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
+            <tr *ngFor="let saleOrder of saleOrders | orderBy: orderTerm: propertyTerm	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
                                         | filter: filterDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
                                         | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{saleOrder.origin}}</td>

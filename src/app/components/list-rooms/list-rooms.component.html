@@ -21,7 +21,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let room of rooms | orderBy: [orderTerm] | filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let room of rooms | orderBy: orderTerm: propertyTerm| filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td class="flat">{{room.description}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', room)"><i class="fa fa-pencil"></i></button>

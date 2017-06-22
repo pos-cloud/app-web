@@ -22,7 +22,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employee of employees | orderBy: [orderTerm] | filter: filterName:'name' | filter: filterType:'description':'type' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm| filter: filterName:'name' | filter: filterType:'description':'type' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{employee.name}}</td>
               <td>{{employee.type.description}}</td>
               <td align="center">

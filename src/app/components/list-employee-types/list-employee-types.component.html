@@ -20,7 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employeeType of employeeTypes | orderBy: [orderTerm] | filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let employeeType of employeeTypes | orderBy: orderTerm: propertyTerm| filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{employeeType.description}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', employeeType)"><i class="fa fa-pencil"></i></button>
