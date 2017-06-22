@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Employee } from './../../models/employee';
+import { EmployeeType } from './../../models/employee-type';
 
 import { EmployeeService } from './../../services/employee.service';
+import { EmployeeTypeService } from './../../services/employee-type.service';
 
 @Component({
   selector: 'app-add-employee',
@@ -18,6 +20,7 @@ import { EmployeeService } from './../../services/employee.service';
 export class AddEmployeeComponent  implements OnInit {
 
   public employee: Employee;
+  public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
   public alertMessage: any;
   public userType: string;
@@ -25,21 +28,26 @@ export class AddEmployeeComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': ''
+    'name': '',
+    'type': ''
   };
 
   public validationMessages = {
     'name': {
+      'required':       'Este campo es requerido.'
+    },
+    'type': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
     public _employeeService: EmployeeService,
+    public _employeeTypeService: EmployeeTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -50,6 +58,7 @@ export class AddEmployeeComponent  implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.employee = new Employee();
+    this.getEmployeeTypes();
     this.buildForm();
   }
 
@@ -57,10 +66,36 @@ export class AddEmployeeComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
+  public getEmployeeTypes(): void {  
+
+    this._employeeTypeService.getEmployeeTypes().subscribe(
+      result => {
+        if(!result.employeeTypes) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+          this.employeeTypes = null;
+        } else {
+          this.alertMessage = null;
+          this.employeeTypes = result.employeeTypes;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
+  }
+
   public buildForm(): void {
 
     this.employeeForm = this._fb.group({
       'name': [this.employee.name, [
+          Validators.required
+        ]
+      ],
+      'type': [this.employee.type, [
           Validators.required
         ]
       ]

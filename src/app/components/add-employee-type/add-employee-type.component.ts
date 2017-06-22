@@ -25,11 +25,11 @@ export class AddEmployeeTypeComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': ''
+    'description': ''
   };
 
   public validationMessages = {
-    'name': {
+    'description': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -60,7 +60,7 @@ export class AddEmployeeTypeComponent  implements OnInit {
   public buildForm(): void {
 
     this.employeeTypeForm = this._fb.group({
-      'name': [this.employeeType.name, [
+      'description': [this.employeeType.description, [
           Validators.required
         ]
       ]

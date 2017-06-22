@@ -14,12 +14,12 @@
         <div class="modal-body">
             <div class="row">
                 <div class="form-group col-md-12">
-                    <label for="name" class="control-label">Nombre:</label>
+                    <label for="description" class="control-label">Descripción:</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+                        <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
                     </div>
-                    <div *ngIf="formErrors.name" class="alert alert-danger">
-                        {{ formErrors.name }}
+                    <div *ngIf="formErrors.description" class="alert alert-danger">
+                        {{ formErrors.description }}
                     </div>
                 </div>
             </div>

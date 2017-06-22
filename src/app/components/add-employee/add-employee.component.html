@@ -14,6 +14,17 @@
 		<div class="modal-body">
 			<div class="row">
 				<div class="form-group col-md-12">
+					<label for="type" class="control-label">Tipo</label>
+					<select class="form-control" formControlName="type">
+						<option *ngFor="let employeeType of employeeTypes" [ngValue]="employeeType">{{employeeType.description}}</option>
+					</select>
+					<div *ngIf="formErrors.type" class="alert alert-danger">
+						{{ formErrors.type }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
 					<label for="name" class="control-label">Nombre:</label>
 					<div class="input-group">
 						<input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>

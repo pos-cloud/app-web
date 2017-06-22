@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Employee } from './../../models/employee';
+import { EmployeeType } from './../../models/employee-type';
 
 import { EmployeeService } from './../../services/employee.service';
+import { EmployeeTypeService } from './../../services/employee-type.service';
 
 @Component({
   selector: 'app-update-employee',
@@ -18,6 +20,7 @@ import { EmployeeService } from './../../services/employee.service';
 export class UpdateEmployeeComponent implements OnInit {
 
   @Input() employee: Employee;
+  public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
   public alertMessage: any;
   public userType: string;
@@ -25,17 +28,22 @@ export class UpdateEmployeeComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': ''
+    'name': '',
+    'type': ''
   };
 
   public validationMessages = {
     'name': {
+      'required':       'Este campo es requerido.'
+    },
+    'type': {
       'required':       'Este campo es requerido.'
     }
   };
 
   constructor(
     public _employeeService: EmployeeService,
+    public _employeeTypeService: EmployeeTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -49,15 +57,39 @@ export class UpdateEmployeeComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.getEmployeeTypes();
     this.buildForm();
     this.employeeForm.setValue({
       '_id': this.employee._id,
-      'name': this.employee.name
+      'name': this.employee.name,
+      'type': this.employee.type
     });
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getEmployeeTypes(): void {
+
+    this._employeeTypeService.getEmployeeTypes().subscribe(
+      result => {
+        if(!result.employeeTypes) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+          this.employeeTypes = null;
+        } else {
+          this.alertMessage = null;
+          this.employeeTypes = result.employeeTypes;
+        }
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+        }
+      }
+    );
   }
 
   public buildForm(): void {
@@ -67,6 +99,10 @@ export class UpdateEmployeeComponent implements OnInit {
         ]
       ],
       'name': [this.employee.name, [
+          Validators.required
+        ]
+      ],
+      'type': [this.employee.type, [
           Validators.required
         ]
       ]

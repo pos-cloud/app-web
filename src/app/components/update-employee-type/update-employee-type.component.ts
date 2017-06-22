@@ -25,11 +25,11 @@ export class UpdateEmployeeTypeComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': ''
+    'description': ''
   };
 
   public validationMessages = {
-    'name': {
+    'description': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -52,7 +52,7 @@ export class UpdateEmployeeTypeComponent implements OnInit {
     this.buildForm();
     this.employeeTypeForm.setValue({
       '_id': this.employeeType._id,
-      'name': this.employeeType.name
+      'description': this.employeeType.description
     });
   }
 
@@ -66,7 +66,7 @@ export class UpdateEmployeeTypeComponent implements OnInit {
       '_id': [this.employeeType._id, [
         ]
       ],
-      'name': [this.employeeType.name, [
+      'description': [this.employeeType.description, [
           Validators.required
         ]
       ]
