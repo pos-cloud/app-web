@@ -70,13 +70,22 @@ export class UpdateUserComponent implements OnInit {
     this.userType = pathLocation[1];
     this.buildForm();
     this.getEmployees();
+    this.loadData(this.user);
+  }
+
+  public loadData(user: User):void {
+    
+    let employeeId: string = "";
+    if(user.employee !== null) {
+      employeeId = user.employee._id;
+    }
     this.userForm.setValue({
-      '_id': this.user._id,
-      'name': this.user.name,
-      'password': this.user.password,
-      'type': this.user.type,
-      'state': this.user.state,
-      'employee': this.user.employee._id
+      '_id': user._id,
+      'name': user.name,
+      'password': user.password,
+      'type': user.type,
+      'state': user.state,
+      'employee': employeeId
     });
   }
 
