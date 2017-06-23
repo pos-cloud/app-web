@@ -28,11 +28,16 @@ export class AddEmployeeComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'code': '',
     'name': '',
     'type': ''
   };
 
   public validationMessages = {
+    'code': {
+      'required':       'Este campo es requerido.',
+      'pattern':        'No puede exceder los 5 dígitos.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
     },
@@ -77,6 +82,7 @@ export class AddEmployeeComponent  implements OnInit {
         } else {
           this.alertMessage = null;
           this.employeeTypes = result.employeeTypes;
+          this.getLastEmployee();
         }
       },
       error => {
@@ -87,10 +93,45 @@ export class AddEmployeeComponent  implements OnInit {
       }
     );
   }
+  
+  public getLastEmployee(): void {  
+
+    this._employeeService.getLastEmployee().subscribe(
+        result => {
+          let code = 1;
+          let employeeType: EmployeeType = new EmployeeType();
+          if(result.employees){
+            if(result.employees[0] !== undefined) {
+              code = result.employees[0].code + 1;
+            }
+          }
+          if(this.employeeTypes[0] !== undefined) {
+            employeeType = this.employeeTypes[0];
+          }
+          
+          this.employeeForm.setValue({  
+            'code': code,
+            'name': '',
+            'type': employeeType
+          });
+        },
+        error => {
+          this.alertMessage = error;
+          if(!this.alertMessage) {
+            this.alertMessage = "Error en la petición.";
+          }
+        }
+      );
+   }
 
   public buildForm(): void {
 
     this.employeeForm = this._fb.group({
+      'code': [this.employee.code, [
+          Validators.required,
+          Validators.pattern("[0-9]{1,5}")
+        ]
+      ],
       'name': [this.employee.name, [
           Validators.required
         ]
@@ -143,9 +184,10 @@ export class AddEmployeeComponent  implements OnInit {
         } else {
           this.employee = result.employee;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El tipo de empleado se ha añadido con éxito.";      
+          this.alertMessage = "El tipo de empleado se ha añadido con éxito.";  
           this.employee = new Employee();
           this.buildForm();
+          this.getEmployeeTypes();
         }
         this.loading = false;
       },

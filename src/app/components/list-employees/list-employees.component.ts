@@ -23,7 +23,7 @@ export class ListEmployeesComponent implements OnInit {
   public areEmployeesEmpty: boolean = true;
   public alertMessage: any;
   public userType: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
 

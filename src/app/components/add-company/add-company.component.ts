@@ -79,8 +79,8 @@ export class AddCompanyComponent  implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.company = new Company ();
-    this.buildForm();
     this.getLastCompany();
+    this.buildForm();
   }
 
   ngAfterViewInit() {
@@ -155,20 +155,21 @@ export class AddCompanyComponent  implements OnInit {
           let code = 1;
           if(result.companies){
             if(result.companies[0] !== undefined) {
-              code = result.companies[0].code;
+              code = result.companies[0].code + 1;
             }
           }
-          // this.companyForm.setValue({
-          //   'code': code,
-          //   'name': '',
-          //   'fantasyName': '',
-          //   'type': '',
-          //   'CUIT': '',
-          //   'address': '',
-          //   'city': '',
-          //   'phones': '',
-          //   'emails': ''
-          // });
+          
+          this.companyForm.setValue({
+            'code': code,
+            'name': '',
+            'fantasyName': '',
+            'type': CompanyType.Client,
+            'CUIT': '',
+            'address': '',
+            'city': '',
+            'phones': '',
+            'emails': ''
+          });
         },
         error => {
           this.alertMessage = error;
@@ -198,6 +199,7 @@ export class AddCompanyComponent  implements OnInit {
           this.alertConfig.type = 'success';
           this.alertMessage = "La empresa se ha añadido con éxito.";      
           this.company = new Company ();
+          this.getLastCompany();
           this.buildForm();
         }
         this.loading = false;

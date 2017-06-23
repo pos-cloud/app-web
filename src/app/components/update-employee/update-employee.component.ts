@@ -28,11 +28,16 @@ export class UpdateEmployeeComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'code': '',
     'name': '',
     'type': ''
   };
 
   public validationMessages = {
+    'code': {
+      'required':       'Este campo es requerido.',
+      'pattern':        'No puede exceder los 5 dígitos.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
     },
@@ -61,6 +66,7 @@ export class UpdateEmployeeComponent implements OnInit {
     this.buildForm();
     this.employeeForm.setValue({
       '_id': this.employee._id,
+      'code': this.employee.code,
       'name': this.employee.name,
       'type': this.employee.type
     });
@@ -96,6 +102,11 @@ export class UpdateEmployeeComponent implements OnInit {
 
     this.employeeForm = this._fb.group({
       '_id': [this.employee._id, [
+        ]
+      ],
+      'code': [this.employee.code, [
+          Validators.required,
+          Validators.pattern("[0-9]{1,5}")
         ]
       ],
       'name': [this.employee.name, [

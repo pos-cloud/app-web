@@ -186,7 +186,7 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = "El empleado seleccionado no tiene asignado un usuario" ;
+        this.alertMessage = "Usuario o contraseña incorrecta" ;
         this.loading = false;
       }
     )

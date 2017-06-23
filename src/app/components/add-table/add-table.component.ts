@@ -162,9 +162,10 @@ export class AddTableComponent  implements OnInit {
         } else {
           this.table = result.table;
           this.alertConfig.type = 'success';
-          this.alertMessage = "La mesa se ha añadido con éxito.";      
+          this.alertMessage = "La mesa se ha añadido con éxito.";  
           this.table = new Table ();
           this.buildForm();
+          this.getRooms();
         }
         this.loading = false;
       },

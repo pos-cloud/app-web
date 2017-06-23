@@ -12,17 +12,20 @@
         <table class="table table-hover">
           <thead>
             <tr>
+              <th (click)="orderBy('code')">Legajo </th>
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('type','description')">Tipo </th>
               <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Legajo..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm| filter: filterName:'name' | filter: filterType:'description':'type' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterName:'name' | filter: filterType:'description':'type' | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td>{{employee.code}}</td>
               <td>{{employee.name}}</td>
               <td>{{employee.type.description}}</td>
               <td align="center">
@@ -31,7 +34,7 @@
               </td>
             </tr>
             <tr align="center" *ngIf="areEmployeesEmpty">
-              <td colspan="3">No se encontraron empleados</td>
+              <td colspan="4">No se encontraron empleados</td>
             </tr>
           </tbody>
         </table>

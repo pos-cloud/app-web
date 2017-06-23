@@ -23,7 +23,7 @@ export class ListCompaniesComponent implements OnInit {
   public areCompaniesEmpty: boolean = true;
   public alertMessage: any;
   @Input() userType: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
 

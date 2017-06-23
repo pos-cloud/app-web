@@ -164,7 +164,7 @@ export class AddArticleComponent  implements OnInit {
           let make: Make  = new Make();
           if(result.articles){
             if(result.articles[0] !== undefined) {
-              code = result.articles[0].code;
+              code = result.articles[0].code + 1;
             }
           }
           if(this.categories[0] !== undefined) {
@@ -258,6 +258,7 @@ export class AddArticleComponent  implements OnInit {
           this.alertConfig.type = 'success';
           this.article = new Article ();
           this.buildForm();
+          this.getLastArticle();
         }
         this.loading = false;
       },
