@@ -20,4 +20,13 @@ export class PrintService {
    toPrintCharge (print: Print) {
     return this._http.post(this.url+'to-print',print).map (res => res.json());
   }
+
+  toPrint(print: Print) {
+    let headers = new Headers();
+    headers.append('Content-Type',
+     'application/x-www-form-urlencoded');
+    return this._http.post('http://localhost:3030/api-pos-resto/libs/printer/pi.php',print.content, {
+      headers : headers
+    }).map (res => res.json());
+  }
 }

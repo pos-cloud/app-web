@@ -782,7 +782,7 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
-        this._printService.toPrintBill(print).subscribe(
+        this._printService.toPrint(print).subscribe(
           result => {
             if(result.message === 'ok'){
               this.changeStateOfTable(TableState.Pending);
@@ -843,7 +843,8 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
-        this._printService.toPrintCharge(print).subscribe(
+
+        this._printService.toPrint(print).subscribe(
           result => {
             if(result.message === 'ok'){
               this.changeStateOfTable(TableState.Available);
