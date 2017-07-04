@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { User, UserTypes, UserState } from './../../models/user';
+import { User, UserState } from './../../models/user';
 import { Employee } from './../../models/employee';
 
 import { UserService } from './../../services/user.service';
@@ -25,14 +25,12 @@ export class AddUserComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
-  public types: UserTypes[] = [UserTypes.Supervisor, UserTypes.Employee];
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
     'name': '',
     'password': '',
-    'type': '',
     'state': '',
     'employee': ''
   };
@@ -43,8 +41,6 @@ export class AddUserComponent  implements OnInit {
     },
     'password': {
       'required':       'Este campo es requerido.'
-    },
-    'type': {
     },
     'state': {
     },
@@ -86,9 +82,6 @@ export class AddUserComponent  implements OnInit {
       ],
       'password': [this.user.password, [
           Validators.required
-        ]
-      ],
-      'type': [this.user.type, [
         ]
       ],
       'state': [this.user.state, [

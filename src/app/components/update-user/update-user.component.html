@@ -36,17 +36,6 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="type" class="control-label">Tipo de usuario</label>
-          <select class="form-control" formControlName="type">
-            <option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
-          </select>
-          <div *ngIf="formErrors.type" class="alert alert-danger">
-            {{ formErrors.type }}
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngIf="userForm.value.type==='Empleado'">
-        <div class="form-group col-md-12">
           <label for="employee" class="control-label">Empleado Asociado</label>
           <select class="form-control" formControlName="employee">
             <option *ngFor="let employee of employees" [selected]="employee._id==user.employee._id" [value]="employee._id">{{employee.name}}</option>

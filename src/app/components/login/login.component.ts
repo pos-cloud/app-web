@@ -85,7 +85,6 @@ export class LoginComponent implements OnInit {
             '_id': this.user._id,
             'name': this.user.name,
             'password': '',
-            'type': this.user.type,
             'state': this.user.state,
             'employee': this.user.employee._id
           });
@@ -133,9 +132,6 @@ export class LoginComponent implements OnInit {
       ],
       'password': [this.user.password, [
         Validators.required
-        ]
-      ],
-      'type': [this.user.type, [
         ]
       ],
       'state': [this.user.state, [
