@@ -14,6 +14,9 @@ export class Article {
     public stock: number = 0;
     public barcode: string;
     public type: ArticleType = ArticleType.Counter;
+    public printed: boolean;
+    public picture: string;
+
 
     constructor() {}
 }

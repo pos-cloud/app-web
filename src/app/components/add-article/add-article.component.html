@@ -13,41 +13,37 @@
 	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
-				<div class="form-group col-md-4">
-					<label for="make" class="control-label">Marca</label>
-					<select class="form-control" formControlName="make">
-						<option *ngFor="let make of makes" [ngValue]="make">{{make.description}}</option>
-					</select>
-					<div *ngIf="formErrors.make" class="alert alert-danger">
-						{{ formErrors.make }}
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-					<label for="code" class="control-label">Código:</label>
-					<input type="number" class="form-control" formControlName="code" name="code" id="code"/>
-					<div *ngIf="formErrors.code" class="alert alert-danger">
-						{{ formErrors.code }}
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-					<label for="barcode">Código de Barra:</label>
-					<input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" [focus]="focusEvent"/>
-				</div>
-			</div>
-			<div class="row">
 				<div class="form-group col-md-8">
-					<label for="description" class="control-label">Descripción:</label>
-					<input type="text" class="form-control" formControlName="description" name="description" id="description"/>
-					<div *ngIf="formErrors.description" class="alert alert-danger">
-						{{ formErrors.description }}
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label for="make" class="control-label">Marca</label>
+							<select class="form-control" formControlName="make">
+								<option *ngFor="let make of makes" [ngValue]="make">{{make.description}}</option>
+							</select>
+							<div *ngIf="formErrors.make" class="alert alert-danger">
+								{{ formErrors.make }}
+							</div>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="code" class="control-label">Código:</label>
+							<input type="number" class="form-control" formControlName="code" name="code" id="code"/>
+							<div *ngIf="formErrors.code" class="alert alert-danger">
+								{{ formErrors.code }}
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label for="description" class="control-label">Descripción:</label>
+							<input type="text" class="form-control" formControlName="description" name="description" id="description"/>
+							<div *ngIf="formErrors.description" class="alert alert-danger">
+								{{ formErrors.description }}
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="form-group col-md-4">
-					<label for="unitOfMeasure" class="control-label">Unidad de Medida:</label>
-					<input type="text" class="form-control" formControlName="unitOfMeasure" name="unitOfMeasure" id="unitOfMeasure" placeholder="Ej: Kgs"/>
-					<div *ngIf="formErrors.unitOfMeasure" class="alert alert-danger">
-						{{ formErrors.unitOfMeasure }}
-					</div>
+					<img src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
 				</div>
 			</div>
 			<div class="row">

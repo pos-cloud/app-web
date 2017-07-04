@@ -13,13 +13,16 @@
   <form [formGroup]="categoryForm" #formAddCategory="ngForm" (ngSubmit)="addCategory()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-8">
           <label for="description" class="control-label">Descripción:</label>
           <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
           </div>
         </div>
+        <div class="form-group col-md-4">
+					<img src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
+				</div>
       </div>
     </div>
     <div class="modal-footer">
