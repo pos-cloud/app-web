@@ -24,6 +24,7 @@ import { TurnService } from './services/turn.service';
 import { CompanyService } from './services/company.service';
 import { ClockService } from './services/clock.service';
 import { PrintService } from './services/print.service';
+import { PrinterService } from './services/printer.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -71,6 +72,10 @@ import { ListEmployeeTypesComponent } from './components/list-employee-types/lis
 import { UpdateEmployeeTypeComponent } from './components/update-employee-type/update-employee-type.component';
 import { DeleteEmployeeTypeComponent } from './components/delete-employee-type/delete-employee-type.component';
 import { AddEmployeeTypeComponent } from './components/add-employee-type/add-employee-type.component';
+import { AddPrinterComponent } from './components/add-printer/add-printer.component';
+import { DeletePrinterComponent } from './components/delete-printer/delete-printer.component';
+import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
+import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -137,7 +142,11 @@ import { ReportsComponent } from './components/reports/reports.component';
     AddEmployeeTypeComponent,
     UpdateEmployeeTypeComponent,
     DeleteEmployeeTypeComponent,
-    ListEmployeeTypesComponent
+    ListEmployeeTypesComponent,
+    AddPrinterComponent,
+    DeletePrinterComponent,
+    UpdatePrinterComponent,
+    ListPrintersComponent
   ],
   imports: [
     BrowserModule,
@@ -164,7 +173,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     TurnService,
     CompanyService,
     ClockService,
-    PrintService
+    PrintService,
+    PrinterService
   ],
   bootstrap: [AppComponent]
 })

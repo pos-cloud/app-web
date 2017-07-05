@@ -1,0 +1,56 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Lista de Impresoras
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Impresora</button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('name')">Name </th>
+              <th (click)="orderBy('origin')">Origen </th>
+              <th (click)="orderBy('connectionURL')">URL de conexión </th>
+              <th></th>
+            </tr>
+            <tr *ngIf="areFiltersVisible">
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Origen..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterConnectionURL" placeholder="URL de conexión..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let printer of printers | orderBy: orderTerm: propertyTerm
+                                                | filter: filterName:'name' 
+                                                | filter: filterOrigin:'origin'
+                                                | filter: filterConnectionURL:'connectionURL'
+                                                | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td class="flat">{{printer.name}}</td>
+              <td class="flat">{{printer.origin}}</td>
+              <td class="flat">{{printer.connectionURL}}</td>
+              <td align="center">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', printer)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', printer)"><i class="fa fa-trash-o"></i></button>
+              </td>
+            </tr>
+            <tr align="center" *ngIf="arePrintersEmpty">
+              <td colspan="3">No se encontraron impresoras</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary card-inverse">
+        <pagination-controls 
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Anterior"
+          nextLabel="Siguiente">
+        </pagination-controls>
+      </div>
+  </div>
+</section>

@@ -44,6 +44,10 @@ import { ListCompaniesComponent } from './components/list-companies/list-compani
 import { AddCompanyComponent } from './components/add-company/add-company.component';
 import { UpdateCompanyComponent } from './components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './components/delete-company/delete-company.component';
+import { AddPrinterComponent } from './components/add-printer/add-printer.component';
+import { DeletePrinterComponent } from './components/delete-printer/delete-printer.component';
+import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
+import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ReportsComponent } from './components/reports/reports.component';
 
@@ -91,6 +95,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-empresa', component: AddCompanyComponent },
   { path: 'admin/editar-empresa', component: UpdateCompanyComponent },
   { path: 'admin/eliminar-empresa', component: DeleteCompanyComponent },
+  { path: 'admin/impresoras', component: ListPrintersComponent },
+  { path: 'admin/agregar-impresora', component: AddPrinterComponent },
+  { path: 'admin/editar-impresora', component: UpdatePrinterComponent },
+  { path: 'admin/eliminar-impresora', component: DeletePrinterComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
