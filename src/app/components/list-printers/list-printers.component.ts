@@ -96,7 +96,7 @@ export class ListPrintersComponent implements OnInit {
           });
           break;
         case 'update' :
-            modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' })
+            modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
             modalRef.componentInstance.printer = printer;
             modalRef.result.then((result) => {
               if(result === 'save_close') {

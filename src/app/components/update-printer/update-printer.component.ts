@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -15,7 +15,7 @@ import { PrinterService } from './../../services/printer.service';
   providers: [NgbAlertConfig]
 })
 
-export class UpdatePrinterComponent  implements OnInit {
+export class UpdatePrinterComponent implements OnInit {
 
   @Input() printer: Printer;
   public printerForm: FormGroup;
@@ -43,7 +43,7 @@ export class UpdatePrinterComponent  implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) { 
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -53,7 +53,6 @@ export class UpdatePrinterComponent  implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.printer = new Printer ();
     this.buildForm();
     this.printerForm.setValue({
       '_id':this.printer._id,
@@ -70,11 +69,14 @@ export class UpdatePrinterComponent  implements OnInit {
   public buildForm(): void {
 
     this.printerForm = this._fb.group({
+      '_id': [this.printer._id, [
+        ]
+      ],
       'name': [this.printer.name, [
           Validators.required
         ]
       ],
-      'origin': [this.printer.name, [
+      'origin': [this.printer.origin, [
         ]
       ],
       'connectionURL': [this.printer.name, [
@@ -87,7 +89,6 @@ export class UpdatePrinterComponent  implements OnInit {
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
-    this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
@@ -108,7 +109,8 @@ export class UpdatePrinterComponent  implements OnInit {
     }
   }
 
-  public updatePrinter(): void {
+  public updatePrinter (): void {
+    
     this.loading = true;
     this.printer = this.printerForm.value;
     this.saveChanges();
@@ -116,26 +118,26 @@ export class UpdatePrinterComponent  implements OnInit {
 
   public saveChanges(): void {
     
-    this._printerService.updatePrinter(this.printer).subscribe(
+  this._printerService.updatePrinter(this.printer).subscribe(
     result => {
-        if (!result.printer) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
-        } else {
-          this.printer = result.printer;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "La impresora se ha actualizado con éxito.";      
-          this.activeModal.close('save_close');
-        }
-        this.loading = false;
-      },
-      error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
-        this.loading = false;
+      if (!result.printer) {
+        this.alertMessage = result.message;
+        this.alertConfig.type = 'danger';
+      } else {
+        this.printer = result.printer;
+        this.alertConfig.type = 'success';
+        this.alertMessage = "La impresora se ha actualizado con éxito.";
+        this.activeModal.close('save_close');
       }
+      this.loading = false;
+    },
+    error => {
+      this.alertMessage = error;
+      if(!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+      }
+      this.loading = false;
+    }
     );
   }
 }
