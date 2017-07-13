@@ -245,6 +245,19 @@ export class UpdateArticleComponent implements OnInit {
             this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
           } else {
             this.article.category = result.category;
+            //this.saveChanges();
+            console.log("entra");
+            this.makeFileRequest(this.filesToUpload)
+              .then(
+                (result)=>{
+                  this.resultUpload = result;
+                  this.article.picture = this.resultUpload.filename;
+                  console.log(this.article.picture);
+                },
+                (error) =>{
+                  console.log(error);
+                }
+              );
             this.saveChanges();
           }
         },
@@ -281,4 +294,37 @@ export class UpdateArticleComponent implements OnInit {
       }
     );
   }
+
+  public filesToUpload: Array <File>;
+  public resultUpload;
+
+  fileChangeEvent(fileInput: any){
+    this.filesToUpload = <Array<File>>fileInput.target.files;
+  }
+
+  makeFileRequest(files: Array<File>){
+    console.log(files);
+    let idArticulo = this.article._id;
+    return new Promise(function(resolve, reject){
+      var formData:any = new FormData();
+      var xhr = new XMLHttpRequest();
+
+      for(var i = 0; i < files.length ; i++){
+        formData.append('image',files[i], files[i].name);
+      }
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          if(xhr.status == 200){
+            resolve(JSON.parse(xhr.response));
+          }else {
+            reject(xhr.response);
+          }
+        }
+      }
+      
+      xhr.open('POST','http://localhost:3000/api/upload-imagen/'+idArticulo,true);
+      xhr.send(formData);
+    });
+  }
+
 }

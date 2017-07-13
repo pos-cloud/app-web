@@ -41,7 +41,7 @@ export class ArticleService {
 		return this._http.get(this.url+'articles/where="category":"'+categoryId+'"').map (res => res.json());
 	}
 
-  uploadImagen (id){
+  uploadImagen (id : string){
     return this._http.post(this.url+"upload-imagen/"+id,"").map (res => res.json());
   }
 }
