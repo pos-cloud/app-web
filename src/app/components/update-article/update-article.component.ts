@@ -30,6 +30,8 @@ export class UpdateArticleComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public filesToUpload: Array<File>;
+  public resultUpload;
 
   public formErrors = {
     'code': 1,
@@ -295,15 +297,13 @@ export class UpdateArticleComponent implements OnInit {
     );
   }
 
-  public filesToUpload: Array <File>;
-  public resultUpload;
-
   fileChangeEvent(fileInput: any){
+    
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
   makeFileRequest(files: Array<File>){
-    console.log(files);
+
     let idArticulo = this.article._id;
     return new Promise(function(resolve, reject){
       var formData:any = new FormData();
@@ -326,5 +326,4 @@ export class UpdateArticleComponent implements OnInit {
       xhr.send(formData);
     });
   }
-
 }

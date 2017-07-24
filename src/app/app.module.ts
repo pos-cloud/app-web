@@ -25,6 +25,7 @@ import { CompanyService } from './services/company.service';
 import { ClockService } from './services/clock.service';
 import { PrintService } from './services/print.service';
 import { PrinterService } from './services/printer.service';
+import { ImportService } from './services/import.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -80,6 +81,7 @@ import { ListPrintersComponent } from './components/list-printers/list-printers.
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
 import { ClockComponent } from './components/clock/clock.component';
+import { ImportComponent } from './components/import/import.component';
 
 //pipes
 import { FilterPipe } from './pipes/filter.pipe';
@@ -146,7 +148,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     AddPrinterComponent,
     DeletePrinterComponent,
     UpdatePrinterComponent,
-    ListPrintersComponent
+    ListPrintersComponent,
+    ImportComponent
   ],
   imports: [
     BrowserModule,
@@ -174,7 +177,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     CompanyService,
     ClockService,
     PrintService,
-    PrinterService
+    PrinterService,
+    ImportService
   ],
   bootstrap: [AppComponent]
 })
