@@ -43,8 +43,9 @@
 					</div>
 				</div>
 				<div class="form-group col-md-4">
-					<img src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
-					<input type="file" placeholder="" (change)="fileChangeEvent($event)"/>
+					<img *ngIf="article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
+					<img *ngIf="article.picture != 'default.jpg'" [src]="'http://localhost:3000/api/get-imagen/'+article.picture" height="140" width="200" class="img-thumbnail mediana">
+					<input type="file" placeholder="ho" (change)="fileChangeEvent($event)"/>
 				</div>
 			</div>
 			<div class="row">

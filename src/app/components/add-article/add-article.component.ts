@@ -271,4 +271,8 @@ export class AddArticleComponent  implements OnInit {
       }
     );
   }
+  public filesToUpload: Array <File>;
+  fileChangeEvent(fileInput: any){
+    this.filesToUpload = <Array<File>>fileInput.target.files;
+  }
 }
