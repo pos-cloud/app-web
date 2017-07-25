@@ -10,7 +10,6 @@ export class Article {
     public salePrice: number = 0.00;
     public make: Make;
     public category: Category;
-    public unitOfMeasure: string;
     public stock: number = 0;
     public barcode: string;
     public type: ArticleType = ArticleType.Counter;

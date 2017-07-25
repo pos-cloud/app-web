@@ -136,14 +136,13 @@ export class ImportComponent  implements OnInit {
     this.objectToImport['model'] = 'article';
     this._importService.import(this.objectToImport).subscribe(
       result => {
-        if (!result.import) {
+        if (result.message !== 'ok') {
           this.alertMessage = result.message;
           this.alertConfig.type = 'danger';
         } else {
-          this.import = result.import;
           this.alertConfig.type = 'success';
-          this.alertMessage = "Se ha importado con éxito.";      
-          this.buildForm();
+          this.alertMessage = "Se ha importado con éxito.";
+          this.activeModal.close("import_close");
         }
         this.loading = false;
       },

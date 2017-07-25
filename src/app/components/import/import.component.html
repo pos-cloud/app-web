@@ -86,15 +86,6 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="barcode" class="control-label">Código de Barra:</label>
-          <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode"/>
-          <div *ngIf="formErrors.barcode" class="alert alert-danger">
-            {{ formErrors.barcode }}
-          </div>
-        </div>
-      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
