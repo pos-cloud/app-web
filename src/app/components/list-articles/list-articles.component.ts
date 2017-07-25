@@ -11,6 +11,7 @@ import { ArticleService } from './../../services/article.service';
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
 import { UpdateArticleComponent } from './../../components/update-article/update-article.component';
 import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
+import { ImportComponent } from './../../components/import/import.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -113,6 +114,16 @@ export class ListArticlesComponent implements OnInit {
             modalRef.componentInstance.article = article;
             modalRef.result.then((result) => {
               if(result === 'delete_close') {
+                this.getArticles();
+              }
+            }, (reason) => {
+              
+            });
+          break;
+        case 'import' :
+            modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+            modalRef.result.then((result) => {
+              if(result === 'import_close') {
                 this.getArticles();
               }
             }, (reason) => {

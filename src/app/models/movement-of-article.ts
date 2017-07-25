@@ -11,7 +11,6 @@ export class MovementOfArticle {
     public totalPrice: number = 0.00;
     public make: string;
     public category: string;
-    public unitOfMeasure: string;
     public barcode: string;
     public amount: number = 1;
     public notes: string;

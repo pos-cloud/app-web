@@ -36,8 +36,7 @@ export class AddArticleComponent  implements OnInit {
     'make': '',
     'description': '',
     'salePrice': 0.00,
-    'category': '',
-    'unitOfMeasure': 'Unidad'
+    'category': ''
   };
 
   public validationMessages = {
@@ -55,9 +54,6 @@ export class AddArticleComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'category': {
-      'required':       'Este campo es requerido.'
-    },
-    'unitOfMeasure': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -112,10 +108,6 @@ export class AddArticleComponent  implements OnInit {
         ]
       ],
       'category': [this.article.category, [
-          Validators.required
-        ]
-      ],
-      'unitOfMeasure': [this.article.unitOfMeasure, [
           Validators.required
         ]
       ],
@@ -180,7 +172,6 @@ export class AddArticleComponent  implements OnInit {
             'description': '',
             'salePrice': 0.00,
             'category': category,
-            'unitOfMeasure': 'Unidad',
             'observation': '',
             'barcode': '',
             'type': ArticleType.Counter

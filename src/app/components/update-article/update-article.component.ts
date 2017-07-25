@@ -30,14 +30,15 @@ export class UpdateArticleComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public filesToUpload: Array<File>;
+  public resultUpload;
 
   public formErrors = {
     'code': 1,
     'make': '',
     'description': '',
     'salePrice': 0.00,
-    'category': '',
-    'unitOfMeasure': 'Unidad'
+    'category': ''
   };
 
   public validationMessages = {
@@ -55,9 +56,6 @@ export class UpdateArticleComponent implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'category': {
-      'required':       'Este campo es requerido.'
-    },
-    'unitOfMeasure': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -89,7 +87,6 @@ export class UpdateArticleComponent implements OnInit {
       'description': this.article.description,
       'salePrice': this.article.salePrice,
       'category': this.article.category._id,
-      'unitOfMeasure': this.article.unitOfMeasure,
       'observation': this.article.observation,
       'barcode': this.article.barcode,
       'type': this.article.type
@@ -124,10 +121,6 @@ export class UpdateArticleComponent implements OnInit {
         ]
       ],
       'category': [this.article.category, [
-          Validators.required
-        ]
-      ],
-      'unitOfMeasure': [this.article.unitOfMeasure, [
           Validators.required
         ]
       ],
@@ -295,15 +288,13 @@ export class UpdateArticleComponent implements OnInit {
     );
   }
 
-  public filesToUpload: Array <File>;
-  public resultUpload;
-
   fileChangeEvent(fileInput: any){
+    
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
   makeFileRequest(files: Array<File>){
-    console.log(files);
+
     let idArticulo = this.article._id;
     return new Promise(function(resolve, reject){
       var formData:any = new FormData();
@@ -326,5 +317,4 @@ export class UpdateArticleComponent implements OnInit {
       xhr.send(formData);
     });
   }
-
 }
