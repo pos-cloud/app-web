@@ -132,35 +132,28 @@ export class ImportComponent  implements OnInit {
   public import(): void {
     
     this.loading = true;
-    for(let key in this.importForm.value) {
-      console.log(this.importForm.value.key);
-      if( this.importForm.value.key != null &&
-          key !== 'filePath') {
-            console.log("guarda "+key);
-        this.objectToImport[key] = this.importForm.value.key;
+    this.objectToImport = this.importForm.value;
+    this.objectToImport['model'] = 'article';
+    this._importService.import(this.objectToImport).subscribe(
+      result => {
+        if (!result.import) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+        } else {
+          this.import = result.import;
+          this.alertConfig.type = 'success';
+          this.alertMessage = "Se ha importado con éxito.";      
+          this.buildForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error;
+        if(!this.alertMessage) {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
       }
-    }
-    console.log(this.objectToImport);
-    // this._importService.import(this.objectToImport).subscribe(
-    // result => {
-    //     if (!result.import) {
-    //       this.alertMessage = result.message;
-    //       this.alertConfig.type = 'danger';
-    //     } else {
-    //       this.import = result.import;
-    //       this.alertConfig.type = 'success';
-    //       this.alertMessage = "Se ha importado con éxito.";      
-    //       this.buildForm();
-    //     }
-    //     this.loading = false;
-    //   },
-    //   error => {
-    //     this.alertMessage = error;
-    //     if(!this.alertMessage) {
-    //         this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-    //     }
-    //     this.loading = false;
-    //   }
-    // );
+    );
   }
 }

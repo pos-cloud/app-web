@@ -12,7 +12,7 @@ export class ImportService {
     this.url = 'http://localhost:3000/api/';
   }
 
-  import() {
-		return this._http.get(this.url+'import').map (res => res.json());
+  import(objectToImport) {
+		return this._http.post(this.url+'import-xlsx', objectToImport).map (res => res.json());
 	}
 }
