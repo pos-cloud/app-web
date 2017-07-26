@@ -23,6 +23,8 @@ export class UpdateCategoryComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public filesToUpload: Array<File>;
+  public resultUpload;
 
   public formErrors = {
     'description': ''
@@ -100,6 +102,18 @@ export class UpdateCategoryComponent implements OnInit {
     
     this.loading = true;
     this.category = this.categoryForm.value;
+
+     this.makeFileRequest(this.filesToUpload)
+              .then(
+                (result)=>{
+                  this.resultUpload = result;
+                  this.category.picture = this.resultUpload.filename;
+                  console.log(this.category.picture);
+                },
+                (error) =>{
+                  console.log(error);
+                }
+              );
     this.saveChanges();
   }
 
@@ -126,5 +140,36 @@ export class UpdateCategoryComponent implements OnInit {
       this.loading = false;
     }
     );
+  }
+
+
+  fileChangeEvent(fileInput: any){
+    
+    this.filesToUpload = <Array<File>>fileInput.target.files;
+  }
+
+  makeFileRequest(files: Array<File>){
+
+    let idCategory = this.category._id;
+    return new Promise(function(resolve, reject){
+      var formData:any = new FormData();
+      var xhr = new XMLHttpRequest();
+
+      for(var i = 0; i < files.length ; i++){
+        formData.append('image',files[i], files[i].name);
+      }
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          if(xhr.status == 200){
+            resolve(JSON.parse(xhr.response));
+          }else {
+            reject(xhr.response);
+          }
+        }
+      }
+      
+      xhr.open('POST','http://localhost:3000/api/upload-imagen-category/'+idCategory,true);
+      xhr.send(formData);
+    });
   }
 }

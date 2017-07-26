@@ -240,6 +240,7 @@ export class UpdateArticleComponent implements OnInit {
             this.article.category = result.category;
             //this.saveChanges();
             console.log("entra");
+            console.log(this.filesToUpload);
             this.makeFileRequest(this.filesToUpload)
               .then(
                 (result)=>{

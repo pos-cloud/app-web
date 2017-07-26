@@ -262,8 +262,36 @@ export class AddArticleComponent  implements OnInit {
       }
     );
   }
+
   public filesToUpload: Array <File>;
+
   fileChangeEvent(fileInput: any){
     this.filesToUpload = <Array<File>>fileInput.target.files;
+
+    console.log(this.filesToUpload);
+  }
+
+  makeFileRequest(files: Array<File>){
+
+    return new Promise(function(resolve, reject){
+      var formData:any = new FormData();
+      var xhr = new XMLHttpRequest();
+
+      for(var i = 0; i < files.length ; i++){
+        formData.append('image',files[i], files[i].name);
+      }
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          if(xhr.status == 200){
+            resolve(JSON.parse(xhr.response));
+          }else {
+            reject(xhr.response);
+          }
+        }
+      }
+      
+      xhr.open('POST','http://localhost:3000/api/upload-imagen/',true);
+      xhr.send(formData);
+    });
   }
 }
