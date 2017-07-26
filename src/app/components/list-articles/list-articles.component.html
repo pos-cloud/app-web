@@ -77,7 +77,8 @@
   <!--<input type="search" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." (onfocus)="showArticles()">-->
   <div class="row" *ngIf="areArticlesVisible"> 
     <div *ngFor="let article of articles | filter: filterCategory.description:'description':'category'" >
-      <div class="iarticle" (click)="addItem(article)">
+      <div (click)="addItem(article)">
+        <img [src]="'http://localhost:3000/api/get-imagen/'+article.picture" height="140" width="200" class="img-thumbnail mediana">
         <p>{{article.description}}</p>
       </div>
     </div>
