@@ -30,6 +30,7 @@ export class AddArticleComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public resultUpload;
 
   public formErrors = {
     'code': 1,
@@ -245,6 +246,17 @@ export class AddArticleComponent  implements OnInit {
           this.alertConfig.type = 'danger';
         } else {
           this.article = result.article;
+          this.makeFileRequest(this.filesToUpload)
+              .then(
+                (result)=>{
+                  this.resultUpload = result;
+                  this.article.picture = this.resultUpload.filename;
+                  console.log(this.article.picture);
+                },
+                (error) =>{
+                  console.log(error);
+                }
+              );
           this.alertMessage = "El artículo se ha añadido con éxito."; 
           this.alertConfig.type = 'success';
           this.article = new Article ();
@@ -272,7 +284,7 @@ export class AddArticleComponent  implements OnInit {
   }
 
   makeFileRequest(files: Array<File>){
-
+    let idArticulo = this.article._id;
     return new Promise(function(resolve, reject){
       var formData:any = new FormData();
       var xhr = new XMLHttpRequest();
@@ -290,7 +302,7 @@ export class AddArticleComponent  implements OnInit {
         }
       }
       
-      xhr.open('POST','http://localhost:3000/api/upload-imagen/',true);
+      xhr.open('POST','http://localhost:3000/api/upload-imagen/'+idArticulo,true);
       xhr.send(formData);
     });
   }

@@ -103,7 +103,7 @@ export class UpdateCategoryComponent implements OnInit {
     this.loading = true;
     this.category = this.categoryForm.value;
 
-     this.makeFileRequest(this.filesToUpload)
+    this.makeFileRequest(this.filesToUpload)
               .then(
                 (result)=>{
                   this.resultUpload = result;
