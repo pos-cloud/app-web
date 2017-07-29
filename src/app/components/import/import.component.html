@@ -45,9 +45,6 @@
         <div class="form-group col-md-8">
           <label for="observation" class="control-label">Observación:</label>
           <input type="text" class="form-control" formControlName="observation" name="observation" id="observation"/>
-          <div *ngIf="formErrors.observation" class="alert alert-danger">
-            {{ formErrors.observation }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -63,27 +60,18 @@
         <div class="form-group col-md-8">
           <label for="make_relation_description" class="control-label">Marca:</label>
           <input type="text" class="form-control" formControlName="make_relation_description" name="make_relation_description" id="make_relation_description"/>
-          <div *ngIf="formErrors.make_relation_description" class="alert alert-danger">
-            {{ formErrors.make_relation_description }}
-          </div>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-8">
           <label for="category_relation_description" class="control-label">Rubro:</label>
           <input type="text" class="form-control" formControlName="category_relation_description" name="category_relation_description" id="category_relation_description"/>
-          <div *ngIf="formErrors.category_relation_description" class="alert alert-danger">
-            {{ formErrors.category_relation_description }}
-          </div>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-8">
           <label for="barcode" class="control-label">Código de Barra:</label>
           <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode"/>
-          <div *ngIf="formErrors.barcode" class="alert alert-danger">
-            {{ formErrors.barcode }}
-          </div>
         </div>
       </div>
     </div>
