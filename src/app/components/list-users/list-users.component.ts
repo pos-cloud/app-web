@@ -65,7 +65,7 @@ export class ListUsersComponent implements OnInit {
           }
 				},
 				error => {
-					this.alertMessage = error;
+					this.alertMessage = error._body;
 					if(!this.alertMessage) {
 						this.alertMessage = "Error en la petición.";
 					}

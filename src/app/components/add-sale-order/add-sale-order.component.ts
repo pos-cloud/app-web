@@ -171,7 +171,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
           this.alertMessage = "Error en la petición.";
           this.alertConfig.type = "danger";
@@ -210,7 +210,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
           this.alertMessage = "Error en la petición.";
           this.alertConfig.type = "danger";
@@ -235,7 +235,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
           this.alertMessage = "Error en la petición.";
         }
@@ -257,7 +257,7 @@ export class AddSaleOrderComponent implements OnInit {
           }
 				},
 				error => {
-					this.alertMessage = error;
+					this.alertMessage = error._body;
 					if(!this.alertMessage) {
 						this.alertMessage = "Error en la petición.";
 					}
@@ -403,7 +403,7 @@ export class AddSaleOrderComponent implements OnInit {
           }
         },
         error => {
-          this.alertMessage = error;
+          this.alertMessage = error._body;
           if(!this.alertMessage) {
               this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
           }
@@ -424,7 +424,7 @@ export class AddSaleOrderComponent implements OnInit {
           }
         },
         error => {
-          this.alertMessage = error;
+          this.alertMessage = error._body;
           if(!this.alertMessage) {
               this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
           }
@@ -454,7 +454,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }
@@ -653,7 +653,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }
@@ -704,7 +704,7 @@ export class AddSaleOrderComponent implements OnInit {
           }
 				},
 				error => {
-					this.alertMessage = error;
+					this.alertMessage = error._body;
 					if(!this.alertMessage) {
 						this.alertMessage = "Error en la petición.";
 					}
@@ -725,7 +725,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.getMovementsOfSaleOrder();
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }
@@ -782,21 +782,23 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
-        this._printService.toPrint(print).subscribe(
-          result => {
-            if(result.message === 'ok'){
               this.changeStateOfTable(TableState.Pending);
               this.backToRooms();
-            } else {
-              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-              this.alertConfig.type = "danger";
-            }
-          },
-          error => {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-            this.alertConfig.type = 'danger';
-          }
-        );
+        // this._printService.toPrint(print).subscribe(
+        //   result => {
+        //     if(result.message === 'ok'){
+        //       this.changeStateOfTable(TableState.Pending);
+        //       this.backToRooms();
+        //     } else {
+        //       this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+        //       this.alertConfig.type = "danger";
+        //     }
+        //   },
+        //   error => {
+        //     this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        //     this.alertConfig.type = 'danger';
+        //   }
+        // );
       } else {
         this.alertMessage = "No existen artículos en el pedido.";
         this.alertConfig.type = "danger";
@@ -843,22 +845,24 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
+        this.changeStateOfTable(TableState.Available);
+        this.backToRooms();
 
-        this._printService.toPrint(print).subscribe(
-          result => {
-            if(result.message === 'ok'){
-              this.changeStateOfTable(TableState.Available);
-              this.backToRooms();
-            } else {
-              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-              this.alertConfig.type = "danger";
-            }
-          },
-          error => {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-            this.alertConfig.type = 'danger';
-          }
-        );
+        // this._printService.toPrint(print).subscribe(
+        //   result => {
+        //     if(result.message === 'ok'){
+        //       this.changeStateOfTable(TableState.Available);
+        //       this.backToRooms();
+        //     } else {
+        //       this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+        //       this.alertConfig.type = "danger";
+        //     }
+        //   },
+        //   error => {
+        //     this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        //     this.alertConfig.type = 'danger';
+        //   }
+        // );
       } else {
         this.alertMessage = "No existen artículos en el pedido.";
         this.alertConfig.type = "danger";

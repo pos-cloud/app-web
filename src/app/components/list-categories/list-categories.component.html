@@ -50,9 +50,14 @@
   <div class="row" *ngIf="areCategoriesVisible"> 
     <div *ngFor="let category of categories">
       <div class="icategory" (click)="selectCategory(category)">
-        <img [src]="'http://localhost:3000/api/get-imagen/'+category.picture" height="140" width="200" class="img-thumbnail mediana">
+        <img [src]="'http://192.168.0.16:3000/api/get-imagen/'+category.picture" height="140" width="200" class="img-thumbnail mediana">
         <p>{{category.description}}</p>
       </div>
     </div>
+    <div class="center-content" *ngIf="areCategoriesEmpty">
+      <ngb-alert (close)="areCategoriesEmpty">
+        No se encontraron rubros
+      </ngb-alert>
+	  </div>
   </div>
 </section>

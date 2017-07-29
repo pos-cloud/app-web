@@ -18,7 +18,7 @@
 						<div class="form-group col-md-6">
 							<label for="make" class="control-label">Marca</label>
 							<select class="form-control" formControlName="make">
-								<option *ngFor="let make of makes" [ngValue]="make">{{make.description}}</option>
+								<option *ngFor="let make of makes" [selected]="make._id==article.make._id" [value]="make._id">{{make.description}}</option>
 							</select>
 							<div *ngIf="formErrors.make" class="alert alert-danger">
 								{{ formErrors.make }}
@@ -44,7 +44,7 @@
 				</div>
 				<div class="form-group col-md-4">
 					<img *ngIf="article.picture == 'default.jpg'" src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
-					<img *ngIf="article.picture != 'default.jpg'" [src]="'http://localhost:3000/api/get-imagen/'+article.picture" height="140" width="200" class="img-thumbnail mediana">
+					<img *ngIf="article.picture != 'default.jpg'" [src]="'http://192.168.0.16:3000/api/get-imagen/'+article.picture" height="140" width="200" class="img-thumbnail mediana">
 					<input type="file" placeholder="ho" (change)="fileChangeEvent($event)"/>
 				</div>
 			</div>
@@ -52,7 +52,7 @@
 				<div class="form-group col-md-12">
 					<label for="category" class="control-label">Rubro</label>
 					<select class="form-control" formControlName="category">
-						<option *ngFor="let category of categories" [ngValue]="category">{{category.description}}</option>
+						<option *ngFor="let category of categories" [selected]="category._id==article.category._id" [value]="category._id">{{category.description}}</option>
 					</select>
 					<div *ngIf="formErrors.category" class="alert alert-danger">
 						{{ formErrors.category }}

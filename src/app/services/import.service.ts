@@ -9,7 +9,7 @@ export class ImportService {
   public url: string;
 
   constructor(public _http: Http) { 
-    this.url = 'http://localhost:3000/api/';
+    this.url = 'http://192.168.0.16:3000/api/';
   }
 
   import(objectToImport) {

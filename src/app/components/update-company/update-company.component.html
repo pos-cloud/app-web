@@ -32,7 +32,7 @@
 				<div class="form-group col-md-4">
 					<label for="CUIT" class="control-label">CUIT:</label>
 					<div class="input-group">
-						<input type="string" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
+						<input type="number" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
 					</div>
 					<div *ngIf="formErrors.CUIT" class="alert alert-danger">
 						{{ formErrors.CUIT }}
@@ -83,7 +83,7 @@
 				<div class="form-group col-md-12">
 					<label for="phones" class="control-label">Teléfonos:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="phones" name="phones" id="phones"/>
+						<input type="number" class="form-control" formControlName="phones" name="phones" id="phones"/>
 					</div>
 					<div *ngIf="formErrors.phones" class="alert alert-danger">
 						{{ formErrors.phones }}

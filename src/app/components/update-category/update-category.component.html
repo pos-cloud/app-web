@@ -22,7 +22,7 @@
          </div> 
         <div class="form-group col-md-4">
 					<img *ngIf="category.picture == 'default.jpg'" src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
-					<img *ngIf="category.picture != 'default.jpg'" [src]="'http://localhost:3000/api/get-imagen/'+category.picture" height="140" width="200" class="img-thumbnail mediana">
+					<img *ngIf="category.picture != 'default.jpg'" [src]="'http://192.168.0.16:3000/api/get-imagen/'+category.picture" height="140" width="200" class="img-thumbnail mediana">
 					<input type="file" placeholder="ho" (change)="fileChangeEvent($event)"/>
 				</div>
       </div>

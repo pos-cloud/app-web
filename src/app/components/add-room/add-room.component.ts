@@ -114,10 +114,11 @@ export class AddRoomComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        console.log(error);
+        // this.alertMessage = error._body;
+        // if(!this.alertMessage) {
+        //     this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        // }
         this.loading = false;
       }
     );

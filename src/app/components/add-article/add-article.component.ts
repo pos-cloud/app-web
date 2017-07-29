@@ -179,7 +179,7 @@ export class AddArticleComponent  implements OnInit {
           });
         },
         error => {
-          this.alertMessage = error;
+          this.alertMessage = error._body;
           if(!this.alertMessage) {
             this.alertMessage = "Error en la petición.";
           }
@@ -201,7 +201,7 @@ export class AddArticleComponent  implements OnInit {
           }
         },
         error => {
-          this.alertMessage = error;
+          this.alertMessage = error._body;
           if(!this.alertMessage) {
             this.alertMessage = "Error en la petición.";
           }
@@ -223,7 +223,7 @@ export class AddArticleComponent  implements OnInit {
           }
         },
         error => {
-          this.alertMessage = error;
+          this.alertMessage = error._body;
           if(!this.alertMessage) {
             this.alertMessage = "Error en la petición.";
           }
@@ -266,7 +266,7 @@ export class AddArticleComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }
@@ -302,7 +302,7 @@ export class AddArticleComponent  implements OnInit {
         }
       }
       
-      xhr.open('POST','http://localhost:3000/api/upload-imagen/'+idArticulo,true);
+      xhr.open('POST','http://192.168.0.16:3000/api/upload-imagen/'+idArticulo,true);
       xhr.send(formData);
     });
   }

@@ -138,7 +138,7 @@ export class AddTableComponent  implements OnInit {
           });
         },
         error => {
-          this.alertMessage = error;
+          this.alertMessage = error._body;
           if(!this.alertMessage) {
             this.alertMessage = "Error en la petición.";
           }
@@ -170,7 +170,7 @@ export class AddTableComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error;
+        this.alertMessage = error._body;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }

@@ -78,9 +78,14 @@
   <div class="row" *ngIf="areArticlesVisible"> 
     <div *ngFor="let article of articles | filter: filterCategory.description:'description':'category'" >
       <div (click)="addItem(article)">
-        <img [src]="'http://localhost:3000/api/get-imagen/'+article.picture" height="140" width="200" class="img-thumbnail mediana">
+        <img [src]="'http://192.168.0.16:3000/api/get-imagen/'+article.picture" height="140" width="200" class="img-thumbnail mediana">
         <p>{{article.description}}</p>
       </div>
     </div>
+    <div class="center-content" *ngIf="areArticlesEmpty">
+      <ngb-alert (close)="areArticlesEmpty">
+        No se encontraron artículos
+      </ngb-alert>
+	  </div>
   </div>
 </section>

@@ -132,7 +132,7 @@ export class UpdatePrinterComponent implements OnInit {
       this.loading = false;
     },
     error => {
-      this.alertMessage = error;
+      this.alertMessage = error._body;
       if(!this.alertMessage) {
           this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
       }
