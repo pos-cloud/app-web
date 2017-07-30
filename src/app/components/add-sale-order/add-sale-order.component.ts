@@ -399,7 +399,6 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
-            this.changeStateOfTable(TableState.Busy);
           }
         },
         error => {
@@ -450,6 +449,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.alertConfig.type = 'danger';
         } else {
           this.table = result.table;
+          this.backToRooms();
         }
         this.loading = false;
       },
@@ -540,7 +540,6 @@ export class AddSaleOrderComponent implements OnInit {
               this.updateSaleOrder();
               this.table.employee = null;
               this.changeStateOfTable(TableState.Available);
-              this.backToRooms();
             }
           }, (reason) => {
             
@@ -782,8 +781,7 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
-              this.changeStateOfTable(TableState.Pending);
-              this.backToRooms();
+        this.changeStateOfTable(TableState.Pending);
         // this._printService.toPrint(print).subscribe(
         //   result => {
         //     if(result.message === 'ok'){
@@ -846,8 +844,6 @@ export class AddSaleOrderComponent implements OnInit {
         print.fileName = fileName;
         print.content = content;
         this.changeStateOfTable(TableState.Available);
-        this.backToRooms();
-
         // this._printService.toPrint(print).subscribe(
         //   result => {
         //     if(result.message === 'ok'){
