@@ -32,7 +32,7 @@
 				<div class="form-group col-md-4">
 					<label for="CUIT" class="control-label">CUIT:</label>
 					<div class="input-group">
-						<input type="number" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
+						<input type="text" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
 					</div>
 					<div *ngIf="formErrors.CUIT" class="alert alert-danger">
 						{{ formErrors.CUIT }}
