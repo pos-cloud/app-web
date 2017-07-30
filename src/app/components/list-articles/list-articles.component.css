@@ -26,21 +26,29 @@
 }
 
 .iarticle {
-    background: #0275d8;
-    color: white;
-    width: 120px;
-    height: 120px;
-    margin: 4px;
-    float: left;
-    text-align: center;
-    cursor: pointer;
+      background: #0275d8;
+      color: white;
+      width: 120px;
+      height: 120px;
+      margin: 4px;
+      float: left;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      width: "120px";
+      height: "120px";
 }
 
 .iarticle:hover {
       background: #025aa5;
 }
 
-.iarticle p {
-    font-size: 20px;
-    margin-top: 20px;
-} 
+.image-title {
+      background: #025aa5;
+      font-size: 20px;
+      margin-top: 20px;
+      position: absolute;
+      left: 0px; 
+      bottom: 0px;
+      width: 100%;
+}

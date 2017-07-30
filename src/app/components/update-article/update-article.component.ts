@@ -2,6 +2,8 @@ import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import { SlicePipe } from '@angular/common'; 
+
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticleType } from './../../models/article';
@@ -37,6 +39,7 @@ export class UpdateArticleComponent implements OnInit {
     'code': 1,
     'make': '',
     'description': '',
+    'posDescription': '',
     'salePrice': 0.00,
     'category': ''
   };
@@ -51,6 +54,10 @@ export class UpdateArticleComponent implements OnInit {
     },
     'description': {
       'required':       'Este campo es requerido.'
+    },
+    'posDescription': {
+      'required':       'Este campo es requerido.',
+      'maxlength':      'No puede exceder los 10 carácteres.'
     },
     'salePrice': {
       'required':       'Este campo es requerido.'
@@ -85,6 +92,7 @@ export class UpdateArticleComponent implements OnInit {
       'code':this.article.code,
       'make': this.article.make._id,
       'description': this.article.description,
+      'posDescription': this.article.posDescription,
       'salePrice': this.article.salePrice,
       'category': this.article.category._id,
       'observation': this.article.observation,
@@ -114,6 +122,10 @@ export class UpdateArticleComponent implements OnInit {
       ],
       'description': [this.article.description, [
           Validators.required
+        ]
+      ],
+      'posDescription': [this.article.posDescription, [
+          Validators.maxLength(10)
         ]
       ],
       'salePrice': [this.article.salePrice, [
@@ -204,6 +216,10 @@ export class UpdateArticleComponent implements OnInit {
   public updateArticle (): void {
     
     this.loading = true;
+    if(this.articleForm.value.posDescription === "") {
+      let slicePipe = new SlicePipe();
+      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
+    }
     this.article = this.articleForm.value;
     this.getMake();
   }

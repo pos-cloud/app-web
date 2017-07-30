@@ -2,6 +2,8 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import { SlicePipe } from '@angular/common'; 
+
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticleType } from './../../models/article';
@@ -36,6 +38,7 @@ export class AddArticleComponent  implements OnInit {
     'code': 1,
     'make': '',
     'description': '',
+    'posDescription': '',
     'salePrice': 0.00,
     'category': ''
   };
@@ -50,6 +53,9 @@ export class AddArticleComponent  implements OnInit {
     },
     'description': {
       'required':       'Este campo es requerido.'
+    },
+    'posDescription': {
+      'maxlength':      'No puede exceder los 10 carácteres.'
     },
     'salePrice': {
       'required':       'Este campo es requerido.'
@@ -92,8 +98,7 @@ export class AddArticleComponent  implements OnInit {
         ]
       ],
       'code': [this.article.code, [
-          Validators.required,
-          Validators.pattern("[0-9]{1,5}")
+          Validators.required
         ]
       ],
       'make': [this.article.make, [
@@ -102,6 +107,10 @@ export class AddArticleComponent  implements OnInit {
       ],
       'description': [this.article.description, [
           Validators.required
+        ]
+      ],
+      'posDescription': [this.article.posDescription, [
+          Validators.maxLength(10)
         ]
       ],
       'salePrice': [this.article.salePrice, [
@@ -171,6 +180,7 @@ export class AddArticleComponent  implements OnInit {
             'code': code,
             'make': make,
             'description': '',
+            'posDescription': '',
             'salePrice': 0.00,
             'category': category,
             'observation': '',
@@ -233,6 +243,10 @@ export class AddArticleComponent  implements OnInit {
 
   public addArticle(): void {
     this.loading = true;
+    if(this.articleForm.value.posDescription === "") {
+      let slicePipe = new SlicePipe();
+      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
+    }
     this.article = this.articleForm.value;
     this.saveArticle();
   }
