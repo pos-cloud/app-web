@@ -3,37 +3,34 @@ import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Employee } from './../models/employee';
+import { Config } from './../app.config';
 
 @Injectable()
 export class EmployeeService {
 
-  public url: string;
-
-  constructor(public _http: Http) {
-    this.url = 'http://192.168.0.16:3000/api/';
-  }
+  constructor(public _http: Http) { }
 
   getLastEmployee () {
-		return this._http.get(this.url+'employees/sort="_id":-1&limit=1').map (res => res.json());
+		return this._http.get(Config.apiURL + 'employees/sort="_id":-1&limit=1').map (res => res.json());
 	}
 
   getEmployee (id) {
-		return this._http.get(this.url+"employee/"+id).map (res => res.json());
+		return this._http.get(Config.apiURL + "employee/"+id).map (res => res.json());
 	}
 
   getEmployees () {
-		return this._http.get(this.url+"employees").map (res => res.json());
+		return this._http.get(Config.apiURL + "employees").map (res => res.json());
 	}
 
   saveEmployee (employee: Employee) {
-		return this._http.post(this.url+"employee",employee).map (res => res.json());
+		return this._http.post(Config.apiURL + "employee",employee).map (res => res.json());
 	}
 
   deleteEmployee (id: string) {
-    return this._http.delete(this.url+"employee/"+id).map (res => res.json());
+    return this._http.delete(Config.apiURL + "employee/"+id).map (res => res.json());
   }
 
   updateEmployee (employee: Employee){
-    return this._http.put(this.url+"employee/"+employee._id, employee).map (res => res.json());
+    return this._http.put(Config.apiURL + "employee/"+employee._id, employee).map (res => res.json());
   }
 }

@@ -65,6 +65,16 @@ export class ImportComponent  implements OnInit {
     this.objectToImport = new Array();
     this.model = 'article';
     this.buildForm();
+    this.importForm.setValue({
+      "filePath":'c:\\temp\\articulos.xlsx',
+      "code":"code",
+      "description":"desc",
+      "salePrice":"precio",
+      "observation":"",
+      "make_relation_description":"marca",
+      "category_relation_description":"rubro",
+      "barcode":""
+    });
   }
 
   ngAfterViewInit() {
@@ -147,7 +157,7 @@ export class ImportComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
+        this.alertMessage = error;
         if(!this.alertMessage) {
             this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
         }

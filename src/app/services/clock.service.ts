@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-
-import {Observable} from "rxjs";
+import { Observable } from "rxjs";
+import { Config } from './../app.config';
 
 @Injectable()
 export class ClockService {

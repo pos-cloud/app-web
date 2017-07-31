@@ -10,6 +10,8 @@ import { AddCategoryComponent } from './../../components/add-category/add-catego
 import { UpdateCategoryComponent } from './../../components/update-category/update-category.component';
 import { DeleteCategoryComponent } from './../../components/delete-category/delete-category.component';
 
+import { Config } from './../../app.config';
+
 @Component({
   selector: 'app-list-categories',
   templateUrl: './list-categories.component.html',
@@ -29,6 +31,7 @@ export class ListCategoriesComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
   @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
   @Input() areCategoriesVisible: boolean = true;
+  public apiURL = Config.apiURL;
 
   constructor(
     public _categoryService: CategoryService,

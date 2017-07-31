@@ -3,37 +3,34 @@ import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Category } from './../models/category';
+import { Config } from './../app.config';
 
 @Injectable()
 export class CategoryService {
-  
-  public url: string;
 
-  constructor(public _http: Http) { 
-    this.url = 'http://192.168.0.16:3000/api/';
-  }
+  constructor(public _http: Http) { }
 
   getLastCategory () {
-    return this._http.get(this.url+'categories/sort="code":-1&limit=1').map (res => res.json());
+    return this._http.get(Config.apiURL + 'categories/sort="code":-1&limit=1').map (res => res.json());
   }
 
   getCategory (id) {
-    return this._http.get(this.url+"category/"+id).map (res => res.json());
+    return this._http.get(Config.apiURL + "category/"+id).map (res => res.json());
   }
 
   getCategories () {
-    return this._http.get(this.url+"categories").map (res => res.json());
+    return this._http.get(Config.apiURL + "categories").map (res => res.json());
   }
 
   saveCategory (category : Category) {
-    return this._http.post(this.url+"category",category).map (res => res.json());
+    return this._http.post(Config.apiURL + "category",category).map (res => res.json());
   }
   
   deleteCategory (id: string) {
-    return this._http.delete(this.url+"category/"+id).map (res => res.json());
+    return this._http.delete(Config.apiURL + "category/"+id).map (res => res.json());
   }
 
   updateCategory (category: Category){
-    return this._http.put(this.url+"category/"+category._id, category).map (res => res.json());
+    return this._http.put(Config.apiURL + "category/"+category._id, category).map (res => res.json());
   }
 }

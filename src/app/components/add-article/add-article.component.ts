@@ -14,6 +14,8 @@ import { ArticleService } from './../../services/article.service';
 import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
 
+import { Config } from './../../app.config';
+
 @Component({
   selector: 'app-add-article',
   templateUrl: './add-article.component.html',
@@ -316,7 +318,7 @@ export class AddArticleComponent  implements OnInit {
         }
       }
       
-      xhr.open('POST','http://192.168.0.16:3000/api/upload-imagen/'+idArticulo,true);
+      xhr.open('POST', Config.apiURL + 'upload-imagen/'+idArticulo,true);
       xhr.send(formData);
     });
   }

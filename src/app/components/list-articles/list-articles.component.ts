@@ -13,6 +13,8 @@ import { UpdateArticleComponent } from './../../components/update-article/update
 import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
 import { ImportComponent } from './../../components/import/import.component';
 
+import { Config } from './../../app.config';
+
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
@@ -32,6 +34,7 @@ export class ListArticlesComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategory: string;
+  public apiURL = Config.apiURL;
 
   constructor(
     public _articleService: ArticleService,

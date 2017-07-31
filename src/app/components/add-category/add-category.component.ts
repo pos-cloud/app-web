@@ -8,6 +8,8 @@ import { Category } from './../../models/category';
 
 import { CategoryService } from './../../services/category.service';
 
+import { Config } from './../../app.config';
+
 @Component({
   selector: 'app-add-category',
   templateUrl: './add-category.component.html',
@@ -161,7 +163,7 @@ export class AddCategoryComponent  implements OnInit {
         }
       }
       
-      xhr.open('POST','http://localhost:3000/api/upload-imagen-category/'+idCategory,true);
+      xhr.open('POST', Config.apiURL + 'upload-imagen-category/'+idCategory,true);
       xhr.send(formData);
     });
   }

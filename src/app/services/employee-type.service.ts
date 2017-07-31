@@ -3,37 +3,34 @@ import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { EmployeeType } from './../models/employee-type';
+import { Config } from './../app.config';
 
 @Injectable()
 export class EmployeeTypeService {
 
-  public url: string;
-
-  constructor(public _http: Http) {
-    this.url = 'http://192.168.0.16:3000/api/';
-  }
+  constructor(public _http: Http) { }
 
   getLastEmployeeType () {
-    return this._http.get(this.url+'employees/sort="_id":-1&limit=1').map (res => res.json());
+    return this._http.get(Config.apiURL + 'employees/sort="_id":-1&limit=1').map (res => res.json());
   }
 
   getEmployeeType (id) {
-    return this._http.get(this.url+"employee-type/"+id).map (res => res.json());
+    return this._http.get(Config.apiURL + "employee-type/"+id).map (res => res.json());
   }
 
   getEmployeeTypes () {
-    return this._http.get(this.url+"employee-types").map (res => res.json());
+    return this._http.get(Config.apiURL + "employee-types").map (res => res.json());
   }
 
   saveEmployeeType (employeeType: EmployeeType) {
-    return this._http.post(this.url+"employee-type",employeeType).map (res => res.json());
+    return this._http.post(Config.apiURL + "employee-type",employeeType).map (res => res.json());
   }
 
   deleteEmployeeType (id: string) {
-    return this._http.delete(this.url+"employee-type/"+id).map (res => res.json());
+    return this._http.delete(Config.apiURL + "employee-type/"+id).map (res => res.json());
   }
 
   updateEmployeeType (employeeType: EmployeeType){
-    return this._http.put(this.url+"employee-type/"+employeeType._id, employeeType).map (res => res.json());
+    return this._http.put(Config.apiURL + "employee-type/"+employeeType._id, employeeType).map (res => res.json());
   }
 }
