@@ -27,6 +27,7 @@ export class UpdateCategoryComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public filesToUpload: Array<File>;
   public resultUpload;
+  public apiURL = Config.apiURL;
 
   public formErrors = {
     'description': ''
@@ -110,10 +111,9 @@ export class UpdateCategoryComponent implements OnInit {
                 (result)=>{
                   this.resultUpload = result;
                   this.category.picture = this.resultUpload.filename;
-                  console.log(this.category.picture);
                 },
                 (error) =>{
-                  console.log(error);
+                  this.alertConfig = error;
                 }
               );
     this.saveChanges();
@@ -145,12 +145,12 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
 
-  fileChangeEvent(fileInput: any){
+  public fileChangeEvent(fileInput: any){
     
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  makeFileRequest(files: Array<File>){
+  public makeFileRequest(files: Array<File>){
 
     let idCategory = this.category._id;
     return new Promise(function(resolve, reject){

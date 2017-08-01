@@ -35,6 +35,7 @@ export class AddArticleComponent  implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public resultUpload;
+  public apiURL = Config.apiURL;
 
   public formErrors = {
     'code': 1,
@@ -267,10 +268,9 @@ export class AddArticleComponent  implements OnInit {
                 (result)=>{
                   this.resultUpload = result;
                   this.article.picture = this.resultUpload.filename;
-                  console.log(this.article.picture);
                 },
                 (error) =>{
-                  console.log(error);
+                  this.alertConfig = error;
                 }
               );
           this.alertMessage = "El artículo se ha añadido con éxito."; 
@@ -293,13 +293,13 @@ export class AddArticleComponent  implements OnInit {
 
   public filesToUpload: Array <File>;
 
-  fileChangeEvent(fileInput: any){
-    this.filesToUpload = <Array<File>>fileInput.target.files;
+  public fileChangeEvent(fileInput: any): void {
 
-    console.log(this.filesToUpload);
+    this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  makeFileRequest(files: Array<File>){
+  public makeFileRequest(files: Array<File>) {
+    
     let idArticulo = this.article._id;
     return new Promise(function(resolve, reject){
       var formData:any = new FormData();

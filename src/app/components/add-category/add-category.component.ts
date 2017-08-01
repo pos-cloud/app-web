@@ -115,10 +115,9 @@ export class AddCategoryComponent  implements OnInit {
                 (result)=>{
                   this.resultUpload = result;
                   this.category.picture = this.resultUpload.filename;
-                  console.log(this.category.picture);
                 },
                 (error) =>{
-                  console.log(error);
+                  this.alertConfig = error;
                 }
               );
           this.alertConfig.type = 'success';
@@ -138,12 +137,12 @@ export class AddCategoryComponent  implements OnInit {
     );
   }
 
-  fileChangeEvent(fileInput: any){
+  public fileChangeEvent(fileInput: any){
     
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  makeFileRequest(files: Array<File>){
+  public makeFileRequest(files: Array<File>){
 
     let idCategory = this.category._id;
     return new Promise(function(resolve, reject){

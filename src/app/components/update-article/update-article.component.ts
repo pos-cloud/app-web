@@ -36,6 +36,7 @@ export class UpdateArticleComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public filesToUpload: Array<File>;
   public resultUpload;
+  public apiURL = Config.apiURL;
 
   public formErrors = {
     'code': 1,
@@ -256,18 +257,14 @@ export class UpdateArticleComponent implements OnInit {
             this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
           } else {
             this.article.category = result.category;
-            //this.saveChanges();
-            console.log("entra");
-            console.log(this.filesToUpload);
             this.makeFileRequest(this.filesToUpload)
               .then(
                 (result)=>{
                   this.resultUpload = result;
                   this.article.picture = this.resultUpload.filename;
-                  console.log(this.article.picture);
                 },
                 (error) =>{
-                  console.log(error);
+                  this.alertConfig = error;
                 }
               );
             this.saveChanges();
@@ -307,12 +304,12 @@ export class UpdateArticleComponent implements OnInit {
     );
   }
 
-  fileChangeEvent(fileInput: any){
+  public fileChangeEvent(fileInput: any){
     
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
-  makeFileRequest(files: Array<File>){
+  public makeFileRequest(files: Array<File>){
 
     let idArticulo = this.article._id;
     return new Promise(function(resolve, reject){

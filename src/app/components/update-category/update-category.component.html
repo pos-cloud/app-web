@@ -21,8 +21,8 @@
           </div>
          </div> 
         <div class="form-group col-md-4">
-					<img *ngIf="category.picture == 'default.jpg'" src="./../../../assets/img/default.jpg" height="140" width="200" class="img-thumbnail mediana">
-					<img *ngIf="category.picture != 'default.jpg'" [src]="Config.apiURL + 'get-imagen/'+category.picture" height="140" width="200" class="img-thumbnail mediana">
+					<img *ngIf="category.picture == 'default.jpg' || category.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120">
+					<img *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined" [src]="apiURL + 'get-imagen/'+category.picture" height="120" width="120">
 					<input type="file" placeholder="ho" (change)="fileChangeEvent($event)"/>
 				</div>
       </div>
