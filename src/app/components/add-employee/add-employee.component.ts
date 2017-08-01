@@ -63,6 +63,7 @@ export class AddEmployeeComponent  implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.employee = new Employee();
+    this.employeeTypes = [];
     this.getEmployeeTypes();
     this.buildForm();
   }
@@ -76,9 +77,7 @@ export class AddEmployeeComponent  implements OnInit {
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
         if(!result.employeeTypes) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
-          this.employeeTypes = null;
+          this.addEmployeeTypeWaiter();
         } else {
           this.alertMessage = null;
           this.employeeTypes = result.employeeTypes;
@@ -90,6 +89,60 @@ export class AddEmployeeComponent  implements OnInit {
         if(!this.alertMessage) {
             this.alertMessage = "Error en la petición.";
         }
+      }
+    );
+  }
+
+  public addEmployeeTypeWaiter() {
+
+    let employeeType: EmployeeType = new EmployeeType();
+    employeeType.description = "Mozo";
+
+    this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
+      result => {
+        if (!result.employeeType) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+        } else {
+          employeeType = result.employeeType;
+          this.employeeTypes[0] = employeeType;
+          this.addEmployeeTypeSupervisor();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error._body;
+        if (!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
+    );
+  }
+
+  public addEmployeeTypeSupervisor() {
+
+    let employeeType: EmployeeType = new EmployeeType();
+    employeeType.description = "Supervisor";
+
+    this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
+      result => {
+        if (!result.employeeType) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+        } else {
+          employeeType = result.employeeType;
+          this.employeeTypes[1] = employeeType;
+          this.getLastEmployee();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = error._body;
+        if (!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
       }
     );
   }
