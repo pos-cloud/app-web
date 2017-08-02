@@ -15,6 +15,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 })
 export class AppComponent {
 
+  public config: Config;
   public alertMessage: any;
   public isAPIConected: boolean;
 
@@ -26,24 +27,33 @@ export class AppComponent {
   ) {
 
     this.isAPIConected = false;
-    this.getConfig();
+    this.getConfigLocal();
   }
 
-  public getConfig() {
-    this._configService.getConfig().subscribe(
+  public getConfigLocal() {
+    
+    let result = this._configService.getConfigLocal();
+    if (!result) {
+      this.openModal("config");
+      this.isAPIConected = false;
+    } else {
+      this.config = result.config;
+      this.setConfigurationSettings(this.config);
+      this.alertMessage = null;
+      this.getConfigApi();
+    }
+  }
+
+  public getConfigApi() {
+    
+    this._configService.getConfigApi().subscribe(
       result => {
-        console.log(result);
-        if(!result.config) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
-          this.isAPIConected = true;
+        if (!result) {
+          this.openModal("config");
+          this.isAPIConected = false;
         } else {
           this.alertMessage = null;
           this.isAPIConected = true;
-          Config.setApiHost(result.config.apiHost);
-          Config.setApiPort(result.config.apiPort);
-          Config.setPrintHost(result.config.printHost);
-          Config.setPrintPort(result.config.printPort);
         }
       },
       error => {
@@ -53,6 +63,13 @@ export class AppComponent {
     );
   }
 
+  public setConfigurationSettings(config) {
+    Config.setApiHost(config.apiHost);
+    Config.setApiPort(config.apiPort);
+    Config.setPrintHost(config.printHost);
+    Config.setPrintPort(config.printPort);
+  }
+
   public openModal(op: string): void {
 
     let modalRef;
@@ -60,9 +77,14 @@ export class AppComponent {
       case 'config':
 
         modalRef = this._modalService.open(ConfigComponent, { size: 'lg' }).result.then((result) => {
-          this.getConfig();
+          if (result === 'save_close') {
+            this.alertMessage = null;
+            this.isAPIConected = true;
+          } else {
+            this.getConfigApi();
+          }
         }, (reason) => {
-          this.getConfig();
+          this.getConfigApi();
         });
         break;
       default: ;

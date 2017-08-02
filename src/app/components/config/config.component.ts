@@ -100,26 +100,26 @@ export class ConfigComponent implements OnInit {
   public addConfig(): void {
     this.loading = true;
     this.config = this.configForm.value;
-
-    Config.setApiHost(this.configForm.value.apiHost);
-    Config.setApiPort(this.configForm.value.apiPort);
-    // Config.setPrintHost(config.printHost);
-    // Config.setPrintPort(config.printPort);
+    this.setConfigurationSettings(this.config);
     this.saveConfig();
   }
 
   public saveConfig(): void {
-
-    this._configService.saveConfig(this.config).subscribe(
+    
+    this._configService.saveConfigApi(this.config).subscribe(
       result => {
-        if (!result.config) {
+        if (!result) {
           this.alertMessage = result.message;
           this.alertConfig.type = 'danger';
         } else {
-          this.config = result.config;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "Conexión exitosa.";
-          this.activeModal.close("config");
+          this.config = result;
+          if (this._configService.saveConfigLocal(this.config)) {
+            this.setConfigurationSettings(this.config);
+            this.activeModal.close("save_close");
+          } else {
+            this.alertMessage = "Ha ocurrido un error en el navegador. Recarge la página.";
+            this.alertConfig.type = 'danger';
+          }
         }
         this.loading = false;
       },
@@ -128,5 +128,12 @@ export class ConfigComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public setConfigurationSettings(config) {
+    Config.setApiHost(config.apiHost);
+    Config.setApiPort(config.apiPort);
+    Config.setPrintHost(config.printHost);
+    Config.setPrintPort(config.printPort);
   }
 }

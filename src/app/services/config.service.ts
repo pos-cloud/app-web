@@ -7,17 +7,31 @@ import { Config } from './../app.config';
 @Injectable()
 export class ConfigService {
 
-	constructor(public _http: Http) { }
+	public localStorage = window.localStorage;
 
-	getConfig() {
+	public constructor(
+		private _http: Http
+	) {	}
+
+	getConfigLocal() {
+		return JSON.parse(this.localStorage.getItem("config"));
+	}
+
+	saveConfigLocal(config: Config) {
+		this.localStorage.removeItem('config');
+		this.localStorage.setItem('config', JSON.stringify(config));
+		return true;
+	}
+
+	getConfigApi() {
 		return this._http.get(Config.apiURL + "config").map(res => res.json());
 	}
 
-	saveConfig(config: Config) {
+	saveConfigApi(config: Config) {
 		return this._http.post(Config.apiURL + "config", config).map(res => res.json());
 	}
 
-	updateConfig(config: Config) {
+	updateConfigApi(config: Config) {
 		return this._http.put(Config.apiURL + "config/" + config._id, config).map(res => res.json());
 	}
 }

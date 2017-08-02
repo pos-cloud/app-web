@@ -7,8 +7,8 @@ export class Config {
     static printHost: string = "localhost";
     static apiURL: string = "http://localhost:7000/api/";
     static printURL: string = "http://localhost:5000/api-pos-resto";
-    static apiPort: number = 3000;
-    static printPort: number = 3000;
+    static apiPort: number = 7000;
+    static printPort: number = 7000;
 
     constructor() { }
 
