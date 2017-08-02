@@ -67,7 +67,7 @@ export class ListEmployeeTypesComponent implements OnInit {
       error => {
         this.alertMessage = error._body;
         if(!this.alertMessage) {
-            this.alertMessage = "Error en la petición.";
+            this.alertMessage = "Ha ocurrido un error en el servidor";
         }
       }
     );

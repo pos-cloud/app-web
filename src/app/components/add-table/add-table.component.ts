@@ -35,7 +35,8 @@ export class AddTableComponent  implements OnInit {
 
   public validationMessages = {
     'description': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.',
+      'maxlength': 'No puede exceder los 6 carácteres.'
     },
     'room': {
       'required':       'Este campo es requerido.'
@@ -74,7 +75,8 @@ export class AddTableComponent  implements OnInit {
 
     this.tableForm = this._fb.group({
       'description': [this.table.description, [
-          Validators.required
+          Validators.required,
+          Validators.maxLength(6)
         ]
       ],
       'room': [this.table.room, [
@@ -140,7 +142,7 @@ export class AddTableComponent  implements OnInit {
         error => {
           this.alertMessage = error._body;
           if(!this.alertMessage) {
-            this.alertMessage = "Error en la petición.";
+            this.alertMessage = "Ha ocurrido un error en el servidor";
           }
         }
       );

@@ -1,0 +1,42 @@
+<div class="modal-header">
+  <h4 class="modal-title">Configurar servidor</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage">
+    <ngb-alert (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="configForm" #formConfigRoom="ngForm" (ngSubmit)="addConfig()" autocomplete="on">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="apiHost" class="control-label">IP - apiHost:</label>
+          <input type="text" class="form-control" formControlName="apiHost" name="apiHost" id="apiHost" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.apiHost" class="alert alert-danger">
+            {{ formErrors.apiHost }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="apiPort" class="control-label">Puerto:</label>
+          <input type="number" class="form-control" formControlName="apiPort" name="apiPort" id="apiPort"/>
+          <div *ngIf="formErrors.apiPort" class="alert alert-danger">
+            {{ formErrors.apiPort }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary" [disabled]="!configForm.valid || loading">
+        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <span *ngIf="!loading">Conectar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>
