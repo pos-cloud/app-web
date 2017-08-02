@@ -26,6 +26,7 @@ import { ClockService } from './services/clock.service';
 import { PrintService } from './services/print.service';
 import { PrinterService } from './services/printer.service';
 import { ImportService } from './services/import.service';
+import { ConfigService } from './services/config.service';
 
 //componentes
 import { HeaderComponent } from './components/header/header.component';
@@ -90,6 +91,7 @@ import { OrderByPipe } from './pipes/order-by.pipe';
 //directives
 import { FocusDirective } from './directives/focus.directive';
 import { ReportsComponent } from './components/reports/reports.component';
+import { ConfigComponent } from './components/config/config.component';
 
 @NgModule({
   declarations: [
@@ -149,7 +151,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     DeletePrinterComponent,
     UpdatePrinterComponent,
     ListPrintersComponent,
-    ImportComponent
+    ImportComponent,
+    ConfigComponent
   ],
   imports: [
     BrowserModule,
@@ -178,7 +181,8 @@ import { ReportsComponent } from './components/reports/reports.component';
     ClockService,
     PrintService,
     PrinterService,
-    ImportService
+    ImportService,
+    ConfigService
   ],
   bootstrap: [AppComponent]
 })

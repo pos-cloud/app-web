@@ -51,6 +51,7 @@ import { ListPrintersComponent } from './components/list-printers/list-printers.
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { ImportComponent } from './components/import/import.component';
+import { ConfigComponent } from './components/config/config.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -101,11 +102,12 @@ const _routes: Routes = [
   { path: 'admin/editar-impresora', component: UpdatePrinterComponent },
   { path: 'admin/eliminar-impresora', component: DeletePrinterComponent },
   { path: 'admin/import', component: ImportComponent },
+  { path: 'admin/config', component: ConfigComponent },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
-  { path: 'reports', component: ReportsComponent},
+  { path: 'reports', component: ReportsComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 
