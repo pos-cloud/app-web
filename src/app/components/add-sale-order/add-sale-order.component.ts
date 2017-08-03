@@ -439,6 +439,10 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = false;
   }
 
+  public closeTable() {
+    this.changeStateOfTable(TableState.Busy);
+  }
+
   public changeStateOfTable(state: any): void {
 
     this.table.state = state;
