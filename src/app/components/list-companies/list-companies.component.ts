@@ -83,6 +83,10 @@ export class ListCompaniesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getCompanies();
+  }
   
   public openModal(op: string, company:Company): void {
 

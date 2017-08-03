@@ -144,6 +144,10 @@ export class ListTablesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getTables();
+  }
   
   public openModal(op: string, table: Table, employee?: Employee): void {
 

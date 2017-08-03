@@ -3,6 +3,7 @@
     <div class="card-header bg-primary card-inverse">Lista de Empleados
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Empleado</button>
+        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
         </span>

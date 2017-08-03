@@ -83,6 +83,10 @@ export class ListEmployeesComponent implements OnInit {
     this.propertyTerm = property;
   }
   
+  public refresh(): void {
+    this.getEmployees();
+  }
+  
   public openModal(op: string, employee:Employee): void {
 
     let modalRef;

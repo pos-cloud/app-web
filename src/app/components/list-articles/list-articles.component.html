@@ -4,6 +4,7 @@
     <div class="card-header bg-primary card-inverse">Lista de Artículos
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Artículo</button>
+        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
         <button class="btn btn-primary" (click)="openModal('import', null)" >Importar Artículos</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>

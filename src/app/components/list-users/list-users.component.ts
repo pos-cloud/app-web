@@ -82,6 +82,10 @@ export class ListUsersComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getUsers();
+  }
   
   public openModal(op: string, user:User): void {
 

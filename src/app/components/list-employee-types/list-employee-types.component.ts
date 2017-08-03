@@ -82,6 +82,10 @@ export class ListEmployeeTypesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getEmployeeTypes();
+  }
   
   public openModal(op: string, employeeType:EmployeeType): void {
 

@@ -81,6 +81,10 @@ export class ListCashBoxesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getCashBoxes();
+  }
   
   public openModal(op: string, cashBox:CashBox): void {
 

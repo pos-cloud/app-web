@@ -81,6 +81,10 @@ export class ListSaleOrdersComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getSaleOrders();
+  }
   
   public openModal(op: string, saleOrder:SaleOrder): void {
 

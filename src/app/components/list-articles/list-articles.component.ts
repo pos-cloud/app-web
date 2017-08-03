@@ -89,6 +89,10 @@ export class ListArticlesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getArticles();
+  }
   
   public openModal(op: string, article:Article): void {
 

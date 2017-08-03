@@ -83,6 +83,10 @@ export class ListRoomsComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getRooms();
+  }
   
   public openModal(op: string, room:Room): void {
 

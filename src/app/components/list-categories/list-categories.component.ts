@@ -88,6 +88,10 @@ export class ListCategoriesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getCategories();
+  }
   
   public openModal(op: string, category:Category): void {
 

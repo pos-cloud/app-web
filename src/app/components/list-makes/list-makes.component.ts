@@ -83,6 +83,10 @@ export class ListMakesComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getMakes();
+  }
   
   public openModal(op: string, make:Make): void {
 

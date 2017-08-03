@@ -83,6 +83,10 @@ export class ListPrintersComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
+
+  public refresh(): void {
+    this.getPrinters();
+  }
   
   public openModal(op: string, printer:Printer): void {
 
