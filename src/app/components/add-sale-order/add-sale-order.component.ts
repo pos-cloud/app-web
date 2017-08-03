@@ -785,22 +785,22 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
-        this.changeStateOfTable(TableState.Pending);
-        // this._printService.toPrint(print).subscribe(
-        //   result => {
-        //     if(result.message === 'ok'){
-        //       this.changeStateOfTable(TableState.Pending);
-        //       this.backToRooms();
-        //     } else {
-        //       this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-        //       this.alertConfig.type = "danger";
-        //     }
-        //   },
-        //   error => {
-        //     this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        //     this.alertConfig.type = 'danger';
-        //   }
-        // );
+        this._printService.toPrint(print).subscribe(
+          result => {
+            console.log(result);
+            if(result.message === 'ok'){
+              this.changeStateOfTable(TableState.Pending);
+            } else {
+              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+              this.alertConfig.type = "danger";
+            }
+          },
+          error => {
+            console.log(error);
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+            this.alertConfig.type = 'danger';
+          }
+        );
       } else {
         this.alertMessage = "No existen artículos en el pedido.";
         this.alertConfig.type = "danger";
@@ -847,22 +847,21 @@ export class AddSaleOrderComponent implements OnInit {
         let print: Print = new Print();
         print.fileName = fileName;
         print.content = content;
-        this.changeStateOfTable(TableState.Available);
-        // this._printService.toPrint(print).subscribe(
-        //   result => {
-        //     if(result.message === 'ok'){
-        //       this.changeStateOfTable(TableState.Available);
-        //       this.backToRooms();
-        //     } else {
-        //       this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-        //       this.alertConfig.type = "danger";
-        //     }
-        //   },
-        //   error => {
-        //     this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        //     this.alertConfig.type = 'danger';
-        //   }
-        // );
+        this._printService.toPrint(print).subscribe(
+          result => {
+            console.log(result);
+            if(result.message === 'ok'){
+              this.changeStateOfTable(TableState.Available);
+            } else {
+              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+              this.alertConfig.type = "danger";
+            }
+          },
+          error => {
+            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+            this.alertConfig.type = 'danger';
+          }
+        );
       } else {
         this.alertMessage = "No existen artículos en el pedido.";
         this.alertConfig.type = "danger";
