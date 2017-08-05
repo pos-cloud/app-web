@@ -248,7 +248,7 @@ export class AddArticleComponent  implements OnInit {
     this.loading = true;
     if(this.articleForm.value.posDescription === "") {
       let slicePipe = new SlicePipe();
-      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
+      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,0,10);
     }
     this.article = this.articleForm.value;
     this.saveArticle();
