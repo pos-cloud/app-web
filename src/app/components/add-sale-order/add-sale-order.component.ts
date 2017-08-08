@@ -1,25 +1,34 @@
+//Angular
 import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
+//Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+//Modelos
 import { SaleOrder, SaleOrderState } from './../../models/sale-order';
-import { Article } from './../../models/article';
+import { Article, ArticleType } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Employee } from './../../models/employee';
 import { Category } from './../../models/category';
 import { Room } from './../../models/room';
 import { Print } from './../../models/print';
+import { Printer, PrinterType } from './../../models/printer';
 
+//Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
+import { PrinterService } from './../../services/printer.service';
 
+//Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 
+//Pipes
 import { DatePipe, DecimalPipe } from '@angular/common'; 
 
 @Component({
@@ -34,7 +43,9 @@ export class AddSaleOrderComponent implements OnInit {
   public saleOrder: SaleOrder;
   public alertMessage: any;
   public movementOfArticle: MovementOfArticle;
-  public movementsOfArticles: MovementOfArticle[] = new Array();
+  public movementsOfArticles: MovementOfArticle[];
+  public printers: Printer[];
+  public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada
   public amountOfItemForm: FormGroup;
   public discountForm: FormGroup;
   public paymentForm: FormGroup;
@@ -49,12 +60,16 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
-  @ViewChild('contentPayment') contentPayment:ElementRef;
+  @ViewChild('contentPayment') contentPayment: ElementRef;
+  @ViewChild('contentPrinters') contentPrinters: ElementRef;
   public discountPorcent: number = 0.00;
   public discountAmount: number = 0.00;
   public isNewItem: boolean;
   public paymentAmount: number = 0.00;
   public paymentChange: string = '0.00';
+  public typeOfOperationToPrint: string;
+  public kitchenArticlesToPrint: MovementOfArticle[];
+  public barArticlesToPrint: MovementOfArticle[];
 
   public formErrors = {
     'description':'',
@@ -113,7 +128,8 @@ export class AddSaleOrderComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public _printerService: PrinterService
   ) {
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
@@ -122,7 +138,12 @@ export class AddSaleOrderComponent implements OnInit {
     this.saleOrder.table = new Table();
     this.table = new Table();
     this.movementOfArticle = new MovementOfArticle();
+    this.movementsOfArticles = new Array();
     this.categorySelected = new Category();
+    this.printers = new Array();
+    this.printersAux = new Array();
+    this.barArticlesToPrint = new Array();
+    this.kitchenArticlesToPrint = new Array();
   }
 
   ngOnInit(): void {
@@ -133,10 +154,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.tableId = pathLocation[5];
     }
 
-    this.getLastSaleOrderByTable();
-    this.buildForm();
-    this.buildFormDiscount();
-    this.buildFormPayment();
+    this.getPrinters();
   }
 
   public getLastSaleOrderByTable(): void {
@@ -419,7 +437,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.alertMessage = result.message;
             this.alertConfig.type = 'danger';
           } else {
-            //No anulamos el mensaje para que figuren en el pos.
+            //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
           }
         },
         error => {
@@ -440,7 +458,30 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public closeTable() {
-    this.changeStateOfTable(TableState.Busy);
+
+    this.typeOfOperationToPrint = 'item';
+    for(let movementOfArticle of this.movementsOfArticles) {
+      if(movementOfArticle.type === ArticleType.Bar && !movementOfArticle.printed) {
+        this.barArticlesToPrint.push(movementOfArticle);
+      }
+      if (movementOfArticle.type === ArticleType.Kitchen && !movementOfArticle.printed) {
+        this.kitchenArticlesToPrint.push(movementOfArticle);
+      }
+    }
+    
+    if(this.barArticlesToPrint.length !== 0) {
+      this.typeOfOperationToPrint = "bar";
+      this.openModal('printers');
+    } 
+    
+    if (this.kitchenArticlesToPrint.length !== 0) {
+        this.typeOfOperationToPrint = "kitchen";
+        this.openModal('printers');
+    }
+
+    if (this.barArticlesToPrint.length === 0 && this.kitchenArticlesToPrint.length === 0) {
+      this.changeStateOfTable(TableState.Busy);
+    }
   }
 
   public changeStateOfTable(state: any): void {
@@ -469,9 +510,12 @@ export class AddSaleOrderComponent implements OnInit {
   
   public addItem(itemData?: MovementOfArticle): void {
 
+    let article: Article = new Article();
     if(itemData) {
       this.isNewItem = false;
       this.movementOfArticle = itemData;
+      this.movementOfArticle.article = article;
+      this.movementOfArticle.article._id = itemData._id;
       this.movementOfArticle.amount = 1;
       this.amountOfItemForm.setValue({
         'description': this.movementOfArticle.description,
@@ -571,23 +615,113 @@ export class AddSaleOrderComponent implements OnInit {
               'cashChange' : parseFloat(this.paymentChange).toFixed(2),
             });
             modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
-              if(result  === "charge"){
+              if (result === "charge") {
                 this.saleOrder.state = SaleOrderState.Closed;
                 this.saleOrder.cashChange = this.paymentForm.value.cashChange;
                 this.updateSaleOrder();
                 this.table.employee = null;
-                this.toPrintCharge();
+                this.typeOfOperationToPrint = 'charge';
+                this.openModal('printers');
               }
             }, (reason) => {
-              
+
             });
           } else {
             this.alertMessage = "No existen artículos en el pedido.";
             this.alertConfig.type = "danger";
           }
           break;
+        case 'printers':
+          if (this.countPrinters() > 1) {
+            modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
+              if (result !== "cancel" && result !== "") {
+                this.distributeImpressions(result);
+              }
+            }, (reason) => {
+
+            });
+          } else if(this.countPrinters() !== 0) {
+            this.distributeImpressions(this.printersAux[0]);
+          } else {
+            this.alertMessage = "No se encontro impresora para la operación solicitada";
+          }
         default : ;
     };
+  }
+
+  public countPrinters(): number {
+    
+    let numberOfPrinters = 0;
+
+    for (let printer of this.printers) {
+      if(this.typeOfOperationToPrint === 'charge' && printer.type === PrinterType.Counter) {
+        this.printersAux.push(printer);
+        numberOfPrinters++;
+      } else if (this.typeOfOperationToPrint === 'bill' && printer.type === PrinterType.Counter) {
+        this.printersAux.push(printer);
+        numberOfPrinters++;
+      } else if (this.typeOfOperationToPrint === 'bar' && printer.type === PrinterType.Bar) {
+        this.printersAux.push(printer);
+        numberOfPrinters++;
+      } else if (this.typeOfOperationToPrint === 'kitchen' && printer.type === PrinterType.Kitchen) {
+        this.printersAux.push(printer);
+        numberOfPrinters++;
+      }
+    }
+
+    return numberOfPrinters;
+  }
+
+  public distributeImpressions(printer: Printer) {
+    
+    switch (this.typeOfOperationToPrint) {
+      case 'charge':
+        this.toPrintCharge(printer);
+        break;
+      case 'bill':
+        this.toPrintBill(printer);
+        break;
+      case 'bar':
+        this.toPrintBar(printer);
+        break;
+      case 'kitchen':
+        this.toPrintKitchen(printer);
+        break;
+      default:
+        this.alertMessage = "No se reconoce la operación de impresión";
+        break;
+    }
+  }
+
+  public setPrintBill(): void {
+    this.typeOfOperationToPrint = 'bill';
+    this.openModal('printers');
+  }
+
+  public getPrinters(): void {
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+          this.printers = null;
+        } else {
+          this.alertMessage = null;
+          this.printers = result.printers;
+          this.getLastSaleOrderByTable();
+          this.buildForm();
+          this.buildFormDiscount();
+          this.buildFormPayment();
+        }
+      },
+      error => {
+        this.alertMessage = error._body;
+        if (!this.alertMessage) {
+          this.alertMessage = "Ha ocurrido un error en el servidor";
+        }
+      }
+    );
   }
 
   public backToRooms(): void {
@@ -595,12 +729,13 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public confirmAmount(): void {
-    
+
     this.movementOfArticle.description = this.amountOfItemForm.value.description;
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+    this.movementOfArticle.printed = false;
     this.saveMovementOfArticle();
   }
 
@@ -747,124 +882,245 @@ export class AddSaleOrderComponent implements OnInit {
       this.applyDiscount();
    }
 
-   public toPrintBill(): void {
+   public toPrintBill(printerSelected: Printer): void {
      
-      if(this.movementsOfArticles.length !== 0) {
-        let datePipe = new DatePipe('es-AR');
-        let decimalPipe = new DecimalPipe('ARS');
-        let content: string;
-        content =
-          'CONFITERIA LA PALMA - CASA DE TE\n' +
-          'CUIT Nro.: 30-61432547-6\n' +
-          '25 de Mayo 2028 - San Francisco - Córdoba\n' +
-          'Tel: (03564) 424423\n' +
-          'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
-          'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-          'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
-          'Mesa: ' + this.saleOrder.table.description + '\n' +
-          'Empleado: ' + this.saleOrder.employee.name + '\n\n';
-          if(this.saleOrder.company) {
-            content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+    if(this.movementsOfArticles.length !== 0) {
+      let datePipe = new DatePipe('es-AR');
+      let decimalPipe = new DecimalPipe('ARS');
+      let content: string;
+      content =
+        'CONFITERIA LA PALMA - CASA DE TE\n' +
+        'CUIT Nro.: 30-61432547-6\n' +
+        '25 de Mayo 2028 - San Francisco - Córdoba\n' +
+        'Tel: (03564) 424423\n' +
+        'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
+        'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
+        'Mesa: ' + this.saleOrder.table.description + '\n' +
+        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
+        if(this.saleOrder.company) {
+          content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+        } else {
+          content += 'Cliente: Consumidor Final\n\n';
+        }
+        content += 'DESC.			CANT	MONTO\n' +
+        '----------------------------------------\n';
+        for (let movementOfArticle of this.movementsOfArticles) {
+          content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
+        }
+        content += '----------------------------------------\n' +
+        'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
+        'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
+        'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n\n' +
+        'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
+        '----Gracias por su visita.----\n\n\n';
+
+      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      
+      let print: Print = new Print();
+      print.fileName = fileName;
+      print.content = content;
+      this._printService.toPrint(print).subscribe(
+        result => {
+          this.printersAux = new Array();
+          if(result.message === 'ok'){
+            this.changeStateOfTable(TableState.Pending);
           } else {
-            content += 'Cliente: Consumidor Final\n\n';
+            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+            this.alertConfig.type = "danger";
           }
-          content += 'DESC.			CANT	MONTO\n' +
-          '----------------------------------------\n';
-          for (let movementOfArticle of this.movementsOfArticles) {
-            content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
-          }
-          content += '----------------------------------------\n' +
-          'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
-          'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
-          'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n\n' +
-          'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
-          '----Gracias por su visita.----\n\n\n';
+        },
+        error => {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+          this.alertConfig.type = 'danger';
+        }
+      );
+    } else {
+      this.alertMessage = "No existen artículos en el pedido.";
+      this.alertConfig.type = "danger";
+    }
+  }
 
-        let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
-        
-        let print: Print = new Print();
-        print.fileName = fileName;
-        print.content = content;
-        this._printService.toPrint(print).subscribe(
-          result => {
-            console.log(result);
-            if(result.message === 'ok'){
-              this.changeStateOfTable(TableState.Pending);
-            } else {
-              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-              this.alertConfig.type = "danger";
-            }
-          },
-          error => {
-            console.log(error);
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-            this.alertConfig.type = 'danger';
-          }
-        );
-      } else {
-        this.alertMessage = "No existen artículos en el pedido.";
-        this.alertConfig.type = "danger";
-      }
-   }
+  public toPrintCharge(printerSelected: Printer): void {
+    
+    if(this.movementsOfArticles.length !== 0) {
+      let datePipe = new DatePipe('es-AR');
+      let decimalPipe = new DecimalPipe('ARS');
+      let content: string;
+      content =
+        'CONFITERIA LA PALMA - CASA DE TE\n' +
+        'CUIT Nro.: 30-61432547-6\n' +
+        '25 de Mayo 2028 - San Francisco - Córdoba\n' +
+        'Tel: (03564) 424423\n' +
+        'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
+        'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
+        'Mesa: ' + this.saleOrder.table.description + '\n' +
+        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
+        if(this.saleOrder.company) {
+          content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+        } else {
+          content += 'Cliente: Consumidor Final\n\n';
+        }
+        content += 'DESC.			CANT	MONTO\n' +
+        '----------------------------------------\n';
+        for (let movementOfArticle of this.movementsOfArticles) {
+          content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
+        }
+        content += '----------------------------------------\n' +
+        'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
+        'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
+        'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
+        'Su pago:					 '+ decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.saleOrder.cashChange), '1.2-2') + '\n' +
+        'Su vuelto:					 '+ decimalPipe.transform(this.saleOrder.cashChange, '1.2-2') + '\n\n' +
+        'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
+        '----Gracias por su visita.----\n\n\n';
 
-   public toPrintCharge(): void {
-
-      if(this.movementsOfArticles.length !== 0) {
-        let datePipe = new DatePipe('es-AR');
-        let decimalPipe = new DecimalPipe('ARS');
-        let content: string;
-        content =
-          'CONFITERIA LA PALMA - CASA DE TE\n' +
-          'CUIT Nro.: 30-61432547-6\n' +
-          '25 de Mayo 2028 - San Francisco - Córdoba\n' +
-          'Tel: (03564) 424423\n' +
-          'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
-          'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-          'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
-          'Mesa: ' + this.saleOrder.table.description + '\n' +
-          'Empleado: ' + this.saleOrder.employee.name + '\n\n';
-          if(this.saleOrder.company) {
-            content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      
+      let print: Print = new Print();
+      print.fileName = fileName;
+      print.content = content;
+      this._printService.toPrint(print).subscribe(
+        result => {
+          this.printersAux = new Array();
+          if(result.message === 'ok'){
+            this.changeStateOfTable(TableState.Available);
           } else {
-            content += 'Cliente: Consumidor Final\n\n';
+            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+            this.alertConfig.type = "danger";
           }
-          content += 'DESC.			CANT	MONTO\n' +
-          '----------------------------------------\n';
-          for (let movementOfArticle of this.movementsOfArticles) {
-            content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
-          }
-          content += '----------------------------------------\n' +
-          'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
-          'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
-          'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
-          'Su pago:					 '+ decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.saleOrder.cashChange), '1.2-2') + '\n' +
-          'Su vuelto:					 '+ decimalPipe.transform(this.saleOrder.cashChange, '1.2-2') + '\n\n' +
-          'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
-          '----Gracias por su visita.----\n\n\n';
+        },
+        error => {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+          this.alertConfig.type = 'danger';
+        }
+      );
+    } else {
+      this.alertMessage = "No existen artículos en el pedido.";
+      this.alertConfig.type = "danger";
+    }
+  }
 
-        let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
-        
-        let print: Print = new Print();
-        print.fileName = fileName;
-        print.content = content;
-        this._printService.toPrint(print).subscribe(
-          result => {
-            console.log(result);
-            if(result.message === 'ok'){
-              this.changeStateOfTable(TableState.Available);
-            } else {
-              this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-              this.alertConfig.type = "danger";
-            }
-          },
-          error => {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-            this.alertConfig.type = 'danger';
-          }
-        );
-      } else {
-        this.alertMessage = "No existen artículos en el pedido.";
-        this.alertConfig.type = "danger";
+  public toPrintBar(printerSelected: Printer): void {
+
+    if (this.barArticlesToPrint.length !== 0) {
+      let datePipe = new DatePipe('es-AR');
+      let decimalPipe = new DecimalPipe('ARS');
+      let content: string;
+      content =
+        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.date, 'HH:mm') + '\n' +
+        'Mesa: ' + this.saleOrder.table.description + '\n' +
+        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
+
+      content += 'DESCRIPCION.			CANTIDAD\n' +
+        '----------------------------------------\n';
+      for (let barArticleToPrint of this.barArticlesToPrint) {
+        content += barArticleToPrint.description + '    ' + barArticleToPrint.amount + '\n';
+        content += barArticleToPrint.observation + '\n';
       }
-   }
+
+      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+
+      let print: Print = new Print();
+      print.fileName = fileName;
+      print.content = content;
+      this._printService.toPrint(print).subscribe(
+        result => {
+          this.printersAux = new Array();
+          if (result.message === 'ok') {
+            for (let movementOfArticle of this.barArticlesToPrint) {
+              movementOfArticle.printed = true;
+              this.updateMovementOfArticle(movementOfArticle);
+            }
+            if(this.kitchenArticlesToPrint.length === 0) {
+              this.changeStateOfTable(TableState.Busy);
+            } else {
+              this.typeOfOperationToPrint = "kitchen";
+              this.openModal("printers");
+            }
+          } else {
+            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+            this.alertConfig.type = "danger";
+          }
+        },
+        error => {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+          this.alertConfig.type = 'danger';
+        }
+      );
+    } else {
+      this.alertMessage = "No existen artículos en el pedido.";
+      this.alertConfig.type = "danger";
+    }
+  }
+
+  public toPrintKitchen(printerSelected: Printer): void {
+
+    if (this.movementsOfArticles.length !== 0) {
+      let datePipe = new DatePipe('es-AR');
+      let decimalPipe = new DecimalPipe('ARS');
+      let content: string;
+      content =
+        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.date, 'HH:mm') + '\n' +
+        'Mesa: ' + this.saleOrder.table.description + '\n' +
+        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
+
+      content += 'DESCRIPCION.			CANTIDAD\n' +
+        '----------------------------------------\n';
+      for (let kitchenArticleToPrint of this.kitchenArticlesToPrint) {
+        content += kitchenArticleToPrint.description + '    ' + kitchenArticleToPrint.amount + '\n';
+        content += kitchenArticleToPrint.observation + '\n';
+      }
+
+      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+
+      let print: Print = new Print();
+      print.fileName = fileName;
+      print.content = content;
+      this._printService.toPrint(print).subscribe(
+        result => {
+          this.printersAux = new Array();
+          if (result.message === 'ok') {
+            for (let movementOfArticle of this.kitchenArticlesToPrint) {
+              movementOfArticle.printed = true;
+              this.updateMovementOfArticle(movementOfArticle);
+            }
+            this.changeStateOfTable(TableState.Busy);
+          } else {
+            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
+            this.alertConfig.type = "danger";
+          }
+        },
+        error => {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+          this.alertConfig.type = 'danger';
+        }
+      );
+    } else {
+      this.alertMessage = "No existen artículos en el pedido.";
+      this.alertConfig.type = "danger";
+    }
+  }
+
+  public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
+
+    this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
+      result => {
+        if (!result.movementOfArticle) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+        } else {
+          //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
+        }
+      },
+      error => {
+        this.alertMessage = error._body;
+        if (!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
+    );
+  }
 }

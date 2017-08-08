@@ -13,33 +13,38 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th (click)="orderBy('name')">Name </th>
-              <th (click)="orderBy('origin')">Origen </th>
-              <th (click)="orderBy('connectionURL')">URL de conexión </th>
+              <th (click)="orderBy('name')">Name</th>
+              <th (click)="orderBy('origin')">Origen</th>
+              <th (click)="orderBy('connectionURL')">URL de conexión</th>
+              <th (click)="orderBy('type')">Tipo</th>
               <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Origen..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterConnectionURL" placeholder="URL de conexión..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterConnectionURL" placeholder="URL de conexión..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let printer of printers | orderBy: orderTerm: propertyTerm
                                                 | filter: filterName:'name' 
                                                 | filter: filterOrigin:'origin'
-                                                | filter: filterConnectionURL:'connectionURL'
+                                                | filter: filterConnectionURL:'connectionURL' 
+                                                | filter: filterType:'type'
                                                 | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td class="flat">{{printer.name}}</td>
               <td class="flat">{{printer.origin}}</td>
               <td class="flat">{{printer.connectionURL}}</td>
+              <td class="flat">{{printer.type}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', printer)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', printer)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>
             <tr align="center" *ngIf="arePrintersEmpty">
-              <td colspan="3">No se encontraron impresoras</td>
+              <td colspan="4">No se encontraron impresoras</td>
             </tr>
           </tbody>
         </table>

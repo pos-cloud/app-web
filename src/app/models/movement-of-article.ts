@@ -1,11 +1,11 @@
-import { Article } from './article';
+import { Article, ArticleType } from './article';
 import { SaleOrder } from './sale-order';
 
 export class MovementOfArticle {
 
     public _id: string;
     public code: number = 1;
-    public description: string = '';
+    public description: string = "";
     public observation: string;
     public salePrice: number = 0.00;
     public totalPrice: number = 0.00;
@@ -14,6 +14,9 @@ export class MovementOfArticle {
     public barcode: string;
     public amount: number = 1;
     public notes: string;
+    public type: ArticleType;
+    public printed: boolean = false;
+    public article: Article = null;
     public saleOrder: SaleOrder = null;
 
 	constructor () {}
