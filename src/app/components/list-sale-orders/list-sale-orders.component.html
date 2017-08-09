@@ -37,7 +37,15 @@
               <td>{{saleOrder.number}}</td>
               <td *ngIf="saleOrder.table">{{saleOrder.table.description}}</td>
               <td>{{saleOrder.date | date: ['dd/MM/yyyy'] }}</td>
-              <td><h6><span class="badge badge-default">{{saleOrder.state}}</span></h6></td>
+              <td>
+                <h6>
+                  <span class="badge" [ngClass]="{'badge-danger':saleOrder.state==='Anulado',
+                                                  'badge-success':saleOrder.state==='Cerrado', 
+                                                  'badge-warning':saleOrder.state==='Abierto'}">
+                    {{saleOrder.state}}
+                  </span>
+                </h6>
+              </td>
               <td>{{saleOrder.observation}}</td>
               <td>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</td>
             </tr>
