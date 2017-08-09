@@ -676,6 +676,7 @@ export class AddSaleOrderComponent implements OnInit {
     
     switch (this.typeOfOperationToPrint) {
       case 'charge':
+        this.assignOrigin(printer.origin);
         this.toPrintCharge(printer);
         break;
       case 'bill':
@@ -691,6 +692,11 @@ export class AddSaleOrderComponent implements OnInit {
         this.alertMessage = "No se reconoce la operación de impresión";
         break;
     }
+  }
+
+  public assignOrigin(origin: number) {
+    this.saleOrder.origin = origin;
+    this.updateSaleOrder();
   }
 
   public setPrintBill(): void {
