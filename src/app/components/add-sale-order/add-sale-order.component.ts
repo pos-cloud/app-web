@@ -920,6 +920,7 @@ export class AddSaleOrderComponent implements OnInit {
       let print: Print = new Print();
       print.fileName = fileName;
       print.content = content;
+      print.printer = printerSelected;
       this._printService.toPrint(print).subscribe(
         result => {
           this.printersAux = new Array();
@@ -971,7 +972,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
         'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
         'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
-        'Su pago:					 '+ decimalPipe.transform(parseFloat(""+this.saleOrder.totalPrice) * parseFloat(""+this.saleOrder.cashChange), '1.2-2') + '\n' +
+          'Su pago:					 ' + decimalPipe.transform(parseFloat("" + this.saleOrder.cashChange) - parseFloat("" + this.saleOrder.totalPrice), '1.2-2') + '\n' +
         'Su vuelto:					 '+ decimalPipe.transform(this.saleOrder.cashChange, '1.2-2') + '\n\n' +
         'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
         '----Gracias por su visita.----\n\n\n';
@@ -981,6 +982,7 @@ export class AddSaleOrderComponent implements OnInit {
       let print: Print = new Print();
       print.fileName = fileName;
       print.content = content;
+      print.printer = printerSelected;
       this._printService.toPrint(print).subscribe(
         result => {
           this.printersAux = new Array();
@@ -1025,6 +1027,7 @@ export class AddSaleOrderComponent implements OnInit {
       let print: Print = new Print();
       print.fileName = fileName;
       print.content = content;
+      print.printer = printerSelected;
       this._printService.toPrint(print).subscribe(
         result => {
           this.printersAux = new Array();
@@ -1078,6 +1081,7 @@ export class AddSaleOrderComponent implements OnInit {
       let print: Print = new Print();
       print.fileName = fileName;
       print.content = content;
+      print.printer = printerSelected;
       this._printService.toPrint(print).subscribe(
         result => {
           this.printersAux = new Array();
