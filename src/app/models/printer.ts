@@ -4,6 +4,13 @@ export class Printer {
     public name: string;
     public origin: number = 0;
     public connectionURL: string;
+    public type: PrinterType = PrinterType.Counter;
 
     constructor() {}
+}
+
+export enum PrinterType {
+    Bar = <any>"Bar",
+    Kitchen = <any>"Cocina",
+    Counter = <any>"Mostrador"
 }

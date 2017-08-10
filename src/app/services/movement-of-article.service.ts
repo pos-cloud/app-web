@@ -30,8 +30,8 @@ export class MovementOfArticleService {
     return this._http.delete(Config.apiURL + "movement-of-article/"+id).map (res => res.json());
   }
 
-  updateMovementOfArticle (id: string, movementOfArticle: MovementOfArticle){
-    return this._http.put(Config.apiURL + "movement-of-article/"+id, movementOfArticle).map (res => res.json());
+  updateMovementOfArticle (movementOfArticle: MovementOfArticle){
+    return this._http.put(Config.apiURL + "movement-of-article/" + movementOfArticle._id, movementOfArticle).map (res => res.json());
   }
 
   getMovementsOfSaleOrder (saleOrderId: string) {

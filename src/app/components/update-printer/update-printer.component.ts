@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Printer } from './../../models/printer';
+import { Printer, PrinterType } from './../../models/printer';
 
 import { PrinterService } from './../../services/printer.service';
 
@@ -18,6 +18,7 @@ import { PrinterService } from './../../services/printer.service';
 export class UpdatePrinterComponent implements OnInit {
 
   @Input() printer: Printer;
+  public types: PrinterType[] = [PrinterType.Bar, PrinterType.Kitchen, PrinterType.Counter];
   public printerForm: FormGroup;
   public alertMessage: any;
   public userType: string;
@@ -26,7 +27,8 @@ export class UpdatePrinterComponent implements OnInit {
 
   public formErrors = {
     'name': '',
-    'connectionURL': ''
+    'connectionURL': '',
+    'type': ''
   };
 
   public validationMessages = {
@@ -35,6 +37,9 @@ export class UpdatePrinterComponent implements OnInit {
     },
     'connectionURL': {
       'required':       'Este campo es requerido.'
+    },
+    'type': {
+      'required': 'Este campo es requerido.'
     }
   };
 
@@ -58,7 +63,8 @@ export class UpdatePrinterComponent implements OnInit {
       '_id':this.printer._id,
       'name': this.printer.name,
       'origin': this.printer.origin,
-      'connectionURL': this.printer.connectionURL
+      'connectionURL': this.printer.connectionURL,
+      'type': this.printer.type
     });
   }
 
@@ -82,6 +88,10 @@ export class UpdatePrinterComponent implements OnInit {
       'connectionURL': [this.printer.name, [
           Validators.required
         ]
+      ],
+      'type': [this.printer.type, [
+        Validators.required
+      ]
       ],
     });
 

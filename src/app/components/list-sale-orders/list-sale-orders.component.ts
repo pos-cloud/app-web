@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { SaleOrder } from './../../models/sale-order';
+import { SaleOrder, SaleOrderState } from './../../models/sale-order';
 import { SaleOrderService } from './../../services/sale-order.service';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';

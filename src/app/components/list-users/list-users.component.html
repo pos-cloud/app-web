@@ -27,7 +27,14 @@
           <tbody>
             <tr *ngFor="let user of users | orderBy: orderTerm: propertyTerm | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{user.name}}</td>
-              <td><h6><span class="badge badge-default">{{user.state}}</span></h6></td>
+              <td>
+                <h6>
+                  <span class="badge" [ngClass]="{'badge-danger':user.state==='No Habilitado',
+                                                  'badge-success':user.state==='Habilitado'}">
+                    {{user.state}}
+                  </span>
+                </h6>
+              </td>
               <td *ngIf="user.employee">{{user.employee.name}}</td>
               <td *ngIf="!user.employee"></td>
               <td align="center">

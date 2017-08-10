@@ -58,7 +58,7 @@
       </div>
       <hr>
       <div class="row">
-        <div class="col-md-6 btn-action btn-large center-content" (click)="toPrintBill()">
+        <div class="col-md-6 btn-action btn-large center-content" (click)="setPrintBill()">
           Cuenta
         </div>
         <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('charge')">
@@ -112,7 +112,7 @@
         <div class="col-md-2 btn-action btn-large center-content" (click)="addItem()">
           Agregar Artículo
         </div>
-        <div class="col-md-1 btn-action btn-large center-content" (click)="backToRooms()">
+        <div class="col-md-1 btn-action btn-large center-content" (click)="closeTable()">
           Cerrar
         </div>
       </div>
@@ -326,4 +326,28 @@
       </button>
     </div>
   </form>
+</ng-template>
+
+<!--MODAL IMPRESORA-->
+<ng-template #contentPrinters let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Impresoras</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <ul class="list-group">
+            <li class="list-group-item center-content" *ngFor="let printer of printersAux" (click)="c(printer)">{{printer.name}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+  </div>
 </ng-template>
