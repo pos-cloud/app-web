@@ -53,9 +53,11 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
 
+import { AuthGuard } from './guards/auth.guard';
+
 const _routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'inicio', component: HomeComponent },
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'inicio', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: HeaderComponent },
   { path: 'admin/productos', component: ListArticlesComponent },

@@ -7,6 +7,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { Table, TableState } from './../../models/table';
 import { Room } from './../../models/room';
 import { Employee } from './../../models/employee';
+import { Turn } from './../../models/turn';
 
 import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
@@ -200,26 +201,25 @@ export class ListTablesComponent implements OnInit {
             this.getEmployees();
 
             modalRef = this._modalService.open(this.content).result.then((result) => {
-                if(result  === "select_employee") {
-                  this.loading = true;
-                  this.selectEmployee();
-                } else {
-                  this.tableSelected.employee = null;
-                  this.loading = false;
-                }
-              }, (reason) => {
+              if(result  === "select_employee") {
+                this.loading = true;
+                this.selectEmployee();
+              } else {
                 this.tableSelected.employee = null;
-                  this.loading = false;
+                this.loading = false;
               }
-            );
+            }, (reason) => {
+              this.tableSelected.employee = null;
+                this.loading = false;
+            });
           }
         break;
         case 'login' :
           modalRef = this._modalService.open(LoginComponent, { size: 'lg' });
           modalRef.componentInstance.employeeSelected = this.tableSelected.employee;
           modalRef.result.then((result) => {
-            if(result === "turn_open") {
-              this.assignEmployee();
+            if(result._id) {
+              this.openTurn(result);
             } else {
               this.tableSelected.employee = null;
             }
@@ -231,17 +231,11 @@ export class ListTablesComponent implements OnInit {
     }
   };
 
-  public selectEmployee(): void {
-    this.employee = this.selectEmployeeForm.value.employee;
-    this.tableSelected.employee = this.employee;
-    this.getOpenTurn();
-  }
+  public getOpenTurn(employee: Employee): void {
 
-  public getOpenTurn(): void {
-  
-    this._turnService.getOpenTurn(this.tableSelected.employee._id).subscribe(
+    this._turnService.getOpenTurn(employee._id).subscribe(
       result => {
-        if(!result.turns) {
+        if (!result.turns) {
           this.loading = false;
           this.openModal('login', this.tableSelected);
         } else {
@@ -251,11 +245,41 @@ export class ListTablesComponent implements OnInit {
       },
       error => {
         this.alertMessage = error._body;
-        if(!this.alertMessage) {
+        if (!this.alertMessage) {
           this.alertMessage = "Ha ocurrido un error en el servidor";
         }
       }
     );
+  }
+
+  public openTurn(employee: Employee): void {
+
+    let turn: Turn = new Turn();
+    turn.employee = employee;
+
+    this._turnService.saveTurn(turn).subscribe(
+      result => {
+        if (!result.turn) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+        } else {
+          this.assignEmployee();
+        }
+      },
+      error => {
+        this.alertMessage = error._body;
+        if (!this.alertMessage) {
+          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        }
+        this.loading = false;
+      }
+    )
+  }
+
+  public selectEmployee(): void {
+    this.employee = this.selectEmployeeForm.value.employee;
+    this.tableSelected.employee = this.employee;
+    this.getOpenTurn(this.employee);
   }
 
   public getEmployees(): void {  

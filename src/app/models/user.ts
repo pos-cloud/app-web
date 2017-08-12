@@ -6,6 +6,7 @@ export class User {
 	public name: string;
 	public password: string;
 	public state: UserState = UserState.Enabled;
+	public token: String;
 	public employee: Employee = null;
 
 	constructor () {}

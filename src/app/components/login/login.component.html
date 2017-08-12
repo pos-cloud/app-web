@@ -1,5 +1,5 @@
 <div class="modal-header">
-	<h4 class="modal-title">Apertura de turno</h4>
+	<h4 class="modal-title">Iniciar Sessión</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -12,14 +12,14 @@
 	</div>
 	<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
 		<div class="modal-body">
-			<div class="row" *ngIf="userType==='admin'">
+			<div class="row" *ngIf="userType!=='pos'">
 				<div class="form-group col-md-12">
-					<label for="user" class="control-label">Usuario</label>
+					<label for="name" class="control-label">Usuario</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="user" name="user" id="user"/>
+						<input type="text" class="form-control" formControlName="name" name="name" id="name"/>
 					</div>
-					<div *ngIf="formErrors.user" class="alert alert-danger">
-						{{ formErrors.user }}
+					<div *ngIf="formErrors.name" class="alert alert-danger">
+						{{ formErrors.name }}
 					</div>
 				</div>
 			</div>

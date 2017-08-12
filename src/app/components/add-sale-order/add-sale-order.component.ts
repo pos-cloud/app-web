@@ -417,6 +417,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.alertMessage = null;
             this.saleOrder = result.saleOrder;
+            this.changeStateOfTable(TableState.Busy, false);
           }
         },
         error => {
@@ -480,11 +481,11 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     if (this.barArticlesToPrint.length === 0 && this.kitchenArticlesToPrint.length === 0) {
-      this.changeStateOfTable(TableState.Busy);
+      this.changeStateOfTable(TableState.Busy, true);
     }
   }
 
-  public changeStateOfTable(state: any): void {
+  public changeStateOfTable(state: any, closed: boolean): void {
 
     this.table.state = state;
     this._tableService.updateTable(this.table).subscribe(
@@ -494,7 +495,9 @@ export class AddSaleOrderComponent implements OnInit {
           this.alertConfig.type = 'danger';
         } else {
           this.table = result.table;
-          this.backToRooms();
+          if(closed) {
+            this.backToRooms();
+          }
         }
         this.loading = false;
       },
@@ -587,7 +590,7 @@ export class AddSaleOrderComponent implements OnInit {
               this.saleOrder.state = SaleOrderState.Canceled;
               this.updateSaleOrder();
               this.table.employee = null;
-              this.changeStateOfTable(TableState.Available);
+              this.changeStateOfTable(TableState.Available, true);
             }
           }, (reason) => {
             
@@ -931,7 +934,7 @@ export class AddSaleOrderComponent implements OnInit {
         result => {
           this.printersAux = new Array();
           if(result.message === 'ok'){
-            this.changeStateOfTable(TableState.Pending);
+            this.changeStateOfTable(TableState.Pending, true);
           } else {
             this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
             this.alertConfig.type = "danger";
@@ -993,7 +996,7 @@ export class AddSaleOrderComponent implements OnInit {
         result => {
           this.printersAux = new Array();
           if(result.message === 'ok'){
-            this.changeStateOfTable(TableState.Available);
+            this.changeStateOfTable(TableState.Available, true);
           } else {
             this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
             this.alertConfig.type = "danger";
@@ -1043,7 +1046,7 @@ export class AddSaleOrderComponent implements OnInit {
               this.updateMovementOfArticle(movementOfArticle);
             }
             if(this.kitchenArticlesToPrint.length === 0) {
-              this.changeStateOfTable(TableState.Busy);
+              this.changeStateOfTable(TableState.Busy, true);
             } else {
               this.typeOfOperationToPrint = "kitchen";
               this.openModal("printers");
@@ -1096,7 +1099,7 @@ export class AddSaleOrderComponent implements OnInit {
               movementOfArticle.printed = true;
               this.updateMovementOfArticle(movementOfArticle);
             }
-            this.changeStateOfTable(TableState.Busy);
+            this.changeStateOfTable(TableState.Busy, true);
           } else {
             this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
             this.alertConfig.type = "danger";

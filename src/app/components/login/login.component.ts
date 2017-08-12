@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
   public userType: string = "admin";
   public loading: boolean = false;
   @Input() employeeSelected: Employee;
+  @Input() routeRequired: Employee;
   public employees: Employee[] = new Array();
 
   public formErrors = {
@@ -63,7 +64,6 @@ export class LoginComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.user = new User();
-    this.getEmployees();
     if(this.employeeSelected !== undefined){
       this.getUserOfEmployee();
     }
@@ -88,28 +88,6 @@ export class LoginComponent implements OnInit {
             'state': this.user.state,
             'employee': this.user.employee._id
           });
-        }
-      },
-      error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
-      }
-    );
-  }
-  
-  public getEmployees(): void {  
-
-    this._employeeService.getEmployees().subscribe(
-      result => {
-        if(!result.employees) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
-          this.employees = null;
-        } else {
-          this.alertMessage = null;
-          this.employees = result.employees;
         }
       },
       error => {
@@ -169,64 +147,25 @@ export class LoginComponent implements OnInit {
   public login(): void {
   
     this.user = this.loginForm.value;
-    
     this._userservice.login(this.user).subscribe(
       result => {
         if (!result.user) {
             this.alertMessage = result.message;
             this.alertConfig.type = 'danger';
+            this.loading = false;
         } else {
           this.alertMessage = null;
           this.user = result.user;
-          this.getOpenTurn();
+          if(this.employeeSelected){
+            this.activeModal.close(this.employeeSelected);
+          } else {
+            localStorage.setItem('session_token',JSON.stringify(this.user.token));
+            this._router.navigate(['/pos']);
+          }
         }
       },
       error => {
         this.alertMessage = "Usuario o contraseña incorrecta" ;
-        this.loading = false;
-      }
-    )
-  }
-
-  public getOpenTurn(): void {
-    
-    this._turnService.getOpenTurn(this.employeeSelected._id).subscribe(
-      result => {
-        if(!result.turns) {
-          this.openTurn();
-        } else {
-          this.alertMessage = "El empleado seleccionado ya tiene el turno abierto" ;
-          this.alertConfig.type = "danger";
-        }
-      },
-      error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
-      }
-    );
-  }
-
-  public openTurn(): void {
-
-    let turn: Turn = new Turn();
-    turn.employee = this.user.employee;
-
-    this._turnService.saveTurn(turn).subscribe(
-      result => {
-        if (!result.turn) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
-        } else {
-          this.activeModal.close("turn_open");
-        }
-      },
-      error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
         this.loading = false;
       }
     )
