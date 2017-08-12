@@ -30,6 +30,9 @@ import { PrinterService } from './services/printer.service';
 import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
 
+//guards
+import { AuthGuard } from './guards/auth.guard';
+
 //componentes
 import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
@@ -184,7 +187,8 @@ import { ConfigComponent } from './components/config/config.component';
     PrintService,
     PrinterService,
     ImportService,
-    ConfigService
+    ConfigService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

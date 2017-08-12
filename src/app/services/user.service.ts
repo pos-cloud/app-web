@@ -15,7 +15,7 @@ export class UserService {
 	}
 
   getUser (id) {
-		return this._http.get(Config.apiURL + "user/"+id).map (res => res.json());
+		return this._http.get(Config.apiURL + "user/" + id).map (res => res.json());
 	}
 
   getUsers () {
@@ -23,22 +23,26 @@ export class UserService {
 	}
 
   login (user : User) {
-    return this._http.post(Config.apiURL + "login",user).map (res => res.json());
+    return this._http.post(Config.apiURL + "login", user).map (res => res.json());
 	}
 
   saveUser (user : User) {
-    return this._http.post(Config.apiURL + "user",user).map (res => res.json());
+    return this._http.post(Config.apiURL + "user", user).map (res => res.json());
   }
   
   deleteUser (id: string) {
-    return this._http.delete(Config.apiURL + "user/"+id).map (res => res.json());
+    return this._http.delete(Config.apiURL + "user/" + id).map (res => res.json());
   }
 
   updateUser (user: User){
-    return this._http.put(Config.apiURL + "user/"+user._id, user).map (res => res.json());
+    return this._http.put(Config.apiURL + "user/" + user._id, user).map (res => res.json());
   }
 
   getUserOfEmployee (employeeId: string) {
-		return this._http.get(Config.apiURL + 'users/where="employee":"'+employeeId+'"&limit=1').map (res => res.json());
-	}
+		return this._http.get(Config.apiURL + 'users/where="employee":"' + employeeId+'"&limit=1').map (res => res.json());
+  }
+  
+  isValidToken(token: string) {
+    return this._http.post(Config.apiURL + 'validate_token', token).map(res => res.json());
+  }
 }
