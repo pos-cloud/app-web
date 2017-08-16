@@ -145,8 +145,9 @@ export class LoginComponent implements OnInit {
   }
 
   public login(): void {
-  
+    
     this.user = this.loginForm.value;
+    this.loading = true;
     this._userservice.login(this.user).subscribe(
       result => {
         if (!result.user) {
@@ -162,6 +163,7 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('session_token',JSON.stringify(this.user.token));
             this._router.navigate(['/pos']);
           }
+          this.loading = false;
         }
       },
       error => {

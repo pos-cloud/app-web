@@ -1,37 +1,78 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { User } from './../models/user';
 import { UserService } from './../services/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+
+  public roles: Array<string>;
 
   constructor(
     private _router: Router,
     private _userService: UserService
   ) { }
   
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  canActivate( route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    let token = localStorage.getItem('session_token');
+    this.roles = route.data["roles"];
 
-    this._userService.isValidToken(token).subscribe(
+    //Buscamos si existen usuarios
+    this._userService.getUsers().subscribe(
       result => {
-        console.log(result);
-        if (!result.user) {
-          this._router.navigate(['/login']);
+        if (!result.users) {
+          //En caso de que no existan permite usar el sistema
+          return true;
         } else {
-          this._router.navigate(['/pos']);
+          //Si existe, exige login
+          let token = localStorage.getItem('session_token');
+
+          if (token !== null) {
+            this._userService.isValidToken(token).subscribe(
+              result => {
+                if (!result.user) {
+                  this._router.navigate(['/login']);
+                  return false;
+                } else {
+                  this._userService.checkPermission(result.user.employee).subscribe(
+                    result => {
+                      if (!result.employee) {
+                        this._router.navigate(['/login']);
+                        return false;
+                      } else {
+                        if (result.employee.type.description === this.roles[0]) {
+                          return true;
+                        } else {
+                          this._router.navigate(['/login']);
+                          return false;
+                        }
+                      }
+                    },
+                    error => {
+                      this._router.navigate(['/login']);
+                      return false;
+                    }
+                  );
+                }
+              },
+              error => {
+                this._router.navigate(['/login']);
+                return false;
+              }
+            );
+
+          } else {
+            this._router.navigate(['/login']);
+            return false;
+          }
         }
       },
       error => {
-        this._router.navigate(['/login']);
+        return false;
       }
     );
-    // not logged in so redirect to login page with the return url
-    this._router.navigate(['/login']);
+
     return true;
   }
 }

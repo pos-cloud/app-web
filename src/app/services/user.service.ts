@@ -43,6 +43,10 @@ export class UserService {
   }
   
   isValidToken(token: string) {
-    return this._http.post(Config.apiURL + 'validate_token', token).map(res => res.json());
+    return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, "")).map(res => res.json());
+  }
+
+  checkPermission(employee: string) {
+    return this._http.get(Config.apiURL + "check_permission/" + employee).map(res => res.json());
   }
 }
