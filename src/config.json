@@ -1,5 +1,8 @@
 {
 	"apiHost": "localhost",
+    "printHost": "localhost",
     "apiURL": "http://localhost:7000/api/",
-    "apiPort": 3000
+    "printURL": "http://localhost:5000/api-pos-resto",
+    "apiPort": 3000,
+    "printPort": 3000
 }
