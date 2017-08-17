@@ -4,11 +4,8 @@ export class Config {
 
     public _id: string;
     static apiHost: string = "localhost";
-    static printHost: string = "localhost";
     static apiURL: string = "http://localhost:7000/api/";
-    static printURL: string = "http://192.168.0.13:3030/api-pos-resto";
     static apiPort: number = 7000;
-    static printPort: number = 7000;
 
     constructor() { }
 
@@ -16,20 +13,9 @@ export class Config {
         this.apiHost = apiHost;
         Config.updateApiURL();
     }
-
-    public static setPrintHost(printHost): void {
-        this.printHost = printHost;
-        Config.updatePrintURL();
-    }
-
     public static setApiPort(apiPort): void {
         this.apiPort = apiPort;
         Config.updateApiURL();
-    }
-
-    public static setPrintPort(printPort): void {
-        this.printPort = printPort;
-        Config.updatePrintURL();
     }
 
     public static updateApiURL() {
@@ -37,14 +23,6 @@ export class Config {
             Config.apiURL = "http://" + Config.apiHost + ":" + Config.apiPort + "/api/";
         } else {
             Config.apiURL = "http://" + Config.apiHost + "/api/";
-        }
-    }
-
-    public static updatePrintURL() {
-        if (Config.printPort !== 0) {
-            Config.printURL = "http://" + Config.printHost + ":" + Config.printPort + "/api-pos-resto/";
-        } else {
-            Config.printURL = "http://" + Config.printHost + "/api-pos-resto/";
         }
     }
 }

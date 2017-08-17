@@ -133,7 +133,5 @@ export class ConfigComponent implements OnInit {
   public setConfigurationSettings(config) {
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
-    // Config.setPrintHost(config.printHost);
-    // Config.setPrintPort(config.printPort);
   }
 }
