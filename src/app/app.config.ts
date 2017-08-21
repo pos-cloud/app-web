@@ -6,30 +6,35 @@ export class Config {
     static apiHost: string = "localhost";
     static printHost: string = "localhost";
     static apiURL: string = "http://localhost:7000/api/";
+    static apiConnectionPassword: string;
     static printURL: string = "http://192.168.0.13:3030/api-pos-resto";
     static apiPort: number = 7000;
     static printPort: number = 7000;
 
     constructor() { }
 
-    public static setApiHost(apiHost): void {
+    public static setApiHost(apiHost: string): void {
         this.apiHost = apiHost;
         Config.updateApiURL();
     }
 
-    public static setPrintHost(printHost): void {
+    public static setPrintHost(printHost: string): void {
         this.printHost = printHost;
         Config.updatePrintURL();
     }
 
-    public static setApiPort(apiPort): void {
+    public static setApiPort(apiPort: number): void {
         this.apiPort = apiPort;
         Config.updateApiURL();
     }
 
-    public static setPrintPort(printPort): void {
+    public static setPrintPort(printPort: number): void {
         this.printPort = printPort;
         Config.updatePrintURL();
+    }
+
+    public static setApiConnectionPassword(apiConnectionPassword: string): void {
+        this.apiConnectionPassword = apiConnectionPassword;
     }
 
     public static updateApiURL() {

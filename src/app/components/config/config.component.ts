@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -19,6 +19,7 @@ export class ConfigComponent implements OnInit {
 
   public config: Config;
   public configForm: FormGroup;
+  public activeModal: NgbActiveModal;
   public alertMessage: any;
   public userType: string;
   public loading: boolean = false;
@@ -26,7 +27,8 @@ export class ConfigComponent implements OnInit {
 
   public formErrors = {
     'apiHost': '',
-    'apiPort': ''
+    'apiPort': '',
+    'apiConnectionPassword': ''
   };
 
   public validationMessages = {
@@ -34,26 +36,44 @@ export class ConfigComponent implements OnInit {
       'required': 'Este campo es requerido.'
     }, 
     'apiPort': {
-    }
+    },
+    'apiConnectionPassword': {
+      'required': 'Este campo es requerido.'
+    },
   };
 
   constructor(
     public _configService: ConfigService,
     public _fb: FormBuilder,
     public _router: Router,
-    public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
+    public alertConfig: NgbAlertConfig
   ) {
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
+    this.alertConfig.type = 'info';
+    this.alertConfig.dismissible = false;
+    this.alertMessage = "Luego de configarlo, deberá reiniciar el navegador";
   }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.config = new Config();
     this.buildForm();
+    this.getConfigLocal();
+  }
+
+  public getConfigLocal() {
+    
+    let result = this._configService.getConfigLocal();
+    if (result) {
+      if (result.config) {
+        let config = result.config;
+        this.configForm.setValue({
+          'apiHost': config.apiHost,
+          'apiPort': config.apiPort,
+          'apiConnectionPassword': config.apiConnectionPassword
+        });
+      }
+    }
   }
 
   ngAfterViewInit() {
@@ -68,6 +88,10 @@ export class ConfigComponent implements OnInit {
         ]
       ],
       'apiPort': [Config.apiPort, [
+        ]
+      ],
+      'apiConnectionPassword': [Config.apiConnectionPassword, [
+          Validators.required
         ]
       ],
     });
@@ -101,7 +125,54 @@ export class ConfigComponent implements OnInit {
     this.loading = true;
     this.config = this.configForm.value;
     this.setConfigurationSettings(this.config);
-    this.saveConfig();
+    this.getConfig();
+  }
+
+  public getConfig() {
+    
+    this._configService.getConfigApi().subscribe(
+      result => {
+        if (!result.config) {
+          this.saveConfig();
+        } else {
+          this.updateConfig(result.config[0]);
+        }
+      },
+      error => {
+        this.alertMessage = 'No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.';
+        this.alertConfig.type = 'danger';
+        this.alertConfig.dismissible = true;
+        this.loading = false;
+      }
+    );
+  }
+
+  public updateConfig(config: Config): void {
+
+    this.config._id = config._id;
+
+    this._configService.updateConfigApi(this.config).subscribe(
+      result => {
+        if (!result) {
+          this.alertMessage = result.message;
+          this.alertConfig.type = 'danger';
+        } else {
+          this.config = result;
+          if (this._configService.saveConfigLocal(this.config)) {
+            this.setConfigurationSettings(this.config);
+            this.activeModal.close("save_close");
+          } else {
+            this.alertMessage = "Ha ocurrido un error en el navegador. Recarge la página.";
+            this.alertConfig.type = 'danger';
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.alertMessage = 'No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.';
+        this.loading = false;
+      }
+    );
   }
 
   public saveConfig(): void {
@@ -133,7 +204,6 @@ export class ConfigComponent implements OnInit {
   public setConfigurationSettings(config) {
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
-    // Config.setPrintHost(config.printHost);
-    // Config.setPrintPort(config.printPort);
+    Config.setApiConnectionPassword(config.apiConnectionPassword);
   }
 }

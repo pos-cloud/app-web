@@ -100,8 +100,10 @@
           <div class="form-group col-md-12">
             <label for="employee" class="control-label">Asignar el empleado</label>
             <select class="form-control" formControlName="employee">
-              <option *ngFor="let employee of employees" [selected]="employee._id==tableSelected.employee._id" [ngValue]="employee">
-                {{employee.name}}
+              <option *ngFor="let waiter of waiters"
+                      [selected]="waiter._id==tableSelected.employee._id" 
+                      [ngValue]="waiter">
+                    {{waiter.name}}
               </option>
             </select>
             <div *ngIf="formErrors.employee" class="alert alert-danger">

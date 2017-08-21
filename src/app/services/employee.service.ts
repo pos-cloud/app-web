@@ -20,6 +20,10 @@ export class EmployeeService {
 
   getEmployees () {
 		return this._http.get(Config.apiURL + "employees").map (res => res.json());
+  }
+  
+  getWaiters () {
+		return this._http.get(Config.apiURL + "employees").map (res => res.json());
 	}
 
   saveEmployee (employee: Employee) {
