@@ -237,7 +237,7 @@ export class AddEmployeeComponent  implements OnInit {
         } else {
           this.employee = result.employee;
           this.alertConfig.type = 'success';
-          this.alertMessage = "El tipo de empleado se ha añadido con éxito.";  
+          this.alertMessage = "El empleado se ha añadido con éxito.";  
           this.employee = new Employee();
           this.buildForm();
           this.getEmployeeTypes();

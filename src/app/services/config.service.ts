@@ -7,19 +7,17 @@ import { Config } from './../app.config';
 @Injectable()
 export class ConfigService {
 
-	public localStorage = window.localStorage;
-
 	public constructor(
 		private _http: Http
 	) {	}
 
 	getConfigLocal() {
-		return JSON.parse(this.localStorage.getItem("config"));
+		return JSON.parse(localStorage.getItem("config"));
 	}
 
 	saveConfigLocal(config: Config) {
-		this.localStorage.removeItem('config');
-		this.localStorage.setItem('config', JSON.stringify(config));
+		localStorage.removeItem('config');
+		localStorage.setItem('config', JSON.stringify(config));
 		return true;
 	}
 

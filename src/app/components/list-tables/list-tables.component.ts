@@ -284,6 +284,8 @@ export class ListTablesComponent implements OnInit {
 
   public getWaiters(): void {  
 
+    this.waiters = new Array();
+
     this._employeeService.getEmployees().subscribe(
       result => {
         if(!result.employees) {

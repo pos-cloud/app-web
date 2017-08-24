@@ -1,57 +1,59 @@
-<div class="modal-header">
-	<h4 class="modal-title">Iniciar Sessión</h4>
-	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-	<span aria-hidden="true">&times;</span>
-	</button>
-</div>
-<section class="container-fluid">
-	<div class="center-content"  *ngIf="alertMessage">
-		<ngb-alert (close)="alertMessage=''">
-			{{alertMessage}}
-		</ngb-alert>
+ <section class="container-login">
+	<div class="modal-header">
+		<h4 class="modal-title">Iniciar Sessión</h4>
+		<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+		<span aria-hidden="true">&times;</span>
+		</button>
 	</div>
-	<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
-		<div class="modal-body">
-			<div class="row" *ngIf="userType!=='pos'">
-				<div class="form-group col-md-12">
-					<label for="name" class="control-label">Usuario</label>
-					<div class="input-group">
-						<input type="text" class="form-control" formControlName="name" name="name" id="name"/>
-					</div>
-					<div *ngIf="formErrors.name" class="alert alert-danger">
-						{{ formErrors.name }}
-					</div>
-				</div>
-			</div>
-			<div class="row" *ngIf="userType==='pos'">
-				<div class="form-group col-md-12">
-					<label for="employee" class="control-label">Empleado</label>
-					<select class="form-control" formControlName="employee">
-						<option *ngFor="let employee of employees" [selected]="employee._id==employeeSelected._id" [value]="employee._id">
-							{{employee.name}}
-						</option>
-					</select>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="password" class="control-label">Password:</label>
-					<div class="input-group">
-						<input type="password" class="form-control" formControlName="password" name="password" id="password"/>
-					</div>
-					<div *ngIf="formErrors.password" class="alert alert-danger">
-						{{ formErrors.password }}
-					</div>
-				</div>
-			</div>
+	<div class="container-fluid">
+		<div class="center-content"  *ngIf="alertMessage">
+			<ngb-alert (close)="alertMessage=''">
+				{{alertMessage}}
+			</ngb-alert>
 		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-			<button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || loading" >
-				<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
-				<span *ngIf="!loading">Iniciar</span>
-				<span *ngIf="loading">Espere por favor</span>
-			</button>
-		</div>
-	</form>
-</section>
+		<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
+			<div class="modal-body">
+				<div class="row" *ngIf="userType!=='pos'">
+					<div class="form-group col-md-12">
+						<label for="name" class="control-label">Usuario</label>
+						<div class="input-group">
+							<input type="text" class="form-control" formControlName="name" name="name" id="name"/>
+						</div>
+						<div *ngIf="formErrors.name" class="alert alert-danger">
+							{{ formErrors.name }}
+						</div>
+					</div>
+				</div>
+				<div class="row" *ngIf="userType==='pos'">
+					<div class="form-group col-md-12">
+						<label for="employee" class="control-label">Empleado</label>
+						<select class="form-control" formControlName="employee">
+							<option *ngFor="let employee of employees" [selected]="employee._id==employeeSelected._id" [value]="employee._id">
+								{{employee.name}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-md-12">
+						<label for="password" class="control-label">Password:</label>
+						<div class="input-group">
+							<input type="password" class="form-control" formControlName="password" name="password" id="password"/>
+						</div>
+						<div *ngIf="formErrors.password" class="alert alert-danger">
+							{{ formErrors.password }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+				<button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || loading" >
+					<i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+					<span *ngIf="!loading">Iniciar</span>
+					<span *ngIf="loading">Espere por favor</span>
+				</button>
+			</div>
+		</form>
+	</div>
+</section> 

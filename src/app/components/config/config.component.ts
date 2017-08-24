@@ -19,7 +19,6 @@ export class ConfigComponent implements OnInit {
 
   public config: Config;
   public configForm: FormGroup;
-  public activeModal: NgbActiveModal;
   public alertMessage: any;
   public userType: string;
   public loading: boolean = false;
@@ -43,14 +42,14 @@ export class ConfigComponent implements OnInit {
   };
 
   constructor(
+    public activeModal: NgbActiveModal,
     public _configService: ConfigService,
     public _fb: FormBuilder,
     public _router: Router,
     public alertConfig: NgbAlertConfig
   ) {
-    this.alertConfig.type = 'info';
-    this.alertConfig.dismissible = false;
-    this.alertMessage = "Luego de configarlo, deberá reiniciar el navegador";
+    this.alertConfig.type = 'danger';
+    this.alertConfig.dismissible = true;
   }
 
   ngOnInit(): void {
@@ -159,14 +158,13 @@ export class ConfigComponent implements OnInit {
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
-            this.setConfigurationSettings(this.config);
-            this.activeModal.close("save_close");
+            location.reload();
           } else {
             this.alertMessage = "Ha ocurrido un error en el navegador. Recarge la página.";
             this.alertConfig.type = 'danger';
+            this.loading = false;
           }
         }
-        this.loading = false;
       },
       error => {
         this.alertMessage = 'No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.';
@@ -185,8 +183,7 @@ export class ConfigComponent implements OnInit {
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
-            this.setConfigurationSettings(this.config);
-            this.activeModal.close("save_close");
+            location.reload();
           } else {
             this.alertMessage = "Ha ocurrido un error en el navegador. Recarge la página.";
             this.alertConfig.type = 'danger';
@@ -204,6 +201,5 @@ export class ConfigComponent implements OnInit {
   public setConfigurationSettings(config) {
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
-    Config.setApiConnectionPassword(config.apiConnectionPassword);
   }
 }
