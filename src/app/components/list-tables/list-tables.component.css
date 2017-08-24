@@ -5,9 +5,9 @@
 
 .itable {
     background: #d9534f;
-    width: 150px;
-    height: 150px;
-    margin: 50px;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
     float: left;
     text-align: center;
     cursor: pointer;
@@ -16,9 +16,9 @@
 
 .itable-enabled {
     background: #5cb85c;
-    width: 150px;
-    height: 150px;
-    margin: 50px;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
     float: left;
     text-align: center;
     cursor: pointer;
@@ -27,9 +27,9 @@
 
 .itable-disabled {
     background: #d9534f;
-    width: 150px;
-    height: 150px;
-    margin: 50px;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
     float: left;
     text-align: center;
     cursor: pointer;
@@ -38,9 +38,9 @@
 
 .itable-pending {
     background: #f0ad4e;
-    width: 150px;
-    height: 150px;
-    margin: 50px;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
     float: left;
     text-align: center;
     cursor: pointer;
@@ -48,7 +48,8 @@
 }
 
 .itable p, .itable-disabled p, .itable-enabled p, .itable-pending p {
-    font-size: 30px;
+    font-size: 20px;
+    font: bold;
     margin-top: 30px;
 } 
 

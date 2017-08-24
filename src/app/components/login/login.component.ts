@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -46,14 +46,15 @@ export class LoginComponent implements OnInit {
   };
 
   constructor(
-    public _userservice: UserService,
+    public _userService: UserService,
     public _employeeService: EmployeeService,
     public _turnService: TurnService,
     public _tableService: TableService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _router: Router
+    public _router: Router,
+    private _route: ActivatedRoute
     ) { 
       alertConfig.type = 'danger';
       alertConfig.dismissible = true;
@@ -64,15 +65,61 @@ export class LoginComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.user = new User();
-    if(this.employeeSelected !== undefined){
-      this.getUserOfEmployee();
+    if(this.userType === "pos"){
+      if(this.employeeSelected !== undefined){
+        this.getUserOfEmployee();
+      }
+    } else {
+      this.getUsers();
     }
     this.buildForm();
   }
 
+  public getUsers(): void {
+
+    //Buscamos si existen usuarios
+    this._userService.getUsers().subscribe(
+      result => {
+        if (!result.users) {
+          //En caso de que no existan permite usar el sistema
+          this._router.navigate(['/inicio']);
+        } else {
+          let existSupervisor = false;
+
+          for(let user of result.users) {
+            if(user.employee.type.description === "Supervisor") {
+              existSupervisor = true;
+            }
+          }
+
+          if(existSupervisor) {
+            //Si existe, exige login
+            let token = localStorage.getItem('session_token');
+
+            if (token !== null) {
+              this._userService.isValidToken(token).subscribe(
+                result => {
+                  if (!result.user) {
+                    this.alertMessage = result.message;
+                  } else {
+                    this._router.navigate(['/inicio']);
+                  }
+                },
+                error => {
+                }
+              );
+            }
+          }
+        }
+      },
+      error => {
+      }
+    );
+  }
+
   public getUserOfEmployee(): void {  
     
-    this._userservice.getUserOfEmployee(this.employeeSelected._id).subscribe(
+    this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
       result => {
         if(!result.users) {
           this.alertMessage = result.message;
@@ -148,7 +195,7 @@ export class LoginComponent implements OnInit {
     
     this.user = this.loginForm.value;
     this.loading = true;
-    this._userservice.login(this.user).subscribe(
+    this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
             this.alertMessage = result.message;
@@ -157,11 +204,12 @@ export class LoginComponent implements OnInit {
         } else {
           this.alertMessage = null;
           this.user = result.user;
-          if(this.employeeSelected){
+          if(this.user.employee.type.description === 'Mozo'){
             this.activeModal.close(this.employeeSelected);
           } else {
+            localStorage.removeItem('session_token');
             localStorage.setItem('session_token',JSON.stringify(this.user.token));
-            this._router.navigate(['/pos']);
+            this._router.navigateByUrl(this._route.snapshot.queryParams['returnUrl'] || '/');
           }
           this.loading = false;
         }

@@ -15,12 +15,14 @@
             <tr>
               <th (click)="orderBy('name')">Nombre</th>
               <th (click)="orderBy('state')">Estado</th>
+              <th (click)="orderBy('tokenExpiration')">Minutos de sesión</th>
 	            <th (click)="orderBy('employee','name')">Empleado</th>
               <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterTokenExpiration" placeholder="Minutos de sesión..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
             </tr>
           </thead>
@@ -35,6 +37,7 @@
                   </span>
                 </h6>
               </td>
+              <td>{{user.tokenExpiration}}</td>
               <td *ngIf="user.employee">{{user.employee.name}}</td>
               <td *ngIf="!user.employee"></td>
               <td align="center">
@@ -43,7 +46,7 @@
               </td>
             </tr>
             <tr align="center" *ngIf="areUsersEmpty">
-              <td colspan="4">No se encontraron usuarios</td>
+              <td colspan="5">No se encontraron usuarios</td>
             </tr>
           </tbody>
         </table>

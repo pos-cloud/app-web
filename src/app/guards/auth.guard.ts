@@ -25,46 +25,56 @@ export class AuthGuard implements CanActivate {
           //En caso de que no existan permite usar el sistema
           return true;
         } else {
-          //Si existe, exige login
-          let token = localStorage.getItem('session_token');
 
-          if (token !== null) {
-            this._userService.isValidToken(token).subscribe(
-              result => {
-                if (!result.user) {
-                  this._router.navigate(['/login']);
-                  return false;
-                } else {
-                  this._userService.checkPermission(result.user.employee).subscribe(
-                    result => {
-                      if (!result.employee) {
-                        this._router.navigate(['/login']);
-                        return false;
-                      } else {
-                        if (result.employee.type.description === this.roles[0]) {
-                          return true;
-                        } else {
-                          this._router.navigate(['/login']);
+          let existSupervisor = false;
+
+          for(let user of result.users) {
+            if(user.employee.type.description === "Supervisor") {
+              existSupervisor = true;
+            }
+          }
+
+          if(existSupervisor) {
+            //Si existe, exige login
+            let token = localStorage.getItem('session_token');
+            if (token !== null) {
+              this._userService.isValidToken(token).subscribe(
+                result => {
+                  if (!result.user) {
+                    this._router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
+                    return false;
+                  } else {
+                    this._userService.checkPermission(result.user.employee).subscribe(
+                      result => {
+                        if (!result.employee) {
+                          this._router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
                           return false;
+                        } else {
+                          if (result.employee.type.description === this.roles[0]) {
+                            return true;
+                          } else {
+                            this._router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
+                            return false;
+                          }
                         }
+                      },
+                      error => {
+                        this._router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
+                        return false;
                       }
-                    },
-                    error => {
-                      this._router.navigate(['/login']);
-                      return false;
-                    }
-                  );
+                    );
+                  }
+                },
+                error => {
+                  this._router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
+                  return false;
                 }
-              },
-              error => {
-                this._router.navigate(['/login']);
-                return false;
-              }
-            );
+              );
 
-          } else {
-            this._router.navigate(['/login']);
-            return false;
+            } else {
+              this._router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
+              return false;
+            }
           }
         }
       },
@@ -72,7 +82,6 @@ export class AuthGuard implements CanActivate {
         return false;
       }
     );
-
     return true;
   }
 }

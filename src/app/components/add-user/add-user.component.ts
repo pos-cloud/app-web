@@ -32,7 +32,8 @@ export class AddUserComponent  implements OnInit {
     'name': '',
     'password': '',
     'state': '',
-    'employee': ''
+    'employee': '',
+    'tokenExpiration': ''
   };
 
   public validationMessages = {
@@ -45,6 +46,10 @@ export class AddUserComponent  implements OnInit {
     'state': {
     },
     'employee': {
+      'required':       'Este campo es requerido.'
+    },
+    'tokenExpiration': {
+      'required':       'Este campo es requerido.'
     }
   };
 
@@ -88,6 +93,11 @@ export class AddUserComponent  implements OnInit {
         ]
       ],
       'employee': [this.user.employee, [
+          Validators.required
+        ]
+      ],
+      'tokenExpiration': [this.user.tokenExpiration, [
+          Validators.required
         ]
       ]
     });

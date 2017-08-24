@@ -18,8 +18,8 @@ export class UserService {
 		return this._http.get(Config.apiURL + "user/" + id).map (res => res.json());
 	}
 
-  getUsers () {
-		return this._http.get(Config.apiURL + "users").map (res => res.json());
+  getUsers (query?: string) {
+		return this._http.get(Config.apiURL + "users" + query).map (res => res.json());
 	}
 
   login (user : User) {

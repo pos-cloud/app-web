@@ -39,6 +39,11 @@ export class DeleteUserComponent implements OnInit {
 
     this._userService.deleteUser(this.user._id).subscribe(
       result => {
+        let token = localStorage.getItem("session_token").replace(/"/gi,"");
+        
+        if(this.user.token === token) {
+          localStorage.removeItem("session_token");
+        }
         this.activeModal.close('delete_close');
       },
       error => {

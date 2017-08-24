@@ -37,7 +37,7 @@ export class ListTablesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public employee: Employee;
-  public employees: Employee[] = new Array();
+  public waiters: Employee[] = new Array();
   @ViewChild('content') content:ElementRef;
   public selectEmployeeForm: FormGroup;
   @Input() filterRoom: string;
@@ -198,7 +198,7 @@ export class ListTablesComponent implements OnInit {
             
             this.tableSelected.employee = new Employee();
             this.buildForm();
-            this.getEmployees();
+            this.getWaiters();
 
             modalRef = this._modalService.open(this.content).result.then((result) => {
               if(result  === "select_employee") {
@@ -282,7 +282,9 @@ export class ListTablesComponent implements OnInit {
     this.getOpenTurn(this.employee);
   }
 
-  public getEmployees(): void {  
+  public getWaiters(): void {  
+
+    this.waiters = new Array();
 
     this._employeeService.getEmployees().subscribe(
       result => {
@@ -291,7 +293,11 @@ export class ListTablesComponent implements OnInit {
           this.alertConfig.type = 'danger';
         } else {
           this.alertMessage = null;
-          this.employees = result.employees;
+          for(let waiter of result.employees){
+            if(waiter.type.description === "Mozo") {
+              this.waiters.push(waiter);
+            }
+          }
         }
       },
       error => {

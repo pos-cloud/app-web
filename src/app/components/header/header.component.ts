@@ -3,10 +3,6 @@ import { Router } from '@angular/router';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-import { LoginComponent } from './../login/login.component';
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -18,8 +14,7 @@ export class HeaderComponent implements OnInit {
   public online: Observable<boolean>;
 
   constructor(
-    public _router: Router,
-    public _modalService: NgbModal
+    public _router: Router
 
   ) { 
      this.online = Observable.merge(
@@ -34,12 +29,8 @@ export class HeaderComponent implements OnInit {
     this.userType = pathLocation[1];
   }
 
-  public openModal(): void {
-
-    let modalRef = this._modalService.open(LoginComponent, { size: 'lg' }).result.then((result) => {
-      
-    }, (reason) => {
-      
-    });
-  };
+  public logout() {
+    localStorage.removeItem("session_token");
+    this._router.navigate(['/login']);
+  }
 } 
