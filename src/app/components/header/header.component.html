@@ -45,6 +45,9 @@
         <a class="nav-link" [routerLink]="['admin','impresoras']" >Impresoras</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" [routerLink]="['admin','configbackup']" >Configuracion</a>
+      </li>
+      <li class="nav-item">
         <span class="badge badge-success" *ngIf="online | async; else elseBlock">Online</span>
         <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
       </li>

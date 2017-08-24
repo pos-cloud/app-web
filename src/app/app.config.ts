@@ -9,6 +9,8 @@ export class Config {
     static printURL: string = "http://192.168.0.13:3030/api-pos-resto";
     static apiPort: number = 7000;
     static printPort: number = 7000;
+    public pathMongo: string;
+    public pathBackup: string;
 
     constructor() { }
 

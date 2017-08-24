@@ -1,0 +1,37 @@
+<section class="container-fluid" *ngIf="userType=='admin'"> 
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Respaldo
+    </div>
+    <div class= 'card-block'> 
+      <form [formGroup]="configForm" #formAddConfig="ngForm" (ngSubmit)="addConfig()" autocomplete="off">
+        <div class="row">  
+          <div class="form-group col-md-12"> 
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Ubicacion de Mongo</span>
+              <input type="text" class="form-control" formControlName="pathMongo" name="pathMongo" id="pathMongo" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.pathMongo" class="alert alert-danger">
+                {{ formErrors.pathMongo }}
+            </div>
+          </div>
+        </div>
+        <div class= "row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Ubicacion de Backup</span>
+              <input type="text" class="form-control" formControlName="pathBackup" name="pathBackup" id="pathBackup" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.pathBackup" class="alert alert-danger">
+                {{ formErrors.pathBackup }}
+            </div>
+          </div>
+        </div>
+        <div class= "row">
+          <div class= "form-group col-md-12">
+            <button type="submit" class="btn btn-primary" [disabled]="!configForm.valid">Guardar Cambios</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

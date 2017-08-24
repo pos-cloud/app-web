@@ -97,6 +97,7 @@ import { OrderByPipe } from './pipes/order-by.pipe';
 import { FocusDirective } from './directives/focus.directive';
 import { ReportsComponent } from './components/reports/reports.component';
 import { ConfigComponent } from './components/config/config.component';
+import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 
 @NgModule({
   declarations: [
@@ -157,7 +158,8 @@ import { ConfigComponent } from './components/config/config.component';
     UpdatePrinterComponent,
     ListPrintersComponent,
     ImportComponent,
-    ConfigComponent
+    ConfigComponent,
+    ConfigBackupComponent
   ],
   imports: [
     BrowserModule,
