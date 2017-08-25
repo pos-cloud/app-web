@@ -28,7 +28,8 @@
             <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterName:'name' | filter: filterType:'description':'type' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{employee.code}}</td>
               <td>{{employee.name}}</td>
-              <td>{{employee.type.description}}</td>
+              <td *ngIf="employee.type">{{employee.type.description}}</td>
+              <td *ngIf="!employee.type"></td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', employee)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', employee)"><i class="fa fa-trash-o"></i></button>

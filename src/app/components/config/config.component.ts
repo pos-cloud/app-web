@@ -149,7 +149,7 @@ export class ConfigComponent implements OnInit {
   public updateConfig(config: Config): void {
 
     this.config._id = config._id;
-
+    
     this._configService.updateConfigApi(this.config).subscribe(
       result => {
         if (!result) {

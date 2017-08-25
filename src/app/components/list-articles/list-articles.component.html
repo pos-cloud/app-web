@@ -41,16 +41,16 @@
                                                                         | filter: filterCategory:'description':'category' | filter: filterSalePrice:'salePrice'
                                                                         | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' | filter: filterType:'type'
                                                                         | paginate: {  itemsPerPage: 9, currentPage: p }">
-              <td class="flat">{{article.code}}</td>
-              <td class="flat">{{article.description}}</td>
-              <td class="flat" *ngIf="article.make">{{article.make.description}}</td>
+              <td>{{article.code}}</td>
+              <td>{{article.description}}</td>
+              <td *ngIf="article.make">{{article.make.description}}</td>
               <td *ngIf="!article.make"></td>
-              <td class="flat" *ngIf="article.category">{{article.category.description}}</td>
-              <td class="flat" *ngIf="!article.category"></td>
-              <td class="flat">{{article.salePrice | currency:'USD':'1.2-2'}}</td>
-              <td class="flat">{{article.observation}}</td>
-              <td class="flat">{{article.barcode}}</td>
-              <td class="flat">{{article.type}}</td>
+              <td *ngIf="article.category">{{article.category.description}}</td>
+              <td *ngIf="!article.category"></td>
+              <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{article.observation}}</td>
+              <td>{{article.barcode}}</td>
+              <td>{{article.type}}</td>
               <td align="center">
                 <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>

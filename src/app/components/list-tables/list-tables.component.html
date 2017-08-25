@@ -31,7 +31,8 @@
                                                                     | filter: filterChair:'chair' | filter: filterState:'state' 
                                                                     | paginate: {  itemsPerPage: 9, currentPage: p }" >
               <td>{{table.description}}</td>
-              <td>{{table.room.description}}</td>
+              <td *ngIf="table.room">{{table.room.description}}</td>
+              <td *ngIf="!table.room"></td>
               <td>{{table.chair}}</td>
               <td>
                 <h6>
