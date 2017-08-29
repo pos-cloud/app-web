@@ -21,7 +21,7 @@ export class UpdateUserComponent implements OnInit {
 
   @Input() user: User;
   public userForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
@@ -59,10 +59,7 @@ export class UpdateUserComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -148,19 +145,18 @@ export class UpdateUserComponent implements OnInit {
     this._employeeService.getEmployees().subscribe(
         result => {
 					if(!result.employees) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
 					  this.employees = null;
 					} else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
 					  this.employees = result.employees;
           }
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
 				}
       );
    }
@@ -177,19 +173,18 @@ export class UpdateUserComponent implements OnInit {
     this._employeeService.getEmployee(this.userForm.value.employee).subscribe(
         result => {
           if(!result.employee) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.user.employee = result.employee;
             this.saveChanges();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -199,23 +194,29 @@ export class UpdateUserComponent implements OnInit {
     this._userService.updateUser(this.user).subscribe(
     result => {
         if (!result.user) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.user = result.user;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El usuario se ha actualizado con éxito.";
+          this.showMessage("El usuario se ha actualizado con éxito.", "success", false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

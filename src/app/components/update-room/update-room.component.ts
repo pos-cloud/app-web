@@ -19,7 +19,7 @@ export class UpdateRoomComponent implements OnInit {
 
   @Input() room: Room;
   public roomForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -40,10 +40,7 @@ export class UpdateRoomComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -105,26 +102,32 @@ export class UpdateRoomComponent implements OnInit {
 
   public saveChanges(): void {
     
-  this._roomService.updateRoom(this.room).subscribe(
-    result => {
-      if (!result.room) {
-        this.alertMessage = result.message;
-        this.alertConfig.type = 'danger';
-      } else {
-        this.room = result.room;
-        this.alertConfig.type = 'success';
-        this.alertMessage = "El salón se ha actualizado con éxito.";
-        this.activeModal.close('save_close');
+    this._roomService.updateRoom(this.room).subscribe(
+      result => {
+        if (!result.room) {
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
+        } else {
+          this.room = result.room;
+          this.showMessage("El salón se ha actualizado con éxito.", "success", false);
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
-      this.loading = false;
-    },
-    error => {
-      this.alertMessage = error._body;
-      if(!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-      }
-      this.loading = false;
-    }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

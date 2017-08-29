@@ -22,7 +22,7 @@ export class AddTableComponent  implements OnInit {
   public table: Table;
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -53,10 +53,7 @@ export class AddTableComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -119,14 +116,17 @@ export class AddTableComponent  implements OnInit {
 
   public getRooms(): void {  
 
+    this.loading = true;
+    
     this._roomService.getRooms().subscribe(
         result => {
           let room: Room  = new Room();
           if(!result.rooms) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true);
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.rooms = result.rooms;
             if(this.rooms[0] !== undefined) {
               room = this.rooms[0];
@@ -138,12 +138,11 @@ export class AddTableComponent  implements OnInit {
             'chair': 1,
             'state': TableState.Available,
           });
+          this.loading = false;
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -156,15 +155,16 @@ export class AddTableComponent  implements OnInit {
 
   public saveTable(): void {
     
+    this.loading = true;
+
     this._tableService.saveTable(this.table).subscribe(
-    result => {
+      result => {
         if (!result.table) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.table = result.table;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "La mesa se ha añadido con éxito.";  
+          this.showMessage("La mesa se ha añadido con éxito.", "success", false);
           this.table = new Table ();
           this.buildForm();
           this.getRooms();
@@ -172,12 +172,19 @@ export class AddTableComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

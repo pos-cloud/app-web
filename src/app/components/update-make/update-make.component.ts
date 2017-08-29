@@ -19,7 +19,7 @@ export class UpdateMakeComponent implements OnInit {
 
   @Input() make: Make;
   public makeForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -40,10 +40,7 @@ export class UpdateMakeComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -105,26 +102,34 @@ export class UpdateMakeComponent implements OnInit {
 
   public saveChanges(): void {
     
-  this._makeService.updateMake(this.make).subscribe(
-    result => {
-      if (!result.make) {
-        this.alertMessage = result.message;
-        this.alertConfig.type = 'danger';
-      } else {
-        this.make = result.make;
-        this.alertConfig.type = 'success';
-        this.alertMessage = "La marca se ha actualizado con éxito.";
-        this.activeModal.close('save_close');
+    this.loading = true;
+    
+    this._makeService.updateMake(this.make).subscribe(
+      result => {
+        if (!result.make) {
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
+        } else {
+          this.make = result.make;
+          this.showMessage("La marca se ha actualizado con éxito.", "success", false);
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
-      this.loading = false;
-    },
-    error => {
-      this.alertMessage = error._body;
-      if(!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-      }
-      this.loading = false;
-    }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

@@ -16,17 +16,15 @@ import { UserService } from './../../services/user.service';
 export class DeleteUserComponent implements OnInit {
 
   @Input() user: User;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public focusEvent = new EventEmitter<boolean>();
+  public loading: boolean = false;
 
   constructor(
     public _userService: UserService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
   }
@@ -37,6 +35,8 @@ export class DeleteUserComponent implements OnInit {
 
   public deleteUser(): void {
 
+    this.loading = true;
+
     this._userService.deleteUser(this.user._id).subscribe(
       result => {
         let token = localStorage.getItem("session_token").replace(/"/gi,"");
@@ -45,13 +45,22 @@ export class DeleteUserComponent implements OnInit {
           localStorage.removeItem("session_token");
         }
         this.activeModal.close('delete_close');
+        this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

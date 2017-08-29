@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 //paquetes de terceros
-import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
+import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
 import { Ng2PaginationModule } from 'ng2-pagination';//https://www.npmjs.com/package/ng2-pagination
 
 //rutas
@@ -170,6 +170,7 @@ import { ConfigComponent } from './components/config/config.component';
   ],
   providers: [
     NgbActiveModal,
+    NgbAlertConfig,
     ArticleService,
     EmployeeService,
     EmployeeTypeService,

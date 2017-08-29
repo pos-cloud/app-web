@@ -21,11 +21,12 @@ export class ListMakesComponent implements OnInit {
 
   public makes: Make[] = new Array();
   public areMakesEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Make> = new EventEmitter<Make>();
 
   constructor(
@@ -33,10 +34,7 @@ export class ListMakesComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -45,31 +43,27 @@ export class ListMakesComponent implements OnInit {
     this.getMakes();
   }
 
-  public getBadge(term: string): boolean {
-
-    return true;
-  }
-
   public getMakes(): void {  
 
+    this.loading = true;
+    
     this._makeService.getMakes().subscribe(
         result => {
           if(!result.makes) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
             this.makes = null;
             this.areMakesEmpty = true;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.makes = result.makes;
             this.areMakesEmpty = false;
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -90,42 +84,52 @@ export class ListMakesComponent implements OnInit {
   
   public openModal(op: string, make:Make): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddMakeComponent, { size: 'lg' }).result.then((result) => {
-            this.getMakes();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddMakeComponent, { size: 'lg' }).result.then((result) => {
+          this.getMakes();
+        }, (reason) => {
+          this.getMakes();
+        });
+        break;
+      case 'update' :
+          modalRef = this._modalService.open(UpdateMakeComponent, { size: 'lg' })
+          modalRef.componentInstance.make = make;
+          modalRef.result.then((result) => {
+            if(result === 'save_close') {
+              this.getMakes();
+            }
           }, (reason) => {
-            this.getMakes();
+            
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateMakeComponent, { size: 'lg' })
-            modalRef.componentInstance.make = make;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getMakes();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteMakeComponent, { size: 'lg' })
-            modalRef.componentInstance.make = make;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getMakes();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
-
-    public addItem(makeSelected) {
-      this.eventAddItem.emit(makeSelected);
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteMakeComponent, { size: 'lg' })
+          modalRef.componentInstance.make = make;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getMakes();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
     }
+  };
+
+  public addItem(makeSelected) {
+    this.eventAddItem.emit(makeSelected);
+  }
+    
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

@@ -16,17 +16,15 @@ import { CategoryService } from './../../services/category.service';
 export class DeleteCategoryComponent implements OnInit {
 
   @Input() category: Category;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public focusEvent = new EventEmitter<boolean>();
+  public loading: boolean = false;
 
   constructor(
     public _categoryService: CategoryService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
   }
@@ -37,16 +35,27 @@ export class DeleteCategoryComponent implements OnInit {
 
   public deleteCategory(): void {
 
+    this.loading = true;
+    
     this._categoryService.deleteCategory(this.category._id).subscribe(
       result => {
         this.activeModal.close('delete_close');
+        this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

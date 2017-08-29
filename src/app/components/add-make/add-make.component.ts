@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { Make } from './../../models/make';
 
@@ -19,11 +19,11 @@ export class AddMakeComponent  implements OnInit {
 
   public make: Make;
   public makeForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-
+  
   public formErrors = {
     'description': ''
   };
@@ -39,11 +39,8 @@ export class AddMakeComponent  implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+    public alertConfig: NgbAlertConfig
+  ) { }
 
   ngOnInit(): void {
 
@@ -92,34 +89,45 @@ export class AddMakeComponent  implements OnInit {
   }
 
   public addMake(): void {
-    this.loading = true;
+    
     this.make = this.makeForm.value;
     this.saveMake();
   }
 
   public saveMake(): void {
     
+    this.loading = true;
+    
     this._makeService.saveMake(this.make).subscribe(
-    result => {
+      result => {
         if (!result.make) {
-          this.alertConfig.type = 'danger';
-          this.alertMessage = result.message;
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.make = result.make;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "La marca se ha añadido con éxito.";      
+          this.showMessage("La marca se ha añadido con éxito.", "success", true);
+          this.alertMessage = "La marca se ha añadido con éxito.";
           this.make = new Make ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    console.log(this.alertConfig);
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+    console.log(this.alertConfig);
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

@@ -31,17 +31,17 @@ export class ListTablesComponent implements OnInit {
   public tableSelected: Table;
   public tables: Table[];
   public areTablesEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
   public employee: Employee;
   public waiters: Employee[] = new Array();
   @ViewChild('content') content:ElementRef;
   public selectEmployeeForm: FormGroup;
   @Input() filterRoom: string;
-  public loading: boolean = false;
 
   public formErrors = {
     'employee': ''
@@ -63,9 +63,7 @@ export class ListTablesComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
+  ) {
     if(this.filterRoom === undefined) {
       this.filterRoom = "";
     }
@@ -114,24 +112,25 @@ export class ListTablesComponent implements OnInit {
 
   public getTables(): void {  
     
+    this.loading = true;
+    
     this._tableService.getTables().subscribe(
       result => {
         if(!result.tables) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
           this.tables = null;
           this.areTablesEmpty = true;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
+          this.loading = false;
           this.tables = result.tables;
           this.areTablesEmpty = false;
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
    }
@@ -233,6 +232,8 @@ export class ListTablesComponent implements OnInit {
 
   public getOpenTurn(employee: Employee): void {
 
+    this.loading = true;
+
     this._turnService.getOpenTurn(employee._id).subscribe(
       result => {
         if (!result.turns) {
@@ -244,10 +245,8 @@ export class ListTablesComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if (!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -256,21 +255,19 @@ export class ListTablesComponent implements OnInit {
 
     let turn: Turn = new Turn();
     turn.employee = employee;
+    this.loading = true;
 
     this._turnService.saveTurn(turn).subscribe(
       result => {
         if (!result.turn) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.assignEmployee();
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if (!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     )
@@ -285,14 +282,16 @@ export class ListTablesComponent implements OnInit {
   public getWaiters(): void {  
 
     this.waiters = new Array();
+    this.loading = true;
 
     this._employeeService.getEmployees().subscribe(
       result => {
         if(!result.employees) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
+          this.loading = false;
           for(let waiter of result.employees){
             if(waiter.type.description === "Mozo") {
               this.waiters.push(waiter);
@@ -301,39 +300,45 @@ export class ListTablesComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
 
   public assignEmployee(): void {
     
+    this.loading = true;
+
     this._tableService.updateTable(this.tableSelected).subscribe(
       result => {
           if(!result.table) {
+            this.showMessage(result.message, "info", true); 
             this.loading = false;
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
             this.loading = false;
             this.addSaleOrder();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.loading = false;
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
     );
   }
 
   public addSaleOrder() {
     this._router.navigate(['/pos/salones/'+this.filterRoom+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

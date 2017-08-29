@@ -25,7 +25,8 @@ export class PointOfSaleComponent implements OnInit {
   public roomSelected: Room;
   public userType: string;
   public existsCashBoxOpen: boolean = false;
-  public alertMessage: any;
+  public alertMessage: string = "";
+  public loading: boolean = false;
 
   constructor(
     public _cashBoxService: CashBoxService,
@@ -33,9 +34,7 @@ export class PointOfSaleComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = false;
+  ) {
     this.roomSelected = new Room();
   }
 
@@ -48,13 +47,16 @@ export class PointOfSaleComponent implements OnInit {
 
   public getRooms(): void {  
 
+    this.loading = true;
+    
     this._roomService.getRooms().subscribe(
         result => {
           if(!result.rooms) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.rooms = result.rooms;
             
             if(this.roomSelected._id === undefined){
@@ -70,15 +72,23 @@ export class PointOfSaleComponent implements OnInit {
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
   }
 
   public changeRoom(room: Room): void {
     this.roomSelected = room;
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

@@ -20,7 +20,7 @@ export class UpdateCompanyComponent implements OnInit {
   @Input() company: Company;
   public types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
   public companyForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -70,10 +70,7 @@ export class UpdateCompanyComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -170,26 +167,34 @@ export class UpdateCompanyComponent implements OnInit {
 
   public saveChanges(): void {
     
+    this.loading = true;
+    
     this._companyService.updateCompany(this.company).subscribe(
     result => {
         if (!result.company) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.company = result.company;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "La empresa se ha actualizado con éxito.";
+          this.showMessage("La empresa se ha actualizado con éxito.", "success", false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

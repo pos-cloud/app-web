@@ -23,7 +23,7 @@ export class ListCategoriesComponent implements OnInit {
 
   public categories: Category[] = new Array();
   public areCategoriesEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -32,16 +32,14 @@ export class ListCategoriesComponent implements OnInit {
   @Output() eventSelectCategory: EventEmitter<Category> = new EventEmitter<Category>();
   @Input() areCategoriesVisible: boolean = true;
   public apiURL = Config.apiURL;
+  public loading: boolean = false;
 
   constructor(
     public _categoryService: CategoryService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -57,27 +55,28 @@ export class ListCategoriesComponent implements OnInit {
 
   public getCategories(): void {  
 
+    this.loading = true;
+
     this._categoryService.getCategories().subscribe(
-        result => {
-          if(!result.categories) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
-            this.categories = null;
-            this.areCategoriesEmpty = true;
-          } else {
-            this.alertMessage = null;
-            this.categories = result.categories;
-            this.areCategoriesEmpty = false;
-          }
-        },
-        error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+      result => {
+        if(!result.categories) {
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
+          this.categories = null;
+          this.areCategoriesEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.categories = result.categories;
+          this.areCategoriesEmpty = false;
         }
-      );
-   }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
 
   public orderBy (term: string, property?: string): void {
 
@@ -95,46 +94,56 @@ export class ListCategoriesComponent implements OnInit {
   
   public openModal(op: string, category:Category): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddCategoryComponent, { size: 'lg' }).result.then((result) => {
-            this.getCategories();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddCategoryComponent, { size: 'lg' }).result.then((result) => {
+          this.getCategories();
+        }, (reason) => {
+          this.getCategories();
+        });
+        break;
+      case 'update' :
+          modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' })
+          modalRef.componentInstance.category = category;
+          modalRef.result.then((result) => {
+            if(result === 'save_close') {
+              this.getCategories();
+            }
           }, (reason) => {
-            this.getCategories();
+            
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' })
-            modalRef.componentInstance.category = category;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getCategories();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteCategoryComponent, { size: 'lg' })
-            modalRef.componentInstance.category = category;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getCategories();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
-
-    public addItem(categorySelected) {
-      this.eventAddItem.emit(categorySelected);
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteCategoryComponent, { size: 'lg' })
+          modalRef.componentInstance.category = category;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getCategories();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
     }
+  };
 
-    public selectCategory(categorySelected) {
-      this.eventSelectCategory.emit(categorySelected);
-    }
+  public addItem(categorySelected) {
+    this.eventAddItem.emit(categorySelected);
+  }
+
+  public selectCategory(categorySelected) {
+    this.eventSelectCategory.emit(categorySelected);
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

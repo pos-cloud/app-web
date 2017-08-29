@@ -19,7 +19,7 @@ export class AddRoomComponent  implements OnInit {
 
   public room: Room;
   public roomForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -39,11 +39,8 @@ export class AddRoomComponent  implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+    public alertConfig: NgbAlertConfig
+  ) { }
 
   ngOnInit(): void {
 
@@ -99,27 +96,35 @@ export class AddRoomComponent  implements OnInit {
 
   public saveRoom(): void {
     
+    this.loading = true;
+    
     this._roomService.saveRoom(this.room).subscribe(
-    result => {
+      result => {
         if (!result.room) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.room = result.room;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El salón se ha añadido con éxito.";      
+          this.showMessage("El salón se ha añadido con éxito.", "success", false); 
           this.room = new Room ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

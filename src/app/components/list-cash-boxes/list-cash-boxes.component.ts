@@ -20,21 +20,19 @@ export class ListCashBoxesComponent implements OnInit {
 
   public cashBoxes: CashBox[] = new Array();
   public areCashBoxesEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
 
   constructor(
     public _cashBoxService: CashBoxService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -50,24 +48,24 @@ export class ListCashBoxesComponent implements OnInit {
 
   public getCashBoxes(): void {  
 
+    this.loading = true;
+
     this._cashBoxService.getCashBoxes().subscribe(
         result => {
 					if(!result.cashBoxes) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
 					  this.cashBoxes = null;
             this.areCashBoxesEmpty = true;
 					} else {
-            this.alertMessage = null;
+            this.hideMessage();
 					  this.cashBoxes = result.cashBoxes;
             this.areCashBoxesEmpty = false;
           }
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
 				}
       );
    }
@@ -88,27 +86,37 @@ export class ListCashBoxesComponent implements OnInit {
   
   public openModal(op: string, cashBox:CashBox): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddCashBoxComponent, { size: 'lg' }).result.then((result) => {
-            this.getCashBoxes();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddCashBoxComponent, { size: 'lg' }).result.then((result) => {
+          this.getCashBoxes();
+        }, (reason) => {
+          this.getCashBoxes();
+        });
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteCashBoxComponent, { size: 'lg' })
+          modalRef.componentInstance.cashBox = cashBox;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getCashBoxes();
+            }
           }, (reason) => {
-            this.getCashBoxes();
+            
           });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteCashBoxComponent, { size: 'lg' })
-            modalRef.componentInstance.cashBox = cashBox;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getCashBoxes();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
+        break;
+      default : ;
+    }
+  };
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

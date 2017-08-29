@@ -21,11 +21,12 @@ export class ListCompaniesComponent implements OnInit {
 
   public companies: Company[] = new Array();
   public areCompaniesEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   @Input() userType: string;
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
 
   constructor(
     public _companyService: CompanyService,
@@ -33,10 +34,7 @@ export class ListCompaniesComponent implements OnInit {
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -45,31 +43,27 @@ export class ListCompaniesComponent implements OnInit {
     this.getCompanies();
   }
 
-  public getBadge(term: string): boolean {
-
-    return true;
-  }
-
   public getCompanies(): void {  
+
+    this.loading = true;
 
     this._companyService.getCompanies().subscribe(
         result => {
 					if(!result.companies) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
 					  this.companies = null;
             this.areCompaniesEmpty = true;
 					} else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
 					  this.companies = result.companies;
             this.areCompaniesEmpty = false;
           }
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
 				}
       );
    }
@@ -127,5 +121,15 @@ export class ListCompaniesComponent implements OnInit {
   
   public selectCompany(companySelected: Company): void {
     this.activeModal.close(companySelected);
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

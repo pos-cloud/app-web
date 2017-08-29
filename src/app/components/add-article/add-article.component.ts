@@ -30,7 +30,7 @@ export class AddArticleComponent  implements OnInit {
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
   public types: ArticleType[] = [ArticleType.Bar, ArticleType.Kitchen, ArticleType.Counter];
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -76,10 +76,7 @@ export class AddArticleComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -162,6 +159,8 @@ export class AddArticleComponent  implements OnInit {
 
   public getLastArticle(): void {  
 
+    this.loading = true;
+    
     this._articleService.getLastArticle().subscribe(
         result => {
           let code = 1;
@@ -190,62 +189,63 @@ export class AddArticleComponent  implements OnInit {
             'barcode': '',
             'type': ArticleType.Counter
           });
+          this.loading = false;
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public getMakes(): void {  
 
+    this.loading = true;
+    
     this._makeService.getMakes().subscribe(
         result => {
           if(!result.makes) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true);
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.makes = result.makes;
             this.getCategories();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public getCategories(): void {  
     
+    this.loading = true;
+    
     this._categoryService.getCategories().subscribe(
         result => {
           if(!result.categories) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true);
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.categories = result.categories;
             this.getLastArticle();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public addArticle(): void {
-    this.loading = true;
+    
     if(this.articleForm.value.posDescription === "") {
       let slicePipe = new SlicePipe();
       this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,0,10);
@@ -256,25 +256,28 @@ export class AddArticleComponent  implements OnInit {
 
   public saveArticle(): void {
     
+    this.loading = true;
+    
     this._articleService.saveArticle(this.article).subscribe(
     result => {
         if (!result.article) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
         } else {
           this.article = result.article;
-          this.makeFileRequest(this.filesToUpload)
-              .then(
-                (result)=>{
-                  this.resultUpload = result;
-                  this.article.picture = this.resultUpload.filename;
-                },
-                (error) =>{
-                  this.alertConfig = error;
-                }
-              );
-          this.alertMessage = "El artículo se ha añadido con éxito."; 
-          this.alertConfig.type = 'success';
+          if(this.filesToUpload) {
+            this.makeFileRequest(this.filesToUpload)
+                .then(
+                  (result)=>{
+                    this.resultUpload = result;
+                    this.article.picture = this.resultUpload.filename;
+                  },
+                  (error) =>{
+                    this.showMessage(error, "danger", false);
+                  }
+                );
+          }
+          this.showMessage("El artículo se ha añadido con éxito.", "success", false);
           this.article = new Article ();
           this.buildForm();
           this.getLastArticle();
@@ -282,10 +285,7 @@ export class AddArticleComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -321,5 +321,15 @@ export class AddArticleComponent  implements OnInit {
       xhr.open('POST', Config.apiURL + 'upload-imagen/'+idArticulo,true);
       xhr.send(formData);
     });
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage(): void {
+    this.alertMessage = "";
   }
 }

@@ -21,7 +21,7 @@ export class UpdateCategoryComponent implements OnInit {
 
   @Input() category: Category;
   public categoryForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -106,39 +106,39 @@ export class UpdateCategoryComponent implements OnInit {
     this.loading = true;
     this.category = this.categoryForm.value;
 
-    this.makeFileRequest(this.filesToUpload)
-              .then(
-                (result)=>{
-                  this.resultUpload = result;
-                  this.category.picture = this.resultUpload.filename;
-                },
-                (error) =>{
-                  this.alertConfig = error;
-                }
-              );
+    if(this.filesToUpload) {
+      this.makeFileRequest(this.filesToUpload)
+          .then(
+            (result)=>{
+              this.resultUpload = result;
+              this.category.picture = this.resultUpload.filename;
+            },
+            (error) =>{
+              this.showMessage(error, "danger", false);
+            }
+          );
+    }
     this.saveChanges();
   }
 
   public saveChanges(): void {
     
+    this.loading = true;
+    
   this._categoryService.updateCategory(this.category).subscribe(
     result => {
       if (!this.category) {
-        this.alertMessage = result.message;
-        this.alertConfig.type = 'danger';
+        this.showMessage(result.message, "info", true); 
+        this.loading = false;
       } else {
         this.category = result.category;
-        this.alertConfig.type = 'success';
-        this.alertMessage = "El rubro se ha actualizado con éxito.";
+        this.showMessage("El rubro se ha actualizado con éxito.", "success", false);
         this.activeModal.close('save_close');
       }
       this.loading = false;
     },
     error => {
-      this.alertMessage = error._body;
-      if(!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-      }
+      this.showMessage(error._body, "danger", false);
       this.loading = false;
     }
     );
@@ -173,5 +173,15 @@ export class UpdateCategoryComponent implements OnInit {
       xhr.open('POST', Config.apiURL + 'upload-imagen-category/'+idCategory,true);
       xhr.send(formData);
     });
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

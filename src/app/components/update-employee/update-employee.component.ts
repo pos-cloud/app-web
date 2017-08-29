@@ -22,7 +22,7 @@ export class UpdateEmployeeComponent implements OnInit {
   @Input() employee: Employee;
   public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -53,10 +53,7 @@ export class UpdateEmployeeComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -78,22 +75,23 @@ export class UpdateEmployeeComponent implements OnInit {
 
   public getEmployeeTypes(): void {
 
+    this.loading = true;
+
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
         if(!result.employeeTypes) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
           this.employeeTypes = null;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
+          this.loading = false;
           this.employeeTypes = result.employeeTypes;
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -152,26 +150,34 @@ export class UpdateEmployeeComponent implements OnInit {
 
   public saveChanges(): void {
     
+    this.loading = true;
+    
     this._employeeService.updateEmployee(this.employee).subscribe(
     result => {
         if (!result.employee) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.employee = result.employee;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El empleado se ha actualizado con éxito.";
+          this.showMessage("El empleado se ha actualizado con éxito.", "success", false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

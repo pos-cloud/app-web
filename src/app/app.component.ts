@@ -16,7 +16,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 export class AppComponent {
 
   public config: Config;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public isAPIConected: boolean;
 
   constructor(
@@ -25,7 +25,6 @@ export class AppComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
-
     this.isAPIConected = false;
     this.getConfigLocal();
   }
@@ -39,7 +38,7 @@ export class AppComponent {
     } else {
       this.config = result.config;
       this.setConfigurationSettings(this.config);
-      this.alertMessage = null;
+      this.hideMessage();
       this.getConfigApi();
     }
   }
@@ -52,7 +51,7 @@ export class AppComponent {
           this.openModal("config");
           this.isAPIConected = false;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
           this.isAPIConected = true;
         }
       },
@@ -66,8 +65,6 @@ export class AppComponent {
   public setConfigurationSettings(config) {
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
-    // Config.setPrintHost(config.printHost);
-    // Config.setPrintPort(config.printPort);
   }
 
   public openModal(op: string): void {
@@ -78,7 +75,7 @@ export class AppComponent {
 
         modalRef = this._modalService.open(ConfigComponent, { size: 'lg' }).result.then((result) => {
           if (result === 'save_close') {
-            this.alertMessage = null;
+            this.hideMessage();
             this.isAPIConected = true;
           } else {
             this.getConfigApi();
@@ -90,4 +87,14 @@ export class AppComponent {
       default: ;
     }
   };
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

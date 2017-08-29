@@ -30,7 +30,7 @@ export class UpdateArticleComponent implements OnInit {
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
   public types: ArticleType[] = [ArticleType.Bar, ArticleType.Kitchen, ArticleType.Counter];
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -176,42 +176,44 @@ export class UpdateArticleComponent implements OnInit {
   
   public getMakes(): void {  
 
+    this.loading = true;
+    
     this._makeService.getMakes().subscribe(
         result => {
           if(!result.makes) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.makes = result.makes;
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public getCategories(): void {  
     
+    this.loading = true;
+    
     this._categoryService.getCategories().subscribe(
         result => {
           if(!result.categories) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.categories = result.categories;
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -229,76 +231,78 @@ export class UpdateArticleComponent implements OnInit {
 
   public getMake(): void {  
     
+    this.loading = true;
+    
     this._makeService.getMake(this.articleForm.value.make).subscribe(
         result => {
           if(!result.make) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.article.make = result.make;
             this.getCategory();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public getCategory(): void {  
     
+    this.loading = true;
+    
     this._categoryService.getCategory(this.articleForm.value.category).subscribe(
         result => {
           if(!result.category) {
-            this.alertMessage = "Error al cargar el rubro. Error en el servidor.";
+            this.showMessage(result.message, "info", true); 
           } else {
             this.article.category = result.category;
-            this.makeFileRequest(this.filesToUpload)
-              .then(
-                (result)=>{
-                  this.resultUpload = result;
-                  this.article.picture = this.resultUpload.filename;
-                },
-                (error) =>{
-                  this.alertConfig = error;
-                }
-              );
+            if(this.filesToUpload) {
+              this.makeFileRequest(this.filesToUpload)
+                .then(
+                  (result)=>{
+                    this.resultUpload = result;
+                    this.article.picture = this.resultUpload.filename;
+                  },
+                  (error) =>{
+                    this.showMessage(error, "danger", false);
+                    this.loading = false;
+                  }
+                );
+            }
             this.saveChanges();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public saveChanges(): void {
     
+    this.loading = true;
+    
     this._articleService.updateArticle(this.article).subscribe(
       result => {
         if (!result.article) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.article = result.article;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha actualizado con éxito.";
+          this.showMessage("El artículo se ha actualizado con éxito.", "success", false); 
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -332,5 +336,15 @@ export class UpdateArticleComponent implements OnInit {
       xhr.open('POST', Config.apiURL + 'upload-imagen/'+idArticulo,true);
       xhr.send(formData);
     });
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

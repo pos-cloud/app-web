@@ -20,7 +20,7 @@ export class UpdateTableComponent implements OnInit {
   @Input() table: Table;
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -50,10 +50,7 @@ export class UpdateTableComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -123,21 +120,22 @@ export class UpdateTableComponent implements OnInit {
 
   public getRooms(): void {  
 
+    this.loading = true;
+
     this._roomService.getRooms().subscribe(
         result => {
           if(!result.rooms) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.rooms = result.rooms;
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -150,49 +148,57 @@ export class UpdateTableComponent implements OnInit {
 
   public getRoom(): void {  
     
+    this.loading = true;
+    
     this._roomService.getRoom(this.tableForm.value.room).subscribe(
         result => {
           if(!result.room) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
-            
+            this.hideMessage();
+            this.loading = false;
             this.table.room = result.room;
             this.saveChanges();
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
 
   public saveChanges(): void {
     
+    this.loading = true;
+    
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.table = result.table;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El artículo se ha actualizado con éxito.";
+          this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

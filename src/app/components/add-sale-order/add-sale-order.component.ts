@@ -41,7 +41,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 export class AddSaleOrderComponent implements OnInit {
 
   public saleOrder: SaleOrder;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public movementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
   public printers: Printer[];
@@ -131,8 +131,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _modalService: NgbModal,
     public _printerService: PrinterService
   ) {
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
     this.saleOrder = new SaleOrder();
     this.saleOrder.employee = new Employee();
     this.saleOrder.table = new Table();
@@ -159,6 +157,8 @@ export class AddSaleOrderComponent implements OnInit {
 
   public getLastSaleOrderByTable(): void {
 
+    this.loading = true;
+    
     this._saleOrderService.getLastSaleOrderByTable(this.tableId).subscribe(
       result => {
 
@@ -177,10 +177,10 @@ export class AddSaleOrderComponent implements OnInit {
         }
         
         if(saleOrderState !== SaleOrderState.Open) {
-          this.alertMessage = null;
+          this.hideMessage();
           this.getTable(this.tableId);
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
           this.saleOrder = result.saleOrders[0];
           this.discountAmount = this.saleOrder.discount;
           this.table = this.saleOrder.table;
@@ -189,11 +189,8 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-          this.alertConfig.type = "danger";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -201,7 +198,8 @@ export class AddSaleOrderComponent implements OnInit {
   public getLastSaleOrderByOrigen(): void {
     
     let origin = 0;
-
+    this.loading = true;
+    
     this._saleOrderService.getLastSaleOrderByOrigen(origin).subscribe(
       result => {
         let number;
@@ -223,29 +221,28 @@ export class AddSaleOrderComponent implements OnInit {
           this.saleOrder.number = number;
           this.addSaleOrder();
         } else {
-          this.alertMessage = "Ha ocurrido un error en obtener el último pedido";
-          this.alertConfig.type = "danger";
+          this.showMessage("Ha ocurrido un error en obtener el último pedido", "danger", false);
+          this.loading = false;
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-          this.alertConfig.type = "danger";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
 
   public getTable(id: string): void  {
     
+    this.loading = true;
+    
     this._tableService.getTable(id).subscribe(
       result => {
         if(!result.table) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
           this.table = result.table;
           this.saleOrder.table = this.table;
           this.saleOrder.employee = this.table.employee;
@@ -253,35 +250,33 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
 
   public getOpenTurn(): void {
     
-      this._turnService.getOpenTurn(this.saleOrder.employee._id).subscribe(
-        result => {
-					if(!result.turns) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
-					} else {
-            this.loading = false;
-            this.saleOrder.turn = result.turns[0];
-            this.getLastSaleOrderByOrigen();
-          }
-				},
-				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
-				}
-      );
-   }
+    this.loading = true;
+    
+    this._turnService.getOpenTurn(this.saleOrder.employee._id).subscribe(
+      result => {
+        if(!result.turns) {
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.saleOrder.turn = result.turns[0];
+          this.getLastSaleOrderByOrigen();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
 
   public buildForm(): void {
 
@@ -409,22 +404,21 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addSaleOrder(): void {
     
+    this.loading = true;
+    
     this._saleOrderService.saveSaleOrder(this.saleOrder).subscribe(
       result => {
           if(!result.saleOrder) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
             this.saleOrder = result.saleOrder;
             this.changeStateOfTable(TableState.Busy, false);
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-              this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          }
+          this.showMessage(error._body, "danger", false);
           this.loading = false;
         }
     );
@@ -432,22 +426,21 @@ export class AddSaleOrderComponent implements OnInit {
 
   public updateSaleOrder(): void {
     
+    this.loading = true;
+    
     this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
       result => {
-          if(!result.saleOrder) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
-          } else {
-            //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
-          }
-        },
-        error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-              this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          }
+        if(!result.saleOrder) {
+          this.showMessage(result.message, "info", true); 
           this.loading = false;
+        } else {
+          //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
         }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
     );
   }
 
@@ -487,12 +480,14 @@ export class AddSaleOrderComponent implements OnInit {
 
   public changeStateOfTable(state: any, closed: boolean): void {
 
+    this.loading = true;
+    
     this.table.state = state;
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.table = result.table;
           if(closed) {
@@ -502,10 +497,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -579,8 +571,8 @@ export class AddSaleOrderComponent implements OnInit {
               
             });
           } else {
-            this.alertMessage = "No existen artículos en el pedido.";
-            this.alertConfig.type = "danger";
+            this.showMessage("No existen artículos en el pedido.", "danger", false);
+            this.loading = false;
           }
           break;
         case 'cancel_order' :
@@ -630,8 +622,8 @@ export class AddSaleOrderComponent implements OnInit {
 
             });
           } else {
-            this.alertMessage = "No existen artículos en el pedido.";
-            this.alertConfig.type = "danger";
+            this.showMessage("No existen artículos en el pedido.", "danger", false);
+            this.loading = false;
           }
           break;
         case 'printers':
@@ -646,7 +638,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else if(this.countPrinters() !== 0) {
             this.distributeImpressions(this.printersAux[0]);
           } else {
-            this.alertMessage = "No se encontro impresora para la operación solicitada";
+            this.showMessage("No se encontro impresora para la operación solicitada", "danger", false);
           }
         default : ;
     };
@@ -692,7 +684,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.toPrintKitchen(printer);
         break;
       default:
-        this.alertMessage = "No se reconoce la operación de impresión";
+        this.showMessage("No se reconoce la operación de impresión.", "danger", false);
         break;
     }
   }
@@ -709,14 +701,16 @@ export class AddSaleOrderComponent implements OnInit {
 
   public getPrinters(): void {
 
+    this.loading = true;
+    
     this._printerService.getPrinters().subscribe(
       result => {
         if (!result.printers) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
           this.printers = null;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
           this.printers = result.printers;
           this.getLastSaleOrderByTable();
           this.buildForm();
@@ -725,10 +719,8 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if (!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -756,7 +748,7 @@ export class AddSaleOrderComponent implements OnInit {
         (this.discountAmount === 0 || this.discountAmount === null)){
 
       this.saleOrder.discount = parseFloat(""+this.saleOrder.subtotalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
-      this.alertMessage = null;
+      this.hideMessage();
     } else if(( this.discountPorcent === 0 || 
                 this.discountPorcent === null) && 
                 this.discountAmount > 0  && 
@@ -764,14 +756,14 @@ export class AddSaleOrderComponent implements OnInit {
                 this.discountAmount !== null){
 
       this.saleOrder.discount = this.discountAmount;
-      this.alertMessage = null;
+      this.hideMessage();
     } else if(this.discountAmount !== 0 && this.discountPorcent !== 0){
       
       this.saleOrder.discount = 0;
-      this.alertMessage = "Solo debe cargar un solo descuento.";
-      this.alertConfig.type = "danger";
+
+      this.showMessage("Solo debe cargar un solo descuento.", "info", true);
     } else {
-      this.alertMessage = null;
+      this.hideMessage();
     }
 
     if(this.saleOrder.discount != 0) {
@@ -785,13 +777,15 @@ export class AddSaleOrderComponent implements OnInit {
 
   public saveMovementOfArticle(): void {
 
+    this.loading = true;
+    
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
           this.movementOfArticle = result.movementOfArticle;
           this.getMovementsOfSaleOrder();
           this.movementOfArticle = new MovementOfArticle();
@@ -800,10 +794,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -838,6 +829,8 @@ export class AddSaleOrderComponent implements OnInit {
 
   public getMovementsOfSaleOrder(): void {
     
+    this.loading = true;
+    
     this._movementOfArticleService.getMovementsOfSaleOrder(this.saleOrder._id).subscribe(
         result => {
 					if(!result.movementsOfArticles) {
@@ -851,11 +844,9 @@ export class AddSaleOrderComponent implements OnInit {
           }
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
-				}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
+        }
       );
   }
 
@@ -867,15 +858,15 @@ export class AddSaleOrderComponent implements OnInit {
 
   public deleteMovementOfArticle(movementOfArticleId: string): void {
     
+    this.loading = true;
+    
     this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
       result => {
         this.getMovementsOfSaleOrder();
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -893,6 +884,8 @@ export class AddSaleOrderComponent implements OnInit {
 
    public toPrintBill(printerSelected: Printer): void {
      
+    this.loading = true;
+    
     if(this.movementsOfArticles.length !== 0) {
       let datePipe = new DatePipe('es-AR');
       let decimalPipe = new DecimalPipe('ARS');
@@ -936,22 +929,24 @@ export class AddSaleOrderComponent implements OnInit {
           if(result.message === 'ok'){
             this.changeStateOfTable(TableState.Pending, true);
           } else {
-            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-            this.alertConfig.type = "danger";
+            this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
+            this.loading = false;
           }
         },
         error => {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          this.alertConfig.type = 'danger';
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
     } else {
-      this.alertMessage = "No existen artículos en el pedido.";
-      this.alertConfig.type = "danger";
+      this.showMessage("No existen artículos en el pedido.", "danger", false);
+      this.loading = false;
     }
   }
 
   public toPrintCharge(printerSelected: Printer): void {
+    
+    this.loading = true;
     
     if(this.movementsOfArticles.length !== 0) {
       let datePipe = new DatePipe('es-AR');
@@ -998,23 +993,25 @@ export class AddSaleOrderComponent implements OnInit {
           if(result.message === 'ok'){
             this.changeStateOfTable(TableState.Available, true);
           } else {
-            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-            this.alertConfig.type = "danger";
+            this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
+            this.loading = false;
           }
         },
         error => {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          this.alertConfig.type = 'danger';
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
     } else {
-      this.alertMessage = "No existen artículos en el pedido.";
-      this.alertConfig.type = "danger";
+      this.showMessage("No existen artículos en el pedido.", "danger", false);
+      this.loading = false;
     }
   }
 
   public toPrintBar(printerSelected: Printer): void {
 
+    this.loading = true;
+    
     if (this.barArticlesToPrint.length !== 0) {
       let datePipe = new DatePipe('es-AR');
       let decimalPipe = new DecimalPipe('ARS');
@@ -1052,23 +1049,25 @@ export class AddSaleOrderComponent implements OnInit {
               this.openModal("printers");
             }
           } else {
-            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-            this.alertConfig.type = "danger";
+            this.showMessage("Ha ocurrido un error en el servidor.", "danger", false); 
+            this.loading = false;
           }
         },
         error => {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          this.alertConfig.type = 'danger';
+          this.showMessage(error, "danger", false);
+          this.loading = false;
         }
       );
     } else {
-      this.alertMessage = "No existen artículos en el pedido.";
-      this.alertConfig.type = "danger";
+      this.showMessage("No existen artículos en el pedido", "danger", false); 
+      this.loading = false;
     }
   }
 
   public toPrintKitchen(printerSelected: Printer): void {
 
+    this.loading = true;
+    
     if (this.movementsOfArticles.length !== 0) {
       let datePipe = new DatePipe('es-AR');
       let decimalPipe = new DecimalPipe('ARS');
@@ -1101,39 +1100,48 @@ export class AddSaleOrderComponent implements OnInit {
             }
             this.changeStateOfTable(TableState.Busy, true);
           } else {
-            this.alertMessage = "Ha ocurrido un error en el servidor. Comuníquese con el Administrador de sistemas.";
-            this.alertConfig.type = "danger";
+            this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
+            this.loading = false;
           }
         },
         error => {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-          this.alertConfig.type = 'danger';
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
     } else {
-      this.alertMessage = "No existen artículos en el pedido.";
-      this.alertConfig.type = "danger";
+      this.showMessage("No existen artículos en el pedido", "danger", false);
+      this.loading = false;
     }
   }
 
   public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
 
+    this.loading = true;
+    
     this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if (!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

@@ -5,8 +5,8 @@
 	</button>
 </div>
 <section class="container-fluid">
-	<div class="center-content"  *ngIf="alertMessage">
-		<ngb-alert (close)="alertMessage=''">
+	<div class="center-content"  *ngIf="alertMessage !== ''">
+		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
@@ -34,7 +34,7 @@
 					</div>
 				</div>
 				<div class="form-group col-md-4">
-					<input type="file" placeholder="ho" (change)="fileChangeEvent($event)"/>
+					<input type="file" accept="image/*" (change)="fileChangeEvent($event)"/>
 				</div>
 			</div>
 			<div class="row">

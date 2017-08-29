@@ -20,11 +20,12 @@ export class ListSaleOrdersComponent implements OnInit {
 
   public saleOrders: SaleOrder[] = new Array();
   public areSaleOrdersEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['number'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
 
   constructor(
     public _saleOrderService: SaleOrderService,
@@ -43,31 +44,27 @@ export class ListSaleOrdersComponent implements OnInit {
     this.getSaleOrders();
   }
 
-  public getBadge(term: string): boolean {
-
-    return true;
-  }
-
   public getSaleOrders(): void {  
 
+    this.loading = true;
+    
     this._saleOrderService.getSaleOrders().subscribe(
         result => {
 					if(!result.saleOrders) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
             this.saleOrders = null;
             this.areSaleOrdersEmpty = true;
 					} else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
 					  this.saleOrders = result.saleOrders;
             this.areSaleOrdersEmpty = false;
           }
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
 				}
       );
    }
@@ -88,26 +85,34 @@ export class ListSaleOrdersComponent implements OnInit {
   
   public openModal(op: string, saleOrder:SaleOrder): void {
 
-      let modalRef;
-      switch(op) {
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteSaleOrderComponent, { size: 'lg' })
-            modalRef.componentInstance.saleOrder = saleOrder;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getSaleOrders();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
-
-    public addSaleOrder(saleOrderCode: number) {
-      this._router.navigate(['/pos/mesas/'+saleOrderCode+'/add-sale-order']);
+    let modalRef;
+    switch(op) {
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteSaleOrderComponent, { size: 'lg' })
+          modalRef.componentInstance.saleOrder = saleOrder;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getSaleOrders();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
     }
+  };
 
-    
+  public addSaleOrder(saleOrderCode: number) {
+    this._router.navigate(['/pos/mesas/'+saleOrderCode+'/add-sale-order']);
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

@@ -21,7 +21,7 @@ export class AddCategoryComponent  implements OnInit {
 
   public category: Category;
   public categoryForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -44,10 +44,7 @@ export class AddCategoryComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -103,35 +100,35 @@ export class AddCategoryComponent  implements OnInit {
 
   public saveCategory(): void {
     
+    this.loading = true;
+    
     this._categoryService.saveCategory(this.category).subscribe(
-    result => {
+      result => {
         if (!result.category) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.category = result.category;
-          this.makeFileRequest(this.filesToUpload)
-              .then(
-                (result)=>{
-                  this.resultUpload = result;
-                  this.category.picture = this.resultUpload.filename;
-                },
-                (error) =>{
-                  this.alertConfig = error;
-                }
-              );
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El rubro se ha añadido con éxito.";      
+          if(this.filesToUpload) {
+            this.makeFileRequest(this.filesToUpload)
+                .then(
+                  (result)=>{
+                    this.resultUpload = result;
+                    this.category.picture = this.resultUpload.filename;
+                  },
+                  (error) =>{
+                    this.showMessage(error, "danger", false);
+                  }
+                );
+          }
+          this.showMessage("El rubro se ha añadido con éxito.", "success", false);   
           this.category = new Category ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false); 
         this.loading = false;
       }
     );
@@ -165,5 +162,15 @@ export class AddCategoryComponent  implements OnInit {
       xhr.open('POST', Config.apiURL + 'upload-imagen-category/'+idCategory,true);
       xhr.send(formData);
     });
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

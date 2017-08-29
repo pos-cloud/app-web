@@ -21,7 +21,7 @@ export class AddUserComponent  implements OnInit {
 
   public user: User;
   public userForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
@@ -60,10 +60,7 @@ export class AddUserComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -129,22 +126,23 @@ export class AddUserComponent  implements OnInit {
 
   public getEmployees(): void {  
 
+    this.loading = true;
+    
     this._employeeService.getEmployees().subscribe(
         result => {
 					if(!result.employees) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
 					  this.employees = null;
 					} else {
-            this.alertMessage = null;
+            this.hideMessage();
 					  this.employees = result.employees;
           }
+          this.loading = false;
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
 				}
       );
    }
@@ -158,27 +156,35 @@ export class AddUserComponent  implements OnInit {
 
   public saveUser(): void {
     
+    this.loading = true;
+    
     this._userService.saveUser(this.user).subscribe(
     result => {
         if (!result.user) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.user = result.user;
-          this.alertMessage = "El usuario se ha añadido con éxito.";  
-          this.alertConfig.type = 'success';    
+          this.showMessage("El usuario se ha añadido con éxito.", "success", false);
           this.user = new User ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

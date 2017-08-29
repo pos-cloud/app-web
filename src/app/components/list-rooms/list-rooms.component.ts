@@ -21,11 +21,12 @@ export class ListRoomsComponent implements OnInit {
 
   public rooms: Room[] = new Array();
   public areRoomsEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Room> = new EventEmitter<Room>();
 
   constructor(
@@ -33,10 +34,7 @@ export class ListRoomsComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -45,31 +43,27 @@ export class ListRoomsComponent implements OnInit {
     this.getRooms();
   }
 
-  public getBadge(term: string): boolean {
-
-    return true;
-  }
-
   public getRooms(): void {  
 
+    this.loading = true;
+    
     this._roomService.getRooms().subscribe(
         result => {
           if(!result.rooms) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
             this.rooms = null;
             this.areRoomsEmpty = true;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.rooms = result.rooms;
             this.areRoomsEmpty = false;
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -90,42 +84,52 @@ export class ListRoomsComponent implements OnInit {
   
   public openModal(op: string, room:Room): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddRoomComponent, { size: 'lg' }).result.then((result) => {
-            this.getRooms();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddRoomComponent, { size: 'lg' }).result.then((result) => {
+          this.getRooms();
+        }, (reason) => {
+          this.getRooms();
+        });
+        break;
+      case 'update' :
+          modalRef = this._modalService.open(UpdateRoomComponent, { size: 'lg' })
+          modalRef.componentInstance.room = room;
+          modalRef.result.then((result) => {
+            if(result === 'save_close') {
+              this.getRooms();
+            }
           }, (reason) => {
-            this.getRooms();
+            
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdateRoomComponent, { size: 'lg' })
-            modalRef.componentInstance.room = room;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getRooms();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeleteRoomComponent, { size: 'lg' })
-            modalRef.componentInstance.room = room;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getRooms();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
-
-    public addItem(roomSelected) {
-      this.eventAddItem.emit(roomSelected);
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteRoomComponent, { size: 'lg' })
+          modalRef.componentInstance.room = room;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getRooms();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
     }
+  };
+
+  public addItem(roomSelected) {
+    this.eventAddItem.emit(roomSelected);
+  }
+    
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

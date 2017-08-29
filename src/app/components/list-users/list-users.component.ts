@@ -21,21 +21,19 @@ export class ListUsersComponent implements OnInit {
 
   public users: User[] = new Array();
   public areUsersEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
 
   constructor(
     public _userService: UserService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -44,31 +42,27 @@ export class ListUsersComponent implements OnInit {
     this.getUsers();
   }
 
-  public getBadge(term: string): boolean {
-
-    return true;
-  }
-
   public getUsers(): void {  
 
+    this.loading = true;
+    
     this._userService.getUsers().subscribe(
         result => {
 					if(!result.users) {
-						this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
 					  this.users = null;
             this.areUsersEmpty = true;
 					} else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
 					  this.users = result.users;
             this.areUsersEmpty = false;
           }
 				},
 				error => {
-					this.alertMessage = error._body;
-					if(!this.alertMessage) {
-						this.alertMessage = "Ha ocurrido un error en el servidor";
-					}
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
 				}
       );
    }
@@ -122,5 +116,15 @@ export class ListUsersComponent implements OnInit {
         break;
       default : ;
     }
-  };
+  }; 
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

@@ -19,7 +19,7 @@ export class ImportComponent  implements OnInit {
   public filePath: string = '';
   public model: string = '';
   public importForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -147,22 +147,28 @@ export class ImportComponent  implements OnInit {
     this._importService.import(this.objectToImport).subscribe(
       result => {
         if (result.message !== 'ok') {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
-          this.alertConfig.type = 'success';
-          this.alertMessage = "Se ha importado con éxito.";
+          this.showMessage("Se ha importado con éxito.", "success", false);
           this.activeModal.close("import_close");
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

@@ -20,7 +20,7 @@ export class AddCompanyComponent  implements OnInit {
   public company: Company;
   public types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
   public companyForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -72,10 +72,7 @@ export class AddCompanyComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -156,6 +153,8 @@ export class AddCompanyComponent  implements OnInit {
 
   public getLastCompany(): void {  
 
+    this.loading = true;
+    
     this._companyService.getLastCompany().subscribe(
         result => {
           let code = 1;
@@ -176,12 +175,11 @@ export class AddCompanyComponent  implements OnInit {
             'phones': '',
             'emails': ''
           });
+          this.loading = false;
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -195,15 +193,16 @@ export class AddCompanyComponent  implements OnInit {
 
   public saveCompany(): void {
     
+    this.loading = true;
+    
     this._companyService.saveCompany(this.company).subscribe(
     result => {
         if (!result.company) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.company = result.company;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "La empresa se ha añadido con éxito.";      
+          this.showMessage("La empresa se ha añadido con éxito.", "success", false);
           this.company = new Company ();
           this.getLastCompany();
           this.buildForm();
@@ -211,12 +210,21 @@ export class AddCompanyComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    console.log(this.alertConfig);
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+    console.log(this.alertConfig);
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

@@ -21,11 +21,12 @@ export class ListPrintersComponent implements OnInit {
 
   public printers: Printer[] = new Array();
   public arePrintersEmpty: boolean = true;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Printer> = new EventEmitter<Printer>();
 
   constructor(
@@ -33,10 +34,7 @@ export class ListPrintersComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -45,31 +43,27 @@ export class ListPrintersComponent implements OnInit {
     this.getPrinters();
   }
 
-  public getBadge(term: string): boolean {
-
-    return true;
-  }
-
   public getPrinters(): void {  
 
+    this.loading = true;
+    
     this._printerService.getPrinters().subscribe(
         result => {
           if(!result.printers) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
+            this.showMessage(result.message, "info", true); 
+            this.loading = false;
             this.printers = null;
             this.arePrintersEmpty = true;
           } else {
-            this.alertMessage = null;
+            this.hideMessage();
+            this.loading = false;
             this.printers = result.printers;
             this.arePrintersEmpty = false;
           }
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -90,42 +84,52 @@ export class ListPrintersComponent implements OnInit {
   
   public openModal(op: string, printer:Printer): void {
 
-      let modalRef;
-      switch(op) {
-        case 'add' :
-          modalRef = this._modalService.open(AddPrinterComponent, { size: 'lg' }).result.then((result) => {
-            this.getPrinters();
+    let modalRef;
+    switch(op) {
+      case 'add' :
+        modalRef = this._modalService.open(AddPrinterComponent, { size: 'lg' }).result.then((result) => {
+          this.getPrinters();
+        }, (reason) => {
+          this.getPrinters();
+        });
+        break;
+      case 'update' :
+          modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
+          modalRef.componentInstance.printer = printer;
+          modalRef.result.then((result) => {
+            if(result === 'save_close') {
+              this.getPrinters();
+            }
           }, (reason) => {
-            this.getPrinters();
+            
           });
-          break;
-        case 'update' :
-            modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
-            modalRef.componentInstance.printer = printer;
-            modalRef.result.then((result) => {
-              if(result === 'save_close') {
-                this.getPrinters();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        case 'delete' :
-            modalRef = this._modalService.open(DeletePrinterComponent, { size: 'lg' })
-            modalRef.componentInstance.printer = printer;
-            modalRef.result.then((result) => {
-              if(result === 'delete_close') {
-                this.getPrinters();
-              }
-            }, (reason) => {
-              
-            });
-          break;
-        default : ;
-      }
-    };
-
-    public addItem(printerSelected) {
-      this.eventAddItem.emit(printerSelected);
+        break;
+      case 'delete' :
+          modalRef = this._modalService.open(DeletePrinterComponent, { size: 'lg' })
+          modalRef.componentInstance.printer = printer;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getPrinters();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
     }
+  };
+
+  public addItem(printerSelected) {
+    this.eventAddItem.emit(printerSelected);
+  }
+    
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
+  }
 }

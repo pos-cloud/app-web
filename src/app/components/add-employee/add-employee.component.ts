@@ -22,7 +22,7 @@ export class AddEmployeeComponent  implements OnInit {
   public employee: Employee;
   public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -53,10 +53,7 @@ export class AddEmployeeComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -74,21 +71,22 @@ export class AddEmployeeComponent  implements OnInit {
 
   public getEmployeeTypes(): void {  
 
+    this.loading = true;
+
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
         if(!result.employeeTypes) {
           this.addEmployeeTypeWaiter();
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
+          this.loading = false;
           this.employeeTypes = result.employeeTypes;
           this.getLastEmployee();
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -97,12 +95,13 @@ export class AddEmployeeComponent  implements OnInit {
 
     let employeeType: EmployeeType = new EmployeeType();
     employeeType.description = "Mozo";
-
+    this.loading = true;
+    
     this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
       result => {
         if (!result.employeeType) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
         } else {
           employeeType = result.employeeType;
           this.employeeTypes[0] = employeeType;
@@ -111,10 +110,7 @@ export class AddEmployeeComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if (!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -124,12 +120,13 @@ export class AddEmployeeComponent  implements OnInit {
 
     let employeeType: EmployeeType = new EmployeeType();
     employeeType.description = "Supervisor";
-
+    this.loading = true;
+    
     this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
       result => {
         if (!result.employeeType) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
         } else {
           employeeType = result.employeeType;
           this.employeeTypes[1] = employeeType;
@@ -138,10 +135,7 @@ export class AddEmployeeComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if (!this.alertMessage) {
-          this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -149,6 +143,8 @@ export class AddEmployeeComponent  implements OnInit {
   
   public getLastEmployee(): void {  
 
+    this.loading = true;
+    
     this._employeeService.getLastEmployee().subscribe(
         result => {
           let code = 1;
@@ -167,12 +163,11 @@ export class AddEmployeeComponent  implements OnInit {
             'name': '',
             'type': employeeType
           });
+          this.loading = false;
         },
         error => {
-          this.alertMessage = error._body;
-          if(!this.alertMessage) {
-            this.alertMessage = "Ha ocurrido un error en el servidor";
-          }
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
       );
    }
@@ -229,15 +224,16 @@ export class AddEmployeeComponent  implements OnInit {
 
   public saveEmployee(): void {
     
+    this.loading = true;
+    
     this._employeeService.saveEmployee(this.employee).subscribe(
     result => {
         if (!result.employee) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.employee = result.employee;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El empleado se ha añadido con éxito.";  
+          this.showMessage("El empleado se ha añadido con éxito.", "sucess", false);
           this.employee = new Employee();
           this.buildForm();
           this.getEmployeeTypes();
@@ -245,12 +241,19 @@ export class AddEmployeeComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

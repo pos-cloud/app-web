@@ -19,7 +19,7 @@ export class AddEmployeeTypeComponent  implements OnInit {
 
   public employeeType: EmployeeType;
   public employeeTypeForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -40,10 +40,7 @@ export class AddEmployeeTypeComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -100,27 +97,35 @@ export class AddEmployeeTypeComponent  implements OnInit {
 
   public saveEmployeeType(): void {
     
+    this.loading = true;
+    
     this._employeeTypeService.saveEmployeeType(this.employeeType).subscribe(
     result => {
         if (!result.employeeType) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
         } else {
           this.employeeType = result.employeeType;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "El tipo de empleado se ha añadido con éxito.";      
+          this.showMessage("El tipo de empleado se ha añadido con éxito.", "success", false);
           this.employeeType = new EmployeeType();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

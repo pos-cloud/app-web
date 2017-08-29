@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
 
   public user: User;
   public loginForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string = "admin";
   public loading: boolean = false;
   @Input() employeeSelected: Employee;
@@ -55,10 +55,7 @@ export class LoginComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _router: Router,
     private _route: ActivatedRoute
-    ) { 
-      alertConfig.type = 'danger';
-      alertConfig.dismissible = true;
-    }
+    ) { }
 
   ngOnInit() {
 
@@ -100,12 +97,16 @@ export class LoginComponent implements OnInit {
               this._userService.isValidToken(token).subscribe(
                 result => {
                   if (!result.user) {
-                    this.alertMessage = result.message;
+                    this.showMessage(result.message, "info", true); 
+                    this.loading = false;
                   } else {
                     this._router.navigate(['/inicio']);
+                    this.loading = false;
                   }
                 },
                 error => {
+                  this.showMessage(error, "danger", false);
+                  this.loading = false;
                 }
               );
             }
@@ -113,20 +114,25 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
+        this.showMessage(error, "danger", false);
+        this.loading = false;
       }
     );
   }
 
   public getUserOfEmployee(): void {  
     
+    this.loading = true;
+    
     this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
       result => {
         if(!result.users) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
           this.user = null;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
+          this.loading = false;
           this.user = result.users[0];
           this.loginForm.setValue({
             '_id': this.user._id,
@@ -138,10 +144,8 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-          this.alertMessage = "Ha ocurrido un error en el servidor";
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
   }
@@ -195,14 +199,14 @@ export class LoginComponent implements OnInit {
     
     this.user = this.loginForm.value;
     this.loading = true;
+
     this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
-            this.alertMessage = result.message;
-            this.alertConfig.type = 'danger';
-            this.loading = false;
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
-          this.alertMessage = null;
+          this.hideMessage();
           this.user = result.user;
           if(this.user.employee.type.description === 'Mozo'){
             this.activeModal.close(this.employeeSelected);
@@ -215,9 +219,19 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = "Usuario o contraseña incorrecta" ;
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     )
+  } 
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

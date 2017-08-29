@@ -16,17 +16,15 @@ import { MakeService } from './../../services/make.service';
 export class DeleteMakeComponent implements OnInit {
 
   @Input() make: Make;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public focusEvent = new EventEmitter<boolean>();
+  public loading: boolean = false;
 
   constructor(
     public _makeService: MakeService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
   }
@@ -37,16 +35,27 @@ export class DeleteMakeComponent implements OnInit {
 
   public deleteMake(): void {
 
+    this.loading = true;
+
     this._makeService.deleteMake(this.make._id).subscribe(
       result => {
         this.activeModal.close('delete_close');
+        this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
       }
     );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

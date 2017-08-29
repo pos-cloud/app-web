@@ -19,7 +19,7 @@ export class AddCashBoxComponent  implements OnInit {
 
   public cashBox: CashBox;
   public cashBoxForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -40,10 +40,7 @@ export class AddCashBoxComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
@@ -121,6 +118,8 @@ export class AddCashBoxComponent  implements OnInit {
 
   public getLastCashBox(): void {
 
+    this.loading = true;
+    
     this._cashBoxService.getLastCashBox().subscribe(
       result => {
         if (!result.cashBoxes) {
@@ -132,10 +131,7 @@ export class AddCashBoxComponent  implements OnInit {
         }
 			},
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
-        }
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -143,26 +139,36 @@ export class AddCashBoxComponent  implements OnInit {
 
   public saveCashBox(): void {
     
+    this.loading = true;
+    
     this._cashBoxService.saveCashBox(this.cashBox).subscribe(
-    result => {
+      result => {
         if (!result.cashBox) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
         } else {
           this.cashBox = result.cashBox;
-          this.alertConfig.type = 'success';
-          this.alertMessage = "La caja se ha añadido con éxito.";      
+          this.showMessage("La caja se ha añadido con éxito.", "success", false);
           this.activeModal.close();
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = error._body;
-        if(!this.alertMessage) {
-            this.alertMessage = 'Ha ocurrido un error al conectarse con el servidor.';
+        error => {
+          this.showMessage(error._body, "danger", true);
+          this.loading = false;
         }
-        this.loading = false;
       }
     );
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }

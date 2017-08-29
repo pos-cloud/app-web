@@ -19,7 +19,7 @@ export class ConfigComponent implements OnInit {
 
   public config: Config;
   public configForm: FormGroup;
-  public alertMessage: any;
+  public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -47,10 +47,7 @@ export class ConfigComponent implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public alertConfig: NgbAlertConfig
-  ) {
-    this.alertConfig.type = 'danger';
-    this.alertConfig.dismissible = true;
-  }
+  ) {  }
 
   ngOnInit(): void {
 
@@ -138,9 +135,7 @@ export class ConfigComponent implements OnInit {
         }
       },
       error => {
-        this.alertMessage = 'No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.';
-        this.alertConfig.type = 'danger';
-        this.alertConfig.dismissible = true;
+        this.showMessage("No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.", "danger", false);
         this.loading = false;
       }
     );
@@ -153,21 +148,20 @@ export class ConfigComponent implements OnInit {
     this._configService.updateConfigApi(this.config).subscribe(
       result => {
         if (!result) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
             location.reload();
           } else {
-            this.alertMessage = "Ha ocurrido un error en el navegador. Recarge la página.";
-            this.alertConfig.type = 'danger';
+            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
             this.loading = false;
           }
         }
       },
       error => {
-        this.alertMessage = 'No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.';
+        this.showMessage("No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.", "danger", false);
         this.loading = false;
       }
     );
@@ -178,21 +172,22 @@ export class ConfigComponent implements OnInit {
     this._configService.saveConfigApi(this.config).subscribe(
       result => {
         if (!result) {
-          this.alertMessage = result.message;
-          this.alertConfig.type = 'danger';
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
+            this.showMessage("La conexión es exitosa.", "success", false);
             location.reload();
           } else {
-            this.alertMessage = "Ha ocurrido un error en el navegador. Recarge la página.";
-            this.alertConfig.type = 'danger';
+            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
+            this.loading = false;
           }
         }
         this.loading = false;
       },
       error => {
-        this.alertMessage = 'No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.';
+        this.showMessage("No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.", "danger", false);
         this.loading = false;
       }
     );
@@ -201,5 +196,15 @@ export class ConfigComponent implements OnInit {
   public setConfigurationSettings(config) {
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
+  }
+  
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage():void {
+    this.alertMessage = "";
   }
 }
