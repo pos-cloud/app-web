@@ -12,6 +12,7 @@ export class Config {
     static printPort: number = 7000;
     public pathMongo: string;
     public pathBackup: string;
+    public backupTime: string;
 
     constructor() { }
 

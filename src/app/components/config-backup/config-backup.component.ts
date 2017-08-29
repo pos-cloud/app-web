@@ -22,7 +22,8 @@ export class ConfigBackupComponent implements OnInit {
 
   public formErrors = {
     'pathMongo' : '',
-    'pathBackup' : ''
+    'pathBackup' : '',
+    'backupTime' : ''
   };
 
   public validationMessages = {
@@ -31,6 +32,9 @@ export class ConfigBackupComponent implements OnInit {
     },
     'pathBackup' : {
         'required':     'Este campo es requerido.'
+    },
+    'backupTime' : {
+      'required':     'Este campo es requerido.'
     }
   };
 
@@ -45,13 +49,8 @@ export class ConfigBackupComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.config = new Config();
-    this.getConfig();
     this.buildForm();
-    this.configForm.setValue({
-      '_id' :this.config._id,
-      'pathBackup' : this.config.pathBackup,
-      'pathMongo' : this.config.pathMongo
-    })
+    this.getConfig();
   }
 
   ngAfterViewInit() {
@@ -60,6 +59,10 @@ export class ConfigBackupComponent implements OnInit {
 
   public buildForm(){
     this.configForm = this._fb.group({
+      '_id': [this.config._id, [
+          Validators.required
+        ]
+      ],
       'pathMongo': [this.config.pathMongo, [
           Validators.required
         ]
@@ -68,6 +71,10 @@ export class ConfigBackupComponent implements OnInit {
           Validators.required
         ]
       ],
+      'backupTime' : [this.config.backupTime, [
+          Validators.required
+        ]
+      ]
     });
 
     this.configForm.valueChanges
@@ -98,10 +105,12 @@ export class ConfigBackupComponent implements OnInit {
   public addConfig(){
     this.config.pathBackup = this.configForm.value.pathBackup;
     this.config.pathMongo = this.configForm.value.pathMongo;
+    this.config.backupTime = this.configForm.value.backupTime;
     this.saveConfig();
   }
 
-  public saveConfig(): void{
+  public saveConfig(): void {
+
     this._serviceConfig.updateConfigApi(this.config).subscribe(
       result=> {
         if(!result.config) {
@@ -127,7 +136,14 @@ export class ConfigBackupComponent implements OnInit {
         if(!result.config) {
           this.alertMessage = result.messages;
         } else {
-          this.config = result.config;
+          this.config = result.config[0];
+          console.log(this.config);
+          this.configForm.setValue({
+            '_id' :this.config._id,
+            'backupTime' : this.config.backupTime,
+            'pathBackup' : this.config.pathBackup,
+            'pathMongo' : this.config.pathMongo
+          })
         }
       },
       error => {
@@ -139,5 +155,4 @@ export class ConfigBackupComponent implements OnInit {
       }
     )
   }
-
 }
