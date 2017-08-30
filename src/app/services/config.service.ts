@@ -29,6 +29,10 @@ export class ConfigService {
 		return this._http.post(Config.apiURL + "config", config).map(res => res.json());
 	}
 
+	saveConfigBackup (config: Config) {
+		return this._http.post(Config.apiURL + "dirbackup", config).map (res => res.json());
+	}
+
 	updateConfigApi(config: Config) {
 		return this._http.put(Config.apiURL + "config/" + config._id, config).map(res => res.json());
 	}

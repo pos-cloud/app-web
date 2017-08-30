@@ -51,6 +51,7 @@ import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.c
 import { ReportsComponent } from './components/reports/reports.component';
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
+import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 
 import { AuthGuard } from './guards/auth.guard';
 
@@ -103,6 +104,7 @@ const _routes: Routes = [
   { path: 'admin/eliminar-impresora', component: DeletePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/import', component: ImportComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/config', component: ConfigComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/configbackup', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
   { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
