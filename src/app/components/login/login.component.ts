@@ -65,6 +65,7 @@ export class LoginComponent implements OnInit {
     if(this.userType === "pos"){
       if(this.employeeSelected !== undefined){
         this.getUserOfEmployee();
+        this.employees.push(this.employeeSelected);
       }
     } else {
       this.getUsers();

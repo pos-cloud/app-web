@@ -12,7 +12,7 @@
           <b>Cliente: </b><span *ngIf="!saleOrder.company">Consumidor final</span><span *ngIf="saleOrder.company">{{saleOrder.company.name}}</span>
         </div>
         <div class="col-md-3">
-          <b>Apertura: </b>{{saleOrder.date | date:['HH:mm']}}
+          <b>Apertura: </b>{{saleOrder.startDate | date:['HH:mm']}}
           <!--<app-clock [startTime]="saleOrder.date"></app-clock>-->
         </div>
       </div>

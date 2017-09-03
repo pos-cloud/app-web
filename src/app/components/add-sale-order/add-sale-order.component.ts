@@ -580,6 +580,7 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
             if(result  === "cancel_order"){
               this.saleOrder.state = SaleOrderState.Canceled;
+              this.saleOrder.endDate = new Date();
               this.updateSaleOrder();
               this.table.employee = null;
               this.changeStateOfTable(TableState.Available, true);
@@ -691,6 +692,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public assignOrigin(origin: number) {
     this.saleOrder.origin = origin;
+    this.saleOrder.endDate = new Date();
     this.updateSaleOrder();
   }
 
@@ -897,7 +899,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Tel: (03564) 424423\n' +
         'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
         'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.endDate, 'HH:mm')  + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
         if(this.saleOrder.company) {
@@ -917,7 +919,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
         '----Gracias por su visita.----\n\n\n';
 
-      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
       
       let print: Print = new Print();
       print.fileName = fileName;
@@ -959,7 +961,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Tel: (03564) 424423\n' +
         'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
         'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.date, 'HH:mm')  + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.endDate, 'HH:mm')  + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
         if(this.saleOrder.company) {
@@ -981,7 +983,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
         '----Gracias por su visita.----\n\n\n';
 
-      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
       
       let print: Print = new Print();
       print.fileName = fileName;
@@ -1017,7 +1019,7 @@ export class AddSaleOrderComponent implements OnInit {
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
       content =
-        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.date, 'HH:mm') + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.endDate, 'HH:mm') + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
 
@@ -1028,7 +1030,7 @@ export class AddSaleOrderComponent implements OnInit {
         content += barArticleToPrint.observation + '\n';
       }
 
-      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
 
       let print: Print = new Print();
       print.fileName = fileName;
@@ -1073,7 +1075,7 @@ export class AddSaleOrderComponent implements OnInit {
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
       content =
-        'Fecha ' + datePipe.transform(this.saleOrder.date, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.date, 'HH:mm') + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.endDate, 'HH:mm') + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
 
@@ -1084,7 +1086,7 @@ export class AddSaleOrderComponent implements OnInit {
         content += kitchenArticleToPrint.observation + '\n';
       }
 
-      let fileName: string = 'tiquet-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
 
       let print: Print = new Print();
       print.fileName = fileName;

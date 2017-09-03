@@ -24,7 +24,7 @@
                 <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Origen..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterTable" placeholder="Mesa..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterDate" placeholder="Fecha..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Fecha..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterObservation" placeholder="Observación..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterTotalPrice" placeholder="Precio Total..." ></th>
@@ -32,12 +32,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let saleOrder of saleOrders | orderBy: orderTerm: propertyTerm	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
-                                        | filter: filterTable:'description':'table' | filter: filterDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
+                                        | filter: filterTable:'description':'table' | filter: filterEndDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
                                         | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 9, currentPage: p }">
               <td>{{saleOrder.origin}}</td>
               <td>{{saleOrder.number}}</td>
               <td *ngIf="saleOrder.table">{{saleOrder.table.description}}</td>
-              <td>{{saleOrder.date | date: ['dd/MM/yyyy'] }}</td>
+              <td *ngIf="!saleOrder.endDate">{{saleOrder.startDate | date: ['dd/MM/yyyy'] }}</td>
+              <td *ngIf="saleOrder.endDate">{{saleOrder.endDate | date: ['dd/MM/yyyy'] }}</td>
               <td>
                 <h6>
                   <span class="badge" [ngClass]="{'badge-danger':saleOrder.state==='Anulado',

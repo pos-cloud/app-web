@@ -9,9 +9,9 @@ export class SaleOrder {
 	public _id: string;
 	public origin: number = 0;
 	public number: number = 0;
-	public date: Date = new Date();
+	public startDate: Date = new Date();
+	public endDate: Date;
 	public state: SaleOrderState = SaleOrderState.Open;
-	public observation: string;
 	public subtotalPrice: number = 0.00;
 	public discount: number = 0.00;
 	public cashChange: number = 0.00;

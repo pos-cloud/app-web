@@ -13,6 +13,7 @@ import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
 import { SaleOrderService } from './../../services/sale-order.service';
 import { TurnService } from './../../services/turn.service';
+import { UserService } from './../../services/user.service';
 
 import { AddTableComponent } from './../../components/add-table/add-table.component';
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
@@ -59,6 +60,7 @@ export class ListTablesComponent implements OnInit {
     public _employeeService: EmployeeService,
     public _saleOrderService: SaleOrderService,
     public _turnService: TurnService,
+    public _userService: UserService,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -238,10 +240,29 @@ export class ListTablesComponent implements OnInit {
       result => {
         if (!result.turns) {
           this.loading = false;
-          this.openModal('login', this.tableSelected);
+          this.getUserOfEmployee(employee);
         } else {
           this.loading = false;
           this.assignEmployee();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getUserOfEmployee(employee: Employee): void {
+
+    this.loading = true;
+
+    this._userService.getUserOfEmployee(employee._id).subscribe(
+      result => {
+        if (!result.users) {
+          this.openTurn(employee);
+        } else {
+          this.openModal('login', this.tableSelected);
         }
       },
       error => {
