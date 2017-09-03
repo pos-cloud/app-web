@@ -9,6 +9,7 @@ import { CategoryService } from './../../services/category.service';
 import { AddCategoryComponent } from './../../components/add-category/add-category.component';
 import { UpdateCategoryComponent } from './../../components/update-category/update-category.component';
 import { DeleteCategoryComponent } from './../../components/delete-category/delete-category.component';
+import { ImportComponent } from './../../components/import/import.component';
 
 import { Config } from './../../app.config';
 
@@ -124,6 +125,20 @@ export class ListCategoriesComponent implements OnInit {
           }, (reason) => {
             
           });
+          break;
+      case 'import':
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        let model: any = new Category();
+        model.model = "category";
+        model.primaryKey = "description";
+        modalRef.componentInstance.model = model;
+        modalRef.result.then((result) => {
+          if (result === 'import_close') {
+            this.getCategories();
+          }
+        }, (reason) => {
+
+        });
         break;
       default : ;
     }

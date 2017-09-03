@@ -129,6 +129,13 @@ export class ListArticlesComponent implements OnInit {
         break;
       case 'import' :
           modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+          let model: any = new Article();
+          model.model = "article";
+          model.primaryKey = "code";
+          model.relations = new Array();
+          model.relations.push("make_relation_description");
+          model.relations.push("category_relation_description");
+          modalRef.componentInstance.model = model;
           modalRef.result.then((result) => {
             if(result === 'import_close') {
               this.getArticles();

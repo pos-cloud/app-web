@@ -9,6 +9,7 @@ import { MakeService } from './../../services/make.service';
 import { AddMakeComponent } from './../../components/add-make/add-make.component';
 import { UpdateMakeComponent } from './../../components/update-make/update-make.component';
 import { DeleteMakeComponent } from './../../components/delete-make/delete-make.component';
+import { ImportComponent } from './../../components/import/import.component';
 
 @Component({
   selector: 'app-list-makes',
@@ -114,6 +115,20 @@ export class ListMakesComponent implements OnInit {
           }, (reason) => {
             
           });
+          break;
+      case 'import':
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        let model: any = new Make();
+        model.model = "make";
+        model.primaryKey = "description";
+        modalRef.componentInstance.model = model;
+        modalRef.result.then((result) => {
+          if (result === 'import_close') {
+            this.getMakes();
+          }
+        }, (reason) => {
+
+        });
         break;
       default : ;
     }

@@ -1,5 +1,5 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, AbstractControl, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,9 +15,11 @@ import { ImportService } from './../../services/import.service';
 
 export class ImportComponent  implements OnInit {
 
-  public objectToImport: Array<String>;
-  public filePath: string = '';
-  public model: string = '';
+  public filePath: string = ''; //Ruta de archivo a importar
+  public modelToImport: Array<String>; //El arreglo donde se guardarán la ruta, el modelo, y las propiedades a importar
+  @Input() model: Array<String>; //Recibimos el objeto a importar, con su clave primaria
+  public properties: Array<String>; //Donde guardaremos las propiedades del objeto a importar
+  public newProperties: Array<String>; //Donde guardaremos las propiedades del objeto a importar modificando las propiedades delas relaciones
   public importForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -26,25 +28,13 @@ export class ImportComponent  implements OnInit {
   public filesToUpload: Array <File>;
 
   public formErrors = {
-    'filePath': '',
-    'code': '',
-    'description': '',
-    'salePrice': 0.00,
+    'filePath': ''
   };
 
   public validationMessages = {
     'filePath': {
       'required':       'Este campo es requerido.',
-    },
-    'code': {
-      'required':       'Este campo es requerido.',
-    },
-    'description': {
-      'required':       'Este campo es requerido.'
-    },
-    'salePrice': {
-      'required':       'Este campo es requerido.'
-    },
+    }
   };
 
   constructor(
@@ -53,28 +43,16 @@ export class ImportComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.objectToImport = new Array();
-    this.model = 'article';
+    this.properties = Object.keys(this.model);
+    this.modelToImport = new Array();
+    this.newProperties = new Array();
     this.buildForm();
-    this.importForm.setValue({
-      "filePath":'c:\\temp\\articulos.xlsx',
-      "code":"code",
-      "description":"desc",
-      "salePrice":"precio",
-      "observation":"",
-      "make_relation_description":"marca",
-      "category_relation_description":"rubro",
-      "barcode":""
-    });
   }
 
   ngAfterViewInit() {
@@ -87,32 +65,36 @@ export class ImportComponent  implements OnInit {
       'filePath': [this.filePath, [
           Validators.required,
         ]
-      ],
-      'code': [this.objectToImport['code'], [
-          Validators.required,
-        ]
-      ],
-      'make_relation_description': [this.objectToImport['make_relation_description'], [
-        ]
-      ],
-      'description': [this.objectToImport['description'], [
-          Validators.required
-        ]
-      ],
-      'salePrice': [this.objectToImport['salePrice'], [
-          Validators.required
-        ]
-      ],
-      'category_relation_description': [this.objectToImport['category'], [
-        ]
-      ],
-      'observation': [this.objectToImport['observation'], [
-        ]
-      ],
-      'barcode': [this.objectToImport['barcode'], [
-        ]
       ]
     });
+    
+    for(let property of this.properties) {
+
+      let newProperty = property.toString();
+
+      if (property !== "model" && property !== "primaryKey" && property !== "relations") {
+        this.importForm.addControl(newProperty, new FormControl(''));
+        this.newProperties[newProperty] = newProperty;
+      } else if (property !== "relations") {
+        this.importForm.addControl(newProperty, new FormControl(this.model[newProperty]));
+      }
+    }
+
+    if (this.model["relations"]) {
+      for (let relation of this.model["relations"]) {
+        
+        let property = relation.toString();
+        
+        this.importForm.addControl(property, new FormControl(''));
+
+
+        let newProperty = property.split('_');
+        this.properties.push(newProperty[0]);
+        this.newProperties[newProperty[0]] = property;
+        console.log(this.properties);
+        console.log(this.newProperties);
+      }
+    }
 
     this.importForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
@@ -142,16 +124,15 @@ export class ImportComponent  implements OnInit {
   public import(): void {
     
     this.loading = true;
-    this.objectToImport = this.importForm.value;
-    this.objectToImport['model'] = 'article';
-    this._importService.import(this.objectToImport).subscribe(
+    this.modelToImport = this.importForm.value;
+    this._importService.import(this.modelToImport).subscribe(
       result => {
         if (result.message !== 'ok') {
           this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.showMessage("Se ha importado con éxito.", "success", false);
-          this.activeModal.close("import_close");
+          // this.activeModal.close("import_close");
         }
         this.loading = false;
       },

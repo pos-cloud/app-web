@@ -5,7 +5,7 @@ export class Article {
 
     public _id: string;
     public code: number = 1;
-    public description: string;
+    public description: string = "";
     public posDescription: string;
     public observation: string;
     public salePrice: number = 0.00;

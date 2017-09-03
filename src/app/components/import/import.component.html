@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Importar Artículos</h4>
+  <h4 class="modal-title">Importar</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -13,8 +13,6 @@
   <form [formGroup]="importForm" #formImport="ngForm" (ngSubmit)="import()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-      </div>
-      <div class="row">
         <div class="form-group col-md-8">
           <label for="filePath" class="control-label">Archivo:</label>
           <input type="text" class="form-control" formControlName="filePath" name="filePath" id="filePath" [focus]="focusEvent"/>
@@ -23,55 +21,10 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="code" class="control-label">Código:</label>
-          <input type="text" class="form-control" formControlName="code" name="code" id="code" value="code"/>
-          <div *ngIf="formErrors.code" class="alert alert-danger">
-            {{ formErrors.code }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="description" class="control-label">Descripción:</label>
-          <input type="text" class="form-control" formControlName="description" name="description" id="description"/>
-          <div *ngIf="formErrors.description" class="alert alert-danger">
-            {{ formErrors.description }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="observation" class="control-label">Observación:</label>
-          <input type="text" class="form-control" formControlName="observation" name="observation" id="observation"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="salePrice" class="control-label">Precio de venta:</label>
-          <input type="text" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice"/>
-          <div *ngIf="formErrors.salePrice" class="alert alert-danger">
-            {{ formErrors.salePrice }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="make_relation_description" class="control-label">Marca:</label>
-          <input type="text" class="form-control" formControlName="make_relation_description" name="make_relation_description" id="make_relation_description"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="category_relation_description" class="control-label">Rubro:</label>
-          <input type="text" class="form-control" formControlName="category_relation_description" name="category_relation_description" id="category_relation_description"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="barcode" class="control-label">Código de Barra:</label>
-          <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode"/>
+      <div class="row" *ngFor="let property of properties">
+        <div class="form-group col-md-8" *ngIf="property !== 'model' && property !== 'primaryKey' && property !== 'relations'">
+          <label for="newProperties[property]" class="control-label">{{property.charAt(0).toUpperCase() + property.slice(1)}}:</label>
+          <input type="text" class="form-control" formControlName="{{newProperties[property]}}" name="newProperties[property]" id="newProperties[property]"/>
         </div>
       </div>
     </div>
@@ -84,4 +37,6 @@
       </button>
     </div>
   </form>
+  {{importForm.value | json}}
+  {{newProperties | json}}
 </section>
