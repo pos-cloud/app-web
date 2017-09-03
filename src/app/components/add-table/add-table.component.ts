@@ -125,7 +125,6 @@ export class AddTableComponent  implements OnInit {
             this.showMessage(result.message, "info", true);
             this.loading = false;
           } else {
-            this.hideMessage();
             this.loading = false;
             this.rooms = result.rooms;
             if(this.rooms[0] !== undefined) {

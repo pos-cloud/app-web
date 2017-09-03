@@ -78,7 +78,6 @@ export class AddEmployeeComponent  implements OnInit {
         if(!result.employeeTypes) {
           this.addEmployeeTypeWaiter();
         } else {
-          this.hideMessage();
           this.loading = false;
           this.employeeTypes = result.employeeTypes;
           this.getLastEmployee();
@@ -233,7 +232,7 @@ export class AddEmployeeComponent  implements OnInit {
           this.loading = false;
         } else {
           this.employee = result.employee;
-          this.showMessage("El empleado se ha añadido con éxito.", "sucess", false);
+          this.showMessage("El empleado se ha añadido con éxito.", "success", false);
           this.employee = new Employee();
           this.buildForm();
           this.getEmployeeTypes();
