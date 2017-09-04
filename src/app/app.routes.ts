@@ -106,9 +106,13 @@ const _routes: Routes = [
   { path: 'admin/config', component: ConfigComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/configbackup', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'pos', component: PointOfSaleComponent },
-  { path: 'pos/salones/:id/mesas', component: PointOfSaleComponent },
-  { path: 'pos/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
+  { path: 'pos/resto', component: PointOfSaleComponent },
+  { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },
+  { path: 'pos/resto/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
+  { path: 'pos/delivery', component: PointOfSaleComponent },
+  { path: 'pos/mostrador', component: PointOfSaleComponent },
+  { path: 'pos/mostrador/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'reports', component: ReportsComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];

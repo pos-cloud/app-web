@@ -4,9 +4,11 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBox } from './../../models/cash-box';
 import { Room } from './../../models/room';
+import { SaleOrder } from './../../models/sale-order';
 
 import { CashBoxService } from './../../services/cash-box.service';
 import { RoomService } from './../../services/room.service';
+import { SaleOrderService } from './../../services/sale-order.service';
 
 
 import { AddCashBoxComponent } from './../add-cash-box/add-cash-box.component';
@@ -23,14 +25,21 @@ export class PointOfSaleComponent implements OnInit {
   public cashBox: CashBox;
   public rooms: Room[] = new Array();
   public roomSelected: Room;
+  public saleOrders: SaleOrder[] = new Array();
+  public areSaleOrdersEmpty: boolean = true;
   public userType: string;
+  public propertyTerm: string;
+  public orderTerm: string[] = ['number'];
+  public posType: string;
   public existsCashBoxOpen: boolean = false;
   public alertMessage: string = "";
+  public areFiltersVisible: boolean = false;
   public loading: boolean = false;
 
   constructor(
     public _cashBoxService: CashBoxService,
     public _roomService: RoomService,
+    public _saleOrderService: SaleOrderService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -41,8 +50,15 @@ export class PointOfSaleComponent implements OnInit {
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.roomSelected._id = pathLocation[3];
-    this.getRooms();
+    this.posType = pathLocation[2];
+    if (this.posType === "resto") {
+      this.roomSelected._id = pathLocation[4];
+      this.getRooms();
+    } else if (this.posType === "delivery") {
+
+    } else if (this.posType === "mostrador") {
+      this.getOpenSaleOrders();
+    }
   }
 
   public getRooms(): void {  
@@ -78,8 +94,50 @@ export class PointOfSaleComponent implements OnInit {
       );
   }
 
+  public getOpenSaleOrders(): void {
+
+    this.loading = true;
+
+    this._saleOrderService.getOpenSaleOrder().subscribe(
+      result => {
+        if (!result.saleOrders) {
+          this.showMessage(result.message, "info", true);
+          this.saleOrders = null;
+          this.areSaleOrdersEmpty = true;
+        } else {
+          this.hideMessage();
+          this.saleOrders = result.saleOrders;
+          this.areSaleOrdersEmpty = false;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public refresh(): void {
+    this.getOpenSaleOrders();
+  }
+
+  public addSaleOrder() {
+    this._router.navigate(['/pos/mostrador/agregar-pedido']);
+  }
+
   public changeRoom(room: Room): void {
     this.roomSelected = room;
+  }
+
+  public orderBy(term: string, property?: string): void {
+
+    if (this.orderTerm[0] === term) {
+      this.orderTerm[0] = "-" + term;
+    } else {
+      this.orderTerm[0] = term;
+    }
+    this.propertyTerm = property;
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {

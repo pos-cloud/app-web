@@ -30,8 +30,12 @@ export class SaleOrderService {
     return this._http.put(Config.apiURL + "sale-order/"+saleOrder._id, saleOrder).map (res => res.json());
   }
 
-  getOpenSaleOrder (tableId) {
+	getOpenSaleOrderByTable (tableId) {
 		return this._http.get(Config.apiURL + 'sale-orders/where="table":"'+tableId+'","state":"'+SaleOrderState.Open+'"&limit=1').map (res => res.json());
+	}
+
+	getOpenSaleOrder() {
+		return this._http.get(Config.apiURL + 'sale-orders/where="state":"' + SaleOrderState.Open + '"&limit=1').map(res => res.json());
 	}
 
   getSaleOrdersByEmployee (employeeId: string, date: string) {

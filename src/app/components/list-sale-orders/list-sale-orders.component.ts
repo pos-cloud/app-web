@@ -32,10 +32,7 @@ export class ListSaleOrdersComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
-    alertConfig.type = 'danger';
-    alertConfig.dismissible = true;
-  }
+  ) { }
 
   ngOnInit(): void {
     
@@ -49,25 +46,25 @@ export class ListSaleOrdersComponent implements OnInit {
     this.loading = true;
     
     this._saleOrderService.getSaleOrders().subscribe(
-        result => {
-					if(!result.saleOrders) {
-            this.showMessage(result.message, "info", true); 
-            this.loading = false;
-            this.saleOrders = null;
-            this.areSaleOrdersEmpty = true;
-					} else {
-            this.hideMessage();
-            this.loading = false;
-					  this.saleOrders = result.saleOrders;
-            this.areSaleOrdersEmpty = false;
-          }
-				},
-				error => {
-          this.showMessage(error._body, "danger", false);
+      result => {
+        if(!result.saleOrders) {
+          this.showMessage(result.message, "info", true); 
           this.loading = false;
-				}
-      );
-   }
+          this.saleOrders = null;
+          this.areSaleOrdersEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.saleOrders = result.saleOrders;
+          this.areSaleOrdersEmpty = false;
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
 
   public orderBy (term: string, property?: string): void {
 

@@ -62,6 +62,7 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
   @ViewChild('contentPayment') contentPayment: ElementRef;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
+  @ViewChild('contentMessage') contentMessage: ElementRef;
   public discountPorcent: number = 0.00;
   public discountAmount: number = 0.00;
   public isNewItem: boolean;
@@ -149,34 +150,50 @@ export class AddSaleOrderComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if(this.tableId === undefined) {
-      this.tableId = pathLocation[5];
+      this.tableId = pathLocation[6];
     }
 
     this.getPrinters();
   }
 
-  public getLastSaleOrderByTable(): void {
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.showMessage(result.message, "info", true);
+          this.printers = null;
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+          if (this.tableId === undefined) {
+            this.getOpenSaleOrderByTable();
+          }
+          this.buildForm();
+          this.buildFormDiscount();
+          this.buildFormPayment();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getOpenSaleOrderByTable(): void {
 
     this.loading = true;
     
-    this._saleOrderService.getLastSaleOrderByTable(this.tableId).subscribe(
+    this._saleOrderService.getOpenSaleOrderByTable(this.tableId).subscribe(
       result => {
 
         let saleOrderState: SaleOrderState;
-        
-        if(result.saleOrders){
-          if(result.saleOrders[0] !== undefined) {
-            saleOrderState = result.saleOrders[0].state;
-          } else {
-            saleOrderState = SaleOrderState.Closed;
-          }
-        } else if(result.message = "No se encontraron pedidos") {
-          saleOrderState = SaleOrderState.Closed;
-        } else {
-          saleOrderState = SaleOrderState.Closed;
-        }
-        
-        if(saleOrderState !== SaleOrderState.Open) {
+
+        if (!result.saleOrders) {
           this.hideMessage();
           this.getTable(this.tableId);
         } else {
@@ -184,9 +201,9 @@ export class AddSaleOrderComponent implements OnInit {
           this.saleOrder = result.saleOrders[0];
           this.discountAmount = this.saleOrder.discount;
           this.table = this.saleOrder.table;
-          saleOrderState = SaleOrderState.Open;
           this.getMovementsOfSaleOrder();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -222,8 +239,8 @@ export class AddSaleOrderComponent implements OnInit {
           this.addSaleOrder();
         } else {
           this.showMessage("Ha ocurrido un error en obtener el último pedido", "danger", false);
-          this.loading = false;
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -240,7 +257,6 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
         if(!result.table) {
           this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           this.hideMessage();
           this.table = result.table;
@@ -248,6 +264,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.saleOrder.employee = this.table.employee;
           this.getOpenTurn();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -263,13 +280,12 @@ export class AddSaleOrderComponent implements OnInit {
     this._turnService.getOpenTurn(this.saleOrder.employee._id).subscribe(
       result => {
         if(!result.turns) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          this.showMessage(result.message, "info", true);
         } else {
-          this.loading = false;
           this.saleOrder.turn = result.turns[0];
           this.getLastSaleOrderByOrigen();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -409,18 +425,18 @@ export class AddSaleOrderComponent implements OnInit {
     this._saleOrderService.saveSaleOrder(this.saleOrder).subscribe(
       result => {
           if(!result.saleOrder) {
-            this.showMessage(result.message, "info", true); 
-            this.loading = false;
+            this.showMessage(result.message, "info", true);
           } else {
             this.hideMessage();
             this.saleOrder = result.saleOrder;
             this.changeStateOfTable(TableState.Busy, false);
-          }
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
         }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
     );
   }
 
@@ -431,11 +447,11 @@ export class AddSaleOrderComponent implements OnInit {
     this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
       result => {
         if(!result.saleOrder) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          this.showMessage(result.message, "info", true);
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -486,8 +502,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          this.showMessage(result.message, "info", true);
         } else {
           this.table = result.table;
           if(closed) {
@@ -612,11 +627,6 @@ export class AddSaleOrderComponent implements OnInit {
             });
             modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
               if (result === "charge") {
-                this.saleOrder.state = SaleOrderState.Closed;
-                this.saleOrder.cashChange = this.paymentForm.value.cashChange;
-                this.updateSaleOrder();
-                this.table.employee = null;
-                this.typeOfOperationToPrint = 'charge';
                 this.openModal('printers');
               }
             }, (reason) => {
@@ -641,6 +651,14 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             this.showMessage("No se encontro impresora para la operación solicitada", "danger", false);
           }
+        case 'errorMessage':
+          modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
+            if (result !== "cancel" && result !== "") {
+              this.finishCharge();
+            }
+          }, (reason) => {
+
+          });
         default : ;
     };
   }
@@ -701,34 +719,17 @@ export class AddSaleOrderComponent implements OnInit {
     this.openModal('printers');
   }
 
-  public getPrinters(): void {
-
-    this.loading = true;
-    
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
-          this.printers = null;
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
-          this.getLastSaleOrderByTable();
-          this.buildForm();
-          this.buildFormDiscount();
-          this.buildFormPayment();
-        }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
+  public finishCharge() {
+    this.saleOrder.state = SaleOrderState.Closed;
+    this.saleOrder.cashChange = this.paymentForm.value.cashChange;
+    this.updateSaleOrder();
+    this.table.employee = null;
+    this.typeOfOperationToPrint = 'charge';
+    this.changeStateOfTable(TableState.Available, true);
   }
 
   public backToRooms(): void {
-    this._router.navigate(['/pos/salones/'+this.saleOrder.table.room+'/mesas']);
+    this._router.navigate(['/pos/resto/salones/'+this.saleOrder.table.room+'/mesas']);
   }
 
   public confirmAmount(): void {
@@ -784,8 +785,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
           this.movementOfArticle = result.movementOfArticle;
@@ -844,6 +844,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.movementsOfArticles = result.movementsOfArticles;
             this.updatePrices();
           }
+          this.loading = false;
 				},
 				error => {
           this.showMessage(error._body, "danger", false);
@@ -865,6 +866,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
       result => {
         this.getMovementsOfSaleOrder();
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -932,11 +934,11 @@ export class AddSaleOrderComponent implements OnInit {
             this.changeStateOfTable(TableState.Pending, true);
           } else {
             this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
-            this.loading = false;
           }
+          this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -989,6 +991,7 @@ export class AddSaleOrderComponent implements OnInit {
       print.fileName = fileName;
       print.content = content;
       print.printer = printerSelected;
+      
       this._printService.toPrint(print).subscribe(
         result => {
           this.printersAux = new Array();
@@ -996,11 +999,11 @@ export class AddSaleOrderComponent implements OnInit {
             this.changeStateOfTable(TableState.Available, true);
           } else {
             this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
-            this.loading = false;
           }
+          this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.openModal('errorMessage');
           this.loading = false;
         }
       );
@@ -1051,12 +1054,12 @@ export class AddSaleOrderComponent implements OnInit {
               this.openModal("printers");
             }
           } else {
-            this.showMessage("Ha ocurrido un error en el servidor.", "danger", false); 
-            this.loading = false;
+            this.showMessage("Ha ocurrido un error en el servidor.", "danger", false);
           }
+          this.loading = false;
         },
         error => {
-          this.showMessage(error, "danger", false);
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1103,11 +1106,11 @@ export class AddSaleOrderComponent implements OnInit {
             this.changeStateOfTable(TableState.Busy, true);
           } else {
             this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
-            this.loading = false;
           }
+          this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );

@@ -1,4 +1,4 @@
-<section class="container-fluid">
+<section class="container-fluid" *ngIf="posType=='resto'">
   <div class="row">
     <div class="center-content"  *ngIf="alertMessage !== ''">
       <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
@@ -17,7 +17,79 @@
       </button>
     </div>
   </div>
+  <div *ngIf="roomSelected">
+    <app-list-tables (eventBackToRoom)="changeRoom($room)" [filterRoom]="roomSelected.description"></app-list-tables>
+  </div>
 </section>
-<div *ngIf="roomSelected">
-  <app-list-tables (eventBackToRoom)="changeRoom($room)" [filterRoom]="roomSelected.description"></app-list-tables>
-</div>
+
+<section class="container-fluid" *ngIf="posType=='delivery'">
+  delivery
+</section>
+
+<section class="container-fluid" *ngIf="posType=='mostrador'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Pedidos
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="addSaleOrder()">Nuevo Pedido</button>
+        <button class="btn btn-primary" (click)="refresh()">Actualizar</button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+    <div class="card-block">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th (click)="orderBy('origin')">Origen</th>
+            <th (click)="orderBy('number')">Número</th>
+            <th (click)="orderBy('table')">Mesa</th>
+            <th (click)="orderBy('date')">Fecha</th>
+            <th (click)="orderBy('state')">Estado</th>
+            <th (click)="orderBy('observation')">Observación</th>
+            <th (click)="orderBy('totalPrice')">Precio Total</th>
+          </tr>
+          <tr *ngIf="areFiltersVisible">
+            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let saleOrder of saleOrders | orderBy: orderTerm: propertyTerm	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
+                                        | filter: filterTable:'description':'table' | filter: filterEndDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
+                                        | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <td>{{saleOrder.origin}}</td>
+            <td>{{saleOrder.number}}</td>
+            <td *ngIf="saleOrder.table">{{saleOrder.table.description}}</td>
+            <td *ngIf="!saleOrder.endDate">{{saleOrder.startDate | date: ['dd/MM/yyyy'] }}</td>
+            <td *ngIf="saleOrder.endDate">{{saleOrder.endDate | date: ['dd/MM/yyyy'] }}</td>
+            <td>
+              <h6>
+                <span class="badge" [ngClass]="{'badge-danger':saleOrder.state==='Anulado',
+                                                  'badge-success':saleOrder.state==='Cerrado', 
+                                                  'badge-warning':saleOrder.state==='Abierto'}">
+                    {{saleOrder.state}}
+                  </span>
+              </h6>
+            </td>
+            <td>{{saleOrder.observation}}</td>
+            <td>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</td>
+          </tr>
+          <tr align="center" *ngIf="areSaleOrdersEmpty">
+            <td colspan="6">Aún no hay pedidos pendientes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-primary card-inverse">
+      <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+      </pagination-controls>
+    </div>
+  </div>
+</section>
+
