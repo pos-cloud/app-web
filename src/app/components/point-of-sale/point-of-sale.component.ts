@@ -4,11 +4,11 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBox } from './../../models/cash-box';
 import { Room } from './../../models/room';
-import { SaleOrder } from './../../models/sale-order';
+import { Transaction } from './../../models/transaction';
 
 import { CashBoxService } from './../../services/cash-box.service';
 import { RoomService } from './../../services/room.service';
-import { SaleOrderService } from './../../services/sale-order.service';
+import { TransactionService } from './../../services/transaction.service';
 
 
 import { AddCashBoxComponent } from './../add-cash-box/add-cash-box.component';
@@ -25,8 +25,8 @@ export class PointOfSaleComponent implements OnInit {
   public cashBox: CashBox;
   public rooms: Room[] = new Array();
   public roomSelected: Room;
-  public saleOrders: SaleOrder[] = new Array();
-  public areSaleOrdersEmpty: boolean = true;
+  public transactions: Transaction[] = new Array();
+  public areTransactionsEmpty: boolean = true;
   public userType: string;
   public propertyTerm: string;
   public orderTerm: string[] = ['number'];
@@ -39,7 +39,7 @@ export class PointOfSaleComponent implements OnInit {
   constructor(
     public _cashBoxService: CashBoxService,
     public _roomService: RoomService,
-    public _saleOrderService: SaleOrderService,
+    public _transactionService: TransactionService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -57,7 +57,7 @@ export class PointOfSaleComponent implements OnInit {
     } else if (this.posType === "delivery") {
 
     } else if (this.posType === "mostrador") {
-      this.getOpenSaleOrders();
+      this.getOpenTransactions();
     }
   }
 
@@ -94,20 +94,20 @@ export class PointOfSaleComponent implements OnInit {
       );
   }
 
-  public getOpenSaleOrders(): void {
+  public getOpenTransactions(): void {
 
     this.loading = true;
 
-    this._saleOrderService.getOpenSaleOrder().subscribe(
+    this._transactionService.getOpenTransaction().subscribe(
       result => {
-        if (!result.saleOrders) {
+        if (!result.transactions) {
           this.showMessage(result.message, "info", true);
-          this.saleOrders = null;
-          this.areSaleOrdersEmpty = true;
+          this.transactions = null;
+          this.areTransactionsEmpty = true;
         } else {
           this.hideMessage();
-          this.saleOrders = result.saleOrders;
-          this.areSaleOrdersEmpty = false;
+          this.transactions = result.transactions;
+          this.areTransactionsEmpty = false;
         }
         this.loading = false;
       },
@@ -119,15 +119,15 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getOpenSaleOrders();
+    this.getOpenTransactions();
   }
   
-  public addSaleOrder(): void {
+  public addTransaction(): void {
     this._router.navigate(['/pos/mostrador/agregar-pedido']);
   }
 
-  public updateSaleOrder(saleOrderId: string): void {
-    this._router.navigate(['/pos/mostrador/editar-pedido/' + saleOrderId]);
+  public updateTransaction(transactionId: string): void {
+    this._router.navigate(['/pos/mostrador/editar-pedido/' + transactionId]);
   }
 
   public changeRoom(room: Room): void {

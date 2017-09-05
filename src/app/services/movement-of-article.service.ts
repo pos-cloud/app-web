@@ -34,7 +34,7 @@ export class MovementOfArticleService {
     return this._http.put(Config.apiURL + "movement-of-article/" + movementOfArticle._id, movementOfArticle).map (res => res.json());
   }
 
-  getMovementsOfSaleOrder (saleOrderId: string) {
-		return this._http.get(Config.apiURL + 'movements-of-articles/where="saleOrder":"'+saleOrderId+'"').map (res => res.json());
+  getMovementsOfTransaction (transactionId: string) {
+		return this._http.get(Config.apiURL + 'movements-of-articles/where="transaction":"'+transactionId+'"').map (res => res.json());
 	}
 }

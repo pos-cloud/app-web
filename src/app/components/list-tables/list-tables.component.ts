@@ -11,7 +11,7 @@ import { Turn } from './../../models/turn';
 
 import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
-import { SaleOrderService } from './../../services/sale-order.service';
+import { TransactionService } from './../../services/transaction.service';
 import { TurnService } from './../../services/turn.service';
 import { UserService } from './../../services/user.service';
 
@@ -58,7 +58,7 @@ export class ListTablesComponent implements OnInit {
     public _fb: FormBuilder,
     public _tableService: TableService,
     public _employeeService: EmployeeService,
-    public _saleOrderService: SaleOrderService,
+    public _transactionService: TransactionService,
     public _turnService: TurnService,
     public _userService: UserService,
     public _router: Router,
@@ -194,7 +194,7 @@ export class ListTablesComponent implements OnInit {
           if(this.tableSelected.employee !== undefined &&
             this.tableSelected.employee !== null) {
 
-            this.addSaleOrder();
+            this.addTransaction();
           } else {
             
             this.tableSelected.employee = new Employee();
@@ -339,7 +339,7 @@ export class ListTablesComponent implements OnInit {
           } else {
             this.hideMessage();
             this.loading = false;
-            this.addSaleOrder();
+            this.addTransaction();
           }
         },
         error => {
@@ -349,7 +349,7 @@ export class ListTablesComponent implements OnInit {
     );
   }
 
-  public addSaleOrder() {
+  public addTransaction() {
     this._router.navigate(['/pos/resto/salones/'+this.filterRoom+'/mesas/'+this.tableSelected._id+'/agregar-pedido']);
   }
   

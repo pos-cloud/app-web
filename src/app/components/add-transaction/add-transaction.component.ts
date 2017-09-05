@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
-import { SaleOrder, SaleOrderState } from './../../models/sale-order';
+import { Transaction, TransactionState } from './../../models/transaction';
 import { Article, ArticleType } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
@@ -19,7 +19,7 @@ import { Printer, PrinterType } from './../../models/printer';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
-import { SaleOrderService } from './../../services/sale-order.service';
+import { TransactionService } from './../../services/transaction.service';
 import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
@@ -32,15 +32,15 @@ import { ListCompaniesComponent } from './../list-companies/list-companies.compo
 import { DatePipe, DecimalPipe } from '@angular/common'; 
 
 @Component({
-  selector: 'app-add-sale-order',
-  templateUrl: './add-sale-order.component.html',
-  styleUrls: ['./add-sale-order.component.css'],
+  selector: 'app-add-transaction',
+  templateUrl: './add-transaction.component.html',
+  styleUrls: ['./add-transaction.component.css'],
   providers: [NgbAlertConfig, DatePipe, DecimalPipe]
 })
 
-export class AddSaleOrderComponent implements OnInit {
+export class AddTransactionComponent implements OnInit {
 
-  public saleOrder: SaleOrder;
+  public transaction: Transaction;
   public alertMessage: string = "";
   public movementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
@@ -121,7 +121,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   constructor(
     public _fb: FormBuilder,
-    public _saleOrderService: SaleOrderService,
+    public _transactionService: TransactionService,
     public _movementOfArticleService: MovementOfArticleService,
     public _tableService: TableService,
     public _turnService: TurnService,
@@ -132,8 +132,8 @@ export class AddSaleOrderComponent implements OnInit {
     public _modalService: NgbModal,
     public _printerService: PrinterService
   ) {
-    this.saleOrder = new SaleOrder();
-    // this.saleOrder.employee = new Employee();
+    this.transaction = new Transaction();
+    // this.transaction.employee = new Employee();
     this.movementOfArticle = new MovementOfArticle();
     this.movementsOfArticles = new Array();
     this.categorySelected = new Category();
@@ -148,23 +148,22 @@ export class AddSaleOrderComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    console.log(this.posType);
 
     this.getPrinters();
 
     if (this.posType === "resto") {
-      this.saleOrder.table = new Table();
+      this.transaction.table = new Table();
       this.table = new Table();
       let tableId = pathLocation[6];
       if (tableId !== undefined) {
-        this.getOpenSaleOrderByTable(tableId);
+        this.getOpenTransactionByTable(tableId);
       }
     } else if (this.posType === "mostrador") {
-      let saleOrderId = pathLocation[4];
-      if (saleOrderId !== undefined) {
-        this.getSaleOrder(saleOrderId);
+      let transactionId = pathLocation[4];
+      if (transactionId !== undefined) {
+        this.getTransaction(transactionId);
       } else {
-        this.getLastSaleOrder();
+        this.getLastTransaction();
       }
     }
     
@@ -180,8 +179,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._printerService.getPrinters().subscribe(
       result => {
         if (!result.printers) {
-          this.showMessage(result.message, "info", true);
-          this.printers = null;
+          this.printers = undefined;
         } else {
           this.hideMessage();
           this.printers = result.printers;
@@ -195,24 +193,24 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getOpenSaleOrderByTable(tableId): void {
+  public getOpenTransactionByTable(tableId): void {
 
     this.loading = true;
     
-    this._saleOrderService.getOpenSaleOrderByTable(tableId).subscribe(
+    this._transactionService.getOpenTransactionByTable(tableId).subscribe(
       result => {
 
-        let saleOrderState: SaleOrderState;
+        let transactionState: TransactionState;
 
-        if (!result.saleOrders) {
+        if (!result.transactions) {
           this.hideMessage();
           this.getTable(tableId);
         } else {
           this.hideMessage();
-          this.saleOrder = result.saleOrders[0];
-          this.discountAmount = this.saleOrder.discount;
-          this.table = this.saleOrder.table;
-          this.getMovementsOfSaleOrder();
+          this.transaction = result.transactions[0];
+          this.discountAmount = this.transaction.discount;
+          this.table = this.transaction.table;
+          this.getMovementsOfTransaction();
         }
         this.loading = false;
       },
@@ -223,20 +221,20 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getSaleOrder(saleOrderId): void {
+  public getTransaction(transactionId): void {
 
     this.loading = true;
 
-    this._saleOrderService.getSaleOrder(saleOrderId).subscribe(
+    this._transactionService.getTransaction(transactionId).subscribe(
       result => {
-        if (!result.saleOrder) {
+        if (!result.transaction) {
           this.showMessage(result.message, "danger", false);
           this.loading = false;
         } else {
           this.hideMessage();
-          this.saleOrder = result.saleOrder;
-          this.discountAmount = this.saleOrder.discount;
-          this.getMovementsOfSaleOrder();
+          this.transaction = result.transaction;
+          this.discountAmount = this.transaction.discount;
+          this.getMovementsOfTransaction();
         }
         this.loading = false;
       },
@@ -258,8 +256,8 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.table = result.table;
-          this.saleOrder.table = this.table;
-          this.saleOrder.employee = this.table.employee;
+          this.transaction.table = this.table;
+          this.transaction.employee = this.table.employee;
           this.getOpenTurn();
         }
         this.loading = false;
@@ -275,13 +273,13 @@ export class AddSaleOrderComponent implements OnInit {
     
     this.loading = true;
     
-    this._turnService.getOpenTurn(this.saleOrder.employee._id).subscribe(
+    this._turnService.getOpenTurn(this.transaction.employee._id).subscribe(
       result => {
         if(!result.turns) {
           this.showMessage(result.message, "info", true);
         } else {
-          this.saleOrder.turn = result.turns[0];
-          this.getLastSaleOrder();
+          this.transaction.turn = result.turns[0];
+          this.getLastTransaction();
         }
         this.loading = false;
       },
@@ -292,17 +290,17 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getLastSaleOrder(): void {
+  public getLastTransaction(): void {
 
     this.loading = true;
 
-    this._saleOrderService.getLastSaleOrder().subscribe(
+    this._transactionService.getLastTransaction().subscribe(
       result => {
         let number;
 
-        if (result.saleOrders) {
-          if (result.saleOrders[0] !== undefined) {
-            number = result.saleOrders[0].number + 1;
+        if (result.transactions) {
+          if (result.transactions[0] !== undefined) {
+            number = result.transactions[0].number + 1;
           } else {
             number = 1;
           }
@@ -314,8 +312,8 @@ export class AddSaleOrderComponent implements OnInit {
 
         if (number != 0) {
 
-          this.saleOrder.number = number;
-          this.addSaleOrder();
+          this.transaction.number = number;
+          this.addTransaction();
         } else {
           this.showMessage("Ha ocurrido un error en obtener el último pedido", "danger", false);
         }
@@ -412,7 +410,7 @@ export class AddSaleOrderComponent implements OnInit {
   public buildFormPayment(): void {
 
     this.paymentForm = this._fb.group({
-      'totalPrice': [this.saleOrder.totalPrice, [
+      'totalPrice': [this.transaction.totalPrice, [
            Validators.required
         ]
       ],
@@ -452,17 +450,17 @@ export class AddSaleOrderComponent implements OnInit {
     this.paymentChange = (this.paymentForm.value.amount -this.paymentForm.value.totalPrice).toFixed(2);
   }
 
-  public addSaleOrder(): void {
+  public addTransaction(): void {
     
     this.loading = true;
     
-    this._saleOrderService.saveSaleOrder(this.saleOrder).subscribe(
+    this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
-        if(!result.saleOrder) {
+        if(!result.transaction) {
           this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
-          this.saleOrder = result.saleOrder;
+          this.transaction = result.transaction;
           if (this.posType === "resto") {
             this.changeStateOfTable(TableState.Busy, false);
           }
@@ -476,13 +474,13 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public updateSaleOrder(): void {
+  public updateTransaction(): void {
     
     this.loading = true;
     
-    this._saleOrderService.updateSaleOrder(this.saleOrder).subscribe(
+    this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
-        if(!result.saleOrder) {
+        if(!result.transaction) {
           this.showMessage(result.message, "info", true);
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
@@ -574,7 +572,7 @@ export class AddSaleOrderComponent implements OnInit {
         'salePrice': this.movementOfArticle.salePrice,
         'notes':''
       });
-      this.movementOfArticle.saleOrder = this.saleOrder;
+      this.movementOfArticle.transaction = this.transaction;
       this.openModal('add_item');
     } else {
       this.isNewItem = true;
@@ -585,7 +583,7 @@ export class AddSaleOrderComponent implements OnInit {
         'salePrice': this.movementOfArticle.salePrice,
         'notes':''
       });
-      this.movementOfArticle.saleOrder = this.saleOrder;
+      this.movementOfArticle.transaction = this.transaction;
       this.openModal('add_new_item');
     }
   }
@@ -631,13 +629,13 @@ export class AddSaleOrderComponent implements OnInit {
             this.loading = false;
           }
           break;
-        case 'cancel_order' :
+        case 'cancel_transaction' :
         
           modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
-            if(result  === "cancel_order"){
-              this.saleOrder.state = SaleOrderState.Canceled;
-              this.saleOrder.endDate = new Date();
-              this.updateSaleOrder();
+            if(result  === "cancel_transaction"){
+              this.transaction.state = TransactionState.Canceled;
+              this.transaction.endDate = new Date();
+              this.updateTransaction();
               if (this.posType === "resto") {
                 this.table.employee = null;
                 this.changeStateOfTable(TableState.Available, true);
@@ -655,8 +653,8 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef.componentInstance.userType = this.userType;
           modalRef.result.then((result) => {
             if(result){
-              this.saleOrder.company = result;
-              this.updateSaleOrder();
+              this.transaction.company = result;
+              this.updateTransaction();
             }
           }, (reason) => {
             
@@ -664,10 +662,11 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         case 'charge' :
 
+          this.typeOfOperationToPrint = "charge";
           if(this.movementsOfArticles.length !== 0) {
             this.paymentForm.setValue({
-              'totalPrice' :  parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
-              'amount' : parseFloat(""+this.saleOrder.totalPrice).toFixed(2),
+              'totalPrice' :  parseFloat(""+this.transaction.totalPrice).toFixed(2),
+              'amount' : parseFloat(""+this.transaction.totalPrice).toFixed(2),
               'cashChange' : parseFloat(this.paymentChange).toFixed(2),
             });
             modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
@@ -691,10 +690,12 @@ export class AddSaleOrderComponent implements OnInit {
             }, (reason) => {
 
             });
-          } else if(this.countPrinters() !== 0) {
+          } else if (this.countPrinters() !== 0) {
             this.distributeImpressions(this.printersAux[0]);
           } else {
-            this.showMessage("No se encontro impresora para la operación solicitada", "danger", false);
+            if (this.typeOfOperationToPrint === "charge") {
+              this.finishCharge();
+            }
           }
         case 'errorMessage':
           modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
@@ -710,29 +711,33 @@ export class AddSaleOrderComponent implements OnInit {
 
   public countPrinters(): number {
     
-    let numberOfPrinters = 0;
+    let numberOfPrinters;
 
-    for (let printer of this.printers) {
-      if(this.typeOfOperationToPrint === 'charge' && printer.type === PrinterType.Counter) {
-        this.printersAux.push(printer);
-        numberOfPrinters++;
-      } else if (this.typeOfOperationToPrint === 'bill' && printer.type === PrinterType.Counter) {
-        this.printersAux.push(printer);
-        numberOfPrinters++;
-      } else if (this.typeOfOperationToPrint === 'bar' && printer.type === PrinterType.Bar) {
-        this.printersAux.push(printer);
-        numberOfPrinters++;
-      } else if (this.typeOfOperationToPrint === 'kitchen' && printer.type === PrinterType.Kitchen) {
-        this.printersAux.push(printer);
-        numberOfPrinters++;
+    if (this.printers != undefined) {
+      for (let printer of this.printers) {
+        if(this.typeOfOperationToPrint === 'charge' && printer.type === PrinterType.Counter) {
+          this.printersAux.push(printer);
+          numberOfPrinters++;
+        } else if (this.typeOfOperationToPrint === 'bill' && printer.type === PrinterType.Counter) {
+          this.printersAux.push(printer);
+          numberOfPrinters++;
+        } else if (this.typeOfOperationToPrint === 'bar' && printer.type === PrinterType.Bar) {
+          this.printersAux.push(printer);
+          numberOfPrinters++;
+        } else if (this.typeOfOperationToPrint === 'kitchen' && printer.type === PrinterType.Kitchen) {
+          this.printersAux.push(printer);
+          numberOfPrinters++;
+        }
       }
+    } else {
+      numberOfPrinters = 0;
     }
 
     return numberOfPrinters;
   }
 
   public distributeImpressions(printer: Printer) {
-    
+
     switch (this.typeOfOperationToPrint) {
       case 'charge':
         this.assignOrigin(printer.origin);
@@ -754,7 +759,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public assignOrigin(origin: number) {
-    this.saleOrder.origin = origin;
+    this.transaction.origin = origin;
   }
 
   public setPrintBill(): void {
@@ -763,10 +768,10 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public finishCharge() {
-    this.saleOrder.endDate = new Date();
-    this.saleOrder.state = SaleOrderState.Closed;
-    this.saleOrder.cashChange = this.paymentForm.value.cashChange;
-    this.updateSaleOrder();
+    this.transaction.endDate = new Date();
+    this.transaction.state = TransactionState.Closed;
+    this.transaction.cashChange = this.paymentForm.value.cashChange;
+    this.updateTransaction();
     this.typeOfOperationToPrint = 'charge';
     if (this.posType === "resto") {
       this.table.employee = null;
@@ -778,7 +783,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public back(): void {
     if (this.posType === "resto") {
-      this._router.navigate(['/pos/resto/salones/' + this.saleOrder.table.room + '/mesas']);
+      this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
     } else if (this.posType === "mostrador") {
       this._router.navigate(['/pos/mostrador']);
     }
@@ -802,32 +807,32 @@ export class AddSaleOrderComponent implements OnInit {
         this.discountPorcent !== null && 
         (this.discountAmount === 0 || this.discountAmount === null)){
 
-      this.saleOrder.discount = parseFloat(""+this.saleOrder.subtotalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
+      this.transaction.discount = parseFloat(""+this.transaction.subtotalPrice) * parseFloat(""+this.discountForm.value.porcent) / 100;
       this.hideMessage();
     } else if(( this.discountPorcent === 0 || 
                 this.discountPorcent === null) && 
                 this.discountAmount > 0  && 
-                this.discountAmount <= this.saleOrder.subtotalPrice  &&
+                this.discountAmount <= this.transaction.subtotalPrice  &&
                 this.discountAmount !== null){
 
-      this.saleOrder.discount = this.discountAmount;
+      this.transaction.discount = this.discountAmount;
       this.hideMessage();
     } else if(this.discountAmount !== 0 && this.discountPorcent !== 0){
       
-      this.saleOrder.discount = 0;
+      this.transaction.discount = 0;
 
       this.showMessage("Solo debe cargar un solo descuento.", "info", true);
     } else {
       this.hideMessage();
     }
 
-    if(this.saleOrder.discount != 0) {
-      this.saleOrder.totalPrice = parseFloat(""+this.saleOrder.subtotalPrice) - parseFloat(""+this.saleOrder.discount);
+    if(this.transaction.discount != 0) {
+      this.transaction.totalPrice = parseFloat(""+this.transaction.subtotalPrice) - parseFloat(""+this.transaction.discount);
     } else {
-      this.saleOrder.totalPrice = this.saleOrder.subtotalPrice;
+      this.transaction.totalPrice = this.transaction.subtotalPrice;
     }
     
-    this.updateSaleOrder();
+    this.updateTransaction();
   }
 
   public saveMovementOfArticle(): void {
@@ -841,7 +846,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.movementOfArticle = result.movementOfArticle;
-          this.getMovementsOfSaleOrder();
+          this.getMovementsOfTransaction();
           this.movementOfArticle = new MovementOfArticle();
           this.buildForm();
         }
@@ -881,11 +886,11 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public getMovementsOfSaleOrder(): void {
+  public getMovementsOfTransaction(): void {
     
     this.loading = true;
     
-    this._movementOfArticleService.getMovementsOfSaleOrder(this.saleOrder._id).subscribe(
+    this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
         result => {
 					if(!result.movementsOfArticles) {
             this.areMovementsOfArticlesEmpty = true;
@@ -917,7 +922,7 @@ export class AddSaleOrderComponent implements OnInit {
     
     this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
       result => {
-        this.getMovementsOfSaleOrder();
+        this.getMovementsOfTransaction();
         this.loading = false;
       },
       error => {
@@ -929,17 +934,17 @@ export class AddSaleOrderComponent implements OnInit {
 
    public updatePrices(): void {
 
-      this.saleOrder.subtotalPrice = 0;
+      this.transaction.subtotalPrice = 0;
 
       for(let movementOfArticle of this.movementsOfArticles) {
-        this.saleOrder.subtotalPrice = parseFloat(""+this.saleOrder.subtotalPrice) + parseFloat(""+movementOfArticle.totalPrice);
+        this.transaction.subtotalPrice = parseFloat(""+this.transaction.subtotalPrice) + parseFloat(""+movementOfArticle.totalPrice);
       }
       
       this.applyDiscount();
    }
 
    public toPrintBill(printerSelected: Printer): void {
-     
+
     this.loading = true;
     
     if(this.movementsOfArticles.length !== 0) {
@@ -951,13 +956,13 @@ export class AddSaleOrderComponent implements OnInit {
         'CUIT Nro.: 30-61432547-6\n' +
         '25 de Mayo 2028 - San Francisco - Córdoba\n' +
         'Tel: (03564) 424423\n' +
-        'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
-        'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.saleOrder.startDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.startDate, 'HH:mm')  + '\n' +
-        'Mesa: ' + this.saleOrder.table.description + '\n' +
-        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
-        if(this.saleOrder.company) {
-          content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+        'P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '\n' +
+        'Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '\n' +
+        'Fecha ' + datePipe.transform(this.transaction.startDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.transaction.startDate, 'HH:mm')  + '\n' +
+        'Mesa: ' + this.transaction.table.description + '\n' +
+        'Empleado: ' + this.transaction.employee.name + '\n\n';
+        if(this.transaction.company) {
+          content += 'Cliente: '+this.transaction.company.name+'\n\n';
         } else {
           content += 'Cliente: Consumidor Final\n\n';
         }
@@ -967,13 +972,13 @@ export class AddSaleOrderComponent implements OnInit {
           content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
         }
         content += '----------------------------------------\n' +
-        'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
-        'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
-        'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n\n' +
+        'Subtotal:				 ' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '\n' +
+        'Descuento:				-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '\n' +
+        'Total:					 '+ decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '\n\n' +
         'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
         '----Gracias por su visita.----\n\n\n';
 
-      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
       
       let print: Print = new Print();
       print.fileName = fileName;
@@ -1003,7 +1008,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public toPrintCharge(printerSelected: Printer): void {
-    
+
     this.loading = true;
     
     if(this.movementsOfArticles.length !== 0) {
@@ -1015,13 +1020,13 @@ export class AddSaleOrderComponent implements OnInit {
         'CUIT Nro.: 30-61432547-6\n' +
         '25 de Mayo 2028 - San Francisco - Córdoba\n' +
         'Tel: (03564) 424423\n' +
-        'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
-        'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.endDate, 'HH:mm')  + '\n' +
-        'Mesa: ' + this.saleOrder.table.description + '\n' +
-        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
-        if(this.saleOrder.company) {
-          content += 'Cliente: '+this.saleOrder.company.name+'\n\n';
+        'P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '\n' +
+        'Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '\n' +
+        'Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.transaction.endDate, 'HH:mm')  + '\n' +
+        'Mesa: ' + this.transaction.table.description + '\n' +
+        'Empleado: ' + this.transaction.employee.name + '\n\n';
+        if(this.transaction.company) {
+          content += 'Cliente: '+this.transaction.company.name+'\n\n';
         } else {
           content += 'Cliente: Consumidor Final\n\n';
         }
@@ -1031,15 +1036,15 @@ export class AddSaleOrderComponent implements OnInit {
           content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
         }
         content += '----------------------------------------\n' +
-        'Subtotal:				 ' + decimalPipe.transform(this.saleOrder.subtotalPrice, '1.2-2') + '\n' +
-        'Descuento:				-' + decimalPipe.transform(this.saleOrder.discount, '1.2-2') + '\n' +
-        'Total:					 '+ decimalPipe.transform(this.saleOrder.totalPrice, '1.2-2') + '\n' +
-          'Su pago:					 ' + decimalPipe.transform(parseFloat("" + this.saleOrder.cashChange) - parseFloat("" + this.saleOrder.totalPrice), '1.2-2') + '\n' +
-        'Su vuelto:					 '+ decimalPipe.transform(this.saleOrder.cashChange, '1.2-2') + '\n\n' +
+        'Subtotal:				 ' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '\n' +
+        'Descuento:				-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '\n' +
+        'Total:					 '+ decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '\n' +
+          'Su pago:					 ' + decimalPipe.transform(parseFloat("" + this.transaction.cashChange) - parseFloat("" + this.transaction.totalPrice), '1.2-2') + '\n' +
+        'Su vuelto:					 '+ decimalPipe.transform(this.transaction.cashChange, '1.2-2') + '\n\n' +
         'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
         '----Gracias por su visita.----\n\n\n';
 
-      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
       
       let print: Print = new Print();
       print.fileName = fileName;
@@ -1077,8 +1082,8 @@ export class AddSaleOrderComponent implements OnInit {
       let content: string;
       content =
         'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
-        'Mesa: ' + this.saleOrder.table.description + '\n' +
-        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
+        'Mesa: ' + this.transaction.table.description + '\n' +
+        'Empleado: ' + this.transaction.employee.name + '\n\n';
 
       content += 'DESCRIPCION.			CANTIDAD\n' +
         '----------------------------------------\n';
@@ -1087,7 +1092,7 @@ export class AddSaleOrderComponent implements OnInit {
         content += barArticleToPrint.observation + '\n';
       }
 
-      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
 
       let print: Print = new Print();
       print.fileName = fileName;
@@ -1137,8 +1142,8 @@ export class AddSaleOrderComponent implements OnInit {
       let content: string;
       content =
         'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
-        'Mesa: ' + this.saleOrder.table.description + '\n' +
-        'Empleado: ' + this.saleOrder.employee.name + '\n\n';
+        'Mesa: ' + this.transaction.table.description + '\n' +
+        'Empleado: ' + this.transaction.employee.name + '\n\n';
 
       content += 'DESCRIPCION.			CANTIDAD\n' +
         '----------------------------------------\n';
@@ -1147,7 +1152,7 @@ export class AddSaleOrderComponent implements OnInit {
         content += kitchenArticleToPrint.observation + '\n';
       }
 
-      let fileName: string = 'pedido-' + this.saleOrder.origin + '-' + this.saleOrder.number;
+      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
 
       let print: Print = new Print();
       print.fileName = fileName;

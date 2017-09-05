@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Employee } from './../../models/employee';
-import { SaleOrder } from './../../models/sale-order';
+import { Transaction } from './../../models/transaction';
 
-import { SaleOrderService } from './../../services/sale-order.service';
+import { TransactionService } from './../../services/transaction.service';
 import { EmployeeService } from './../../services/employee.service';
 
 @Component({
@@ -20,11 +20,11 @@ export class ReportsComponent implements OnInit {
 
   public date: Date;
   public employee: Employee;
-  public saleOrderForm : FormGroup;
-  public saleOrders: SaleOrder[] = new Array();
+  public transactionForm : FormGroup;
+  public transactions: Transaction[] = new Array();
   public alertMessage: string = "";
   public employees: Employee[] = new Array();
-  public areSaleOrdersEmpty: boolean = true;
+  public areTransactionsEmpty: boolean = true;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
 
@@ -43,7 +43,7 @@ export class ReportsComponent implements OnInit {
   };
 
   constructor(
-    public _saleOrderService: SaleOrderService,
+    public _transactionService: TransactionService,
     public _employeeService: EmployeeService,
     public _router: Router,
     public _fb: FormBuilder,
@@ -80,7 +80,7 @@ export class ReportsComponent implements OnInit {
 
   public buildForm(): void {
 
-    this.saleOrderForm = this._fb.group({
+    this.transactionForm = this._fb.group({
       'employee': [this.employee, [
           Validators.required
         ]
@@ -91,7 +91,7 @@ export class ReportsComponent implements OnInit {
       ]
     });
 
-    this.saleOrderForm.valueChanges
+    this.transactionForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -99,8 +99,8 @@ export class ReportsComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
 
-    if (!this.saleOrderForm) { return; }
-    const form = this.saleOrderForm;
+    if (!this.transactionForm) { return; }
+    const form = this.transactionForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -118,20 +118,20 @@ export class ReportsComponent implements OnInit {
   public reportByEmployeeByDay(): void {
 
     this.loading = true;
-    this.employee = this.saleOrderForm.value.employee;
+    this.employee = this.transactionForm.value.employee;
 
-    this._saleOrderService.getSaleOrdersByEmployee(this.employee._id,"2017-06-02").subscribe(
+    this._transactionService.getTransactionsByEmployee(this.employee._id,"2017-06-02").subscribe(
       result => {
-        if(!result.saleOrders) {
+        if(!result.transactions) {
           this.showMessage(result.message, "info", true); 
           this.loading = false;
-          this.saleOrders = null;
-          this.areSaleOrdersEmpty = true;
+          this.transactions = null;
+          this.areTransactionsEmpty = true;
         } else {
           this.hideMessage();
           this.loading = false;
-          this.saleOrders = result.saleOrders;
-          this.areSaleOrdersEmpty = false;
+          this.transactions = result.transactions;
+          this.areTransactionsEmpty = false;
         }
       },
       error => {

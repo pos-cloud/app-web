@@ -30,7 +30,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Pedidos
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="addSaleOrder()">Nuevo Pedido</button>
+        <button class="btn btn-primary" (click)="addTransaction()">Nuevo Pedido</button>
         <button class="btn btn-primary" (click)="refresh()">Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="fa fa-filter"></i>
@@ -58,27 +58,27 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let saleOrder of saleOrders | orderBy: orderTerm: propertyTerm	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
+          <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	| filter: filterOrigin:'origin' | filter: filterNumber:'number' 
                                         | filter: filterEndDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
                                         | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 9, currentPage: p }"
-              (click)="updateSaleOrder(saleOrder._id)">
-            <td>{{saleOrder.origin}}</td>
-            <td>{{saleOrder.number}}</td>
-            <td *ngIf="!saleOrder.endDate">{{saleOrder.startDate | date: ['dd/MM/yyyy'] }}</td>
-            <td *ngIf="saleOrder.endDate">{{saleOrder.endDate | date: ['dd/MM/yyyy'] }}</td>
+              (click)="updateTransaction(transaction._id)">
+            <td>{{transaction.origin}}</td>
+            <td>{{transaction.number}}</td>
+            <td *ngIf="!transaction.endDate">{{transaction.startDate | date: ['dd/MM/yyyy'] }}</td>
+            <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }}</td>
             <td>
               <h6>
-                <span class="badge" [ngClass]="{'badge-danger':saleOrder.state==='Anulado',
-                                                  'badge-success':saleOrder.state==='Cerrado', 
-                                                  'badge-warning':saleOrder.state==='Abierto'}">
-                    {{saleOrder.state}}
+                <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
+                                                  'badge-success':transaction.state==='Cerrado', 
+                                                  'badge-warning':transaction.state==='Abierto'}">
+                    {{transaction.state}}
                   </span>
               </h6>
             </td>
-            <td>{{saleOrder.observation}}</td>
-            <td>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{transaction.observation}}</td>
+            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
-          <tr align="center" *ngIf="areSaleOrdersEmpty">
+          <tr align="center" *ngIf="areTransactionsEmpty">
             <td colspan="6">Aún no hay pedidos pendientes</td>
           </tr>
         </tbody>

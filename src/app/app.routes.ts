@@ -20,9 +20,9 @@ import { ListTablesComponent } from './components/list-tables/list-tables.compon
 import { AddTableComponent } from './components/add-table/add-table.component';
 import { UpdateTableComponent } from './components/update-table/update-table.component';
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
-import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
-import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
+import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
+import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
+import { DeleteTransactionComponent } from './components/delete-transaction/delete-transaction.component';
 import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
 import { AddRoomComponent } from './components/add-room/add-room.component';
 import { UpdateRoomComponent } from './components/update-room/update-room.component';
@@ -75,9 +75,9 @@ const _routes: Routes = [
   { path: 'admin/agregar-mesa', component: AddTableComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-mesa', component: UpdateTableComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-mesa', component: DeleteTableComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/pedidos', component: ListSaleOrdersComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/agregar-pedido', component: AddSaleOrderComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/eliminar-pedido', component: DeleteSaleOrderComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/pedidos', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/agregar-pedido', component: AddTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/eliminar-pedido', component: DeleteTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/salones', component: ListRoomsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/agregar-salon', component: AddRoomComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-salon', component: UpdateRoomComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
@@ -108,12 +108,12 @@ const _routes: Routes = [
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },
-  { path: 'pos/resto/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
+  { path: 'pos/resto/salones/:id/mesas/:id/agregar-pedido', component: AddTransactionComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: 'pos/delivery', component: PointOfSaleComponent },
   { path: 'pos/mostrador', component: PointOfSaleComponent },
-  { path: 'pos/mostrador/agregar-pedido', component: AddSaleOrderComponent },
-  { path: 'pos/mostrador/editar-pedido/:id', component: AddSaleOrderComponent },
+  { path: 'pos/mostrador/agregar-pedido', component: AddTransactionComponent },
+  { path: 'pos/mostrador/editar-pedido/:id', component: AddTransactionComponent },
   { path: 'reports', component: ReportsComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];

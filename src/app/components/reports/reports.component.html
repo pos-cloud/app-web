@@ -1,5 +1,5 @@
 <section class="container-fluid">
-  <form [formGroup]="saleOrderForm" #formSaleOrder="ngForm" (ngSubmit)="reportByEmployeeByDay()" autocomplete="off">
+  <form [formGroup]="transactionForm" #formTransaction="ngForm" (ngSubmit)="reportByEmployeeByDay()" autocomplete="off">
     <div class="row" >
       <div class="form-group col-md-6">
         <label for="employee" class="control-label">Empleado Asociado</label>
@@ -49,19 +49,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let saleOrder of saleOrders">
-              <td>{{saleOrder.origin}}</td>
-              <td>{{saleOrder.number}}</td>
-              <td>{{saleOrder.date | date: ['dd/MM/yyyy'] }}</td>
-              <td><h6><span class="badge badge-default">{{saleOrder.state}}</span></h6></td>
-              <td>{{saleOrder.observation}}</td>
-              <td>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <tr *ngFor="let transaction of transactions">
+              <td>{{transaction.origin}}</td>
+              <td>{{transaction.number}}</td>
+              <td>{{transaction.date | date: ['dd/MM/yyyy'] }}</td>
+              <td><h6><span class="badge badge-default">{{transaction.state}}</span></h6></td>
+              <td>{{transaction.observation}}</td>
+              <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
               <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', saleOrder)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', saleOrder)"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-primary" (click)="openModal('update', transaction)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', transaction)"><i class="fa fa-trash-o"></i></button>
               </td>
             </tr>
-            <tr align="center" *ngIf="areSaleOrdersEmpty">
+            <tr align="center" *ngIf="areTransactionsEmpty">
               <td colspan="7">No se encontraron pedidos</td>
             </tr>
           </tbody>

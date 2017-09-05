@@ -1,19 +1,19 @@
 <section class="container-fluid">
-  <div class="row header-sale-order">
+  <div class="row header-transaction">
     <div class="col-md-12">
       <div class="row">
-        <div class="col-md-3" *ngIf="saleOrder.table">
-          <b>Mesa:</b> {{saleOrder.table.description}}
+        <div class="col-md-3" *ngIf="transaction.table">
+          <b>Mesa:</b> {{transaction.table.description}}
         </div>
-        <div class="col-md-3" *ngIf="saleOrder.employee">
-          <b>Empleado:</b> {{saleOrder.employee.name}}
-        </div>
-        <div class="col-md-3">
-          <b>Cliente: </b><span *ngIf="!saleOrder.company">Consumidor final</span><span *ngIf="saleOrder.company">{{saleOrder.company.name}}</span>
+        <div class="col-md-3" *ngIf="transaction.employee">
+          <b>Empleado:</b> {{transaction.employee.name}}
         </div>
         <div class="col-md-3">
-          <b>Apertura: </b>{{saleOrder.startDate | date:['HH:mm']}}
-          <!--<app-clock [startTime]="saleOrder.date"></app-clock>-->
+          <b>Cliente: </b><span *ngIf="!transaction.company">Consumidor final</span><span *ngIf="transaction.company">{{transaction.company.name}}</span>
+        </div>
+        <div class="col-md-3">
+          <b>Apertura: </b>{{transaction.startDate | date:['HH:mm']}}
+          <!--<app-clock [startTime]="transaction.date"></app-clock>-->
         </div>
       </div>
     </div>
@@ -77,7 +77,7 @@
         <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
           Descuento
         </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel_order')">
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel_transaction')">
           Cancelar
         </div>
       </div>
@@ -86,7 +86,7 @@
           <h4>Subtotal</h4>
         </div>
         <div class="col-md-4 center-content">
-          <h4>{{saleOrder.subtotalPrice | currency:'USD':'1.2-2'}}</h4>
+          <h4>{{transaction.subtotalPrice | currency:'USD':'1.2-2'}}</h4>
         </div>
       </div>
       <div class="row">
@@ -94,7 +94,7 @@
           <h6>Descuento</h6>
         </div>
         <div class="col-md-4 center-content">
-          <h6>-{{saleOrder.discount | currency:'USD':'1.2-2'}}</h6>
+          <h6>-{{transaction.discount | currency:'USD':'1.2-2'}}</h6>
         </div>
       </div>
       <div class="row">
@@ -102,7 +102,7 @@
           <h4>Total</h4>
         </div>
         <div class="col-md-4 center-content">
-          <h4>{{saleOrder.totalPrice | currency:'USD':'1.2-2'}}</h4>
+          <h4>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</h4>
         </div>
       </div>
     </div>
@@ -280,7 +280,7 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-    <button type="submit" class="btn btn-primary" (click)="c('cancel_order')">Aceptar</button>
+    <button type="submit" class="btn btn-primary" (click)="c('cancel_transaction')">Aceptar</button>
   </div>
 </ng-template>
 

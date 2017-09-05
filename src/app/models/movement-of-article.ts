@@ -1,5 +1,5 @@
 import { Article, ArticleType } from './article';
-import { SaleOrder } from './sale-order';
+import { Transaction } from './transaction';
 
 export class MovementOfArticle {
 
@@ -17,7 +17,7 @@ export class MovementOfArticle {
     public type: ArticleType;
     public printed: boolean = false;
     public article: Article = null;
-    public saleOrder: SaleOrder = null;
+    public transaction: Transaction = null;
 
 	constructor () {}
 }

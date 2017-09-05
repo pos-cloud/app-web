@@ -51,7 +51,6 @@ export class AddCompanyComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'CUIT': {
-      'required':       'Este campo es requerido.',
       'minlength':      'El CUIT debe contener 13 díguitos.',
       'maxlength':      'El CUIT debe contener 13 díguitos.',
       'pattern':        ' Ingrese el CUIT con formato con guiones'
@@ -106,7 +105,6 @@ export class AddCompanyComponent  implements OnInit {
         ]
       ],
       'CUIT': [this.company.CUIT, [
-          Validators.required,
           Validators.maxLength(13),
           Validators.minLength(13),
           Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')

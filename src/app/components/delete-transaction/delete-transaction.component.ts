@@ -2,26 +2,26 @@ import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { SaleOrder } from './../../models/sale-order';
+import { Transaction } from './../../models/transaction';
 
-import { SaleOrderService } from './../../services/sale-order.service';
+import { TransactionService } from './../../services/transaction.service';
 
 @Component({
-  selector: 'app-delete-sale-order',
-  templateUrl: './delete-sale-order.component.html',
-  styleUrls: ['./delete-sale-order.component.css'],
+  selector: 'app-delete-transaction',
+  templateUrl: './delete-transaction.component.html',
+  styleUrls: ['./delete-transaction.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class DeleteSaleOrderComponent implements OnInit {
+export class DeleteTransactionComponent implements OnInit {
 
-  @Input() saleOrder: SaleOrder;
+  @Input() transaction: Transaction;
   public alertMessage: string = "";
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
   constructor(
-    public _saleOrderService: SaleOrderService,
+    public _transactionService: TransactionService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
@@ -36,11 +36,11 @@ export class DeleteSaleOrderComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public deleteSaleOrder(): void {
+  public deleteTransaction(): void {
 
     this.loading = true;
 
-    this._saleOrderService.deleteSaleOrder(this.saleOrder._id).subscribe(
+    this._transactionService.deleteTransaction(this.transaction._id).subscribe(
       result => {
         this.activeModal.close('delete_close');
         this.loading = false;

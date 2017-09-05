@@ -16,7 +16,7 @@ import { EmployeeService } from './services/employee.service';
 import { EmployeeTypeService } from './services/employee-type.service';
 import { TableService } from './services/table.service';
 import { CashBoxService } from './services/cash-box.service';
-import { SaleOrderService } from './services/sale-order.service';
+import { TransactionService } from './services/transaction.service';
 import { MovementOfArticleService } from "./services/movement-of-article.service";
 import { UserService } from './services/user.service';
 import { RoomService } from './services/room.service';
@@ -52,9 +52,9 @@ import { DeleteTableComponent } from './components/delete-table/delete-table.com
 import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
 import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
-import { ListSaleOrdersComponent } from './components/list-sale-orders/list-sale-orders.component';
-import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
-import { DeleteSaleOrderComponent } from './components/delete-sale-order/delete-sale-order.component';
+import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
+import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
+import { DeleteTransactionComponent } from './components/delete-transaction/delete-transaction.component';
 import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
 import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
 import { UpdateRoomComponent } from './components/update-room/update-room.component';
@@ -119,9 +119,9 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
     ListCashBoxesComponent,
     DeleteCashBoxComponent,
     AddCashBoxComponent,
-    ListSaleOrdersComponent,
-    AddSaleOrderComponent,
-    DeleteSaleOrderComponent,
+    ListTransactionsComponent,
+    AddTransactionComponent,
+    DeleteTransactionComponent,
     FocusDirective,
     ListRoomsComponent,
     AddRoomComponent,
@@ -178,7 +178,7 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
     EmployeeTypeService,
     TableService,
     CashBoxService,
-    SaleOrderService,
+    TransactionService,
     MovementOfArticleService,
     UserService,
     RoomService,
