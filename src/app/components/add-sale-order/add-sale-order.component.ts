@@ -953,7 +953,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Tel: (03564) 424423\n' +
         'P.V. Nro.: ' + decimalPipe.transform(this.saleOrder.origin, '4.0-0').replace(/,/g, "") + '\n' +
         'Nro. T.            ' + decimalPipe.transform(this.saleOrder.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.endDate, 'HH:mm')  + '\n' +
+        'Fecha ' + datePipe.transform(this.saleOrder.startDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.saleOrder.startDate, 'HH:mm')  + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
         if(this.saleOrder.company) {
@@ -1076,7 +1076,7 @@ export class AddSaleOrderComponent implements OnInit {
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
       content =
-        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.endDate, 'HH:mm') + '\n' +
+        'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
 
@@ -1136,7 +1136,7 @@ export class AddSaleOrderComponent implements OnInit {
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
       content =
-        'Fecha ' + datePipe.transform(this.saleOrder.endDate, 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(this.saleOrder.endDate, 'HH:mm') + '\n' +
+        'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
         'Mesa: ' + this.saleOrder.table.description + '\n' +
         'Empleado: ' + this.saleOrder.employee.name + '\n\n';
 
