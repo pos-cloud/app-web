@@ -2,10 +2,10 @@
   <div class="row header-sale-order">
     <div class="col-md-12">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="saleOrder.table">
           <b>Mesa:</b> {{saleOrder.table.description}}
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="saleOrder.employee">
           <b>Empleado:</b> {{saleOrder.employee.name}}
         </div>
         <div class="col-md-3">
@@ -57,11 +57,16 @@
         Todavía no se cargaron artículos al pedido
       </div>
       <hr>
-      <div class="row">
+      <div class="row" *ngIf="posType==='resto'">
         <div class="col-md-6 btn-action btn-large center-content" (click)="setPrintBill()">
           Cuenta
         </div>
         <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('charge')">
+          Cobrar
+        </div>
+      </div>
+      <div class="row" *ngIf="posType!=='resto'">
+        <div class="col-md-12 btn-action btn-large center-content" (click)="openModal('charge')">
           Cobrar
         </div>
       </div>
@@ -112,7 +117,7 @@
         <div class="col-md-2 btn-action btn-large center-content" (click)="addItem()">
           Agregar Artículo
         </div>
-        <div class="col-md-1 btn-action btn-large center-content" (click)="closeTable()">
+        <div class="col-md-1 btn-action btn-large center-content" (click)="close()">
           Cerrar
         </div>
       </div>

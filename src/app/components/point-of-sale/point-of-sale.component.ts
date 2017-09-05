@@ -121,9 +121,13 @@ export class PointOfSaleComponent implements OnInit {
   public refresh(): void {
     this.getOpenSaleOrders();
   }
-
-  public addSaleOrder() {
+  
+  public addSaleOrder(): void {
     this._router.navigate(['/pos/mostrador/agregar-pedido']);
+  }
+
+  public updateSaleOrder(saleOrderId: string): void {
+    this._router.navigate(['/pos/mostrador/editar-pedido/' + saleOrderId]);
   }
 
   public changeRoom(room: Room): void {

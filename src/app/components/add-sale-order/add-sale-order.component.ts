@@ -45,14 +45,14 @@ export class AddSaleOrderComponent implements OnInit {
   public movementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
   public printers: Printer[];
-  public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada
+  public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public amountOfItemForm: FormGroup;
   public discountForm: FormGroup;
   public paymentForm: FormGroup;
   public areMovementsOfArticlesEmpty: boolean = true;
   public userType: string;
-  public table: Table;
-  public tableId: string;
+  public posType: string;
+  public table: Table; //Solo se usa si posType es igual a resto
   public loading: boolean = false;
   public areCategoriesVisible: boolean = true;
   public areArticlesVisible: boolean = false;
@@ -133,9 +133,7 @@ export class AddSaleOrderComponent implements OnInit {
     public _printerService: PrinterService
   ) {
     this.saleOrder = new SaleOrder();
-    this.saleOrder.employee = new Employee();
-    this.saleOrder.table = new Table();
-    this.table = new Table();
+    // this.saleOrder.employee = new Employee();
     this.movementOfArticle = new MovementOfArticle();
     this.movementsOfArticles = new Array();
     this.categorySelected = new Category();
@@ -149,11 +147,30 @@ export class AddSaleOrderComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if(this.tableId === undefined) {
-      this.tableId = pathLocation[6];
-    }
+    this.posType = pathLocation[2];
+    console.log(this.posType);
 
     this.getPrinters();
+
+    if (this.posType === "resto") {
+      this.saleOrder.table = new Table();
+      this.table = new Table();
+      let tableId = pathLocation[6];
+      if (tableId !== undefined) {
+        this.getOpenSaleOrderByTable(tableId);
+      }
+    } else if (this.posType === "mostrador") {
+      let saleOrderId = pathLocation[4];
+      if (saleOrderId !== undefined) {
+        this.getSaleOrder(saleOrderId);
+      } else {
+        this.getLastSaleOrder();
+      }
+    }
+    
+    this.buildForm();
+    this.buildFormDiscount();
+    this.buildFormPayment();
   }
 
   public getPrinters(): void {
@@ -168,12 +185,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.printers = result.printers;
-          if (this.tableId === undefined) {
-            this.getOpenSaleOrderByTable();
-          }
-          this.buildForm();
-          this.buildFormDiscount();
-          this.buildFormPayment();
         }
         this.loading = false;
       },
@@ -184,18 +195,18 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getOpenSaleOrderByTable(): void {
+  public getOpenSaleOrderByTable(tableId): void {
 
     this.loading = true;
     
-    this._saleOrderService.getOpenSaleOrderByTable(this.tableId).subscribe(
+    this._saleOrderService.getOpenSaleOrderByTable(tableId).subscribe(
       result => {
 
         let saleOrderState: SaleOrderState;
 
         if (!result.saleOrders) {
           this.hideMessage();
-          this.getTable(this.tableId);
+          this.getTable(tableId);
         } else {
           this.hideMessage();
           this.saleOrder = result.saleOrders[0];
@@ -212,33 +223,20 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getLastSaleOrderByOrigen(): void {
-    
-    let origin = 0;
+  public getSaleOrder(saleOrderId): void {
+
     this.loading = true;
-    
-    this._saleOrderService.getLastSaleOrderByOrigen(origin).subscribe(
+
+    this._saleOrderService.getSaleOrder(saleOrderId).subscribe(
       result => {
-        let number;
-        
-        if(result.saleOrders){
-          if(result.saleOrders[0] !== undefined) {
-            number = result.saleOrders[0].number + 1;
-          } else {
-            number = 1;
-          }
-        } else if(result.message = "No se encontraron pedidos") {
-          number = 1;
+        if (!result.saleOrder) {
+          this.showMessage(result.message, "danger", false);
+          this.loading = false;
         } else {
-          number = 0;
-        }
-
-        if(number != 0) {
-
-          this.saleOrder.number = number;
-          this.addSaleOrder();
-        } else {
-          this.showMessage("Ha ocurrido un error en obtener el último pedido", "danger", false);
+          this.hideMessage();
+          this.saleOrder = result.saleOrder;
+          this.discountAmount = this.saleOrder.discount;
+          this.getMovementsOfSaleOrder();
         }
         this.loading = false;
       },
@@ -283,7 +281,43 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.saleOrder.turn = result.turns[0];
-          this.getLastSaleOrderByOrigen();
+          this.getLastSaleOrder();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getLastSaleOrder(): void {
+
+    this.loading = true;
+
+    this._saleOrderService.getLastSaleOrder().subscribe(
+      result => {
+        let number;
+
+        if (result.saleOrders) {
+          if (result.saleOrders[0] !== undefined) {
+            number = result.saleOrders[0].number + 1;
+          } else {
+            number = 1;
+          }
+        } else if (result.message = "No se encontraron pedidos") {
+          number = 1;
+        } else {
+          number = 0;
+        }
+
+        if (number != 0) {
+
+          this.saleOrder.number = number;
+          this.addSaleOrder();
+        } else {
+          this.showMessage("Ha ocurrido un error en obtener el último pedido", "danger", false);
         }
         this.loading = false;
       },
@@ -424,12 +458,14 @@ export class AddSaleOrderComponent implements OnInit {
     
     this._saleOrderService.saveSaleOrder(this.saleOrder).subscribe(
       result => {
-          if(!result.saleOrder) {
-            this.showMessage(result.message, "info", true);
-          } else {
-            this.hideMessage();
-            this.saleOrder = result.saleOrder;
+        if(!result.saleOrder) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.hideMessage();
+          this.saleOrder = result.saleOrder;
+          if (this.posType === "resto") {
             this.changeStateOfTable(TableState.Busy, false);
+          }
         }
         this.loading = false;
       },
@@ -467,7 +503,8 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = false;
   }
 
-  public closeTable() {
+  public close() {
+
 
     this.typeOfOperationToPrint = 'item';
     for(let movementOfArticle of this.movementsOfArticles) {
@@ -490,7 +527,11 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     if (this.barArticlesToPrint.length === 0 && this.kitchenArticlesToPrint.length === 0) {
-      this.changeStateOfTable(TableState.Busy, true);
+      if(this.posType === "resto") {
+        this.changeStateOfTable(TableState.Busy, true);
+      } else if (this.posType === "mostrador") {
+        this.back();
+      }
     }
   }
 
@@ -506,7 +547,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.table = result.table;
           if(closed) {
-            this.backToRooms();
+            this.back();
           }
         }
         this.loading = false;
@@ -597,8 +638,12 @@ export class AddSaleOrderComponent implements OnInit {
               this.saleOrder.state = SaleOrderState.Canceled;
               this.saleOrder.endDate = new Date();
               this.updateSaleOrder();
-              this.table.employee = null;
-              this.changeStateOfTable(TableState.Available, true);
+              if (this.posType === "resto") {
+                this.table.employee = null;
+                this.changeStateOfTable(TableState.Available, true);
+              } else if (this.posType === "mostrador") {
+                this.back();
+              }
             }
           }, (reason) => {
             
@@ -710,8 +755,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   public assignOrigin(origin: number) {
     this.saleOrder.origin = origin;
-    this.saleOrder.endDate = new Date();
-    this.updateSaleOrder();
   }
 
   public setPrintBill(): void {
@@ -720,16 +763,25 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public finishCharge() {
+    this.saleOrder.endDate = new Date();
     this.saleOrder.state = SaleOrderState.Closed;
     this.saleOrder.cashChange = this.paymentForm.value.cashChange;
     this.updateSaleOrder();
-    this.table.employee = null;
     this.typeOfOperationToPrint = 'charge';
-    this.changeStateOfTable(TableState.Available, true);
+    if (this.posType === "resto") {
+      this.table.employee = null;
+      this.changeStateOfTable(TableState.Available, true);
+    } else {
+      this.back();
+    }
   }
 
-  public backToRooms(): void {
-    this._router.navigate(['/pos/resto/salones/'+this.saleOrder.table.room+'/mesas']);
+  public back(): void {
+    if (this.posType === "resto") {
+      this._router.navigate(['/pos/resto/salones/' + this.saleOrder.table.room + '/mesas']);
+    } else if (this.posType === "mostrador") {
+      this._router.navigate(['/pos/mostrador']);
+    }
   }
 
   public confirmAmount(): void {
@@ -860,7 +912,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public deleteMovementOfArticle(movementOfArticleId: string): void {
-    
+
     this.loading = true;
     
     this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
@@ -931,7 +983,9 @@ export class AddSaleOrderComponent implements OnInit {
         result => {
           this.printersAux = new Array();
           if(result.message === 'ok'){
-            this.changeStateOfTable(TableState.Pending, true);
+            if (this.posType === 'resto') {
+              this.changeStateOfTable(TableState.Pending, true);
+            }
           } else {
             this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
           }
@@ -996,7 +1050,7 @@ export class AddSaleOrderComponent implements OnInit {
         result => {
           this.printersAux = new Array();
           if(result.message === 'ok'){
-            this.changeStateOfTable(TableState.Available, true);
+            this.finishCharge();
           } else {
             this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
           }
@@ -1048,7 +1102,11 @@ export class AddSaleOrderComponent implements OnInit {
               this.updateMovementOfArticle(movementOfArticle);
             }
             if(this.kitchenArticlesToPrint.length === 0) {
-              this.changeStateOfTable(TableState.Busy, true);
+              if (this.posType === 'resto') {
+                this.changeStateOfTable(TableState.Pending, true);
+              } else if (this.posType === 'resto') {
+                this.back();
+              }
             } else {
               this.typeOfOperationToPrint = "kitchen";
               this.openModal("printers");
@@ -1103,7 +1161,11 @@ export class AddSaleOrderComponent implements OnInit {
               movementOfArticle.printed = true;
               this.updateMovementOfArticle(movementOfArticle);
             }
-            this.changeStateOfTable(TableState.Busy, true);
+            if (this.posType === 'resto') {
+              this.changeStateOfTable(TableState.Pending, true);
+            } else if (this.posType === 'resto') {
+              this.back();
+            }
           } else {
             this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
           }

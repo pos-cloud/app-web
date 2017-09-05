@@ -35,11 +35,15 @@ export class SaleOrderService {
 	}
 
 	getOpenSaleOrder() {
-		return this._http.get(Config.apiURL + 'sale-orders/where="state":"' + SaleOrderState.Open + '"&limit=1').map(res => res.json());
+		return this._http.get(Config.apiURL + 'sale-orders/where="state":"' + SaleOrderState.Open + '"').map(res => res.json());
 	}
 
   getSaleOrdersByEmployee (employeeId: string, date: string) {
 		return this._http.get(Config.apiURL + 'sale-orders/'+employeeId+'/'+date).map (res => res.json());
+	}
+
+	getLastSaleOrder() {
+		return this._http.get(Config.apiURL + 'sale-orders/sort="number":-1&limit=1').map(res => res.json());
 	}
   
   getLastSaleOrderByOrigen (origin: number) {
