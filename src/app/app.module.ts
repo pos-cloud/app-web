@@ -30,6 +30,7 @@ import { PrintService } from './services/print.service';
 import { PrinterService } from './services/printer.service';
 import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
+import { PaymentMethodService } from './services/payment-method.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -193,6 +194,7 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
     PrinterService,
     ImportService,
     ConfigService,
+    PaymentMethodService,
     AuthGuard
   ],
   bootstrap: [AppComponent]

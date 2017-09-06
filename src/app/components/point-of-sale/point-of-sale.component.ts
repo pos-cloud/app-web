@@ -6,11 +6,13 @@ import { CashBox } from './../../models/cash-box';
 import { Room } from './../../models/room';
 import { Transaction } from './../../models/transaction';
 import { TransactionType, TransactionTypeState, TypeOfMovements, CurrentAcount } from './../../models/transaction-type';
+import { PaymentMethod } from './../../models/payment-method';
 
 import { CashBoxService } from './../../services/cash-box.service';
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
+import { PaymentMethodService } from './../../services/payment-method.service';
 
 
 import { AddCashBoxComponent } from './../add-cash-box/add-cash-box.component';
@@ -43,6 +45,7 @@ export class PointOfSaleComponent implements OnInit {
     public _roomService: RoomService,
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
+    public _paymentMethodService: PaymentMethodService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -56,6 +59,7 @@ export class PointOfSaleComponent implements OnInit {
     this.posType = pathLocation[2];
 
     this.getTransactionTypes();
+    this.getPaymentMethods();
 
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
@@ -96,6 +100,70 @@ export class PointOfSaleComponent implements OnInit {
                       this.showMessage(result.message, "info", true);
                     } else {
                       this.hideMessage();
+                    }
+                    this.loading = false;
+                  },
+                  error => {
+                    this.showMessage(error._body, "danger", false);
+                    this.loading = false;
+                  }
+                );
+              this.loading = false;
+              }
+            },
+            error => {
+              console.log("danger");
+              this.showMessage(error._body, "danger", false);
+              this.loading = false;
+            }
+          );
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getPaymentMethods(): void {
+
+    this._paymentMethodService.getPaymentMethods().subscribe(
+      result => {
+        if (!result.paymentMethods){
+          this.loading = true;
+          let paymentMethod = new PaymentMethod();
+          paymentMethod.name = "Efectivo";
+          console.log(paymentMethod);
+          this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
+            result => {
+            console.log(result);
+              if (!result.paymentMethod) {
+                this.showMessage(result.message, "info", true);
+              } else {
+                let paymentMethod = new PaymentMethod();
+                paymentMethod.name = "Cuenta Corriente";
+                this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
+                  result => {
+                    if (!result.paymentMethod) {
+                      this.showMessage(result.message, "info", true);
+                    } else {
+                      let paymentMethod = new PaymentMethod();
+                      paymentMethod.name = "Tarjeta de Crédito";
+                      this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
+                        result => {
+                          if (!result.paymentMethod) {
+                            this.showMessage(result.message, "info", true);
+                          } else {
+                            this.hideMessage();
+                          }
+                          this.loading = false;
+                        },
+                        error => {
+                          this.showMessage(error._body, "danger", false);
+                          this.loading = false;
+                        }
+                      );
                     }
                     this.loading = false;
                   },
