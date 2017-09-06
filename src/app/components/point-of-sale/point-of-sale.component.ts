@@ -5,10 +5,12 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CashBox } from './../../models/cash-box';
 import { Room } from './../../models/room';
 import { Transaction } from './../../models/transaction';
+import { TransactionType, TransactionTypeState, TypeOfMovements, CurrentAcount } from './../../models/transaction-type';
 
 import { CashBoxService } from './../../services/cash-box.service';
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
+import { TransactionTypeService } from './../../services/transaction-type.service';
 
 
 import { AddCashBoxComponent } from './../add-cash-box/add-cash-box.component';
@@ -40,6 +42,7 @@ export class PointOfSaleComponent implements OnInit {
     public _cashBoxService: CashBoxService,
     public _roomService: RoomService,
     public _transactionService: TransactionService,
+    public _transactionTypeService: TransactionTypeService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -51,6 +54,9 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+
+    this.getTransactionTypes();
+
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
@@ -59,6 +65,61 @@ export class PointOfSaleComponent implements OnInit {
     } else if (this.posType === "mostrador") {
       this.getOpenTransactions();
     }
+  }
+
+  public getTransactionTypes(): void {
+
+    this._transactionTypeService.getTransactionTypes().subscribe(
+      result => {
+        if (!result.transactionTypes){
+          this.loading = true;
+          let transactionType = new TransactionType();
+          transactionType.currentAccount = CurrentAcount.Yes;
+          transactionType.movement = TypeOfMovements.Outflows;
+          transactionType.name = "Orden de Pedido";
+          transactionType.state = TransactionTypeState.Enabled;
+          this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+            result => {
+              if (!result.transactionType) {
+                this.showMessage(result.message, "info", true);
+                console.log("info");
+              } else {
+                let transactionType = new TransactionType();
+                transactionType.currentAccount = CurrentAcount.Yes;
+                transactionType.movement = TypeOfMovements.Inflows;
+                transactionType.name = "Cobro";
+                transactionType.state = TransactionTypeState.Enabled;
+                console.log(transactionType);
+                this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+                  result => {
+                    if (!result.transactionType) {
+                      this.showMessage(result.message, "info", true);
+                    } else {
+                      this.hideMessage();
+                    }
+                    this.loading = false;
+                  },
+                  error => {
+                    this.showMessage(error._body, "danger", false);
+                    this.loading = false;
+                  }
+                );
+              this.loading = false;
+              }
+            },
+            error => {
+              console.log("danger");
+              this.showMessage(error._body, "danger", false);
+              this.loading = false;
+            }
+          );
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getRooms(): void {  

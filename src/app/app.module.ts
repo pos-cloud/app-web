@@ -17,6 +17,7 @@ import { EmployeeTypeService } from './services/employee-type.service';
 import { TableService } from './services/table.service';
 import { CashBoxService } from './services/cash-box.service';
 import { TransactionService } from './services/transaction.service';
+import { TransactionTypeService } from './services/transaction-type.service';
 import { MovementOfArticleService } from "./services/movement-of-article.service";
 import { UserService } from './services/user.service';
 import { RoomService } from './services/room.service';
@@ -179,6 +180,7 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
     TableService,
     CashBoxService,
     TransactionService,
+    TransactionTypeService,
     MovementOfArticleService,
     UserService,
     RoomService,

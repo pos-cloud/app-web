@@ -8,6 +8,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
+import { TransactionType } from './../../models/transaction-type';
 import { Article, ArticleType } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
@@ -20,6 +21,7 @@ import { Printer, PrinterType } from './../../models/printer';
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { TransactionService } from './../../services/transaction.service';
+import { TransactionTypeService } from './../../services/transaction-type.service';
 import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
@@ -122,6 +124,7 @@ export class AddTransactionComponent implements OnInit {
   constructor(
     public _fb: FormBuilder,
     public _transactionService: TransactionService,
+    public _transactionTypeService: TransactionTypeService,
     public _movementOfArticleService: MovementOfArticleService,
     public _tableService: TableService,
     public _turnService: TurnService,
@@ -149,6 +152,8 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
+    this.getTransactionTypeSaleOrder();
+
     this.getPrinters();
 
     if (this.posType === "resto") {
@@ -170,6 +175,26 @@ export class AddTransactionComponent implements OnInit {
     this.buildForm();
     this.buildFormDiscount();
     this.buildFormPayment();
+  }
+
+
+
+  public getTransactionTypeSaleOrder(): void {
+
+    this._transactionTypeService.getTransactionTypeSaleOrder().subscribe(
+      result => {
+        if (!result.transactionTypes) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.transaction.type = result.transactionTypes[0];
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getPrinters(): void {
@@ -453,7 +478,7 @@ export class AddTransactionComponent implements OnInit {
   public addTransaction(): void {
     
     this.loading = true;
-    
+    console.log(this.transaction);
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if(!result.transaction) {
@@ -697,6 +722,7 @@ export class AddTransactionComponent implements OnInit {
               this.finishCharge();
             }
           }
+          break;
         case 'errorMessage':
           modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
             if (result !== "cancel" && result !== "") {
@@ -705,6 +731,7 @@ export class AddTransactionComponent implements OnInit {
           }, (reason) => {
 
           });
+          break;
         default : ;
     };
   }
@@ -997,7 +1024,7 @@ export class AddTransactionComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          this.openModal("errorMessage");
+          // this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1062,7 +1089,7 @@ export class AddTransactionComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          this.openModal('errorMessage');
+          // this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1122,7 +1149,7 @@ export class AddTransactionComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          this.openModal("errorMessage");
+          // this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1177,7 +1204,7 @@ export class AddTransactionComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          this.openModal("errorMessage");
+          // this.openModal("errorMessage");
           this.loading = false;
         }
       );
