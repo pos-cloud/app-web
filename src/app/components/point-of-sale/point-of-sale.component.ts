@@ -86,14 +86,12 @@ export class PointOfSaleComponent implements OnInit {
             result => {
               if (!result.transactionType) {
                 this.showMessage(result.message, "info", true);
-                console.log("info");
               } else {
                 let transactionType = new TransactionType();
                 transactionType.currentAccount = CurrentAcount.Yes;
                 transactionType.movement = TypeOfMovements.Inflows;
                 transactionType.name = "Cobro";
                 transactionType.state = TransactionTypeState.Enabled;
-                console.log(transactionType);
                 this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                   result => {
                     if (!result.transactionType) {
@@ -112,7 +110,6 @@ export class PointOfSaleComponent implements OnInit {
               }
             },
             error => {
-              console.log("danger");
               this.showMessage(error._body, "danger", false);
               this.loading = false;
             }
@@ -128,16 +125,15 @@ export class PointOfSaleComponent implements OnInit {
 
   public getPaymentMethods(): void {
 
+    this.loading = true;
+
     this._paymentMethodService.getPaymentMethods().subscribe(
       result => {
         if (!result.paymentMethods){
-          this.loading = true;
           let paymentMethod = new PaymentMethod();
           paymentMethod.name = "Efectivo";
-          console.log(paymentMethod);
           this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
             result => {
-            console.log(result);
               if (!result.paymentMethod) {
                 this.showMessage(result.message, "info", true);
               } else {
@@ -176,12 +172,12 @@ export class PointOfSaleComponent implements OnInit {
               }
             },
             error => {
-              console.log("danger");
               this.showMessage(error._body, "danger", false);
               this.loading = false;
             }
           );
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);

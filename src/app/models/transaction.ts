@@ -3,6 +3,7 @@ import { CashBox } from './cash-box';
 import { Table } from './table';
 import { Employee } from './employee';
 import { Turn } from './turn';
+import { PaymentMethod } from './payment-method';
 
 export class Transaction {
 	
@@ -17,6 +18,7 @@ export class Transaction {
 	public cashChange: number = 0.00;
 	public totalPrice: number = 0.00;
 	public type: number = 0.00;
+	public paymentMethod: PaymentMethod;
 	public company: Company;
 	public cashBox: CashBox;
 	public table: Table;

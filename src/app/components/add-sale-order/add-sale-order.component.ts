@@ -17,6 +17,7 @@ import { Category } from './../../models/category';
 import { Room } from './../../models/room';
 import { Print } from './../../models/print';
 import { Printer, PrinterType } from './../../models/printer';
+import { PaymentMethod } from './../../models/payment-method';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -26,6 +27,7 @@ import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
 import { PrinterService } from './../../services/printer.service';
+import { PaymentMethodService } from './../../services/payment-method.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
@@ -34,18 +36,20 @@ import { ListCompaniesComponent } from './../list-companies/list-companies.compo
 import { DatePipe, DecimalPipe } from '@angular/common'; 
 
 @Component({
-  selector: 'app-add-transaction',
-  templateUrl: './add-transaction.component.html',
-  styleUrls: ['./add-transaction.component.css'],
+  selector: 'app-add-sale-order',
+  templateUrl: './add-sale-order.component.html',
+  styleUrls: ['./add-sale-order.component.css'],
   providers: [NgbAlertConfig, DatePipe, DecimalPipe]
 })
 
-export class AddTransactionComponent implements OnInit {
+export class AddSaleOrderComponent implements OnInit {
 
   public transaction: Transaction;
   public alertMessage: string = "";
   public movementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
+  public paymentMethods: PaymentMethod[];
+  public paymentMethodSelected: PaymentMethod;
   public printers: Printer[];
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public amountOfItemForm: FormGroup;
@@ -77,8 +81,7 @@ export class AddTransactionComponent implements OnInit {
   public formErrors = {
     'description':'',
     'amount': '',
-    'salePrice':''
-
+    'salePrice': ''
   };
 
   public validationMessages = {
@@ -129,6 +132,7 @@ export class AddTransactionComponent implements OnInit {
     public _tableService: TableService,
     public _turnService: TurnService,
     public _printService: PrintService,
+    public _paymentMethodService: PaymentMethodService,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -478,7 +482,6 @@ export class AddTransactionComponent implements OnInit {
   public addTransaction(): void {
     
     this.loading = true;
-    console.log(this.transaction);
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if(!result.transaction) {
@@ -689,6 +692,7 @@ export class AddTransactionComponent implements OnInit {
 
           this.typeOfOperationToPrint = "charge";
           if(this.movementsOfArticles.length !== 0) {
+            this.getPaymentMethods();
             this.paymentForm.setValue({
               'totalPrice' :  parseFloat(""+this.transaction.totalPrice).toFixed(2),
               'amount' : parseFloat(""+this.transaction.totalPrice).toFixed(2),
@@ -734,6 +738,27 @@ export class AddTransactionComponent implements OnInit {
           break;
         default : ;
     };
+  }
+
+  public getPaymentMethods(): void {
+    
+    this.loading = true;
+
+    this._paymentMethodService.getPaymentMethods().subscribe(
+      result => {
+        if (!result.paymentMethods){
+          this.showMessage(result.message, "info", true);
+        } else {  
+          this.paymentMethodSelected = result.paymentMethods[0];
+          this.paymentMethods = result.paymentMethods;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public countPrinters(): number {

@@ -55,7 +55,7 @@ import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-b
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
 import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
 import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
-import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
+import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './components/delete-transaction/delete-transaction.component';
 import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
 import { DeleteRoomComponent } from './components/delete-room/delete-room.component';
@@ -122,7 +122,7 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
     DeleteCashBoxComponent,
     AddCashBoxComponent,
     ListTransactionsComponent,
-    AddTransactionComponent,
+    AddSaleOrderComponent,
     DeleteTransactionComponent,
     FocusDirective,
     ListRoomsComponent,
