@@ -1,7 +1,7 @@
 export class TransactionType {
 
 	public _id: string;
-	public name: string;
+	public name: string = "";
 	public state: TransactionTypeState = TransactionTypeState.Enabled;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: TypeOfMovements = TypeOfMovements.Inflows;

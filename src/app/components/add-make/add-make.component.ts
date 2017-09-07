@@ -106,7 +106,6 @@ export class AddMakeComponent  implements OnInit {
         } else {
           this.make = result.make;
           this.showMessage("La marca se ha añadido con éxito.", "success", true);
-          this.alertMessage = "La marca se ha añadido con éxito.";
           this.make = new Make ();
           this.buildForm();
         }
@@ -120,11 +119,9 @@ export class AddMakeComponent  implements OnInit {
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
-    console.log(this.alertConfig);
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
-    console.log(this.alertConfig);
   }
 
   public hideMessage():void {

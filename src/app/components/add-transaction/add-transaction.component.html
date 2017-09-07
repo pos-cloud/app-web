@@ -1,0 +1,83 @@
+<div class="modal-header">
+  <h4 class="modal-title">Agregar Cobro</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="transactionForm" #formAddTransaction="ngForm" (ngSubmit)="addTransaction()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="company" class="control-label">Cliente</label>
+          <select class="form-control" formControlName="company" name="company">
+              <option *ngFor="let company of companies"
+                      [selected]="company._id==transaction.company._id" 
+                      [ngValue]="company">
+                    {{company.name}}
+              </option>
+            </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="date" class="control-label">Fecha:</label>
+          <input type="date" class="form-control" formControlName="date" name="date" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.date" class="alert alert-danger">
+            {{ formErrors.date }}
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="number" class="control-label">Número:</label>
+          <input type="number" class="form-control" formControlName="number" name="number" min="0"/>
+          <div *ngIf="formErrors.number" class="alert alert-danger">
+            {{ formErrors.number }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="paymentMethod" class="control-label">Medio de pago</label>
+          <select class="form-control" formControlName="paymentMethod" name="paymentMethod">
+              <option *ngFor="let paymentMethod of paymentMethods"
+                      [selected]="paymentMethod._id==transaction.paymentMethod._id" 
+                      [ngValue]="paymentMethod">
+                    {{paymentMethod.name}}
+              </option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="totalPrice" class="control-label">Importe:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" />
+          </div>
+          <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
+            {{ formErrors.totalPrice }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="observation" class="control-label">Observación:</label>
+          <div class="input-group">
+            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!transactionForm.valid || loading">
+        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+  {{transactionForm.value | json}}
+</section>

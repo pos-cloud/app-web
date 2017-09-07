@@ -17,5 +17,5 @@ export class Company {
 
 export enum CompanyType {
     Client = <any> "Cliente",
-    Provider = <any> "Proveedor",
+    // Provider = <any> "Proveedor",
 }

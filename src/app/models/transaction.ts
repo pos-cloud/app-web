@@ -4,12 +4,14 @@ import { Table } from './table';
 import { Employee } from './employee';
 import { Turn } from './turn';
 import { PaymentMethod } from './payment-method';
+import { TransactionType } from './transaction-type';
 
 export class Transaction {
 	
 	public _id: string;
 	public origin: number = 0;
 	public number: number = 0;
+	public date: Date = new Date();
 	public startDate: Date = new Date();
 	public endDate: Date;
 	public state: TransactionState = TransactionState.Open;
@@ -17,7 +19,8 @@ export class Transaction {
 	public discount: number = 0.00;
 	public cashChange: number = 0.00;
 	public totalPrice: number = 0.00;
-	public type: number = 0.00;
+	public observation: string;
+	public type: TransactionType;
 	public paymentMethod: PaymentMethod;
 	public company: Company;
 	public cashBox: CashBox;

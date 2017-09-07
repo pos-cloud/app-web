@@ -110,7 +110,7 @@ export class AddSaleOrderComponent implements OnInit {
     }
   };
 
-   public formErrorsPayment = {
+  public formErrorsPayment = {
     'amount': '',
     'cashChange': ''
   };
@@ -821,6 +821,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public finishCharge() {
     this.transaction.endDate = new Date();
+    this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
     this.transaction.cashChange = this.paymentForm.value.cashChange;
     this.updateTransaction();
