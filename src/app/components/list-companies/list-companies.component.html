@@ -2,6 +2,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Lista de Empresas
       <div class="pull-right">
+        <button class="btn btn-primary" (click)="openMail"> Enviar Mail </button>
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Empresa</button>
         <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">

@@ -6,7 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionService } from './../../services/transaction.service';
 
-import { AddTransactionComponent } from './../../components/add-transaction/add-transaction.component';
+import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 
 @Component({

@@ -36,4 +36,12 @@ export class ConfigService {
 	updateConfigApi(config: Config) {
 		return this._http.put(Config.apiURL + "config/" + config._id, config).map(res => res.json());
 	}
+
+	updateConfigBackup(config: Config) {
+		return this._http.put(Config.apiURL + "configbackup/" + config._id, config).map(res => res.json());
+	}
+
+	updateConfigMail(config: Config) {
+		return this._http.put(Config.apiURL + "configmail/" + config._id, config).map(res => res.json());
+	}
 }

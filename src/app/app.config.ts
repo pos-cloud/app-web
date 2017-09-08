@@ -10,9 +10,11 @@ export class Config {
     static printURL: string = "http://192.168.0.13:3030/api-pos-resto";
     static apiPort: number = 7000;
     static printPort: number = 7000;
-    public pathMongo: string;
-    public pathBackup: string;
-    public backupTime: string;
+    static pathMongo: string = "C:\\Program Files\\MongoDB\\Server\\3.4\\bin";
+    static pathBackup: string = "C:\\Mongo\\backup";
+    static backupTime: string = "00:00";
+    static mailAccount: string;
+    static mailPassword: string;
 
     constructor() { }
 
@@ -38,6 +40,17 @@ export class Config {
 
     public static setApiConnectionPassword(apiConnectionPassword: string): void {
         this.apiConnectionPassword = apiConnectionPassword;
+    }
+
+    public static setConfigToBackup(pathBackup, pathMongo, backupTime): void {
+        this.pathBackup = pathBackup;
+        this.pathMongo = pathMongo;
+        this.backupTime = backupTime;
+    }
+
+    public static setConfigMail(mailAccount, mailPassword): void {
+        this.mailAccount = mailAccount;
+        this.mailPassword = mailPassword;
     }
 
     public static updateApiURL() {
