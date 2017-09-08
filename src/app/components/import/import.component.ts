@@ -91,8 +91,6 @@ export class ImportComponent  implements OnInit {
         let newProperty = property.split('_');
         this.properties.push(newProperty[0]);
         this.newProperties[newProperty[0]] = property;
-        console.log(this.properties);
-        console.log(this.newProperties);
       }
     }
 

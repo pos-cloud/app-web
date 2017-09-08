@@ -18,7 +18,7 @@ import { CompanyService } from './../../services/company.service';
 export class AddCompanyComponent  implements OnInit {
 
   public company: Company;
-  public types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
+  public types: CompanyType[] = [CompanyType.Client];
   public companyForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -215,11 +215,9 @@ export class AddCompanyComponent  implements OnInit {
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {
-    console.log(this.alertConfig);
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
-    console.log(this.alertConfig);
   }
 
   public hideMessage():void {

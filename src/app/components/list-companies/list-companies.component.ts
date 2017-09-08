@@ -19,7 +19,7 @@ import { DeleteCompanyComponent } from './../../components/delete-company/delete
 
 export class ListCompaniesComponent implements OnInit {
 
-  public companies: Company[] = new Array();
+  public companies: Company[];
   public areCompaniesEmpty: boolean = true;
   public alertMessage: string = "";
   @Input() userType: string;
@@ -34,7 +34,9 @@ export class ListCompaniesComponent implements OnInit {
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) { 
+    this.companies = new Array();
+  }
 
   ngOnInit(): void {
     

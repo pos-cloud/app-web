@@ -14,8 +14,7 @@ import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { PaymentMethodService } from './../../services/payment-method.service';
 
-
-import { AddCashBoxComponent } from './../add-cash-box/add-cash-box.component';
+import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -247,8 +246,30 @@ export class PointOfSaleComponent implements OnInit {
     this.getOpenTransactions();
   }
   
-  public addTransaction(): void {
+  public addSaleOrder(): void {
     this._router.navigate(['/pos/mostrador/agregar-pedido']);
+  } 
+  
+  public addTransaction(): void {
+    this.openModal("charge");
+  }
+
+  public openModal(op: string): void {
+
+    let modalRef;
+
+    switch (op) {
+      case 'charge':
+        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' }).result.then((result) => {
+          if (result === "charge") {
+            this.showMessage("La transacción se ha añadido con éxito.", "success", true);
+          }
+        }, (reason) => {
+
+        });
+        break;
+      default: ;
+    }
   }
 
   public updateTransaction(transactionId: string): void {

@@ -22,6 +22,7 @@ import { UpdateTableComponent } from './components/update-table/update-table.com
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
 import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
 import { DeleteTransactionComponent } from './components/delete-transaction/delete-transaction.component';
+import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { ListRoomsComponent } from './components/list-rooms/list-rooms.component';
 import { AddRoomComponent } from './components/add-room/add-room.component';
@@ -75,9 +76,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-mesa', component: AddTableComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-mesa', component: UpdateTableComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-mesa', component: DeleteTableComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/pedidos', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/transacciones', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/agregar-pedido', component: AddSaleOrderComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/eliminar-pedido', component: DeleteTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/agregar-transaccion', component: AddTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/eliminar-transaccion', component: DeleteTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/salones', component: ListRoomsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/agregar-salon', component: AddRoomComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-salon', component: UpdateRoomComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },

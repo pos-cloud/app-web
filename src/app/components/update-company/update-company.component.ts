@@ -18,7 +18,7 @@ import { CompanyService } from './../../services/company.service';
 export class UpdateCompanyComponent implements OnInit {
 
   @Input() company: Company;
-  public types: CompanyType[] = [CompanyType.Client, CompanyType.Provider];
+  public types: CompanyType[] = [CompanyType.Client];
   public companyForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
