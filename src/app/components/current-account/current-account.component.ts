@@ -58,7 +58,6 @@ export class CurrentAccountComponent implements OnInit {
       result => {
         if (!result.companies) {
           this.showMessage(result.message, "info", true);
-          this.companies = null;
         } else {
           this.hideMessage();
           this.companies = result.companies;
@@ -78,61 +77,66 @@ export class CurrentAccountComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionService.getTransactionsByCompany(this.companySelectedId).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.showMessage(result.message, "info", true);
+    if (this.companySelectedId) {
+      this._transactionService.getTransactionsByCompany(this.companySelectedId).subscribe(
+        result => {
+          if (!result.transactions) {
+            this.hideMessage();
+            this.loading = false;
+            this.transactions = null;
+            this.areTransactionsEmpty = true;
+            this.transactions = new Array();
+            this.balance = 0;
+          } else {
+            this.hideMessage();
+            this.loading = false
+            this.filterTransactions(result.transactions);
+            this.areTransactionsEmpty = false;
+          }
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
           this.loading = false;
-          this.transactions = null;
-          this.areTransactionsEmpty = true;
           this.transactions = new Array();
           this.balance = 0;
-        } else {
-          this.hideMessage();
-          this.loading = false
-          this.filterTransactions(result.transactions);
-          this.areTransactionsEmpty = false;
         }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-        this.transactions = new Array();
-        this.balance = 0;
-      }
-    );
+      );
+    } else {
+      this.showMessage("Debe seleccionar una empresa.", "info", true);
+      this.loading = false;
+    }
   }
 
   public filterTransactions(transactions: Transaction[]): void {
-    
+
     this.transactions = new Array();
     this.balance = 0;
 
-    for(let transaction of transactions) {
-      
-      if (  transaction.state === TransactionState.Closed &&
-            transaction.company._id === this.companySelectedId &&
-            transaction.type.currentAccount !== CurrentAcount.No) {
-              if( transaction.type.currentAccount === CurrentAcount.Yes &&
-                  transaction.paymentMethod.name === "Cuenta Corriente") {
-                this.transactions.push(transaction);
-                if (transaction.type.movement === TransactionTypeMovements.Outflows){
-                  this.balance += transaction.totalPrice;
-                } else {
-                  this.balance -= transaction.totalPrice;
-                }
-              } else if (transaction.type.currentAccount === CurrentAcount.Cobra) {
-                this.transactions.push(transaction);
-                if (transaction.type.movement === TransactionTypeMovements.Outflows) {
-                  this.balance += transaction.totalPrice;
-                } else {
-                  this.balance -= transaction.totalPrice;
-                }
-              } else {
-                //No se toma en cuenta el documento
-              }
+    for (let transaction of transactions) {
+
+      if (transaction.state === TransactionState.Closed &&
+        transaction.company._id === this.companySelectedId &&
+        transaction.type.currentAccount !== CurrentAcount.No) {
+        if (transaction.type.currentAccount === CurrentAcount.Yes &&
+          transaction.paymentMethod.name === "Cuenta Corriente") {
+          this.transactions.push(transaction);
+          if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+            this.balance -= transaction.totalPrice;
+          } else {
+            this.balance += transaction.totalPrice;
+          }
+        } else if (transaction.type.currentAccount === CurrentAcount.Cobra) {
+          this.transactions.push(transaction);
+          if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+            this.balance -= transaction.totalPrice;
+          } else {
+            this.balance += transaction.totalPrice;
+          }
+        } else {
+          //No se toma en cuenta el documento
+        }
       } else {
-         //No se toma en cuenta el documento
+        //No se toma en cuenta el documento
       }
     }
   }
@@ -148,7 +152,11 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getTransactionsByCompany();
+    if(this.companies.length === 0) {
+      this.getCompanies();
+    } else {
+      this.getTransactionsByCompany();
+    }
   }
 
   public openModal(op: string, transaction: Transaction): void {

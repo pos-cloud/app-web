@@ -1,5 +1,5 @@
 //Paquetes de Angular
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -34,6 +34,7 @@ export class AddTransactionComponent implements OnInit {
   public paymentMethods: PaymentMethod[];
   public companies: Company[];
   public transaction: Transaction;
+  @Input() type: string;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
@@ -88,7 +89,7 @@ export class AddTransactionComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getTransactionTypeCharge();
+    this.getTransactionByName();
     this.getCompanies();
     this.getPaymentMethods();
     this.buildForm();
@@ -143,11 +144,11 @@ export class AddTransactionComponent implements OnInit {
     );
   }
 
-  public getTransactionTypeCharge(): void {
+  public getTransactionByName(): void {
 
     this.loading = true;
 
-    this._transactionTypeService.getTransactionTypeCharge().subscribe(
+    this._transactionTypeService.getTransactionByName(this.type).subscribe(
       result => {
         if (!result.transactionTypes) {
           this.showMessage(result.message, "info", true);
@@ -254,7 +255,7 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha añadido con éxito.", "success", true);
-          this.activeModal.close('charge');
+          this.activeModal.close('transaction');
         }
         this.loading = false;
       },

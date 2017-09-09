@@ -30,8 +30,15 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Pedidos
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="addSaleOrder()">Nuevo Pedido</button>
-        <button class="btn btn-primary" (click)="addTransaction()">Nuevo Cobro</button>
+        <div class="btn-group" ngbDropdown>
+          <button class="btn btn-primary" ngbDropdownToggle>Nuevo</button>
+          <div class="dropdown-menu" ngbDropdownMenu>
+            <button class="dropdown-item" (click)="addSaleOrder()">Pedido</button>
+            <button class="dropdown-item" (click)="addTransaction('Cobro')">Cobro</button>
+            <button class="dropdown-item" (click)="addTransaction('Nota de Crédito')">Nota de Crédito</button>
+            <button class="dropdown-item" (click)="addTransaction('Saldo Inicial')">Saldo Inicial</button>
+          </div>
+        </div>
         <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()">Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter"></i>

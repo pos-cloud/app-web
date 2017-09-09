@@ -26,8 +26,8 @@ export class TransactionTypeService {
 		return this._http.get(Config.apiURL + 'transaction-types/where="name":"Orden de Pedido"').map(res => res.json());
 	}
 
-	getTransactionTypeCharge() {
-		return this._http.get(Config.apiURL + 'transaction-types/where="name":"Cobro"').map(res => res.json());
+	getTransactionByName(name: string) {
+		return this._http.get(Config.apiURL + 'transaction-types/where="name":"' + name + '"').map(res => res.json());
 	}
 
 	saveTransactionType(transactionType: TransactionType) {

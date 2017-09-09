@@ -22,5 +22,14 @@
 }
 
 table {
-      width: 50%;
+      /* width: 50%; */
+}
+
+.center-content {
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-justify-content: center;
+      justify-content: center;
 }

@@ -96,7 +96,43 @@ export class PointOfSaleComponent implements OnInit {
                     if (!result.transactionType) {
                       this.showMessage(result.message, "info", true);
                     } else {
-                      this.hideMessage();
+                      let transactionType = new TransactionType();
+                      transactionType.currentAccount = CurrentAcount.Yes;
+                      transactionType.movement = TransactionTypeMovements.Inflows;
+                      transactionType.name = "Nota de Crédito";
+                      transactionType.state = TransactionTypeState.Enabled;
+                      this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+                        result => {
+                          if (!result.transactionType) {
+                            this.showMessage(result.message, "info", true);
+                          } else {
+                            let transactionType = new TransactionType();
+                            transactionType.currentAccount = CurrentAcount.Yes;
+                            transactionType.movement = TransactionTypeMovements.Inflows;
+                            transactionType.name = "Saldo Inicial";
+                            transactionType.state = TransactionTypeState.Enabled;
+                            this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+                              result => {
+                                if (!result.transactionType) {
+                                  this.showMessage(result.message, "info", true);
+                                } else {
+                                  this.hideMessage();
+                                }
+                                this.loading = false;
+                              },
+                              error => {
+                                this.showMessage(error._body, "danger", false);
+                                this.loading = false;
+                              }
+                            );
+                          }
+                          this.loading = false;
+                        },
+                        error => {
+                          this.showMessage(error._body, "danger", false);
+                          this.loading = false;
+                        }
+                      );
                     }
                     this.loading = false;
                   },
@@ -250,18 +286,20 @@ export class PointOfSaleComponent implements OnInit {
     this._router.navigate(['/pos/mostrador/agregar-pedido']);
   } 
   
-  public addTransaction(): void {
-    this.openModal("charge");
+  public addTransaction(type: string): void {
+    this.openModal('transaction', type);
   }
 
-  public openModal(op: string): void {
+  public openModal(op: string, typeTransaction?: string): void {
 
     let modalRef;
 
     switch (op) {
-      case 'charge':
-        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' }).result.then((result) => {
-          if (result === "charge") {
+      case 'transaction':
+        modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
+        modalRef.componentInstance.type = typeTransaction;
+        modalRef.result.then((result) => {
+          if (result === "transaction") {
             this.showMessage("La transacción se ha añadido con éxito.", "success", true);
           }
         }, (reason) => {

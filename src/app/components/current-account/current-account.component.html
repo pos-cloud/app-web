@@ -1,4 +1,5 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
+
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Cuenta Corriente
       <div class="pull-right">
@@ -8,16 +9,22 @@
         </span>
       </div>
     </div>
-    <div class="card-block table-responsive center-content">
+    
+    <div class="card-block table-responsive">
+      <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+          {{alertMessage}}
+        </ngb-alert>
+      </div>
       <div class="row">
-        <div class="form-group col-md-6">
-          <label for="company" class="control-label">Tipo</label>
+        <div class="form-group col-md-6 offset-md-3">
+          <label for="company" class="control-label">Selecciona una empresa:</label>
           <select class="form-control" [(ngModel)]="companySelectedId" (change)="getTransactionsByCompany()">
               <option *ngFor="let company of companies" [value]="company._id">{{company.name}}</option>
           </select>
         </div>
       </div>
-      <div class="row">
+      <div class="row center-content">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -48,13 +55,34 @@
               <td *ngIf="!transaction.type"></td>
               <td>{{transaction.origin}}</td>
               <td>{{transaction.number}}</td>
-              <td align="right" [ngClass]="{'credit':transaction.type.movement==='Entrada','debit':transaction.type.movement==='Salida'}"><strong>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</strong></td>
+              <td align="right" 
+                  *ngIf="transaction.type.name==='Saldo Inicial'"
+                  [ngClass]="{'debit': transaction.type.name==='Saldo Inicial' && transaction.totalPrice<0,
+                              'credit': transaction.type.name==='Saldo Inicial' && transaction.totalPrice>0}">
+                <strong *ngIf="transaction.totalPrice>=0">
+                  {{transaction.totalPrice | currency:'USD':'1.2-2'}}
+                </strong>
+                <strong *ngIf="transaction.totalPrice<0">
+                  {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
+                </strong>
+              </td>
+              <td align="right" 
+                  *ngIf="transaction.type.name!=='Saldo Inicial'"
+                  [ngClass]="{'debit': transaction.type.movement==='Salida',
+                                            'credit': transaction.type.movement==='Entrada'}">
+                <strong *ngIf="transaction.totalPrice>=0">
+                  {{transaction.totalPrice | currency:'USD':'1.2-2'}}
+                </strong>
+                <strong *ngIf="transaction.totalPrice<0">
+                  {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
+                </strong>
+              </td>
             </tr>
             <tr align="center" *ngIf="areTransactionsEmpty">
               <td colspan="5">No se encontraron transacciones</td>
             </tr>
           </tbody>
-          <tfoot [ngClass]="{'credit':balance<0,'debit':balance>0}">
+          <tfoot [ngClass]="{'credit':balance>0,'debit':balance<0}">
             <td><strong>Saldo</strong></td>
             <td></td>
             <td></td>
