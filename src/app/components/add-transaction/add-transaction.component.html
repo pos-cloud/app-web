@@ -73,11 +73,10 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!transactionForm.valid || loading">
-        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
     </div>
   </form>
-  {{transactionForm.value | json}}
 </section>

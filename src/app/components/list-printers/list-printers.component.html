@@ -4,21 +4,21 @@
     <div class="card-header bg-primary card-inverse">Lista de Impresoras
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Impresora</button>
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Name</th>
               <th (click)="orderBy('origin')">Origen</th>
               <th (click)="orderBy('connectionURL')">URL de conexión</th>
               <th (click)="orderBy('type')">Tipo</th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
@@ -35,14 +35,14 @@
                                                 | filter: filterConnectionURL:'connectionURL' 
                                                 | filter: filterType:'type'
                                                 | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', printer)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', printer)"><i class="fa fa-trash-o"></i></button>
+              </td>
               <td class="flat">{{printer.name}}</td>
               <td class="flat">{{printer.origin}}</td>
               <td class="flat">{{printer.connectionURL}}</td>
               <td class="flat">{{printer.type}}</td>
-              <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', printer)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', printer)"><i class="fa fa-trash-o"></i></button>
-              </td>
             </tr>
             <tr align="center" *ngIf="arePrintersEmpty">
               <td colspan="4">No se encontraron impresoras</td>

@@ -27,17 +27,17 @@
     <div class="card-header bg-primary card-inverse">
       Lista de Pedidos de Venta
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th><i class="fa fa-bars"></i></th>
             	<th>Origen</th>
             	<th>Número</th>
 	            <th>Fecha</th>
 	            <th>Estado</th>
 	            <th>Observación</th>
 	            <th>Precio Total</th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="#..."></th>
@@ -50,16 +50,16 @@
           </thead>
           <tbody>
             <tr *ngFor="let transaction of transactions">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-primary" (click)="openModal('update', transaction)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger" (click)="openModal('delete', transaction)"><i class="fa fa-trash-o"></i></button>
+              </td>
               <td>{{transaction.origin}}</td>
               <td>{{transaction.number}}</td>
               <td>{{transaction.date | date: ['dd/MM/yyyy'] }}</td>
               <td><h6><span class="badge badge-default">{{transaction.state}}</span></h6></td>
               <td>{{transaction.observation}}</td>
               <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
-              <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', transaction)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', transaction)"><i class="fa fa-trash-o"></i></button>
-              </td>
             </tr>
             <tr align="center" *ngIf="areTransactionsEmpty">
               <td colspan="7">No se encontraron pedidos</td>

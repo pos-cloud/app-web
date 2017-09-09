@@ -4,26 +4,26 @@
     <div class="card-header bg-primary card-inverse">Lista de Artículos
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Artículo</button>
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <button class="btn btn-primary" (click)="openModal('import', null)" >Importar Artículos</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
-              <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
-              <th (click)="orderBy('description')">Description </th>
+              <th><i class="fa fa-bars"></i></th>
+              <th (click)="orderBy('code')">#</th>
+              <th (click)="orderBy('description')">Description</th>
               <th (click)="orderBy('make','description')">Marca</th>
               <th (click)="orderBy('category','description')">Rubro</th>
               <th (click)="orderBy('salePrice')">Precio de Venta</th>
               <th (click)="orderBy('observation')">Observation</th>
               <th (click)="orderBy('barcode')">Codigo de Barra</th>
               <th (click)="orderBy('type')">Tipo</th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
@@ -41,6 +41,10 @@
                                                                         | filter: filterCategory:'description':'category' | filter: filterSalePrice:'salePrice'
                                                                         | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' | filter: filterType:'type'
                                                                         | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
+              </td>
               <td>{{article.code}}</td>
               <td>{{article.description}}</td>
               <td *ngIf="article.make">{{article.make.description}}</td>
@@ -51,10 +55,6 @@
               <td>{{article.observation}}</td>
               <td>{{article.barcode}}</td>
               <td>{{article.type}}</td>
-              <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
-              </td>
             </tr>
             <tr align="center" *ngIf="areArticlesEmpty">
               <td colspan="10">No se encontraron artículos</td>

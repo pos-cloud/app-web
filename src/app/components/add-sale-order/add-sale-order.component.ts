@@ -112,7 +112,9 @@ export class AddSaleOrderComponent implements OnInit {
 
   public formErrorsPayment = {
     'amount': '',
-    'cashChange': ''
+    'cashChange': '',
+    'paymentMethod': '',
+    'totalPrice': ''
   };
 
   public validationMessagesPayment = {
@@ -121,6 +123,12 @@ export class AddSaleOrderComponent implements OnInit {
     },
     'cashChange': {
       'required':       'Este campo es requerido.'
+    },
+    'paymentMethod': {
+      'required': 'Este campo es requerido.'
+    },
+    'totalPrice': {
+      'required': 'Este campo es requerido.'
     }
   };
 
@@ -175,10 +183,8 @@ export class AddSaleOrderComponent implements OnInit {
         this.getLastTransaction();
       }
     }
-    
-    this.buildForm();
-    this.buildFormDiscount();
-    this.buildFormPayment();
+
+    this.getPaymentMethods();
   }
 
 
@@ -450,6 +456,10 @@ export class AddSaleOrderComponent implements OnInit {
       'cashChange': [this.paymentChange, [
            Validators.required
         ]
+      ],
+      'paymentMethod': [this.transaction.paymentMethod, [
+          Validators.required
+        ]
       ]
     });
 
@@ -586,6 +596,8 @@ export class AddSaleOrderComponent implements OnInit {
   }
   
   public addItem(itemData?: MovementOfArticle): void {
+    
+    this.buildForm();
 
     let article: Article = new Article();
     if(itemData) {
@@ -621,7 +633,8 @@ export class AddSaleOrderComponent implements OnInit {
     let modalRef;
 
       switch(op) {
-        case 'add_item' :
+        case 'add_item':
+
           modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
             if(result  === "add_item"){
               this.confirmAmount();
@@ -630,7 +643,8 @@ export class AddSaleOrderComponent implements OnInit {
             
           });
           break;
-        case 'add_new_item' :
+        case 'add_new_item':
+
           modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
             if(result  === "add_item"){
               this.confirmAmount();
@@ -640,7 +654,9 @@ export class AddSaleOrderComponent implements OnInit {
           });
           break;
         case 'apply_discount' :
-        
+
+          this.buildFormDiscount();
+
           if(this.movementsOfArticles.length !== 0) {
             modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
               if(result  === "apply_discount"){
@@ -692,12 +708,14 @@ export class AddSaleOrderComponent implements OnInit {
 
           this.typeOfOperationToPrint = "charge";
           if(this.movementsOfArticles.length !== 0) {
-            this.getPaymentMethods();
+            
             this.paymentForm.setValue({
-              'totalPrice' :  parseFloat(""+this.transaction.totalPrice).toFixed(2),
-              'amount' : parseFloat(""+this.transaction.totalPrice).toFixed(2),
-              'cashChange' : parseFloat(this.paymentChange).toFixed(2),
+              'totalPrice': parseFloat("" + this.transaction.totalPrice).toFixed(2),
+              'amount': parseFloat("" + this.transaction.totalPrice).toFixed(2),
+              'cashChange': parseFloat(this.paymentChange).toFixed(2),
+              'paymentMethod': this.transaction.paymentMethod
             });
+            
             modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
               if (result === "charge") {
                 this.openModal('printers');
@@ -751,6 +769,14 @@ export class AddSaleOrderComponent implements OnInit {
         } else {  
           this.paymentMethodSelected = result.paymentMethods[0];
           this.paymentMethods = result.paymentMethods;
+          this.transaction.paymentMethod = this.paymentMethods[0];
+          this.buildFormPayment();
+          this.paymentForm.setValue({
+            'totalPrice': parseFloat("" + this.transaction.totalPrice).toFixed(2),
+            'amount': parseFloat("" + this.transaction.totalPrice).toFixed(2),
+            'cashChange': parseFloat(this.paymentChange).toFixed(2),
+            'paymentMethod': this.transaction.paymentMethod._id
+          });
         }
         this.loading = false;
       },
@@ -824,6 +850,8 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
     this.transaction.cashChange = this.paymentForm.value.cashChange;
+    this.transaction.paymentMethod = this.paymentForm.value.paymentMethod;
+
     this.updateTransaction();
     this.typeOfOperationToPrint = 'charge';
     if (this.posType === "resto") {

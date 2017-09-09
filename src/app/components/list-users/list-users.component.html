@@ -3,21 +3,21 @@
     <div class="card-header bg-primary card-inverse">Lista de Usuarios
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Usuario</button>
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Nombre</th>
               <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('tokenExpiration')">Minutos de sesión</th>
 	            <th (click)="orderBy('employee','name')">Empleado</th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
@@ -27,7 +27,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of users | orderBy: orderTerm: propertyTerm | filter: filterName:'name' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let user of users | orderBy: orderTerm: propertyTerm 
+                                          | filter: filterName:'name' 
+                                          | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', user)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', user)"><i class="fa fa-trash-o"></i></button>
+              </td>
               <td>{{user.name}}</td>
               <td>
                 <h6>
@@ -40,10 +46,6 @@
               <td>{{user.tokenExpiration}}</td>
               <td *ngIf="user.employee">{{user.employee.name}}</td>
               <td *ngIf="!user.employee"></td>
-              <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', user)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', user)"><i class="fa fa-trash-o"></i></button>
-              </td>
             </tr>
             <tr align="center" *ngIf="areUsersEmpty">
               <td colspan="5">No se encontraron usuarios</td>

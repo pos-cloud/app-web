@@ -53,6 +53,7 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
+import { CurrentAccountComponent } from './components/current-account/current-account.component';
 
 import { AuthGuard } from './guards/auth.guard';
 
@@ -107,6 +108,7 @@ const _routes: Routes = [
   { path: 'admin/import', component: ImportComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/config', component: ConfigComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/configbackup', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/cuentas-corrientes', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },

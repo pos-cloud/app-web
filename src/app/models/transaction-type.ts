@@ -21,5 +21,6 @@ export enum TypeOfMovements {
 
 export enum CurrentAcount {
 	Yes = <any>"Sí",
-	No = <any>"No"
+	No = <any>"No",
+	Cobra = <any>"Cobra"
 }

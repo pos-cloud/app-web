@@ -3,6 +3,10 @@
       height: 820px;
 }
 
+.btn {
+      cursor: pointer;
+}
+
 .itable {
     background: #d9534f;
     width: 100px;

@@ -3,20 +3,20 @@
     <div class="card-header bg-primary card-inverse">Lista de Empleados
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Empleado</button>
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('code')">Legajo </th>
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('type','description')">Tipo </th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Legajo..." ></th>
@@ -25,15 +25,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterName:'name' | filter: filterType:'description':'type' | paginate: {  itemsPerPage: 9, currentPage: p }">
+            <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm 
+                                                  | filter: filterCode:'code' 
+                                                  | filter: filterName:'name' 
+                                                  | filter: filterType:'description':'type' 
+                                                  | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', employee)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', employee)"><i class="fa fa-trash-o"></i></button>
+              </td>
               <td>{{employee.code}}</td>
               <td>{{employee.name}}</td>
               <td *ngIf="employee.type">{{employee.type.description}}</td>
               <td *ngIf="!employee.type"></td>
-              <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', employee)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', employee)"><i class="fa fa-trash-o"></i></button>
-              </td>
             </tr>
             <tr align="center" *ngIf="areEmployeesEmpty">
               <td colspan="4">No se encontraron empleados</td>

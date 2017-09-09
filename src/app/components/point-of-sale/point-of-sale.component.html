@@ -32,13 +32,13 @@
       <div class="pull-right">
         <button class="btn btn-primary" (click)="addSaleOrder()">Nuevo Pedido</button>
         <button class="btn btn-primary" (click)="addTransaction()">Nuevo Cobro</button>
-        <button class="btn btn-primary" (click)="refresh()">Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()">Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-    <div class="card-block">
+    <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
           <tr>

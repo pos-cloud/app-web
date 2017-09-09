@@ -4,31 +4,33 @@
     <div class="card-header bg-primary card-inverse">Lista de Rubros
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Rubro</button>
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <button class="btn btn-primary" (click)="openModal('import', null)">Importar Rubros</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('description')">Description </th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let category of categories | orderBy: orderTerm: propertyTerm| filter: filterDescription:'description' | paginate: {  itemsPerPage: 9, currentPage: p }">
-              <td class="flat">{{category.description}}</td>
-              <td align="center">
-                <button type="button" class="btn btn-primary" (click)="openModal('update', category)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', category)"><i class="fa fa-trash-o"></i></button>
+            <tr *ngFor="let category of categories  | orderBy: orderTerm: propertyTerm
+                                                    | filter: filterDescription:'description' 
+                                                    | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-primary  btn-sm" (click)="openModal('update', category)"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger  btn-sm" (click)="openModal('delete', category)"><i class="fa fa-trash-o"></i></button>
               </td>
+              <td class="flat">{{category.description}}</td>
             </tr>
             <tr align="center" *ngIf="areCategoriesEmpty">
               <td colspan="2">No se encontraron rubros</td>
@@ -57,7 +59,7 @@
       </div>
     </div>
     <div class="center-content" *ngIf="areCategoriesEmpty">
-      <ngb-alert (close)="areCategoriesEmpty">
+      <ngb-alert type="info">
         No se encontraron rubros
       </ngb-alert>
 	  </div>

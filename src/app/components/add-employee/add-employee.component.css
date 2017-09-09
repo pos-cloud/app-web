@@ -7,3 +7,7 @@
       -webkit-justify-content: center;
       justify-content: center;
 }
+
+.btn {
+      cursor: pointer;
+}

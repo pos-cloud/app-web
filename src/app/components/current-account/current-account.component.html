@@ -1,0 +1,79 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary card-inverse">Cuenta Corriente
+      <div class="pull-right">
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()">Actualizar</button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter"></i>
+        </span>
+      </div>
+    </div>
+    <div class="card-block table-responsive center-content">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="company" class="control-label">Tipo</label>
+          <select class="form-control" [(ngModel)]="companySelectedId" (change)="getTransactionsByCompany()">
+              <option *ngFor="let company of companies" [value]="company._id">{{company.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('date')">Fecha</th>
+              <th (click)="orderBy('type')">Tipo</th>
+              <th (click)="orderBy('origin')">Origen</th>
+              <th (click)="orderBy('number')">Número</th>
+              <th (click)="orderBy('totalPrice')">Monto</th>
+            </tr>
+            <tr *ngIf="areFiltersVisible">
+              <th><input type="text" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto..."></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm
+                                                        | filter: filterDate:'date' 
+                                                        | filter: filterType:'name':'type' 
+                                                        | filter: filterOrigin:'origin' 
+                                                        | filter: filterNumber:'number' 
+                                                        | filter: filterTotalPrice:'totalPrice' 
+                                                        | paginate: {  itemsPerPage: 20, currentPage: p }">
+              <td *ngIf="transaction.date">{{transaction.date | date: ['dd/MM/yyyy'] }}</td>
+              <td *ngIf="transaction.type">{{transaction.type.name}}</td>
+              <td *ngIf="!transaction.type"></td>
+              <td>{{transaction.origin}}</td>
+              <td>{{transaction.number}}</td>
+              <td align="right" [ngClass]="{'credit':transaction.type.movement==='Entrada','debit':transaction.type.movement==='Salida'}"><strong>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</strong></td>
+            </tr>
+            <tr align="center" *ngIf="areTransactionsEmpty">
+              <td colspan="5">No se encontraron transacciones</td>
+            </tr>
+          </tbody>
+          <tfoot [ngClass]="{'credit':balance<0,'debit':balance>0}">
+            <td><strong>Saldo</strong></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><strong>{{balance | currency:'USD':'1.2-2'}}</strong></td>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-primary card-inverse">
+      <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+      </pagination-controls>
+    </div>
+  </div>
+</section>
+
+<!--POS-->
+<section class="row" *ngIf="userType=='pos'">
+  <div class="table" *ngFor="let transaction of transactions | orderBy:[orderTerm]" (click)="addTransaction(transaction.code)">
+    <p>{{transaction.code}}</p>
+  </div>
+</section>

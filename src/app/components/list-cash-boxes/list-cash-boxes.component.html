@@ -3,16 +3,17 @@
     <div class="card-header bg-primary card-inverse">Lista de Cajas
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Caja</button>
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
               <th (click)="orderBy('openingDate')">Fecha Apertura</th>
               <th (click)="orderBy('closingDate')">Fecha Cierre</th>
@@ -21,7 +22,6 @@
               <th (click)="orderBy('invoicedCash')">Facturado</th>
               <th (click)="orderBy('difference')">Diferencia</th>
               <th (click)="orderBy('state')">Estado</th>
-              <th></th>
             </tr>
             <tr *ngIf="areFiltersVisible">
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
@@ -40,6 +40,9 @@
                                                                           | filter: filterClosingCash:'closingCash' | filter: filterInvoicedCash:'invoicedCash'
                                                                           | filter: filterDifference:'difference' | filter: filterState:'state'
                                                                           | paginate: {  itemsPerPage: 9, currentPage: p }">
+              <td align="left" width="90">
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
+              </td>
               <td>{{cashBox.code}}</td>
               <td>{{cashBox.openingDate | date: ['dd/MM/yyyy'] }}</td>
               <td>{{cashBox.closingDate | date: ['dd/MM/yyyy']}}</td>
@@ -48,9 +51,6 @@
               <td>{{cashBox.invoicedCash | currency:'USD':'1.2-2'}}</td>
               <td>{{cashBox.difference | currency:'USD':'1.2-2'}}</td>
               <td><h6><span class="badge badge-default">{{cashBox.state}}</span></h6></td>
-              <td align="center">
-                <button type="button" class="btn btn-danger" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
-              </td>
             </tr>
             <tr align="center" *ngIf="areCashBoxesEmpty">
               <td colspan="9">No se encontraron cajas</td>

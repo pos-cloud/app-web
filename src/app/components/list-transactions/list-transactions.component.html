@@ -2,13 +2,13 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Lista de Pedidos de Venta
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()">Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter"></i>
         </span>
       </div>
     </div>
-      <div class="card-block">
+      <div class="card-block table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -35,7 +35,7 @@
           <tbody>
             <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	| filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' 
                                         | filter: filterTable:'description':'table' | filter: filterEndDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
-                                        | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 9, currentPage: p }">
+                                        | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 30, currentPage: p }">
               <td *ngIf="transaction.type">{{transaction.type.name}}</td>
               <td *ngIf="!transaction.type"></td>
               <td>{{transaction.origin}}</td>

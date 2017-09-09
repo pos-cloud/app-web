@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Transaction, TransactionState } from './../models/transaction';
 import { Config } from './../app.config';
+import { Company } from './../models/company';
 
 @Injectable()
 export class TransactionService {
@@ -16,6 +17,10 @@ export class TransactionService {
 
   getTransactions () {
 		return this._http.get(Config.apiURL + "transactions").map (res => res.json());
+	}
+
+	getTransactionsByCompany(id: String) {
+		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"').map(res => res.json());
 	}
 
   saveTransaction (transaction: Transaction) {

@@ -202,7 +202,7 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
-        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
@@ -246,7 +246,7 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!discountForm.valid || loading" >
-        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
@@ -303,15 +303,14 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
-          <label for="paymentMethod" class="control-label">Medio de pago</label>
-          <select class="form-control">
-            <option *ngFor="let paymentMethod of paymentMethods"
-                    [selected]="paymentMethod._id==paymentMethodSelected._id" 
-                    [ngValue]="paymentMethod">
-                  {{paymentMethod.name}}
-            </option>
-          </select>
+        <div class="form-group col-md-6">
+          <label for="paymentMethod" class="control-label">Medio de Pago</label>
+          <select class="form-control" formControlName="paymentMethod">
+								<option *ngFor="let paymentMethod of paymentMethods" [selected]="paymentMethod._id==paymentMethodSelected._id" [value]="paymentMethod._id">{{paymentMethod.name}}</option>
+							</select>
+          <div *ngIf="formErrors.paymentMethod" class="alert alert-danger">
+            {{ formErrors.paymentMethod }}
+          </div>
         </div>
       </div>
       <div class="row">
@@ -337,12 +336,13 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!paymentForm.valid || loading" >
-        <i [ngClass]="{'fa fa-save':!loading, 'fa-refresh fa-spin':loading}"></i>
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
     </div>
   </form>
+  {{paymentForm.value | json}}
 </ng-template>
 
 <!--MODAL IMPRESORA-->

@@ -101,6 +101,7 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
+import { CurrentAccountComponent } from './components/current-account/current-account.component';
 
 @NgModule({
   declarations: [
@@ -163,7 +164,8 @@ import { AddTransactionComponent } from './components/add-transaction/add-transa
     ImportComponent,
     ConfigComponent,
     ConfigBackupComponent,
-    AddTransactionComponent
+    AddTransactionComponent,
+    CurrentAccountComponent
   ],
   imports: [
     BrowserModule,
