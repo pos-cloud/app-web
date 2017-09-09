@@ -59,7 +59,8 @@
             <td></td>
             <td></td>
             <td></td>
-            <td><strong>{{balance | currency:'USD':'1.2-2'}}</strong></td>
+            <td *ngIf="balance>=0"><strong>{{balance | currency:'USD':'1.2-2'}}</strong></td>
+            <td *ngIf="balance<0"><strong>{{balance*-1 | currency:'USD':'1.2-2'}}</strong></td>
           </tfoot>
         </table>
       </div>

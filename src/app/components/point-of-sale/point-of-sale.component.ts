@@ -5,7 +5,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CashBox } from './../../models/cash-box';
 import { Room } from './../../models/room';
 import { Transaction } from './../../models/transaction';
-import { TransactionType, TransactionTypeState, TypeOfMovements, CurrentAcount } from './../../models/transaction-type';
+import { TransactionType, TransactionTypeState, TransactionTypeMovements, CurrentAcount } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
 import { CashBoxService } from './../../services/cash-box.service';
@@ -78,7 +78,7 @@ export class PointOfSaleComponent implements OnInit {
           this.loading = true;
           let transactionType = new TransactionType();
           transactionType.currentAccount = CurrentAcount.Yes;
-          transactionType.movement = TypeOfMovements.Outflows;
+          transactionType.movement = TransactionTypeMovements.Outflows;
           transactionType.name = "Orden de Pedido";
           transactionType.state = TransactionTypeState.Enabled;
           this._transactionTypeService.saveTransactionType(transactionType).subscribe(
@@ -88,7 +88,7 @@ export class PointOfSaleComponent implements OnInit {
               } else {
                 let transactionType = new TransactionType();
                 transactionType.currentAccount = CurrentAcount.Cobra;
-                transactionType.movement = TypeOfMovements.Inflows;
+                transactionType.movement = TransactionTypeMovements.Inflows;
                 transactionType.name = "Cobro";
                 transactionType.state = TransactionTypeState.Enabled;
                 this._transactionTypeService.saveTransactionType(transactionType).subscribe(

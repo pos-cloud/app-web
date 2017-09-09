@@ -148,6 +148,7 @@ export class AddSaleOrderComponent implements OnInit {
     public _printerService: PrinterService
   ) {
     this.transaction = new Transaction();
+    this.transaction.paymentMethod = null;
     // this.transaction.employee = new Employee();
     this.movementOfArticle = new MovementOfArticle();
     this.movementsOfArticles = new Array();
@@ -185,6 +186,7 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     this.getPaymentMethods();
+    this.buildFormPayment();
   }
 
 
@@ -770,7 +772,6 @@ export class AddSaleOrderComponent implements OnInit {
           this.paymentMethodSelected = result.paymentMethods[0];
           this.paymentMethods = result.paymentMethods;
           this.transaction.paymentMethod = this.paymentMethods[0];
-          this.buildFormPayment();
           this.paymentForm.setValue({
             'totalPrice': parseFloat("" + this.transaction.totalPrice).toFixed(2),
             'amount': parseFloat("" + this.transaction.totalPrice).toFixed(2),

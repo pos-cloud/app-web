@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionTypeState, CurrentAcount, TypeOfMovements } from './../../models/transaction-type';
+import { TransactionType, TransactionTypeState, CurrentAcount, TransactionTypeMovements } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 
 import { CompanyService } from './../../services/company.service';
@@ -109,16 +109,25 @@ export class CurrentAccountComponent implements OnInit {
     this.balance = 0;
 
     for(let transaction of transactions) {
+      
       if (  transaction.state === TransactionState.Closed &&
             transaction.company._id === this.companySelectedId &&
             transaction.type.currentAccount !== CurrentAcount.No) {
               if( transaction.type.currentAccount === CurrentAcount.Yes &&
                   transaction.paymentMethod.name === "Cuenta Corriente") {
                 this.transactions.push(transaction);
-                this.balance += transaction.totalPrice;
+                if (transaction.type.movement === TransactionTypeMovements.Outflows){
+                  this.balance += transaction.totalPrice;
+                } else {
+                  this.balance -= transaction.totalPrice;
+                }
               } else if (transaction.type.currentAccount === CurrentAcount.Cobra) {
                 this.transactions.push(transaction);
-                this.balance += transaction.totalPrice;
+                if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+                  this.balance += transaction.totalPrice;
+                } else {
+                  this.balance -= transaction.totalPrice;
+                }
               } else {
                 //No se toma en cuenta el documento
               }

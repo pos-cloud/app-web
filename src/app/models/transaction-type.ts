@@ -4,7 +4,7 @@ export class TransactionType {
 	public name: string = "";
 	public state: TransactionTypeState = TransactionTypeState.Enabled;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
-	public movement: TypeOfMovements = TypeOfMovements.Inflows;
+	public movement: TransactionTypeMovements = TransactionTypeMovements.Inflows;
 
 	constructor() { }
 }
@@ -14,7 +14,7 @@ export enum TransactionTypeState {
 	Disabled = <any> "Deshabilitado"
 }
 
-export enum TypeOfMovements {
+export enum TransactionTypeMovements {
 	Inflows = <any> "Entrada",
 	Outflows = <any> "Salida"
 }
