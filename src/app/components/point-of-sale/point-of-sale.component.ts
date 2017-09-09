@@ -38,6 +38,7 @@ export class PointOfSaleComponent implements OnInit {
   public alertMessage: string = "";
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  public itemsPerPage = 10;
 
   constructor(
     public _cashBoxService: CashBoxService,

@@ -40,7 +40,7 @@
             <tr *ngFor="let article of articles | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'description':'make'
                                                                         | filter: filterCategory:'description':'category' | filter: filterSalePrice:'salePrice'
                                                                         | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' | filter: filterType:'type'
-                                                                        | paginate: {  itemsPerPage: 9, currentPage: p }">
+                                                                        | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
               <td align="left" width="90">
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)"><i class="fa fa-trash-o"></i></button>
@@ -63,12 +63,25 @@
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        <pagination-controls 
-          (pageChange)="p=$event" 
-          #api 
-          previousLabel="Anterior"
-          nextLabel="Siguiente">
-        </pagination-controls>
+        <div class="row">
+          <div class="col-md-4 offset-md-4">
+            <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+            </pagination-controls>
+          </div>
+          <div class="col-md-2"></div>
+          Mostrar
+          <div class="form-group col-md-1">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5" >5</option>
+              <option [value]="10">10</option>
+              <option [value]="15">15</option>
+              <option [value]="20">20</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+          ítems
+        </div>
       </div>
   </div>
 </section>

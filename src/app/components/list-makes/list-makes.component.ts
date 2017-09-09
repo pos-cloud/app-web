@@ -29,6 +29,7 @@ export class ListMakesComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Make> = new EventEmitter<Make>();
+  public itemsPerPage = 10;
 
   constructor(
     public _makeService: MakeService,

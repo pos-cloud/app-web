@@ -34,6 +34,7 @@ export class ListCategoriesComponent implements OnInit {
   @Input() areCategoriesVisible: boolean = true;
   public apiURL = Config.apiURL;
   public loading: boolean = false;
+  public itemsPerPage = 10;
 
   constructor(
     public _categoryService: CategoryService,

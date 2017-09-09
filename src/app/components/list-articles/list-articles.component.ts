@@ -36,6 +36,7 @@ export class ListArticlesComponent implements OnInit {
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategory: string;
   public apiURL = Config.apiURL;
+  public itemsPerPage = 10;
 
   constructor(
     public _articleService: ArticleService,

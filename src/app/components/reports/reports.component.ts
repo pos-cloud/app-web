@@ -27,6 +27,7 @@ export class ReportsComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  public itemsPerPage = 10;
 
   public formErrors = {
     'employee': '',

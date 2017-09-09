@@ -32,6 +32,7 @@ export class CurrentAccountComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public balance: number = 0;
+  public itemsPerPage = 10;
 
   constructor(
     public _transactionService: TransactionService,

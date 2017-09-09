@@ -27,6 +27,7 @@ export class ListUsersComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  public itemsPerPage = 10;
 
   constructor(
     public _userService: UserService,

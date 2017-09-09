@@ -1,4 +1,5 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
+  hola {{itemPerPage}}
   <div class="card card-outline-primary">
     <div class="card-header bg-primary card-inverse">Lista de Pedidos de Venta
       <div class="pull-right">
@@ -33,9 +34,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	| filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' 
-                                        | filter: filterTable:'description':'table' | filter: filterEndDate:'date' | filter: filterState:'c' | filter: filterObservation:'observation' 
-                                        | filter: filterTotalPrice:'totalPrice' | paginate: {  itemsPerPage: 30, currentPage: p }">
+            <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	
+                                                        | filter: filterType:'name':'type' 
+                                                        | filter: filterOrigin:'origin' 
+                                                        | filter: filterNumber:'number' 
+                                                        | filter: filterTable:'description':'table' 
+                                                        | filter: filterEndDate:'date' 
+                                                        | filter: filterState:'state' 
+                                                        | filter: filterObservation:'observation' 
+                                                        | filter: filterTotalPrice:'totalPrice' 
+                                                        | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
               <td *ngIf="transaction.type">{{transaction.type.name}}</td>
               <td *ngIf="!transaction.type"></td>
               <td>{{transaction.origin}}</td>
@@ -63,12 +71,25 @@
         </table>
       </div>
       <div class="card-footer bg-primary card-inverse">
-        <pagination-controls 
-          (pageChange)="p=$event" 
-          #api 
-          previousLabel="Anterior"
-          nextLabel="Siguiente">
-        </pagination-controls>
+        <div class="row">
+          <div class="col-md-4 offset-md-4">
+            <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+            </pagination-controls>
+          </div>
+          <div class="col-md-2"></div>
+          Mostrar
+          <div class="form-group col-md-1">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5" >5</option>
+              <option [value]="10">10</option>
+              <option [value]="15">15</option>
+              <option [value]="20">20</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+          ítems
+        </div>
       </div>
   </div>
 </section>
