@@ -88,8 +88,8 @@
                                         'itable-pending':table.state==='Pendiente',
                                         'itable-disabled':table.state==='Ocupada'}"
             (click)="openModal('select_employee', table, table.employee)">
-        <p>{{table.description}}</p>
-        <b *ngIf="table.employee && table.state !== 'Disponible'">{{table.employee.name}}</b>
+        <p><b>{{table.description}}</b></p>
+        <b *ngIf="table.employee && table.state !== 'Disponible'" class="name-employee">{{table.employee.name}}</b>
       </div>
     </div>
 </section>

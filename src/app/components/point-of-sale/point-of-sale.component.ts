@@ -187,7 +187,37 @@ export class PointOfSaleComponent implements OnInit {
                           if (!result.paymentMethod) {
                             this.showMessage(result.message, "info", true);
                           } else {
-                            this.hideMessage();
+                            let paymentMethod = new PaymentMethod();
+                            paymentMethod.name = "Tarjeta de Débito";
+                            this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
+                              result => {
+                                if (!result.paymentMethod) {
+                                  this.showMessage(result.message, "info", true);
+                                } else {
+                                  let paymentMethod = new PaymentMethod();
+                                  paymentMethod.name = "Cheque de Terceros";
+                                  this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
+                                    result => {
+                                      if (!result.paymentMethod) {
+                                        this.showMessage(result.message, "info", true);
+                                      } else {
+                                        this.hideMessage();
+                                      }
+                                      this.loading = false;
+                                    },
+                                    error => {
+                                      this.showMessage(error._body, "danger", false);
+                                      this.loading = false;
+                                    }
+                                  );
+                                }
+                                this.loading = false;
+                              },
+                              error => {
+                                this.showMessage(error._body, "danger", false);
+                                this.loading = false;
+                              }
+                            );
                           }
                           this.loading = false;
                         },

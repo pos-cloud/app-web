@@ -36,7 +36,7 @@ export class AddTableComponent  implements OnInit {
   public validationMessages = {
     'description': {
       'required': 'Este campo es requerido.',
-      'maxlength': 'No puede exceder los 6 carácteres.'
+      'maxlength': 'No puede exceder los 5 carácteres.'
     },
     'room': {
       'required':       'Este campo es requerido.'
@@ -73,7 +73,7 @@ export class AddTableComponent  implements OnInit {
     this.tableForm = this._fb.group({
       'description': [this.table.description, [
           Validators.required,
-          Validators.maxLength(6)
+          Validators.maxLength(5)
         ]
       ],
       'room': [this.table.room, [

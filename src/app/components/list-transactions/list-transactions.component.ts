@@ -22,7 +22,7 @@ export class ListTransactionsComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = "";
   public userType: string;
-  public orderTerm: string[] = ['number'];
+  public orderTerm: string[] = ['-date'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
