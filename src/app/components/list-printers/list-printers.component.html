@@ -4,7 +4,7 @@
     <div class="card-header bg-primary card-inverse">Lista de Impresoras
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Impresora</button>
-        <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
+        <button class="btn btn-primary" (click)="refresh()"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i> Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>
