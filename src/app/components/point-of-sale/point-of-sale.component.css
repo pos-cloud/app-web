@@ -16,3 +16,13 @@
 .btn {
       cursor: pointer;
 }
+
+.table {
+    box-shadow: 0px 0px 5px;
+    border-radius: 10px;
+    cursor: pointer;
+ }
+
+ .tables-container {
+       height: 700px;
+ }

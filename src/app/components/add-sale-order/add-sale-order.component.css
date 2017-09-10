@@ -11,16 +11,19 @@
       cursor: pointer;
 }
 
-.table {
-      box-shadow: 0px 0px 5px;
-      border-radius: 10px;
-      cursor: pointer;
- }
+.img-container {
+      height: 700px;
+}
 
- .scroll-table {
-      overflow-y: auto;
-      height: 300px;
- }    
+.articles-container {
+      height: 500px;
+      margin: 0px;
+      padding: 0px;
+}
+
+.table-container{
+      top: -15px;
+}  
 
 .header-transaction {
       padding: 15px;
@@ -75,18 +78,6 @@
 .color-red:hover {
       background: #c9302c;
 }
-
-.scroll {
-      height: 500px;
-      overflow-y: scroll;
-}
-
- /*.row{
-       border: 1px solid red;
- }
- .col-md-4, .col-md-8, .col-md-12, .col-md-3, .col-md-9 {
-       border: 1px solid blue;
- }*/
 
 .list-group-item {
       width: 400px;

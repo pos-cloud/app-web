@@ -17,8 +17,10 @@
       </button>
     </div>
   </div>
-  <div *ngIf="roomSelected">
-    <app-list-tables (eventBackToRoom)="changeRoom($room)" [filterRoom]="roomSelected.description"></app-list-tables>
+  <div class="tables-container table-responsive">
+    <div *ngIf="roomSelected">
+      <app-list-tables (eventBackToRoom)="changeRoom($room)" [filterRoom]="roomSelected.description"></app-list-tables>
+    </div>
   </div>
 </section>
 
@@ -31,7 +33,7 @@
     <div class="card-header bg-primary card-inverse">Pedidos
       <div class="pull-right">
         <div class="btn-group" ngbDropdown>
-          <button class="btn btn-primary" ngbDropdownToggle>Nuevo</button>
+          <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">Nuevo</button>
           <div class="dropdown-menu" ngbDropdownMenu>
             <button class="dropdown-item" (click)="addSaleOrder()">Pedido</button>
             <button class="dropdown-item" (click)="addTransaction('Cobro')">Cobro</button>
@@ -41,7 +43,7 @@
         </div>
         <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()">Actualizar</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>
       </div>
     </div>

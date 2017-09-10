@@ -7,7 +7,7 @@
         <button class="btn btn-primary" [ngClass]="{'fa fa-spinner fa-spin':loading}" (click)="refresh()" >Actualizar</button>
         <button class="btn btn-primary" (click)="openModal('import', null)" >Importar Artículos</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>
       </div>
     </div>
@@ -17,7 +17,7 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('code')">#</th>
-              <th (click)="orderBy('description')">Description</th>
+              <th (click)="orderBy('description')">Descripción</th>
               <th (click)="orderBy('make','description')">Marca</th>
               <th (click)="orderBy('category','description')">Rubro</th>
               <th (click)="orderBy('salePrice')">Precio de Venta</th>

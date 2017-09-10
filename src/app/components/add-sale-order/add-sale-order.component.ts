@@ -744,6 +744,8 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             if (this.typeOfOperationToPrint === "charge") {
               this.finishCharge();
+            } else if (this.typeOfOperationToPrint === "bill") {
+              this.changeStateOfTable(TableState.Pending, true);
             }
           }
           break;
