@@ -9,6 +9,7 @@ import { CompanyService } from './../../services/company.service';
 import { AddCompanyComponent } from './../../components/add-company/add-company.component';
 import { UpdateCompanyComponent } from './../../components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './../../components/delete-company/delete-company.component';
+import { SendMailComponent } from './../../components/send-mail/send-mail.component';
 
 @Component({
   selector: 'app-list-companies',
@@ -108,7 +109,6 @@ export class ListCompaniesComponent implements OnInit {
         break;
       case 'delete' :
           modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg' })
-          modalRef.componentInstance.company = company;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
               this.getCompanies();
@@ -120,6 +120,25 @@ export class ListCompaniesComponent implements OnInit {
       default : ;
     }
   };
+
+  public openMail(companies: Company[]): void {
+    let modalRef ;
+    modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
+    let emails = "";
+    for(let i=0; i < companies.length; i++){
+      emails += companies[i].emails;
+      if((i-companies.length)<=-2){
+        emails += ",";
+      }
+    }
+    modalRef.componentInstance.emails = emails;
+    modalRef.result.then((result) => {
+      this.getCompanies();
+    }, (reason) => {
+      this.getCompanies();
+    });
+
+  }
   
   public selectCompany(companySelected: Company): void {
     this.activeModal.close(companySelected);

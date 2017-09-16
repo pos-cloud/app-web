@@ -31,6 +31,7 @@ import { PrinterService } from './services/printer.service';
 import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
 import { PaymentMethodService } from './services/payment-method.service';
+import { MailService } from './services/send-mail.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -90,6 +91,7 @@ import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.c
 import { LoginComponent } from './components/login/login.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ImportComponent } from './components/import/import.component';
+import { SimpleTinyComponent } from './components/simple-tiny/simple-tiny.components';
 
 //pipes
 import { FilterPipe } from './pipes/filter.pipe';
@@ -102,6 +104,7 @@ import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
+import { SendMailComponent } from './components/send-mail/send-mail.component';
 
 @NgModule({
   declarations: [
@@ -165,7 +168,9 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
     ConfigComponent,
     ConfigBackupComponent,
     AddTransactionComponent,
-    CurrentAccountComponent
+    CurrentAccountComponent,
+    SendMailComponent,
+    SimpleTinyComponent
   ],
   imports: [
     BrowserModule,
@@ -199,7 +204,8 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
     ImportService,
     ConfigService,
     PaymentMethodService,
-    AuthGuard
+    AuthGuard,
+    MailService
   ],
   bootstrap: [AppComponent]
 })

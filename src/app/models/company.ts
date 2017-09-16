@@ -10,7 +10,7 @@ export class Company {
     public address: string;
     public city: string;
     public phones: string;
-    public emails: string;
+    public emails: String;
 
     constructor() {}
 }
