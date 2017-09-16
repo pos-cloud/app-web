@@ -28,6 +28,7 @@ export class ListPrintersComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Printer> = new EventEmitter<Printer>();
+  public itemsPerPage = 10;
 
   constructor(
     public _printerService: PrinterService,

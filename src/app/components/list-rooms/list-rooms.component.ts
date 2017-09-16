@@ -28,6 +28,7 @@ export class ListRoomsComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Room> = new EventEmitter<Room>();
+  public itemsPerPage = 10;
 
   constructor(
     public _roomService: RoomService,

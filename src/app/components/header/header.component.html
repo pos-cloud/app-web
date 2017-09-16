@@ -4,48 +4,48 @@
           aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" [routerLink]="['inicio']">Pos-Resto</a>
+  <a class="navbar-brand" [routerLink]="['inicio']" [routerLinkActive]="['active']">Pos-Resto</a>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['inicio']" >Inicio</a>
+        <a class="nav-link" [routerLink]="['inicio']" [routerLinkActive]="['active']">Inicio</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','productos']" >Productos</a>
+        <a class="nav-link" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','empleados']" >Empleados</a>
+        <a class="nav-link" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','mesas']" >Mesas</a>
+        <a class="nav-link" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','transacciones']" >Ventas</a>
+        <a class="nav-link" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active']">Ventas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','salones']" >Salones</a>
+        <a class="nav-link" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','marcas']" >Marcas</a>
+        <a class="nav-link" [routerLink]="['admin','marcas']" [routerLinkActive]="['active']">Marcas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','rubros']" >Rubros</a>
+        <a class="nav-link" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','usuarios']" >Usuarios</a>
+        <a class="nav-link" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','empresas']" >Clientes</a>
+        <a class="nav-link" [routerLink]="['admin','empresas']" [routerLinkActive]="['active']">Clientes</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','cuentas-corrientes']">Cuentas Corrientes</a>
+        <a class="nav-link" [routerLink]="['admin','cuentas-corrientes']" [routerLinkActive]="['active']">Cuentas Corrientes</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','impresoras']" >Impresoras</a>
+        <a class="nav-link" [routerLink]="['admin','impresoras']" [routerLinkActive]="['active']">Impresoras</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','configbackup']" >Configuracion</a>
+        <a class="nav-link" [routerLink]="['admin','configbackup']" [routerLinkActive]="['active']">Configuracion</a>
       </li>
       <li class="nav-item">
         <span class="badge badge-success" *ngIf="online | async; else elseBlock">Online</span>

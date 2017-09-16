@@ -1,3 +1,17 @@
 .btn {
       cursor: pointer;
 }
+
+.navbar .active {
+      border-bottom: 5px solid #0275d8;
+}
+
+.navbar {
+      margin: 0px;
+      padding: 0px;
+      padding-top: 10px;
+}
+
+.nav-item, .navbar-brand {
+      margin-left: 10px;
+}

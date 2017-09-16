@@ -33,7 +33,8 @@ export class UpdateTableComponent implements OnInit {
 
   public validationMessages = {
     'description': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.',
+      'maxlength': 'No puede exceder los 5 carácteres.'
     },
     'room': {
       'required':       'Este campo es requerido.'
@@ -78,7 +79,8 @@ export class UpdateTableComponent implements OnInit {
         ]
       ],
       'description': [this.table.description, [
-          Validators.required
+          Validators.required,
+          Validators.maxLength(5)
         ]
       ],
       'room': [this.table.room, [

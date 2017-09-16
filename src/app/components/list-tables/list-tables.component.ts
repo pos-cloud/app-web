@@ -43,6 +43,7 @@ export class ListTablesComponent implements OnInit {
   @ViewChild('content') content:ElementRef;
   public selectEmployeeForm: FormGroup;
   @Input() filterRoom: string;
+  public itemsPerPage = 10;
 
   public formErrors = {
     'employee': ''
