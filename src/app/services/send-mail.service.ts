@@ -10,6 +10,6 @@ export class MailService {
   constructor(public _http: Http) { }
 
   sendMail (objectToImport) {
-		return this._http.post(Config.apiURL + '/enviarmail',objectToImport).map (res => res.json());
+		return this._http.post(Config.apiURL + '/send-email',objectToImport).map (res => res.json());
 	}
 }
