@@ -46,6 +46,7 @@ export class AddTransactionComponent implements OnInit {
     'number': '',
     'amount': '',
     'paymentMethod': '',
+    'totalPrice': '',
     'company': ''
   };
 

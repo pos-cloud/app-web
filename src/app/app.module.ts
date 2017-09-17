@@ -99,7 +99,6 @@ import { OrderByPipe } from './pipes/order-by.pipe';
 
 //directives
 import { FocusDirective } from './directives/focus.directive';
-import { ReportsComponent } from './components/reports/reports.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
@@ -154,7 +153,6 @@ import { SendMailComponent } from './components/send-mail/send-mail.component';
     UpdateCompanyComponent,
     DeleteCompanyComponent,
     AddCompanyComponent,
-    ReportsComponent,
     ClockComponent,
     AddEmployeeTypeComponent,
     UpdateEmployeeTypeComponent,

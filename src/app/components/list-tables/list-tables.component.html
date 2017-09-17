@@ -43,8 +43,7 @@
                   <span class="badge" [ngClass]="{'badge-danger':table.state==='Ocupada',
                                                   'badge-success':table.state==='Disponible', 
                                                   'badge-warning':table.state==='Pendiente',
-                                                  'badge-default':table.state==='No Habilitada',
-                                                  'badge-danger':table.state==='Reservada'}">
+                                                  'badge-default':table.state==='No Habilitada'}">
                     {{table.state}}
                   </span>
                 </h6>
@@ -86,7 +85,7 @@
       <div  class="itable" [ngClass]="{ 'itable-disabled':table.state==='No Habilitada',
                                         'itable-enabled':table.state==='Disponible',
                                         'itable-pending':table.state==='Pendiente',
-                                        'itable-disabled':table.state==='Ocupada'}"
+                                        'itable-disabledII':table.state==='Ocupada'}"
             (click)="openModal('select_employee', table, table.employee)">
         <p><b>{{table.description}}</b></p>
         <b *ngIf="table.employee && table.state !== 'Disponible'" class="name-employee">{{table.employee.name}}</b>

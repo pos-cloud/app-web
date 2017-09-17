@@ -49,7 +49,6 @@ import { DeletePrinterComponent } from './components/delete-printer/delete-print
 import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { ReportsComponent } from './components/reports/reports.component';
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
@@ -120,7 +119,6 @@ const _routes: Routes = [
   { path: 'pos/mostrador', component: PointOfSaleComponent },
   { path: 'pos/mostrador/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-pedido/:id', component: AddSaleOrderComponent },
-  { path: 'reports', component: ReportsComponent },
   { path: '**',pathMatch: 'full', redirectTo: '' }
 ];
 

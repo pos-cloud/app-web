@@ -43,6 +43,18 @@
     box-shadow: 0px 0px 5px;
 }
 
+.itable-disabledII {
+    background: #d9534f;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid black;
+    box-shadow: 0px 0px 5px;
+}
+
 .itable-pending {
     background: #f0ad4e;
     width: 100px;
@@ -55,7 +67,7 @@
     box-shadow: 0px 0px 5px;
 }
 
-.itable p, .itable-disabled p, .itable-enabled p, .itable-pending p {
+.itable p, .itable-disabled p, .itable-disabledII p, .itable-enabled p, .itable-pending p {
     font-size: 30px;
     font: bold;
     margin-top: 10px;
