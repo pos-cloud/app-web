@@ -5,8 +5,14 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Config } from './../../app.config';
+import { Employee } from './../../models/employee';
+import { EmployeeType } from './../../models/employee-type';
+import { User, UserState } from './../../models/user';
 
 import { ConfigService } from './../../services/config.service';
+import { UserService } from './../../services/user.service';
+import { EmployeeService } from './../../services/employee.service';
+import { EmployeeTypeService } from './../../services/employee-type.service';
 
 @Component({
   selector: 'app-config',
@@ -44,13 +50,16 @@ export class ConfigComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public _configService: ConfigService,
+    public _userService: UserService,
+    public _employeeService: EmployeeService,
+    public _employeeTypeService: EmployeeTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public alertConfig: NgbAlertConfig
   ) {  }
 
   ngOnInit(): void {
-
+    console.log("ngOnInit");
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
@@ -58,7 +67,8 @@ export class ConfigComponent implements OnInit {
   }
 
   public getConfigLocal() {
-    
+
+    console.log("getConfigLocal");
     let result = this._configService.getConfigLocal();
     if (result) {
       if (result.config) {
@@ -73,11 +83,13 @@ export class ConfigComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+    console.log("ngAfterViewInit");
     this.focusEvent.emit(true);
   }
 
   public buildForm(): void {
 
+    console.log("buildForm");
     this.configForm = this._fb.group({
       'apiHost': [Config.apiHost, [
           Validators.required
@@ -101,6 +113,7 @@ export class ConfigComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
 
+    console.log("onValueChanged");
     if (!this.configForm) { return; }
     const form = this.configForm;
 
@@ -118,6 +131,7 @@ export class ConfigComponent implements OnInit {
   }
 
   public addConfig(): void {
+    console.log("addConfig");
     this.loading = true;
     this.config = this.configForm.value;
     this.setConfigurationSettings(this.config);
@@ -125,7 +139,8 @@ export class ConfigComponent implements OnInit {
   }
 
   public getConfig() {
-    
+
+    console.log("getConfig");
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result.config) {
@@ -143,6 +158,7 @@ export class ConfigComponent implements OnInit {
 
   public updateConfig(config: Config): void {
 
+    console.log("updateConfig");
     this.config._id = config._id;
     
     this._configService.updateConfigApi(this.config).subscribe(
@@ -153,7 +169,7 @@ export class ConfigComponent implements OnInit {
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
-            location.reload();
+            this.configUser();
           } else {
             this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
             this.loading = false;
@@ -168,7 +184,8 @@ export class ConfigComponent implements OnInit {
   }
 
   public saveConfig(): void {
-    
+
+    console.log("saveConfig");
     this._configService.saveConfigApi(this.config).subscribe(
       result => {
         if (!result) {
@@ -178,7 +195,7 @@ export class ConfigComponent implements OnInit {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
             this.showMessage("La conexión es exitosa.", "success", false);
-            location.reload();
+            this.configUser();
           } else {
             this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
             this.loading = false;
@@ -194,8 +211,135 @@ export class ConfigComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
+    console.log("setConfigurationSettings");
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
+  }
+
+  //METODO PARA INICIALIZAR EL SISTEMA CON UN USUARIO
+  public configUser() {
+    console.log("configUser");
+    this.getUsers();
+  }
+
+  public getUsers(): void {
+
+    console.log("getUsers");
+    this.loading = true;
+
+    console.log("get user config");
+    this._userService.getUsers("", "config").subscribe(
+      result => {
+        if (!result.users) {
+          this.addEmployeeTypeWaiter();
+        } else {
+          this.hideMessage();
+          location.reload();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public addEmployeeTypeWaiter() {
+
+    let employeeType: EmployeeType = new EmployeeType();
+    employeeType.description = "Mozo";
+    this.loading = true;
+
+    this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
+      result => {
+        if (!result.employeeType) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          employeeType = result.employeeType;
+          this.addEmployeeTypeSupervisor();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public addEmployeeTypeSupervisor() {
+
+    let employeeType: EmployeeType = new EmployeeType();
+    employeeType.description = "Supervisor";
+    this.loading = true;
+
+    this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
+      result => {
+        if (!result.employeeType) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          employeeType = result.employeeType;
+          this.saveEmployee(employeeType);
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveEmployee(employeeType: EmployeeType): void {
+
+    let employee: Employee = new Employee();
+    employee.code = 1;
+    employee.name = "Soporte";
+    employee.type = employeeType;
+    this.loading = true;
+
+    this._employeeService.saveEmployee(employee).subscribe(
+      result => {
+        if (!result.employee) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          employee = result.employee;
+          this.saveUser(employee);
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveUser(employee: Employee): void {
+
+    let user = new User();
+    user.name = "Soporte";
+    user.password = "PosRest@";
+    user.state = UserState.Enabled;
+    user.tokenExpiration = 60;
+    user.employee = employee;
+    this.loading = true;
+
+    this._userService.saveUser(user).subscribe(
+      result => {
+        if (!result.user) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          location.reload();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {

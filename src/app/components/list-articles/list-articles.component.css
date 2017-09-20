@@ -30,7 +30,6 @@
 }
 
 .iarticle {
-      background: #0275d8;
       color: white;
       width: 120px;
       height: 120px;
@@ -44,7 +43,7 @@
 }
 
 .iarticle:hover {
-      background: #025aa5;
+      opacity: 0.5;
 }
 
 .image-title {

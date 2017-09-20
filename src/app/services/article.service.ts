@@ -4,41 +4,104 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Article } from './../models/article';
 import { Config } from './../app.config';
+import { UserService } from './user.service';
 
 @Injectable()
 export class ArticleService {
 
-  constructor(public _http: Http) { }
+  constructor(
+    public _http: Http,
+    public _userService: UserService
+  ) { }
 
   getLastArticle () {
-		return this._http.get(Config.apiURL + 'articles/sort="code":-1&limit=1').map (res => res.json());
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.get(Config.apiURL + 'articles/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
   getArticle (id) {
-		return this._http.get(Config.apiURL + "article/"+id).map (res => res.json());
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.get(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
 	}
 
   getArticles () {
-		return this._http.get(Config.apiURL + "articles").map (res => res.json());
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.get(Config.apiURL + "articles", { headers: headers }).map (res => res.json());
 	}
 
-  saveArticle (article : Article) {
-    return this._http.post(Config.apiURL + "article",article).map (res => res.json());
+  saveArticle(article: Article) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken()
+    });
+    return this._http.post(Config.apiURL + "article",article, { headers: headers }).map (res => res.json());
   }
   
   deleteArticle (id: string) {
-    return this._http.delete(Config.apiURL + "article/"+id).map (res => res.json());
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.delete(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
   }
 
   updateArticle (article: Article){
-    return this._http.put(Config.apiURL + "article/"+article._id, article).map (res => res.json());
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.put(Config.apiURL + "article/"+article._id, article, { headers: headers }).map (res => res.json());
   }
 
   getArticlesByCategory (categoryId: string) {
-		return this._http.get(Config.apiURL + 'articles/where="category":"'+categoryId+'"').map (res => res.json());
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.get(Config.apiURL + 'articles/where="category":"'+categoryId+'"', { headers: headers }).map (res => res.json());
 	}
 
   uploadImagen (id : string){
-    return this._http.post(Config.apiURL + "upload-imagen/"+id,"").map (res => res.json());
-  }
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.post(Config.apiURL + "upload-image/"+id,"", { headers: headers }).map (res => res.json());
+	}
+	
+	public makeFileRequest(idArticle: String, files: Array<File>) {
+
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', Config.apiURL + 'upload-image-article/' + idArticle, true);
+		xhr.setRequestHeader('Authorization', this._userService.getToken());
+
+		return new Promise(function (resolve, reject) {
+			var formData: any = new FormData();
+
+			for (var i = 0; i < files.length; i++) {
+				formData.append('image', files[i], files[i].name);
+			}
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						resolve(JSON.parse(xhr.response));
+					} else {
+						reject(xhr.response);
+					}
+				}
+			}
+
+			xhr.send(formData);
+		});
+	}
 }

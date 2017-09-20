@@ -4,7 +4,7 @@
           aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" [routerLink]="['inicio']" [routerLinkActive]="['active']">Pos-Resto</a>
+  <a class="navbar-brand" [routerLink]="['inicio']">Pos-Resto</a>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
@@ -12,47 +12,52 @@
         <a class="nav-link" [routerLink]="['inicio']" [routerLinkActive]="['active']">Inicio</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active']">Ventas</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active']">Ventas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','marcas']" [routerLinkActive]="['active']">Marcas</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','marcas']" [routerLinkActive]="['active']">Marcas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','empresas']" [routerLinkActive]="['active']">Clientes</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','empresas']" [routerLinkActive]="['active']">Clientes</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','cuentas-corrientes']" [routerLinkActive]="['active']">Cuentas Corrientes</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','cuentas-corrientes']" [routerLinkActive]="['active']">Cuentas Corrientes</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','impresoras']" [routerLinkActive]="['active']">Impresoras</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','impresoras']" [routerLinkActive]="['active']">Impresoras</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['admin','configbackup']" [routerLinkActive]="['active']">Configuracion</a>
+        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','configbackup']" [routerLinkActive]="['active']">Configuracion</a>
       </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
       <li class="nav-item">
         <span class="badge badge-success" *ngIf="online | async; else elseBlock">Online</span>
         <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
       </li>
       <li class="nav-item">
-        <a class="nav-link" (click)="logout()">Cerrar Sesión</a>
+        <a class="nav-link btn" *ngIf="identity" (click)="logout()"><i class="fa fa-sign-out"></i> Cerrar Sesión</a>
+      </li>
+      <li class="nav-item pull-right">
+        <a class="nav-link" *ngIf="!identity" [routerLink]="['login']" [routerLinkActive]="['active']"><i class="fa fa-sign-in"></i> Iniciar Sesión</a>
       </li>
     </ul>
   </div>

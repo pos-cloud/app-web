@@ -67,7 +67,7 @@
   <div class="row" *ngIf="areCategoriesVisible"> 
     <div *ngFor="let category of categories">
       <div class="icategory" (click)="selectCategory(category)">
-        <img [src]="apiURL + 'get-imagen/'+category.picture" width="120" height="120"> 
+        <img [src]="apiURL + 'get-image-category/'+category.picture" width="120" height="120"> 
          <div class="image-title">{{category.description}}</div> 
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Config } from './app.config';
 
@@ -13,11 +13,12 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
 
   public config: Config;
   public alertMessage: string = "";
   public isAPIConected: boolean;
+  public loading: boolean = true;
 
   constructor(
     public _configService: ConfigService,
@@ -26,6 +27,10 @@ export class AppComponent {
     public _modalService: NgbModal
   ) {
     this.isAPIConected = false;
+  }
+
+  ngOnInit(): void {
+    this.loading = true;
     this.getConfigLocal();
   }
 

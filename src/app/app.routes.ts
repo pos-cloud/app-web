@@ -119,7 +119,8 @@ const _routes: Routes = [
   { path: 'pos/mostrador', component: PointOfSaleComponent },
   { path: 'pos/mostrador/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-pedido/:id', component: AddSaleOrderComponent },
-  { path: '**',pathMatch: 'full', redirectTo: '' }
+  { path: 'login', component: LoginComponent },
+  { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 
 @NgModule({

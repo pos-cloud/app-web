@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-
+import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
@@ -23,7 +23,8 @@ export class DeleteUserComponent implements OnInit {
   constructor(
     public _userService: UserService,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _router: Router
   ) { }
 
   ngOnInit(): void {
@@ -39,10 +40,10 @@ export class DeleteUserComponent implements OnInit {
 
     this._userService.deleteUser(this.user._id).subscribe(
       result => {
-        let token = localStorage.getItem("session_token").replace(/"/gi,"");
-        
-        if(this.user.token === token) {
-          localStorage.removeItem("session_token");
+        if (this._userService.getIdentity()._id === this.user._id) {
+            localStorage.removeItem("session_token");
+            localStorage.removeItem("user");
+            this._router.navigate(['/']);
         }
         this.activeModal.close('delete_close');
         this.loading = false;

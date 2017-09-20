@@ -92,7 +92,7 @@
   <div class="row" *ngIf="areArticlesVisible"> 
     <div *ngFor="let article of articles | filter: filterCategory.description:'description':'category'" >
       <div class="iarticle" (click)="addItem(article)">
-        <img [src]="apiURL + 'get-imagen/'+article.picture" width="120" height="120">
+        <img [src]="apiURL + 'get-image-article/'+article.picture" width="120" height="120">
         <div class="image-title">{{article.posDescription}}</div> 
       </div>
     </div>

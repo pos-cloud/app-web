@@ -7,6 +7,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from './../../models/user';
 import { Turn } from './../../models/turn';
 import { Employee } from './../../models/employee';
+import { EmployeeType } from './../../models/employee-type';
 
 import { UserService } from './../../services/user.service';
 import { TurnService } from './../../services/turn.service';
@@ -30,6 +31,7 @@ export class LoginComponent implements OnInit {
   @Input() employeeSelected: Employee;
   @Input() routeRequired: Employee;
   public employees: Employee[] = new Array();
+  public token: string;
 
   public formErrors = {
     'name': '',
@@ -62,63 +64,14 @@ export class LoginComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.user = new User();
-    if(this.userType === "pos"){
+    if (this.userType === "pos") {
       if(this.employeeSelected !== undefined){
         this.getUserOfEmployee();
         this.employees.push(this.employeeSelected);
       }
-    } else {
-      this.getUsers();
     }
+    
     this.buildForm();
-  }
-
-  public getUsers(): void {
-
-    //Buscamos si existen usuarios
-    this._userService.getUsers().subscribe(
-      result => {
-        if (!result.users) {
-          //En caso de que no existan permite usar el sistema
-          this._router.navigate(['/inicio']);
-        } else {
-          let existSupervisor = false;
-
-          for(let user of result.users) {
-            if(user.employee.type.description === "Supervisor") {
-              existSupervisor = true;
-            }
-          }
-
-          if(existSupervisor) {
-            //Si existe, exige login
-            let token = localStorage.getItem('session_token');
-
-            if (token !== null) {
-              this._userService.isValidToken(token).subscribe(
-                result => {
-                  if (!result.user) {
-                    this.showMessage(result.message, "info", true); 
-                    this.loading = false;
-                  } else {
-                    this._router.navigate(['/inicio']);
-                    this.loading = false;
-                  }
-                },
-                error => {
-                  this.showMessage(error, "danger", false);
-                  this.loading = false;
-                }
-              );
-            }
-          }
-        }
-      },
-      error => {
-        this.showMessage(error, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public getUserOfEmployee(): void {  
@@ -198,25 +151,26 @@ export class LoginComponent implements OnInit {
 
   public login(): void {
     
+    if(this.userType === "pos") {
+      this.loginWaiter();
+    } else {
+      this.loginSupervisor();
+    }
+  } 
+
+  public loginWaiter(): void {
+
     this.user = this.loginForm.value;
     this.loading = true;
 
+    //Obtener el usuario
     this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
-          this.showMessage(result.message, "info", true); 
+          this.showMessage(result.message, "info", true);
           this.loading = false;
-        } else {
-          this.hideMessage();
-          this.user = result.user;
-          if(this.user.employee.type.description === 'Mozo'){
-            this.activeModal.close(this.employeeSelected);
-          } else {
-            localStorage.removeItem('session_token');
-            localStorage.setItem('session_token',JSON.stringify(this.user.token));
-            this._router.navigateByUrl(this._route.snapshot.queryParams['returnUrl'] || '/');
-          }
-          this.loading = false;
+        } else { 
+          this.activeModal.close(result.user);
         }
       },
       error => {
@@ -224,7 +178,65 @@ export class LoginComponent implements OnInit {
         this.loading = false;
       }
     )
-  } 
+  }
+
+  public loginSupervisor(): void {
+    
+    this.user = this.loginForm.value;
+    this.loading = true;
+
+    //Obtener el usuario
+    this._userService.login(this.user).subscribe(
+      result => {
+        if (!result.user) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          let userStorage = new User();
+          userStorage._id = result.user._id;
+          userStorage.name = result.user.name;
+          userStorage.employee = new Employee();
+          userStorage.employee._id = result.user.employee._id;
+          userStorage.employee.name = result.user.employee.name;
+          userStorage.employee.type = new EmployeeType();
+          userStorage.employee.type._id = result.user.employee.type._id;
+          userStorage.employee.type.description = result.user.employee.type.description;
+          localStorage.setItem('user', JSON.stringify(userStorage));
+
+          //Obtener el token del usuario
+          this._userService.login(this.user, true).subscribe(
+            result => {
+              if (!result.token) {
+                this.showMessage(result.message, "info", true);
+                this.loading = false;
+              } else {
+                this.hideMessage();
+                if (!result.token) {
+                  this.showMessage("El token no se ha generado correctamente", "info", true);
+                } else {
+                  this.token = result.token;
+                  localStorage.setItem('session_token', this.token);
+                  this._router.navigate(['/']);
+                }
+
+                // if(this.user.employee.type.description === 'Mozo'){
+                //   this.activeModal.close(this.employeeSelected);
+                // } else {
+                //   localStorage.removeItem('session_token');
+                //   localStorage.setItem('session_token',JSON.stringify(this.user.token));
+                //   this._router.navigateByUrl(this._route.snapshot.queryParams['returnUrl'] || '/');
+                // }
+                this.loading = false;
+              }
+            });
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    )
+  }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

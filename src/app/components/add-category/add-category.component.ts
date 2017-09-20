@@ -110,20 +110,26 @@ export class AddCategoryComponent  implements OnInit {
         } else {
           this.category = result.category;
           if(this.filesToUpload) {
-            this.makeFileRequest(this.filesToUpload)
+            this._categoryService.makeFileRequest(this.category._id, this.filesToUpload)
                 .then(
                   (result)=>{
                     this.resultUpload = result;
                     this.category.picture = this.resultUpload.filename;
+                    this.showMessage("El rubro se ha añadido con éxito.", "success", false);
+                    this.category = new Category();
+                    this.filesToUpload = null;
+                    this.buildForm();
                   },
                   (error) =>{
                     this.showMessage(error, "danger", false);
                   }
                 );
+          } else {
+            this.showMessage("El rubro se ha añadido con éxito.", "success", false);
+            this.category = new Category();
+            this.filesToUpload = null;
+            this.buildForm();
           }
-          this.showMessage("El rubro se ha añadido con éxito.", "success", false);   
-          this.category = new Category ();
-          this.buildForm();
         }
         this.loading = false;
       },
@@ -137,31 +143,6 @@ export class AddCategoryComponent  implements OnInit {
   public fileChangeEvent(fileInput: any){
     
     this.filesToUpload = <Array<File>>fileInput.target.files;
-  }
-
-  public makeFileRequest(files: Array<File>){
-
-    let idCategory = this.category._id;
-    return new Promise(function(resolve, reject){
-      var formData:any = new FormData();
-      var xhr = new XMLHttpRequest();
-
-      for(var i = 0; i < files.length ; i++){
-        formData.append('image',files[i], files[i].name);
-      }
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4){
-          if(xhr.status == 200){
-            resolve(JSON.parse(xhr.response));
-          }else {
-            reject(xhr.response);
-          }
-        }
-      }
-      
-      xhr.open('POST', Config.apiURL + 'upload-imagen-category/'+idCategory,true);
-      xhr.send(formData);
-    });
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {

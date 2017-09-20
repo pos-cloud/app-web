@@ -671,7 +671,7 @@ export class AddSaleOrderComponent implements OnInit {
               
             });
           } else {
-            this.showMessage("No existen artículos en el pedido.", "danger", false);
+            this.showMessage("No existen artículos en el pedido.", "info", true);
             this.loading = false;
           }
           break;
@@ -726,7 +726,7 @@ export class AddSaleOrderComponent implements OnInit {
 
             });
           } else {
-            this.showMessage("No existen artículos en el pedido.", "danger", false);
+            this.showMessage("No existen artículos en el pedido.", "info", true);
             this.loading = false;
           }
           break;
@@ -844,8 +844,13 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public setPrintBill(): void {
-    this.typeOfOperationToPrint = 'bill';
-    this.openModal('printers');
+    if (this.movementsOfArticles.length !== 0) {
+      this.typeOfOperationToPrint = 'bill';
+      this.openModal('printers');
+    } else {
+      this.showMessage("No existen artículos en el pedido.", "info", true);
+      this.loading = false;
+    }
   }
 
   public finishCharge() {
@@ -1086,7 +1091,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido.", "danger", false);
+      this.showMessage("No existen artículos en el pedido.", "info", true);
       this.loading = false;
     }
   }
@@ -1151,7 +1156,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido.", "danger", false);
+      this.showMessage("No existen artículos en el pedido.", "info", true);
       this.loading = false;
     }
   }
@@ -1211,7 +1216,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido", "danger", false); 
+      this.showMessage("No existen artículos en el pedido", "info", true); 
       this.loading = false;
     }
   }
@@ -1266,7 +1271,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido", "danger", false);
+      this.showMessage("No existen artículos en el pedido", "info", true);
       this.loading = false;
     }
   }

@@ -259,19 +259,6 @@ export class UpdateArticleComponent implements OnInit {
             this.showMessage(result.message, "info", true); 
           } else {
             this.article.category = result.category;
-            if(this.filesToUpload) {
-              this.makeFileRequest(this.filesToUpload)
-                .then(
-                  (result)=>{
-                    this.resultUpload = result;
-                    this.article.picture = this.resultUpload.filename;
-                  },
-                  (error) =>{
-                    this.showMessage(error, "danger", false);
-                    this.loading = false;
-                  }
-                );
-            }
             this.saveChanges();
           }
         },
@@ -293,8 +280,23 @@ export class UpdateArticleComponent implements OnInit {
           this.loading = false;
         } else {
           this.article = result.article;
-          this.showMessage("El artículo se ha actualizado con éxito.", "success", false); 
-          this.activeModal.close('save_close');
+          if (this.filesToUpload) {
+            this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
+              .then(
+              (result) => {
+                this.resultUpload = result;
+                this.article.picture = this.resultUpload.filename;
+                this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
+                this.activeModal.close('save_close');
+              },
+              (error) => {
+                this.showMessage(error, "danger", false);
+              }
+              );
+          } else {
+            this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
+            this.activeModal.close('save_close');
+          }
         }
         this.loading = false;
       },
@@ -330,7 +332,7 @@ export class UpdateArticleComponent implements OnInit {
         }
       }
       
-      xhr.open('POST', Config.apiURL + 'upload-imagen/'+idArticulo,true);
+      xhr.open('POST', Config.apiURL + 'upload-image/'+idArticulo,true);
       xhr.send(formData);
     });
   }

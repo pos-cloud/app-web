@@ -5,9 +5,9 @@ export class User {
 	public _id: string;
 	public name: string;
 	public password: string;
-	public state: UserState = UserState.Enabled;
-	public token: String;
-	public tokenExpiration: String = "5";
+	public state: UserState;
+	public token: boolean;
+	public tokenExpiration: number;
 	public employee: Employee = null;
 
 	constructor () {}

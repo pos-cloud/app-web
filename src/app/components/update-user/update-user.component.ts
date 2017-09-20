@@ -6,6 +6,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User, UserState } from './../../models/user';
 import { Employee } from './../../models/employee';
+import { EmployeeType } from './../../models/employee-type';
 
 import { UserService } from './../../services/user.service';
 import { EmployeeService } from './../../services/employee.service';
@@ -199,6 +200,18 @@ export class UpdateUserComponent implements OnInit {
         } else {
           this.user = result.user;
           this.showMessage("El usuario se ha actualizado con éxito.", "success", false);
+          if(this._userService.getIdentity()._id === this.user._id){
+            let userStorage = new User();
+            userStorage._id = result.user._id;
+            userStorage.name = result.user.name;
+            userStorage.employee = new Employee();
+            userStorage.employee._id = result.user.employee._id;
+            userStorage.employee.name = result.user.employee.name;
+            userStorage.employee.type = new EmployeeType();
+            userStorage.employee.type._id = result.user.employee.type._id;
+            userStorage.employee.type.description = result.user.employee.type.description;
+            localStorage.setItem('user', JSON.stringify(userStorage));
+          }
           this.activeModal.close('save_close');
         }
         this.loading = false;

@@ -265,22 +265,29 @@ export class AddArticleComponent  implements OnInit {
           this.loading = false;
         } else {
           this.article = result.article;
-          if(this.filesToUpload) {
-            this.makeFileRequest(this.filesToUpload)
-                .then(
-                  (result)=>{
-                    this.resultUpload = result;
-                    this.article.picture = this.resultUpload.filename;
-                  },
-                  (error) =>{
-                    this.showMessage(error, "danger", false);
-                  }
-                );
+          if (this.filesToUpload) {
+            this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
+              .then(
+              (result) => {
+                this.resultUpload = result;
+                this.article.picture = this.resultUpload.filename;
+                this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+                this.article = new Article();
+                this.filesToUpload = null;
+                this.buildForm();
+                this.getLastArticle();
+              },
+              (error) => {
+                this.showMessage(error, "danger", false);
+              }
+              );
+          } else {
+            this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+            this.article = new Article();
+            this.filesToUpload = null;
+            this.buildForm();
+            this.getLastArticle();
           }
-          this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-          this.article = new Article ();
-          this.buildForm();
-          this.getLastArticle();
         }
         this.loading = false;
       },
@@ -318,7 +325,7 @@ export class AddArticleComponent  implements OnInit {
         }
       }
       
-      xhr.open('POST', Config.apiURL + 'upload-imagen/'+idArticulo,true);
+      xhr.open('POST', Config.apiURL + 'upload-image/'+idArticulo,true);
       xhr.send(formData);
     });
   }
