@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title">Editar Rubro</h4>
+  <h4 class="modal-title" *ngIf="!readonly">Editar Rubro</h4>
+  <h4 class="modal-title" *ngIf="readonly">Rubro</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -15,7 +16,7 @@
       <div class="row">
         <div class="form-group col-md-8">
           <label for="description" class="control-label">Descripción:</label>
-          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
           </div>
@@ -23,13 +24,13 @@
         <div class="form-group col-md-4">
 					<img *ngIf="category.picture == 'default.jpg' || category.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120">
 					<img *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined" [src]="apiURL + 'get-image-category/'+category.picture" height="120" width="120">
-					<input type="file" accept="image/*" (change)="fileChangeEvent($event)"/>
+					<input type="file" *ngIf="!readonly" accept="image/*" (change)="fileChangeEvent($event)"/>
 				</div>
       </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" *ngIf="!readonly">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!categoryForm.valid || loading" >
+      <button type="submit" class="btn btn-primary" [disabled]="!categoryForm.valid || loading || readonly" >
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar Cambios</span>
         <span *ngIf="loading">Espere por favor</span>

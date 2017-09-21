@@ -97,7 +97,12 @@ export class ListCategoriesComponent implements OnInit {
   public openModal(op: string, category:Category): void {
 
     let modalRef;
-    switch(op) {
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' });
+        modalRef.componentInstance.category = category;
+        modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddCategoryComponent, { size: 'lg' }).result.then((result) => {
           this.getCategories();
@@ -106,7 +111,7 @@ export class ListCategoriesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' });
           modalRef.componentInstance.category = category;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
@@ -119,6 +124,7 @@ export class ListCategoriesComponent implements OnInit {
       case 'delete' :
           modalRef = this._modalService.open(DeleteCategoryComponent, { size: 'lg' })
           modalRef.componentInstance.category = category;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
               this.getCategories();

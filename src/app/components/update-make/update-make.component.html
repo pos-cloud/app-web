@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title">Editar Marca</h4>
+  <h4 class="modal-title" *ngIf="!readonly">Editar Marca</h4>
+  <h4 class="modal-title" *ngIf="readonly">Marca</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -15,16 +16,16 @@
       <div class="row">
         <div class="form-group col-md-8">
           <label for="description" class="control-label">Descripción:</label>
-          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
           </div>
         </div>
       </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" *ngIf="!readonly">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!makeForm.valid || loading" >
+      <button type="submit" class="btn btn-primary" [disabled]="!makeForm.valid || loading || readonly">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar Cambios</span>
         <span *ngIf="loading">Espere por favor</span>

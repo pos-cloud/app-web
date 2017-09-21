@@ -18,6 +18,7 @@ import { MakeService } from './../../services/make.service';
 export class UpdateMakeComponent implements OnInit {
 
   @Input() make: Make;
+  @Input() readonly: boolean;
   public makeForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -94,10 +95,11 @@ export class UpdateMakeComponent implements OnInit {
   }
 
   public updateMake (): void {
-    
-    this.loading = true;
-    this.make = this.makeForm.value;
-    this.saveChanges();
+    if(!this.readonly) {
+      this.loading = true;
+      this.make = this.makeForm.value;
+      this.saveChanges();
+    }
   }
 
   public saveChanges(): void {

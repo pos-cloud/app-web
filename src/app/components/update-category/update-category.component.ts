@@ -20,6 +20,7 @@ import { Config } from './../../app.config';
 export class UpdateCategoryComponent implements OnInit {
 
   @Input() category: Category;
+  @Input() readonly: boolean;
   public categoryForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -102,10 +103,11 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
   public updateCategory (): void {
-    
-    this.loading = true;
-    this.category = this.categoryForm.value;
-    this.saveChanges();
+    if(!this.readonly) {
+      this.loading = true;
+      this.category = this.categoryForm.value;
+      this.saveChanges();
+    }
   }
 
   public saveChanges(): void {
