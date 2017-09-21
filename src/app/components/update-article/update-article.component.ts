@@ -39,7 +39,7 @@ export class UpdateArticleComponent implements OnInit {
   public apiURL = Config.apiURL;
 
   public formErrors = {
-    'code': 1,
+    'code': "1",
     'make': '',
     'description': '',
     'posDescription': '',
@@ -50,7 +50,7 @@ export class UpdateArticleComponent implements OnInit {
   public validationMessages = {
     'code': {
       'required':       'Este campo es requerido.',
-      'pattern':        'No puede exceder los 5 dígitos.',
+      'maxlength':      'No puede exceder los 5 carácteres.'
     },
     'make': {
       'required':       'Este campo es requerido.'
@@ -113,7 +113,7 @@ export class UpdateArticleComponent implements OnInit {
       ],
       'code': [this.article.code, [
           Validators.required,
-          Validators.pattern("[0-9]{1,5}")
+          Validators.maxLength(5)
         ]
       ],
       'make': [this.article.make, [

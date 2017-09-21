@@ -38,7 +38,7 @@ export class AddArticleComponent  implements OnInit {
   public apiURL = Config.apiURL;
 
   public formErrors = {
-    'code': 1,
+    'code': "1",
     'make': '',
     'description': '',
     'posDescription': '',
@@ -49,7 +49,7 @@ export class AddArticleComponent  implements OnInit {
   public validationMessages = {
     'code': {
       'required':       'Este campo es requerido.',
-      'pattern':        'No puede exceder los 5 dígitos.',
+      'maxlength':      'No puede exceder los 5 carácteres.'
     },
     'make': {
       'required':       'Este campo es requerido.'
@@ -98,7 +98,8 @@ export class AddArticleComponent  implements OnInit {
         ]
       ],
       'code': [this.article.code, [
-          Validators.required
+          Validators.required,
+          Validators.maxLength(5)
         ]
       ],
       'make': [this.article.make, [
@@ -163,12 +164,16 @@ export class AddArticleComponent  implements OnInit {
     
     this._articleService.getLastArticle().subscribe(
         result => {
-          let code = 1;
+          let code = "1";
           let category: Category = new Category();
           let make: Make  = new Make();
           if(result.articles){
             if(result.articles[0] !== undefined) {
-              code = result.articles[0].code + 1;
+              if (!isNaN(parseInt(result.articles[0].code))) {
+                code = (parseInt(result.articles[0].code) + 1) + "";
+              } else {
+                code = "1";
+              }
             }
           }
           if(this.categories[0] !== undefined) {

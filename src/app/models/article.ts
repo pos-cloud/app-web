@@ -4,7 +4,7 @@ import { Category } from './category';
 export class Article {
 
     public _id: string;
-    public code: number = 1;
+    public code: String = "1";
     public description: string = "";
     public posDescription: string = "";
     public observation: string;
