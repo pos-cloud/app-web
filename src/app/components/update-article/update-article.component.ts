@@ -26,6 +26,7 @@ import { Config } from './../../app.config';
 export class UpdateArticleComponent implements OnInit {
 
   @Input() article: Article;
+  @Input() readonly: boolean;
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
@@ -216,14 +217,15 @@ export class UpdateArticleComponent implements OnInit {
    }
 
   public updateArticle (): void {
-    
-    this.loading = true;
-    if(this.articleForm.value.posDescription === "") {
-      let slicePipe = new SlicePipe();
-      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
+    if(!this.readonly) {
+      this.loading = true;
+      if(this.articleForm.value.posDescription === "") {
+        let slicePipe = new SlicePipe();
+        this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
+      }
+      this.article = this.articleForm.value;
+      this.getMake();
     }
-    this.article = this.articleForm.value;
-    this.getMake();
   }
 
   public getMake(): void {  

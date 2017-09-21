@@ -1,5 +1,6 @@
 <div class="modal-header">
-	<h4 class="modal-title">Editar Empresa</h4>
+	<h4 class="modal-title" *ngIf="!readonly">Editar Empresa</h4>
+	<h4 class="modal-title" *ngIf="readonly">Empresa</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -15,7 +16,7 @@
 			<div class="row">
 				<div class="form-group col-md-4">
 					<label for="code" class="control-label">Código:</label>
-					<input type="number" class="form-control" formControlName="code" name="code" id="code"/>
+					<input type="number" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly"/>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
 						{{ formErrors.code }}
 					</div>
@@ -23,7 +24,7 @@
 				<div class="form-group col-md-4">
 					<label for="type" class="control-label">Tipo</label>
 					<select class="form-control" formControlName="type">
-						<option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
+						<option *ngFor="let type of types" [ngValue]="type" [disabled]="readonly">{{type}}</option>
 					</select>
 					<div *ngIf="formErrors.type" class="alert alert-danger">
 						{{ formErrors.type }}
@@ -32,7 +33,7 @@
 				<div class="form-group col-md-4">
 					<label for="CUIT" class="control-label">CUIT:</label>
 					<div class="input-group">
-						<input type="number" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
+						<input type="number" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.CUIT" class="alert alert-danger">
 						{{ formErrors.CUIT }}
@@ -43,7 +44,7 @@
 				<div class="form-group col-md-6">
 					<label for="name" class="control-label">Nombre:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="name" name="name" id="name"/>
+						<input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.name" class="alert alert-danger">
 						{{ formErrors.name }}
@@ -52,7 +53,7 @@
 				<div class="form-group col-md-6">
 					<label for="fantasyName" class="control-label">Nombre de Fantasía:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="fantasyName" name="fantasyName" id="fantasyName"/>
+						<input type="text" class="form-control" formControlName="fantasyName" name="fantasyName" id="fantasyName" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.fantasyName" class="alert alert-danger">
 						{{ formErrors.fantasyName }}
@@ -63,7 +64,7 @@
 				<div class="form-group col-md-8">
 					<label for="address" class="control-label">Dirección:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="address" name="address" id="address"/>
+						<input type="text" class="form-control" formControlName="address" name="address" id="address" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.address" class="alert alert-danger">
 						{{ formErrors.address }}
@@ -72,7 +73,7 @@
 				<div class="form-group col-md-4">
 					<label for="city" class="control-label">Ciudad:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="city" name="city" id="city"/>
+						<input type="text" class="form-control" formControlName="city" name="city" id="city" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.city" class="alert alert-danger">
 						{{ formErrors.city }}
@@ -83,7 +84,7 @@
 				<div class="form-group col-md-12">
 					<label for="phones" class="control-label">Teléfonos:</label>
 					<div class="input-group">
-						<input type="number" class="form-control" formControlName="phones" name="phones" id="phones"/>
+						<input type="number" class="form-control" formControlName="phones" name="phones" id="phones" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.phones" class="alert alert-danger">
 						{{ formErrors.phones }}
@@ -94,7 +95,7 @@
 				<div class="form-group col-md-12">
 					<label for="emails" class="control-label">Emails:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="emails" name="emails" id="emails"/>
+						<input type="text" class="form-control" formControlName="emails" name="emails" id="emails" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.emails" class="alert alert-danger">
 						{{ formErrors.emails }}
@@ -102,7 +103,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="modal-footer">
+		<div class="modal-footer" *ngIf="!readonly">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!companyForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

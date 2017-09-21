@@ -90,6 +90,11 @@ export class ListCompaniesComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view' :
+          modalRef = this._modalService.open(UpdateCompanyComponent, { size: 'lg' });
+          modalRef.componentInstance.company = company;
+          modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' }).result.then((result) => {
           this.getCompanies();
@@ -98,8 +103,9 @@ export class ListCompaniesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateCompanyComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateCompanyComponent, { size: 'lg' });
           modalRef.componentInstance.company = company;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getCompanies();

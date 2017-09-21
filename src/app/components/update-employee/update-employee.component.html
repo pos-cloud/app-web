@@ -1,5 +1,6 @@
 <div class="modal-header">
-	<h4 class="modal-title">Editar Empleado</h4>
+	<h4 class="modal-title" *ngIf="!readonly">Editar Empleado</h4>
+	<h4 class="modal-title" *ngIf="readonly">Empleado</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -12,12 +13,11 @@
 	</div>
 	<form [formGroup]="employeeForm" #formUpdateEmployee="ngForm" (ngSubmit)="updateEmployee()" autocomplete="off">
 		<div class="modal-body">
-			
 			<div class="row">
 				<div class="form-group col-md-6">
 					<label for="code" class="control-label">Legajo:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="code" name="code" id="code"/>
+						<input type="text" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
 						{{ formErrors.code }}
@@ -26,7 +26,7 @@
 				<div class="form-group col-md-6">
 					<label for="type" class="control-label">Tipo</label>
 					<select class="form-control" formControlName="type">
-						<option *ngFor="let employeeType of employeeTypes" [selected]="employeeType._id===employee.type._id" [value]="employeeType._id">
+						<option *ngFor="let employeeType of employeeTypes" [selected]="employeeType._id===employee.type._id" [value]="employeeType._id" [disabled]="readonly">
 							{{employeeType.description}}
 						</option>
 					</select>
@@ -39,7 +39,7 @@
 				<div class="form-group col-md-12">
 					<label for="name" class="control-label">Nombre:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+						<input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.name" class="alert alert-danger">
 						{{ formErrors.name }}
@@ -47,7 +47,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="modal-footer">
+		<div class="modal-footer" *ngIf="!readonly">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!employeeForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

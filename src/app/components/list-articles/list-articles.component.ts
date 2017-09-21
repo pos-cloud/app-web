@@ -99,6 +99,11 @@ export class ListArticlesComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view' :
+          modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' });
+          modalRef.componentInstance.article = article;
+          modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' }).result.then((result) => {
           this.getArticles();
@@ -109,6 +114,7 @@ export class ListArticlesComponent implements OnInit {
       case 'update' :
           modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' });
           modalRef.componentInstance.article = article;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getArticles();

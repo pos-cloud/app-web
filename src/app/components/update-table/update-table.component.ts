@@ -18,6 +18,7 @@ import { RoomService } from './../../services/room.service';
 export class UpdateTableComponent implements OnInit {
 
   @Input() table: Table;
+  @Input() readonly: boolean;
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
   public alertMessage: string = "";
@@ -143,9 +144,11 @@ export class UpdateTableComponent implements OnInit {
    }
 
   public updateTable(): void {
-    this.loading = true;
-    this.table = this.tableForm.value;
-    this.getRoom();
+    if(!this.readonly) {
+      this.loading = true;
+      this.table = this.tableForm.value;
+      this.getRoom();
+    }
   }
 
   public getRoom(): void {  

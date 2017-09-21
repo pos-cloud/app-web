@@ -87,6 +87,11 @@ export class ListRoomsComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view' :
+          modalRef = this._modalService.open(UpdateRoomComponent, { size: 'lg' });
+          modalRef.componentInstance.room = room;
+          modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddRoomComponent, { size: 'lg' }).result.then((result) => {
           this.getRooms();
@@ -95,8 +100,9 @@ export class ListRoomsComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateRoomComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateRoomComponent, { size: 'lg' });
           modalRef.componentInstance.room = room;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getRooms();

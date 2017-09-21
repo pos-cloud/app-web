@@ -18,6 +18,7 @@ import { RoomService } from './../../services/room.service';
 export class UpdateRoomComponent implements OnInit {
 
   @Input() room: Room;
+  @Input() readonly: boolean;
   public roomForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -94,10 +95,11 @@ export class UpdateRoomComponent implements OnInit {
   }
 
   public updateRoom (): void {
-    
-    this.loading = true;
-    this.room = this.roomForm.value;
-    this.saveChanges();
+    if(!this.readonly) {
+      this.loading = true;
+      this.room = this.roomForm.value;
+      this.saveChanges();
+    }
   }
 
   public saveChanges(): void {

@@ -86,6 +86,11 @@ export class ListEmployeesComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view' :
+          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg' });
+          modalRef.componentInstance.employee = employee;
+          modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddEmployeeComponent, { size: 'lg' }).result.then((result) => {
           this.getEmployees();
@@ -94,8 +99,9 @@ export class ListEmployeesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg' });
           modalRef.componentInstance.employee = employee;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getEmployees();

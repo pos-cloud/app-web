@@ -18,6 +18,7 @@ import { PrinterService } from './../../services/printer.service';
 export class UpdatePrinterComponent implements OnInit {
 
   @Input() printer: Printer;
+  @Input() readonly: boolean;
   public types: PrinterType[] = [PrinterType.Bar, PrinterType.Kitchen, PrinterType.Counter];
   public printerForm: FormGroup;
   public alertMessage: string = "";
@@ -117,10 +118,11 @@ export class UpdatePrinterComponent implements OnInit {
   }
 
   public updatePrinter (): void {
-    
-    this.loading = true;
-    this.printer = this.printerForm.value;
-    this.saveChanges();
+    if(!this.readonly) {
+      this.loading = true;
+      this.printer = this.printerForm.value;
+      this.saveChanges();
+    }
   }
 
   public saveChanges(): void {

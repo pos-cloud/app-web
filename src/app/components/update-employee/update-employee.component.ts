@@ -20,6 +20,7 @@ import { EmployeeTypeService } from './../../services/employee-type.service';
 export class UpdateEmployeeComponent implements OnInit {
 
   @Input() employee: Employee;
+  @Input() readonly: boolean;
   public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
   public alertMessage: string = "";
@@ -142,10 +143,11 @@ export class UpdateEmployeeComponent implements OnInit {
   }
 
   public updateEmployee (): void {
-
-    this.loading = true;
-    this.employee = this.employeeForm.value;
-    this.saveChanges();
+    if(!this.readonly) {
+      this.loading = true;
+      this.employee = this.employeeForm.value;
+      this.saveChanges();
+    }
   }
 
   public saveChanges(): void {

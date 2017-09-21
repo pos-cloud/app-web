@@ -49,7 +49,8 @@
                                                   | filter: filterPhones:'phones' 
                                                   | filter: filterEmails:'emails'
                                                   | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
-              <td align="left" width="90">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', company)"><i class="fa fa-eye"></i></button>
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', company)"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', company)"><i class="fa fa-trash-o"></i></button>
               </td>

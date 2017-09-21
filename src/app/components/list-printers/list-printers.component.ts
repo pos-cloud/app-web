@@ -87,6 +87,11 @@ export class ListPrintersComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view' :
+          modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
+          modalRef.componentInstance.printer = printer;
+          modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddPrinterComponent, { size: 'lg' }).result.then((result) => {
           this.getPrinters();
@@ -97,6 +102,7 @@ export class ListPrintersComponent implements OnInit {
       case 'update' :
           modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
           modalRef.componentInstance.printer = printer;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getPrinters();

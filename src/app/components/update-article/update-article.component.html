@@ -1,5 +1,6 @@
 <div class="modal-header">
-	<h4 class="modal-title">Editar Artículo</h4>
+	<h4 class="modal-title" *ngIf="!readonly">Editar Artículo</h4>
+	<h4 class="modal-title" *ngIf="readonly">Artículo</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -18,7 +19,7 @@
 						<div class="form-group col-md-6">
 							<label for="make" class="control-label">Marca</label>
 							<select class="form-control" formControlName="make">
-								<option *ngFor="let make of makes" [selected]="make._id==article.make._id" [value]="make._id">{{make.description}}</option>
+								<option *ngFor="let make of makes" [selected]="make._id==article.make._id" [value]="make._id" [disabled]="readonly">{{make.description}}</option>
 							</select>
 							<div *ngIf="formErrors.make" class="alert alert-danger">
 								{{ formErrors.make }}
@@ -26,7 +27,7 @@
 						</div>
 						<div class="form-group col-md-6">
 							<label for="code" class="control-label">Código:</label>
-							<input type="text" class="form-control" formControlName="code" name="code" id="code"/>
+							<input type="text" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly"/>
 							<div *ngIf="formErrors.code" class="alert alert-danger">
 								{{ formErrors.code }}
 							</div>
@@ -35,14 +36,14 @@
 					<div class="row">
 						<div class="form-group col-md-8">
 							<label for="description" class="control-label">Descripción:</label>
-							<input type="text" class="form-control" formControlName="description" name="description" id="description"/>
+							<input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="readonly"/>
 							<div *ngIf="formErrors.description" class="alert alert-danger">
 								{{ formErrors.description }}
 							</div>
 						</div>
 						<div class="form-group col-md-4">
 							<label for="posDescription" class="control-label">Descripción POS:</label>
-							<input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription"/>
+							<input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription" [readonly]="readonly"/>
 							<div *ngIf="formErrors.posDescription" class="alert alert-danger">
 								{{ formErrors.posDescription }}
 							</div>
@@ -52,14 +53,14 @@
 				<div class="form-group col-md-4">
 					<img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120">
 					<img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined" [src]="apiURL + 'get-image-article/'+article.picture" height="120" width="120">
-					<input type="file" accept="image/*" (change)="fileChangeEvent($event)"/>
+					<input type="file" *ngIf="!readonly"accept="image/*" (change)="fileChangeEvent($event)"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="form-group col-md-12">
 					<label for="category" class="control-label">Rubro</label>
 					<select class="form-control" formControlName="category">
-						<option *ngFor="let category of categories" [selected]="category._id==article.category._id" [value]="category._id">{{category.description}}</option>
+						<option *ngFor="let category of categories" [selected]="category._id==article.category._id" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
 					</select>
 					<div *ngIf="formErrors.category" class="alert alert-danger">
 						{{ formErrors.category }}
@@ -70,7 +71,7 @@
 				<div class="form-group col-md-12">
 					<label for="observation" class="control-label">Observación:</label>
 					<div class="input-group">
-						<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
+						<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
 					</div>
 				</div>
 			</div>
@@ -79,7 +80,7 @@
 					<label for="salePrice" class="control-label">Precio de Venta:</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01"/>
+						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
 						{{ formErrors.salePrice }}
@@ -88,12 +89,12 @@
 				<div class="form-group col-md-4">
 					<label for="type" class="control-label">Tipo</label>
 					<select class="form-control" formControlName="type">
-						<option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
+						<option *ngFor="let type of types" [ngValue]="type" [disabled]="readonly">{{type}}</option>
 					</select>
 				</div>
 			</div>
 		</div>
-		<div class="modal-footer">
+		<div class="modal-footer" *ngIf="!readonly">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

@@ -18,6 +18,7 @@ import { CompanyService } from './../../services/company.service';
 export class UpdateCompanyComponent implements OnInit {
 
   @Input() company: Company;
+  @Input() readonly: boolean;
   public types: CompanyType[] = [CompanyType.Client];
   public companyForm: FormGroup;
   public alertMessage: string = "";
@@ -157,10 +158,11 @@ export class UpdateCompanyComponent implements OnInit {
   }
 
   public updateCompany (): void {
-
-    this.loading = true;
-    this.company = this.companyForm.value;
-    this.saveChanges();
+    if(!this.readonly) {
+      this.loading = true;
+      this.company = this.companyForm.value;
+      this.saveChanges();
+    }
   }
 
   public saveChanges(): void {

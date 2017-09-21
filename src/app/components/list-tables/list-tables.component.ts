@@ -159,6 +159,11 @@ export class ListTablesComponent implements OnInit {
     let modalRef;
     
     switch(op) {
+      case 'view' :
+          modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
+          modalRef.componentInstance.table = this.tableSelected;
+          modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
 
         modalRef = this._modalService.open(AddTableComponent, { size: 'lg' }).result.then((result) => {
@@ -168,8 +173,9 @@ export class ListTablesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
           modalRef.componentInstance.table = this.tableSelected;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getTables();
