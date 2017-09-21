@@ -27,6 +27,7 @@ export class DeleteCompanyComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.company);
   }
 
   ngAfterViewInit() {

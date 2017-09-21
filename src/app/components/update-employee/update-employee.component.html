@@ -17,7 +17,7 @@
 				<div class="form-group col-md-6">
 					<label for="code" class="control-label">Legajo:</label>
 					<div class="input-group">
-						<input type="text" class="form-control" formControlName="code" name="code" id="code" readonly/>
+						<input type="text" class="form-control" formControlName="code" name="code" id="code"/>
 					</div>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
 						{{ formErrors.code }}
@@ -26,7 +26,9 @@
 				<div class="form-group col-md-6">
 					<label for="type" class="control-label">Tipo</label>
 					<select class="form-control" formControlName="type">
-						<option *ngFor="let employeeType of employeeTypes" [selected]="employeeType._id==employee.type._id" [value]="employeeType._id">{{employeeType.description}}</option>
+						<option *ngFor="let employeeType of employeeTypes" [selected]="employeeType._id===employee.type._id" [value]="employeeType._id">
+							{{employeeType.description}}
+						</option>
 					</select>
 					<div *ngIf="formErrors.type" class="alert alert-danger">
 						{{ formErrors.type }}

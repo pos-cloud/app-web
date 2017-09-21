@@ -65,7 +65,7 @@ export class UpdateEmployeeComponent implements OnInit {
       '_id': this.employee._id,
       'code': this.employee.code,
       'name': this.employee.name,
-      'type': this.employee.type
+      'type': this.employee.type._id
     });
   }
 

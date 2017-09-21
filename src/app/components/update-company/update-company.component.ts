@@ -52,7 +52,6 @@ export class UpdateCompanyComponent implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'CUIT': {
-      'required':       'Este campo es requerido.'
     },
     'address': {
     },
@@ -117,7 +116,6 @@ export class UpdateCompanyComponent implements OnInit {
         ]
       ],
       'CUIT': [this.company.CUIT, [
-          Validators.required
         ]
       ],
       'address': [this.company.address, [

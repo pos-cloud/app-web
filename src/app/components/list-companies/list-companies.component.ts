@@ -109,7 +109,8 @@ export class ListCompaniesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg' });
+          modalRef.componentInstance.company = company;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
               this.getCompanies();
