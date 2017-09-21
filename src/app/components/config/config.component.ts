@@ -59,7 +59,6 @@ export class ConfigComponent implements OnInit {
   ) {  }
 
   ngOnInit(): void {
-    console.log("ngOnInit");
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
@@ -68,7 +67,6 @@ export class ConfigComponent implements OnInit {
 
   public getConfigLocal() {
 
-    console.log("getConfigLocal");
     let result = this._configService.getConfigLocal();
     if (result) {
       if (result.config) {
@@ -83,13 +81,11 @@ export class ConfigComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    console.log("ngAfterViewInit");
     this.focusEvent.emit(true);
   }
 
   public buildForm(): void {
-
-    console.log("buildForm");
+    
     this.configForm = this._fb.group({
       'apiHost': [Config.apiHost, [
           Validators.required
@@ -103,7 +99,7 @@ export class ConfigComponent implements OnInit {
         ]
       ],
     });
-
+    
     this.configForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
@@ -113,7 +109,6 @@ export class ConfigComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
 
-    console.log("onValueChanged");
     if (!this.configForm) { return; }
     const form = this.configForm;
 
@@ -131,7 +126,7 @@ export class ConfigComponent implements OnInit {
   }
 
   public addConfig(): void {
-    console.log("addConfig");
+    
     this.loading = true;
     this.config = this.configForm.value;
     this.setConfigurationSettings(this.config);
@@ -140,7 +135,6 @@ export class ConfigComponent implements OnInit {
 
   public getConfig() {
 
-    console.log("getConfig");
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result.config) {
@@ -158,7 +152,6 @@ export class ConfigComponent implements OnInit {
 
   public updateConfig(config: Config): void {
 
-    console.log("updateConfig");
     this.config._id = config._id;
     
     this._configService.updateConfigApi(this.config).subscribe(
@@ -185,7 +178,6 @@ export class ConfigComponent implements OnInit {
 
   public saveConfig(): void {
 
-    console.log("saveConfig");
     this._configService.saveConfigApi(this.config).subscribe(
       result => {
         if (!result) {
@@ -211,23 +203,20 @@ export class ConfigComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
-    console.log("setConfigurationSettings");
+    
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
   }
 
   //METODO PARA INICIALIZAR EL SISTEMA CON UN USUARIO
   public configUser() {
-    console.log("configUser");
     this.getUsers();
   }
 
   public getUsers(): void {
 
-    console.log("getUsers");
     this.loading = true;
 
-    console.log("get user config");
     this._userService.getUsers("", "config").subscribe(
       result => {
         if (!result.users) {

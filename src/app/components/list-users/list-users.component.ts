@@ -47,7 +47,6 @@ export class ListUsersComponent implements OnInit {
 
     this.loading = true;
 
-    console.log("get user list");
     this._userService.getUsers("","list").subscribe(
         result => {
 					if(!result.users) {

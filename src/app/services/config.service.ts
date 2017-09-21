@@ -14,19 +14,16 @@ export class ConfigService {
 	) { }
 
 	getConfigLocal() {
-		console.log("getConfigLocal");
 		return JSON.parse(localStorage.getItem("config"));
 	}
 
 	saveConfigLocal(config: Config) {
-		console.log("saveConfigLocal");
 		localStorage.removeItem('config');
 		localStorage.setItem('config', JSON.stringify(config));
 		return true;
 	}
 
 	getConfigApi() {
-		console.log("getConfigApi");
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -35,7 +32,6 @@ export class ConfigService {
 	}
 
 	saveConfigApi(config: Config) {
-		console.log("saveConfigApi");
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -44,7 +40,6 @@ export class ConfigService {
 	}
 
 	saveConfigBackup(config: Config) {
-		console.log("saveConfigBackup");
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -53,7 +48,6 @@ export class ConfigService {
 	}
 
 	updateConfigApi(config: Config) {
-		console.log("updateConfigApi");
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -62,7 +56,6 @@ export class ConfigService {
 	}
 
 	updateConfigBackup(config: Config) {
-		console.log("updateConfigBackup");
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -71,7 +64,6 @@ export class ConfigService {
 	}
 
 	updateConfigMail(config: Config) {
-		console.log("updateConfigMail");
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()

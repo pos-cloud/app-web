@@ -111,10 +111,10 @@ export class UpdateCategoryComponent implements OnInit {
   public saveChanges(): void {
     
     this.loading = true;
-    
+
     this._categoryService.updateCategory(this.category).subscribe(
       result => {
-        if (!this.category) {
+        if (!result.category) {
           this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
