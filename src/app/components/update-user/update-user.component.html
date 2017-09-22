@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title">Editar Usuario</h4>
+  <h4 class="modal-title" *ngIf="!readonly">Editar Usuario</h4>
+  <h4 class="modal-title" *ngIf="readonly">Usuario</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -16,7 +17,7 @@
         <div class="form-group col-md-12">
           <label for="name" class="control-label">Nombre:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+            <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
@@ -27,7 +28,7 @@
         <div class="form-group col-md-8">
           <label for="state" class="control-label">Habilitado</label>
           <select class="form-control" formControlName="state">
-            <option *ngFor="let state of states" [ngValue]="state">{{state}}</option>
+            <option *ngFor="let state of states" [ngValue]="state" [disabled]="readonly">{{state}}</option>
           </select>
           <div *ngIf="formErrors.state" class="alert alert-danger">
             {{ formErrors.state }}
@@ -35,7 +36,7 @@
         </div>
 				<div class="form-group col-md-4">
 					<label for="tokenExpiration" class="control-label">Minutos de sesión:</label>
-					<input type="text" class="form-control" formControlName="tokenExpiration" name="tokenExpiration" id="tokenExpiration"/>
+					<input type="text" class="form-control" formControlName="tokenExpiration" name="tokenExpiration" id="tokenExpiration" [readonly]="readonly"/>
 					<div *ngIf="formErrors.tokenExpiration" class="alert alert-danger">
 						{{ formErrors.tokenExpiration }}
 					</div>
@@ -45,7 +46,7 @@
         <div class="form-group col-md-12">
           <label for="employee" class="control-label">Empleado Asociado</label>
           <select class="form-control" formControlName="employee">
-            <option *ngFor="let employee of employees" [selected]="employee._id==user.employee._id" [value]="employee._id">{{employee.name}}</option>
+            <option *ngFor="let employee of employees" [selected]="employee._id==user.employee._id" [value]="employee._id" [disabled]="readonly">{{employee.name}}</option>
           </select>
           <div *ngIf="formErrors.employee" class="alert alert-danger">
             {{ formErrors.state }}
@@ -53,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" *ngIf="!readonly">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid || loading" >
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

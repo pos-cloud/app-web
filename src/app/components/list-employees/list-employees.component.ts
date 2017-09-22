@@ -83,7 +83,7 @@ export class ListEmployeesComponent implements OnInit {
   }
   
   public openModal(op: string, employee:Employee): void {
-
+    
     let modalRef;
     switch(op) {
       case 'view' :

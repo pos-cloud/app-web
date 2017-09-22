@@ -86,6 +86,11 @@ export class ListUsersComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view':
+        modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+        modalRef.componentInstance.user = user;
+        modalRef.componentInstance.readonly = true;
+        break;
       case 'add' :
         modalRef = this._modalService.open(AddUserComponent, { size: 'lg' }).result.then((result) => {
           this.getUsers();
@@ -94,8 +99,9 @@ export class ListUsersComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
           modalRef.componentInstance.user = user;
+          modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
               this.getUsers();

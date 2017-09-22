@@ -75,8 +75,9 @@ export class AddEmployeeComponent  implements OnInit {
 
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
-        if(!result.employeeTypes) {
-          this.addEmployeeTypeWaiter();
+        if (!result.employeeType) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
         } else {
           this.loading = false;
           this.employeeTypes = result.employeeTypes;
@@ -90,56 +91,6 @@ export class AddEmployeeComponent  implements OnInit {
     );
   }
 
-  public addEmployeeTypeWaiter() {
-
-    let employeeType: EmployeeType = new EmployeeType();
-    employeeType.description = "Mozo";
-    this.loading = true;
-    
-    this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
-      result => {
-        if (!result.employeeType) {
-          this.showMessage(result.message, "info", true);
-          this.loading = false;
-        } else {
-          employeeType = result.employeeType;
-          this.employeeTypes[0] = employeeType;
-          this.addEmployeeTypeSupervisor();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public addEmployeeTypeSupervisor() {
-
-    let employeeType: EmployeeType = new EmployeeType();
-    employeeType.description = "Supervisor";
-    this.loading = true;
-    
-    this._employeeTypeService.saveEmployeeType(employeeType).subscribe(
-      result => {
-        if (!result.employeeType) {
-          this.showMessage(result.message, "info", true);
-          this.loading = false;
-        } else {
-          employeeType = result.employeeType;
-          this.employeeTypes[1] = employeeType;
-          this.getLastEmployee();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-  
   public getLastEmployee(): void {  
 
     this.loading = true;

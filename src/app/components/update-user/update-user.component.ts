@@ -21,6 +21,7 @@ import { EmployeeService } from './../../services/employee.service';
 export class UpdateUserComponent implements OnInit {
 
   @Input() user: User;
+  @Input() readonly: boolean;
   public userForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -163,10 +164,11 @@ export class UpdateUserComponent implements OnInit {
    }
 
   public updateUser (): void {
-
-    this.loading = true;
-    this.user = this.userForm.value;
-    this.getEmployee();
+    if(!this.readonly) {
+      this.loading = true;
+      this.user = this.userForm.value;
+      this.getEmployee();
+    }
   }
 
   public getEmployee(): void {  
