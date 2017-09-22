@@ -46,7 +46,7 @@ export class TransactionTypeService {
 		return this._http.get(Config.apiURL + 'transaction-types/where="name":"Orden de Pedido"', {headers: headers}).map(res => res.json());
 	}
 
-	getTransactionByName(name: string) {
+	getTransactionTypeByName(name: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()

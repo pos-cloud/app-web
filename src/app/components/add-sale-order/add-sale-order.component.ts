@@ -165,8 +165,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
-    this.getTransactionTypeSaleOrder();
-
     this.getPrinters();
 
     if (this.posType === "resto") {
@@ -181,15 +179,13 @@ export class AddSaleOrderComponent implements OnInit {
       if (transactionId !== undefined) {
         this.getTransaction(transactionId);
       } else {
-        this.getLastTransaction();
+        this.getTransactionTypeSaleOrder();
       }
     }
 
     this.getPaymentMethods();
     this.buildFormPayment();
   }
-
-
 
   public getTransactionTypeSaleOrder(): void {
 
@@ -199,6 +195,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionTypes[0];
+          this.getLastSaleOrder();
         }
         this.loading = false;
       },
@@ -316,7 +313,6 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.turn = result.turns[0];
-          this.getLastTransaction();
         }
         this.loading = false;
       },
@@ -327,32 +323,20 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getLastTransaction(): void {
+  public getLastSaleOrder(): void {
 
     this.loading = true;
-
-    this._transactionService.getLastTransaction().subscribe(
+    
+    this._transactionService.getLastTransactionByType(this.transaction.type).subscribe(
       result => {
-        let number;
-
-        if (result.transactions) {
-          if (result.transactions[0] !== undefined) {
-            number = result.transactions[0].number + 1;
-          } else {
-            number = 1;
-          }
-        } else if (result.message = "No se encontraron pedidos") {
-          number = 1;
-        } else {
-          number = 0;
-        }
-
-        if (number != 0) {
-
-          this.transaction.number = number;
+        if (!result.transactions) {
+          this.transaction.origin = 0;
+          this.transaction.number = 1;
           this.addTransaction();
         } else {
-          this.showMessage("Ha ocurrido un error en obtener el último pedido", "danger", false);
+          this.transaction.origin = result.transactions[0].origin;
+          this.transaction.number = result.transactions[0].number + 1;
+          this.addTransaction();
         }
         this.loading = false;
       },
@@ -927,7 +911,7 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(): void {
 
     this.loading = true;
-    
+    console.log(this.movementOfArticle);
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {

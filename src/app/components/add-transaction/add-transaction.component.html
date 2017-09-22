@@ -32,7 +32,14 @@
             {{ formErrors.date }}
           </div>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-3">
+          <label for="origin" class="control-label">Origen:</label>
+          <input type="origin" class="form-control" formControlName="origin" name="origin" min="0" />
+          <div *ngIf="formErrors.origin" class="alert alert-danger">
+            {{ formErrors.origin }}
+          </div>
+        </div>
+        <div class="form-group col-md-3">
           <label for="number" class="control-label">Número:</label>
           <input type="number" class="form-control" formControlName="number" name="number" min="0"/>
           <div *ngIf="formErrors.number" class="alert alert-danger">

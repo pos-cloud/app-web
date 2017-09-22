@@ -3,6 +3,7 @@ import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Transaction, TransactionState } from './../models/transaction';
+import { TransactionType } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { Company } from './../models/company';
 import { UserService } from './user.service';
@@ -101,6 +102,15 @@ export class TransactionService {
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="origin":"' + origin + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
+	}
+
+	getLastTransactionByType(type: TransactionType) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		console.log(type);
+		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
   
 	getLastTransactionByTable(tableId: string) {

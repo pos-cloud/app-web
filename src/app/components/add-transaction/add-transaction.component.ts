@@ -43,6 +43,7 @@ export class AddTransactionComponent implements OnInit {
 
   public formErrors = {
     'date': '',
+    'origin': '',
     'number': '',
     'amount': '',
     'paymentMethod': '',
@@ -55,6 +56,9 @@ export class AddTransactionComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'date': {
+      'required': 'Este campo es requerido.'
+    },
+    'origin': {
       'required': 'Este campo es requerido.'
     },
     'number': {
@@ -90,7 +94,7 @@ export class AddTransactionComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getTransactionByName();
+    this.getTransactionTypeByName();
     this.getCompanies();
     this.getPaymentMethods();
     this.buildForm();
@@ -145,16 +149,41 @@ export class AddTransactionComponent implements OnInit {
     );
   }
 
-  public getTransactionByName(): void {
+  public getTransactionTypeByName(): void {
 
     this.loading = true;
 
-    this._transactionTypeService.getTransactionByName(this.type).subscribe(
+    this._transactionTypeService.getTransactionTypeByName(this.type).subscribe(
       result => {
         if (!result.transactionTypes) {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionTypes[0];
+          this.setValueForm();
+          this.getLastTransactionByType();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getLastTransactionByType(): void {
+
+    this.loading = true;
+    console.log(this.transaction.type._id);
+    this._transactionService.getLastTransactionByType(this.transaction.type).subscribe(
+      result => {
+        if (!result.transactions) {
+          this.transaction.origin = 1;
+          this.transaction.number = 1;
+          this.setValueForm();
+        } else {
+          this.transaction.origin = result.transactions[0].origin;
+          this.transaction.number = result.transactions[0].number + 1;
           this.setValueForm();
         }
         this.loading = false;
@@ -166,11 +195,12 @@ export class AddTransactionComponent implements OnInit {
     );
   }
 
-  public setValueForm() {
+  public setValueForm(): void {
     
     this.transactionForm.setValue({
       'company': this.transaction.company,
       'date': this.datePipe.transform(this.transaction.date, 'yyyy/MM/dd'),
+      'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
       'paymentMethod': this.transaction.paymentMethod,
@@ -186,6 +216,10 @@ export class AddTransactionComponent implements OnInit {
         ]
       ],
       'date': [this.datePipe.transform(this.transaction.date, 'yyyy/MM/dd'), [
+          Validators.required
+        ]
+      ],
+      'origin': [this.transaction.origin, [
           Validators.required
         ]
       ],
@@ -235,6 +269,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transaction.company = this.transactionForm.value.company;
     this.transaction.date = this.transactionForm.value.date;
+    this.transaction.origin = this.transactionForm.value.origin;
     this.transaction.number = this.transactionForm.value.number;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.paymentMethod = this.transactionForm.value.paymentMethod;
