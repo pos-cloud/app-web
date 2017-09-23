@@ -1,15 +1,22 @@
+//Paquetes Angular
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+//Paquetes de terceros
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
+//Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType, TransactionTypeState, CurrentAcount, TransactionTypeMovements } from './../../models/transaction-type';
 import { Company } from './../../models/company';
+import { MovementOfCash } from './../../models/movement-of-cash';
 
+//Services
 import { CompanyService } from './../../services/company.service';
 import { TransactionService } from './../../services/transaction.service';
+import { MovementOfCashService } from './../../services/movement-of-cash.services';
 
+//Componentes
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 
 @Component({
@@ -22,8 +29,9 @@ import { DeleteTransactionComponent } from './../../components/delete-transactio
 export class CurrentAccountComponent implements OnInit {
 
   public transactions: Transaction[];
-  public companySelectedId: String;
+  public companySelectedId: string;
   public companies: Company[];
+  public movementsOfCashes: MovementOfCash[];
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = "";
   public userType: string;
@@ -36,12 +44,14 @@ export class CurrentAccountComponent implements OnInit {
 
   constructor(
     public _transactionService: TransactionService,
+    public _movementOfCashService: MovementOfCashService,
     public _companyService: CompanyService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) { 
     this.companies = new Array();
+    this.movementsOfCashes = new Array();
   }
 
   ngOnInit(): void {
@@ -89,9 +99,10 @@ export class CurrentAccountComponent implements OnInit {
             this.transactions = new Array();
             this.balance = 0;
           } else {
+            this.transactions = result.transactions;
             this.hideMessage();
             this.loading = false
-            this.filterTransactions(result.transactions);
+            this.getMovementOfCurrentAccountByCompany();
             this.areTransactionsEmpty = false;
           }
         },
@@ -108,18 +119,46 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public filterTransactions(transactions: Transaction[]): void {
+  public getMovementOfCurrentAccountByCompany(): void {
+
+    this.loading = true;
+
+    if (this.companySelectedId) {
+
+      this._movementOfCashService.getMovementOfCurrentAccountByCompany(this.companySelectedId).subscribe(
+        result => {
+          if (!result.movementsOfCashes) {
+            this.hideMessage();
+          } else {
+            this.hideMessage();
+            this.filterTransactions();
+            this.movementsOfCashes = result.movementsOfCashes;
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
+        }
+      );
+    } else {
+      this.showMessage("Debe seleccionar una empresa.", "info", true);
+      this.loading = false;
+    }
+  }
+
+  public filterTransactions(): void {
 
     this.transactions = new Array();
     this.balance = 0;
 
-    for (let transaction of transactions) {
+    for (let transaction of this.transactions) {
 
       if (transaction.state === TransactionState.Closed &&
         transaction.company._id === this.companySelectedId &&
         transaction.type.currentAccount !== CurrentAcount.No) {
         if (transaction.type.currentAccount === CurrentAcount.Yes &&
-          transaction.paymentMethod.name === "Cuenta Corriente") {
+          this.getPaymentMethodName(transaction) === "Cuenta Corriente") {
           this.transactions.push(transaction);
           if (transaction.type.movement === TransactionTypeMovements.Outflows) {
             this.balance -= transaction.totalPrice;
@@ -140,6 +179,19 @@ export class CurrentAccountComponent implements OnInit {
         //No se toma en cuenta el documento
       }
     }
+  }
+
+  public getPaymentMethodName(transaction): string {
+
+    let name: string = "";
+
+    for (let movementOfCash of this.movementsOfCashes) {
+      if(movementOfCash.transaction._id === transaction._id){
+        name = movementOfCash.type.name;
+      }
+    }
+
+    return name;
   }
 
   public orderBy(term: string, property?: string): void {

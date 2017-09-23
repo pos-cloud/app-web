@@ -21,7 +21,6 @@ export class Transaction {
 	public totalPrice: number = 0.00;
 	public observation: string;
 	public type: TransactionType;
-	public paymentMethod: PaymentMethod;
 	public company: Company;
 	public cashBox: CashBox;
 	public table: Table;

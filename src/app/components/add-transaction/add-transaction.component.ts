@@ -4,22 +4,23 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
-import { PaymentMethod } from './../../models/payment-method';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 
 //Services
-import { PaymentMethodService } from './../../services/payment-method.service';
 import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { CompanyService } from './../../services/company.service';
 
 //Pipes
 import { DatePipe, DecimalPipe } from '@angular/common'; 
+
+//Componentes
+import { AddMovementOfCashComponent } from './../../components/add-movement-of-cash/add-movement-of-cash.component';
 
 @Component({
   selector: 'app-add-transaction',
@@ -31,7 +32,6 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 export class AddTransactionComponent implements OnInit {
 
   public transactionForm: FormGroup;
-  public paymentMethods: PaymentMethod[];
   public companies: Company[];
   public transaction: Transaction;
   @Input() type: string;
@@ -73,20 +73,18 @@ export class AddTransactionComponent implements OnInit {
   };
 
   constructor(
-    public _paymentMethodService: PaymentMethodService,
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _companyService: CompanyService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _modalService: NgbModal
   ) { 
     this.transaction = new Transaction();
     this.transaction.type = new TransactionType();
     this.transaction.company = new Company();
-    this.transaction.paymentMethod = new PaymentMethod();
-    this.paymentMethods = new Array();
     this.companies = new Array();
   }
 
@@ -96,7 +94,6 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.getTransactionTypeByName();
     this.getCompanies();
-    this.getPaymentMethods();
     this.buildForm();
   }
 
@@ -116,28 +113,6 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.companies = result.companies;
           this.transaction.company = result.companies[0];
-          this.setValueForm();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getPaymentMethods(): void {
-
-    this.loading = true;
-
-    this._paymentMethodService.getPaymentMethods().subscribe(
-      result => {
-        if (!result.paymentMethods) {
-          this.showMessage(result.message, "info", true);
-        } else {
-          this.paymentMethods = result.paymentMethods;
-          this.transaction.paymentMethod = result.paymentMethods[0];
           this.setValueForm();
         }
         this.loading = false;
@@ -174,7 +149,7 @@ export class AddTransactionComponent implements OnInit {
   public getLastTransactionByType(): void {
 
     this.loading = true;
-    console.log(this.transaction.type._id);
+    
     this._transactionService.getLastTransactionByType(this.transaction.type).subscribe(
       result => {
         if (!result.transactions) {
@@ -203,7 +178,6 @@ export class AddTransactionComponent implements OnInit {
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
-      'paymentMethod': this.transaction.paymentMethod,
       'observation': ''
     });
   }
@@ -228,10 +202,6 @@ export class AddTransactionComponent implements OnInit {
         ]
       ],
       'totalPrice': [this.transaction.totalPrice, [
-          Validators.required
-        ]
-      ],
-      'paymentMethod': [this.transaction.paymentMethod, [
           Validators.required
         ]
       ],
@@ -272,7 +242,6 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.origin = this.transactionForm.value.origin;
     this.transaction.number = this.transactionForm.value.number;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-    this.transaction.paymentMethod = this.transactionForm.value.paymentMethod;
     this.transaction.observation = this.transactionForm.value.observation;
     this.transaction.state = TransactionState.Closed;
 
@@ -291,7 +260,7 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha añadido con éxito.", "success", true);
-          this.activeModal.close('transaction');
+          this.activeModal.close(this.transaction);
         }
         this.loading = false;
       },

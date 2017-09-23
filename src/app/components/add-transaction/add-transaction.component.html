@@ -48,32 +48,9 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-6">
-          <label for="paymentMethod" class="control-label">Medio de pago</label>
-          <select class="form-control" formControlName="paymentMethod" name="paymentMethod">
-              <option *ngFor="let paymentMethod of paymentMethods"
-                      [selected]="paymentMethod._id==transaction.paymentMethod._id" 
-                      [ngValue]="paymentMethod">
-                    {{paymentMethod.name}}
-              </option>
-            </select>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="totalPrice" class="control-label">Importe:</label>
-          <div class="input-group">
-            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" />
-          </div>
-          <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
-            {{ formErrors.totalPrice }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
         <div class="form-group col-md-12">
           <label for="observation" class="control-label">Observación:</label>
-          <div class="input-group">
-            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
-          </div>
+          <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
         </div>
       </div>
     </div>

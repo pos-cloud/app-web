@@ -32,6 +32,7 @@ import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
 import { PaymentMethodService } from './services/payment-method.service';
 import { MailService } from './services/send-mail.service';
+import { MovementOfCashService } from './services/movement-of-cash.services';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -86,6 +87,7 @@ import { AddPrinterComponent } from './components/add-printer/add-printer.compon
 import { DeletePrinterComponent } from './components/delete-printer/delete-printer.component';
 import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
+import { AddMovementOfCashComponent } from './components/add-movement-of-cash/add-movement-of-cash.component';
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -162,6 +164,7 @@ import { SendMailComponent } from './components/send-mail/send-mail.component';
     DeletePrinterComponent,
     UpdatePrinterComponent,
     ListPrintersComponent,
+    AddMovementOfCashComponent,
     ImportComponent,
     ConfigComponent,
     ConfigBackupComponent,
@@ -169,6 +172,9 @@ import { SendMailComponent } from './components/send-mail/send-mail.component';
     CurrentAccountComponent,
     SendMailComponent,
     SimpleTinyComponent
+  ],
+  entryComponents: [
+    AddMovementOfCashComponent
   ],
   imports: [
     BrowserModule,
@@ -202,6 +208,7 @@ import { SendMailComponent } from './components/send-mail/send-mail.component';
     ImportService,
     ConfigService,
     PaymentMethodService,
+    MovementOfCashService,
     AuthGuard,
     MailService
   ],

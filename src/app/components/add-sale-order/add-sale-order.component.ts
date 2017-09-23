@@ -1,4 +1,4 @@
-//Angular
+//Paquetes Angular
 import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,7 +17,6 @@ import { Category } from './../../models/category';
 import { Room } from './../../models/room';
 import { Print } from './../../models/print';
 import { Printer, PrinterType } from './../../models/printer';
-import { PaymentMethod } from './../../models/payment-method';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -27,7 +26,6 @@ import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
 import { PrinterService } from './../../services/printer.service';
-import { PaymentMethodService } from './../../services/payment-method.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
@@ -48,8 +46,6 @@ export class AddSaleOrderComponent implements OnInit {
   public alertMessage: string = "";
   public movementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
-  public paymentMethods: PaymentMethod[];
-  public paymentMethodSelected: PaymentMethod;
   public printers: Printer[];
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public amountOfItemForm: FormGroup;
@@ -113,7 +109,6 @@ export class AddSaleOrderComponent implements OnInit {
   public formErrorsPayment = {
     'amount': '',
     'cashChange': '',
-    'paymentMethod': '',
     'totalPrice': ''
   };
 
@@ -123,9 +118,6 @@ export class AddSaleOrderComponent implements OnInit {
     },
     'cashChange': {
       'required':       'Este campo es requerido.'
-    },
-    'paymentMethod': {
-      'required': 'Este campo es requerido.'
     },
     'totalPrice': {
       'required': 'Este campo es requerido.'
@@ -140,7 +132,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _tableService: TableService,
     public _turnService: TurnService,
     public _printService: PrintService,
-    public _paymentMethodService: PaymentMethodService,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -148,7 +139,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _printerService: PrinterService
   ) {
     this.transaction = new Transaction();
-    this.transaction.paymentMethod = null;
     // this.transaction.employee = new Employee();
     this.movementOfArticle = new MovementOfArticle();
     this.movementsOfArticles = new Array();
@@ -182,8 +172,6 @@ export class AddSaleOrderComponent implements OnInit {
         this.getTransactionTypeSaleOrder();
       }
     }
-
-    this.getPaymentMethods();
     this.buildFormPayment();
   }
 
@@ -442,10 +430,6 @@ export class AddSaleOrderComponent implements OnInit {
       'cashChange': [this.paymentChange, [
            Validators.required
         ]
-      ],
-      'paymentMethod': [this.transaction.paymentMethod, [
-          Validators.required
-        ]
       ]
     });
 
@@ -698,8 +682,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.paymentForm.setValue({
               'totalPrice': parseFloat("" + this.transaction.totalPrice).toFixed(2),
               'amount': parseFloat("" + this.transaction.totalPrice).toFixed(2),
-              'cashChange': parseFloat(this.paymentChange).toFixed(2),
-              'paymentMethod': this.transaction.paymentMethod
+              'cashChange': parseFloat(this.paymentChange).toFixed(2)
             });
             
             modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
@@ -744,34 +727,6 @@ export class AddSaleOrderComponent implements OnInit {
           break;
         default : ;
     };
-  }
-
-  public getPaymentMethods(): void {
-    
-    this.loading = true;
-
-    this._paymentMethodService.getPaymentMethods().subscribe(
-      result => {
-        if (!result.paymentMethods){
-          this.showMessage(result.message, "info", true);
-        } else {  
-          this.paymentMethodSelected = result.paymentMethods[0];
-          this.paymentMethods = result.paymentMethods;
-          this.transaction.paymentMethod = this.paymentMethods[0];
-          this.paymentForm.setValue({
-            'totalPrice': parseFloat("" + this.transaction.totalPrice).toFixed(2),
-            'amount': parseFloat("" + this.transaction.totalPrice).toFixed(2),
-            'cashChange': parseFloat(this.paymentChange).toFixed(2),
-            'paymentMethod': this.transaction.paymentMethod._id
-          });
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public countPrinters(): number {
@@ -842,7 +797,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
     this.transaction.cashChange = this.paymentForm.value.cashChange;
-    this.transaction.paymentMethod = this.paymentForm.value.paymentMethod;
 
     this.updateTransaction();
     this.typeOfOperationToPrint = 'charge';
@@ -911,7 +865,7 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(): void {
 
     this.loading = true;
-    console.log(this.movementOfArticle);
+    
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
@@ -1070,7 +1024,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          // this.openModal("errorMessage");
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1135,7 +1089,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          // this.openModal("errorMessage");
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1195,7 +1149,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          // this.openModal("errorMessage");
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );
@@ -1250,7 +1204,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          // this.openModal("errorMessage");
+          this.openModal("errorMessage");
           this.loading = false;
         }
       );

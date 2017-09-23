@@ -299,17 +299,6 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-6">
-          <label for="paymentMethod" class="control-label">Medio de Pago</label>
-          <select class="form-control" formControlName="paymentMethod">
-								<option *ngFor="let paymentMethod of paymentMethods" [selected]="paymentMethod._id==paymentMethodSelected._id" [value]="paymentMethod._id">{{paymentMethod.name}}</option>
-							</select>
-          <div *ngIf="formErrors.paymentMethod" class="alert alert-danger">
-            {{ formErrors.paymentMethod }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
         <div class="form-group col-md-12">
           <label for="amount" class="control-label">Importe de cobro:</label>
           <div class="input-group">

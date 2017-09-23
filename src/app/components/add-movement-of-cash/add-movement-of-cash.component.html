@@ -1,0 +1,44 @@
+<div class="modal-header">
+  <h4 class="modal-title">Método de pago</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+    <form [formGroup]="movementOfCashForm" #formAddMovementOfCash="ngForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="paymentMethod" class="control-label">Medio de pago:</label>
+            <select class="form-control" formControlName="paymentMethod" name="paymentMethod">
+                <option *ngFor="let paymentMethod of paymentMethods"
+                        [selected]="paymentMethod._id==movementOfCash.type._id" 
+                        [ngValue]="paymentMethod">
+                      {{paymentMethod.name}}
+                </option>
+              </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="totalPrice" class="control-label">Importe:</label>
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" [value]="movementOfCash.totalPrice"  [focus]="focusEvent"/>
+            <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
+              {{ formErrors.totalPrice }}
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!movementOfCashForm.valid || loading" >
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

@@ -32,7 +32,7 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + "transactions", { headers: headers }).map (res => res.json());
 	}
 
-	getTransactionsByCompany(id: String) {
+	getTransactionsByCompany(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -109,7 +109,6 @@ export class TransactionService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		console.log(type);
 		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
   

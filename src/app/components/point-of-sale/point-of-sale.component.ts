@@ -15,6 +15,7 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { PaymentMethodService } from './../../services/payment-method.service';
 
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
+import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -321,7 +322,7 @@ export class PointOfSaleComponent implements OnInit {
     this.openModal('transaction', type);
   }
 
-  public openModal(op: string, typeTransaction?: string): void {
+  public openModal(op: string, typeTransaction?: string, transaction?: Transaction): void {
 
     let modalRef;
 
@@ -330,8 +331,19 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
         modalRef.componentInstance.type = typeTransaction;
         modalRef.result.then((result) => {
-          if (result === "transaction") {
-            this.showMessage("La transacción se ha añadido con éxito.", "success", true);
+          if (result) {
+            this.openModal('movement-of-cash', typeTransaction, result);
+          }
+        }, (reason) => {
+
+        });
+        break;
+      case 'movement-of-cash':
+        modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.result.then((result) => {
+          if (result === "add-movement-of-cash") {
+            this.showMessage(typeTransaction + " realizado con éxito","success",true);
           }
         }, (reason) => {
 
