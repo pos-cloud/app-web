@@ -17,7 +17,6 @@ export class Transaction {
 	public state: TransactionState = TransactionState.Open;
 	public subtotalPrice: number = 0.00;
 	public discount: number = 0.00;
-	public cashChange: number = 0.00;
 	public totalPrice: number = 0.00;
 	public observation: string;
 	public type: TransactionType;

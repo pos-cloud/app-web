@@ -330,13 +330,15 @@ export class PointOfSaleComponent implements OnInit {
       case 'transaction':
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
         modalRef.componentInstance.type = typeTransaction;
-        modalRef.result.then((result) => {
-          if (result) {
-            this.openModal('movement-of-cash', typeTransaction, result);
-          }
-        }, (reason) => {
+        modalRef.result.then(
+          (result) => {
+            if (typeof(result) === "object") {
+              this.openModal('movement-of-cash', typeTransaction, result);
+            }
+          }, (reason) => {
 
-        });
+          }
+        );
         break;
       case 'movement-of-cash':
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });

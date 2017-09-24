@@ -72,8 +72,6 @@ export class CurrentAccountComponent implements OnInit {
         } else {
           this.hideMessage();
           this.companies = result.companies;
-          this.companySelectedId = this.companies[0]._id;
-          this.getTransactionsByCompany();
         }
         this.loading = false;
       },
@@ -87,8 +85,9 @@ export class CurrentAccountComponent implements OnInit {
   public getTransactionsByCompany(): void {
 
     this.loading = true;
+    
+    if (this.companySelectedId !== "undefined") {
 
-    if (this.companySelectedId) {
       this._transactionService.getTransactionsByCompany(this.companySelectedId).subscribe(
         result => {
           if (!result.transactions) {
@@ -131,8 +130,8 @@ export class CurrentAccountComponent implements OnInit {
             this.hideMessage();
           } else {
             this.hideMessage();
-            this.filterTransactions();
             this.movementsOfCashes = result.movementsOfCashes;
+            this.filterTransactions();
           }
           this.loading = false;
         },
@@ -148,12 +147,13 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public filterTransactions(): void {
-
+    
+    let transactions: Transaction[] = this.transactions;
     this.transactions = new Array();
     this.balance = 0;
 
-    for (let transaction of this.transactions) {
-
+    for (let transaction of transactions) {
+      
       if (transaction.state === TransactionState.Closed &&
         transaction.company._id === this.companySelectedId &&
         transaction.type.currentAccount !== CurrentAcount.No) {
@@ -182,7 +182,7 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public getPaymentMethodName(transaction): string {
-
+    
     let name: string = "";
 
     for (let movementOfCash of this.movementsOfCashes) {
@@ -190,7 +190,7 @@ export class CurrentAccountComponent implements OnInit {
         name = movementOfCash.type.name;
       }
     }
-
+    
     return name;
   }
 

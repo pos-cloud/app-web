@@ -29,6 +29,7 @@ import { PrinterService } from './../../services/printer.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
+import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 
 //Pipes
 import { DatePipe, DecimalPipe } from '@angular/common'; 
@@ -62,14 +63,12 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('content') content:ElementRef;
   @ViewChild('contentCancelOrder') contentCancelOrder:ElementRef;
   @ViewChild('contentDiscount') contentDiscount:ElementRef;
-  @ViewChild('contentPayment') contentPayment: ElementRef;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
   public discountPorcent: number = 0.00;
   public discountAmount: number = 0.00;
   public isNewItem: boolean;
   public paymentAmount: number = 0.00;
-  public paymentChange: string = '0.00';
   public typeOfOperationToPrint: string;
   public kitchenArticlesToPrint: MovementOfArticle[];
   public barArticlesToPrint: MovementOfArticle[];
@@ -103,24 +102,6 @@ export class AddSaleOrderComponent implements OnInit {
     },
     'porcent': {
       'required':       'Este campo es requerido.'
-    }
-  };
-
-  public formErrorsPayment = {
-    'amount': '',
-    'cashChange': '',
-    'totalPrice': ''
-  };
-
-  public validationMessagesPayment = {
-    'amount': {
-      'required':       'Este campo es requerido.'
-    },
-    'cashChange': {
-      'required':       'Este campo es requerido.'
-    },
-    'totalPrice': {
-      'required': 'Este campo es requerido.'
     }
   };
 
@@ -172,11 +153,10 @@ export class AddSaleOrderComponent implements OnInit {
         this.getTransactionTypeSaleOrder();
       }
     }
-    this.buildFormPayment();
   }
 
   public getTransactionTypeSaleOrder(): void {
-
+    
     this._transactionTypeService.getTransactionTypeSaleOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
@@ -301,6 +281,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.turn = result.turns[0];
+          this.getTransactionTypeSaleOrder();
         }
         this.loading = false;
       },
@@ -312,7 +293,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getLastSaleOrder(): void {
-
+    
     this.loading = true;
     
     this._transactionService.getLastTransactionByType(this.transaction.type).subscribe(
@@ -414,49 +395,6 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     }
-  }
-
-  public buildFormPayment(): void {
-
-    this.paymentForm = this._fb.group({
-      'totalPrice': [this.transaction.totalPrice, [
-           Validators.required
-        ]
-      ],
-      'amount': [this.paymentAmount, [
-           Validators.required
-        ]
-      ],
-      'cashChange': [this.paymentChange, [
-           Validators.required
-        ]
-      ]
-    });
-
-    this.paymentForm.valueChanges
-      .subscribe(data => this.onValueChangedPayment(data));
-
-    this.onValueChangedPayment();
-  }
-
-  public onValueChangedPayment(data?: any): void {
-
-    if (!this.paymentForm) { return; }
-    const form = this.paymentForm;
-
-    for (const field in this.formErrorsPayment) {
-      this.formErrorsPayment[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessagesPayment[field];
-        for (const key in control.errors) {
-          this.formErrorsPayment[field] += messages[key] + ' ';
-        }
-      }
-    }
-    
-    this.paymentChange = (this.paymentForm.value.amount -this.paymentForm.value.totalPrice).toFixed(2);
   }
 
   public addTransaction(): void {
@@ -678,20 +616,16 @@ export class AddSaleOrderComponent implements OnInit {
 
           this.typeOfOperationToPrint = "charge";
           if(this.movementsOfArticles.length !== 0) {
-            
-            this.paymentForm.setValue({
-              'totalPrice': parseFloat("" + this.transaction.totalPrice).toFixed(2),
-              'amount': parseFloat("" + this.transaction.totalPrice).toFixed(2),
-              'cashChange': parseFloat(this.paymentChange).toFixed(2)
-            });
-            
-            modalRef = this._modalService.open(this.contentPayment, { size: 'lg' }).result.then((result) => {
-              if (result === "charge") {
+            modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+            modalRef.componentInstance.transaction = this.transaction;
+            modalRef.result.then((result) => {
+              if (result === "add-movement-of-cash") {
                 this.openModal('printers');
               }
             }, (reason) => {
-
+    
             });
+            break;
           } else {
             this.showMessage("No existen artículos en el pedido.", "info", true);
             this.loading = false;
@@ -796,7 +730,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.endDate = new Date();
     this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
-    this.transaction.cashChange = this.paymentForm.value.cashChange;
 
     this.updateTransaction();
     this.typeOfOperationToPrint = 'charge';
@@ -1066,8 +999,8 @@ export class AddSaleOrderComponent implements OnInit {
         'Subtotal:				 ' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '\n' +
         'Descuento:				-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '\n' +
         'Total:					 '+ decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '\n' +
-          'Su pago:					 ' + decimalPipe.transform(parseFloat("" + this.transaction.cashChange) - parseFloat("" + this.transaction.totalPrice), '1.2-2') + '\n' +
-        'Su vuelto:					 '+ decimalPipe.transform(this.transaction.cashChange, '1.2-2') + '\n\n' +
+        // 'Su pago:					 ' + decimalPipe.transform(parseFloat("" + this.transaction.cashChange) - parseFloat("" + this.transaction.totalPrice), '1.2-2') + '\n' +
+        // 'Su vuelto:					 '+ decimalPipe.transform(this.transaction.cashChange, '1.2-2') + '\n\n' +
         'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
         '----Gracias por su visita.----\n\n\n';
 

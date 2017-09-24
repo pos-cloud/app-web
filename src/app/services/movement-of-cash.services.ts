@@ -75,6 +75,6 @@ export class MovementOfCashService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		return this._http.get(Config.apiURL + 'movements-of-cashes-by-company/where="company":"' + companyId + '"', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + "movements-of-cashes-by-company/" + companyId, { headers: headers }).map(res => res.json());
 	}
 }

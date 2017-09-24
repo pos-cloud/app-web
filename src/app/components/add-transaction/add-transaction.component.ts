@@ -33,7 +33,7 @@ export class AddTransactionComponent implements OnInit {
 
   public transactionForm: FormGroup;
   public companies: Company[];
-  public transaction: Transaction;
+  @Input() transaction: Transaction;
   @Input() type: string;
   public alertMessage: string = "";
   public userType: string;
@@ -82,9 +82,6 @@ export class AddTransactionComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) { 
-    this.transaction = new Transaction();
-    this.transaction.type = new TransactionType();
-    this.transaction.company = new Company();
     this.companies = new Array();
   }
 
@@ -92,7 +89,14 @@ export class AddTransactionComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getTransactionTypeByName();
+    if(!this.transaction) {
+      this.transaction = new Transaction();
+      this.transaction.type = new TransactionType();
+      this.transaction.company = null;
+      this.getTransactionTypeByName();
+    } else {
+
+    }
     this.getCompanies();
     this.buildForm();
   }
@@ -112,7 +116,6 @@ export class AddTransactionComponent implements OnInit {
           this.companies = null;
         } else {
           this.companies = result.companies;
-          this.transaction.company = result.companies[0];
           this.setValueForm();
         }
         this.loading = false;
@@ -243,7 +246,7 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.number = this.transactionForm.value.number;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.observation = this.transactionForm.value.observation;
-    this.transaction.state = TransactionState.Closed;
+    this.transaction.state = TransactionState.Pending;
 
     this.saveTransaction();
   }

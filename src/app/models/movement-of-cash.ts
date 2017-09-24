@@ -8,6 +8,7 @@ export class MovementOfCash {
     public expirationDate: Date = new Date();
     public state: MovementOfCashState = MovementOfCashState.Pending;
     public totalPrice: number = 0.00;
+	public cashChange: number = 0.00;
     public observation: string;
     public type: PaymentMethod;
     public transaction: Transaction;

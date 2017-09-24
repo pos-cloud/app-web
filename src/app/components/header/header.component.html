@@ -8,44 +8,51 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['inicio']" [routerLinkActive]="['active']">Inicio</a>
+      <li class="nav-item" ngbDropdown>
+        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">POS</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['pos','resto']">Resto</button>
+          <button class="dropdown-item" [routerLink]="['pos','mostrador']">Mostrador</button>
+          <button class="dropdown-item" [routerLink]="['pos','delivery']">Delivery</button>
+        </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</a>
+      <li class="nav-item" ngbDropdown *ngIf="identity">
+        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Productos</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['admin','productos']">Productos</button>
+          <button class="dropdown-item" [routerLink]="['admin','marcas']">Marcas</button>
+          <button class="dropdown-item" [routerLink]="['admin','rubros']">Categorías</button>
+        </div>
+      </li>
+      <li class="nav-item" ngbDropdown *ngIf="identity">
+        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Empresas</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['admin','empresas']">Clientes</button>
+          <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']">Cuentas Corrientes</button>
+        </div>
       </li>
       <li class="nav-item">
         <a class="nav-link" *ngIf="identity" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</a>
+      <li class="nav-item" ngbDropdown *ngIf="identity">
+        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Resto</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['admin','mesas']">Mesas</button>
+          <button class="dropdown-item" [routerLink]="['admin','salones']">Salones</button>
+        </div>
       </li>
       <li class="nav-item">
         <a class="nav-link" *ngIf="identity" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active']">Ventas</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','marcas']" [routerLinkActive]="['active']">Marcas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" *ngIf="identity" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','empresas']" [routerLinkActive]="['active']">Clientes</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','cuentas-corrientes']" [routerLinkActive]="['active']">Cuentas Corrientes</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','impresoras']" [routerLinkActive]="['active']">Impresoras</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','configbackup']" [routerLinkActive]="['active']">Configuracion</a>
+      <li class="nav-item" ngbDropdown *ngIf="identity">
+        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Configuración</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['admin','configuraciones']">Configuración</button>
+          <button class="dropdown-item" [routerLink]="['admin','impresoras']">Impresoras</button>
+        </div>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">

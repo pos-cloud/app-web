@@ -75,7 +75,7 @@ export class AddEmployeeComponent  implements OnInit {
 
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
-        if (!result.employeeType) {
+        if (!result.employeeTypes) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
@@ -94,7 +94,7 @@ export class AddEmployeeComponent  implements OnInit {
   public getLastEmployee(): void {  
 
     this.loading = true;
-    
+
     this._employeeService.getLastEmployee().subscribe(
         result => {
           let code = 1;

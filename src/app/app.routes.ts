@@ -107,7 +107,7 @@ const _routes: Routes = [
   { path: 'admin/eliminar-impresora', component: DeletePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/import', component: ImportComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/config', component: ConfigComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/configbackup', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/configuraciones', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/cuentas-corrientes', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/send-mail', component: SendMailComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'pos', component: PointOfSaleComponent },

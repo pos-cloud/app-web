@@ -17,7 +17,6 @@
           <label for="company" class="control-label">Cliente</label>
           <select class="form-control" formControlName="company" name="company">
               <option *ngFor="let company of companies"
-                      [selected]="company._id==transaction.company._id" 
                       [ngValue]="company">
                     {{company.name}}
               </option>
@@ -49,6 +48,18 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="totalPrice" class="control-label">Importe:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01"/>
+          </div>
+          <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
+            {{ formErrors.totalPrice }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="observation" class="control-label">Observación:</label>
           <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
         </div>
@@ -63,4 +74,5 @@
       </button>
     </div>
   </form>
+  {{transactionForm.value|json}}
 </section>

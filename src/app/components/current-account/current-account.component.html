@@ -18,8 +18,8 @@
       </div>
       <div class="row">
         <div class="form-group col-md-6 offset-md-3">
-          <label for="company" class="control-label">Selecciona una empresa:</label>
           <select class="form-control" [(ngModel)]="companySelectedId" (change)="getTransactionsByCompany()">
+              <option [value]="undefined">Selecciona una empresa</option>
               <option *ngFor="let company of companies" [value]="company._id">{{company.name}}</option>
           </select>
         </div>
