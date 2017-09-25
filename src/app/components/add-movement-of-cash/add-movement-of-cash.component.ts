@@ -42,8 +42,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'totalPrice': {
-      'required': 'Este campo es requerido.',
-      'min':      'No el importe de pago no puede ser menor al importe de la venta.'
+      'required': 'Este campo es requerido.'
     },
     'cashChange': {
     },
@@ -106,8 +105,7 @@ export class AddMovementOfCashComponent implements OnInit {
         ]
       ],
       'totalPrice': [this.movementOfCash.totalPrice, [
-          Validators.required,
-          Validators.min(this.transaction.totalPrice)
+          Validators.required
         ]
       ],
       'cashChange': [this.paymentChange, [

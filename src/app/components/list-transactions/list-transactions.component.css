@@ -3,6 +3,10 @@
       height:80vh;
 }
 
+.card-header {
+      color: white;
+}
+
 .btn {
       cursor: pointer;
 }

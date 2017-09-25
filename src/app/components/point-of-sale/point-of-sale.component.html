@@ -33,7 +33,7 @@
 <!-- POS MOSTRADOR -->
 <section class="container-fluid" *ngIf="posType=='mostrador'">
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary card-inverse">Pendientes
+    <div class="card-header bg-primary">Pendientes
       <div class="pull-right">
         <div class="btn-group" ngbDropdown>
           <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">Nuevo</button>
@@ -102,22 +102,22 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary card-inverse">
+    <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-4 offset-md-4">
           <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
           </pagination-controls>
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
         Mostrar
         <div class="form-group col-md-1">
           <select class="form-control" [(ngModel)]="itemsPerPage">
-              <option [value]="5" >5</option>
-              <option [value]="10">10</option>
-              <option [value]="15">15</option>
-              <option [value]="20">20</option>
-              <option [value]="50">50</option>
-              <option [value]="100">100</option>
+              <option [value]="5">Mostrar 5 ítems</option>
+              <option [value]="10">Mostrar 10 ítems</option>
+              <option [value]="15">Mostrar 15 ítems</option>
+              <option [value]="20">Mostrar 20 ítems</option>
+              <option [value]="50">Mostrar 50 ítems</option>
+              <option [value]="100">Mostrar 100 ítems</option>
             </select>
         </div>
         ítems
