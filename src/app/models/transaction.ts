@@ -31,6 +31,8 @@ export class Transaction {
 
 export enum TransactionState {
 	Open = <any> "Abierto",
+	Delivered = <any> "Entregado",
+	Sent = <any> "Enviado",
 	Canceled = <any> "Anulado",
 	Closed = <any> "Cerrado",
 	Pending = <any> "Pendiente"

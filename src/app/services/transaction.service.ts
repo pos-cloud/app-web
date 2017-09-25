@@ -77,9 +77,8 @@ export class TransactionService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		console.log('transactions/where="$or":[{"state":"' + TransactionState.Pending + '"},{"state":"' + TransactionState.Open + '"}]');
 		return this._http.get(Config.apiURL + 
-			'transactions/where="$or":[{"state":"' + TransactionState.Pending + '"},{"state":"' + TransactionState.Open + '"}]', { headers: headers }).map(res => res.json());
+			'transactions/where="operation_type":{"$ne": "'+TransactionState.Closed+'"}', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByEmployee(employeeId: string, date: string) {
