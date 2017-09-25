@@ -4,7 +4,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBox } from './../../models/cash-box';
 import { Room } from './../../models/room';
-import { Transaction } from './../../models/transaction';
+import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType, TransactionTypeState, TransactionTypeMovements, CurrentAcount } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
@@ -322,13 +322,14 @@ export class PointOfSaleComponent implements OnInit {
     this.openModal('transaction', type);
   }
 
-  public openModal(op: string, typeTransaction?: string, transaction?: Transaction): void {
+  public openModal(op: string, typeTransaction?: string, transaction: Transaction = undefined): void {
 
     let modalRef;
 
     switch (op) {
       case 'transaction':
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.type = typeTransaction;
         modalRef.result.then(
           (result) => {
@@ -345,7 +346,8 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result === "add-movement-of-cash") {
-            this.showMessage(typeTransaction + " realizado con éxito","success",true);
+            transaction.state = TransactionState.Closed;
+            this.updateTransaction(transaction);
           }
         }, (reason) => {
 
@@ -355,8 +357,34 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public updateTransaction(transactionId: string): void {
-    this._router.navigate(['/pos/mostrador/editar-pedido/' + transactionId]);
+  public openTransaction(transaction: Transaction): void {
+
+    if(transaction.type.name === "Orden de Pedido") {
+      this._router.navigate(['/pos/mostrador/editar-pedido/' + transaction._id]);
+    } else {
+      this.openModal('transaction', transaction.type.name, transaction);
+    }   
+  }
+
+  public updateTransaction(transaction: Transaction): void {
+    
+    this.loading = true;
+    
+    this._transactionService.updateTransaction(transaction).subscribe(
+      result => {
+        if (!result.transaction) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.showMessage("La transacción se ha actualizado con éxito.", "success", true);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public changeRoom(room: Room): void {

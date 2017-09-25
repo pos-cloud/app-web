@@ -1,3 +1,4 @@
+<!-- POS RESTO -->
 <section class="container-fluid" *ngIf="posType=='resto'">
   <div class="row">
     <div class="center-content"  *ngIf="alertMessage !== ''">
@@ -24,13 +25,15 @@
   </div>
 </section>
 
+<!-- POS DELIVERY -->
 <section class="container-fluid" *ngIf="posType=='delivery'">
   delivery
 </section>
 
+<!-- POS MOSTRADOR -->
 <section class="container-fluid" *ngIf="posType=='mostrador'">
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary card-inverse">Pedidos
+    <div class="card-header bg-primary card-inverse">Pendientes
       <div class="pull-right">
         <div class="btn-group" ngbDropdown>
           <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">Nuevo</button>
@@ -41,7 +44,7 @@
             <button class="dropdown-item" (click)="addTransaction('Saldo Inicial')">Saldo Inicial</button>
           </div>
         </div>
-        <button class="btn btn-primary" (click)="refresh()"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i> Actualizar</button>
+        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading"[disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span *ngIf="loading">Cargando</span><span *ngIf="!loading">Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>
@@ -76,7 +79,7 @@
                                                       | filter: filterObservation:'observation' 
                                                       | filter: filterTotalPrice:'totalPrice' 
                                                       | paginate: { itemsPerPage: itemsPerPage, currentPage: p }"
-              (click)="updateTransaction(transaction._id)">
+              (click)="openTransaction(transaction)">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>
             <td *ngIf="!transaction.endDate">{{transaction.startDate | date: ['dd/MM/yyyy'] }}</td>

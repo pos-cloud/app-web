@@ -90,11 +90,14 @@ export class AddTransactionComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if(!this.transaction) {
+      console.log("new");
       this.transaction = new Transaction();
+      this.transaction.state = TransactionState.Open;
       this.transaction.type = new TransactionType();
       this.transaction.company = null;
       this.getTransactionTypeByName();
     } else {
+      console.log("edits");
 
     }
     this.getCompanies();
@@ -246,9 +249,13 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.number = this.transactionForm.value.number;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.observation = this.transactionForm.value.observation;
-    this.transaction.state = TransactionState.Pending;
 
-    this.saveTransaction();
+    if(this.transaction.state === TransactionState.Open) {
+      this.transaction.state = TransactionState.Pending;
+      this.saveTransaction();
+    } else {
+      this.updateTransaction();
+    }
   }
 
   public saveTransaction(): void {
@@ -263,6 +270,29 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha añadido con éxito.", "success", true);
+          this.activeModal.close(this.transaction);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public updateTransaction(): void {
+    
+    this.loading = true;
+    
+    this._transactionService.updateTransaction(this.transaction).subscribe(
+      result => {
+        if (!result.transaction) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.transaction = result.transaction;
+          this.showMessage("La transacción se ha actualizado con éxito.", "success", true);
           this.activeModal.close(this.transaction);
         }
         this.loading = false;
