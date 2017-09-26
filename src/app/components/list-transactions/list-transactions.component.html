@@ -70,8 +70,8 @@
               <td>
                 <h6>
                   <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
-                                                  'badge-success':transaction.state==='Cerrado', 
-                                                  'badge-warning':transaction.state==='Abierto'}">
+                                                'badge-success':transaction.state==='Cerrado' || transaction.state==='Entregado', 
+                                                'badge-warning':transaction.state==='Abierto' || transaction.state==='Pendiente' || transaction.state==='Enviado'}">
                     {{transaction.state}}
                   </span>
                 </h6>

@@ -116,6 +116,8 @@ const _routes: Routes = [
   { path: 'pos/resto/salones/:id/mesas/:id/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: 'pos/delivery', component: PointOfSaleComponent },
+  { path: 'pos/delivery/agregar-pedido', component: AddSaleOrderComponent },
+  { path: 'pos/delivery/editar-pedido/:id', component: AddSaleOrderComponent },
   { path: 'pos/mostrador', component: PointOfSaleComponent },
   { path: 'pos/mostrador/agregar-pedido', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-pedido/:id', component: AddSaleOrderComponent },

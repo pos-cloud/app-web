@@ -449,7 +449,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   public close() {
 
-
     this.typeOfOperationToPrint = 'item';
     for(let movementOfArticle of this.movementsOfArticles) {
       if(movementOfArticle.type === ArticleType.Bar && !movementOfArticle.printed) {
@@ -473,7 +472,7 @@ export class AddSaleOrderComponent implements OnInit {
     if (this.barArticlesToPrint.length === 0 && this.kitchenArticlesToPrint.length === 0) {
       if(this.posType === "resto") {
         this.changeStateOfTable(TableState.Busy, true);
-      } else if (this.posType === "mostrador") {
+      } else {
         this.back();
       }
     }
@@ -744,8 +743,8 @@ export class AddSaleOrderComponent implements OnInit {
   public back(): void {
     if (this.posType === "resto") {
       this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
-    } else if (this.posType === "mostrador") {
-      this._router.navigate(['/pos/mostrador']);
+    } else {
+      this._router.navigate(['/pos/' + this.posType]);
     }
   }
 

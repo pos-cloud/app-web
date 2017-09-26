@@ -78,7 +78,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + 
-			'transactions/where="operation_type":{"$ne": "'+TransactionState.Closed+'"}', { headers: headers }).map(res => res.json());
+			'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}}]', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByEmployee(employeeId: string, date: string) {

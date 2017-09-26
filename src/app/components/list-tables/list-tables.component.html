@@ -81,10 +81,9 @@
 <!--POS-->
 <section class="row" *ngIf="userType=='pos'">
     <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'" >
-      <div  class="itable" [ngClass]="{ 'itable-disabled':table.state==='No Habilitada',
+      <div  class="itable" [ngClass]="{ 'itable-disabled':table.state==='No Habilitada' || table.state==='Ocupada' || table.state==='Reservada',
                                         'itable-enabled':table.state==='Disponible',
-                                        'itable-pending':table.state==='Pendiente',
-                                        'itable-disabledII':table.state==='Ocupada'}"
+                                        'itable-pending':table.state==='Pendiente'}"
             (click)="openModal('select_employee', table, table.employee)">
         <p><b>{{table.description}}</b></p>
         <b *ngIf="table.employee && table.state !== 'Disponible'" class="name-employee">{{table.employee.name}}</b>

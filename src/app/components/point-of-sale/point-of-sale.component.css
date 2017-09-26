@@ -10,7 +10,14 @@
 
 .card {
       margin-top: 50px;
+}
+
+.list-delivery {
       height:33/100vh;
+}
+
+.list-counter {
+      height:80vh;
 }
 
 .card-header {

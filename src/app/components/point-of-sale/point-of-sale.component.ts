@@ -66,7 +66,7 @@ export class PointOfSaleComponent implements OnInit {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
     } else if (this.posType === "delivery") {
-
+      this.getOpenTransactions();
     } else if (this.posType === "mostrador") {
       this.getOpenTransactions();
     }
@@ -315,7 +315,7 @@ export class PointOfSaleComponent implements OnInit {
   }
   
   public addSaleOrder(): void {
-    this._router.navigate(['/pos/mostrador/agregar-pedido']);
+    this._router.navigate(['/pos/' + this.posType + '/agregar-pedido']);
   } 
   
   public addTransaction(type: string): void {
@@ -360,7 +360,7 @@ export class PointOfSaleComponent implements OnInit {
   public openTransaction(transaction: Transaction): void {
 
     if(transaction.type.name === "Orden de Pedido") {
-      this._router.navigate(['/pos/mostrador/editar-pedido/' + transaction._id]);
+      this._router.navigate(['/pos/' + this.posType + '/editar-pedido/' + transaction._id]);
     } else {
       this.openModal('transaction', transaction.type.name, transaction);
     }   
@@ -376,7 +376,7 @@ export class PointOfSaleComponent implements OnInit {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.showMessage("La transacción se ha actualizado con éxito.", "success", true);
+          this.refresh();
         }
         this.loading = false;
       },
@@ -385,6 +385,19 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public changeStateOfTransaction(transaction: Transaction, state: string): void {
+
+    this.loading = true;
+
+    if(state === "Enviado") {
+      transaction.state = TransactionState.Sent;
+    } else if (state === "Entregado") {
+      transaction.state = TransactionState.Delivered;
+    }    
+    
+    this.updateTransaction(transaction);
   }
 
   public changeRoom(room: Room): void {

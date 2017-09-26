@@ -52,9 +52,9 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('date')">Fecha</th>
-            <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
+            <th></th>
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
@@ -62,6 +62,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -69,19 +70,24 @@
                                                       | filter: filterOrigin:'origin' 
                                                       | filter: filterNumber:'number' 
                                                       | filter: filterEndDate:'date' 
-                                                      | filter: 'Pendiente':'state'
                                                       | filter: filterObservation:'observation' 
-                                                      | filter: filterTotalPrice:'totalPrice'"
-              (click)="openTransaction(transaction)">
+                                                      | filter: filterTotalPrice:'totalPrice'
+                                                      | filter: 'Abierto':'state'">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>
             <td *ngIf="!transaction.endDate">{{transaction.startDate | date: ['dd/MM/yyyy'] }}</td>
             <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }}</td>
             <td>{{transaction.observation}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')">
+                <i class="fa fa-truck">
+                </i>
+              </button>
+            </td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">
-            <td colspan="6">Aún no hay pedidos pendientes</td>
+            <td colspan="7">Aún no hay pedidos pendientes</td>
           </tr>
         </tbody>
       </table>
@@ -102,7 +108,6 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('date')">Fecha</th>
-            <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
@@ -119,28 +124,24 @@
                                                       | filter: filterOrigin:'origin' 
                                                       | filter: filterNumber:'number' 
                                                       | filter: filterEndDate:'date' 
-                                                      | filter: 'Enviado':'state' 
                                                       | filter: filterObservation:'observation' 
-                                                      | filter: filterTotalPrice:'totalPrice'"
-              (click)="openTransaction(transaction)">
+                                                      | filter: filterTotalPrice:'totalPrice' 
+                                                      | filter: 'Enviado':'state'">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>
             <td *ngIf="!transaction.endDate">{{transaction.startDate | date: ['dd/MM/yyyy'] }}</td>
             <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }}</td>
-            <td>
-              <h6>
-                <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
-                                                  'badge-success':transaction.state==='Cerrado', 
-                                                  'badge-warning':transaction.state==='Abierto'}">
-                    {{transaction.state}}
-                  </span>
-              </h6>
-            </td>
             <td>{{transaction.observation}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>
+              <button class="btn btn-sm btn-warning" (click)="changeStateOfTransaction(transaction, 'Entregado')">
+                <i class="fa fa-share">
+                </i>
+              </button>
+            </td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">
-            <td colspan="6">Aún no hay pedidos pendientes</td>
+            <td colspan="7">Aún no hay pedidos pendientes</td>
           </tr>
         </tbody>
       </table>
@@ -161,9 +162,9 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('date')">Fecha</th>
-            <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
+            <th></th>
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
@@ -171,6 +172,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -178,28 +180,23 @@
                                                       | filter: filterOrigin:'origin' 
                                                       | filter: filterNumber:'number' 
                                                       | filter: filterEndDate:'date' 
-                                                      | filter: 'Entregado':'state' 
                                                       | filter: filterObservation:'observation' 
-                                                      | filter: filterTotalPrice:'totalPrice'"
-              (click)="openTransaction(transaction)">
+                                                      | filter: filterTotalPrice:'totalPrice' 
+                                                      | filter: 'Entregado':'state'">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>
             <td *ngIf="!transaction.endDate">{{transaction.startDate | date: ['dd/MM/yyyy'] }}</td>
             <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }}</td>
-            <td>
-              <h6>
-                <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
-                                                  'badge-success':transaction.state==='Cerrado', 
-                                                  'badge-warning':transaction.state==='Abierto'}">
-                    {{transaction.state}}
-                  </span>
-              </h6>
-            </td>
             <td>{{transaction.observation}}</td>
-            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td><td>
+              <button class="btn btn-sm btn-success" (click)="openTransaction(transaction)">
+                <i class="fa fa-credit-card">
+                </i>
+              </button>
+            </td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">
-            <td colspan="6">Aún no hay pedidos pendientes</td>
+            <td colspan="7">Aún no hay pedidos pendientes</td>
           </tr>
         </tbody>
       </table>
@@ -209,7 +206,7 @@
 
 <!-- POS MOSTRADOR -->
 <section class="container-fluid" *ngIf="posType=='mostrador'">
-  <div class="card card-outline-primary">
+  <div class="card card-outline-primary list-counter">
     <div class="card-header bg-primary">Pendientes
       <div class="pull-right">
         <div class="btn-group" ngbDropdown>
@@ -264,8 +261,8 @@
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
-                                                  'badge-success':transaction.state==='Cerrado', 
-                                                  'badge-warning':transaction.state==='Abierto'}">
+                                                'badge-success':transaction.state==='Cerrado' || transaction.state==='Entregado', 
+                                                'badge-warning':transaction.state==='Abierto' || transaction.state==='Pendiente' || transaction.state==='Enviado'}">
                     {{transaction.state}}
                   </span>
               </h6>
@@ -286,8 +283,7 @@
           </pagination-controls>
         </div>
         <div class="col-md-1"></div>
-        Mostrar
-        <div class="form-group col-md-1">
+        <div class="form-group col-md-2">
           <select class="form-control" [(ngModel)]="itemsPerPage">
               <option [value]="5">Mostrar 5 ítems</option>
               <option [value]="10">Mostrar 10 ítems</option>
@@ -297,7 +293,6 @@
               <option [value]="100">Mostrar 100 ítems</option>
             </select>
         </div>
-        ítems
       </div>
     </div>
   </div>
