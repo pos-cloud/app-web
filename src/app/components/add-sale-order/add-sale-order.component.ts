@@ -145,7 +145,7 @@ export class AddSaleOrderComponent implements OnInit {
       if (tableId !== undefined) {
         this.getOpenTransactionByTable(tableId);
       }
-    } else if (this.posType === "mostrador") {
+    } else {
       let transactionId = pathLocation[4];
       if (transactionId !== undefined) {
         this.getTransaction(transactionId);
