@@ -4,12 +4,11 @@
           aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" [routerLink]="['inicio']">POS Cloud</a>
-
+  <a class="navbar-brand" [routerLink]="['inicio']"><i class="fa fa-cloud"></i> POS Cloud</a>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item" ngbDropdown>
-        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">POS</a>
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-fax"></i> POS</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['pos','resto']">Resto</button>
           <button class="dropdown-item" [routerLink]="['pos','mostrador']">Mostrador</button>
@@ -17,7 +16,7 @@
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity">
-        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Productos</a>
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-shopping-basket"></i> Productos</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','productos']">Productos</button>
           <button class="dropdown-item" [routerLink]="['admin','marcas']">Marcas</button>
@@ -25,30 +24,31 @@
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity">
-        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Empresas</a>
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empresas']">Clientes</button>
           <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']">Cuentas Corrientes</button>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</a>
+      <li class="nav-item" ngbDropdown *ngIf="identity">
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-users"></i> Empleados</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <button class="dropdown-item" [routerLink]="['admin','empleados']">Empleados</button>
+          <button class="dropdown-item" [routerLink]="['admin','usuarios']">Usuarios</button>
+        </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity">
-        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Resto</a>
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-cutlery"></i> Resto</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','mesas']">Mesas</button>
           <button class="dropdown-item" [routerLink]="['admin','salones']">Salones</button>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active']">Ventas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="identity" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</a>
+        <a class="nav-link btn" *ngIf="identity" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active']"><i class="fa fa-bar-chart"></i> Ventas</a>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity">
-        <a class="nav-link" ngbDropdownToggle data-toggle="tooltip" data-placement="top">Configuración</a>
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','configuraciones']">Configuración</button>
           <button class="dropdown-item" [routerLink]="['admin','impresoras']">Impresoras</button>
@@ -64,7 +64,7 @@
         <a class="nav-link btn" *ngIf="identity" (click)="logout()"><i class="fa fa-sign-out"></i> Cerrar Sesión</a>
       </li>
       <li class="nav-item pull-right">
-        <a class="nav-link" *ngIf="!identity" [routerLink]="['login']" [routerLinkActive]="['active']"><i class="fa fa-sign-in"></i> Iniciar Sesión</a>
+        <a class="nav-link btn" *ngIf="!identity" [routerLink]="['login']" [routerLinkActive]="['active']"><i class="fa fa-sign-in"></i> Iniciar Sesión</a>
       </li>
     </ul>
   </div>
