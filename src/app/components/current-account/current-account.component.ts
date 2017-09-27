@@ -208,7 +208,11 @@ export class CurrentAccountComponent implements OnInit {
     if(this.companies.length === 0) {
       this.getCompanies();
     } else {
-      this.getTransactionsByCompany();
+      if(this.companySelectedId){
+        this.getTransactionsByCompany();
+      } else {
+        this.showMessage("Debe seleccionar una empresa.", "info", true);
+      }
     }
   }
 
