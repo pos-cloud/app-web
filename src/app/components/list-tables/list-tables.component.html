@@ -41,10 +41,9 @@
               <td>{{table.chair}}</td>
               <td>
                 <h6>
-                  <span class="badge" [ngClass]="{'badge-danger':table.state==='Ocupada',
+                  <span class="badge" [ngClass]="{'badge-danger':table.state==='Ocupada' || table.state==='No Habilitada' || table.state==='Reservada',
                                                   'badge-success':table.state==='Disponible', 
-                                                  'badge-warning':table.state==='Pendiente',
-                                                  'badge-default':table.state==='No Habilitada'}">
+                                                  'badge-warning':table.state==='Pendiente'}">
                     {{table.state}}
                   </span>
                 </h6>
@@ -79,9 +78,18 @@
 </section>
 
 <!--POS-->
-<section class="row" *ngIf="userType=='pos'">
+<section *ngIf="userType=='pos'">
+  <div class="row center-content">
+    <div  *ngIf="alertMessage !== ''">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+  </div>
+  <div class="row">
     <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'" >
-      <div  class="itable" [ngClass]="{ 'itable-disabled':table.state==='No Habilitada' || table.state==='Ocupada' || table.state==='Reservada',
+      <div  class="itable" [ngClass]="{ 'itable-busy':table.state==='Ocupada' || table.state==='Reservada',
+                                        'itable-disabled':table.state==='No Habilitada',
                                         'itable-enabled':table.state==='Disponible',
                                         'itable-pending':table.state==='Pendiente'}"
             (click)="openModal('select_employee', table, table.employee)">
@@ -89,6 +97,7 @@
         <b *ngIf="table.employee && table.state !== 'Disponible'" class="name-employee">{{table.employee.name}}</b>
       </div>
     </div>
+  </div>
 </section>
 
 <!--MODAL SELECCIONAR MOZO-->

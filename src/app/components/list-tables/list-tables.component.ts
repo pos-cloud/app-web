@@ -155,87 +155,93 @@ export class ListTablesComponent implements OnInit {
   public openModal(op: string, table: Table, employee?: Employee): void {
 
     this.tableSelected = table;
-    if(employee !== undefined) this.tableSelected.employee = employee;
-    let modalRef;
-    
-    switch(op) {
-      case 'view' :
-          modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
-          modalRef.componentInstance.table = this.tableSelected;
-          modalRef.componentInstance.readonly = true;
-        break;
-      case 'add' :
 
-        modalRef = this._modalService.open(AddTableComponent, { size: 'lg' }).result.then((result) => {
-          this.getTables();
-        }, (reason) => {
-          this.getTables();
-        });
-        break;
-      case 'update' :
-          modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
-          modalRef.componentInstance.table = this.tableSelected;
-          modalRef.componentInstance.readonly = false;
-          modalRef.result.then((result) => {
-            if(result === 'save_close') {
-              this.getTables();
-            }
+    if( this.tableSelected.state !== TableState.Disabled &&
+        this.tableSelected.state !== TableState.Reserved) {
+      if(employee !== undefined) this.tableSelected.employee = employee;
+      let modalRef;
+      
+      switch(op) {
+        case 'view' :
+            modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
+            modalRef.componentInstance.table = this.tableSelected;
+            modalRef.componentInstance.readonly = true;
+          break;
+        case 'add' :
+
+          modalRef = this._modalService.open(AddTableComponent, { size: 'lg' }).result.then((result) => {
+            this.getTables();
           }, (reason) => {
-            
+            this.getTables();
           });
-        break;
-      case 'delete' :
+          break;
+        case 'update' :
+            modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
+            modalRef.componentInstance.table = this.tableSelected;
+            modalRef.componentInstance.readonly = false;
+            modalRef.result.then((result) => {
+              if(result === 'save_close') {
+                this.getTables();
+              }
+            }, (reason) => {
+              
+            });
+          break;
+        case 'delete' :
 
-          modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' });
-          modalRef.componentInstance.table = this.tableSelected;
-          modalRef.result.then((result) => {
-            if(result === 'delete_close') {
-              this.getTables();
+            modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' });
+            modalRef.componentInstance.table = this.tableSelected;
+            modalRef.result.then((result) => {
+              if(result === 'delete_close') {
+                this.getTables();
+              }
+            }, (reason) => {
+              
+            });
+          break;
+        case 'select_employee' :
+
+            if(this.tableSelected.employee !== undefined &&
+              this.tableSelected.employee !== null) {
+
+              this.addTransaction();
+            } else {
+              
+              this.tableSelected.employee = new Employee();
+              this.buildForm();
+              this.getWaiters();
+
+              modalRef = this._modalService.open(this.content).result.then((result) => {
+                if(result  === "select_employee") {
+                  this.loading = true;
+                  this.selectEmployee();
+                } else {
+                  this.tableSelected.employee = null;
+                  this.loading = false;
+                }
+              }, (reason) => {
+                this.tableSelected.employee = null;
+                  this.loading = false;
+              });
             }
-          }, (reason) => {
-            
-          });
-        break;
-      case 'select_employee' :
-
-          if(this.tableSelected.employee !== undefined &&
-            this.tableSelected.employee !== null) {
-
-            this.addTransaction();
-          } else {
-            
-            this.tableSelected.employee = new Employee();
-            this.buildForm();
-            this.getWaiters();
-
-            modalRef = this._modalService.open(this.content).result.then((result) => {
-              if(result  === "select_employee") {
-                this.loading = true;
-                this.selectEmployee();
+          break;
+          case 'login' :
+            modalRef = this._modalService.open(LoginComponent, { size: 'lg' });
+            modalRef.componentInstance.employeeSelected = this.tableSelected.employee;
+            modalRef.result.then((result) => {
+              if(result._id) {
+                this.openTurn(result);
               } else {
                 this.tableSelected.employee = null;
-                this.loading = false;
               }
             }, (reason) => {
               this.tableSelected.employee = null;
-                this.loading = false;
             });
-          }
-        break;
-        case 'login' :
-          modalRef = this._modalService.open(LoginComponent, { size: 'lg' });
-          modalRef.componentInstance.employeeSelected = this.tableSelected.employee;
-          modalRef.result.then((result) => {
-            if(result._id) {
-              this.openTurn(result);
-            } else {
-              this.tableSelected.employee = null;
-            }
-          }, (reason) => {
-            this.tableSelected.employee = null;
-          });
-        break;
-      default : ;
+          break;
+        default : ;
+      }
+    } else {
+      this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, "info", true);
     }
   };
 

@@ -39,6 +39,14 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="state" class="control-label">Estado</label>
+					<select class="form-control" formControlName="state">
+						<option *ngFor="let state of states" [ngValue]="state">{{state}}</option>
+					</select>
+				</div>
+			</div>
 		</div>
     <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

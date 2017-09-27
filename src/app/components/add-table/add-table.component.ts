@@ -20,6 +20,7 @@ import { RoomService } from './../../services/room.service';
 export class AddTableComponent  implements OnInit {
 
   public table: Table;
+  public states: TableState[] = [TableState.Available, TableState.Disabled, TableState.Reserved];
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
   public alertMessage: string = "";
@@ -30,7 +31,8 @@ export class AddTableComponent  implements OnInit {
   public formErrors = {
     'description': '',
     'room': '',
-    'chair': 1,
+    'chair': 2,
+    'state': ''
   };
 
   public validationMessages = {
@@ -42,6 +44,9 @@ export class AddTableComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'chair': {
+      'required':       'Este campo es requerido.'
+    },
+    'state': {
       'required':       'Este campo es requerido.'
     }
   };
@@ -134,7 +139,7 @@ export class AddTableComponent  implements OnInit {
           this.tableForm.setValue({
             'room': room,
             'description': '',
-            'chair': 1,
+            'chair': 2,
             'state': TableState.Available,
           });
           this.loading = false;

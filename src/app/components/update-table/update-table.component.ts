@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Table } from './../../models/table';
+import { Table, TableState } from './../../models/table';
 import { Room } from './../../models/room';
 
 import { TableService } from './../../services/table.service';
@@ -18,6 +18,7 @@ import { RoomService } from './../../services/room.service';
 export class UpdateTableComponent implements OnInit {
 
   @Input() table: Table;
+  public states: TableState[] = [TableState.Available, TableState.Disabled, TableState.Reserved, TableState.Busy, TableState.Pending];
   @Input() readonly: boolean;
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
@@ -67,6 +68,7 @@ export class UpdateTableComponent implements OnInit {
       'chair': this.table.chair,
       'state': this.table.state
     });
+    console.log(this.table.state);
   }
 
   ngAfterViewInit() {
@@ -144,10 +146,15 @@ export class UpdateTableComponent implements OnInit {
    }
 
   public updateTable(): void {
-    if(!this.readonly) {
-      this.loading = true;
-      this.table = this.tableForm.value;
-      this.getRoom();
+
+    if(this.table.state !== TableState.Pending && this.table.state !== TableState.Busy) {
+      if(!this.readonly) {
+        this.loading = true;
+        this.table = this.tableForm.value;
+        this.getRoom();
+      }
+    } else {
+      this.showMessage("No se puede modificar una mesa en estado " + this.table.state, "info", true);
     }
   }
 
