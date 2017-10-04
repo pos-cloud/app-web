@@ -1,5 +1,4 @@
 .center-content {
-      margin-top: 30px;
       display: -webkit-flex;
       display: flex;
       -webkit-flex-wrap: wrap;
@@ -8,6 +7,10 @@
       justify-content: center;
 }
 
-.container-login {
-      width: 50%;
+.row {
+      display: block;
+}
+
+.col-md-12 {
+      width: 374px;
 }

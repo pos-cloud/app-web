@@ -2,17 +2,20 @@
   <div class="row header-transaction">
     <div class="col-md-12">
       <div class="row">
-        <div class="col-md-3" *ngIf="transaction.table">
+        <div class="col-md-2" *ngIf="transaction.table">
           <b>Mesa:</b> {{transaction.table.description}}
         </div>
-        <div class="col-md-3" *ngIf="transaction.employee">
-          <b>Empleado:</b> {{transaction.employee.name}}
+        <div class="col-md-2" *ngIf="transaction.employeeClosing">
+          <b>Empleado:</b> {{transaction.employeeClosing.name}}
         </div>
         <div class="col-md-3">
           <b>Cliente: </b><span *ngIf="!transaction.company">Consumidor final</span><span *ngIf="transaction.company">{{transaction.company.name}}</span>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <b>Apertura: </b>{{transaction.startDate | date:['HH:mm']}}
+        </div>
+        <div class="col-md-2 offset-md-1">
+          <a class="btn" (click)="openModal('change-employee')"><i class="fa fa-exchange"></i> Cambiar Empleado</a>
         </div>
       </div>
     </div>
@@ -39,7 +42,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let movementOfArticle of movementsOfArticles">
+            <tr *ngFor="let movementOfArticle of movementsOfArticles" (click)="editItem(movementOfArticle)">
               <td>{{movementOfArticle.amount}}</td>
               <td>{{movementOfArticle.description}}
                   <strong *ngIf="movementOfArticle.notes">
@@ -49,8 +52,8 @@
               </td>
               <td>{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</td>
               <td align=" left " width="20 ">
-                <button type="button " class="btn btn-danger btn-sm " (click)="deleteMovementOfArticle(movementOfArticle._id)
-              "><i class="fa fa-trash-o "></i></button>
+                <!-- <button type="button " class="btn btn-danger btn-sm " (click)="deleteMovementOfArticle(movementOfArticle._id) -->
+              <!-- "><i class="fa fa-trash-o "></i></button> -->
               </td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
@@ -139,7 +142,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('add_item')" autocomplete="off">
+  <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('edit_item')" autocomplete="off">
     <div class="modal-body container-fluid">
       <div class="row" *ngIf="isNewItem">
         <div class="form-group col-md-12">
@@ -197,6 +200,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-danger" *ngIf="!isNewItem" (click)="c('delete_item')">Eliminar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
@@ -252,7 +256,7 @@
   </form>
 </ng-template>
 
-<!--MODAL CANCEL-->
+<!--MODAL ANULAR-->
 <ng-template #contentCancelOrder let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title">Cancelar Pedido</h4>

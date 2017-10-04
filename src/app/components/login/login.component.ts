@@ -166,11 +166,11 @@ export class LoginComponent implements OnInit {
     //Obtener el usuario
     this._userService.login(this.user).subscribe(
       result => {
-        if (!result.user) {
+        if (!result.user.employee) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else { 
-          this.activeModal.close(result.user);
+          this.activeModal.close(result.user.employee);
         }
       },
       error => {
@@ -219,13 +219,6 @@ export class LoginComponent implements OnInit {
                   this._router.navigate(['/']);
                 }
 
-                // if(this.user.employee.type.description === 'Mozo'){
-                //   this.activeModal.close(this.employeeSelected);
-                // } else {
-                //   localStorage.removeItem('session_token');
-                //   localStorage.setItem('session_token',JSON.stringify(this.user.token));
-                //   this._router.navigateByUrl(this._route.snapshot.queryParams['returnUrl'] || '/');
-                // }
                 this.loading = false;
               }
             });

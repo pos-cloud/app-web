@@ -2,20 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { CashBox } from './../../models/cash-box';
+import { Employee } from './../../models/employee';
+import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType, TransactionTypeState, TransactionTypeMovements, CurrentAcount } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
-import { CashBoxService } from './../../services/cash-box.service';
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { PaymentMethodService } from './../../services/payment-method.service';
+import { TurnService } from './../../services/turn.service';
 
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
+import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -26,7 +28,6 @@ import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-moveme
 
 export class PointOfSaleComponent implements OnInit {
 
-  public cashBox: CashBox;
   public rooms: Room[] = new Array();
   public roomSelected: Room;
   public transactions: Transaction[] = new Array();
@@ -42,7 +43,7 @@ export class PointOfSaleComponent implements OnInit {
   public itemsPerPage = 10;
 
   constructor(
-    public _cashBoxService: CashBoxService,
+    public _turnService: TurnService,
     public _roomService: RoomService,
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
@@ -348,6 +349,30 @@ export class PointOfSaleComponent implements OnInit {
           if (result === "add-movement-of-cash") {
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
+          }
+        }, (reason) => {
+
+        });
+        break;
+      case 'open-turn':
+        modalRef = this._modalService.open(SelectEmployeeComponent, { size: 'lg' });
+        modalRef.componentInstance.requireLogin = true;
+        modalRef.componentInstance.op = 'open';
+        modalRef.result.then((result) => {
+          if (typeof result == "object") {
+            this.showMessage("El turno se ha abierto correctamente", "success", true);
+          }
+        }, (reason) => {
+
+        });
+        break;
+      case 'close-turn':
+        modalRef = this._modalService.open(SelectEmployeeComponent, { size: 'lg' });
+        modalRef.componentInstance.requireLogin = true;
+        modalRef.componentInstance.op = 'close';
+        modalRef.result.then((result) => {
+          if (typeof result == "object") {
+            this.showMessage("El turno se ha cerrado correctamente", "success", true);
           }
         }, (reason) => {
 

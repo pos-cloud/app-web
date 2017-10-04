@@ -90,15 +90,11 @@ export class AddTransactionComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if(!this.transaction) {
-      console.log("new");
       this.transaction = new Transaction();
       this.transaction.state = TransactionState.Open;
       this.transaction.type = new TransactionType();
       this.transaction.company = null;
       this.getTransactionTypeByName();
-    } else {
-      console.log("edits");
-
     }
     this.getCompanies();
     this.buildForm();

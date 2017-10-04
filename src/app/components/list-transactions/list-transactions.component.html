@@ -1,4 +1,9 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Lista de Pedidos de Venta
       <div class="pull-right">

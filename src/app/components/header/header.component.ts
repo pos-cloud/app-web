@@ -16,7 +16,6 @@ import { UserService } from './../../services/user.service';
 export class HeaderComponent implements OnInit, DoCheck {
 
   public identity: User;
-  public userType: string;
   public online: Observable<boolean>;
 
   constructor(
@@ -32,8 +31,6 @@ export class HeaderComponent implements OnInit, DoCheck {
   }
 
   ngOnInit(): void {
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
     this.identity = this._userService.getIdentity();
   }
 

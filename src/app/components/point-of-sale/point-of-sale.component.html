@@ -1,7 +1,7 @@
 <!-- POS RESTO -->
 <section class="container-fluid" *ngIf="posType=='resto'">
-  <div class="row">
-    <div class="center-content"  *ngIf="alertMessage !== ''">
+  <div class="row center-content">
+    <div *ngIf="alertMessage !== ''">
       <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
         {{alertMessage}}
       </ngb-alert>
@@ -18,9 +18,17 @@
       </button>
     </div>
   </div>
-  <div class="tables-container table-responsive">
+  <div class="row tables-container table-responsive">
     <div *ngIf="roomSelected">
       <app-list-tables (eventBackToRoom)="changeRoom($room)" [filterRoom]="roomSelected.description"></app-list-tables>
+    </div>
+  </div>
+  <div class="row">
+    <div class="btn container-button center-content" (click)="openModal('open-turn')">
+      Abrir Turno
+    </div>
+    <div class="btn container-button center-content" (click)="openModal('close-turn')">
+      Cerrar Turno
     </div>
   </div>
 </section>

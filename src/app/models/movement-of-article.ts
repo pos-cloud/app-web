@@ -15,7 +15,7 @@ export class MovementOfArticle {
     public amount: number = 1;
     public notes: string;
     public type: ArticleType;
-    public printed: boolean = false;
+    public printed: number = 0;
     public article: Article = null;
     public transaction: Transaction = null;
 

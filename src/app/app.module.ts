@@ -106,6 +106,7 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
+import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
 
 @NgModule({
   declarations: [
@@ -171,10 +172,12 @@ import { SendMailComponent } from './components/send-mail/send-mail.component';
     AddTransactionComponent,
     CurrentAccountComponent,
     SendMailComponent,
-    SimpleTinyComponent
+    SimpleTinyComponent,
+    SelectEmployeeComponent
   ],
   entryComponents: [
-    AddMovementOfCashComponent
+    AddMovementOfCashComponent,
+    SelectEmployeeComponent
   ],
   imports: [
     BrowserModule,

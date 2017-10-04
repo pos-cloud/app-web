@@ -33,7 +33,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public formErrors = {
     'paymentMethod': '',
-    'totalPrice': '',
+    'amountPaid': '',
     'cashChange': ''
   };
 
@@ -41,7 +41,7 @@ export class AddMovementOfCashComponent implements OnInit {
     'paymentMethod': {
       'required': 'Este campo es requerido.'
     },
-    'totalPrice': {
+    'amountPaid': {
       'required': 'Este campo es requerido.'
     },
     'cashChange': {
@@ -63,8 +63,9 @@ export class AddMovementOfCashComponent implements OnInit {
   ngOnInit() {
     this.getPaymentMethods();
     this.buildForm();
-    this.movementOfCash.totalPrice = this.transaction.totalPrice;
-    this.paymentChange = (this.movementOfCash.totalPrice - this.transaction.totalPrice).toFixed(2);
+    this.movementOfCash.amountPaid = this.transaction.totalPrice;
+    this.movementOfCash.amountCharge = this.transaction.totalPrice;
+    this.paymentChange = (this.movementOfCash.amountPaid - this.transaction.totalPrice).toFixed(2);
   }
 
   ngAfterViewInit() {
@@ -84,7 +85,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.paymentMethods = result.paymentMethods;
           this.movementOfCashForm.setValue({
             'paymentMethod': this.movementOfCash.type,
-            'totalPrice': this.movementOfCash.totalPrice,
+            'amountPaid': this.movementOfCash.amountPaid,
             'cashChange': this.movementOfCash.cashChange
           });
         }
@@ -104,7 +105,7 @@ export class AddMovementOfCashComponent implements OnInit {
           Validators.required
         ]
       ],
-      'totalPrice': [this.movementOfCash.totalPrice, [
+      'amountPaid': [this.movementOfCash.amountPaid, [
           Validators.required
         ]
       ],
@@ -137,16 +138,16 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
     
-    if(this.movementOfCashForm.value.totalPrice - this.transaction.totalPrice < 0) {
+    if (this.movementOfCashForm.value.amountPaid - this.transaction.totalPrice < 0) {
       this.paymentChange = '0.00';
     } else {
-      this.paymentChange = (this.movementOfCashForm.value.totalPrice - this.transaction.totalPrice).toFixed(2);
+      this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.transaction.totalPrice).toFixed(2);
     }
   }
 
   public addMovementOfCash(): void {
     this.movementOfCash.state = MovementOfCashState.Closed;
-    this.movementOfCash.totalPrice = this.movementOfCashForm.value.totalPrice;
+    this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountPaid;
     this.movementOfCash.transaction = this.transaction;
     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     this.movementOfCash.cashChange = this.movementOfCashForm.value.cashChange;
@@ -155,7 +156,6 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public cancel(): void {
-    console.log("cancel");
     this.activeModal.close('cancel');
   }
 

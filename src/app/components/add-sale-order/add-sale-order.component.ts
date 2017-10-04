@@ -17,6 +17,7 @@ import { Category } from './../../models/category';
 import { Room } from './../../models/room';
 import { Print } from './../../models/print';
 import { Printer, PrinterType } from './../../models/printer';
+import { Turn } from './../../models/turn';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -26,10 +27,13 @@ import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { PrintService } from './../../services/print.service';
 import { PrinterService } from './../../services/printer.service';
+import { UserService } from './../../services/user.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
+import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
+import { LoginComponent } from './../login/login.component';
 
 //Pipes
 import { DatePipe, DecimalPipe } from '@angular/common'; 
@@ -46,6 +50,7 @@ export class AddSaleOrderComponent implements OnInit {
   public transaction: Transaction;
   public alertMessage: string = "";
   public movementOfArticle: MovementOfArticle;
+  public lastMovementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
   public printers: Printer[];
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
@@ -117,7 +122,8 @@ export class AddSaleOrderComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
-    public _printerService: PrinterService
+    public _printerService: PrinterService,
+    public _userService: UserService
   ) {
     this.transaction = new Transaction();
     // this.transaction.employee = new Employee();
@@ -196,16 +202,15 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getOpenTransactionByTable(tableId): void {
-
+    
     this.loading = true;
     
     this._transactionService.getOpenTransactionByTable(tableId).subscribe(
       result => {
 
         let transactionState: TransactionState;
-
         if (!result.transactions) {
-          this.hideMessage();
+          this.hideMessage(); 
           this.getTable(tableId);
         } else {
           this.hideMessage();
@@ -259,8 +264,10 @@ export class AddSaleOrderComponent implements OnInit {
           this.hideMessage();
           this.table = result.table;
           this.transaction.table = this.table;
-          this.transaction.employee = this.table.employee;
-          this.getOpenTurn();
+          this.transaction.employeeOpening = this.table.employee;
+          this.transaction.employeeClosing = this.table.employee;
+          this.getOpenTurn(this.table.employee);
+          this.getTransactionTypeSaleOrder();
         }
         this.loading = false;
       },
@@ -271,17 +278,17 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getOpenTurn(): void {
-    
+  public getOpenTurn(employee: Employee): void {
+
     this.loading = true;
     
-    this._turnService.getOpenTurn(this.transaction.employee._id).subscribe(
+    this._turnService.getOpenTurn(employee._id).subscribe(
       result => {
         if(!result.turns) {
-          this.showMessage(result.message, "info", true);
+          this.openModal("change-employee");
         } else {
-          this.transaction.turn = result.turns[0];
-          this.getTransactionTypeSaleOrder();
+          this.transaction.turnOpening = result.turns[0];
+          this.transaction.turnClosing = result.turns[0];
         }
         this.loading = false;
       },
@@ -319,6 +326,9 @@ export class AddSaleOrderComponent implements OnInit {
   public buildForm(): void {
 
     this.amountOfItemForm = this._fb.group({
+      '_id': [this.movementOfArticle._id, [
+        ]
+      ],
       'description': [this.movementOfArticle.description, [
           Validators.required
         ]
@@ -451,10 +461,12 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.typeOfOperationToPrint = 'item';
     for(let movementOfArticle of this.movementsOfArticles) {
-      if(movementOfArticle.type === ArticleType.Bar && !movementOfArticle.printed) {
+      if(movementOfArticle.type === ArticleType.Bar && movementOfArticle.printed < movementOfArticle.amount) {
+        movementOfArticle.amount = movementOfArticle.amount - movementOfArticle.printed;
         this.barArticlesToPrint.push(movementOfArticle);
       }
-      if (movementOfArticle.type === ArticleType.Kitchen && !movementOfArticle.printed) {
+      if (movementOfArticle.type === ArticleType.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+        movementOfArticle.amount = movementOfArticle.amount - movementOfArticle.printed;
         this.kitchenArticlesToPrint.push(movementOfArticle);
       }
     }
@@ -501,30 +513,53 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
+
+  public updateTable(): void {
+
+    this.loading = true;
+    
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        if (!result.table) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.table = result.table;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
   
   public addItem(itemData?: MovementOfArticle): void {
     
-    this.buildForm();
-
-    let article: Article = new Article();
     if(itemData) {
-      this.isNewItem = false;
-      this.movementOfArticle = itemData;
-      this.movementOfArticle.article = article;
-      this.movementOfArticle.article._id = itemData._id;
-      this.movementOfArticle.amount = 1;
-      this.amountOfItemForm.setValue({
-        'description': this.movementOfArticle.description,
-        'amount': this.movementOfArticle.amount,
-        'salePrice': this.movementOfArticle.salePrice,
-        'notes':''
-      });
-      this.movementOfArticle.transaction = this.transaction;
-      this.openModal('add_item');
+      if (!this.lastMovementOfArticle || itemData._id !== this.lastMovementOfArticle.article._id) {
+        let article: Article = new Article();
+        this.movementOfArticle = itemData;
+        this.movementOfArticle.article = article;
+        this.movementOfArticle.article._id = itemData._id;
+        this.movementOfArticle.printed = 0;
+        this.movementOfArticle.transaction = this.transaction;
+        this.movementOfArticle.amount = 1;
+        this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+        this.saveMovementOfArticle();
+      } else {
+        this.movementOfArticle = this.lastMovementOfArticle;
+        this.movementOfArticle.amount += 1;
+        this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+        this.updateMovementOfArticle(this.movementOfArticle);
+      }
+      
     } else {
+      this.buildForm();
       this.isNewItem = true;
       this.movementOfArticle = new MovementOfArticle();
       this.amountOfItemForm.setValue({
+        '_id': "",
         'description':this.movementOfArticle.description,
         'amount':this.movementOfArticle.amount,
         'salePrice': this.movementOfArticle.salePrice,
@@ -535,16 +570,37 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
+  public editItem(itemData: MovementOfArticle): void {
+
+    this.isNewItem = false;
+
+    this.buildForm();
+    
+    this.movementOfArticle = itemData;
+
+    this.amountOfItemForm.setValue({
+      '_id': this.movementOfArticle._id,
+      'description': this.movementOfArticle.description,
+      'amount': this.movementOfArticle.amount,
+      'salePrice': this.movementOfArticle.salePrice,
+      'notes':''
+    });
+
+    this.openModal('edit_item');
+  }
+
   public openModal(op: string): void {
 
     let modalRef;
 
       switch(op) {
-        case 'add_item':
+        case 'edit_item':
 
           modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
-            if(result  === "add_item"){
-              this.confirmAmount();
+            if (result === "edit_item"){
+              this.confirmAmount('edit');
+            } else if (result === "delete_item") {
+              this.deleteMovementOfArticle();
             }
           }, (reason) => {
             
@@ -553,8 +609,8 @@ export class AddSaleOrderComponent implements OnInit {
         case 'add_new_item':
 
           modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
-            if(result  === "add_item"){
-              this.confirmAmount();
+            if (result === "edit_item"){
+              this.confirmAmount('add');
             }
           }, (reason) => {
             
@@ -658,6 +714,22 @@ export class AddSaleOrderComponent implements OnInit {
 
           });
           break;
+        case 'change-employee':
+          modalRef = this._modalService.open(SelectEmployeeComponent);
+          modalRef.componentInstance.requireLogin = true;
+          modalRef.componentInstance.op = "change-employee";
+          modalRef.result.then((result) => {
+              if (typeof result == 'object') {
+                this.transaction.turnClosing = result;
+                this.transaction.employeeClosing = result.employee;
+                this.table.employee = result.employee;
+                this.updateTransaction();
+                this.updateTable();
+              }
+            }, (reason) => {
+              
+            });
+          break;
         default : ;
     };
   }
@@ -748,15 +820,19 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public confirmAmount(): void {
+  public confirmAmount(op: string): void {
 
     this.movementOfArticle.description = this.amountOfItemForm.value.description;
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
     this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
-    this.movementOfArticle.printed = false;
-    this.saveMovementOfArticle();
+    this.movementOfArticle.printed = 0;
+    if(op === 'add') {
+      this.saveMovementOfArticle();
+    } else if (op === 'edit') {
+      this.updateMovementOfArticle(this.movementOfArticle);
+    }
   }
 
   public applyDiscount(): void {
@@ -820,6 +896,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addAmount(): void {
     this.amountOfItemForm.setValue({
+            '_id': this.amountOfItemForm.value._id,
             'description': this.amountOfItemForm.value.description,
             'amount': this.amountOfItemForm.value.amount + 1,
             'salePrice': this.amountOfItemForm.value.salePrice,
@@ -830,6 +907,7 @@ export class AddSaleOrderComponent implements OnInit {
   public subtractAmount(): void {
     if (this.amountOfItemForm.value.amount > 1) {
       this.amountOfItemForm.setValue({
+              '_id': this.amountOfItemForm.value._id,
               'description':this.amountOfItemForm.value.description,
               'amount': this.amountOfItemForm.value.amount - 1,
               'salePrice': this.amountOfItemForm.value.salePrice,
@@ -837,6 +915,7 @@ export class AddSaleOrderComponent implements OnInit {
       });
     } else {
       this.amountOfItemForm.setValue({
+              '_id': this.amountOfItemForm.value._id,
               'description':this.amountOfItemForm.value.description,
               'amount': 1,
               'salePrice': this.amountOfItemForm.value.salePrice,
@@ -854,10 +933,12 @@ export class AddSaleOrderComponent implements OnInit {
 					if(!result.movementsOfArticles) {
             this.areMovementsOfArticlesEmpty = true;
             this.movementsOfArticles = new Array();
+            this.lastMovementOfArticle = undefined;
             this.updatePrices();
 					} else {
             this.areMovementsOfArticlesEmpty = false;
             this.movementsOfArticles = result.movementsOfArticles;
+            this.lastMovementOfArticle = result.movementsOfArticles[result.movementsOfArticles.length-1];
             this.updatePrices();
           }
           this.loading = false;
@@ -875,13 +956,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.areArticlesVisible = false;
   }
 
-  public deleteMovementOfArticle(movementOfArticleId: string): void {
+  public deleteMovementOfArticle(): void {
 
     this.loading = true;
     
-    this._movementOfArticleService.deleteMovementOfArticle(movementOfArticleId).subscribe(
+    this._movementOfArticleService.deleteMovementOfArticle(this.amountOfItemForm.value._id).subscribe(
       result => {
         this.getMovementsOfTransaction();
+        this.activeModal.close();
         this.loading = false;
       },
       error => {
@@ -919,7 +1001,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '\n' +
         'Fecha ' + datePipe.transform(this.transaction.startDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.transaction.startDate, 'HH:mm')  + '\n' +
         'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employee.name + '\n\n';
+        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
         if(this.transaction.company) {
           content += 'Cliente: '+this.transaction.company.name+'\n\n';
         } else {
@@ -983,7 +1065,7 @@ export class AddSaleOrderComponent implements OnInit {
         'Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '\n' +
         'Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.transaction.endDate, 'HH:mm')  + '\n' +
         'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employee.name + '\n\n';
+        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
         if(this.transaction.company) {
           content += 'Cliente: '+this.transaction.company.name+'\n\n';
         } else {
@@ -1042,7 +1124,7 @@ export class AddSaleOrderComponent implements OnInit {
       content =
         'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
         'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employee.name + '\n\n';
+        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
 
       content += 'DESCRIPCION.			CANTIDAD\n' +
         '----------------------------------------\n';
@@ -1062,7 +1144,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.printersAux = new Array();
           if (result.message === 'ok') {
             for (let movementOfArticle of this.barArticlesToPrint) {
-              movementOfArticle.printed = true;
+              movementOfArticle.printed += movementOfArticle.amount;
               this.updateMovementOfArticle(movementOfArticle);
             }
             if(this.kitchenArticlesToPrint.length === 0) {
@@ -1102,7 +1184,7 @@ export class AddSaleOrderComponent implements OnInit {
       content =
         'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
         'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employee.name + '\n\n';
+        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
 
       content += 'DESCRIPCION.			CANTIDAD\n' +
         '----------------------------------------\n';
@@ -1122,7 +1204,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.printersAux = new Array();
           if (result.message === 'ok') {
             for (let movementOfArticle of this.kitchenArticlesToPrint) {
-              movementOfArticle.printed = true;
+              movementOfArticle.printed += movementOfArticle.amount;
               this.updateMovementOfArticle(movementOfArticle);
             }
             if (this.posType === 'resto') {
@@ -1153,11 +1235,12 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          this.showMessage(result.message, "info", true);
         } else {
+          this.updatePrices();
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);

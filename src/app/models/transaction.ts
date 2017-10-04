@@ -23,8 +23,10 @@ export class Transaction {
 	public company: Company;
 	public cashBox: CashBox;
 	public table: Table;
-	public employee: Employee;
-	public turn: Turn;
+	public employeeOpening: Employee;
+	public employeeClosing: Employee;
+	public turnOpening: Turn;
+	public turnClosing: Turn;
 
 	constructor () {}
 }
