@@ -13,6 +13,7 @@ import { UserService } from './../../services/user.service';
 import { TransactionService } from './../../services/transaction.service';
 
 import { LoginComponent } from './../../components/login/login.component';
+import { PrintComponent } from './../../components/print/print.component';
 
 @Component({
   selector: 'app-select-employee',
@@ -197,7 +198,7 @@ export class SelectEmployeeComponent implements OnInit {
             this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
           } else if (this.op === 'close') {
             if(this.requireLogin) {
-              this.openModal('login');
+              this.getUserOfEmployee();
             } else {
               this.closeTurn();
             }
@@ -234,7 +235,15 @@ export class SelectEmployeeComponent implements OnInit {
         if (!result.turn) {
           this.showMessage(result.message, "info", true);
         } else {
-          this.activeModal.close(this.employee);
+          console.log(result.turn);
+          let modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.turn = result.turn;
+          modalRef.componentInstance.typePrint = 'turn';
+          modalRef.result.then((result) => {
+
+          }, (reason) => {
+
+          });
         }
         this.loading = false;
       },
@@ -252,7 +261,11 @@ export class SelectEmployeeComponent implements OnInit {
     this._userService.getUserOfEmployee(this.employee._id).subscribe(
       result => {
         if (!result.users) {
-          this.openTurn();
+          if(this.op === 'close') {
+            this.closeTurn();
+          } else  {
+            this.openTurn();
+          }
         } else {
           this.openModal('login');
         }

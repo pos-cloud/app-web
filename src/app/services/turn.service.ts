@@ -46,6 +46,30 @@ export class TurnService {
     return this._http.get(Config.apiURL + "turns", { headers: headers }).map (res => res.json());
   }
 
+  getShiftClosingByTransaccion(turnId: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken()
+    });
+    return this._http.get(Config.apiURL + "shift-closing-by-transaction/" + turnId, { headers: headers }).map(res => res.json());
+  }
+
+  getShiftClosingByMovementOfCash(turnId: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken()
+    });
+    return this._http.get(Config.apiURL + "shift-closing-by-payment-method/" + turnId, { headers: headers }).map(res => res.json());
+  }
+
+  getShiftClosingByMovementOfArticle(turnId: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken()
+    });
+    return this._http.get(Config.apiURL + "shift-closing-by-article/" + turnId, { headers: headers }).map(res => res.json());
+  }
+
   saveTurn(turn: Turn) {
     let headers = new Headers({
       'Content-Type': 'application/json',

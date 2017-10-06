@@ -1,0 +1,31 @@
+.sale-order {
+	width: 300px;
+	border: 1px solid #DCDCDC;
+	font: 13px Courier;
+}
+
+.row {
+	font: sans-serif;
+}
+
+.center-content {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+.row {
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.space-in-white {
+	margin-top: 10px;
+}
+
+.title {
+	font-weight: 900;
+}

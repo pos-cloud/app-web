@@ -107,6 +107,7 @@ import { AddTransactionComponent } from './components/add-transaction/add-transa
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
+import { PrintComponent } from './components/print/print.component';
 
 @NgModule({
   declarations: [
@@ -173,11 +174,13 @@ import { SelectEmployeeComponent } from './components/select-employee/select-emp
     CurrentAccountComponent,
     SendMailComponent,
     SimpleTinyComponent,
-    SelectEmployeeComponent
+    SelectEmployeeComponent,
+    PrintComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
-    SelectEmployeeComponent
+    SelectEmployeeComponent,
+    PrintComponent
   ],
   imports: [
     BrowserModule,
