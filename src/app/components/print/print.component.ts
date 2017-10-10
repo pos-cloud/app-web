@@ -4,7 +4,7 @@ import { Transaction, TransactionState } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Turn, TurnState } from './../../models/turn';
 
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TurnService } from './../../services/turn.service';
 
@@ -23,17 +23,22 @@ export class PrintComponent implements OnInit {
   public alertMessage: string = "";
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
+  public shiftClosingMovementOfCash;
 
   constructor(
     public _turnService: TurnService,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {
     if(this.typePrint === "turn") {
       this.shiftClosingTransaction = new Array();
+      this.shiftClosingMovementOfArticle = new Array();
+      this.shiftClosingMovementOfCash = new Array();
       this.getShiftClosingByTransaccion();
       this.getShiftClosingByMovementOfArticle();
+      this.getShiftClosingByMovementOfCash();
     }
   }
 
@@ -65,13 +70,34 @@ export class PrintComponent implements OnInit {
 
     this._turnService.getShiftClosingByMovementOfArticle(this.turn._id).subscribe(
       result => {
-        console.log(result.shiftClosing);
         if (!result.shiftClosing) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.hideMessage();
           this.shiftClosingMovementOfArticle = result.shiftClosing;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getShiftClosingByMovementOfCash(): void {
+
+    this.loading = true;
+
+    this._turnService.getShiftClosingByMovementOfCash(this.turn._id).subscribe(
+      result => {
+        if (!result.shiftClosing) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.shiftClosingMovementOfCash = result.shiftClosing;
         }
         this.loading = false;
       },

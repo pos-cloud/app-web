@@ -34,6 +34,7 @@ import { ListCompaniesComponent } from './../list-companies/list-companies.compo
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 import { LoginComponent } from './../login/login.component';
+import { PrintComponent } from './../../components/print/print.component';
 
 //Pipes
 import { DatePipe, DecimalPipe } from '@angular/common'; 
@@ -431,7 +432,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(): void {
-    
+    console.log(this.transaction);
     this.loading = true;
     
     this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -730,6 +731,55 @@ export class AddSaleOrderComponent implements OnInit {
               
             });
           break;
+        case 'print':
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.transaction = this.transaction;
+          if (this.typeOfOperationToPrint === 'charge') {
+            modalRef.componentInstance.movementsOfArticles = this.movementsOfArticles;
+          } else if (this.typeOfOperationToPrint === 'bill') {
+            modalRef.componentInstance.movementsOfArticles = this.movementsOfArticles;
+          } else if (this.typeOfOperationToPrint === 'bar') {
+            modalRef.componentInstance.movementsOfArticles = this.barArticlesToPrint;
+          } else if (this.typeOfOperationToPrint === 'kitchen') {
+            modalRef.componentInstance.movementsOfArticles = this.kitchenArticlesToPrint;
+          }
+          modalRef.componentInstance.typePrint = this.typeOfOperationToPrint;
+          modalRef.result.then(
+            (result) => {
+              if (this.typeOfOperationToPrint === 'kitchen') {
+                for (let movementOfArticle of this.kitchenArticlesToPrint) {
+                  movementOfArticle.printed += movementOfArticle.amount;
+                  this.updateMovementOfArticle(movementOfArticle);
+                }
+                if (this.posType === 'resto') {
+                  this.changeStateOfTable(TableState.Pending, true);
+                }
+              } else if (this.typeOfOperationToPrint === 'bill') {
+                if (this.posType === 'resto') {
+                  this.changeStateOfTable(TableState.Pending, true);
+                }
+              } else if (this.typeOfOperationToPrint === 'charge') {
+                this.finishCharge();
+              } else if (this.typeOfOperationToPrint === 'bar') {
+                for (let movementOfArticle of this.barArticlesToPrint) {
+                  movementOfArticle.printed += movementOfArticle.amount;
+                  this.updateMovementOfArticle(movementOfArticle);
+                }
+                if (this.kitchenArticlesToPrint.length === 0) {
+                  if (this.posType === 'resto') {
+                    this.changeStateOfTable(TableState.Pending, true);
+                  } else if (this.posType === 'resto') {
+                    this.back();
+                  }
+                } else {
+                  this.typeOfOperationToPrint = "kitchen";
+                  this.openModal("printers");
+                }
+              }
+          }, (reason) => {
+
+          });
+          break;
         default : ;
     };
   }
@@ -989,59 +1039,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.loading = true;
     
     if(this.movementsOfArticles.length !== 0) {
-      let datePipe = new DatePipe('es-AR');
-      let decimalPipe = new DecimalPipe('ARS');
-      let content: string;
-      content =
-        'CONFITERIA LA PALMA - CASA DE TE\n' +
-        'CUIT Nro.: 30-61432547-6\n' +
-        '25 de Mayo 2028 - San Francisco - Córdoba\n' +
-        'Tel: (03564) 424423\n' +
-        'P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '\n' +
-        'Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.transaction.startDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.transaction.startDate, 'HH:mm')  + '\n' +
-        'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
-        if(this.transaction.company) {
-          content += 'Cliente: '+this.transaction.company.name+'\n\n';
-        } else {
-          content += 'Cliente: Consumidor Final\n\n';
-        }
-        content += 'DESC.			CANT	MONTO\n' +
-        '----------------------------------------\n';
-        for (let movementOfArticle of this.movementsOfArticles) {
-          content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
-        }
-        content += '----------------------------------------\n' +
-        'Subtotal:				 ' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '\n' +
-        'Descuento:				-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '\n' +
-        'Total:					 '+ decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '\n\n' +
-        'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
-        '----Gracias por su visita.----\n\n\n';
-
+      
       let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
       
       let print: Print = new Print();
       print.fileName = fileName;
-      print.content = content;
       print.printer = printerSelected;
-      this._printService.toPrint(print).subscribe(
-        result => {
-          this.printersAux = new Array();
-          if(result.message === 'ok'){
-            if (this.posType === 'resto') {
-              this.changeStateOfTable(TableState.Pending, true);
-            }
-          } else {
-            this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
-          }
-          this.loading = false;
-        },
-        error => {
-          this.openModal("errorMessage");
-          this.loading = false;
-        }
-      );
+      this.typeOfOperationToPrint = 'bill';
+      this.openModal('print');
     } else {
       this.showMessage("No existen artículos en el pedido.", "info", true);
       this.loading = false;
@@ -1053,60 +1058,15 @@ export class AddSaleOrderComponent implements OnInit {
     this.loading = true;
     
     if(this.movementsOfArticles.length !== 0) {
-      let datePipe = new DatePipe('es-AR');
-      let decimalPipe = new DecimalPipe('ARS');
-      let content: string;
-      content =
-        'CONFITERIA LA PALMA - CASA DE TE\n' +
-        'CUIT Nro.: 30-61432547-6\n' +
-        '25 de Mayo 2028 - San Francisco - Córdoba\n' +
-        'Tel: (03564) 424423\n' +
-        'P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '\n' +
-        'Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '\n' +
-        'Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy')  + '  Hora '  + datePipe.transform(this.transaction.endDate, 'HH:mm')  + '\n' +
-        'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
-        if(this.transaction.company) {
-          content += 'Cliente: '+this.transaction.company.name+'\n\n';
-        } else {
-          content += 'Cliente: Consumidor Final\n\n';
-        }
-        content += 'DESC.			CANT	MONTO\n' +
-        '----------------------------------------\n';
-        for (let movementOfArticle of this.movementsOfArticles) {
-          content += movementOfArticle.description + '    ' + movementOfArticle.amount + '      '	+ decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '\n';
-        }
-        content += '----------------------------------------\n' +
-        'Subtotal:				 ' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '\n' +
-        'Descuento:				-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '\n' +
-        'Total:					 '+ decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '\n' +
-        // 'Su pago:					 ' + decimalPipe.transform(parseFloat("" + this.transaction.cashChange) - parseFloat("" + this.transaction.totalPrice), '1.2-2') + '\n' +
-        // 'Su vuelto:					 '+ decimalPipe.transform(this.transaction.cashChange, '1.2-2') + '\n\n' +
-        'Ticket no válido como factura. Solicite su factura en el mostrador.\n\n' +
-        '----Gracias por su visita.----\n\n\n';
 
       let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
       
       let print: Print = new Print();
       print.fileName = fileName;
-      print.content = content;
       print.printer = printerSelected;
-      
-      this._printService.toPrint(print).subscribe(
-        result => {
-          this.printersAux = new Array();
-          if(result.message === 'ok'){
-            this.finishCharge();
-          } else {
-            this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
-          }
-          this.loading = false;
-        },
-        error => {
-          this.openModal("errorMessage");
-          this.loading = false;
-        }
-      );
+
+      this.typeOfOperationToPrint = 'charge';
+      this.openModal('print');
     } else {
       this.showMessage("No existen artículos en el pedido.", "info", true);
       this.loading = false;
@@ -1118,55 +1078,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.loading = true;
     
     if (this.barArticlesToPrint.length !== 0) {
-      let datePipe = new DatePipe('es-AR');
-      let decimalPipe = new DecimalPipe('ARS');
-      let content: string;
-      content =
-        'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
-        'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
-
-      content += 'DESCRIPCION.			CANTIDAD\n' +
-        '----------------------------------------\n';
-      for (let barArticleToPrint of this.barArticlesToPrint) {
-        content += barArticleToPrint.description + '    ' + barArticleToPrint.amount + '\n';
-        content += barArticleToPrint.observation + '\n';
-      }
 
       let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
 
       let print: Print = new Print();
       print.fileName = fileName;
-      print.content = content;
       print.printer = printerSelected;
-      this._printService.toPrint(print).subscribe(
-        result => {
-          this.printersAux = new Array();
-          if (result.message === 'ok') {
-            for (let movementOfArticle of this.barArticlesToPrint) {
-              movementOfArticle.printed += movementOfArticle.amount;
-              this.updateMovementOfArticle(movementOfArticle);
-            }
-            if(this.kitchenArticlesToPrint.length === 0) {
-              if (this.posType === 'resto') {
-                this.changeStateOfTable(TableState.Pending, true);
-              } else if (this.posType === 'resto') {
-                this.back();
-              }
-            } else {
-              this.typeOfOperationToPrint = "kitchen";
-              this.openModal("printers");
-            }
-          } else {
-            this.showMessage("Ha ocurrido un error en el servidor.", "danger", false);
-          }
-          this.loading = false;
-        },
-        error => {
-          this.openModal("errorMessage");
-          this.loading = false;
-        }
-      );
+      this.typeOfOperationToPrint = 'bar';
+      this.openModal('print');
     } else {
       this.showMessage("No existen artículos en el pedido", "info", true); 
       this.loading = false;
@@ -1178,50 +1097,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.loading = true;
     
     if (this.movementsOfArticles.length !== 0) {
-      let datePipe = new DatePipe('es-AR');
-      let decimalPipe = new DecimalPipe('ARS');
-      let content: string;
-      content =
-        'Fecha ' + datePipe.transform(new Date(), 'dd/MM/yyyy') + '  Hora ' + datePipe.transform(new Date(), 'HH:mm') + '\n' +
-        'Mesa: ' + this.transaction.table.description + '\n' +
-        'Empleado: ' + this.transaction.employeeClosing.name + '\n\n';
-
-      content += 'DESCRIPCION.			CANTIDAD\n' +
-        '----------------------------------------\n';
-      for (let kitchenArticleToPrint of this.kitchenArticlesToPrint) {
-        content += kitchenArticleToPrint.description + '    ' + kitchenArticleToPrint.amount + '\n';
-        content += kitchenArticleToPrint.observation + '\n';
-      }
-
+      
       let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
 
       let print: Print = new Print();
       print.fileName = fileName;
-      print.content = content;
       print.printer = printerSelected;
-      this._printService.toPrint(print).subscribe(
-        result => {
-          this.printersAux = new Array();
-          if (result.message === 'ok') {
-            for (let movementOfArticle of this.kitchenArticlesToPrint) {
-              movementOfArticle.printed += movementOfArticle.amount;
-              this.updateMovementOfArticle(movementOfArticle);
-            }
-            if (this.posType === 'resto') {
-              this.changeStateOfTable(TableState.Pending, true);
-            } else if (this.posType === 'resto') {
-              this.back();
-            }
-          } else {
-            this.showMessage("Ha ocurrido un error en el servidor", "danger", false);
-          }
-          this.loading = false;
-        },
-        error => {
-          this.openModal("errorMessage");
-          this.loading = false;
-        }
-      );
+      this.typeOfOperationToPrint = 'kitchen';
+      this.openModal('print');
     } else {
       this.showMessage("No existen artículos en el pedido", "info", true);
       this.loading = false;

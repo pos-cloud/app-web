@@ -167,7 +167,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._transactionService.getOpenSaleOrdersByEmployee(this.employee._id).subscribe(
       result => {
         if (!result.transactions) {
-          this.closeTurn();
+          this.getUserOfEmployee();
         } else {
           this.showMessage("No puede cerrar el turno del empleado si tiene pedidos pendientes", "info", true);
         }
@@ -197,19 +197,15 @@ export class SelectEmployeeComponent implements OnInit {
           if(this.op === 'open') {
             this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
           } else if (this.op === 'close') {
-            if(this.requireLogin) {
-              this.getUserOfEmployee();
-            } else {
-              this.closeTurn();
-            }
+            this.getTransactionsOpenByEmployee();
           } else if (this.op === 'change-employee') {
             if (this.requireLogin) {
-              this.openModal('login');
+              this.getUserOfEmployee();
             } else {
               this.activeModal.close(this.employee);
             }
           } else if (this.op === 'charge') {
-            if(this.requireLogin) {
+            if (this.requireLogin) {
               this.openModal('login');
             } else {
               this.activeModal.close(this.employee);
@@ -235,7 +231,6 @@ export class SelectEmployeeComponent implements OnInit {
         if (!result.turn) {
           this.showMessage(result.message, "info", true);
         } else {
-          console.log(result.turn);
           let modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.turn = result.turn;
           modalRef.componentInstance.typePrint = 'turn';
@@ -263,7 +258,15 @@ export class SelectEmployeeComponent implements OnInit {
         if (!result.users) {
           if(this.op === 'close') {
             this.closeTurn();
-          } else  {
+          } else if (this.op === 'change-employee') {
+            if(this.turn) {
+              this.activeModal.close(this.turn);
+            } else {
+              this.openTurn();
+            }
+          } else if(this.op === 'open') {
+            this.openTurn();
+          } else if (this.op === 'charge') {
             this.openTurn();
           }
         } else {

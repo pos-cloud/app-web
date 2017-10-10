@@ -311,25 +311,55 @@
          Tiques Anulados: {{shiftClosingTransaction.amountOrdersCanceled}}
       </div>
     </div>
+    <hr *ngIf="shiftClosingTransaction.detailCanceled">
     <div class="row">
-      <div class="col-md-12">
-        Detalle de Tiquets Anulados:
+      <div class="col-md-12" *ngIf="shiftClosingTransaction.detailCanceled">
+        <b>Detalle de Tiquets Anulados:</b>
       </div>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="shiftClosingTransaction.detailCanceled">
       <div class="col-md-12">
         {{shiftClosingTransaction.detailCanceled}}
       </div>
     </div>
-    <div class="row">
+    <hr *ngIf="shiftClosingMovementOfArticle.deletedItems">
+    <div class="row" *ngIf="shiftClosingMovementOfArticle.deletedItems">
       <div class="col-md-12">
-        Detalle de Artículos Anulados:
+        <b>Detalle de Artículos Anulados:</b>
       </div>
     </div>
-    <div class="row" *ngIf="shiftClosingMovementOfArticle">
+    <div class="row" *ngIf="shiftClosingMovementOfArticle.deletedItems">
       <div class="col-md-12">
         {{shiftClosingMovementOfArticle.deletedItems}}
       </div>
     </div>
+    <hr>
+    <div class="row" *ngIf="shiftClosingMovementOfCash">
+      <div class="col-md-12">
+        <b>Detalle de Medios de Pago:</b>
+      </div>
+    </div>
+    <div class="row" *ngIf="shiftClosingMovementOfCash">
+      <div class="col-md-12">
+        <div class="row" *ngIf="shiftClosingMovementOfCash.cash">
+          Efectivo: {{shiftClosingMovementOfCash.cash | number:'1.2-2'}}
+        </div>
+        <div class="row" *ngIf="shiftClosingMovementOfCash.currentAccount">
+          Cuenta Corriente: {{shiftClosingMovementOfCash.currentAccount | number:'1.2-2'}}
+        </div>
+        <div class="row" *ngIf="shiftClosingMovementOfCash.creditCard">
+          Tarjeta de Crédito: {{shiftClosingMovementOfCash.creditCard | number:'1.2-2'}}
+        </div>
+        <div class="row" *ngIf="shiftClosingMovementOfCash.debitCard">
+          Tarjeta de Débito: {{shiftClosingMovementOfCash.debitCard | number:'1.2-2'}}
+        </div>
+        <div class="row" *ngIf="shiftClosingMovementOfCash.thirdPartyCheck">
+          Cheque de Terceros: {{shiftClosingMovementOfCash.thirdPartyCheck | number:'1.2-2'}}
+        </div>
+      </div>
+    </div>
   </section>
+  <button type="submit" class="btn btn-primary" (click)="activeModal.close('ok')">
+    Ok
+  </button>
 </div>
