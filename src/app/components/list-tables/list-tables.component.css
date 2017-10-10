@@ -88,8 +88,13 @@
     color: white;
 } 
 
-.name-employee {
+.employee-name, .table-number, .table-description {
     color: white;
+}
+
+.table-description {
+    margin-top: 20px;
+    font-size: 30px;
 }
 
 .table {
