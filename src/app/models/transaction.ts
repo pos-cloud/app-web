@@ -18,6 +18,7 @@ export class Transaction {
 	public subtotalPrice: number = 0.00;
 	public discount: number = 0.00;
 	public totalPrice: number = 0.00;
+	public diners: number = 0;
 	public observation: string;
 	public type: TransactionType;
 	public company: Company;

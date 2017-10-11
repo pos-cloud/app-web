@@ -43,7 +43,7 @@ export class AppComponent implements OnInit{
       this.isAPIConected = false;
       this.loading = false;
     } else {
-      this.config = result.config[0];
+      this.config = result.config;
       this.setConfigurationSettings(this.config);
       this.setApiConfigurationSettings(this.config);
       this.hideMessage();
@@ -79,9 +79,9 @@ export class AppComponent implements OnInit{
   }
 
   public setConfigurationSettings(config) {
-    Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
-    Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
+    if(!config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
+    if(!config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    if(!config.nameCompany) Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
   }
 
   public setApiConfigurationSettings(config) {
