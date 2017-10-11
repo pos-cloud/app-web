@@ -68,15 +68,13 @@ export class ConfigComponent implements OnInit {
   public getConfigLocal() {
 
     let result = this._configService.getConfigLocal();
-    if (result) {
-      if (result.config) {
-        let config = result.config;
-        this.configForm.setValue({
-          'apiHost': config.apiHost,
-          'apiPort': config.apiPort,
-          'apiConnectionPassword': config.apiConnectionPassword
-        });
-      }
+    if (result && result.config) {
+      let config = result.config[0];
+      this.configForm.setValue({
+        'apiHost': config.apiHost,
+        'apiPort': config.apiPort,
+        'apiConnectionPassword': config.apiConnectionPassword
+      });
     }
   }
 
@@ -154,7 +152,7 @@ export class ConfigComponent implements OnInit {
 
     this.config._id = config._id;
     
-    this._configService.updateConfigApi(this.config).subscribe(
+    this._configService.updateConfig(this.config).subscribe(
       result => {
         if (!result) {
           this.showMessage(result.message, "info", true); 

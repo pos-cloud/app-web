@@ -25,7 +25,6 @@ import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
-import { PrintService } from './../../services/print.service';
 import { PrinterService } from './../../services/printer.service';
 import { UserService } from './../../services/user.service';
 
@@ -118,7 +117,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _movementOfArticleService: MovementOfArticleService,
     public _tableService: TableService,
     public _turnService: TurnService,
-    public _printService: PrintService,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -786,7 +784,8 @@ export class AddSaleOrderComponent implements OnInit {
 
   public countPrinters(): number {
     
-    let numberOfPrinters;
+    let numberOfPrinters: number = 0;
+    this.printersAux = new Array();
 
     if (this.printers != undefined) {
       for (let printer of this.printers) {

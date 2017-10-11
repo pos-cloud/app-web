@@ -20,16 +20,22 @@ export class ConfigBackupComponent implements OnInit {
   public config: Config;
   public configFormBackup: FormGroup;
   public configFormEmail: FormGroup;
+  public configFormCompany: FormGroup;
   public focusEvent = new EventEmitter<boolean>();
-  public alertMessage: any;
+  public alertMessage: string = "";
   public loading: boolean = false;
 
   public formErrors = {
     'pathMongo' : '',
     'pathBackup' : '',
     'backupTime' : '',
-    'mailAccount' : '',
-    'mailPassword': ''
+    'emailAccount': '',
+    'emailPassword': '',
+    'companyName': '',
+    'companyCUIT': '',
+    'companyAddress': '',
+    'companyPhone': '',
+    'ticketFoot': ''
   };
 
   public validationMessages = {
@@ -42,11 +48,22 @@ export class ConfigBackupComponent implements OnInit {
     'backupTime' : {
       'required':     'Este campo es requerido.'
     },
-    'mailAccount' : {
-      'required':     'Este campo es requerido'
+    'emailAccount': {
+      'required': 'Este campo es requerido'
     },
-    'mailPassword' : {
-      'required':     'Este campo es requerido'
+    'emailPassword': {
+      'required': 'Este campo es requerido'
+    },
+    'companyName': {
+      'required': 'Este campo es requerido'
+    },
+    'companyCUIT': {
+    },
+    'companyAddress': {
+    },
+    'companyPhone': {
+    },
+    'ticketFoot': {
     }
   };
 
@@ -64,6 +81,7 @@ export class ConfigBackupComponent implements OnInit {
     this.config = new Config();
     this.buildFormBackup();
     this.buildFormEmail();
+    this.buildFormCompany();
     this.getConfig();
   }
 
@@ -92,9 +110,9 @@ export class ConfigBackupComponent implements OnInit {
     });
 
     this.configFormBackup.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+      .subscribe(data => this.onValueChangedBackup(data));
 
-    this.onValueChanged();
+    this.onValueChangedBackup();
     this.focusEvent.emit(true);
   }
 
@@ -104,25 +122,92 @@ export class ConfigBackupComponent implements OnInit {
           Validators.required
         ]
       ],
-      'mailAccount' : [ Config.mailAccount, [
+      'emailAccount' : [ Config.emailAccount, [
           Validators.required
         ]
       ],
-      'mailPassword' : [ Config.mailPassword, [
+      'emailPassword' : [ Config.emailPassword, [
           Validators.required
         ]
       ]
     });
 
     this.configFormEmail.valueChanges
-      .subscribe(data => this.onValueChanged(data));
+      .subscribe(data => this.onValueChangedEmail(data));
 
-    this.onValueChanged();
+    this.onValueChangedEmail();
     this.focusEvent.emit(true);
   }
 
-  public onValueChanged(data?: any): void {
+  public buildFormCompany() {
+    this.configFormCompany = this._fb.group({
+      '_id': [this.config._id, [
+        Validators.required
+        ]
+      ],
+      'companyName': [Config.companyName, [
+        Validators.required
+        ]
+      ],
+      'companyCUIT': [Config.companyCUIT, [
+        ]
+      ],
+      'companyAddress': [Config.companyAddress, [
+        ]
+      ],
+      'companyPhone': [Config.companyPhone, [
+        ]
+      ],
+      'ticketFoot': [Config.ticketFoot, [
+        ]
+      ]
+    });
+
+    this.configFormCompany.valueChanges
+      .subscribe(data => this.onValueChangedCompany(data));
+
+    this.onValueChangedCompany();
+    this.focusEvent.emit(true);
+  }
+
+  public onValueChangedBackup(data?: any): void {
     
+    if (!this.configFormBackup) { return; }
+    const form = this.configFormBackup;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  public onValueChangedEmail(data?: any): void {
+
+    if (!this.configFormBackup) { return; }
+    const form = this.configFormBackup;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  public onValueChangedCompany(data?: any): void {
+
     if (!this.configFormBackup) { return; }
     const form = this.configFormBackup;
 
@@ -142,28 +227,36 @@ export class ConfigBackupComponent implements OnInit {
   public addConfigBackup() {
     this.config = this.configFormBackup.value;
     this.setConfigurationSettings(this.config);
-    this.saveConfigBackup();
+    this.updateConfigBackup();
   }
 
   public addConfigEmail() {
     this.config = this.configFormEmail.value;
     this.setConfigurationSettings(this.config);
-    this.saveConfigMail();
+    this.updateConfigEMail();
+  }
+
+  public addConfigCompany() {
+    this.config = this.configFormCompany.value;
+    this.setConfigurationSettings(this.config);
+    this.updateConfigCompany();
   }
 
   public setConfigurationSettings(config) {
     Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
-    Config.setConfigMail(config.mailAccount, config.mailPassword)
+    Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
   }
 
-  public saveConfigBackup(): void {
-    
+
+  public updateConfigBackup(): void {
+
     this.loading = true;
-    
+
     this._serviceConfig.updateConfigBackup(this.config).subscribe(
-      result=> {
-        if(!result.config) {
-          this.showMessage(result.message, "info", true); 
+      result => {
+        if (!result.config) {
+          this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.config;
@@ -180,14 +273,38 @@ export class ConfigBackupComponent implements OnInit {
     )
   }
 
-  public saveConfigMail(): void {
-    
+  public updateConfigEMail(): void {
+
     this.loading = true;
-    
-    this._serviceConfig.updateConfigMail(this.config).subscribe(
-      result=> {
-        if(!result.config) {
-          this.showMessage(result.message, "info", true); 
+
+    this._serviceConfig.updateConfigEmail(this.config).subscribe(
+      result => {
+        if (!result.config) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.config = result.config;
+          this.showMessage("Se guardaron los cambios.", "success", false);
+        }
+        this.loading = false;
+        this.buildFormEmail();
+        this.getConfig();
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    )
+  }
+
+  public updateConfigCompany(): void {
+
+    this.loading = true;
+
+    this._serviceConfig.updateConfigCompany(this.config).subscribe(
+      result => {
+        if (!result.config) {
+          this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.config;
@@ -212,21 +329,10 @@ export class ConfigBackupComponent implements OnInit {
       result => {
         if(!result.config) {
           this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           let config = result.config[0];
           this.config = config;
-          this.configFormBackup.setValue({
-            '_id' : config._id,
-            'backupTime' : config.backupTime,
-            'pathBackup' : config.pathBackup,
-            'pathMongo' : config.pathMongo,
-          });
-          this.configFormEmail.setValue({
-            '_id' : config._id,
-            'mailAccount' : config.mailAccount,
-            'mailPassword' : config.mailPassword
-          });
+          this.setProperties(config);
         }
         this.loading = false;
       },
@@ -235,6 +341,42 @@ export class ConfigBackupComponent implements OnInit {
         this.loading = false;
       }
     )
+  }
+
+  public setProperties(config): void {
+    
+    if (!config.backupTime) config.backupTime = "";
+    if (!config.pathBackup) config.pathBackup = "";
+    if (!config.pathMongo) config.pathMongo = "";
+    if (!config.emailAccount) config.emailAccount = "";
+    if (!config.emailPassword) config.emailPassword = "";
+    if (!config.companyName) config.companyName = "";
+    if (!config.companyCUIT) config.companyCUIT = "";
+    if (!config.companyAddress) config.companyAddress = "";
+    if (!config.companyPhone) config.companyPhone = "";
+    if (!config.ticketFoot) config.ticketFoot = "";
+    
+    this.configFormBackup.setValue({
+      '_id': config._id,
+      'backupTime': config.backupTime,
+      'pathBackup': config.pathBackup,
+      'pathMongo': config.pathMongo,
+    });
+
+    this.configFormEmail.setValue({
+      '_id': config._id,
+      'emailAccount': config.emailAccount,
+      'emailPassword': config.emailPassword
+    });
+
+    this.configFormCompany.setValue({
+      '_id': config._id,
+      'companyName': config.companyName,
+      'companyCUIT': config.companyCUIT,
+      'companyAddress': config.companyAddress,
+      'companyPhone': config.companyPhone,
+      'ticketFoot': config.ticketFoot,
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

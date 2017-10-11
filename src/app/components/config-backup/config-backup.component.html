@@ -4,6 +4,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
+  <!-- Backup -->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Respaldo</div>
     <div class= 'card-block'> 
@@ -51,6 +52,7 @@
       </form>
     </div>
   </div>
+  <!-- Email -->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Email</div>
     <div class= 'card-block'>
@@ -59,10 +61,10 @@
           <div class= "form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Cuenta de Mail</span>
-              <input type="text" class="form-control" formControlName="mailAccount" name="mailAccount" id="mailAccount" aria-describedby="basic-addon1">
+              <input type="text" class="form-control" formControlName="emailAccount" name="emailAccount" id="emailAccount" aria-describedby="basic-addon1">
             </div>
-            <div *ngIf="formErrors.mailAccount" class="alert alert-danger">
-                {{ formErrors.mailAccount }}
+            <div *ngIf="formErrors.emailAccount" class="alert alert-danger">
+                {{ formErrors.emailAccount }}
             </div>
           </div>
         </div>
@@ -70,16 +72,88 @@
           <div class= "form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Contraseña de Mail</span>
-              <input type="password" class="form-control" formControlName="mailPassword" name="mailPassword" id="mailPassword" aria-describedby="basic-addon1" >
+              <input type="password" class="form-control" formControlName="emailPassword" name="emailPassword" id="emailPassword" aria-describedby="basic-addon1" >
             </div>
-            <div *ngIf="formErrors.mailPassword" class="alert alert-danger">
-                {{ formErrors.mailPassword }}
+            <div *ngIf="formErrors.emailPassword" class="alert alert-danger">
+                {{ formErrors.emailPassword }}
             </div>
           </div>
         </div>
         <div class= "row">
           <div class= "form-group col-md-12">
             <button type="submit" class="btn btn-primary" [disabled]="!configFormEmail.valid || loading" >
+              <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+              <span *ngIf="!loading">Guardar</span>
+              <span *ngIf="loading">Espere por favor</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!--Company-->
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Datos de la Empresa</div>
+    <div class="card-block">
+      <form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()" autocomplete="off">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Razon Social</span>
+              <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyName" class="alert alert-danger">
+              {{ formErrors.companyName }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">CUIT</span>
+              <input type="text" class="form-control" formControlName="companyCUIT" name="companyCUIT" id="companyCUIT" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyCUIT" class="alert alert-danger">
+              {{ formErrors.companyCUIT }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Dirección</span>
+              <input type="text" class="form-control" formControlName="companyAddress" name="companyAddress" id="companyAddress" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyAddress" class="alert alert-danger">
+              {{ formErrors.companyAddress }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Teléfono</span>
+              <input type="text" class="form-control" formControlName="companyPhone" name="companyPhone" id="companyPhone" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyPhone" class="alert alert-danger">
+              {{ formErrors.companyPhone }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Pie de Ticket</span>
+              <input type="text" class="form-control" formControlName="ticketFoot" name="ticketFoot" id="ticketFoot" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.ticketFoot" class="alert alert-danger">
+              {{ formErrors.ticketFoot }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormCompany.valid || loading">
               <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
               <span *ngIf="!loading">Guardar</span>
               <span *ngIf="loading">Espere por favor</span>

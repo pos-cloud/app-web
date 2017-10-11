@@ -5,11 +5,11 @@
   </button>
 </div>
 <section class="container-fluid">
-	<div class="center-content"  *ngIf="alertMessage !== ''">
-		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-			{{alertMessage}}
-		</ngb-alert>
-	</div>
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
   <form [formGroup]="configForm" #formConfigRoom="ngForm" (ngSubmit)="addConfig()" autocomplete="off">
     <div class="modal-body">
       <div class="row">

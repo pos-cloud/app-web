@@ -30,34 +30,45 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.loading = true;
     this.getConfigLocal();
   }
 
   public getConfigLocal() {
-    
+
+    this.loading = true;
+
     let result = this._configService.getConfigLocal();
     if (!result) {
       this.openModal("config");
       this.isAPIConected = false;
+      this.loading = false;
     } else {
-      this.config = result.config;
+      this.config = result.config[0];
       this.setConfigurationSettings(this.config);
+      this.setApiConfigurationSettings(this.config);
       this.hideMessage();
       this.getConfigApi();
+      this.loading = false;
     }
   }
 
   public getConfigApi() {
-    
+
+    this.loading = true;
+
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result) {
           this.openModal("config");
           this.isAPIConected = false;
+          this.loading = false;
         } else {
           this.hideMessage();
-          this.isAPIConected = true;
+          this.isAPIConected = true; 
+          let config = result.config[0];
+          this.setConfigurationSettings(config);
+          this.setApiConfigurationSettings(config);
+          this.loading = false;
         }
       },
       error => {
@@ -68,6 +79,12 @@ export class AppComponent implements OnInit{
   }
 
   public setConfigurationSettings(config) {
+    Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
+    Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
+  }
+
+  public setApiConfigurationSettings(config) {
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
   }

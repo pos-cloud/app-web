@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company } from './../../models/company';
+import { Config } from './../../app.config';
+
 import { CompanyService } from './../../services/company.service';
 
 import { AddCompanyComponent } from './../../components/add-company/add-company.component';
@@ -129,23 +131,30 @@ export class ListCompaniesComponent implements OnInit {
     }
   };
 
-  public openMail(companies: Company[]): void {
-    let modalRef ;
-    modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
-    let emails = "";
-    for(let i=0; i < companies.length; i++){
-      emails += companies[i].emails;
-      if((i-companies.length)<=-2){
-        emails += ",";
+  public openMail(): void {
+    
+    if(Config.emailAccount) {
+      if(this.companies.length !== 0) {
+        let modalRef;
+        let emails = "";
+  
+        modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
+        for(let i=0; i < this.companies.length; i++){
+          emails += this.companies[i].emails;
+          if((i-this.companies.length)<=-2){
+            emails += ",";
+          }
+        }
+        modalRef.componentInstance.emails = emails;
+        modalRef.result.then((result) => {
+        }, (reason) => {
+        });
+      } else {
+        this.showMessage("No se encontraron empresas.","info",true);
       }
+    } else {
+      this.showMessage("Debe primero configurar la cuenta de correo.", "info", true);
     }
-    modalRef.componentInstance.emails = emails;
-    modalRef.result.then((result) => {
-      this.getCompanies();
-    }, (reason) => {
-      this.getCompanies();
-    });
-
   }
   
   public selectCompany(companySelected: Company): void {

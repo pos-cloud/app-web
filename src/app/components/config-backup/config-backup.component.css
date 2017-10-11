@@ -1,3 +1,11 @@
 .card {
     margin-top: 50px;
 }
+
+.btn {
+      cursor: pointer;
+}
+
+.card-header {
+      color: white;
+}

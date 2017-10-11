@@ -39,15 +39,7 @@ export class ConfigService {
 		return this._http.post(Config.apiURL + "config", config, { headers: headers }).map (res => res.json());
 	}
 
-	saveConfigBackup(config: Config) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
-		});
-		return this._http.post(Config.apiURL + "dirbackup", config, { headers: headers }).map (res => res.json());
-	}
-
-	updateConfigApi(config: Config) {
+	updateConfig(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
@@ -60,14 +52,22 @@ export class ConfigService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		return this._http.put(Config.apiURL + "configbackup/" + config._id, config, { headers: headers }).map (res => res.json());
+		return this._http.put(Config.apiURL + "config-backup/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
 
-	updateConfigMail(config: Config) {
+	updateConfigEmail(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		return this._http.put(Config.apiURL + "configmail/" + config._id, config, { headers: headers }).map (res => res.json());
+		return this._http.put(Config.apiURL + "config-email/" + config._id, config, { headers: headers }).map(res => res.json());
+	}
+
+	updateConfigCompany(config: Config) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.put(Config.apiURL + "config-company/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
 }

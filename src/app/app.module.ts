@@ -26,7 +26,6 @@ import { CategoryService } from './services/category.service';
 import { TurnService } from './services/turn.service';
 import { CompanyService } from './services/company.service';
 import { ClockService } from './services/clock.service';
-import { PrintService } from './services/print.service';
 import { PrinterService } from './services/printer.service';
 import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
@@ -209,7 +208,6 @@ import { PrintComponent } from './components/print/print.component';
     TurnService,
     CompanyService,
     ClockService,
-    PrintService,
     PrinterService,
     ImportService,
     ConfigService,

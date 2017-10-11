@@ -4,38 +4,32 @@ export class Config {
 
     public _id: string;
     static apiHost: string = "localhost";
-    static printHost: string = "localhost";
-    static apiURL: string = "http://localhost:7000/api/";
+    static apiURL: string;
     static apiConnectionPassword: string;
-    static printURL: string = "http://192.168.0.13:3030/api-pos-resto";
-    static apiPort: number = 7000;
-    static printPort: number = 7000;
-    static pathMongo: string = "C:\\Program Files\\MongoDB\\Server\\3.4\\bin";
-    static pathBackup: string = "C:\\Mongo\\backup";
-    static backupTime: string = "00:00";
-    static mailAccount: string;
-    static mailPassword: string;
+    static apiPort: number = 3000;
+    static pathMongo: string;
+    static pathBackup: string;
+    static backupTime: string;
+    static emailAccount: string;
+    static emailPassword: string;
+    static companyName: string;
+    static companyCUIT: string;
+    static companyAddress: string;
+    static companyPhone: string;
+    static ticketFoot: string;
 
-    constructor() { }
+    constructor() { 
+        Config.updateApiURL();
+    }
 
     public static setApiHost(apiHost: string): void {
         this.apiHost = apiHost;
         Config.updateApiURL();
     }
 
-    public static setPrintHost(printHost: string): void {
-        this.printHost = printHost;
-        Config.updatePrintURL();
-    }
-
     public static setApiPort(apiPort: number): void {
         this.apiPort = apiPort;
         Config.updateApiURL();
-    }
-
-    public static setPrintPort(printPort: number): void {
-        this.printPort = printPort;
-        Config.updatePrintURL();
     }
 
     public static setApiConnectionPassword(apiConnectionPassword: string): void {
@@ -48,9 +42,17 @@ export class Config {
         this.backupTime = backupTime;
     }
 
-    public static setConfigMail(mailAccount, mailPassword): void {
-        this.mailAccount = mailAccount;
-        this.mailPassword = mailPassword;
+    public static setConfigEmail(emailAccount, emailPassword): void {
+        this.emailAccount = emailAccount;
+        this.emailPassword = emailPassword;
+    }
+
+    public static setConfigCompany(companyName, companyCUIT, companyAddress, companyPhone, ticketFoot): void {
+        this.companyName = companyName;
+        this.companyCUIT = companyCUIT;
+        this.companyAddress = companyAddress;
+        this.companyPhone = companyPhone;
+        this.ticketFoot = ticketFoot;
     }
 
     public static updateApiURL() {
@@ -58,14 +60,6 @@ export class Config {
             Config.apiURL = "http://" + Config.apiHost + ":" + Config.apiPort + "/api/";
         } else {
             Config.apiURL = "http://" + Config.apiHost + "/api/";
-        }
-    }
-
-    public static updatePrintURL() {
-        if (Config.printPort !== 0) {
-            Config.printURL = "http://" + Config.printHost + ":" + Config.printPort + "/api-pos-resto/";
-        } else {
-            Config.printURL = "http://" + Config.printHost + "/api-pos-resto/";
         }
     }
 }
