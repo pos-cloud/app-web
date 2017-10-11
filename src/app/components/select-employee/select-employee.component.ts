@@ -4,10 +4,12 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Employee } from './../../models/employee';
+import { Table } from './../../models/table';
 import { Turn, TurnState } from './../../models/turn';
 import { Transaction, TransactionState } from './../../models/transaction';
 
 import { EmployeeService } from './../../services/employee.service';
+import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { UserService } from './../../services/user.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -24,6 +26,7 @@ export class SelectEmployeeComponent implements OnInit {
 
   public selectEmployeeForm: FormGroup;
   public employee: Employee;
+  public table: Table;
   public turn: Turn;
   public waiters: Employee[] = new Array();
   public alertMessage: string = "";
@@ -32,11 +35,15 @@ export class SelectEmployeeComponent implements OnInit {
   @Input() op: string;
 
   public formErrors = {
-    'employee': ''
+    'employee': '',
+    'chair': ''
   };
 
   public validationMessages = {
     'employee': {
+      'required': 'Este campo es requerido.'
+    },
+    'chair': {
       'required': 'Este campo es requerido.'
     }
   };
@@ -44,6 +51,7 @@ export class SelectEmployeeComponent implements OnInit {
   constructor(
     public _fb: FormBuilder,
     public _employeeService: EmployeeService,
+    public _tableService: TableService,
     public _turnService: TurnService,
     public _userService: UserService,
     public _transactionService: TransactionService,
@@ -54,6 +62,9 @@ export class SelectEmployeeComponent implements OnInit {
 
   ngOnInit() {
     this.employee = new Employee();
+    if(!this.table) {
+      this.table = new Table();
+    }
     this.buildForm();
     this.getWaiters();
   }
@@ -62,6 +73,11 @@ export class SelectEmployeeComponent implements OnInit {
 
     this.selectEmployeeForm = this._fb.group({
       'employee': [this.employee.name, [
+          Validators.required
+        ]
+      ],
+      'chair': [this.table.chair, [
+          Validators.required
         ]
       ]
     });
@@ -110,7 +126,8 @@ export class SelectEmployeeComponent implements OnInit {
           }
           this.employee = this.waiters[0];
           this.selectEmployeeForm.setValue({
-            'employee': this.employee
+            'employee': this.employee,
+            'chair': this.table.chair
           });
         }
       },
@@ -310,7 +327,51 @@ export class SelectEmployeeComponent implements OnInit {
 
   public selectEmployee(): void {
     this.employee = this.selectEmployeeForm.value.employee;
+    this.table.chair = this.selectEmployeeForm.value.chair;
+    this.updateTable();
     this.getOpenTurn();
+  }
+
+  public addChair(): void {
+    this.selectEmployeeForm.setValue({
+      'employee': this.selectEmployeeForm.value.employee,
+      'chair': this.selectEmployeeForm.value.chair + 1
+    });
+  }
+
+  public subtractChair(): void {
+    if (this.selectEmployeeForm.value.chair > 1) {
+      this.selectEmployeeForm.setValue({
+              'employee': this.selectEmployeeForm.value.employee,
+              'chair': this.selectEmployeeForm.value.chair - 1
+      });
+    } else {
+      this.selectEmployeeForm.setValue({
+              'employee': this.selectEmployeeForm.value.employee,
+              'chair': 1
+      });
+    }
+  }
+
+  public updateTable(): void {
+    
+    this.loading = true;
+    
+    this._tableService.updateTable(this.table).subscribe(
+      result => {
+        if (!result.table) {
+          this.showMessage(result.message, "info", true); 
+          this.loading = false;
+        } else {
+          this.table = result.table;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

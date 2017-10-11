@@ -65,21 +65,21 @@
             <th></th>
           </tr>
           <tr *ngIf="areFiltersVisible">
-            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPendingOrigin" placeholder="Origen..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPendingNumber" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPendingEndDate" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPendingObservation" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPendingTotalPrice" placeholder="Precio Total..."></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm  
-                                                      | filter: filterOrigin:'origin' 
-                                                      | filter: filterNumber:'number' 
-                                                      | filter: filterEndDate:'date' 
-                                                      | filter: filterObservation:'observation' 
-                                                      | filter: filterTotalPrice:'totalPrice'
+                                                      | filter: filterPendingOrigin:'origin' 
+                                                      | filter: filterPendingNumber:'number' 
+                                                      | filter: filterPendingEndDate:'date' 
+                                                      | filter: filterPendingObservation:'observation' 
+                                                      | filter: filterPendingTotalPrice:'totalPrice'
                                                       | filter: 'Abierto':'state'">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>
@@ -120,20 +120,20 @@
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
-            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSendOrigin" placeholder="Origen..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSendNumber" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSendEndDate" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSendObservation" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSendTotalPrice" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm  
-                                                      | filter: filterOrigin:'origin' 
-                                                      | filter: filterNumber:'number' 
-                                                      | filter: filterEndDate:'date' 
-                                                      | filter: filterObservation:'observation' 
-                                                      | filter: filterTotalPrice:'totalPrice' 
+                                                      | filter: filterSendOrigin:'origin' 
+                                                      | filter: filterSendNumber:'number' 
+                                                      | filter: filterSendEndDate:'date' 
+                                                      | filter: filterSendObservation:'observation' 
+                                                      | filter: filterSendTotalPrice:'totalPrice' 
                                                       | filter: 'Enviado':'state'">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>
@@ -175,21 +175,21 @@
             <th></th>
           </tr>
           <tr *ngIf="areFiltersVisible">
-            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredOrigin" placeholder="Origen..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredNumber" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredEndDate" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredObservation" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredTotalPrice" placeholder="Precio Total..."></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm  
-                                                      | filter: filterOrigin:'origin' 
-                                                      | filter: filterNumber:'number' 
-                                                      | filter: filterEndDate:'date' 
-                                                      | filter: filterObservation:'observation' 
-                                                      | filter: filterTotalPrice:'totalPrice' 
+                                                      | filter: filterDeliveredOrigin:'origin' 
+                                                      | filter: filterDeliveredNumber:'number' 
+                                                      | filter: filterDeliveredEndDate:'date' 
+                                                      | filter: filterDeliveredObservation:'observation' 
+                                                      | filter: filterDeliveredTotalPrice:'totalPrice' 
                                                       | filter: 'Entregado':'state'">
             <td>{{transaction.origin}}</td>
             <td>{{transaction.number}}</td>

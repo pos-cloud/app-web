@@ -27,7 +27,8 @@
             <select class="form-control" formControlName="paymentMethod" name="paymentMethod">
                 <option *ngFor="let paymentMethod of paymentMethods"
                         [selected]="paymentMethod._id==movementOfCash.type._id" 
-                        [ngValue]="paymentMethod">
+                        [ngValue]="paymentMethod"
+                        [disabled]="!transaction.company && paymentMethod.name === 'Cuenta Corriente'">
                       {{paymentMethod.name}}
                 </option>
               </select>

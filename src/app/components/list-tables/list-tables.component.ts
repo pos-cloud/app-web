@@ -154,6 +154,7 @@ export class ListTablesComponent implements OnInit {
             this.tableSelected.state !== TableState.Reserved) {
                 if (!this.tableSelected.employee) {
                   modalRef = this._modalService.open(SelectEmployeeComponent);
+                  modalRef.componentInstance.table = this.tableSelected;
                   modalRef.componentInstance.requireLogin = false;
                   modalRef.componentInstance.op = "charge";
                   modalRef.result.then((result) => {
