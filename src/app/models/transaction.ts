@@ -20,6 +20,7 @@ export class Transaction {
 	public totalPrice: number = 0.00;
 	public diners: number = 0;
 	public observation: string;
+	public madein: string;
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;

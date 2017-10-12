@@ -80,13 +80,13 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + 'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}}],"employeeClosing":"' + employeeId + '"&limit=1', { headers: headers }).map(res => res.json());
 	}
 
-	getOpenTransaction() {
+	getOpenTransaction(posType: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + 
-			'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}}]', { headers: headers }).map(res => res.json());
+			'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}},{"madein":"'+posType+'"}]', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByEmployee(employeeId: string, date: string) {

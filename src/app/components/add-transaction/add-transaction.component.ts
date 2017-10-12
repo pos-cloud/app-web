@@ -40,6 +40,7 @@ export class AddTransactionComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public datePipe = new DatePipe('es-AR');
+  public posType: string;
 
   public formErrors = {
     'date': '',
@@ -89,6 +90,7 @@ export class AddTransactionComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.posType = pathLocation[2];
     if(!this.transaction) {
       this.transaction = new Transaction();
       this.transaction.state = TransactionState.Open;
@@ -257,7 +259,8 @@ export class AddTransactionComponent implements OnInit {
   public saveTransaction(): void {
 
     this.loading = true;
-    
+    this.transaction.madein = this.posType;
+
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {

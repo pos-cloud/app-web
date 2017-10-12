@@ -410,6 +410,8 @@ export class AddSaleOrderComponent implements OnInit {
   public addTransaction(): void {
     
     this.loading = true;
+    this.transaction.madein = this.posType;
+    
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if(!result.transaction) {

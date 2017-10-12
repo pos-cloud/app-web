@@ -291,7 +291,7 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionService.getOpenTransaction().subscribe(
+    this._transactionService.getOpenTransaction(this.posType).subscribe(
       result => {
         if (!result.transactions) {
           this.showMessage(result.message, "info", true);

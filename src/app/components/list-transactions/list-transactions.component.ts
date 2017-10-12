@@ -22,6 +22,7 @@ export class ListTransactionsComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = "";
   public userType: string;
+  public posType: string;
   public orderTerm: string[] = ['-date'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -39,6 +40,7 @@ export class ListTransactionsComponent implements OnInit {
     
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.posType = pathLocation[2];
     this.getTransactions();
   }
 
