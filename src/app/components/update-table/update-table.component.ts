@@ -68,7 +68,6 @@ export class UpdateTableComponent implements OnInit {
       'chair': this.table.chair,
       'state': this.table.state
     });
-    console.log(this.table.state);
   }
 
   ngAfterViewInit() {

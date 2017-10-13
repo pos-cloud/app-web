@@ -36,7 +36,7 @@
 					<div class="row">
 						<div class="form-group col-md-8">
 							<label for="description" class="control-label">Descripción:</label>
-							<input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="readonly"/>
+							<input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="readonly" (blur)="loadPosDescription()"/>
 							<div *ngIf="formErrors.description" class="alert alert-danger">
 								{{ formErrors.description }}
 							</div>
@@ -57,13 +57,67 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-6">
 					<label for="category" class="control-label">Rubro</label>
 					<select class="form-control" formControlName="category">
-						<option *ngFor="let category of categories" [selected]="category._id==article.category._id" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
+						<option *ngFor="let category of categories" [selected]="category._id===article.category._id" [value]="category._id" [disabled]="readonly">
+							{{category.description}}
+						</option>
 					</select>
 					<div *ngIf="formErrors.category" class="alert alert-danger">
 						{{ formErrors.category }}
+					</div>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="type" class="control-label">Imprime en:</label>
+					<select class="form-control" formControlName="type">
+						<option *ngFor="let type of types" [ngValue]="type" [disabled]="readonly">{{type}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="costPrice" class="control-label">Precio de Costo:</label>
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')" [readonly]="readonly"/>
+					</div>
+					<div *ngIf="formErrors.costPrice" class="alert alert-danger">
+						{{ formErrors.costPrice }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-6">
+					<label for="markupPorcent" class="control-label">Margen:</label>
+					<div class="input-group">
+						<span class="input-group-addon">%</span>
+						<input type="number" class="form-control" formControlName="markupPorcent" name="markupPorcent" id="markupPorcent" step="0.01" [readonly]="readonly" (blur)="updatePrices('markupPorcent')" />
+					</div>
+					<div *ngIf="formErrors.markupPorcent" class="alert alert-danger">
+						{{ formErrors.markupPorcent }}
+					</div>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="markupPrice" class="control-label">Utilidad:</label>
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice" step="0.01" (blur)="updatePrices('markupPrice')" [readonly]="readonly"/>
+					</div>
+					<div *ngIf="formErrors.markupPrice" class="alert alert-danger">
+						{{ formErrors.markupPrice }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="salePrice" class="control-label">Precio de Venta:</label>
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" (blur)="updatePrices('salePrice')" [readonly]="readonly"/>
+					</div>
+					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
+						{{ formErrors.salePrice }}
 					</div>
 				</div>
 			</div>
@@ -73,24 +127,6 @@
 					<div class="input-group">
 						<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
 					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-8">
-					<label for="salePrice" class="control-label">Precio de Venta:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" [readonly]="readonly"/>
-					</div>
-					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
-						{{ formErrors.salePrice }}
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-					<label for="type" class="control-label">Tipo</label>
-					<select class="form-control" formControlName="type">
-						<option *ngFor="let type of types" [ngValue]="type" [disabled]="readonly">{{type}}</option>
-					</select>
 				</div>
 			</div>
 		</div>

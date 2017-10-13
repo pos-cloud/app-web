@@ -8,6 +8,9 @@ export class Article {
     public description: string = "";
     public posDescription: string = "";
     public observation: string;
+    public costPrice: number = 0.00;
+    public markupPorcent: number = 0.00;
+    public markupPrice: number = 0.00;
     public salePrice: number = 0.00;
     public make: Make;
     public category: Category;

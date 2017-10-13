@@ -133,6 +133,8 @@ export class ConfigComponent implements OnInit {
 
   public getConfig() {
 
+    this.loading = true;
+
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result.config) {
@@ -140,6 +142,7 @@ export class ConfigComponent implements OnInit {
         } else {
           this.updateConfig(result.config[0]);
         }
+        this.loading = false;
       },
       error => {
         this.showMessage("No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.", "danger", false);
@@ -150,22 +153,22 @@ export class ConfigComponent implements OnInit {
 
   public updateConfig(config: Config): void {
 
+    this.loading = true;
     this.config._id = config._id;
     
     this._configService.updateConfig(this.config).subscribe(
       result => {
         if (!result) {
           this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
             this.configUser();
           } else {
             this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
-            this.loading = false;
           }
         }
+        this.loading = false;
       },
       error => {
         this.showMessage("No se ha podido establecer conexión con el servidor.\nVerifique los datos ingresados.\nVerifique si el servidor está encendido.", "danger", false);
@@ -176,11 +179,12 @@ export class ConfigComponent implements OnInit {
 
   public saveConfig(): void {
 
+    this.loading = true;
+
     this._configService.saveConfigApi(this.config).subscribe(
       result => {
         if (!result) {
           this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           this.config = result;
           if (this._configService.saveConfigLocal(this.config)) {
@@ -188,7 +192,6 @@ export class ConfigComponent implements OnInit {
             this.configUser();
           } else {
             this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
-            this.loading = false;
           }
         }
         this.loading = false;
@@ -223,6 +226,7 @@ export class ConfigComponent implements OnInit {
           this.hideMessage();
           location.reload();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -241,11 +245,11 @@ export class ConfigComponent implements OnInit {
       result => {
         if (!result.employeeType) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           employeeType = result.employeeType;
           this.addEmployeeTypeSupervisor();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -264,11 +268,11 @@ export class ConfigComponent implements OnInit {
       result => {
         if (!result.employeeType) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           employeeType = result.employeeType;
           this.saveEmployee(employeeType);
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -289,11 +293,11 @@ export class ConfigComponent implements OnInit {
       result => {
         if (!result.employee) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           employee = result.employee;
           this.saveUser(employee);
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -316,7 +320,6 @@ export class ConfigComponent implements OnInit {
       result => {
         if (!result.user) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           location.reload();
         }

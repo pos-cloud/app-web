@@ -36,13 +36,13 @@ import { LoginComponent } from './../login/login.component';
 import { PrintComponent } from './../../components/print/print.component';
 
 //Pipes
-import { DatePipe, DecimalPipe } from '@angular/common'; 
+import { DatePipe } from '@angular/common'; 
 
 @Component({
   selector: 'app-add-sale-order',
   templateUrl: './add-sale-order.component.html',
   styleUrls: ['./add-sale-order.component.css'],
-  providers: [NgbAlertConfig, DatePipe, DecimalPipe]
+  providers: [NgbAlertConfig, DatePipe]
 })
 
 export class AddSaleOrderComponent implements OnInit {

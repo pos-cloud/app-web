@@ -26,8 +26,7 @@ export class DeleteMakeComponent implements OnInit {
     public alertConfig: NgbAlertConfig
   ) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);

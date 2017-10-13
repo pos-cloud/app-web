@@ -17,7 +17,7 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { CompanyService } from './../../services/company.service';
 
 //Pipes
-import { DatePipe, DecimalPipe } from '@angular/common'; 
+import { DatePipe } from '@angular/common'; 
 
 //Componentes
 import { AddMovementOfCashComponent } from './../../components/add-movement-of-cash/add-movement-of-cash.component';
@@ -26,7 +26,7 @@ import { AddMovementOfCashComponent } from './../../components/add-movement-of-c
   selector: 'app-add-transaction',
   templateUrl: './add-transaction.component.html',
   styleUrls: ['./add-transaction.component.css'],
-  providers: [NgbAlertConfig, DatePipe, DecimalPipe]
+  providers: [NgbAlertConfig, DatePipe ]
 })
 
 export class AddTransactionComponent implements OnInit {

@@ -16,11 +16,14 @@ import { CategoryService } from './../../services/category.service';
 
 import { Config } from './../../app.config';
 
+//Pipes
+import { DecimalPipe } from '@angular/common'; 
+
 @Component({
   selector: 'app-add-article',
   templateUrl: './add-article.component.html',
   styleUrls: ['./add-article.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, DecimalPipe]
 })
 
 export class AddArticleComponent  implements OnInit {
@@ -42,6 +45,9 @@ export class AddArticleComponent  implements OnInit {
     'make': '',
     'description': '',
     'posDescription': '',
+    'costPrice': 0.00,
+    'markupPorcent': 0.00,
+    'markupPrice': 0.00,
     'salePrice': 0.00,
     'category': ''
   };
@@ -59,6 +65,15 @@ export class AddArticleComponent  implements OnInit {
     },
     'posDescription': {
       'maxlength':      'No puede exceder los 10 carácteres.'
+    },
+    'costPrice': {
+      'required': 'Este campo es requerido.'
+    },
+    'markupPorcent': {
+      'required': 'Este campo es requerido.'
+    },
+    'markupPrice': {
+      'required': 'Este campo es requerido.'
     },
     'salePrice': {
       'required':       'Este campo es requerido.'
@@ -103,7 +118,6 @@ export class AddArticleComponent  implements OnInit {
         ]
       ],
       'make': [this.article.make, [
-          Validators.required
         ]
       ],
       'description': [this.article.description, [
@@ -112,6 +126,18 @@ export class AddArticleComponent  implements OnInit {
       ],
       'posDescription': [this.article.posDescription, [
           Validators.maxLength(10)
+        ]
+      ],
+      'costPrice': [this.article.costPrice, [
+        Validators.required
+        ]
+      ],
+      'markupPorcent': [this.article.markupPorcent, [
+        Validators.required
+        ]
+      ],
+      'markupPrice': [this.article.markupPrice, [
+        Validators.required
         ]
       ],
       'salePrice': [this.article.salePrice, [
@@ -166,7 +192,6 @@ export class AddArticleComponent  implements OnInit {
         result => {
           let code = "1";
           let category: Category = new Category();
-          let make: Make  = new Make();
           if(result.articles){
             if(result.articles[0] !== undefined) {
               if (!isNaN(parseInt(result.articles[0].code))) {
@@ -179,21 +204,11 @@ export class AddArticleComponent  implements OnInit {
           if(this.categories[0] !== undefined) {
             category = this.categories[0];
           }
-          if(this.makes[0] !== undefined) {
-            make = this.makes[0];
-          }
-          this.articleForm.setValue({
-            '_id': '',
-            'code': code,
-            'make': make,
-            'description': '',
-            'posDescription': '',
-            'salePrice': 0.00,
-            'category': category,
-            'observation': '',
-            'barcode': '',
-            'type': ArticleType.Counter
-          });
+
+          this.article.code = code;
+          this.article.make = this.makes[0];
+          this.article.category = category;
+          this.setValuesForm();
           this.loading = false;
         },
         error => {
@@ -210,8 +225,7 @@ export class AddArticleComponent  implements OnInit {
     this._makeService.getMakes().subscribe(
         result => {
           if(!result.makes) {
-            this.showMessage(result.message, "info", true);
-            this.loading = false;
+            this.getCategories();
           } else {
             this.hideMessage();
             this.loading = false;
@@ -247,14 +261,93 @@ export class AddArticleComponent  implements OnInit {
           this.loading = false;
         }
       );
-   }
+  }
+
+  public updatePrices(op): void {
+    
+    switch(op) {
+      case 'costPrice':
+          this.articleForm.value.markupPrice = (this.articleForm.value.costPrice * this.articleForm.value.markupPorcent) / 100;
+          this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+      case 'markupPorcent':
+        this.articleForm.value.markupPrice = (this.articleForm.value.costPrice * this.articleForm.value.markupPorcent) / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+      case 'markupPrice':
+        this.articleForm.value.markupPorcent = (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+      case 'salePrice':
+        if(this.articleForm.value.costPrice === 0) {
+          this.articleForm.value.markupPorcent = 0;
+          this.articleForm.value.markupPricet = 0;
+        } else {
+          this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
+          this.articleForm.value.markupPorcent = (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100;
+        }
+        break;
+      default:
+        this.articleForm.value.markupPrice = (this.articleForm.value.costPrice * this.articleForm.value.markupPorcent) / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+    }
+
+    this.articleForm.value.costPrice = parseFloat(this.articleForm.value.costPrice.toFixed(2));
+    this.articleForm.value.markupPorcent = parseFloat(this.articleForm.value.markupPorcent.toFixed(2));
+    this.articleForm.value.markupPrice = parseFloat(this.articleForm.value.markupPrice.toFixed(2));
+    this.articleForm.value.salePrice = parseFloat(this.articleForm.value.salePrice.toFixed(2));
+
+    this.article = this.articleForm.value;
+    this.setValuesForm();
+
+  }
+
+  public loadPosDescription(): void {
+    if (this.articleForm.value.posDescription === "") {
+      let slicePipe = new SlicePipe();
+      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description, 0, 10);
+      this.article = this.articleForm.value;
+      this.setValuesForm();
+    }
+  }
+
+  public setValuesForm(): void {
+
+    if (!this.article._id) this.article._id = "";
+    if (!this.article.code) this.article.code = "1";
+    if (!this.article.make) this.article.make = null;
+    if (!this.article.description) this.article.description = "";
+    if (!this.article.posDescription) this.article.posDescription = "";
+    if (!this.article.costPrice) this.article.costPrice = 0.00;
+    if (!this.article.markupPorcent) this.article.markupPorcent = 0.00;
+    if (!this.article.markupPrice) this.article.markupPrice = 0.00;
+    if (!this.article.salePrice) this.article.salePrice = 0.00;
+    if (!this.article.category) this.article.category = null;
+    if (!this.article.observation) this.article.observation = "";
+    if (!this.article.barcode) this.article.barcode = "";
+    if (!this.article.type) this.article.type = ArticleType.Counter;
+    
+    this.articleForm.setValue({
+      '_id': this.article._id,
+      'code': this.article.code,
+      'make': this.article.make,
+      'description': this.article.description,
+      'posDescription': this.article.posDescription,
+      'costPrice': this.article.costPrice,
+      'markupPorcent': this.article.markupPorcent,
+      'markupPrice': this.article.markupPrice,
+      'salePrice': this.article.salePrice,
+      'category': this.article.category,
+      'observation': this.article.observation,
+      'barcode': this.article.barcode,
+      'type': this.article.type
+    });
+  }
 
   public addArticle(): void {
     
-    if(this.articleForm.value.posDescription === "") {
-      let slicePipe = new SlicePipe();
-      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,0,10);
-    }
+    this.loadPosDescription();
     this.article = this.articleForm.value;
     this.saveArticle();
   }

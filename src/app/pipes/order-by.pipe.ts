@@ -10,10 +10,10 @@ export class OrderByPipe implements PipeTransform {
   static _orderByComparator(a:any, b:any):number{
 
         //Si la variable es indefinida la seteamos en blanco
-        if(a === undefined) {
+        if(a === undefined || a === null) {
             a="";
         }
-        if(b === undefined) {
+        if (b === undefined || b === null) {
             b="";
         }
 
@@ -61,11 +61,11 @@ export class OrderByPipe implements PipeTransform {
                         //Verificamos si no hay un obejeto dentro de otro
                         if(arg2 !== undefined) {
                             //En caso de que haya un objeto dentro de otro, pero la relacion no exista crea una relacion ficticia
-                            if(a[property] === undefined) {
+                            if (a[property] === undefined || a[property] === null) {
                                 a[property] = new Array();
                                 a[property][arg2] = "";
                             }
-                            if(b[property] === undefined) {
+                            if (b[property] === undefined || b[property] === null) {
                                 b[property] = new Array();
                                 b[property][arg2] = "";
                             }
@@ -75,11 +75,11 @@ export class OrderByPipe implements PipeTransform {
                         }
                     } else {
                         if(arg2 !== undefined) {
-                            if(a[property] === undefined) {
+                            if (a[property] === undefined || a[property] === null) {
                                 a[property] = new Array();
                                 a[property][arg2] = "";
                             }
-                            if(b[property] === undefined) {
+                            if (b[property] === undefined || b[property] === null) {
                                 b[property] = new Array();
                                 b[property][arg2] = "";
                             }

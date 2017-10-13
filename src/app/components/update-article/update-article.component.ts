@@ -16,11 +16,14 @@ import { CategoryService } from './../../services/category.service';
 
 import { Config } from './../../app.config';
 
+//Pipes
+import { DecimalPipe } from '@angular/common'; 
+
 @Component({
   selector: 'app-update-article',
   templateUrl: './update-article.component.html',
   styleUrls: ['./update-article.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, DecimalPipe]
 })
 
 export class UpdateArticleComponent implements OnInit {
@@ -44,30 +47,40 @@ export class UpdateArticleComponent implements OnInit {
     'make': '',
     'description': '',
     'posDescription': '',
+    'costPrice': 0.00,
+    'markupPorcent': 0.00,
+    'markupPrice': 0.00,
     'salePrice': 0.00,
     'category': ''
   };
 
   public validationMessages = {
     'code': {
-      'required':       'Este campo es requerido.',
-      'maxlength':      'No puede exceder los 5 carácteres.'
+      'required': 'Este campo es requerido.',
+      'maxlength': 'No puede exceder los 5 carácteres.'
     },
     'make': {
-      'required':       'Este campo es requerido.'
     },
     'description': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'posDescription': {
-      'required':       'Este campo es requerido.',
-      'maxlength':      'No puede exceder los 10 carácteres.'
+      'maxlength': 'No puede exceder los 10 carácteres.'
+    },
+    'costPrice': {
+      'required': 'Este campo es requerido.'
+    },
+    'markupPorcent': {
+      'required': 'Este campo es requerido.'
+    },
+    'markupPrice': {
+      'required': 'Este campo es requerido.'
     },
     'salePrice': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'category': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     }
   };
 
@@ -88,18 +101,7 @@ export class UpdateArticleComponent implements OnInit {
     this.buildForm();
     this.getMakes();
     this.getCategories();
-    this.articleForm.setValue({
-      '_id':this.article._id,
-      'code':this.article.code,
-      'make': this.article.make._id,
-      'description': this.article.description,
-      'posDescription': this.article.posDescription,
-      'salePrice': this.article.salePrice,
-      'category': this.article.category._id,
-      'observation': this.article.observation,
-      'barcode': this.article.barcode,
-      'type': this.article.type
-    });
+    this.setValuesForm();
   }
 
   ngAfterViewInit() {
@@ -118,7 +120,6 @@ export class UpdateArticleComponent implements OnInit {
         ]
       ],
       'make': [this.article.make, [
-          Validators.required
         ]
       ],
       'description': [this.article.description, [
@@ -127,6 +128,18 @@ export class UpdateArticleComponent implements OnInit {
       ],
       'posDescription': [this.article.posDescription, [
           Validators.maxLength(10)
+        ]
+      ],
+      'costPrice': [this.article.costPrice, [
+        Validators.required
+        ]
+      ],
+      'markupPorcent': [this.article.markupPorcent, [
+        Validators.required
+        ]
+      ],
+      'markupPrice': [this.article.markupPrice, [
+        Validators.required
         ]
       ],
       'salePrice': [this.article.salePrice, [
@@ -179,8 +192,6 @@ export class UpdateArticleComponent implements OnInit {
     this._makeService.getMakes().subscribe(
         result => {
           if(!result.makes) {
-            this.showMessage(result.message, "info", true); 
-            this.loading = false;
           } else {
             this.hideMessage();
             this.loading = false;
@@ -224,52 +235,160 @@ export class UpdateArticleComponent implements OnInit {
         this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
       }
       this.article = this.articleForm.value;
-      this.getMake();
+      if(this.articleForm.value.make) {
+        this.getMake();
+      } else {
+        this.getCategory();
+      }
     }
   }
 
-  public getMake(): void {  
-    
-    this.loading = true;
-    
-    this._makeService.getMake(this.articleForm.value.make).subscribe(
-        result => {
-          if(!result.make) {
-            this.showMessage(result.message, "info", true); 
-            this.loading = false;
-          } else {
-            this.hideMessage();
-            this.loading = false;
-            this.article.make = result.make;
-            this.getCategory();
-          }
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
-        }
-      );
-   }
+  public getMake(): void {
 
-  public getCategory(): void {  
-    
     this.loading = true;
-    
-    this._categoryService.getCategory(this.articleForm.value.category).subscribe(
-        result => {
-          if(!result.category) {
-            this.showMessage(result.message, "info", true); 
-          } else {
-            this.article.category = result.category;
-            this.saveChanges();
-          }
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
+
+    this._makeService.getMake(this.articleForm.value.make).subscribe(
+      result => {
+        if (!result.make) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.hideMessage();
           this.loading = false;
+          this.article.make = result.make;
+          this.getCategory();
         }
-      );
-   }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getCategory(): void {
+
+    this.loading = true;
+
+    this._categoryService.getCategory(this.articleForm.value.category).subscribe(
+      result => {
+        if (!result.category) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.article.category = result.category;
+          this.loadPosDescription();
+          this.saveChanges();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public updatePrices(op): void {
+
+    switch (op) {
+      case 'costPrice':
+        this.articleForm.value.markupPrice = (this.articleForm.value.costPrice * this.articleForm.value.markupPorcent) / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+      case 'markupPorcent':
+        this.articleForm.value.markupPrice = (this.articleForm.value.costPrice * this.articleForm.value.markupPorcent) / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+      case 'markupPrice':
+        this.articleForm.value.markupPorcent = (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+      case 'salePrice':
+        if (this.articleForm.value.costPrice === 0) {
+          this.articleForm.value.markupPorcent = 0;
+          this.articleForm.value.markupPricet = 0;
+        } else {
+          this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
+          this.articleForm.value.markupPorcent = (this.articleForm.value.markupPrice / this.articleForm.value.costPrice) * 100;
+        }
+        break;
+      default:
+        this.articleForm.value.markupPrice = (this.articleForm.value.costPrice * this.articleForm.value.markupPorcent) / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        break;
+    }
+
+    this.articleForm.value.costPrice = parseFloat(this.articleForm.value.costPrice.toFixed(2));
+    this.articleForm.value.markupPorcent = parseFloat(this.articleForm.value.markupPorcent.toFixed(2));
+    this.articleForm.value.markupPrice = parseFloat(this.articleForm.value.markupPrice.toFixed(2));
+    this.articleForm.value.salePrice = parseFloat(this.articleForm.value.salePrice.toFixed(2));
+
+    this.article = this.articleForm.value;    
+    this.setValuesForm();
+  }
+
+  public loadPosDescription(): void {
+    if (this.articleForm.value.posDescription === "") {
+      let slicePipe = new SlicePipe();
+      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description, 0, 10);
+      this.article = this.articleForm.value;
+      this.setValuesForm();
+    }
+  }
+
+  public setValuesForm(): void {
+
+    if (!this.article._id) this.article._id = "";
+    if (!this.article.code) this.article.code = "1";
+
+    let make;
+    if (!this.article.make) {
+      make = null;
+    } else {
+      if (this.article.make._id) {
+        make = this.article.make._id;
+      } else {
+        make = this.article.make;
+      }
+    }
+
+    if (!this.article.description) this.article.description = "";
+    if (!this.article.posDescription) this.article.posDescription = "";
+    if (!this.article.costPrice) this.article.costPrice = 0.00;
+    if (!this.article.markupPorcent) this.article.markupPorcent = 0.00;
+    if (!this.article.markupPrice) this.article.markupPrice = 0.00;
+    if (!this.article.salePrice) this.article.salePrice = 0.00;
+
+    let category;
+    if (!this.article.category) {
+      category = null;
+    } else {
+      if (this.article.category._id) {
+        category = this.article.category._id;
+      } else {
+        category = this.article.category;
+      }
+    }
+
+    if (!this.article.observation) this.article.observation = "";
+    if (!this.article.barcode) this.article.barcode = "";
+    if (!this.article.type) this.article.type = ArticleType.Counter;
+
+    this.articleForm.setValue({
+      '_id': this.article._id,
+      'code': this.article.code,
+      'make': make,
+      'description': this.article.description,
+      'posDescription': this.article.posDescription,
+      'costPrice': this.article.costPrice,
+      'markupPorcent': this.article.markupPorcent,
+      'markupPrice': this.article.markupPrice,
+      'salePrice': this.article.salePrice,
+      'category': category,
+      'observation': this.article.observation,
+      'barcode': this.article.barcode,
+      'type': this.article.type
+    });
+  }
 
   public saveChanges(): void {
     
@@ -278,8 +397,7 @@ export class UpdateArticleComponent implements OnInit {
     this._articleService.updateArticle(this.article).subscribe(
       result => {
         if (!result.article) {
-          this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          this.showMessage(result.message, "info", true);
         } else {
           this.article = result.article;
           if (this.filesToUpload) {
