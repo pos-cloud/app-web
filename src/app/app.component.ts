@@ -38,11 +38,12 @@ export class AppComponent implements OnInit{
     this.loading = true;
 
     let result = this._configService.getConfigLocal();
-    if (!result) {
+    if (!result.config) {
       this.openModal("config");
       this.isAPIConected = false;
       this.loading = false;
     } else {
+      console.log(result.config);
       this.config = result.config[0];
       this.setConfigurationSettings(this.config);
       this.setApiConfigurationSettings(this.config);

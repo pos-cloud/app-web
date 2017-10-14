@@ -69,7 +69,7 @@ export class ConfigBackupComponent implements OnInit {
 
   constructor(
     public _router: Router,
-    public _serviceConfig: ConfigService,
+    public _configService: ConfigService,
     public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig,
   ) { }
@@ -244,7 +244,7 @@ export class ConfigBackupComponent implements OnInit {
 
   public setConfigurationSettings(config) {
     Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
-    Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    Config.setConfigEmail(config.emailAccount, config.emailPassword);
     Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
   }
 
@@ -253,18 +253,22 @@ export class ConfigBackupComponent implements OnInit {
 
     this.loading = true;
 
-    this._serviceConfig.updateConfigBackup(this.config).subscribe(
+    this._configService.updateConfigBackup(this.config).subscribe(
       result => {
         if (!result.config) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.config;
-          this.showMessage("Se guardaron los cambios.", "success", false);
+          if (this._configService.saveConfigLocal(this.config)) {
+            this.showMessage("Se guardaron los cambios.", "success", false);
+            this.buildFormBackup();
+            this.getConfig();
+          } else {
+            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
+          }
         }
         this.loading = false;
-        this.buildFormBackup();
-        this.getConfig();
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -277,18 +281,22 @@ export class ConfigBackupComponent implements OnInit {
 
     this.loading = true;
 
-    this._serviceConfig.updateConfigEmail(this.config).subscribe(
+    this._configService.updateConfigEmail(this.config).subscribe(
       result => {
         if (!result.config) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.config;
-          this.showMessage("Se guardaron los cambios.", "success", false);
+          if (this._configService.saveConfigLocal(this.config)) {
+            this.showMessage("Se guardaron los cambios.", "success", false);
+            this.buildFormEmail();
+            this.getConfig();
+          } else {
+            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
+          }
         }
         this.loading = false;
-        this.buildFormEmail();
-        this.getConfig();
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -301,18 +309,22 @@ export class ConfigBackupComponent implements OnInit {
 
     this.loading = true;
 
-    this._serviceConfig.updateConfigCompany(this.config).subscribe(
+    this._configService.updateConfigCompany(this.config).subscribe(
       result => {
         if (!result.config) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.config;
-          this.showMessage("Se guardaron los cambios.", "success", false);
+          if (this._configService.saveConfigLocal(this.config)) {
+            this.showMessage("Se guardaron los cambios.", "success", false);
+            this.buildFormCompany();
+            this.getConfig();
+          } else {
+            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
+          }
         }
         this.loading = false;
-        this.buildFormEmail();
-        this.getConfig();
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -325,7 +337,7 @@ export class ConfigBackupComponent implements OnInit {
 
     this.loading = true;
     
-    this._serviceConfig.getConfigApi().subscribe(
+    this._configService.getConfigApi().subscribe(
       result => {
         if(!result.config) {
           this.showMessage(result.message, "info", true); 
