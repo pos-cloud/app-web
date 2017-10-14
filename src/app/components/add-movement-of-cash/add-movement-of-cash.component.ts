@@ -1,6 +1,6 @@
 //Paquetes Angular
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -39,10 +39,12 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public validationMessages = {
     'paymentMethod': {
-      'required': 'Este campo es requerido.'
+      'required': 'Este campo es requerido.',
+      'payValid': 'El monto ingresado es incorrecto para este medio de pago.'
     },
     'amountPaid': {
-      'required': 'Este campo es requerido.'
+      'required': 'Este campo es requerido.',
+      'payValid': 'El monto ingresado es incorrecto.'
     },
     'cashChange': {
     },
@@ -99,14 +101,16 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public buildForm(): void {
-
+    
     this.movementOfCashForm = this._fb.group({
       'paymentMethod': [this.movementOfCash.type, [
-          Validators.required
+          Validators.required,
+          this.validatePaymentMethod(this.transaction)
         ]
       ],
       'amountPaid': [this.movementOfCash.amountPaid, [
-          Validators.required
+          Validators.required,
+          this.validateAmountPaid(this.transaction)
         ]
       ],
       'cashChange': [this.paymentChange, [
@@ -128,9 +132,16 @@ export class AddMovementOfCashComponent implements OnInit {
     for (const field in this.formErrors) {
 
       this.formErrors[field] = '';
+
       const control = form.get(field);
-      
-      if (control && control.dirty && !control.valid) {
+      if (control && control.dirty && (field === 'paymentMethod' || field === 'amountPaid')) {
+        if (!this.validateAmountPaidByPaymentMethod(this.transaction)) {
+          const messages = this.validationMessages[field];
+          for (const key in control.errors) {
+            this.formErrors[field] += messages[key] + ' ';
+          }
+        }
+      } else if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
           this.formErrors[field] += messages[key] + ' ';
@@ -143,6 +154,57 @@ export class AddMovementOfCashComponent implements OnInit {
     } else {
       this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.transaction.totalPrice).toFixed(2);
     }
+  }
+
+  public validateAmountPaid(transaction) {
+    return function (input: FormControl) {
+      let payValid = false;
+      let nameMethod;
+      if (input.parent && input.parent.controls && input.parent.controls['paymentMethod'].value.name) {
+        nameMethod = input.parent.controls['paymentMethod'].value.name;
+        if (transaction.totalPrice <= input.value) {
+          if (transaction.totalPrice < input.value && nameMethod !== 'Efectivo') {
+            payValid = false;
+          } else {
+            payValid = true;
+          }
+        }
+      }
+      return payValid ? null : { payValid: true };
+    };
+  }
+
+  public validateAmountPaidByPaymentMethod(transaction) {
+    
+    let payValid = true;
+    let amountPaid = this.movementOfCashForm.value.amountPaid;
+    let nameMethod = this.movementOfCashForm.value.paymentMethod.name;
+      if (transaction.totalPrice <= amountPaid) {
+        if (transaction.totalPrice < amountPaid && nameMethod !== 'Efectivo') {
+          payValid = false;
+        } else {
+          payValid = true;
+        }
+      }
+    return payValid;
+  }
+
+  public validatePaymentMethod(transaction) {
+    return function (input: FormControl) {
+      let payValid = true;
+      let amountPaid;
+      if (input.parent && input.parent.controls && input.parent.controls['amountPaid'].value) {
+        amountPaid = input.parent.controls['amountPaid'].value;
+        if (transaction.totalPrice <= amountPaid) {
+          if (transaction.totalPrice < amountPaid && input.value.name !== 'Efectivo') {
+            payValid = false;
+          } else {
+            payValid = true;
+          }
+        }
+      }
+      return payValid ? null : { payValid: true };
+    };
   }
 
   public addMovementOfCash(): void {

@@ -32,6 +32,9 @@
                       {{paymentMethod.name}}
                 </option>
               </select>
+              <div *ngIf="formErrors.paymentMethod" class="alert alert-danger">
+                {{ formErrors.paymentMethod }}
+              </div>
           </div>
           <div class="form-group col-md-6">
             <label for="amountPaid" class="control-label">Importe de pago:</label>
