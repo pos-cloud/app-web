@@ -8,6 +8,7 @@ import { TransactionService } from './../../services/transaction.service';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
+import { ViewTransactionComponent } from './../../components/view-sale-order/view-transaction.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -87,6 +88,10 @@ export class ListTransactionsComponent implements OnInit {
 
     let modalRef;
     switch(op) {
+      case 'view':
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
+        break;
       case 'delete' :
           modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' })
           modalRef.componentInstance.transaction = transaction;

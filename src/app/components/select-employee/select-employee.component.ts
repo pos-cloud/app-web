@@ -124,11 +124,16 @@ export class SelectEmployeeComponent implements OnInit {
               this.waiters.push(waiter);
             }
           }
-          this.employee = this.waiters[0];
-          this.selectEmployeeForm.setValue({
-            'employee': this.employee,
-            'chair': this.table.chair
-          });
+          if(this.waiters.length === 0) {
+            this.showMessage("No se encontraron mozos", "info", true);
+            this.loading = false;
+          } else {
+            this.employee = this.waiters[0];
+            this.selectEmployeeForm.setValue({
+              'employee': this.employee,
+              'chair': this.table.chair
+            });
+          }
         }
       },
       error => {

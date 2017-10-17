@@ -12,7 +12,7 @@ import { Transaction } from './../../models/transaction';
 
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
-import { MovementOfCashService } from './../../services/movement-of-cash.services';
+import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -34,7 +34,8 @@ export class AddMovementOfCashComponent implements OnInit {
   public formErrors = {
     'paymentMethod': '',
     'amountPaid': '',
-    'cashChange': ''
+    'cashChange': '',
+    'observation': ''
   };
 
   public validationMessages = {
@@ -47,6 +48,8 @@ export class AddMovementOfCashComponent implements OnInit {
       'payValid': 'El monto ingresado es incorrecto.'
     },
     'cashChange': {
+    },
+    'observation': {
     },
   };
 
@@ -88,7 +91,8 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementOfCashForm.setValue({
             'paymentMethod': this.movementOfCash.type,
             'amountPaid': this.movementOfCash.amountPaid,
-            'cashChange': this.movementOfCash.cashChange
+            'cashChange': this.movementOfCash.cashChange,
+            'observation': ''
           });
         }
         this.loading = false;
@@ -114,6 +118,9 @@ export class AddMovementOfCashComponent implements OnInit {
         ]
       ],
       'cashChange': [this.paymentChange, [
+        ]
+      ],
+      'observation': [this.movementOfCash.observation, [
         ]
       ],
     });
@@ -213,6 +220,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCash.transaction = this.transaction;
     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     this.movementOfCash.cashChange = this.movementOfCashForm.value.cashChange;
+    this.movementOfCash.observation = this.movementOfCashForm.value.observation;
     
     this.saveMovementOfCash();
   }

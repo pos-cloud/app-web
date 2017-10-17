@@ -1,0 +1,117 @@
+<div class="modal-header">
+  <h4 class="modal-title">Transacción</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="modal-body">
+    <ngb-tabset>
+      <ngb-tab title="Datos">
+        <ng-template ngbTabContent>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="company" class="control-label">Cliente</label>
+              <input type="text" class="form-control" name="date" *ngIf="transaction.company" value="{{transaction.company.name}}" readonly/>
+              <input type="text" class="form-control" name="date" *ngIf="!transaction.company" value="Consumidor Final" readonly/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label for="date" class="control-label">Fecha:</label>
+              <input type="text" class="form-control" name="date" value="{{transaction.date | date:'dd/MM/yyyy'}}" readonly/>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="origin" class="control-label">Origen:</label>
+              <input type="origin" class="form-control" name="origin" min="0" value="{{transaction.origin}}" readonly/>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="number" class="control-label">Número:</label>
+              <input type="number" class="form-control" name="number" min="0" value="{{transaction.number}}" readonly/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="totalPrice" class="control-label">Importe:</label>
+              <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="number" class="form-control" name="totalPrice" min="0" step="0.01" value="{{transaction.totalPrice}}" readonly/>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="observation" class="control-label">Observación:</label>
+              <textarea type="text" class="form-control" name="observation" id="observation" rows="2" readonly>
+                {{transaction.observation}}
+              </textarea>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab [disabled]="areMovementsOfArticlesEmpty">
+        <ng-template ngbTabTitle>Artículos</ng-template>
+        <ng-template ngbTabContent>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Cant</th>
+                      <th>Description</th>
+                      <th>Precio Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let movementOfArticle of movementsOfArticles">
+                      <td>{{movementOfArticle.amount}}</td>
+                      <td>{{movementOfArticle.description}}
+                          <strong *ngIf="movementOfArticle.notes">
+                            <br>
+                            {{movementOfArticle.notes}}
+                          </strong>
+                      </td>
+                      <td>{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</td>
+                    </tr>
+                    <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
+                      <td colspan="10 ">No existen artículos en la transacción</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Métodos de Pago" [disabled]="areMovementsOfCashesEmpty">
+          <ng-template ngbTabContent>
+              <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Método</th>
+                        <th>Monto</th>
+                        <th>Observación</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let movementOfCash of movementsOfCashes">
+                        <td>{{movementOfCash.type.name}}</td>
+                        <td>{{movementOfCash.amountCharge | currency:'USD':'1.2-2'}}</td>
+                        <td>{{movementOfCash.observation}}</td>
+                      </tr>
+                      <tr align="center " *ngIf="areMovementsOfCashEmpty ">
+                        <td colspan="10 ">No existen método de pagos en la transacción</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+          </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+  <div class="modal-footer">
+  </div>
+</section>

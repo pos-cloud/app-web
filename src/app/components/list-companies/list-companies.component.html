@@ -97,40 +97,79 @@
   </div>
 </section>
 
-<section class="container-fluid pos" *ngIf="userType=='pos'">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th (click)="orderBy('code')">Número </th>
-        <th (click)="orderBy('name')">Nombre </th>
-        <th (click)="orderBy('CUIT')">CUIT </th>
-      </tr>
-      <tr>
-          <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
-          <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-          <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
-                                            | filter: filterCode:'code' 
-                                            | filter: filterName:'name' 
-                                            | filter: filterCUIT:'CUIT' 
-                                            | paginate: { itemsPerPage: itemsPerPage, currentPage: p }"
-          (click)="selectCompany(company)">
-        <td>{{company.code}}</td>
-        <td>{{company.name}}</td>
-        <td>{{company.CUIT}}</td>
-      </tr>
-      <tr align="center" *ngIf="areCompaniesEmpty">
-        <td colspan="3">No se encontraron empresas</td>
-      </tr>
-    </tbody>
-  </table>
-  <pagination-controls 
-    (pageChange)="p=$event" 
-    #api 
-    previousLabel="Anterior"
-    nextLabel="Siguiente">
-  </pagination-controls>
-</section>
+<section class="container-fluid" *ngIf="userType=='pos'">
+    <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <div class="card card-outline-primary">
+      <div class="card-header bg-primary">Lista de Empresas
+        <div class="pull-right">
+          <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Empresa</button>
+          <button class="btn btn-primary" (click)="refresh()"[disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span *ngIf="loading">Cargando</span><span *ngIf="!loading">Actualizar</span></button>
+        </div>
+      </div>
+        <div class="card-block table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th (click)="orderBy('code')">Código </th>
+                <th (click)="orderBy('name')">Nombre </th>
+                <th (click)="orderBy('city')">Ciudad </th>
+                <th (click)="orderBy('address')">Dirección </th>
+                <th (click)="orderBy('phones')">Teléfonos </th>
+                <th (click)="orderBy('emails')">Emails </th>
+              </tr>
+              <tr>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm  
+                                                    | filter: filterCode:'code'
+                                                    | filter: filterName:'name'
+                                                    | filter: filterCity:'city' 
+                                                    | filter: filterAddress:'address'
+                                                    | filter: filterPhones:'phones' 
+                                                    | filter: filterEmails:'emails'
+                                                    | paginate: { itemsPerPage: itemsPerPage, currentPage: p }"
+                  (click)="selectCompany(company)">
+                <td>{{company.code}}</td>
+                <td>{{company.name}}</td>
+                <td>{{company.city}}</td>
+                <td>{{company.address}}</td>
+                <td>{{company.phones}}</td>
+                <td>{{company.emails}}</td>
+              </tr>
+              <tr align="center" *ngIf="areCompaniesEmpty">
+                <td colspan="6">No se encontraron empresas</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-primary">
+          <div class="row">
+            <div class="col-md-6 offset-md-3">
+              <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+              </pagination-controls>
+            </div>
+            <div class="form-group col-md-3">
+              <select class="form-control" [(ngModel)]="itemsPerPage">
+                <option [value]="5">Mostrar 5 ítems</option>
+                <option [value]="10">Mostrar 10 ítems</option>
+                <option [value]="15">Mostrar 15 ítems</option>
+                <option [value]="20">Mostrar 20 ítems</option>
+                <option [value]="50">Mostrar 50 ítems</option>
+                <option [value]="100">Mostrar 100 ítems</option>
+              </select>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section>

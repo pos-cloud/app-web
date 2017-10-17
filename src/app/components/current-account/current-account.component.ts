@@ -14,7 +14,7 @@ import { MovementOfCash } from './../../models/movement-of-cash';
 //Services
 import { CompanyService } from './../../services/company.service';
 import { TransactionService } from './../../services/transaction.service';
-import { MovementOfCashService } from './../../services/movement-of-cash.services';
+import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 //Componentes
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
