@@ -432,7 +432,7 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public updateTransaction(): void {
+  public updateTransaction(closed?: boolean): void {
   
     this.loading = true;
     
@@ -442,6 +442,9 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
+          if(closed) {
+            this.back();
+          }
         }
         this.loading = false;
       },
@@ -644,12 +647,12 @@ export class AddSaleOrderComponent implements OnInit {
             if(result  === "cancel_transaction"){
               this.transaction.state = TransactionState.Canceled;
               this.transaction.endDate = new Date();
-              this.updateTransaction();
               if (this.posType === "resto") {
+                this.updateTransaction();
                 this.table.employee = null;
                 this.changeStateOfTable(TableState.Available, true);
               } else if (this.posType === "mostrador") {
-                this.back();
+                this.updateTransaction(true);
               }
             }
           }, (reason) => {
@@ -854,13 +857,13 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 
-    this.updateTransaction();
     this.typeOfOperationToPrint = 'charge';
     if (this.posType === "resto") {
+      this.updateTransaction();
       this.table.employee = null;
       this.changeStateOfTable(TableState.Available, true);
     } else {
-      this.back();
+      this.updateTransaction(true);
     }
   }
 
