@@ -43,12 +43,12 @@ export class AppComponent implements OnInit{
       this.isAPIConected = false;
       this.loading = false;
     } else {
-      this.config = result.config[0];
-      this.setConfigurationSettings(this.config);
-      this.setApiConfigurationSettings(this.config);
-      this.hideMessage();
-      this.getConfigApi();
-      this.loading = false;
+        this.config = result.config[0];
+        this.setConfigurationSettings(this.config);
+        this.setApiConfigurationSettings(this.config);
+        this.hideMessage();
+        this.getConfigApi();
+        this.loading = false;
     }
   }
 

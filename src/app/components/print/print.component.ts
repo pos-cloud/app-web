@@ -3,6 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Turn, TurnState } from './../../models/turn';
+import { Config } from './../../app.config';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -24,6 +25,7 @@ export class PrintComponent implements OnInit {
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
   public shiftClosingMovementOfCash;
+  public companyName: string = Config.companyName;
 
   constructor(
     public _turnService: TurnService,
@@ -32,6 +34,8 @@ export class PrintComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.companyName);
+    console.log(Config.companyName);
     if(this.typePrint === "turn") {
       this.shiftClosingTransaction = new Array();
       this.shiftClosingMovementOfArticle = new Array();

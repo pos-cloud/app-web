@@ -435,7 +435,7 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public updateTransaction(): void {
+  public updateTransaction(closed?: boolean): void {
   
     this.loading = true;
     
@@ -445,6 +445,9 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
+          if(closed) {
+            this.back();
+          }
         }
         this.loading = false;
       },
@@ -646,13 +649,18 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
             if(result  === "cancel_transaction"){
               this.transaction.state = TransactionState.Canceled;
+<<<<<<< HEAD
               this.transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
               this.updateTransaction();
+=======
+              this.transaction.endDate = new Date();
+>>>>>>> 715b2a74f689d0aa85e2f10c61b34d4bfb14b76f
               if (this.posType === "resto") {
+                this.updateTransaction();
                 this.table.employee = null;
                 this.changeStateOfTable(TableState.Available, true);
               } else if (this.posType === "mostrador") {
-                this.back();
+                this.updateTransaction(true);
               }
             }
           }, (reason) => {
@@ -857,13 +865,13 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 
-    this.updateTransaction();
     this.typeOfOperationToPrint = 'charge';
     if (this.posType === "resto") {
+      this.updateTransaction();
       this.table.employee = null;
       this.changeStateOfTable(TableState.Available, true);
     } else {
-      this.back();
+      this.updateTransaction(true);
     }
   }
 

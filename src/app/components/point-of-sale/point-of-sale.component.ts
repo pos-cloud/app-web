@@ -420,7 +420,9 @@ export class PointOfSaleComponent implements OnInit {
       transaction.state = TransactionState.Sent;
     } else if (state === "Entregado") {
       transaction.state = TransactionState.Delivered;
-    }    
+    }
+
+    transaction.endDate = new Date();
     
     this.updateTransaction(transaction);
   }

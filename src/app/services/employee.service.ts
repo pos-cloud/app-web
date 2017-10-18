@@ -36,7 +36,7 @@ export class EmployeeService {
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + "employees", { headers: headers }).map (res => res.json());
-  }
+	}
   
   getWaiters () {
 		let headers = new Headers({

@@ -98,6 +98,11 @@
                                         'itable-enabled':table.state==='Disponible',
                                         'itable-pending':table.state==='Pendiente'}" 
                           (click)="openModal('select-employee', table)">
+        <div class="col-md-2 offset-md-8" align="right">
+            <span class="badge badge-warning" *ngIf="table.state==='Ocupada' || table.state==='Reservada' || table.state==='Pendiente'">
+              <b>{{table.chair}}</b>
+            </span>
+        </div>
         <div class="row table-description">
           <div class="col-md-12" align="center">
             <b>{{table.description}}</b>
@@ -107,9 +112,6 @@
           <div class="col-md-12 employee-name" align="center">
             <b  *ngIf="table.employee && table.state !== 'Disponible'">{{table.employee.name}}</b>
           </div>
-          <!--<div class="col-md-2 badge-default" align="right">
-            <b>{{table.chair}}</b>
-          </div>-->
         </div>
       </div>
     </div>

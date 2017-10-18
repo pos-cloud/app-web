@@ -31,7 +31,7 @@ import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
 import { PaymentMethodService } from './services/payment-method.service';
 import { MailService } from './services/send-mail.service';
-import { MovementOfCashService } from './services/movement-of-cash.services';
+import { MovementOfCashService } from './services/movement-of-cash.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -107,6 +107,7 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
 import { PrintComponent } from './components/print/print.component';
+import { ViewTransactionComponent } from './components/view-sale-order/view-transaction.component';
 
 @NgModule({
   declarations: [
@@ -174,12 +175,14 @@ import { PrintComponent } from './components/print/print.component';
     SendMailComponent,
     SimpleTinyComponent,
     SelectEmployeeComponent,
-    PrintComponent
+    PrintComponent,
+    ViewTransactionComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
     SelectEmployeeComponent,
-    PrintComponent
+    PrintComponent,
+    ViewTransactionComponent
   ],
   imports: [
     BrowserModule,

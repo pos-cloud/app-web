@@ -182,7 +182,7 @@ export class AddTransactionComponent implements OnInit {
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
-      'observation': ''
+      'observation': this.transaction.observation
     });
   }
 
