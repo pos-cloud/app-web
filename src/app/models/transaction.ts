@@ -6,14 +6,17 @@ import { Turn } from './turn';
 import { PaymentMethod } from './payment-method';
 import { TransactionType } from './transaction-type';
 
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
 export class Transaction {
 	
 	public _id: string;
 	public origin: number = 0;
 	public number: number = 0;
-	public date: Date = new Date();
-	public startDate: Date = new Date();
-	public endDate: Date;
+	public date: string;
+	public startDate: string = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
+	public endDate: string;
 	public state: TransactionState = TransactionState.Open;
 	public subtotalPrice: number = 0.00;
 	public discount: number = 0.00;

@@ -3,6 +3,9 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
 import { Employee } from './../../models/employee';
 import { Table } from './../../models/table';
 import { Turn, TurnState } from './../../models/turn';
@@ -240,7 +243,7 @@ export class SelectEmployeeComponent implements OnInit {
 
   public closeTurn(): void {
 
-    this.turn.endDate = new Date();
+    this.turn.endDate = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
     this.turn.state = TurnState.Closed;
 
     this._turnService.updateTurn(this.turn).subscribe(

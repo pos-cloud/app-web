@@ -1,11 +1,14 @@
 import { PaymentMethod } from './payment-method';
 import { Transaction } from './transaction';
 
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
+
 export class MovementOfCash {
 
     public _id: string;
-    public date: Date = new Date();
-    public expirationDate: Date = new Date();
+    public date: string = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
+    public expirationDate: string = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
     public state: MovementOfCashState = MovementOfCashState.Pending;
     public amountPaid: number = 0.00;
     public cashChange: number = 0.00;
