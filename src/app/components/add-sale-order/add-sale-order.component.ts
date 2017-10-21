@@ -686,34 +686,6 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'charge':
 
-<<<<<<< HEAD
-                this.discountPorcent = this.discountForm.value.porcent;
-                this.discountAmount = this.discountForm.value.amount;
-                this.updatePrices();
-              }
-            }, (reason) => {
-              
-            });
-          } else {
-            this.showMessage("No existen artículos en el pedido.", "info", true);
-            this.loading = false;
-          }
-          break;
-        case 'cancel_transaction' :
-        
-          modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
-            if(result  === "cancel_transaction"){
-              this.transaction.state = TransactionState.Canceled;
-              this.transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
-              this.updateTransaction();
-              if (this.posType === "resto") {
-                this.updateTransaction();
-                this.table.employee = null;
-                this.changeStateOfTable(TableState.Available, true);
-              } else if (this.posType === "mostrador") {
-                this.updateTransaction(true);
-              }
-=======
         this.typeOfOperationToPrint = "charge";
         if (this.movementsOfArticles.length !== 0) {
           modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
@@ -721,7 +693,6 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef.result.then((result) => {
             if (result === "add-movement-of-cash") {
               this.openModal('printers');
->>>>>>> 2cca83f0d2f71ed3f65e93e2df774c753d88727b
             }
           }, (reason) => {
 
