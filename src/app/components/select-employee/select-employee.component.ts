@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
 
@@ -65,7 +64,7 @@ export class SelectEmployeeComponent implements OnInit {
 
   ngOnInit() {
     this.employee = new Employee();
-    if(!this.table) {
+    if (!this.table) {
       this.table = new Table();
     }
     this.buildForm();
@@ -76,12 +75,12 @@ export class SelectEmployeeComponent implements OnInit {
 
     this.selectEmployeeForm = this._fb.group({
       'employee': [this.employee.name, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ],
       'chair': [this.table.chair, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ]
     });
 
@@ -127,7 +126,7 @@ export class SelectEmployeeComponent implements OnInit {
               this.waiters.push(waiter);
             }
           }
-          if(this.waiters.length === 0) {
+          if (this.waiters.length === 0) {
             this.showMessage("No se encontraron mozos", "info", true);
             this.loading = false;
           } else {
@@ -147,11 +146,11 @@ export class SelectEmployeeComponent implements OnInit {
   }
 
   public openModal(op: string): void {
-    
-    let  modalRef;
 
-    switch(op) {
-      case 'login' :
+    let modalRef;
+
+    switch (op) {
+      case 'login':
         modalRef = this._modalService.open(LoginComponent);
         modalRef.componentInstance.employeeSelected = this.employee;
         modalRef.result.then((result) => {
@@ -159,10 +158,10 @@ export class SelectEmployeeComponent implements OnInit {
             this.employee = result;
             if (this.op === 'open') {
               this.openTurn();
-            } else if(this.op === 'close'){
+            } else if (this.op === 'close') {
               this.getTransactionsOpenByEmployee();
             } else if (this.op === 'change-employee') {
-              if(this.turn) {
+              if (this.turn) {
                 this.activeModal.close(this.turn);
               } else {
                 this.openTurn();
@@ -180,13 +179,13 @@ export class SelectEmployeeComponent implements OnInit {
           this.loading = false;
         });
         break;
-        default:
-          break;
+      default:
+        break;
     }
   }
 
   public getTransactionsOpenByEmployee(): void {
-    
+
     this.loading = true;
 
     this._transactionService.getOpenSaleOrdersByEmployee(this.employee._id).subscribe(
@@ -212,14 +211,14 @@ export class SelectEmployeeComponent implements OnInit {
     this._turnService.getOpenTurn(this.employee._id).subscribe(
       result => {
         if (!result.turns) {
-          if(this.op === "close") {
+          if (this.op === "close") {
             this.showMessage("El empleado no tiene turnos abiertos", "info", true);
           } else {
             this.getUserOfEmployee();
           }
         } else {
           this.turn = result.turns[0];
-          if(this.op === 'open') {
+          if (this.op === 'open') {
             this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
           } else if (this.op === 'close') {
             this.getTransactionsOpenByEmployee();
@@ -248,7 +247,7 @@ export class SelectEmployeeComponent implements OnInit {
 
   public closeTurn(): void {
 
-    this.turn.endDate = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
+    this.turn.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
     this.turn.state = TurnState.Closed;
 
     this._turnService.updateTurn(this.turn).subscribe(
@@ -260,7 +259,7 @@ export class SelectEmployeeComponent implements OnInit {
           modalRef.componentInstance.turn = result.turn;
           modalRef.componentInstance.typePrint = 'turn';
           modalRef.result.then((result) => {
-
+            this.activeModal.close(result);
           }, (reason) => {
 
           });
@@ -281,15 +280,15 @@ export class SelectEmployeeComponent implements OnInit {
     this._userService.getUserOfEmployee(this.employee._id).subscribe(
       result => {
         if (!result.users) {
-          if(this.op === 'close') {
+          if (this.op === 'close') {
             this.closeTurn();
           } else if (this.op === 'change-employee') {
-            if(this.turn) {
+            if (this.turn) {
               this.activeModal.close(this.turn);
             } else {
               this.openTurn();
             }
-          } else if(this.op === 'open') {
+          } else if (this.op === 'open') {
             this.openTurn();
           } else if (this.op === 'charge') {
             this.openTurn();
@@ -336,7 +335,9 @@ export class SelectEmployeeComponent implements OnInit {
   public selectEmployee(): void {
     this.employee = this.selectEmployeeForm.value.employee;
     this.table.chair = this.selectEmployeeForm.value.chair;
-    this.updateTable();
+    if (this.op !== 'turn' && this.op !== 'close') {
+      this.updateTable();
+    }
     this.getOpenTurn();
   }
 
@@ -350,25 +351,25 @@ export class SelectEmployeeComponent implements OnInit {
   public subtractChair(): void {
     if (this.selectEmployeeForm.value.chair > 1) {
       this.selectEmployeeForm.setValue({
-              'employee': this.selectEmployeeForm.value.employee,
-              'chair': this.selectEmployeeForm.value.chair - 1
+        'employee': this.selectEmployeeForm.value.employee,
+        'chair': this.selectEmployeeForm.value.chair - 1
       });
     } else {
       this.selectEmployeeForm.setValue({
-              'employee': this.selectEmployeeForm.value.employee,
-              'chair': 1
+        'employee': this.selectEmployeeForm.value.employee,
+        'chair': 1
       });
     }
   }
 
   public updateTable(): void {
-    
+
     this.loading = true;
-    
+
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true); 
+          this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.table = result.table;

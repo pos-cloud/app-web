@@ -3,7 +3,7 @@ export class Printer {
     public _id: string;
     public name: string;
     public origin: number = 0;
-    public connectionURL: string;
+    public connectionURL: string = "C:\\printhtml.exe";
     public type: PrinterType = PrinterType.Counter;
 
     constructor() {}

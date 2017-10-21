@@ -37,22 +37,22 @@ export class Config {
     }
 
     public static setConfigToBackup(pathBackup, pathMongo, backupTime): void {
-        this.pathBackup = pathBackup;
-        this.pathMongo = pathMongo;
-        this.backupTime = backupTime;
+        Config.pathBackup = pathBackup;
+        Config.pathMongo = pathMongo;
+        Config.backupTime = backupTime;
     }
 
     public static setConfigEmail(emailAccount, emailPassword): void {
-        this.emailAccount = emailAccount;
-        this.emailPassword = emailPassword;
+        Config.emailAccount = emailAccount;
+        Config.emailPassword = emailPassword;
     }
 
     public static setConfigCompany(companyName, companyCUIT, companyAddress, companyPhone, ticketFoot): void {
-        this.companyName = companyName;
-        this.companyCUIT = companyCUIT;
-        this.companyAddress = companyAddress;
-        this.companyPhone = companyPhone;
-        this.ticketFoot = ticketFoot;
+        Config.companyName = companyName;
+        Config.companyCUIT = companyCUIT;
+        Config.companyAddress = companyAddress;
+        Config.companyPhone= companyPhone;
+        Config.ticketFoot = ticketFoot;
     }
 
     public static updateApiURL() {
