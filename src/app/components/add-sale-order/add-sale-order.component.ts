@@ -649,12 +649,8 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
             if(result  === "cancel_transaction"){
               this.transaction.state = TransactionState.Canceled;
-<<<<<<< HEAD
               this.transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
               this.updateTransaction();
-=======
-              this.transaction.endDate = new Date();
->>>>>>> 715b2a74f689d0aa85e2f10c61b34d4bfb14b76f
               if (this.posType === "resto") {
                 this.updateTransaction();
                 this.table.employee = null;
