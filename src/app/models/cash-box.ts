@@ -7,7 +7,7 @@ export class CashBox {
     
     public _id: string;
     public code: number = 1;
-    public openingDate: string = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
+    public openingDate: string = moment().locale('es').format('YYYY/MM/DD')+" "+ moment().locale('es').format('LTS');
     public closingDate: string;
     public openingCash: number = 0.00;
     public closingCash: number = 0.00;

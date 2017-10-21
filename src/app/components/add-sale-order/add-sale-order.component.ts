@@ -446,7 +446,6 @@ export class AddSaleOrderComponent implements OnInit {
         if (!result.transaction) {
           this.showMessage(result.message, "info", true);
         } else {
-          console.log("actualiza");
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
           if (closed) {
             this.back();
@@ -511,8 +510,6 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.table = result.table;
-          console.log("actualiza mesa");
-          console.log(closed);
           if (closed) {
             this.back();
           }
@@ -658,7 +655,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
           if (result === "cancel_transaction") {
             this.transaction.state = TransactionState.Canceled;
-            this.transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
+            this.transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
             if (this.posType === "resto") {
               this.updateTransaction();
               this.table.employee = null;
@@ -869,7 +866,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public finishCharge() {
 
-    this.transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
+    this.transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
     this.transaction.date = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 

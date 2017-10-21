@@ -7,8 +7,8 @@ import 'moment/locale/pt-br';
 export class MovementOfCash {
 
     public _id: string;
-    public date: string = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
-    public expirationDate: string = moment().locale('es').format('L')+" "+ moment().locale('es').format('LT');
+    public date: string = moment().locale('es').format('YYYY/MM/DD')+" "+ moment().locale('es').format('LTS');
+    public expirationDate: string = moment().locale('es').format('YYYY/MM/DD')+" "+ moment().locale('es').format('LTS');
     public state: MovementOfCashState = MovementOfCashState.Pending;
     public amountPaid: number = 0.00;
     public cashChange: number = 0.00;

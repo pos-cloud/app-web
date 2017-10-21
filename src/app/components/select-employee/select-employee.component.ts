@@ -247,7 +247,7 @@ export class SelectEmployeeComponent implements OnInit {
 
   public closeTurn(): void {
 
-    this.turn.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
+    this.turn.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
     this.turn.state = TurnState.Closed;
 
     this._turnService.updateTurn(this.turn).subscribe(

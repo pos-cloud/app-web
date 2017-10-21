@@ -5,9 +5,6 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/pt-br';
 
-import * as moment from 'moment';
-import 'moment/locale/pt-br';
-
 import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
@@ -428,7 +425,7 @@ export class PointOfSaleComponent implements OnInit {
       transaction.state = TransactionState.Delivered;
     }
 
-    transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
+    transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
     
     this.updateTransaction(transaction);
   }
