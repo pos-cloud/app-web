@@ -137,10 +137,10 @@ export class ConfigComponent implements OnInit {
 
     this._configService.getConfigApi().subscribe(
       result => {
-        if (!result.config) {
+        if (!result.configs) {
           this.saveConfig();
         } else {
-          this.updateConfig(result.config[0]);
+          this.updateConfig(result.configs[0]);
         }
         this.loading = false;
       },
@@ -158,10 +158,10 @@ export class ConfigComponent implements OnInit {
     
     this._configService.updateConfig(this.config).subscribe(
       result => {
-        if (!result) {
+        if (!result.configs) {
           this.showMessage(result.message, "info", true); 
         } else {
-          this.config = result;
+          this.config = result.configs[0];
           if (this._configService.saveConfigLocal(this.config)) {
             this.configUser();
           } else {
@@ -183,10 +183,10 @@ export class ConfigComponent implements OnInit {
 
     this._configService.saveConfigApi(this.config).subscribe(
       result => {
-        if (!result) {
+        if (!result.configs) {
           this.showMessage(result.message, "info", true); 
         } else {
-          this.config = result;
+          this.config = result.configs[0];
           if (this._configService.saveConfigLocal(this.config)) {
             this.showMessage("La conexión es exitosa.", "success", false);
             this.configUser();

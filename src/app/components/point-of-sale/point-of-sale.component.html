@@ -247,7 +247,11 @@
             <button class="dropdown-item" (click)="addTransaction('Saldo Inicial')">Saldo Inicial</button>
           </div>
         </div>
-        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading"[disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span *ngIf="loading">Cargando</span><span *ngIf="!loading">Actualizar</span></button>
+        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading" [disabled]="loading">
+          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
+          <span *ngIf="loading">Cargando</span>
+          <span *ngIf="!loading">Actualizar</span>
+        </button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>
@@ -257,50 +261,49 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th (click)="orderBy('origin')">Origen</th>
+            <th (click)="orderBy('type','name')">Tipo</th>
+            <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('date')">Fecha</th>
-            <th (click)="orderBy('state')">Estado</th>
-            <th (click)="orderBy('observation')">Observación</th>
+            <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
-            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
+            </th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha...">
+            </th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
+            </th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente...">
+            </th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	
-                                                      | filter: filterOrigin:'origin' 
+                                                      | filter: filterType:'name':'type' 
+                                                      | filter: filterStartDate:'startDate' 
                                                       | filter: filterNumber:'number' 
-                                                      | filter: filterEndDate:'date' 
-                                                      | filter: filterState:'c' 
-                                                      | filter: filterObservation:'observation' 
+                                                      | filter: filterCompany:'name':'company'
                                                       | filter: filterTotalPrice:'totalPrice' 
-                                                      | paginate: { itemsPerPage: itemsPerPage, currentPage: p }"
-              (click)="openTransaction(transaction)">
-            <td>{{transaction.origin}}</td>
-            <td><b>{{transaction.number}}</b></td>
-            <td *ngIf="!transaction.endDate">{{transaction.startDate | date: ['dd/MM/yyyy'] }} <b>{{transaction.startDate | date: ['hh:mm:ss'] }}</b></td>
-            <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }} <b>{{transaction.endDate | date: ['hh:mm:ss'] }}</b></td>
+                                                      | paginate: { itemsPerPage: itemsPerPage, currentPage: p }" (click)="openTransaction(transaction)">
+            <td>{{transaction.type.name}}</td>
+            <td>{{transaction.startDate | date: ['dd/MM/yyyy hh:mm:ss'] }}</td>
             <td>
-              <h6>
-                <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
-                                                'badge-success':transaction.state==='Cerrado' || transaction.state==='Entregado', 
-                                                'badge-warning':transaction.state==='Abierto' || transaction.state==='Pendiente' || transaction.state==='Enviado'}">
-                    {{transaction.state}}
-                  </span>
-              </h6>
+              <b>{{transaction.number}}</b>
             </td>
-            <td>{{transaction.observation}}</td>
+            <td *ngIf="transaction.company">{{transaction.company.name}}</td>
+            <td *ngIf="!transaction.company">Consumidor Final</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">
-            <td colspan="6">Aún no hay pedidos pendientes</td>
+            <td colspan="5">Aún no hay transacciones pendientes</td>
           </tr>
         </tbody>
       </table>
@@ -314,16 +317,15 @@
         <div class="col-md-1"></div>
         <div class="form-group col-md-2">
           <select class="form-control" [(ngModel)]="itemsPerPage">
-              <option [value]="5">Mostrar 5 ítems</option>
-              <option [value]="10">Mostrar 10 ítems</option>
-              <option [value]="15">Mostrar 15 ítems</option>
-              <option [value]="20">Mostrar 20 ítems</option>
-              <option [value]="50">Mostrar 50 ítems</option>
-              <option [value]="100">Mostrar 100 ítems</option>
-            </select>
+            <option [value]="5">Mostrar 5 ítems</option>
+            <option [value]="10">Mostrar 10 ítems</option>
+            <option [value]="15">Mostrar 15 ítems</option>
+            <option [value]="20">Mostrar 20 ítems</option>
+            <option [value]="50">Mostrar 50 ítems</option>
+            <option [value]="100">Mostrar 100 ítems</option>
+          </select>
         </div>
       </div>
     </div>
   </div>
 </section>
-

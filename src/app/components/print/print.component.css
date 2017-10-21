@@ -4,6 +4,19 @@
 	font: 13px Courier;
 }
 
+.content-turn {
+	border: 1px solid #DCDCDC;
+	padding: 20px;
+}
+
+.content-btn-print {
+	width: 300px;
+}
+
+.btn-print {
+	margin-top: 30px;
+}
+
 .row {
 	font: sans-serif;
 }
@@ -28,4 +41,9 @@
 
 .title {
 	font-weight: 900;
+}
+
+section {
+	padding-top: 45px;
+	padding-bottom: 45px;
 }

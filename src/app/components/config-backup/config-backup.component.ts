@@ -243,9 +243,9 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
-    Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
-    Config.setConfigEmail(config.emailAccount, config.emailPassword);
-    Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
+    if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
+    if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone, config.ticketFoot);
   }
 
 
@@ -255,11 +255,11 @@ export class ConfigBackupComponent implements OnInit {
 
     this._configService.updateConfigBackup(this.config).subscribe(
       result => {
-        if (!result.config) {
+        if (!result.configs) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.config = result.config;
+          this.config = result.configs[0];
           if (this._configService.saveConfigLocal(this.config)) {
             this.showMessage("Se guardaron los cambios.", "success", false);
             this.buildFormBackup();
@@ -283,11 +283,11 @@ export class ConfigBackupComponent implements OnInit {
 
     this._configService.updateConfigEmail(this.config).subscribe(
       result => {
-        if (!result.config) {
+        if (!result.configs) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.config = result.config;
+          this.config = result.configs[0];
           if (this._configService.saveConfigLocal(this.config)) {
             this.showMessage("Se guardaron los cambios.", "success", false);
             this.buildFormEmail();
@@ -311,11 +311,11 @@ export class ConfigBackupComponent implements OnInit {
 
     this._configService.updateConfigCompany(this.config).subscribe(
       result => {
-        if (!result.config) {
+        if (!result.configs) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.config = result.config;
+          this.config = result.configs[0];
           if (this._configService.saveConfigLocal(this.config)) {
             this.showMessage("Se guardaron los cambios.", "success", false);
             this.buildFormCompany();
@@ -339,10 +339,10 @@ export class ConfigBackupComponent implements OnInit {
     
     this._configService.getConfigApi().subscribe(
       result => {
-        if(!result.config) {
+        if(!result.configs) {
           this.showMessage(result.message, "info", true); 
         } else {
-          let config = result.config[0];
+          let config = result.configs[0];
           this.config = config;
           this.setProperties(config);
         }
@@ -365,7 +365,7 @@ export class ConfigBackupComponent implements OnInit {
     if (!config.companyName) config.companyName = "";
     if (!config.companyCUIT) config.companyCUIT = "";
     if (!config.companyAddress) config.companyAddress = "";
-    if (!config.companyPhone) config.companyPhone = "";
+    if (!config.companyPhone) config.companyPhone= "";
     if (!config.ticketFoot) config.ticketFoot = "";
     
     this.configFormBackup.setValue({

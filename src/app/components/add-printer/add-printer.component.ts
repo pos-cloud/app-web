@@ -70,10 +70,10 @@ export class AddPrinterComponent  implements OnInit {
           Validators.required
         ]
       ],
-      'origin': [this.printer.name, [
+      'origin': [this.printer.origin, [
         ]
       ],
-      'connectionURL': [this.printer.name, [
+      'connectionURL': [this.printer.connectionURL, [
           Validators.required
         ]
       ],
@@ -122,7 +122,6 @@ export class AddPrinterComponent  implements OnInit {
       result => {
         if (!result.printer) {
           this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           this.printer = result.printer;
           this.showMessage("La impresora se ha añadido con éxito.", "success", false);

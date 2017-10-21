@@ -32,6 +32,7 @@ import { ConfigService } from './services/config.service';
 import { PaymentMethodService } from './services/payment-method.service';
 import { MailService } from './services/send-mail.service';
 import { MovementOfCashService } from './services/movement-of-cash.service';
+import { PrintService } from './services/print.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -216,6 +217,7 @@ import { ViewTransactionComponent } from './components/view-sale-order/view-tran
     ConfigService,
     PaymentMethodService,
     MovementOfCashService,
+    PrintService,
     AuthGuard,
     MailService
   ],

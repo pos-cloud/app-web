@@ -38,17 +38,18 @@ export class AppComponent implements OnInit{
     this.loading = true;
 
     let result = this._configService.getConfigLocal();
+
     if (!result) {
       this.openModal("config");
       this.isAPIConected = false;
       this.loading = false;
     } else {
-        this.config = result.config[0];
-        this.setConfigurationSettings(this.config);
-        this.setApiConfigurationSettings(this.config);
-        this.hideMessage();
-        this.getConfigApi();
-        this.loading = false;
+      this.config = result;
+      this.setConfigurationSettings(this.config);
+      this.setApiConfigurationSettings(this.config);
+      this.hideMessage();
+      this.getConfigApi();
+      this.loading = false;
     }
   }
 
@@ -58,14 +59,14 @@ export class AppComponent implements OnInit{
 
     this._configService.getConfigApi().subscribe(
       result => {
-        if (!result) {
+        if (!result.configs) {
           this.openModal("config");
           this.isAPIConected = false;
           this.loading = false;
         } else {
           this.hideMessage();
-          this.isAPIConected = true; 
-          let config = result.config[0];
+          this.isAPIConected = true;
+          let config = result.configs[0];
           this.setConfigurationSettings(config);
           this.setApiConfigurationSettings(config);
           this.loading = false;
@@ -79,9 +80,9 @@ export class AppComponent implements OnInit{
   }
 
   public setConfigurationSettings(config) {
-    if(!config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
-    if(!config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if(!config.nameCompany) Config.setConfigCompany(config.nameCompany, config.cuitCompany, config.addressCompany, config.phoneCompany, config.footerTicket);
+    if(config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
+    if(config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone, config.ticketFoot);
   }
 
   public setApiConfigurationSettings(config) {

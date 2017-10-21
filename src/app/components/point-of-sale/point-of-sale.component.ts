@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
 
 import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
@@ -355,7 +358,7 @@ export class PointOfSaleComponent implements OnInit {
         });
         break;
       case 'open-turn':
-        modalRef = this._modalService.open(SelectEmployeeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
         modalRef.componentInstance.op = 'open';
         modalRef.result.then((result) => {
@@ -367,7 +370,7 @@ export class PointOfSaleComponent implements OnInit {
         });
         break;
       case 'close-turn':
-        modalRef = this._modalService.open(SelectEmployeeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
         modalRef.componentInstance.op = 'close';
         modalRef.result.then((result) => {
@@ -422,7 +425,7 @@ export class PointOfSaleComponent implements OnInit {
       transaction.state = TransactionState.Delivered;
     }
 
-    transaction.endDate = new Date();
+    transaction.endDate = moment().locale('es').format('L') + " " + moment().locale('es').format('LT');
     
     this.updateTransaction(transaction);
   }

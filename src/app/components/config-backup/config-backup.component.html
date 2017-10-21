@@ -136,7 +136,7 @@
               <input type="text" class="form-control" formControlName="companyPhone" name="companyPhone" id="companyPhone" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyPhone" class="alert alert-danger">
-              {{ formErrors.companyPhone }}
+              {{ formErrors.companyPhone}}
             </div>
           </div>
         </div>
@@ -161,6 +161,7 @@
           </div>
         </div>
       </form>
+      {{configFormCompany.value | json}}
     </div>
   </div>
 </section>
