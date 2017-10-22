@@ -182,7 +182,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm.setValue({
       'company': this.transaction.company,
-      'date': this.datePipe.transform(this.transaction.date, 'yyyy/MM/dd'),
+      'date': this.datePipe.transform(this.transaction.endDate, 'yyyy/MM/dd'),
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
@@ -197,7 +197,7 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
-      'date': [this.datePipe.transform(this.transaction.date, 'yyyy/MM/dd'), [
+      'date': [this.datePipe.transform(this.transaction.endDate, 'yyyy/MM/dd'), [
           Validators.required
         ]
       ],
@@ -246,7 +246,7 @@ export class AddTransactionComponent implements OnInit {
   public addTransaction(): void {
 
     this.transaction.company = this.transactionForm.value.company;
-    this.transaction.date = this.transactionForm.value.date;
+    this.transaction.endDate = this.transactionForm.value.date;
     this.transaction.origin = this.transactionForm.value.origin;
     this.transaction.number = this.transactionForm.value.number;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;

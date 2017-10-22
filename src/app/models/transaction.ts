@@ -14,7 +14,6 @@ export class Transaction {
 	public _id: string;
 	public origin: number = 0;
 	public number: number = 0;
-	public date: string;
 	public startDate: string = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
 	public endDate: string;
 	public state: TransactionState = TransactionState.Open;

@@ -52,7 +52,6 @@ export class ListTransactionsComponent implements OnInit {
     this._transactionService.getTransactions().subscribe(
       result => {
         if(!result.transactions) {
-          this.showMessage(result.message, "info", true); 
           this.loading = false;
           this.transactions = null;
           this.areTransactionsEmpty = true;
