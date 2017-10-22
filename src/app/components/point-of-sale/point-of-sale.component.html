@@ -218,7 +218,11 @@
             <td *ngIf="!transaction.company"></td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             <td>
-              <button class="btn btn-sm btn-success" (click)="openTransaction(transaction)">
+              <button class="btn btn-sm btn-danger" (click)="openModal('cancel-transaction', '',transaction)">
+                  <i class="fa fa-close">
+                  </i>
+                </button>
+              <button class="btn btn-sm btn-success" (click)="openModal('movement-of-cash', '',transaction)">
                 <i class="fa fa-credit-card">
                 </i>
               </button>

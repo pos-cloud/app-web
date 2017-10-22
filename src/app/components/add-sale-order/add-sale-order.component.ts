@@ -717,7 +717,11 @@ export class AddSaleOrderComponent implements OnInit {
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           } else {
-            this.changeStateOfTable(TableState.Busy, true);
+            if(this.posType === "resto") {
+              this.changeStateOfTable(TableState.Busy, true);
+            } else {
+              this.back();
+            }
           }
         }
         break;

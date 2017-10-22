@@ -176,6 +176,10 @@ export class AddTransactionComponent implements OnInit {
 
   public setValueForm(): void {
     
+    if(!this.transaction.origin) this.transaction.origin = 1;
+    if(!this.transaction.number) this.transaction.number = 1;     
+    if(!this.transaction.observation) this.transaction.observation = ""; 
+
     this.transactionForm.setValue({
       'company': this.transaction.company,
       'date': this.datePipe.transform(this.transaction.date, 'yyyy/MM/dd'),
@@ -265,7 +269,6 @@ export class AddTransactionComponent implements OnInit {
       result => {
         if (!result.transaction) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha añadido con éxito.", "success", true);
@@ -279,7 +282,7 @@ export class AddTransactionComponent implements OnInit {
       }
     );
   }
-
+  
   public updateTransaction(): void {
     
     this.loading = true;
@@ -288,7 +291,6 @@ export class AddTransactionComponent implements OnInit {
       result => {
         if (!result.transaction) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha actualizado con éxito.", "success", true);
