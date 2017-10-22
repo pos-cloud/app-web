@@ -353,9 +353,10 @@ export class PointOfSaleComponent implements OnInit {
           if (result === "add-movement-of-cash") {
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
+            this.getOpenTransactions();
           }
         }, (reason) => {
-
+          this.getOpenTransactions();
         });
         break;
       case 'cancel-transaction':

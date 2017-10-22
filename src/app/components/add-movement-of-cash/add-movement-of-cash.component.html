@@ -28,7 +28,9 @@
                 <option *ngFor="let paymentMethod of paymentMethods"
                         [selected]="paymentMethod._id==movementOfCash.type._id" 
                         [ngValue]="paymentMethod"
-                        [disabled]="!transaction.company && paymentMethod.name === 'Cuenta Corriente'">
+                        [disabled]="(!transaction.company && paymentMethod.name === 'Cuenta Corriente') ||
+                                    (transaction.type.name === 'Cobro' && paymentMethod.name === 'Cuenta Corriente') ||
+                                    (transaction.type.name === 'Saldo Inicial' && paymentMethod.name !== 'Cuenta Corriente')">
                       {{paymentMethod.name}}
                 </option>
               </select>
@@ -58,7 +60,7 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <label for="observation" class="control-label">Observación:</label>
+            <label for="observation" class="control-label">ObservaciÃ³n:</label>
             <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2">
             </textarea>
           </div>
