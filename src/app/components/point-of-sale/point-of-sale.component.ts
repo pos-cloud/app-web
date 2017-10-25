@@ -19,6 +19,7 @@ import { PaymentMethodService } from './../../services/payment-method.service';
 import { TurnService } from './../../services/turn.service';
 
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
+import { DeleteTransactionComponent } from './../delete-transaction/delete-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 
@@ -352,6 +353,18 @@ export class PointOfSaleComponent implements OnInit {
           if (result === "add-movement-of-cash") {
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
+            this.getOpenTransactions();
+          }
+        }, (reason) => {
+          this.getOpenTransactions();
+        });
+        break;
+      case 'cancel-transaction':
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.result.then((result) => {
+          if (result === "delete_close") {
+            this.getOpenTransactions();
           }
         }, (reason) => {
 

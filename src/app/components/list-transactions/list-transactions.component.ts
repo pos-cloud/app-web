@@ -52,7 +52,6 @@ export class ListTransactionsComponent implements OnInit {
     this._transactionService.getTransactions().subscribe(
       result => {
         if(!result.transactions) {
-          this.showMessage(result.message, "info", true); 
           this.loading = false;
           this.transactions = null;
           this.areTransactionsEmpty = true;
@@ -92,7 +91,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
         break;
-      case 'delete' :
+      case 'cancel' :
           modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' })
           modalRef.componentInstance.transaction = transaction;
           modalRef.result.then((result) => {

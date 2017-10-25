@@ -717,7 +717,11 @@ export class AddSaleOrderComponent implements OnInit {
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           } else {
-            this.changeStateOfTable(TableState.Busy, true);
+            if(this.posType === "resto") {
+              this.changeStateOfTable(TableState.Busy, true);
+            } else {
+              this.back();
+            }
           }
         }
         break;
@@ -867,7 +871,7 @@ export class AddSaleOrderComponent implements OnInit {
   public finishCharge() {
 
     this.transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
-    this.transaction.date = this.transaction.endDate;
+    this.transaction.endDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 
     this.typeOfOperationToPrint = 'charge';
@@ -1060,8 +1064,8 @@ export class AddSaleOrderComponent implements OnInit {
       content +=
         '<tr><td colspan="5"><font face="Courier" size="2">P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '</font></td>' +
         '<td colspan="7" align="right"><font face="Courier" size="2">Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.date, 'dd/MM/yyyy') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.date, 'HH:mm') + '</font></td></tr>';
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
+        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.endDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
       if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
@@ -1143,8 +1147,8 @@ export class AddSaleOrderComponent implements OnInit {
       content +=
         '<tr><td colspan="5"><font face="Courier" size="2">P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '</font></td>' +
         '<td colspan="7" align="right"><font face="Courier" size="2">Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.date, 'dd/MM/yyyy') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.date, 'HH:mm') + '</font></td></tr>';
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
+        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.endDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
       if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
@@ -1223,7 +1227,7 @@ export class AddSaleOrderComponent implements OnInit {
       if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
       content +=
         '<tr><td colspan="12"><font face="Courier" size="2">Nro. Pedido ' + this.transaction.number + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.date, 'dd/MM/yyyy') + '</font></td>' +
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
         '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
@@ -1305,7 +1309,7 @@ export class AddSaleOrderComponent implements OnInit {
       if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
       content +=
         '<tr><td colspan="12"><font face="Courier" size="2">Nro. Pedido ' + this.transaction.number + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.date, 'dd/MM/yyyy') + '</font></td>' +
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
         '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';

@@ -100,7 +100,8 @@
           width="120">
         <img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined" [src]="apiURL + 'get-image-article/'+article.picture"
           height="120" width="120">
-        <div class="image-title">{{article.posDescription}}</div> 
+        <div *ngIf="article.posDescription" class="image-title">{{article.posDescription}}</div> 
+        <div *ngIf="!article.posDescription" class="image-title">{{article.description | slice:0:9}}</div> 
       </div>
     </div>
     <div class="center-content" *ngIf="areArticlesEmpty">

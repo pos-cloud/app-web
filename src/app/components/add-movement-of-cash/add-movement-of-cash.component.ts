@@ -86,14 +86,20 @@ export class AddMovementOfCashComponent implements OnInit {
         if (!result.paymentMethods){
           this.showMessage(result.message, "info", true);
         } else {  
-          this.movementOfCash.type = result.paymentMethods[0];
           this.paymentMethods = result.paymentMethods;
-          this.movementOfCashForm.setValue({
-            'paymentMethod': this.movementOfCash.type,
-            'amountPaid': this.movementOfCash.amountPaid,
-            'cashChange': this.movementOfCash.cashChange,
-            'observation': ''
-          });
+          if(this.transaction.type.name === "Saldo Inicial") {
+            for(let i=0; i < this.paymentMethods.length; i++) {
+              if(this.paymentMethods[i].name === "Cuenta Corriente") {
+                this.movementOfCash.type = this.paymentMethods[i];
+              }
+            }
+            if(this.movementOfCash.type.name !== "Cuenta Corriente") {
+              this.showMessage("No existe el medio de pago 'Cuenta Corriente', debe agregarlo.","danger",false);
+            }
+          } else {
+            this.movementOfCash.type = this.paymentMethods[0];
+          }
+          this.setValueForm();
         }
         this.loading = false;
       },
@@ -102,6 +108,18 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public setValueForm(): void {
+
+    if(!this.movementOfCash.observation) this.movementOfCash.observation = "";
+    
+    this.movementOfCashForm.setValue({
+      'paymentMethod': this.movementOfCash.type,
+      'amountPaid': this.movementOfCash.amountPaid,
+      'cashChange': this.movementOfCash.cashChange,
+      'observation': this.movementOfCash.observation,
+    });
   }
 
   public buildForm(): void {
