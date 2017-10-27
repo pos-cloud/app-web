@@ -24,7 +24,7 @@ export class ListTransactionsComponent implements OnInit {
   public alertMessage: string = "";
   public userType: string;
   public posType: string;
-  public orderTerm: string[] = ['-date'];
+  public orderTerm: string[] = ['-endDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;

@@ -21,7 +21,7 @@
               <th (click)="orderBy('type','name')">Tipo</th>
             	<th (click)="orderBy('origin')">Origen</th>
             	<th (click)="orderBy('number')">Número</th>
-	            <th (click)="orderBy('date')">Fecha</th>
+	            <th (click)="orderBy('endDate')">Fecha</th>
 	            <th (click)="orderBy('company','name')">Cliente</th>
             	<th (click)="orderBy('table','description')">Mesa</th>
             	<th (click)="orderBy('employee','name')">Mozo</th>
@@ -32,10 +32,10 @@
 	            <th (click)="orderBy('totalPrice')">Precio Total</th>
             </tr>
             <tr *ngIf="areFiltersVisible"><th>
-              <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Origen..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterDate" placeholder="Fecha..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Fecha..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCompany" placeholder="Cliente..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterTable" placeholder="Mesa..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Mozo..."></th>
@@ -51,11 +51,11 @@
                                                         | filter: filterType:'name':'type' 
                                                         | filter: filterOrigin:'origin' 
                                                         | filter: filterNumber:'number'
-                                                        | filter: filterDate:'date' 
+                                                        | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTable:'description':'table' 
                                                         | filter: filterEmployee:'name':'employee'  
-                                                        | filter: filterTurn:'name':'turn' 
+                                                        | filter: filterTurn:'openDate':'turn' 
                                                         | filter: filterState:'state' 
                                                         | filter: filterPaymentMethod:'name':'paymentMethod'
                                                         | filter: filterObservation:'observation'  
@@ -78,8 +78,8 @@
               <td *ngIf="!transaction.table"></td>
               <td *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</td>
               <td *ngIf="!transaction.employeeClosing"></td>
-              <td *ngIf="transaction.turnClosing">{{transaction.turnClosing.startDate | date: ['dd/MM/yyyy'] }}</td>
-              <td *ngIf="!transaction.turnClosing"></td>
+              <td *ngIf="transaction.turnOpening">{{transaction.turnOpening.startDate | date: ['dd/MM/yyyy'] }}</td>
+              <td *ngIf="!transaction.turnOpening"></td>
               <td>
                 <h6>
                   <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
