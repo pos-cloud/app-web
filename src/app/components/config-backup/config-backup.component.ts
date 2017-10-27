@@ -333,8 +333,8 @@ export class ConfigBackupComponent implements OnInit {
     )
   }
 
-  public downloadLicence(): void {
-    this._configService.getLicence().subscribe(
+  public downloadlicense(): void {
+    this._configService.getlicense().subscribe(
       result => {
         if(!result.configs) {
           this.showMessage(result.message, "info", true); 

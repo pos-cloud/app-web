@@ -31,12 +31,12 @@ export class ConfigService {
 		return this._http.get(Config.apiURL + "config", { headers: headers }).map (res => res.json());
 	}
 
-	getLicence() {
+	getlicense() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		return this._http.get(Config.apiURL + "/download", { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + "/download-license", { headers: headers }).map (res => res.json());
 	}
 
 	saveConfigApi(config: Config) {
