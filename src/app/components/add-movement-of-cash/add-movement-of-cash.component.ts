@@ -30,6 +30,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public alertMessage: string = "";
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public op: string;
 
   public formErrors = {
     'paymentMethod': '',
@@ -66,15 +67,39 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getMovementOfCashesByTransaction();
     this.getPaymentMethods();
     this.buildForm();
-    this.movementOfCash.amountPaid = this.transaction.totalPrice;
-    this.movementOfCash.amountCharge = this.transaction.totalPrice;
-    this.paymentChange = (this.movementOfCash.amountPaid - this.transaction.totalPrice).toFixed(2);
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getMovementOfCashesByTransaction(): void {
+
+    this.loading = true;
+
+    this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
+      result => {
+        if (!result.movementsOfCashes) {
+          this.movementOfCash.amountPaid = this.transaction.totalPrice;
+          this.movementOfCash.amountCharge = this.transaction.totalPrice;
+          this.paymentChange = (this.movementOfCash.amountPaid - this.transaction.totalPrice).toFixed(2);
+          this.op = "add";
+        } else {
+          this.movementOfCash = result.movementsOfCashes[0];
+          this.op = "update";
+        }
+        this.paymentChange = (this.movementOfCash.amountPaid - this.transaction.totalPrice).toFixed(2);
+        this.setValueForm();
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getPaymentMethods(): void {
@@ -240,32 +265,15 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCash.cashChange = this.movementOfCashForm.value.cashChange;
     this.movementOfCash.observation = this.movementOfCashForm.value.observation;
     
-    this.saveMovementOfCash();
+    if(this.op === "add") {
+      this.saveMovementOfCash();
+    } else if (this.op === "update"){
+      this.updateMovementOfCash();
+    }
   }
 
   public cancel(): void {
     this.activeModal.close('cancel');
-  }
-
-  public getMovementOfCashesByTransaction(): void {
-
-    this.loading = true;
-    
-    this._movementOfCashService.getMovementOfCashesByTransaction(this.movementOfCash.transaction._id).subscribe(
-      result => {
-        if (!result.movementsOfCashes) {
-          this.saveMovementOfCash();
-        } else {
-          this.movementOfCash = result.movementsOfCashes[0];
-          this.updateMovementOfCash();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public saveMovementOfCash(): void {
@@ -301,6 +309,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;
+          this.activeModal.close("add-movement-of-cash");
         }
         this.loading = false;
       },
