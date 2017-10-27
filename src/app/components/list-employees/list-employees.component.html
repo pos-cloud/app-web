@@ -24,9 +24,10 @@
               <th (click)="orderBy('type','description')">Tipo </th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Legajo..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Legajo..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
             </tr>
           </thead>
           <tbody>

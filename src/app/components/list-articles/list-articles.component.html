@@ -31,14 +31,15 @@
               <th (click)="orderBy('type')">Tipo</th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterMake" placeholder="Marca..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCategory" placeholder="Rubro..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterSalePrice" placeholder="Precio de Venta..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterTermObservation" placeholder="Observación..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterTermBarcode" placeholder="Código de Barra..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterMake" placeholder="Marca..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCategory" placeholder="Rubro..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterSalePrice" placeholder="Precio de Venta..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterTermObservation" placeholder="Observación..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterTermBarcode" placeholder="Código de Barra..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
             </tr>
           </thead>
           <tbody>

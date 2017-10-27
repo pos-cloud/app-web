@@ -23,7 +23,8 @@
               <th (click)="orderBy('description')">Description </th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
             </tr>
           </thead>
           <tbody>

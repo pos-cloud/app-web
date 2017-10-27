@@ -25,10 +25,11 @@
 	            <th (click)="orderBy('employee','name')">Empleado</th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterTokenExpiration" placeholder="Minutos de sesión..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterTokenExpiration" placeholder="Minutos de sesión..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
             </tr>
           </thead>
           <tbody>

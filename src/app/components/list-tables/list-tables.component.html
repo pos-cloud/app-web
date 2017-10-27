@@ -25,6 +25,7 @@
             <th (click)="orderBy('state')">Estado</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRoom" placeholder="Salón..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterChair" placeholder="Sillas..."></th>

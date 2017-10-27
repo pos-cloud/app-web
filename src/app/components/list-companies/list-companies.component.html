@@ -31,15 +31,16 @@
               <th (click)="orderBy('emails')">Emails </th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
             </tr>
           </thead>
           <tbody>
