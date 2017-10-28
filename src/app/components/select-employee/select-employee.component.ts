@@ -261,7 +261,7 @@ export class SelectEmployeeComponent implements OnInit {
           modalRef.result.then((result) => {
             this.activeModal.close(result);
           }, (reason) => {
-
+            this.activeModal.close(result);
           });
         }
         this.loading = false;

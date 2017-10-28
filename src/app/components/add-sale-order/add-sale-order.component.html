@@ -57,7 +57,7 @@
               </td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
-              <td colspan="10 ">Todavía no se cargaron artículos al pedido</td>
+              <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
             </tr>
           </tbody>
         </table>
@@ -110,11 +110,11 @@
         <div class="col-md-8">
           <nav class="breadcrumb">
             <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}" (click)="showCategories()">Categorias</span>
-            <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Artículos</span>
+            <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Productos</span>
           </nav>
         </div>
         <div class="col-md-2 btn-action btn-large center-content" (click)="addItem()">
-          Agregar Artículo
+          Agregar Producto
         </div>
         <div class="col-md-1 btn-action btn-large center-content" (click)="close()">
           Cerrar

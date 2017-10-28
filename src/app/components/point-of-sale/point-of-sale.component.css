@@ -1,5 +1,4 @@
 .center-content {
-      margin-top: 30px;
       display: -webkit-flex;
       display: flex;
       -webkit-flex-wrap: wrap;
@@ -35,12 +34,32 @@
  }
 
  .tables-container {
-       height:70vh;
+    height:72vh;
+    padding-left: 50px;
+    padding-right: 50px;
  }
 
- .container-button {
-      background: #f0ad4e;
-      margin-left: 20px;
-      width: 100px;
-      height: 100px;
- }
+ .btn-turn {
+    background: #f0ad4e;
+    width: 100px;
+    height: 100px;
+    margin: 25px;
+    float: left;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid black;
+    padding-top: 20px;
+}
+
+.btn-turn-text {
+    color: white;
+    font-size: 20px;
+}
+
+.container-btns {
+    padding-left: 50px;
+}
+
+.pos-resto {
+    background-color: #5C2626;
+}

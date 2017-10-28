@@ -55,7 +55,7 @@
         </ng-template>
       </ngb-tab>
       <ngb-tab [disabled]="areMovementsOfArticlesEmpty">
-        <ng-template ngbTabTitle>Artículos</ng-template>
+        <ng-template ngbTabTitle>Productos</ng-template>
         <ng-template ngbTabContent>
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -78,7 +78,7 @@
                       <td>{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</td>
                     </tr>
                     <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
-                      <td colspan="10 ">No existen artículos en la transacción</td>
+                      <td colspan="10 ">No existen productos en la transacción</td>
                     </tr>
                   </tbody>
                 </table>

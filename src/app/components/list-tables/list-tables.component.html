@@ -111,7 +111,13 @@
         </div>
         <div class="row" align="bottom">
           <div class="col-md-12 employee-name" align="center">
-            <b  *ngIf="table.employee && table.state !== 'Disponible'">{{table.employee.name}}</b>
+            <b *ngIf="table.employee 
+                      && table.state !== 'Disponible' 
+                      && table.state !== 'Reservada'
+                      && table.state !== 'No Habilitada'"
+                      >{{table.employee.name}}</b>
+            <b *ngIf="table.state === 'Reservada'">Reservada</b>
+            <b *ngIf="table.state === 'No Habilitada'">No Habilitada</b>
           </div>
         </div>
       </div>

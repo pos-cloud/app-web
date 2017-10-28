@@ -646,7 +646,7 @@ export class AddSaleOrderComponent implements OnInit {
 
           });
         } else {
-          this.showMessage("No existen artículos en el pedido.", "info", true);
+          this.showMessage("No existen productos en el pedido.", "info", true);
           this.loading = false;
         }
         break;
@@ -696,7 +696,7 @@ export class AddSaleOrderComponent implements OnInit {
           });
           break;
         } else {
-          this.showMessage("No existen artículos en el pedido.", "info", true);
+          this.showMessage("No existen productos en el pedido.", "info", true);
           this.loading = false;
         }
         break;
@@ -863,7 +863,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = 'bill';
       this.openModal('printers');
     } else {
-      this.showMessage("No existen artículos en el pedido.", "info", true);
+      this.showMessage("No existen productos en el pedido.", "info", true);
       this.loading = false;
     }
   }
@@ -1120,7 +1120,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido.", "info", true);
+      this.showMessage("No existen productos en el pedido.", "info", true);
     }
   }
 
@@ -1203,7 +1203,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido.", "info", true);
+      this.showMessage("No existen productos en el pedido.", "info", true);
     }
   }
 
@@ -1285,7 +1285,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido.", "info", true);
+      this.showMessage("No existen productos en el pedido.", "info", true);
     }
   }
 
@@ -1360,7 +1360,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage("No existen artículos en el pedido.", "info", true);
+      this.showMessage("No existen productos en el pedido.", "info", true);
     }
   }
 

@@ -65,7 +65,7 @@ export class UpdateArticleComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'posDescription': {
-      'maxlength': 'No puede exceder los 10 carácteres.'
+      'maxlength': 'No puede exceder los 20 carácteres.'
     },
     'costPrice': {
       'required': 'Este campo es requerido.'
@@ -127,7 +127,7 @@ export class UpdateArticleComponent implements OnInit {
         ]
       ],
       'posDescription': [this.article.posDescription, [
-          Validators.maxLength(10)
+          Validators.maxLength(20)
         ]
       ],
       'costPrice': [this.article.costPrice, [
@@ -329,7 +329,7 @@ export class UpdateArticleComponent implements OnInit {
   public loadPosDescription(): void {
     if (this.articleForm.value.posDescription === "") {
       let slicePipe = new SlicePipe();
-      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description, 0, 10);
+      this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description, 0, 20);
       this.article = this.articleForm.value;
       this.setValuesForm();
     }
@@ -434,7 +434,7 @@ export class UpdateArticleComponent implements OnInit {
 
   public makeFileRequest(files: Array<File>){
 
-    let idArticulo = this.article._id;
+    let articleId = this.article._id;
     return new Promise(function(resolve, reject){
       var formData:any = new FormData();
       var xhr = new XMLHttpRequest();
@@ -452,7 +452,7 @@ export class UpdateArticleComponent implements OnInit {
         }
       }
       
-      xhr.open('POST', Config.apiURL + 'upload-image/'+idArticulo,true);
+      xhr.open('POST', Config.apiURL + 'upload-image/'+articleId,true);
       xhr.send(formData);
     });
   }

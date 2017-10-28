@@ -12,11 +12,11 @@
 }
 
 .img-container {
-      height:80vh;
+      height:71vh;
 }
 
 .articles-container {
-      height:55vh;
+      height:44vh;
       margin: 0px;
       padding: 0px;
 }
@@ -59,7 +59,9 @@
 }
 
 .btn-large {
-      height: 50px;
+      height: 70px;
+      font-size: 20px;
+      font-weight: 400;
 }
 
 .color-default {
