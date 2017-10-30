@@ -30,63 +30,36 @@
     text-align: center;
     cursor: pointer;
     border: 1px solid black;
+    border-radius: 5px;
     box-shadow: 0px 0px 5px;
 }
 
 .itable-enabled {
     background: #5cb85c;
-    width: 100px;
-    height: 100px;
-    margin: 25px;
-    float: left;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid black;
-    box-shadow: 0px 0px 5px;
 }
 
 .itable-busy {
     background: #d9534f;
-    width: 100px;
-    height: 100px;
-    margin: 25px;
-    float: left;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid black;
-    box-shadow: 0px 0px 5px;
 }
 
 .itable-disabled {
     background: #d1d1d1;
-    width: 100px;
-    height: 100px;
-    margin: 25px;
-    float: left;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid black;
-    box-shadow: 0px 0px 5px;
 }
 
 .itable-pending {
     background: #f0ad4e;
-    width: 100px;
-    height: 100px;
-    margin: 25px;
-    float: left;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid black;
-    box-shadow: 0px 0px 5px;
 }
 
-.itable p, .itable-disabled p, .itable-enabled p, .itable-pending p {
+.itable p {
     font-size: 30px;
     font: bold;
     margin-top: 10px;
     color: white;
 } 
+
+.itable:hover {
+    opacity: 0.5;
+}
 
 .employee-name, .table-number, .table-description {
     color: white;
@@ -98,7 +71,7 @@
 
 .table {
     box-shadow: 0px 0px 5px;
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: pointer;
  }
 
