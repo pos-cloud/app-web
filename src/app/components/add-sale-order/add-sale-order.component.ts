@@ -908,36 +908,33 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public applyDiscount(): void {
+    
+    if(this.transaction.subtotalPrice !== 0) {
+      if (this.discountPorcent > 0 &&
+        this.discountPorcent <= 100 &&
+        this.discountPorcent !== null &&
+        (this.discountAmount === 0 || this.discountAmount === null)) {
 
-    if (this.discountPorcent > 0 &&
-      this.discountPorcent <= 100 &&
-      this.discountPorcent !== null &&
-      (this.discountAmount === 0 || this.discountAmount === null)) {
-
-      this.transaction.discount = parseFloat("" + this.transaction.subtotalPrice) * parseFloat("" + this.discountForm.value.porcent) / 100;
-      this.hideMessage();
-    } else if ((this.discountPorcent === 0 ||
-      this.discountPorcent === null) &&
-      this.discountAmount > 0 &&
-      this.discountAmount <= this.transaction.subtotalPrice &&
-      this.discountAmount !== null) {
-
-      this.transaction.discount = this.discountAmount;
-      this.hideMessage();
-    } else if (this.discountAmount !== 0 && this.discountPorcent !== 0) {
-
+          this.transaction.discount = (this.transaction.subtotalPrice * this.discountForm.value.porcent) / 100;
+          this.hideMessage();
+      } else if ((this.discountPorcent === 0 ||
+        this.discountPorcent === null) &&
+        this.discountAmount > 0 &&
+        this.discountAmount <= this.transaction.subtotalPrice &&
+        this.discountAmount !== null) {
+          this.transaction.discount = this.discountAmount;
+          this.hideMessage();
+      } else if (this.discountAmount !== 0 && this.discountPorcent !== 0) {
+        this.transaction.discount = 0;
+        this.showMessage("Solo debe cargar un solo descuento.", "info", true);
+      }
+    } else {
       this.transaction.discount = 0;
-
-      this.showMessage("Solo debe cargar un solo descuento.", "info", true);
-    } else {
-      this.hideMessage();
+      this.discountPorcent = 0;
+      this.discountAmount = 0;
     }
 
-    if (this.transaction.discount != 0) {
-      this.transaction.totalPrice = parseFloat("" + this.transaction.subtotalPrice) - parseFloat("" + this.transaction.discount);
-    } else {
-      this.transaction.totalPrice = this.transaction.subtotalPrice;
-    }
+    this.transaction.totalPrice = this.transaction.subtotalPrice - this.transaction.discount;
 
     this.updateTransaction();
   }
@@ -1033,11 +1030,13 @@ export class AddSaleOrderComponent implements OnInit {
   public updatePrices(): void {
 
     this.transaction.subtotalPrice = 0;
+    this.transaction.totalPrice = 0;
 
     for (let movementOfArticle of this.movementsOfArticles) {
-      this.transaction.subtotalPrice = parseFloat("" + this.transaction.subtotalPrice) + parseFloat("" + movementOfArticle.totalPrice);
+      this.transaction.subtotalPrice = this.transaction.subtotalPrice + movementOfArticle.totalPrice;
+      this.transaction.totalPrice = this.transaction.subtotalPrice - this.transaction.discount;
     }
-
+    
     this.applyDiscount();
   }
 
