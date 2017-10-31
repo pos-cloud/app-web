@@ -194,9 +194,9 @@ export class UpdateArticleComponent implements OnInit {
           if(!result.makes) {
           } else {
             this.hideMessage();
-            this.loading = false;
             this.makes = result.makes;
           }
+          this.loading = false;
         },
         error => {
           this.showMessage(error._body, "danger", false);
@@ -213,12 +213,11 @@ export class UpdateArticleComponent implements OnInit {
         result => {
           if(!result.categories) {
             this.showMessage(result.message, "info", true); 
-            this.loading = false;
           } else {
             this.hideMessage();
-            this.loading = false;
             this.categories = result.categories;
           }
+          this.loading = false;
         },
         error => {
           this.showMessage(error._body, "danger", false);

@@ -228,10 +228,10 @@ export class AddArticleComponent  implements OnInit {
             this.getCategories();
           } else {
             this.hideMessage();
-            this.loading = false;
             this.makes = result.makes;
             this.getCategories();
           }
+          this.loading = false;
         },
         error => {
           this.showMessage(error._body, "danger", false);
@@ -248,13 +248,12 @@ export class AddArticleComponent  implements OnInit {
         result => {
           if(!result.categories) {
             this.showMessage(result.message, "info", true);
-            this.loading = false;
           } else {
             this.hideMessage();
-            this.loading = false;
             this.categories = result.categories;
             this.getLastArticle();
           }
+          this.loading = false;
         },
         error => {
           this.showMessage(error._body, "danger", false);
