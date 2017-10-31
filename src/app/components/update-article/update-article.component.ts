@@ -321,7 +321,10 @@ export class UpdateArticleComponent implements OnInit {
     this.articleForm.value.markupPrice = parseFloat(this.articleForm.value.markupPrice.toFixed(2));
     this.articleForm.value.salePrice = parseFloat(this.articleForm.value.salePrice.toFixed(2));
 
-    this.article = this.articleForm.value;    
+    this.article.costPrice = this.articleForm.value.costPrice;
+    this.article.markupPorcent = this.articleForm.value.markupPorcent;
+    this.article.markupPrice = this.articleForm.value.markupPrice;
+    this.article.salePrice = this.articleForm.value.salePrice;    
     this.setValuesForm();
   }
 
@@ -329,7 +332,7 @@ export class UpdateArticleComponent implements OnInit {
     if (this.articleForm.value.posDescription === "") {
       let slicePipe = new SlicePipe();
       this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description, 0, 20);
-      this.article = this.articleForm.value;
+      this.article.posDescription = this.articleForm.value.posDescription;
       this.setValuesForm();
     }
   }
