@@ -98,9 +98,9 @@
     <div *ngFor="let article of articles | filter: filterCategory.description:'description':'category'" >
       <div class="iarticle" (click)="addItem(article)">
         <img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120"
-          width="120">
+          width="120" class="img-fluid">
         <img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined" [src]="apiURL + 'get-image-article/'+article.picture"
-          height="120" width="120">
+          height="120" width="120" class="img-fluid">
         <div *ngIf="article.posDescription" class="image-title">{{article.posDescription}}</div> 
         <div *ngIf="!article.posDescription" class="image-title">{{article.description | slice:0:19}}</div> 
       </div>
