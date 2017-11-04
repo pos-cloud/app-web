@@ -37,6 +37,8 @@ export class ListTablesComponent implements OnInit {
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
+  public amountOfDinersNow: number = 0;
+  public amountOfDiners: number = 0;
   public loading: boolean = false;
   @Input() filterRoom: string;
   public itemsPerPage = 10;
@@ -80,6 +82,7 @@ export class ListTablesComponent implements OnInit {
           this.loading = false;
           this.tables = result.tables;
           this.areTablesEmpty = false;
+          this.calculateAmountOfDiners();
         }
       },
       error => {
@@ -91,6 +94,20 @@ export class ListTablesComponent implements OnInit {
         }
       }
     );
+  }
+
+  public calculateAmountOfDiners() {
+    
+    this.amountOfDiners = 0;
+    this.amountOfDinersNow = 0;
+
+    for(let table of this.tables) {
+      this.amountOfDiners += table.chair;
+      if( table.state === TableState.Busy || 
+          table.state === TableState.Pending) {
+            this.amountOfDinersNow += table.chair;
+      }
+    }
   }
 
   public orderBy(term: string, property?: string): void {

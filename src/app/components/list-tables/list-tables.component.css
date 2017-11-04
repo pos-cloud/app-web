@@ -50,12 +50,15 @@
     background: #f0ad4e;
 }
 
-.itable p {
+.table-description {
     font-size: 30px;
     font: bold;
-    margin-top: 10px;
     color: white;
 } 
+
+.number-chair {
+    height: 20px;
+}
 
 .itable:hover {
     opacity: 0.5;
