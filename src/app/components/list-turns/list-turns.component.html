@@ -1,0 +1,82 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Lista de Turnos
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="refresh()"[disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span *ngIf="loading">Cargando</span><span *ngIf="!loading">Actualizar</span></button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th><i class="fa fa-bars"></i></th>
+              <th (click)="orderBy('startDate')">Apertura</th>
+              <th (click)="orderBy('endDate')">Cierre</th>
+              <th (click)="orderBy('state')">Estado</th>
+              <th (click)="orderBy('employee')">Empleado</th>
+            </tr>
+            <tr *ngIf="areFiltersVisible"><th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterStartDate" placeholder="Apertura..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Cierre..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let turn of turns | orderBy: orderTerm: propertyTerm  
+                                          | filter: filterStartDate:'startDate' 
+                                          | filter: filterEndDate:'endDate' 
+                                          | filter: filterState:'state'
+                                          | filter: filterEmployee:'employee'
+                                          | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+              <td align="left" width="100">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', turn)"><i class="fa fa-eye"></i></button>
+              </td>
+              <td>{{turn.startDate | date: ['dd/MM/yyyy hh:mm:ss'] }}</td>
+              <td *ngIf="turn.endDate">{{turn.endDate | date: ['dd/MM/yyyy hh:mm:ss'] }}</td>
+              <td *ngIf="!turn.endDate"></td>
+              <td>
+                <h6>
+                  <span class="badge" [ngClass]="{'badge-success':turn.state==='Cerrado',
+                                                'badge-warning':turn.state==='Abierto'}">
+                    {{turn.state}}
+                  </span>
+                </h6>
+              </td>
+              <td>{{turn.employee.name}}</td>
+            </tr>
+            <tr align="center" *ngIf="areTurnsEmpty">
+              <td colspan="13">No se encontraron turnos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+        <div class="row">
+          <div class="col-md-4 offset-md-4">
+            <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+            </pagination-controls>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 ítems</option>
+              <option [value]="10">Mostrar 10 ítems</option>
+              <option [value]="15">Mostrar 15 ítems</option>
+              <option [value]="20">Mostrar 20 ítems</option>
+              <option [value]="50">Mostrar 50 ítems</option>
+              <option [value]="100">Mostrar 100 ítems</option>
+            </select>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>

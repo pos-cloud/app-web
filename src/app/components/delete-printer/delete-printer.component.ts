@@ -36,7 +36,7 @@ export class DeletePrinterComponent implements OnInit {
   public deletePrinter(): void {
 
     this.loading = true;
-    
+    console.log(this.printer);
     this._printerService.deletePrinter(this.printer._id).subscribe(
       result => {
         this.activeModal.close('delete_close');

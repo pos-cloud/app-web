@@ -156,9 +156,9 @@ export class SelectEmployeeComponent implements OnInit {
         modalRef.result.then((result) => {
           if (typeof result == 'object') {
             this.employee = result;
-            if (this.op === 'open') {
+            if (this.op === 'open-turn') {
               this.openTurn();
-            } else if (this.op === 'close') {
+            } else if (this.op === 'close-turn') {
               this.getTransactionsOpenByEmployee();
             } else if (this.op === 'change-employee') {
               if (this.turn) {
@@ -218,9 +218,9 @@ export class SelectEmployeeComponent implements OnInit {
           }
         } else {
           this.turn = result.turns[0];
-          if (this.op === 'open') {
+          if (this.op === 'open-turn') {
             this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
-          } else if (this.op === 'close') {
+          } else if (this.op === 'close-turn') {
             this.getTransactionsOpenByEmployee();
           } else if (this.op === 'change-employee') {
             if (this.requireLogin) {
@@ -280,7 +280,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._userService.getUserOfEmployee(this.employee._id).subscribe(
       result => {
         if (!result.users) {
-          if (this.op === 'close') {
+          if (this.op === 'close-turn') {
             this.closeTurn();
           } else if (this.op === 'change-employee') {
             if (this.turn) {
@@ -288,7 +288,7 @@ export class SelectEmployeeComponent implements OnInit {
             } else {
               this.openTurn();
             }
-          } else if (this.op === 'open') {
+          } else if (this.op === 'open-turn') {
             this.openTurn();
           } else if (this.op === 'charge') {
             this.openTurn();
@@ -335,7 +335,7 @@ export class SelectEmployeeComponent implements OnInit {
   public selectEmployee(): void {
     this.employee = this.selectEmployeeForm.value.employee;
     this.table.chair = this.selectEmployeeForm.value.chair;
-    if (this.op !== 'turn' && this.op !== 'close') {
+    if (this.op !== 'turn' && this.op !== 'close-turn') {
       this.updateTable();
     }
     this.getOpenTurn();

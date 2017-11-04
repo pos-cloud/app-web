@@ -51,6 +51,7 @@ export class PrinterService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
+		console.log(Config.apiURL + "printer/"+id);
 		return this._http.delete(Config.apiURL + "printer/"+id, { headers: headers }).map (res => res.json());
   }
 

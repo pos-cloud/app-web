@@ -48,6 +48,7 @@ import { AddPrinterComponent } from './components/add-printer/add-printer.compon
 import { DeletePrinterComponent } from './components/delete-printer/delete-printer.component';
 import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
+import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
@@ -102,6 +103,7 @@ const _routes: Routes = [
   { path: 'admin/editar-empresa', component: UpdateCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-empresa', component: DeleteCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/impresoras', component: ListPrintersComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/turnos', component: ListTurnsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/agregar-impresora', component: AddPrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-impresora', component: UpdatePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-impresora', component: DeletePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },

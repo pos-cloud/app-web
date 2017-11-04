@@ -373,7 +373,7 @@ export class PointOfSaleComponent implements OnInit {
       case 'open-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
-        modalRef.componentInstance.op = 'open';
+        modalRef.componentInstance.op = 'open-turn';
         modalRef.result.then((result) => {
           if (typeof result == "object") {
             this.showMessage("El turno se ha abierto correctamente", "success", true);
@@ -385,7 +385,7 @@ export class PointOfSaleComponent implements OnInit {
       case 'close-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
-        modalRef.componentInstance.op = 'close';
+        modalRef.componentInstance.op = 'close-turn';
         modalRef.result.then((result) => {
           if (typeof result == "object") {
             this.showMessage("El turno se ha cerrado correctamente", "success", true);
