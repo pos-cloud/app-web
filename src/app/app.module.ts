@@ -109,6 +109,7 @@ import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
 import { PrintComponent } from './components/print/print.component';
 import { ViewTransactionComponent } from './components/view-sale-order/view-transaction.component';
+import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 
 @NgModule({
   declarations: [
@@ -177,7 +178,8 @@ import { ViewTransactionComponent } from './components/view-sale-order/view-tran
     SimpleTinyComponent,
     SelectEmployeeComponent,
     PrintComponent,
-    ViewTransactionComponent
+    ViewTransactionComponent,
+    ListTurnsComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

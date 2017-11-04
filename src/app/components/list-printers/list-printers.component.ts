@@ -112,7 +112,7 @@ export class ListPrintersComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeletePrinterComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeletePrinterComponent, { size: 'lg' });
           modalRef.componentInstance.printer = printer;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
