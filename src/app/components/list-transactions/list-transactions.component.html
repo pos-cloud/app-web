@@ -24,8 +24,8 @@
 	            <th (click)="orderBy('endDate')">Fecha</th>
 	            <th (click)="orderBy('company','name')">Cliente</th>
             	<th (click)="orderBy('table','description')">Mesa</th>
-            	<th (click)="orderBy('employee','name')">Mozo</th>
-            	<th (click)="orderBy('turn','openDate')">Turn</th>
+            	<th (click)="orderBy('employeeClosing','name')">Mozo</th>
+            	<th (click)="orderBy('turnOpening','startDate')">Turn</th>
 	            <th (click)="orderBy('state')">Estado</th>
 	            <th (click)="orderBy('observation')">Observación</th>
 	            <th (click)="orderBy('discount')">Descuento</th>
@@ -54,8 +54,8 @@
                                                         | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTable:'description':'table' 
-                                                        | filter: filterEmployee:'name':'employee'  
-                                                        | filter: filterTurn:'openDate':'turn' 
+                                                        | filter: filterEmployee:'name':'employeeClosing'  
+                                                        | filter: filterTurn:'startDate':'turnOpening' 
                                                         | filter: filterState:'state' 
                                                         | filter: filterPaymentMethod:'name':'paymentMethod'
                                                         | filter: filterObservation:'observation'  

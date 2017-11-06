@@ -35,7 +35,6 @@
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empleados']">Empleados</button>
           <button class="dropdown-item" [routerLink]="['admin','turnos']">Turnos</button>
-          <button class="dropdown-item" [routerLink]="['admin','usuarios']">Usuarios</button>
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity">
@@ -51,7 +50,8 @@
       <li class="nav-item" ngbDropdown *ngIf="identity">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item" [routerLink]="['admin','configuraciones']">Configuración</button>
+          <button class="dropdown-item" [routerLink]="['admin','usuarios']">Usuarios</button>
+          <button class="dropdown-item" [routerLink]="['admin','configuraciones']">Generales</button>
           <button class="dropdown-item" [routerLink]="['admin','impresoras']">Impresoras</button>
         </div>
       </li>

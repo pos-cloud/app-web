@@ -21,7 +21,7 @@
               <th (click)="orderBy('startDate')">Apertura</th>
               <th (click)="orderBy('endDate')">Cierre</th>
               <th (click)="orderBy('state')">Estado</th>
-              <th (click)="orderBy('employee')">Empleado</th>
+              <th (click)="orderBy('employee','name')">Empleado</th>
             </tr>
             <tr *ngIf="areFiltersVisible"><th>
               <th><input type="text" class="form-control" [(ngModel)]="filterStartDate" placeholder="Apertura..."></th>
@@ -35,7 +35,7 @@
                                           | filter: filterStartDate:'startDate' 
                                           | filter: filterEndDate:'endDate' 
                                           | filter: filterState:'state'
-                                          | filter: filterEmployee:'employee'
+                                          | filter: filterEmployee:'name':'employee'
                                           | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
               <td align="left" width="100">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', turn)"><i class="fa fa-eye"></i></button>
