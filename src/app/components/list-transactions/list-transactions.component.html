@@ -26,6 +26,8 @@
             	<th (click)="orderBy('table','description')">Mesa</th>
             	<th (click)="orderBy('employeeClosing','name')">Mozo</th>
             	<th (click)="orderBy('turnOpening','startDate')">Turn</th>
+	            <th (click)="orderBy('diners')">Comensales</th>
+	            <th (click)="orderBy('madein')">Canal</th>
 	            <th (click)="orderBy('state')">Estado</th>
 	            <th (click)="orderBy('observation')">Observación</th>
 	            <th (click)="orderBy('discount')">Descuento</th>
@@ -40,6 +42,8 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterTable" placeholder="Mesa..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Mozo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterTurn" placeholder="Turno..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDiners" placeholder="Comensales..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterMadein" placeholder="Canal..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterObservation" placeholder="Observación..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDiscount" placeholder="Descuento..." ></th>
@@ -55,7 +59,9 @@
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTable:'description':'table' 
                                                         | filter: filterEmployee:'name':'employeeClosing'  
-                                                        | filter: filterTurn:'startDate':'turnOpening' 
+                                                        | filter: filterTurn:'startDate':'turnOpening'   
+                                                        | filter: filterDiners:'diners'
+                                                        | filter: filterMadein:'madein' 
                                                         | filter: filterState:'state' 
                                                         | filter: filterPaymentMethod:'name':'paymentMethod'
                                                         | filter: filterObservation:'observation'  
@@ -83,6 +89,9 @@
               <td *ngIf="!transaction.employeeClosing"></td>
               <td *ngIf="transaction.turnOpening">{{transaction.turnOpening.startDate | date: ['dd/MM/yyyy'] }}</td>
               <td *ngIf="!transaction.turnOpening"></td>
+              <td *ngIf="transaction.diners">{{transaction.diners}}</td>
+              <td *ngIf="!transaction.diners"></td>
+              <td>{{transaction.madein}}</td>
               <td>
                 <h6>
                   <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
