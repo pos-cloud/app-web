@@ -107,6 +107,10 @@
             <td *ngIf="!transaction.company"></td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             <td>
+              <button class="btn btn-danger" (click)="openTransaction(transaction)">
+                <i class="fa fa-pencil">
+                </i>
+              </button>
               <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')">
                 <i class="fa fa-motorcycle">
                 </i>
