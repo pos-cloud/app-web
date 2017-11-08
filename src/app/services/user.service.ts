@@ -18,7 +18,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-		return this._http.get(Config.apiURL + 'users/sort="code":-1&limit=1').map (res => res.json());
+    return this._http.get(Config.apiURL + 'users/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
   getUser(id) {
@@ -26,7 +26,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-		return this._http.get(Config.apiURL + "user/" + id).map (res => res.json());
+    return this._http.get(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
 	}
 
   getUsers(query?: string, when?: string) {
@@ -34,7 +34,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-		return this._http.get(Config.apiURL + "users/" + query).map (res => res.json());
+    return this._http.get(Config.apiURL + "users/" + query, { headers: headers }).map (res => res.json());
 	}
 
   login(user: User, token: boolean = undefined) {
@@ -47,7 +47,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-    return this._http.post(Config.apiURL + "login", user).map (res => res.json());
+    return this._http.post(Config.apiURL + "login", user, { headers: headers }).map (res => res.json());
 	}
 
   saveUser(user: User) {
@@ -63,7 +63,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-    return this._http.delete(Config.apiURL + "user/" + id).map (res => res.json());
+    return this._http.delete(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
   }
 
   updateUser (user: User){
@@ -71,7 +71,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-    return this._http.put(Config.apiURL + "user/" + user._id, user).map (res => res.json());
+    return this._http.put(Config.apiURL + "user/" + user._id, user, { headers: headers }).map (res => res.json());
   }
 
   getUserOfEmployee(employeeId: string) {
@@ -79,7 +79,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-		return this._http.get(Config.apiURL + 'users/where="employee":"' + employeeId+'"&limit=1').map (res => res.json());
+    return this._http.get(Config.apiURL + 'users/where="employee":"' + employeeId + '"&limit=1', { headers: headers }).map (res => res.json());
   }
   
   isValidToken(token: string) {
@@ -87,7 +87,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-    return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, "")).map(res => res.json());
+    return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, ""), { headers: headers }).map(res => res.json());
   }
 
   checkPermission(employee: string) {
@@ -95,7 +95,7 @@ export class UserService {
       'Content-Type': 'application/json',
       'Authorization': this.getToken()
     });
-    return this._http.get(Config.apiURL + "check_permission/" + employee).map(res => res.json());
+    return this._http.get(Config.apiURL + "check_permission/" + employee, { headers: headers }).map(res => res.json());
   }
 
   getIdentity(): User {

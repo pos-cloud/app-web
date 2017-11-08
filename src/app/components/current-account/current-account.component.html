@@ -49,7 +49,10 @@
                                                         | filter: filterOrigin:'origin' 
                                                         | filter: filterNumber:'number' 
                                                         | filter: filterTotalPrice:'totalPrice' 
-                                                        | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+                                                        | paginate: { itemsPerPage: itemsPerPage, 
+                                                                      currentPage: p, 
+                                                                      totalItems: totalItems
+                                                                    }">
               <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }}</td>
               <td *ngIf="transaction.type">{{transaction.type.name}}</td>
               <td *ngIf="!transaction.type"></td>
@@ -96,7 +99,13 @@
     <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-4 offset-md-4">
-          <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+          <pagination-controls 
+                      class="my-pagination"
+                      (pageChange)="p=$event" 
+                      #api 
+                      previousLabel="Anterior" 
+                      nextLabel="Siguiente"
+                      autoHide="true">
           </pagination-controls>
         </div>
         <div class="col-md-1"></div>

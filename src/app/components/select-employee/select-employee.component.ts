@@ -159,7 +159,7 @@ export class SelectEmployeeComponent implements OnInit {
             if (this.op === 'open-turn') {
               this.openTurn();
             } else if (this.op === 'close-turn') {
-              this.getTransactionsOpenByEmployee();
+              this.closeTurn();
             } else if (this.op === 'change-employee') {
               if (this.turn) {
                 this.activeModal.close(this.turn);
@@ -211,7 +211,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._turnService.getOpenTurn(this.employee._id).subscribe(
       result => {
         if (!result.turns) {
-          if (this.op === "close") {
+          if (this.op === "close-turn") {
             this.showMessage("El empleado no tiene turnos abiertos", "info", true);
           } else {
             this.getUserOfEmployee();

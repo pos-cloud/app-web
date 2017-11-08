@@ -5,6 +5,11 @@
   </button>
 </div>
 <div class="modal-body">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
   <p>¿Está seguro de eliminar el rubro?</p>
 </div>
 <div class="modal-footer">

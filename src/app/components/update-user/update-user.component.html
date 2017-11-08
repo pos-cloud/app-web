@@ -25,6 +25,15 @@
         </div>
       </div>
       <div class="row">
+        <div class="form-group col-md-12">
+          <label for="password" class="control-label">Contraseña:</label>
+          <input type="password" class="form-control" formControlName="password" name="password" id="password" />
+          <div *ngIf="formErrors.password" class="alert alert-danger">
+            {{ formErrors.password }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="form-group col-md-8">
           <label for="state" class="control-label">Habilitado</label>
           <select class="form-control" formControlName="state">

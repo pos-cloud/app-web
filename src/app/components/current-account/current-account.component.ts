@@ -41,6 +41,7 @@ export class CurrentAccountComponent implements OnInit {
   public loading: boolean = false;
   public balance: number = 0;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _transactionService: TransactionService,
@@ -179,6 +180,7 @@ export class CurrentAccountComponent implements OnInit {
         //No se toma en cuenta el documento
       }
     }
+    this.totalItems = this.transactions.length;
   }
 
   public getPaymentMethodName(transaction): string {

@@ -27,12 +27,12 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="op !== 'open' && op !== 'close'">
+      <div class="row" *ngIf="op !== 'open-turn' && op !== 'close-turn'">
         <div class="form-group col-md-12">
           <label for="chair" class="control-label">Comensales:</label>
         </div>
       </div>
-      <div class="row" *ngIf="op !== 'open' && op !== 'close'">
+      <div class="row" *ngIf="op !== 'open-turn' && op !== 'close-turn'">
         <div class="form-group col-md-8">
           <div class="input-group">
             <input type="number" class="form-control" formControlName="chair" name="chair" id="chair"/>

@@ -59,7 +59,12 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-4 offset-md-4">
-            <pagination-controls (pageChange)="p=$event" #api previousLabel="Anterior" nextLabel="Siguiente">
+            <pagination-controls 
+                      (pageChange)="p=$event" 
+                      #api 
+                      previousLabel="Anterior" 
+                      nextLabel="Siguiente"
+                      autoHide="true">
             </pagination-controls>
           </div>
           <div class="col-md-1"></div>
