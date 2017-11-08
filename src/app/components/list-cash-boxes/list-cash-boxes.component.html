@@ -44,7 +44,10 @@
                                                                           | filter: filterClosingDate:'closingDate' | filter: filterOpeningCash:'openingCash'
                                                                           | filter: filterClosingCash:'closingCash' | filter: filterInvoicedCash:'invoicedCash'
                                                                           | filter: filterDifference:'difference' | filter: filterState:'state'
-                                                                          | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+                                                                          | paginate: { itemsPerPage: itemsPerPage, 
+                                                                                        currentPage: p, 
+                                                                                        totalItems: totalItems
+                                                                                      }">
               <td align="left" width="90">
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
               </td>
@@ -65,16 +68,16 @@
       </div>
       <div class="card-footer bg-primary">
         <div class="row">
-          <div class="col-md-4 offset-md-4">
+          <div class="col-md-10">
             <pagination-controls 
+                      class="my-pagination"
                       (pageChange)="p=$event" 
                       #api 
-                      previousLabel="Anterior" 
-                      nextLabel="Siguiente"
+                      previousLabel="Ant." 
+                      nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>
           </div>
-          <div class="col-md-1"></div>
           <div class="form-group col-md-2">
             <select class="form-control" [(ngModel)]="itemsPerPage">
               <option [value]="5">Mostrar 5 ítems</option>

@@ -68,3 +68,7 @@
 .pos-resto {
     background-color: #FFF;
 }
+
+.my-pagination /deep/ .ngx-pagination {
+    color: white;
+}

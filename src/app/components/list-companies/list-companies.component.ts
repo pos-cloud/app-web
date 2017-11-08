@@ -31,6 +31,7 @@ export class ListCompaniesComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _companyService: CompanyService,
@@ -63,7 +64,8 @@ export class ListCompaniesComponent implements OnInit {
 					} else {
             this.hideMessage();
             this.loading = false;
-					  this.companies = result.companies;
+            this.companies = result.companies;
+            this.totalItems = this.companies.length;
             this.areCompaniesEmpty = false;
           }
 				},

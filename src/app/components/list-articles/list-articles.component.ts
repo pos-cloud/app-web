@@ -37,6 +37,7 @@ export class ListArticlesComponent implements OnInit {
   @Input() filterCategory: string;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _articleService: ArticleService,
@@ -71,6 +72,7 @@ export class ListArticlesComponent implements OnInit {
             this.hideMessage();
             this.loading = false;
             this.articles = result.articles;
+            this.totalItems = this.articles.length;
             this.areArticlesEmpty = false;
           }
 				},

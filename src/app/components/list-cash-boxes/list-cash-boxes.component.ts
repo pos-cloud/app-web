@@ -27,6 +27,7 @@ export class ListCashBoxesComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _cashBoxService: CashBoxService,
@@ -60,7 +61,8 @@ export class ListCashBoxesComponent implements OnInit {
             this.areCashBoxesEmpty = true;
 					} else {
             this.hideMessage();
-					  this.cashBoxes = result.cashBoxes;
+            this.cashBoxes = result.cashBoxes;
+            this.totalItems = this.cashBoxes.length;
             this.areCashBoxesEmpty = false;
           }
 				},

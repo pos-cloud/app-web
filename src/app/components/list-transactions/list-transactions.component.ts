@@ -29,6 +29,7 @@ export class ListTransactionsComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage: number = 10;
+  public totalItems = 0;
 
   constructor(
     public _transactionService: TransactionService,
@@ -59,6 +60,7 @@ export class ListTransactionsComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.transactions = result.transactions;
+          this.totalItems = this.transactions.length;
           this.areTransactionsEmpty = false;
         }
       },

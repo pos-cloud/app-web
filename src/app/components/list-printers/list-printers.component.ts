@@ -29,6 +29,7 @@ export class ListPrintersComponent implements OnInit {
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Printer> = new EventEmitter<Printer>();
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _printerService: PrinterService,
@@ -59,6 +60,7 @@ export class ListPrintersComponent implements OnInit {
             this.hideMessage();
             this.loading = false;
             this.printers = result.printers;
+            this.totalItems = this.printers.length;
             this.arePrintersEmpty = false;
           }
         },

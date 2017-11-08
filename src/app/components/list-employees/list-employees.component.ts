@@ -28,6 +28,7 @@ export class ListEmployeesComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _employeeService: EmployeeService,
@@ -57,7 +58,8 @@ export class ListEmployeesComponent implements OnInit {
 					} else {
             this.hideMessage();
             this.loading = false;
-					  this.employees = result.employees;
+            this.employees = result.employees;
+            this.totalItems = this.employees.length;
             this.areEmployeesEmpty = false;
           }
 				},

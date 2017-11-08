@@ -22,11 +22,12 @@ export class ListTurnsComponent implements OnInit {
   public alertMessage: string = "";
   public userType: string;
   public posType: string;
-  public orderTerm: string[] = ['-endDate'];
+  public orderTerm: string[] = ['-startDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage: number = 10;
+  public totalItems = 0;
 
   constructor(
     public _turnService: TurnService,
@@ -57,6 +58,7 @@ export class ListTurnsComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.turns = result.turns;
+          this.totalItems = this.turns.length;
           this.areTurnsEmpty = false;
         }
       },

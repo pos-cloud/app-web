@@ -26,3 +26,7 @@
     border-radius: 10px;
     cursor: pointer;
  }
+
+ .my-pagination /deep/ .ngx-pagination {
+    color: white;
+}

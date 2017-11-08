@@ -42,6 +42,7 @@ export class ListTablesComponent implements OnInit {
   public loading: boolean = false;
   @Input() filterRoom: string;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _tableService: TableService,
@@ -81,6 +82,7 @@ export class ListTablesComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.tables = result.tables;
+          this.totalItems = this.tables.length;
           this.areTablesEmpty = false;
           this.calculateAmountOfDiners();
         }

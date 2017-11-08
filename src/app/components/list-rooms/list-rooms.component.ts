@@ -29,6 +29,7 @@ export class ListRoomsComponent implements OnInit {
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Room> = new EventEmitter<Room>();
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _roomService: RoomService,
@@ -59,6 +60,7 @@ export class ListRoomsComponent implements OnInit {
             this.hideMessage();
             this.loading = false;
             this.rooms = result.rooms;
+            this.totalItems = this.rooms.length;
             this.areRoomsEmpty = false;
           }
         },

@@ -45,6 +45,7 @@ export class PointOfSaleComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _turnService: TurnService,
@@ -304,6 +305,7 @@ export class PointOfSaleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transactions = result.transactions;
+          this.totalItems = this.transactions.length;
           this.areTransactionsEmpty = false;
         }
         this.loading = false;

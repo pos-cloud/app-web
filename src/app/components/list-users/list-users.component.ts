@@ -28,6 +28,7 @@ export class ListUsersComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _userService: UserService,
@@ -57,7 +58,8 @@ export class ListUsersComponent implements OnInit {
 					} else {
             this.hideMessage();
             this.loading = false;
-					  this.users = result.users;
+            this.users = result.users;
+            this.totalItems = this.users.length;
             this.areUsersEmpty = false;
           }
 				},

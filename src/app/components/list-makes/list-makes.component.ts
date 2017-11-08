@@ -30,6 +30,7 @@ export class ListMakesComponent implements OnInit {
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<Make> = new EventEmitter<Make>();
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _makeService: MakeService,
@@ -60,6 +61,7 @@ export class ListMakesComponent implements OnInit {
             this.hideMessage();
             this.loading = false;
             this.makes = result.makes;
+            this.totalItems = this.makes.length;
             this.areMakesEmpty = false;
           }
         },

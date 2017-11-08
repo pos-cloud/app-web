@@ -31,3 +31,7 @@
       padding-top: 30px;
       height: 700px;
  }
+
+ .my-pagination /deep/ .ngx-pagination {
+    color: white;
+}

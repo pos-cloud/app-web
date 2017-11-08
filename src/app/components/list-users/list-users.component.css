@@ -26,3 +26,7 @@
       -webkit-justify-content: center;
       justify-content: center;
 }
+
+.my-pagination /deep/ .ngx-pagination {
+    color: white;
+}

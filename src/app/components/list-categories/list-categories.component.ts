@@ -35,6 +35,7 @@ export class ListCategoriesComponent implements OnInit {
   public apiURL = Config.apiURL;
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public totalItems = 0;
 
   constructor(
     public _categoryService: CategoryService,
@@ -70,6 +71,7 @@ export class ListCategoriesComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.categories = result.categories;
+          this.totalItems = this.categories.length;
           this.areCategoriesEmpty = false;
         }
       },

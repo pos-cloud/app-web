@@ -60,3 +60,7 @@
       width: 100%;
       opacity: 0.8;
 }
+
+.my-pagination /deep/ .ngx-pagination {
+    color: white;
+}
