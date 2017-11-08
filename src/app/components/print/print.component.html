@@ -1,10 +1,11 @@
-<section class="center-content">
+<iframe [src]="pdfURL" width="500" height="600" type='application/pdf' *ngIf="pdfURL"></iframe>
+<section class="center-content" #contentTicket>
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="row sale-order"  *ngIf="typePrint==='charge'">
+  <div class="row sale-order" *ngIf="typePrint==='charge'">
     <div class="row space-in-white">
       <div class="col-md-12 center-content title">
         CONFITERIA LA PALMA - CASA DE TE
@@ -35,7 +36,7 @@
     </div>
     <div class="row">
       <div class="col-md-7">
-        Fecha: {{transaction.endDate | date:'dd/MM/yyyy'}} 
+        Fecha: {{transaction.endDate | date:'dd/MM/yyyy'}}
       </div>
       <div class="col-md-5" align="right">
         Hora: {{transaction.endDate | date:'HH:mm'}}
@@ -77,13 +78,13 @@
     </div>
     <div class="row" *ngFor="let movementOfArticle of movementsOfArticles">
       <div class="col-md-6">
-         {{movementOfArticle.description}}
+        {{movementOfArticle.description}}
       </div>
       <div class="col-md-2" align="right">
-         {{movementOfArticle.amount}}
+        {{movementOfArticle.amount}}
       </div>
       <div class="col-md-4" align="right">
-         {{movementOfArticle.salePrice * movementOfArticle.amount | currency:'USD': '1.2-2'}}
+        {{movementOfArticle.salePrice * movementOfArticle.amount | currency:'USD': '1.2-2'}}
       </div>
     </div>
     <div class="row">
@@ -91,7 +92,7 @@
         Descuento:
       </div>
       <div class="col-md-8" align="right">
-         {{transaction.discount | number: '1.2-2'}}
+        {{transaction.discount | number: '1.2-2'}}
       </div>
     </div>
     <div class="row">
@@ -99,7 +100,7 @@
         Total:
       </div>
       <div class="col-md-8" align="right">
-         {{transaction.totalPrice | number: '1.2-2'}}
+        {{transaction.totalPrice | number: '1.2-2'}}
       </div>
     </div>
     <div class="row space-in-white">
@@ -259,14 +260,14 @@
             <b>
               <font face="Courier">CIERRE DE TURNO</font>
             </b>
-          <td>
+            <td>
         </tr>
         <tr *ngIf="companyName">
           <td colspan="12" align="center">
             <b>
               <font face="Courier">{{companyName}}</font>
             </b>
-          <td>
+            <td>
         </tr>
         <tr *ngIf="turn.employee">
           <td colspan="12">

@@ -93,13 +93,21 @@
     </div>
   </div>
   <div class="row">
+    <div class="col-md-6" align="left">
+      <h5><b>Mesas</b></h5>
+    </div>
+    <div class="col-md-6" align="right">
+      <h5><b>Comensales: {{amountOfDinersNow}}/{{amountOfDiners}}</b></h5>
+    </div>
+  </div>
+  <div class="row">
     <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'">
       <div class="itable" [ngClass]="{ 'itable-busy':table.state==='Ocupada' || table.state==='Reservada',
                                         'itable-disabled':table.state==='No Habilitada',
                                         'itable-enabled':table.state==='Disponible',
                                         'itable-pending':table.state==='Pendiente'}" 
                           (click)="openModal('select-employee', table)">
-        <div class="col-md-2 offset-md-8" align="right">
+        <div class="col-md-2 offset-md-8" align="right" class="number-chair">
             <span class="badge badge-warning" *ngIf="table.state==='Ocupada' || table.state==='Reservada' || table.state==='Pendiente'">
               <b>{{table.chair}}</b>
             </span>
@@ -114,7 +122,7 @@
             <b *ngIf="table.employee 
                       && table.state !== 'Disponible' 
                       && table.state !== 'Reservada'
-                      && table.state !== 'No Habilitada'"
+                      && table.state !== 'No   Habilitada'"
                       >{{table.employee.name}}</b>
             <b *ngIf="table.state === 'Reservada'">Reservada</b>
             <b *ngIf="table.state === 'No Habilitada'">No Habilitada</b>
