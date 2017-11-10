@@ -1,12 +1,12 @@
 import { Employee } from './employee';
 
 import * as moment from 'moment';
-import 'moment/locale/pt-br';
+import 'moment/locale/es';
 
 export class Turn {
 	
 	public _id: string;
-	public startDate: string = moment().locale('es').format('YYYY/MM/DD')+" "+ moment().locale('es').format('LTS');
+	public startDate: string = moment().format('DD/MM/YYYY HH:mm:ss');
 	public endDate: string;
 	public state: TurnState = TurnState.Open;
 	public employee: Employee = null;

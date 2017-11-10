@@ -276,12 +276,12 @@
         </tr>
         <tr *ngIf="turn.startDate">
           <td colspan="12">
-            <font face="Courier" size="2">Apertura: {{turn.startDate | date:'dd/MM/yyyy HH:mm'}}</font>
+            <font face="Courier" size="2">Apertura: {{turn.startDate | date:['dd/MM/yyyy HH:mm']}}</font>
           </td>
         </tr>
         <tr *ngIf="turn.endDate">
           <td colspan="12">
-            <font face="Courier" size="2">Cierre: {{turn.endDate | date:'dd/MM/yyyy HH:mm'}}</font>
+            <font face="Courier" size="2">Cierre: {{turn.endDate | date:['dd/MM/yyyy HH:mm']}}</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingTransaction">

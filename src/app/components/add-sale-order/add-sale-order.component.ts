@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
-import 'moment/locale/pt-br';
+import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
@@ -655,7 +655,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
           if (result === "cancel_transaction") {
             this.transaction.state = TransactionState.Canceled;
-            this.transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
+            this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
             if (this.posType === "resto") {
               this.updateTransaction();
               this.table.employee = null;
@@ -870,7 +870,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public finishCharge() {
 
-    this.transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
+    this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
     this.transaction.endDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 

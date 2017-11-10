@@ -7,14 +7,14 @@ import { PaymentMethod } from './payment-method';
 import { TransactionType } from './transaction-type';
 
 import * as moment from 'moment';
-import 'moment/locale/pt-br';
+import 'moment/locale/es';
 
 export class Transaction {
 	
 	public _id: string;
 	public origin: number = 0;
 	public number: number = 0;
-	public startDate: string = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
+	public startDate: string = moment().format('DD/MM/YYYY HH:mm:ss');
 	public endDate: string;
 	public state: TransactionState = TransactionState.Open;
 	public subtotalPrice: number = 0.00;

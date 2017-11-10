@@ -2,13 +2,13 @@ import { PaymentMethod } from './payment-method';
 import { Transaction } from './transaction';
 
 import * as moment from 'moment';
-import 'moment/locale/pt-br';
+import 'moment/locale/es';
 
 export class MovementOfCash {
 
     public _id: string;
-    public date: string = moment().locale('es').format('YYYY/MM/DD')+" "+ moment().locale('es').format('LTS');
-    public expirationDate: string = moment().locale('es').format('YYYY/MM/DD')+" "+ moment().locale('es').format('LTS');
+    public date: string = moment().format('DD/MM/YYYY HH:mm:ss');
+    public expirationDate: string = moment().format('DD/MM/YYYY HH:mm:ss');
     public state: MovementOfCashState = MovementOfCashState.Pending;
     public amountPaid: number = 0.00;
     public cashChange: number = 0.00;

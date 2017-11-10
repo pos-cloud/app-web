@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
-import 'moment/locale/pt-br';
+import 'moment/locale/es';
 
 import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
@@ -440,7 +440,7 @@ export class PointOfSaleComponent implements OnInit {
       transaction.state = TransactionState.Delivered;
     }
 
-    transaction.endDate = moment().locale('es').format('YYYY/MM/DD') + " " + moment().locale('es').format('LTS');
+    transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
     
     this.updateTransaction(transaction);
   }

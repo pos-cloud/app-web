@@ -53,7 +53,7 @@
                                                                       currentPage: p, 
                                                                       totalItems: totalItems
                                                                     }">
-              <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['dd/MM/yyyy'] }}</td>
+              <td *ngIf="transaction.endDate">{{transaction.endDate | date: ['MM/dd/yyyy'] }}</td>
               <td *ngIf="transaction.type">{{transaction.type.name}}</td>
               <td *ngIf="!transaction.type"></td>
               <td>{{transaction.origin}}</td>

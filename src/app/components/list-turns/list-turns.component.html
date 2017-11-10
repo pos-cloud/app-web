@@ -43,8 +43,8 @@
               <td align="left" width="100">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', turn)"><i class="fa fa-eye"></i></button>
               </td>
-              <td>{{turn.startDate | date: ['dd/MM/yyyy hh:mm:ss'] }}</td>
-              <td *ngIf="turn.endDate">{{turn.endDate | date: ['dd/MM/yyyy hh:mm:ss'] }}</td>
+              <td>{{turn.startDate }}</td>
+              <td *ngIf="turn.endDate">{{turn.endDate }}</td>
               <td *ngIf="!turn.endDate"></td>
               <td>
                 <h6>

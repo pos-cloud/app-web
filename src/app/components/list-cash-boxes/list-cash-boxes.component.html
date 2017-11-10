@@ -52,8 +52,8 @@
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
               </td>
               <td>{{cashBox.code}}</td>
-              <td>{{cashBox.openingDate | date: ['dd/MM/yyyy'] }}</td>
-              <td>{{cashBox.closingDate | date: ['dd/MM/yyyy']}}</td>
+              <td>{{cashBox.openingDate | date: ['MM/dd/yyyy'] }}</td>
+              <td>{{cashBox.closingDate | date: ['MM/dd/yyyy']}}</td>
               <td>{{cashBox.openingCash | currency:'USD':'1.2-2'}}</td>
               <td>{{cashBox.closingCash | currency:'USD':'1.2-2'}}</td>
               <td>{{cashBox.invoicedCash | currency:'USD':'1.2-2'}}</td>
