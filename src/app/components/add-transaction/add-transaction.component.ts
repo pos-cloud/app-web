@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbAlertConfig, NgbActiveModal, NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
@@ -16,17 +18,11 @@ import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { CompanyService } from './../../services/company.service';
 
-//Pipes
-import { DatePipe } from '@angular/common'; 
-
-//Componentes
-import { AddMovementOfCashComponent } from './../../components/add-movement-of-cash/add-movement-of-cash.component';
-
 @Component({
   selector: 'app-add-transaction',
   templateUrl: './add-transaction.component.html',
   styleUrls: ['./add-transaction.component.css'],
-  providers: [NgbAlertConfig, DatePipe ]
+  providers: [NgbAlertConfig ]
 })
 
 export class AddTransactionComponent implements OnInit {
@@ -39,7 +35,6 @@ export class AddTransactionComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public datePipe = new DatePipe('es-AR');
   public posType: string;
 
   public formErrors = {
@@ -182,7 +177,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm.setValue({
       'company': this.transaction.company,
-      'date': this.datePipe.transform(this.transaction.endDate, 'yyyy/MM/dd'),
+      'date': moment(this.transaction.endDate).format('DD/MM/YYYY HH:mm:ss'),
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
@@ -197,7 +192,7 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
-      'date': [this.datePipe.transform(this.transaction.endDate, 'yyyy/MM/dd'), [
+      'date': [moment().format('DD/MM/YYYY HH:mm:ss'), [
           Validators.required
         ]
       ],

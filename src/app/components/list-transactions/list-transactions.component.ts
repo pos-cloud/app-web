@@ -4,11 +4,15 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, TransactionState } from './../../models/transaction';
+import { TransactionTypeMovements } from './../../models/transaction-type';
 import { TransactionService } from './../../services/transaction.service';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-sale-order/view-transaction.component';
+
+//Pipes
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-list-transactions',
@@ -108,8 +112,27 @@ export class ListTransactionsComponent implements OnInit {
     }
   };
 
-  public addTransaction(transactionCode: number) {
+  public addTransaction(transactionCode: number): void {
     this._router.navigate(['/pos/mesas/'+transactionCode+'/add-transaction']);
+  }
+
+  public calculateTotal(transactions: Transaction[], col, format): string {
+
+    let decimalPipe = new DecimalPipe('ARS');
+    let total = 0;
+    if (transactions) {
+      for(let transaction of transactions) {
+        if (transaction[col]) {
+          if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+            total -= transaction[col];
+          } else {
+            total += transaction[col];
+          }
+        }
+      }
+    }
+
+    return decimalPipe.transform(total, format);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

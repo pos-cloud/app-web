@@ -174,7 +174,6 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        console.log(error);
         this.showMessage(error._body, "danger", false);
         this.loading = false;
       }

@@ -313,7 +313,8 @@
             <button class="dropdown-item" (click)="addSaleOrder()">Pedido</button>
             <button class="dropdown-item" (click)="addTransaction('Cobro')">Cobro</button>
             <button class="dropdown-item" (click)="addTransaction('Nota de Crédito')">Nota de Crédito</button>
-            <button class="dropdown-item" (click)="addTransaction('Saldo Inicial')">Saldo Inicial</button>
+            <button class="dropdown-item" (click)="addTransaction('Saldo Inicial (+)')">Saldo Inicial (+)</button>
+            <button class="dropdown-item" (click)="addTransaction('Saldo Inicial (-)')">Saldo Inicial (-)</button>
           </div>
         </div>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading" [disabled]="loading">

@@ -59,9 +59,9 @@
               <td>{{transaction.origin}}</td>
               <td>{{transaction.number}}</td>
               <td align="right" 
-                  *ngIf="transaction.type.name==='Saldo Inicial'"
-                  [ngClass]="{'debit': transaction.type.name==='Saldo Inicial' && transaction.totalPrice<0,
-                              'credit': transaction.type.name==='Saldo Inicial' && transaction.totalPrice>0}">
+                  *ngIf="transaction.type.currentAccount !== 'Cobra'"
+                  [ngClass]="{'debit': transaction.type.movement==='Entrada',
+                              'credit': transaction.type.movement==='Salida'}">
                 <strong *ngIf="transaction.totalPrice>=0">
                   {{transaction.totalPrice | currency:'USD':'1.2-2'}}
                 </strong>
@@ -69,9 +69,8 @@
                   {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
                 </strong>
               </td>
-              <td align="right" 
-                  *ngIf="transaction.type.name!=='Saldo Inicial'"
-                  [ngClass]="{'debit': transaction.type.movement==='Salida',
+              <td align="right" *ngIf="transaction.type.currentAccount === 'Cobra'" 
+                                [ngClass]="{'debit': transaction.type.movement==='Salida',
                                             'credit': transaction.type.movement==='Entrada'}">
                 <strong *ngIf="transaction.totalPrice>=0">
                   {{transaction.totalPrice | currency:'USD':'1.2-2'}}

@@ -30,7 +30,7 @@
                         [ngValue]="paymentMethod"
                         [disabled]="(!transaction.company && paymentMethod.name === 'Cuenta Corriente') ||
                                     (transaction.type.name === 'Cobro' && paymentMethod.name === 'Cuenta Corriente') ||
-                                    (transaction.type.name === 'Saldo Inicial' && paymentMethod.name !== 'Cuenta Corriente')">
+                                    ((transaction.type.name === 'Saldo Inicial (+)' || transaction.type.name === 'Saldo Inicial (+)') && paymentMethod.name !== 'Cuenta Corriente')">
                       {{paymentMethod.name}}
                 </option>
               </select>

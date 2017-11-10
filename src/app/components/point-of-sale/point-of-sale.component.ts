@@ -86,7 +86,7 @@ export class PointOfSaleComponent implements OnInit {
           this.loading = true;
           let transactionType = new TransactionType();
           transactionType.currentAccount = CurrentAcount.Yes;
-          transactionType.movement = TransactionTypeMovements.Outflows;
+          transactionType.movement = TransactionTypeMovements.Inflows;
           transactionType.name = "Orden de Pedido";
           transactionType.state = TransactionTypeState.Enabled;
           this._transactionTypeService.saveTransactionType(transactionType).subscribe(
@@ -106,7 +106,7 @@ export class PointOfSaleComponent implements OnInit {
                     } else {
                       let transactionType = new TransactionType();
                       transactionType.currentAccount = CurrentAcount.Yes;
-                      transactionType.movement = TransactionTypeMovements.Inflows;
+                      transactionType.movement = TransactionTypeMovements.Outflows;
                       transactionType.name = "Nota de Crédito";
                       transactionType.state = TransactionTypeState.Enabled;
                       this._transactionTypeService.saveTransactionType(transactionType).subscribe(
@@ -116,15 +116,33 @@ export class PointOfSaleComponent implements OnInit {
                           } else {
                             let transactionType = new TransactionType();
                             transactionType.currentAccount = CurrentAcount.Yes;
-                            transactionType.movement = TransactionTypeMovements.Inflows;
-                            transactionType.name = "Saldo Inicial";
+                            transactionType.movement = TransactionTypeMovements.Outflows;
+                            transactionType.name = "Saldo Inicial (+)";
                             transactionType.state = TransactionTypeState.Enabled;
                             this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                               result => {
                                 if (!result.transactionType) {
                                   this.showMessage(result.message, "info", true);
                                 } else {
-                                  this.hideMessage();
+                                  let transactionType = new TransactionType();
+                                  transactionType.currentAccount = CurrentAcount.Yes;
+                                  transactionType.movement = TransactionTypeMovements.Inflows;
+                                  transactionType.name = "Saldo Inicial (-)";
+                                  transactionType.state = TransactionTypeState.Enabled;
+                                  this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+                                    result => {
+                                      if (!result.transactionType) {
+                                        this.showMessage(result.message, "info", true);
+                                      } else {
+                                        this.hideMessage();
+                                      }
+                                      this.loading = false;
+                                    },
+                                    error => {
+                                      this.showMessage(error._body, "danger", false);
+                                      this.loading = false;
+                                    }
+                                  );
                                 }
                                 this.loading = false;
                               },
@@ -354,6 +372,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.result.then((result) => {
           if (result === "add-movement-of-cash") {
             transaction.state = TransactionState.Closed;
+            transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
             this.updateTransaction(transaction);
             this.getOpenTransactions();
           }

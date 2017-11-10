@@ -162,9 +162,9 @@ export class CurrentAccountComponent implements OnInit {
           this.getPaymentMethodName(transaction) === "Cuenta Corriente") {
           this.transactions.push(transaction);
           if (transaction.type.movement === TransactionTypeMovements.Outflows) {
-            this.balance -= transaction.totalPrice;
-          } else {
             this.balance += transaction.totalPrice;
+          } else {
+            this.balance -= transaction.totalPrice;
           }
         } else if (transaction.type.currentAccount === CurrentAcount.Cobra) {
           this.transactions.push(transaction);

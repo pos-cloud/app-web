@@ -67,7 +67,6 @@ export class MovementOfCashService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		console.log(Config.apiURL + 'movements-of-cashes/where="transaction":"' + transactionId + '"');
 		return this._http.get(Config.apiURL + 'movements-of-cashes/where="transaction":"' + transactionId + '"', { headers: headers }).map(res => res.json());
 	}
 

@@ -112,7 +112,8 @@ export class AddMovementOfCashComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {  
           this.paymentMethods = result.paymentMethods;
-          if(this.transaction.type.name === "Saldo Inicial") {
+          if(this.transaction.type.name === "Saldo Inicial (+)" || 
+            this.transaction.type.name === "Saldo Inicial (-)") {
             for(let i=0; i < this.paymentMethods.length; i++) {
               if(this.paymentMethods[i].name === "Cuenta Corriente") {
                 this.movementOfCash.type = this.paymentMethods[i];
