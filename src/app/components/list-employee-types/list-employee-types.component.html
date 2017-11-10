@@ -26,8 +26,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employeeType of employeeTypes | orderBy: orderTerm: propertyTerm
-                                                          | filter: filterDescription:'description' 
+            <tr *ngFor="let employeeType of employeeTypes | filter: filterDescription:'description' 
+                                                          | orderBy: orderTerm: propertyTerm
                                                           | paginate: { itemsPerPage: itemsPerPage, 
                                                                         currentPage: p, 
                                                                         totalItems: totalItems

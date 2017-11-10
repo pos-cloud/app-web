@@ -33,11 +33,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let table of tables | orderBy: orderTerm: propertyTerm  
-                                          | filter: filterDescription:'description' 
+          <tr *ngFor="let table of tables | filter: filterDescription:'description' 
                                           | filter: filterRoom:'description':'room' 
                                           | filter: filterChair:'chair' 
-                                          | filter: filterState:'state' 
+                                          | filter: filterState:'state'
+                                          | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage, 
                                                         currentPage: p, 
                                                         totalItems: totalItems

@@ -31,11 +31,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let turn of turns | orderBy: orderTerm: propertyTerm  
-                                          | filter: filterStartDate:'startDate' 
+            <tr *ngFor="let turn of turns | filter: filterStartDate:'startDate' 
                                           | filter: filterEndDate:'endDate' 
                                           | filter: filterState:'state'
                                           | filter: filterEmployee:'name':'employee'
+                                          | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage, 
                                                         currentPage: p, 
                                                         totalItems: totalItems

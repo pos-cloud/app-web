@@ -29,8 +29,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let make of makes | orderBy: orderTerm: propertyTerm 
-                                          | filter: filterDescription:'description' 
+            <tr *ngFor="let make of makes | filter: filterDescription:'description' 
+                                          | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage, 
                                                         currentPage: p, 
                                                         totalItems: totalItems

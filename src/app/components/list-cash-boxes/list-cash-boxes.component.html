@@ -40,14 +40,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let cashBox of cashBoxes | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterOpeningDate:'openingDate'
-                                                                          | filter: filterClosingDate:'closingDate' | filter: filterOpeningCash:'openingCash'
-                                                                          | filter: filterClosingCash:'closingCash' | filter: filterInvoicedCash:'invoicedCash'
-                                                                          | filter: filterDifference:'difference' | filter: filterState:'state'
-                                                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                                                        currentPage: p, 
-                                                                                        totalItems: totalItems
-                                                                                      }">
+            <tr *ngFor="let cashBox of cashBoxes  | filter: filterCode:'code' 
+                                                  | filter: filterOpeningDate:'openingDate'
+                                                  | filter: filterClosingDate:'closingDate' 
+                                                  | filter: filterOpeningCash:'openingCash'
+                                                  | filter: filterClosingCash:'closingCash'
+                                                  | filter: filterInvoicedCash:'invoicedCash'
+                                                  | filter: filterDifference:'difference' 
+                                                  | filter: filterState:'state'
+                                                  | orderBy: orderTerm: propertyTerm
+                                                  | paginate: { itemsPerPage: itemsPerPage, 
+                                                                currentPage: p, 
+                                                                totalItems: totalItems
+                                                              }">
               <td align="left" width="90">
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
               </td>

@@ -28,8 +28,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let room of rooms | orderBy: orderTerm: propertyTerm
-                                          | filter: filterDescription:'description' 
+            <tr *ngFor="let room of rooms | filter: filterDescription:'description' 
+                                          | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage, 
                                                         currentPage: p, 
                                                         totalItems: totalItems

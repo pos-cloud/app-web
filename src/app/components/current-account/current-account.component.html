@@ -29,7 +29,7 @@
           <thead>
             <tr>
               <th (click)="orderBy('date')">Fecha</th>
-              <th (click)="orderBy('type')">Tipo</th>
+              <th (click)="orderBy('type','name')">Tipo</th>
               <th (click)="orderBy('origin')">Origen</th>
               <th (click)="orderBy('number')">Número</th>
               <th (click)="orderBy('totalPrice')">Monto</th>
@@ -43,12 +43,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm
-                                                        | filter: filterDate:'date' 
+            <tr *ngFor="let transaction of transactions | filter: filterDate:'date' 
                                                         | filter: filterType:'name':'type' 
                                                         | filter: filterOrigin:'origin' 
                                                         | filter: filterNumber:'number' 
                                                         | filter: filterTotalPrice:'totalPrice' 
+                                                        | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage, 
                                                                       currentPage: p, 
                                                                       totalItems: totalItems

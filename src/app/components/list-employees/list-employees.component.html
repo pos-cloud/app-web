@@ -31,10 +31,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employee of employees | orderBy: orderTerm: propertyTerm 
-                                                  | filter: filterCode:'code' 
+            <tr *ngFor="let employee of employees | filter: filterCode:'code' 
                                                   | filter: filterName:'name' 
                                                   | filter: filterType:'description':'type' 
+                                                  | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage, 
                                                                 currentPage: p, 
                                                                 totalItems: totalItems

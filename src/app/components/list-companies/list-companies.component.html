@@ -44,8 +44,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm  
-                                                  | filter: filterCode:'code'
+            <tr *ngFor="let company of companies  | filter: filterCode:'code'
                                                   | filter: filterName:'name' 
                                                   | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterType:'type'
@@ -54,6 +53,7 @@
                                                   | filter: filterCity:'city' 
                                                   | filter: filterPhones:'phones' 
                                                   | filter: filterEmails:'emails'
+                                                  | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage, 
                                                                 currentPage: p, 
                                                                 totalItems: totalItems

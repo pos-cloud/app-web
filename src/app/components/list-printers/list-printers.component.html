@@ -34,11 +34,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let printer of printers | orderBy: orderTerm: propertyTerm
-                                                | filter: filterName:'name' 
+            <tr *ngFor="let printer of printers | filter: filterName:'name' 
                                                 | filter: filterOrigin:'origin'
                                                 | filter: filterConnectionURL:'connectionURL' 
                                                 | filter: filterType:'type'
+                                                | orderBy: orderTerm: propertyTerm
                                                 | paginate: { itemsPerPage: itemsPerPage, 
                                                               currentPage: p, 
                                                               totalItems: totalItems

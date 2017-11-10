@@ -51,8 +51,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	
-                                                        | filter: filterType:'name':'type' 
+            <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type' 
                                                         | filter: filterOrigin:'origin' 
                                                         | filter: filterNumber:'number'
                                                         | filter: filterEndDate:'endDate' 
@@ -66,7 +65,8 @@
                                                         | filter: filterPaymentMethod:'name':'paymentMethod'
                                                         | filter: filterObservation:'observation'  
                                                         | filter: filterDiscount:'discount' 
-                                                        | filter: filterTotalPrice:'totalPrice' 
+                                                        | filter: filterTotalPrice:'totalPrice'
+                                                        | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage, 
                                                                       currentPage: p, 
                                                                       totalItems: totalItems
@@ -122,28 +122,34 @@
             <td></td>
             <td></td>
             <td>
-              {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
+              <b>
+                {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
               filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
               | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
               filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'diners', '1.0-0') }}
+              </b>
             </td>
             <td></td>
             <td></td>
             <td></td>
             <td>
-              {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
+              <b>
+                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
               filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
               | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
               filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'discount', '1.2-2') }}
+              </b>
             </td>
             <td>
-              {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
+              <b>
+                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
               filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
               | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
               filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'totalPrice', '1.2-2') }}
+              </b>
             </td>
           </tfoot>
         </table>

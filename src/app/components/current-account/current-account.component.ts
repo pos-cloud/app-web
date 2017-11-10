@@ -188,8 +188,10 @@ export class CurrentAccountComponent implements OnInit {
     let name: string = "";
 
     for (let movementOfCash of this.movementsOfCashes) {
-      if(movementOfCash.transaction._id === transaction._id){
-        name = movementOfCash.type.name;
+      if(movementOfCash.transaction) {
+        if(movementOfCash.transaction._id === transaction._id){
+          name = movementOfCash.type.name;
+        }
       }
     }
     

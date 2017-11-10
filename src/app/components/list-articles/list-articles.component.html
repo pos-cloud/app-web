@@ -43,10 +43,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let article of articles | orderBy: orderTerm: propertyTerm | filter: filterCode:'code' | filter: filterDescription:'description' | filter: filterMake:'description':'make'
-                                                                        | filter: filterCategory:'description':'category' | filter: filterSalePrice:'salePrice'
-                                                                        | filter: filterTermObservation:'observation' | filter: filterTermBarcode:'barcode' | filter: filterType:'type'
-                                                                        | paginate: { itemsPerPage: itemsPerPage, 
+            <tr *ngFor="let article of articles | filter: filterCode:'code' 
+                                                | filter: filterDescription:'description' 
+                                                | filter: filterMake:'description':'make'
+                                                | filter: filterCategory:'description':'category' 
+                                                | filter: filterSalePrice:'salePrice'
+                                                | filter: filterTermObservation:'observation' 
+                                                | filter: filterTermBarcode:'barcode' 
+                                                | filter: filterType:'type'
+                                                | orderBy: orderTerm: propertyTerm
+                                                | paginate: { itemsPerPage: itemsPerPage, 
                                                                                       currentPage: p, 
                                                                                       totalItems: totalItems
                                                                                     }">

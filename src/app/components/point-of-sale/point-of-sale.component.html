@@ -85,14 +85,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm  
-                                                      | filter: filterPendingNumber:'number' 
+          <tr *ngFor="let transaction of transactions | filter: filterPendingNumber:'number' 
                                                       | filter: filterPendingEndDate:'date'  
                                                       | filter: filterPendingCompany:'name':'company'
                                                       | filter: filterPendingAddress:'address':'company'
                                                       | filter: filterPendingPhones:'phones':'company'
                                                       | filter: filterPendingTotalPrice:'totalPrice'
-                                                      | filter: 'Abierto':'state'">
+                                                      | filter: 'Abierto':'state'
+                                                      | orderBy: orderTerm: propertyTerm">
             <td>
               <b>{{transaction.number}}</b>
             </td>
@@ -171,15 +171,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm  
-                                                      | filter: filterSendNumber:'number' 
+          <tr *ngFor="let transaction of transactions | filter: filterSendNumber:'number' 
                                                       | filter: filterSendStartDate:'startDate'  
                                                       | filter: filterSendEndDate:'endDate'  
                                                       | filter: filterSendCompany:'name':'company'
                                                       | filter: filterSendAddress:'address':'company'
                                                       | filter: filterSendPhones:'phones':'company'
                                                       | filter: filterSendTotalPrice:'totalPrice'
-                                                      | filter: 'Enviado':'state'">
+                                                      | filter: 'Enviado':'state'
+                                                      | orderBy: orderTerm: propertyTerm">
             <td>
               <b>{{transaction.number}}</b>
             </td>
@@ -257,15 +257,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm  
-                                                      | filter: filterSendNumber:'number' 
+          <tr *ngFor="let transaction of transactions | filter: filterSendNumber:'number' 
                                                       | filter: filterSendStartDate:'startDate'  
                                                       | filter: filterSendEndDate:'endDate'  
                                                       | filter: filterDeliveredCompany:'name':'company'
                                                       | filter: filterDeliveredAddress:'address':'company'
                                                       | filter: filterDeliveredPhones:'phones':'company'
                                                       | filter: filterDeliveredTotalPrice:'totalPrice'
-                                                      | filter: 'Entregado':'state'">
+                                                      | filter: 'Entregado':'state'
+                                                      | orderBy: orderTerm: propertyTerm">
             <td>
               <b>{{transaction.number}}</b>
             </td>
@@ -356,12 +356,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | orderBy: orderTerm: propertyTerm	
-                                                      | filter: filterType:'name':'type' 
+          <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type' 
                                                       | filter: filterStartDate:'startDate' 
                                                       | filter: filterNumber:'number' 
                                                       | filter: filterCompany:'name':'company'
                                                       | filter: filterTotalPrice:'totalPrice' 
+                                                      | orderBy: orderTerm: propertyTerm
                                                       | paginate: { itemsPerPage: itemsPerPage, 
                                                                     currentPage: p, 
                                                                     totalItems: totalItems
