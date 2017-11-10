@@ -98,6 +98,7 @@ import { SimpleTinyComponent } from './components/simple-tiny/simple-tiny.compon
 //pipes
 import { FilterPipe } from './pipes/filter.pipe';
 import { OrderByPipe } from './pipes/order-by.pipe';
+import { DateFormatPipe } from './pipes/date-format.pipe';
 
 //directives
 import { FocusDirective } from './directives/focus.directive';
@@ -151,6 +152,7 @@ import { ListTurnsComponent } from './components/list-turns/list-turns.component
     LoginComponent,
     FilterPipe,
     OrderByPipe,
+    DateFormatPipe,
     AddUserComponent,
     UpdateUserComponent,
     ListUsersComponent,

@@ -96,8 +96,8 @@
             <td>
               <b>{{transaction.number}}</b>
             </td>
-            <td>{{transaction.startDate | date: ['MM/dd/yyyy'] }}
-              <b>{{transaction.startDate | date: ['HH:mm:ss'] }}</b>
+            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+              <b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
             </td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company"></td>
@@ -183,11 +183,11 @@
             <td>
               <b>{{transaction.number}}</b>
             </td>
-            <td>{{transaction.startDate | date: ['MM/dd/yyyy'] }}
-              <b>{{transaction.startDate | date: ['HH:mm:ss'] }}</b>
+            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+              <b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
             </td>
             <td>
-              <b>{{transaction.endDate | date: ['HH:mm:ss'] }}</b>
+              <b>{{transaction.endDate | dateFormat:'HH:mm:ss' }}</b>
             </td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company"></td>
@@ -269,11 +269,11 @@
             <td>
               <b>{{transaction.number}}</b>
             </td>
-            <td>{{transaction.startDate | date: ['MM/dd/yyyy'] }}
-              <b>{{transaction.startDate | date: ['HH:mm:ss'] }}</b>
+            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+              <b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
             </td>
             <td>
-              <b>{{transaction.endDate | date: ['HH:mm:ss'] }}</b>
+              <b>{{transaction.endDate | dateFormat:'HH:mm:ss' }}</b>
             </td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company"></td>
