@@ -13,7 +13,7 @@
 	<form [formGroup]="companyForm" #formAddCompany="ngForm" (ngSubmit)="addCompany()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
-				<div class="form-group col-md-4">
+				<div class="form-group col-md-3">
 					<label for="code" class="control-label">Código:</label>
 					<input type="number" class="form-control" formControlName="code" name="code" id="code"/>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
@@ -29,13 +29,41 @@
 						{{ formErrors.type }}
 					</div>
 				</div>
-				<div class="form-group col-md-4">
-					<label for="CUIT" class="control-label">CUIT:</label>
+				<div class="form-group col-md-5">
+					<label for="vatCondition" class="control-label">Condición de IVA:</label>
+					<select class="form-control" formControlName="vatCondition">
+						<option *ngFor="let vatCondition of vatConditions" [ngValue]="vatCondition">{{vatCondition.description}}</option>
+					</select>
+					<div *ngIf="formErrors.vatCondition" class="alert alert-danger">
+						{{ formErrors.vatCondition }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-3">
+					<label for="identityType" class="control-label"></label>
+					<select class="form-control" formControlName="identityType">
+						<option *ngFor="let identityType of identityTypes" [selected]="identityTypeSelected">
+							{{identityType}}
+						</option>
+					</select>
+				</div>
+				<div class="form-group col-md-9" *ngIf="identityTypeSelected==='CUIT'">
+					<label for="CUIT" class="control-label"></label>
 					<div class="input-group">
 						<input type="text" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
 					</div>
 					<div *ngIf="formErrors.CUIT" class="alert alert-danger">
 						{{ formErrors.CUIT }}
+					</div>
+				</div>
+				<div class="form-group col-md-9" *ngIf="identityTypeSelected==='DNI'">
+					<label for="DNI" class="control-label"></label>
+					<div class="input-group">
+						<input type="number" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent" />
+					</div>
+					<div *ngIf="formErrors.DNI" class="alert alert-danger">
+						{{ formErrors.DNI }}
 					</div>
 				</div>
 			</div>
@@ -105,7 +133,7 @@
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!companyForm.valid || loading" >
-				<i [ngClass]="{'fa fa-save':!loading, 'fa fa-spinner fa-spin':loading}"></i>
+				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Guardar</span>
 				<span *ngIf="loading">Espere por favor</span>
 			</button>

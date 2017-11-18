@@ -14,7 +14,7 @@
 	<form [formGroup]="companyForm" #formUpdateCompany="ngForm" (ngSubmit)="updateCompany()" autocomplete="off">
 		<div class="modal-body">
 			<div class="row">
-				<div class="form-group col-md-4">
+				<div class="form-group col-md-3">
 					<label for="code" class="control-label">Código:</label>
 					<input type="number" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly"/>
 					<div *ngIf="formErrors.code" class="alert alert-danger">
@@ -22,7 +22,7 @@
 					</div>
 				</div>
 				<div class="form-group col-md-4">
-					<label for="type" class="control-label">Tipo</label>
+					<label for="type" class="control-label">Tipo:</label>
 					<select class="form-control" formControlName="type">
 						<option *ngFor="let type of types" [ngValue]="type" [disabled]="readonly">{{type}}</option>
 					</select>
@@ -30,13 +30,41 @@
 						{{ formErrors.type }}
 					</div>
 				</div>
-				<div class="form-group col-md-4">
-					<label for="CUIT" class="control-label">CUIT:</label>
+				<div class="form-group col-md-5">
+					<label for="vatCondition" class="control-label">Condición de IVA:</label>
+					<select class="form-control" formControlName="vatCondition">
+						<option *ngFor="let vatCondition of vatConditions" [selected]="vatCondition._id===company.vatCondition._id" [value]="vatCondition._id" [disabled]="readonly">{{vatCondition.description}}</option>
+					</select>
+					<div *ngIf="formErrors.vatCondition" class="alert alert-danger">
+						{{ formErrors.vatCondition }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-2">
+					<label for="identityType" class="control-label"></label>
+					<select class="form-control" formControlName="identityType">
+						<option *ngFor="let identityType of identityTypes" [ngValue]="identityType" [disabled]="readonly">
+							{{identityType}}
+						</option>
+					</select>
+				</div>
+				<div class="form-group col-md-4" *ngIf="identityTypeSelected==='CUIT'">
+					<label for="CUIT" class="control-label"></label>
 					<div class="input-group">
-						<input type="number" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent" [readonly]="readonly"/>
+						<input type="text" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.CUIT" class="alert alert-danger">
 						{{ formErrors.CUIT }}
+					</div>
+				</div>
+				<div class="form-group col-md-4" *ngIf="identityTypeSelected==='DNI'">
+					<label for="DNI" class="control-label"></label>
+					<div class="input-group">
+						<input type="text" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent" [readonly]="readonly"/>
+					</div>
+					<div *ngIf="formErrors.DNI" class="alert alert-danger">
+						{{ formErrors.DNI }}
 					</div>
 				</div>
 			</div>

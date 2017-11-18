@@ -40,13 +40,14 @@ import { LoginComponent } from './../login/login.component';
 import { PrintComponent } from './../../components/print/print.component';
 
 //Pipes
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
+import { DateFormatPipe } from './../../pipes/date-format.pipe';
 
 @Component({
   selector: 'app-add-sale-order',
   templateUrl: './add-sale-order.component.html',
   styleUrls: ['./add-sale-order.component.css'],
-  providers: [NgbAlertConfig, DatePipe]
+  providers: [NgbAlertConfig, DateFormatPipe]
 })
 
 export class AddSaleOrderComponent implements OnInit {
@@ -74,7 +75,7 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('contentDiscount') contentDiscount: ElementRef;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
-  public discountPorcent: number = 0.00;
+  public discountPercentage: number = 0.00;
   public discountAmount: number = 0.00;
   public isNewItem: boolean;
   public paymentAmount: number = 0.00;
@@ -103,14 +104,14 @@ export class AddSaleOrderComponent implements OnInit {
 
   public formErrorsDiscount = {
     'amount': '',
-    'porcent': ''
+    'percentage': ''
   };
 
   public validationMessagesDiscount = {
     'amount': {
       'required': 'Este campo es requerido.'
     },
-    'porcent': {
+    'percentage': {
       'required': 'Este campo es requerido.'
     }
   };
@@ -382,7 +383,7 @@ export class AddSaleOrderComponent implements OnInit {
         Validators.required
       ]
       ],
-      'porcent': [this.discountPorcent, [
+      'percentage': [this.discountPercentage, [
         Validators.required
       ]
       ]
@@ -638,7 +639,7 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if (result === "apply_discount") {
 
-              this.discountPorcent = this.discountForm.value.porcent;
+              this.discountPercentage = this.discountForm.value.percentage;
               this.discountAmount = this.discountForm.value.amount;
               this.updatePrices();
             }
@@ -910,27 +911,27 @@ export class AddSaleOrderComponent implements OnInit {
   public applyDiscount(): void {
     
     if(this.transaction.subtotalPrice !== 0) {
-      if (this.discountPorcent > 0 &&
-        this.discountPorcent <= 100 &&
-        this.discountPorcent !== null &&
+      if (this.discountPercentage > 0 &&
+        this.discountPercentage <= 100 &&
+        this.discountPercentage !== null &&
         (this.discountAmount === 0 || this.discountAmount === null)) {
 
-          this.transaction.discount = (this.transaction.subtotalPrice * this.discountForm.value.porcent) / 100;
+          this.transaction.discount = (this.transaction.subtotalPrice * this.discountForm.value.percentage) / 100;
           this.hideMessage();
-      } else if ((this.discountPorcent === 0 ||
-        this.discountPorcent === null) &&
+      } else if ((this.discountPercentage === 0 ||
+        this.discountPercentage === null) &&
         this.discountAmount > 0 &&
         this.discountAmount <= this.transaction.subtotalPrice &&
         this.discountAmount !== null) {
           this.transaction.discount = this.discountAmount;
           this.hideMessage();
-      } else if (this.discountAmount !== 0 && this.discountPorcent !== 0) {
+      } else if (this.discountAmount !== 0 && this.discountPercentage !== 0) {
         this.transaction.discount = 0;
         this.showMessage("Solo debe cargar un solo descuento.", "info", true);
       }
     } else {
       this.transaction.discount = 0;
-      this.discountPorcent = 0;
+      this.discountPercentage = 0;
       this.discountAmount = 0;
     }
 
@@ -1049,7 +1050,7 @@ export class AddSaleOrderComponent implements OnInit {
 
       this.typeOfOperationToPrint = 'charge';
 
-      let datePipe = new DatePipe('es-AR');
+      let datePipe = new DateFormatPipe();
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
 
@@ -1063,7 +1064,7 @@ export class AddSaleOrderComponent implements OnInit {
       content +=
         '<tr><td colspan="5"><font face="Courier" size="2">P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '</font></td>' +
         '<td colspan="7" align="right"><font face="Courier" size="2">Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
         '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.endDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
@@ -1132,7 +1133,7 @@ export class AddSaleOrderComponent implements OnInit {
 
       this.typeOfOperationToPrint = 'charge';
 
-      let datePipe = new DatePipe('es-AR');
+      let datePipe = new DateFormatPipe();
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
 
@@ -1146,7 +1147,7 @@ export class AddSaleOrderComponent implements OnInit {
       content +=
         '<tr><td colspan="5"><font face="Courier" size="2">P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '</font></td>' +
         '<td colspan="7" align="right"><font face="Courier" size="2">Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
         '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.endDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
@@ -1215,7 +1216,7 @@ export class AddSaleOrderComponent implements OnInit {
 
       this.typeOfOperationToPrint = 'bar';
 
-      let datePipe = new DatePipe('es-AR');
+      let datePipe = new DateFormatPipe();
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
 
@@ -1226,7 +1227,7 @@ export class AddSaleOrderComponent implements OnInit {
       if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
       content +=
         '<tr><td colspan="12"><font face="Courier" size="2">Nro. Pedido ' + this.transaction.number + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
         '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
@@ -1297,7 +1298,7 @@ export class AddSaleOrderComponent implements OnInit {
 
       this.typeOfOperationToPrint = 'kitchen';
 
-      let datePipe = new DatePipe('es-AR');
+      let datePipe = new DateFormatPipe();
       let decimalPipe = new DecimalPipe('ARS');
       let content: string;
 
@@ -1308,7 +1309,7 @@ export class AddSaleOrderComponent implements OnInit {
       if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
       content +=
         '<tr><td colspan="12"><font face="Courier" size="2">Nro. Pedido ' + this.transaction.number + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'dd/MM/yyyy') + '</font></td>' +
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
         '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
       if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';

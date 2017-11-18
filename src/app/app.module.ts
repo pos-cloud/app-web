@@ -33,6 +33,7 @@ import { PaymentMethodService } from './services/payment-method.service';
 import { MailService } from './services/send-mail.service';
 import { MovementOfCashService } from './services/movement-of-cash.service';
 import { PrintService } from './services/print.service';
+import { VATConditionService } from './services/vat-condition.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -225,7 +226,8 @@ import { ListTurnsComponent } from './components/list-turns/list-turns.component
     MovementOfCashService,
     PrintService,
     AuthGuard,
-    MailService
+    MailService,
+    VATConditionService
   ],
   bootstrap: [AppComponent]
 })

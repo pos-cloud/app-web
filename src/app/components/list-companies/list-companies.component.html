@@ -24,7 +24,7 @@
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('fantasyName')">Nombre de Fantasía </th>
               <th (click)="orderBy('type')">Tipo </th>
-              <th (click)="orderBy('CUIT')">CUIT </th>
+              <th>CUIT/DNI </th>
               <th (click)="orderBy('address')">Dirección </th>
               <th (click)="orderBy('city')">Ciudad </th>
               <th (click)="orderBy('phones')">Teléfonos </th>
@@ -36,7 +36,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentity" placeholder="CUIT o DNI..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
@@ -48,7 +48,8 @@
                                                   | filter: filterName:'name' 
                                                   | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterType:'type'
-                                                  | filter: filterCUIT:'CUIT'
+                                                  | filter: filterIdentity:'CUIT'
+                                                  | filter: filterIdentity:'DNI'
                                                   | filter: filterAddress:'address'
                                                   | filter: filterCity:'city' 
                                                   | filter: filterPhones:'phones' 
@@ -67,7 +68,8 @@
               <td>{{company.name}}</td>
               <td>{{company.fantasyName}}</td>
               <td>{{company.type}}</td>
-              <td>{{company.CUIT}}</td>
+              <td *ngIf="company.CUIT && company.CUIT !== ''">{{company.CUIT}}</td>
+              <td *ngIf="company.DNI && company.DNI !== ''">{{company.DNI}}</td>
               <td>{{company.address}}</td>
               <td>{{company.city}}</td>
               <td>{{company.phones}}</td>

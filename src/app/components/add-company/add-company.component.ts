@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company, CompanyType } from './../../models/company';
+import { VATCondition } from 'app/models/vat-condition';
 
 import { CompanyService } from './../../services/company.service';
+import { VATConditionService } from './../../services/vat-condition.service';
 
 @Component({
   selector: 'app-add-company',
@@ -19,6 +21,9 @@ export class AddCompanyComponent  implements OnInit {
 
   public company: Company;
   public types: CompanyType[] = [CompanyType.Client];
+  public vatConditions: VATCondition[];
+  public identityTypes: string[] = ["CUIT","DNI"];
+  public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -30,7 +35,9 @@ export class AddCompanyComponent  implements OnInit {
     'name': '',
     'fantasyName': '',
     'type': '',
+    'vatCondition': '',
     'CUIT': '',
+    'DNI': '',
     'address': '',
     'city': '',
     'phones': '',
@@ -50,10 +57,17 @@ export class AddCompanyComponent  implements OnInit {
     'type': {
       'required':       'Este campo es requerido.'
     },
+    'vatCondition': {
+      'required': 'Este campo es requerido.'
+    },
     'CUIT': {
       'minlength':      'El CUIT debe contener 13 díguitos.',
       'maxlength':      'El CUIT debe contener 13 díguitos.',
       'pattern':        ' Ingrese el CUIT con formato con guiones'
+    },
+    'DNI': {
+      'minlength': 'El DNI debe contener 8 díguitos.',
+      'maxlength': 'El DNI debe contener 8 díguitos.'
     },
     'address': {
     },
@@ -67,6 +81,7 @@ export class AddCompanyComponent  implements OnInit {
 
   constructor(
     public _companyService: CompanyService,
+    public _vatCondition: VATConditionService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -78,8 +93,11 @@ export class AddCompanyComponent  implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.company = new Company ();
+    this.vatConditions = new Array();
+    this.getVATConditions();
     this.getLastCompany();
     this.buildForm();
+    this.identityTypeSelected = "CUIT";
   }
 
   ngAfterViewInit() {
@@ -104,10 +122,22 @@ export class AddCompanyComponent  implements OnInit {
           Validators.required
         ]
       ],
+      'vatCondition': [this.company.vatCondition, [
+          Validators.required
+        ]
+      ],
+      'identityType': [this.identityTypes[0], [
+        ]
+      ],
       'CUIT': [this.company.CUIT, [
           Validators.maxLength(13),
           Validators.minLength(13),
           Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
+        ]
+      ],
+      'DNI': [this.company.DNI, [
+          Validators.maxLength(8),
+          Validators.minLength(8)
         ]
       ],
       'address': [this.company.address, [
@@ -147,6 +177,96 @@ export class AddCompanyComponent  implements OnInit {
         }
       }
     }
+
+    this.identityTypeSelected = this.companyForm.value.identityType;
+    if (this.identityTypeSelected === "CUIT") {
+      this.companyForm.value.DNI = "";
+    } else {
+      this.companyForm.value.CUIT = "";
+    }
+  }
+
+  public getVATConditions(): void {
+
+    this.loading = true;
+
+    this._vatCondition.getVATConditions().subscribe(
+      result => {
+        if (!result.vatConditions) {
+          this.saveVATConditions();
+        } else {
+          this.vatConditions = result.vatConditions;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveVATConditions(): void {
+
+    this.loading = true;
+    let vatConditionCF = new VATCondition();
+    vatConditionCF.code = 3;
+    vatConditionCF.description = "Consumidor Final";
+    vatConditionCF.discriminate = "No";
+    vatConditionCF.transactionLetter = "B";
+
+    this._vatCondition.saveVATCondition(vatConditionCF).subscribe(
+      result => {
+        if (!result.vatCondition) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          let vatConditionRI = new VATCondition();
+          vatConditionRI.code = 1;
+          vatConditionRI.description = "Responsable Inscripto";
+          vatConditionRI.discriminate = "Si";
+          vatConditionRI.transactionLetter = "A";
+
+          this._vatCondition.saveVATCondition(vatConditionRI).subscribe(
+            result => {
+              if (!result.vatCondition) {
+                this.showMessage(result.message, "info", true);
+              } else {
+                let vatConditionM = new VATCondition();
+                vatConditionM.code = 2;
+                vatConditionM.description = "Monotributista";
+                vatConditionM.discriminate = "No";
+                vatConditionM.transactionLetter = "B";
+
+                this._vatCondition.saveVATCondition(vatConditionM).subscribe(
+                  result => {
+                    if (!result.vatCondition) {
+                      this.showMessage(result.message, "info", true);
+                    } else {
+                      this.getVATConditions();
+                    }
+                    this.loading = false;
+                  },
+                  error => {
+                    this.showMessage(error._body, "danger", false);
+                    this.loading = false;
+                  }
+                );
+              }
+              this.loading = false;
+            },
+            error => {
+              this.showMessage(error._body, "danger", false);
+              this.loading = false;
+            }
+          );
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getLastCompany(): void {  
@@ -167,7 +287,10 @@ export class AddCompanyComponent  implements OnInit {
             'name': '',
             'fantasyName': '',
             'type': CompanyType.Client,
+            'vatCondition': this.vatConditions[0],
+            'identityType': this.identityTypes[0],
             'CUIT': '',
+            'DNI': '',
             'address': '',
             'city': '',
             'phones': '',
@@ -182,9 +305,14 @@ export class AddCompanyComponent  implements OnInit {
       );
    }
 
-  public addCompany(): void {
+  
+   public addCompany(): void {
     
-    this.loading = true;
+    if (this.identityTypeSelected === "CUIT") {
+      this.companyForm.value.DNI = "";
+    } else {
+      this.companyForm.value.CUIT = "";
+    }
     this.company = this.companyForm.value;
     this.saveCompany();
   }

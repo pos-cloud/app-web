@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company, CompanyType } from './../../models/company';
+import { VATCondition } from 'app/models/vat-condition';
 
 import { CompanyService } from './../../services/company.service';
+import { VATConditionService } from './../../services/vat-condition.service';
 
 @Component({
   selector: 'app-update-company',
@@ -20,6 +22,9 @@ export class UpdateCompanyComponent implements OnInit {
   @Input() company: Company;
   @Input() readonly: boolean;
   public types: CompanyType[] = [CompanyType.Client];
+  public vatConditions: VATCondition[];
+  public identityTypes: string[] = ["CUIT", "DNI"];
+  public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -31,7 +36,9 @@ export class UpdateCompanyComponent implements OnInit {
     'name': '',
     'fantasyName': '',
     'type': '',
+    'vatCondition': '',
     'CUIT': '',
+    'DNI': '',
     'address': '',
     'city': '',
     'phones': '',
@@ -52,7 +59,17 @@ export class UpdateCompanyComponent implements OnInit {
     'type': {
       'required':       'Este campo es requerido.'
     },
+    'vatCondition': {
+      'required': 'Este campo es requerido.'
+    },
     'CUIT': {
+      'minlength': 'El CUIT debe contener 13 díguitos.',
+      'maxlength': 'El CUIT debe contener 13 díguitos.',
+      'pattern': ' Ingrese el CUIT con formato con guiones'
+    },
+    'DNI': {
+      'minlength': 'El DNI debe contener 8 díguitos.',
+      'maxlength': 'El DNI debe contener 8 díguitos.'
     },
     'address': {
     },
@@ -66,6 +83,7 @@ export class UpdateCompanyComponent implements OnInit {
 
   constructor(
     public _companyService: CompanyService,
+    public _vatCondition: VATConditionService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -76,19 +94,18 @@ export class UpdateCompanyComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.vatConditions = new Array();
+    this.getVATConditions();
+
+    if (this.company.DNI && this.company.DNI !== "") {
+      this.identityTypeSelected = "DNI";
+    } else {
+      this.identityTypeSelected = "CUIT";
+    }
+
     this.buildForm();
-    this.companyForm.setValue({
-      '_id':this.company._id,
-      'code': this.company.code,
-      'name': this.company.name,
-      'fantasyName': this.company.fantasyName,
-      'type': this.company.type,
-      'CUIT': this.company.CUIT,
-      'address': this.company.address,
-      'city': this.company.city,
-      'phones': this.company.phones,
-      'emails': this.company.emails
-    });
+
+    this.setValueForm();
   }
 
   ngAfterViewInit() {
@@ -116,7 +133,22 @@ export class UpdateCompanyComponent implements OnInit {
           Validators.required
         ]
       ],
+      'vatCondition': [this.company.vatCondition, [
+          Validators.required
+        ]
+      ],
+      'identityType': [this.identityTypeSelected, [
+        ]
+      ],
       'CUIT': [this.company.CUIT, [
+          Validators.maxLength(13),
+          Validators.minLength(13),
+          Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
+        ]
+      ],
+      'DNI': [this.company.DNI, [
+          Validators.maxLength(8),
+          Validators.minLength(8)
         ]
       ],
       'address': [this.company.address, [
@@ -139,6 +171,65 @@ export class UpdateCompanyComponent implements OnInit {
     this.onValueChanged();
   }
 
+  public setValueForm(): void {
+
+    if (!this.company._id) this.company._id = "";
+    if (!this.company.code) this.company.code = 0;
+    if (!this.company.name) this.company.name = "";
+    if (!this.company.fantasyName) this.company.fantasyName = "";
+    if (!this.company.type) CompanyType.Client;
+    if (!this.identityTypeSelected) this.company.DNI = "";
+    if (!this.company.CUIT) this.company.CUIT = "";
+    if (!this.company.DNI) this.company.DNI = "";
+    if (!this.company.address) this.company.address = "";
+    if (!this.company.city) this.company.city = "";
+    if (!this.company.phones) this.company.phones = "";
+    if (!this.company.emails) this.company.emails = "";
+    
+    if (this.company.DNI && this.company.DNI !== "") {
+      this.identityTypeSelected = "DNI";
+    } else {
+      this.identityTypeSelected = "CUIT";
+    }
+    
+    this.companyForm.setValue({
+      '_id': this.company._id,
+      'code': this.company.code,
+      'name': this.company.name,
+      'fantasyName': this.company.fantasyName,
+      'type': this.company.type,
+      'vatCondition': this.company.vatCondition,
+      'identityType': this.identityTypeSelected,
+      'CUIT': this.company.CUIT,
+      'DNI': this.company.DNI,
+      'address': this.company.address,
+      'city': this.company.city,
+      'phones': this.company.phones,
+      'emails': this.company.emails
+    });
+  }
+
+  public getVATConditions(): void {
+
+    this.loading = true;
+
+    this._vatCondition.getVATConditions().subscribe(
+      result => {
+        if (!result.vatConditions) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.vatConditions = result.vatConditions;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
   public onValueChanged(data?: any): void {
 
     if (!this.companyForm) { return; }
@@ -155,11 +246,22 @@ export class UpdateCompanyComponent implements OnInit {
         }
       }
     }
+
+    this.identityTypeSelected = this.companyForm.value.identityType;
+    if (this.identityTypeSelected === "CUIT") {
+      this.companyForm.value.DNI = "";
+    } else {
+      this.companyForm.value.CUIT = "";
+    }
   }
 
   public updateCompany (): void {
     if(!this.readonly) {
-      this.loading = true;
+      if (this.identityTypeSelected === "CUIT") {
+        this.companyForm.value.DNI = "";
+      } else {
+        this.companyForm.value.CUIT = "";
+      }
       this.company = this.companyForm.value;
       this.saveChanges();
     }

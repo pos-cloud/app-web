@@ -192,6 +192,7 @@ export class PointOfSaleComponent implements OnInit {
       result => {
         if (!result.paymentMethods){
           let paymentMethod = new PaymentMethod();
+          paymentMethod.code = 1;
           paymentMethod.name = "Efectivo";
           this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
             result => {
@@ -199,6 +200,7 @@ export class PointOfSaleComponent implements OnInit {
                 this.showMessage(result.message, "info", true);
               } else {
                 let paymentMethod = new PaymentMethod();
+                paymentMethod.code = 2;
                 paymentMethod.name = "Cuenta Corriente";
                 this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
                   result => {
@@ -206,6 +208,7 @@ export class PointOfSaleComponent implements OnInit {
                       this.showMessage(result.message, "info", true);
                     } else {
                       let paymentMethod = new PaymentMethod();
+                      paymentMethod.code = 3;
                       paymentMethod.name = "Tarjeta de Crédito";
                       this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
                         result => {
@@ -213,6 +216,7 @@ export class PointOfSaleComponent implements OnInit {
                             this.showMessage(result.message, "info", true);
                           } else {
                             let paymentMethod = new PaymentMethod();
+                            paymentMethod.code = 4;
                             paymentMethod.name = "Tarjeta de Débito";
                             this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
                               result => {
@@ -220,6 +224,7 @@ export class PointOfSaleComponent implements OnInit {
                                   this.showMessage(result.message, "info", true);
                                 } else {
                                   let paymentMethod = new PaymentMethod();
+                                  paymentMethod.code = 5;
                                   paymentMethod.name = "Cheque de Terceros";
                                   this._paymentMethodService.savePaymentMethod(paymentMethod).subscribe(
                                     result => {

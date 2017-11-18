@@ -1,3 +1,5 @@
+import { VATCondition } from './vat-condition';
+
 export class Company {
     
     public _id: string;
@@ -5,7 +7,9 @@ export class Company {
     public name: string;
     public fantasyName: string;
     public type: CompanyType = CompanyType.Client;
+    public vatCondition: VATCondition;
     public CUIT: string;
+    public DNI: string;
     public address: string;
     public city: string;
     public phones: string;

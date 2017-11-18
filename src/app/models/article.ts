@@ -9,7 +9,9 @@ export class Article {
     public posDescription: string = "";
     public observation: string;
     public costPrice: number = 0.00;
-    public markupPorcent: number = 0.00;
+    public VATPercentage: number = 21.00;
+    public VATAmount: number = 0.00;
+    public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
     public salePrice: number = 0.00;
     public make: Make;

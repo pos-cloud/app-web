@@ -84,13 +84,36 @@
 			</div>
 			<div class="row">
 				<div class="form-group col-md-6">
-					<label for="markupPorcent" class="control-label">Margen:</label>
+					<label for="VATPercentage" class="control-label">IVA:</label>
 					<div class="input-group">
 						<span class="input-group-addon">%</span>
-						<input type="number" class="form-control" formControlName="markupPorcent" name="markupPorcent" id="markupPorcent" step="0.01" (blur)="updatePrices('markupPorcent')"/>
+						<input type="number" class="form-control" formControlName="VATPercentage" name="VATPercentage" id="VATPercentage"
+						 step="0.01" (blur)="updatePrices('VATPercentage')" />
 					</div>
-					<div *ngIf="formErrors.markupPorcent" class="alert alert-danger">
-						{{ formErrors.markupPorcent }}
+					<div *ngIf="formErrors.VATPercentage" class="alert alert-danger">
+						{{ formErrors.VATPercentage }}
+					</div>
+				</div>
+				<div class="form-group col-md-6">
+					<label for="VATAmount" class="control-label">Monto:</label>
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="number" class="form-control" formControlName="VATAmount" name="VATAmount" id="VATAmount" step="0.01" (blur)="updatePrices('VATAmount')" readonly/>
+					</div>
+					<div *ngIf="formErrors.VATAmount" class="alert alert-danger">
+						{{ formErrors.VATAmount }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-6">
+					<label for="markupPercentage" class="control-label">Margen:</label>
+					<div class="input-group">
+						<span class="input-group-addon">%</span>
+						<input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage" id="markupPercentage" step="0.01" (blur)="updatePrices('markupPercentage')"/>
+					</div>
+					<div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
+						{{ formErrors.markupPercentage }}
 					</div>
 				</div>
 				<div class="form-group col-md-6">

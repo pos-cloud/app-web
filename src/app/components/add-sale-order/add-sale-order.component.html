@@ -12,7 +12,7 @@
           <b>Cliente: </b><span *ngIf="!transaction.company">Consumidor final</span><span *ngIf="transaction.company">{{transaction.company.name}}</span>
         </div>
         <div class="col-md-2">
-          <b>Apertura: </b>{{transaction.startDate | date:['HH:mm']}}
+          <b>Apertura: </b>{{transaction.startDate | dateFormat:'HH:mm'}}
         </div>
         <div class="col-md-2 offset-md-1">
           <a class="btn" (click)="openModal('change-employee')"><i class="fa fa-exchange"></i> Cambiar Empleado</a>
@@ -234,13 +234,13 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="porcent" class="control-label">Porcentaje de descuento:</label>
+          <label for="percentage" class="control-label">Percentageaje de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="porcent" name="porcent" step="0.01"/>
+            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01"/>
           </div>
-          <div *ngIf="formErrors.porcent" class="alert alert-danger">
-            {{ formErrors.porcent }}
+          <div *ngIf="formErrors.percentage" class="alert alert-danger">
+            {{ formErrors.percentage }}
           </div>
         </div>
       </div>
