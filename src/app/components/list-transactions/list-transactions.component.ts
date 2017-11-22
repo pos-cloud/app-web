@@ -10,6 +10,7 @@ import { TransactionService } from './../../services/transaction.service';
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-sale-order/view-transaction.component';
+import { ExportReceComponent } from './../../components/export-rece/export-rece.component';
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
@@ -143,5 +144,18 @@ export class ListTransactionsComponent implements OnInit {
 
   public hideMessage():void {
     this.alertMessage = "";
+  }
+
+  public exportRece(): void {
+    
+    let modalRef;
+
+    modalRef = this._modalService.open(ExportReceComponent, { size: 'lg' });
+    modalRef.result.then((result) => {
+      if(result === 'export') {
+      }
+    }, (reason) => {
+      
+    });
   }
 }

@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h4 class="modal-title">Exportar RECE</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+	<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+<section class="container-fluid">
+  <div class="center-content"  *ngIf="alertMessage !== ''">
+		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+			{{alertMessage}}
+    </ngb-alert>
+  </div>
+
+  <form [formGroup]="exportReceForm" #formExportRece="ngForm" (ngSubmit)="exportRece()" autocomplete="off">
+    <div class="modal-body">
+			<div class = "row">
+				<label for="destination" class="control-label">Destino:</label>
+				<input type="text" class="form-control" formControlName="destination" name="destination" id="destination"/>
+				<div *ngIf="formErrors.destination" class="alert alert-danger">
+					{{ formErrors.destination }}
+				</div>
+			</div>
+			<div class = "row">
+				<label for="period" class="control-label">Periodo:</label>
+				<input type="text" class="form-control" formControlName="period" name="period" id="period" />
+				<div *ngIf="formErrors.period" class="alert alert-danger">
+					{{ formErrors.period }}
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+				<button type="submit" class="btn btn-primary" [disabled]="!exportReceForm.valid || loading" >
+					<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+					<span *ngIf="!loading">Enviar</span>
+					<span *ngIf="loading">Espere por favor</span>
+				</button>
+		</div>
+  </form>
+
+</section>

@@ -128,4 +128,12 @@ export class TransactionService {
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
+
+	getFileAfip (period) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		return this._http.post(Config.apiURL + 'documentQuery', period).map (res => res.json());
+	}
 }

@@ -113,6 +113,7 @@ import { SelectEmployeeComponent } from './components/select-employee/select-emp
 import { PrintComponent } from './components/print/print.component';
 import { ViewTransactionComponent } from './components/view-sale-order/view-transaction.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
+import { ExportReceComponent } from './components/export-rece/export-rece.component';
 
 @NgModule({
   declarations: [
@@ -184,13 +185,15 @@ import { ListTurnsComponent } from './components/list-turns/list-turns.component
     SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
-    ListTurnsComponent
+    ListTurnsComponent,
+    ExportReceComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
     SelectEmployeeComponent,
     PrintComponent,
-    ViewTransactionComponent
+    ViewTransactionComponent,
+    ExportReceComponent
   ],
   imports: [
     BrowserModule,
