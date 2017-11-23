@@ -11,6 +11,7 @@ import 'moment/locale/es';
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType } from './../../models/transaction-type';
+import { TransactionTax } from './../../models/transaction-tax';
 import { Article, ArticleType } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
@@ -75,8 +76,6 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('contentDiscount') contentDiscount: ElementRef;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
-  public discountPercentage: number = 0.00;
-  public discountAmount: number = 0.00;
   public isNewItem: boolean;
   public paymentAmount: number = 0.00;
   public typeOfOperationToPrint: string;
@@ -104,7 +103,8 @@ export class AddSaleOrderComponent implements OnInit {
 
   public formErrorsDiscount = {
     'amount': '',
-    'percentage': ''
+    'percentage': '',
+    'transactionAmount': ''
   };
 
   public validationMessagesDiscount = {
@@ -112,6 +112,9 @@ export class AddSaleOrderComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'percentage': {
+      'required': 'Este campo es requerido.'
+    },
+    'transactionAmount': {
       'required': 'Este campo es requerido.'
     }
   };
@@ -212,15 +215,12 @@ export class AddSaleOrderComponent implements OnInit {
 
     this._transactionService.getOpenTransactionByTable(tableId).subscribe(
       result => {
-
-        let transactionState: TransactionState;
         if (!result.transactions) {
           this.hideMessage();
           this.getTable(tableId);
         } else {
           this.hideMessage();
           this.transaction = result.transactions[0];
-          this.discountAmount = this.transaction.discount;
           this.table = this.transaction.table;
           this.getMovementsOfTransaction();
         }
@@ -245,7 +245,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
-          this.discountAmount = this.transaction.discount;
           this.getMovementsOfTransaction();
         }
         this.loading = false;
@@ -333,22 +332,22 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.amountOfItemForm = this._fb.group({
       '_id': [this.movementOfArticle._id, [
-      ]
+        ]
       ],
       'description': [this.movementOfArticle.description, [
         Validators.required
-      ]
+        ]
       ],
       'amount': [this.movementOfArticle.amount, [
         Validators.required
-      ]
+        ]
       ],
       'salePrice': [this.movementOfArticle.salePrice, [
         Validators.required
-      ]
+        ]
       ],
       'notes': [this.movementOfArticle.notes, [
-      ]
+        ]
       ]
     });
 
@@ -379,13 +378,17 @@ export class AddSaleOrderComponent implements OnInit {
   public buildFormDiscount(): void {
 
     this.discountForm = this._fb.group({
-      'amount': [this.discountAmount, [
-        Validators.required
-      ]
+      'amount': [this.transaction.discount, [
+          Validators.required
+        ]
       ],
-      'percentage': [this.discountPercentage, [
-        Validators.required
-      ]
+      'percentage': [this.transaction.discount * 100 / this.transaction.totalPrice, [
+          Validators.required
+        ]
+      ],
+      'transactionAmount': [this.transaction.totalPrice, [
+          Validators.required
+        ]
       ]
     });
 
@@ -411,6 +414,30 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     }
+  }
+
+  public updateDiscounts(op: string): void {
+    
+    if(op === 'percentage') {
+      if(this.discountForm.value.percentage && this.discountForm.value.percentage !== 0) {
+        this.discountForm.value.amount = this.transaction.totalPrice * this.discountForm.value.percentage / 100;
+        this.discountForm.value.transactionAmount = this.transaction.totalPrice - (this.transaction.totalPrice * this.discountForm.value.percentage / 100);
+      }
+    } else if (op === 'amount') {
+      if(this.discountForm.value.amount && this.discountForm.value.amount !== 0) {
+        this.discountForm.value.transactionAmount = this.transaction.totalPrice - this.discountForm.value.amount;
+        this.discountForm.value.percentage = this.discountForm.value.amount * 100 / this.transaction.totalPrice;
+      }
+    }
+    this.setValueFormDiscount();
+  }
+
+  public setValueFormDiscount() {
+    this.discountForm.setValue({
+      'percentage': this.discountForm.value.percentage,
+      'amount': this.discountForm.value.amount,
+      'transactionAmount': this.discountForm.value.transactionAmount
+    });
   }
 
   public addTransaction(): void {
@@ -547,20 +574,22 @@ export class AddSaleOrderComponent implements OnInit {
   public addItem(itemData?: MovementOfArticle): void {
 
     if (itemData) {
-      if (!this.lastMovementOfArticle || itemData._id !== this.lastMovementOfArticle.article._id) {
+      if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
         let article: Article = new Article();
         this.movementOfArticle = itemData;
-        this.movementOfArticle.article = article;
-        this.movementOfArticle.article._id = itemData._id;
         this.movementOfArticle.printed = 0;
         this.movementOfArticle.transaction = this.transaction;
         this.movementOfArticle.amount = 1;
-        this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+        this.lastMovementOfArticle = this.movementOfArticle;
         this.saveMovementOfArticle();
       } else {
         this.movementOfArticle = this.lastMovementOfArticle;
         this.movementOfArticle.amount += 1;
-        this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+        this.movementOfArticle.basePrice += itemData.basePrice;
+        this.movementOfArticle.VATAmount += itemData.VATAmount;
+        this.movementOfArticle.costPrice += itemData.costPrice;
+        this.movementOfArticle.markupPrice += itemData.markupPrice;
+        this.movementOfArticle.salePrice += itemData.salePrice;
         this.updateMovementOfArticle(this.movementOfArticle);
       }
 
@@ -572,6 +601,70 @@ export class AddSaleOrderComponent implements OnInit {
       this.movementOfArticle.transaction = this.transaction;
       this.openModal('add_new_item');
     }
+  }
+
+  public updateTaxes(): void {
+
+    let taxes: TransactionTax[] = new Array();
+    let taxesAUX: TransactionTax[] = new Array();
+    let VATs: any[] = new Array();
+    let isSavedTax: boolean = false;
+    this.transaction.exempt = 0;
+
+    for(let movementOfArticle of this.movementsOfArticles) {
+      
+      if(movementOfArticle.VATPercentage !== 0) {
+  
+        let tax = new TransactionTax();
+        tax.percentage = movementOfArticle.VATPercentage;
+        tax.tax = "IVA";
+        tax.taxBase = movementOfArticle.salePrice / ((movementOfArticle.VATPercentage / 100) + 1);
+        tax.taxAmount = tax.taxBase * movementOfArticle.VATPercentage / 100;
+        taxesAUX.push(tax);
+
+        if(VATs.length !== 0) {
+          let exist: boolean = false;
+          for(let VAT of VATs) {
+            if( VAT.tax === tax.tax &&
+                VAT.percentage === tax.percentage) {
+              exist = true;
+            }
+          }
+          if(exist === false){
+            VATs.push({ 
+              "tax": tax.tax,
+              "percentage": tax.percentage
+            });
+          }
+        } else {
+          VATs.push({ 
+            "tax": tax.tax,
+            "percentage": tax.percentage
+          });
+        }
+      } else {
+        this.transaction.exempt += movementOfArticle.salePrice;
+      }
+    }
+
+    for(let VAT of VATs) {
+      let tax = new TransactionTax();
+      tax.percentage = VAT.percentage;
+      tax.tax = VAT.tax;
+      tax.taxAmount = 0;
+      tax.taxBase = 0;
+      for(let taxAUX of taxesAUX) {
+        if( taxAUX.percentage === VAT.percentage &&
+            VAT.tax === taxAUX.tax) {
+              tax.taxAmount += taxAUX.taxAmount;
+              tax.taxBase += taxAUX.taxBase;
+        }
+      }
+      taxes.push(tax);
+    }
+
+    this.transaction.taxes = taxes;
+    this.updateTransaction();
   }
 
   public editItem(itemData: MovementOfArticle): void {
@@ -638,10 +731,9 @@ export class AddSaleOrderComponent implements OnInit {
         if (this.movementsOfArticles.length !== 0) {
           modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if (result === "apply_discount") {
-
-              this.discountPercentage = this.discountForm.value.percentage;
-              this.discountAmount = this.discountForm.value.amount;
-              this.updatePrices();
+              this.transaction.totalPrice = this.discountForm.value.transactionAmount;
+              this.transaction.discount = this.discountForm.value.amount;
+              this.applyDiscount(this.discountForm.value.percentage);
             }
           }, (reason) => {
 
@@ -805,6 +897,16 @@ export class AddSaleOrderComponent implements OnInit {
     };
   }
 
+  public applyDiscount(percentage: number): void {
+
+    for(let movementOfArticle of this.movementsOfArticles) {
+      movementOfArticle.markupPercentage -= percentage;
+      movementOfArticle.markupPrice = movementOfArticle.costPrice * movementOfArticle.markupPercentage / 100;
+      movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.markupPrice;
+      this.updateMovementOfArticle(movementOfArticle);
+    }
+  }
+
   public countPrinters(): number {
 
     let numberOfPrinters: number = 0;
@@ -899,45 +1001,13 @@ export class AddSaleOrderComponent implements OnInit {
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
-    this.movementOfArticle.totalPrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+    this.movementOfArticle.salePrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
     this.movementOfArticle.printed = 0;
     if (op === 'add') {
       this.saveMovementOfArticle();
     } else if (op === 'edit') {
       this.updateMovementOfArticle(this.movementOfArticle);
     }
-  }
-
-  public applyDiscount(): void {
-    
-    if(this.transaction.subtotalPrice !== 0) {
-      if (this.discountPercentage > 0 &&
-        this.discountPercentage <= 100 &&
-        this.discountPercentage !== null &&
-        (this.discountAmount === 0 || this.discountAmount === null)) {
-
-          this.transaction.discount = (this.transaction.subtotalPrice * this.discountForm.value.percentage) / 100;
-          this.hideMessage();
-      } else if ((this.discountPercentage === 0 ||
-        this.discountPercentage === null) &&
-        this.discountAmount > 0 &&
-        this.discountAmount <= this.transaction.subtotalPrice &&
-        this.discountAmount !== null) {
-          this.transaction.discount = this.discountAmount;
-          this.hideMessage();
-      } else if (this.discountAmount !== 0 && this.discountPercentage !== 0) {
-        this.transaction.discount = 0;
-        this.showMessage("Solo debe cargar un solo descuento.", "info", true);
-      }
-    } else {
-      this.transaction.discount = 0;
-      this.discountPercentage = 0;
-      this.discountAmount = 0;
-    }
-
-    this.transaction.totalPrice = this.transaction.subtotalPrice - this.transaction.discount;
-
-    this.updateTransaction();
   }
 
   public saveMovementOfArticle(): void {
@@ -1028,17 +1098,17 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
+
+
   public updatePrices(): void {
 
-    this.transaction.subtotalPrice = 0;
     this.transaction.totalPrice = 0;
 
     for (let movementOfArticle of this.movementsOfArticles) {
-      this.transaction.subtotalPrice = this.transaction.subtotalPrice + movementOfArticle.totalPrice;
-      this.transaction.totalPrice = this.transaction.subtotalPrice - this.transaction.discount;
+      this.transaction.totalPrice = this.transaction.totalPrice + movementOfArticle.salePrice;
     }
     
-    this.applyDiscount();
+    this.updateTaxes();
   }
 
   public toPrintBill(printerSelected: Printer): void {
@@ -1087,8 +1157,6 @@ export class AddSaleOrderComponent implements OnInit {
 
       content +=
         '<tr><td colspan="12"><hr></td></tr>' +
-        '<tr><td colspan="6"><font face="Courier" size="2">Subtotal:</font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2">' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '</font></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
         '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '</font></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
@@ -1170,8 +1238,6 @@ export class AddSaleOrderComponent implements OnInit {
 
       content +=
         '<tr><td colspan="12"><hr></td></tr>' +
-        '<tr><td colspan="6"><font face="Courier" size="2">Subtotal:</font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2">' + decimalPipe.transform(this.transaction.subtotalPrice, '1.2-2') + '</font></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
         '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '</font></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +

@@ -30,14 +30,14 @@
             <tr>
               <th (click)="orderBy('date')">Fecha</th>
               <th (click)="orderBy('type','name')">Tipo</th>
-              <th (click)="orderBy('origin')">Origen</th>
+              <th (click)="orderBy('origin')">Punto de venta</th>
               <th (click)="orderBy('number')">Número</th>
               <th (click)="orderBy('totalPrice')">Monto</th>
             </tr>
             <tr *ngIf="areFiltersVisible">
               <th><input type="text" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Origen..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto..."></th>
             </tr>

@@ -105,7 +105,7 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + 'transactions/sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
   
-	getLastTransactionByOrigen(origin: number) {
+	getLastTransactionByOrigin(origin: number) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()

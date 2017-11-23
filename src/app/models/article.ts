@@ -4,13 +4,14 @@ import { Category } from './category';
 export class Article {
 
     public _id: string;
-    public code: String = "1";
+    public code: string = "1";
     public description: string = "";
     public posDescription: string = "";
     public observation: string;
-    public costPrice: number = 0.00;
+    public basePrice: number = 0.00;
     public VATPercentage: number = 21.00;
     public VATAmount: number = 0.00;
+    public costPrice: number = 0.00;
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
     public salePrice: number = 0.00;

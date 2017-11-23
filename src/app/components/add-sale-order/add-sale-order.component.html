@@ -50,7 +50,7 @@
                     {{movementOfArticle.notes}}
                   </strong>
               </td>
-              <td>{{movementOfArticle.totalPrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
               <td align=" left " width="20 ">
                 <!-- <button type="button " class="btn btn-danger btn-sm " (click)="deleteMovementOfArticle(movementOfArticle._id) -->
               <!-- "><i class="fa fa-trash-o "></i></button> -->
@@ -66,8 +66,8 @@
         <table class="table table-hover">
           <tbody>
             <tr>
-              <td align="right"><strong>Subtotal</strong></td>
-              <td align="right"><strong>{{transaction.subtotalPrice | currency:'USD':'1.2-2'}}</strong></td>
+              <td align="right"><h5><b>Subtotal</b></h5></td>
+              <td align="right"><h5><b>{{(transaction.totalPrice+transaction.discount) | currency:'USD':'1.2-2'}}</b></h5></td>
             </tr>
             <tr>
               <td align="right"><strong>Descuento</strong></td>
@@ -222,13 +222,10 @@
     <div class="modal-body container-fluid">
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="amount" class="control-label">Monto de descuento:</label>
+          <label for="totalPrice" class="control-label">Monto de la transacción:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" autofocus/>
-          </div>
-          <div *ngIf="formErrors.amount" class="alert alert-danger">
-            {{ formErrors.amount }}
+            <input type="number" class="form-control" name="totalPrice" min="0" step="0.01" [value]="this.transaction.totalPrice" readonly/>
           </div>
         </div>
       </div>
@@ -237,10 +234,34 @@
           <label for="percentage" class="control-label">Percentageaje de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01"/>
+            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01" (blur)="updateDiscounts('percentage')" autofocus/>
           </div>
           <div *ngIf="formErrors.percentage" class="alert alert-danger">
             {{ formErrors.percentage }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="amount" class="control-label">Monto de descuento:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" (blur)="updateDiscounts('amount')"/>
+          </div>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="transactionAmount" class="control-label">Monto de la transacción con descuento:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="transactionAmount" name="transactionAmount" step="0.01" readonly/>
+          </div>
+          <div *ngIf="formErrors.transactionAmount" class="alert alert-danger">
+            {{ formErrors.transactionAmount }}
           </div>
         </div>
       </div>

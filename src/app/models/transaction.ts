@@ -5,6 +5,7 @@ import { Employee } from './employee';
 import { Turn } from './turn';
 import { PaymentMethod } from './payment-method';
 import { TransactionType } from './transaction-type';
+import { TransactionTax } from './transaction-tax';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -17,7 +18,8 @@ export class Transaction {
 	public startDate: string = moment().format('DD/MM/YYYY HH:mm:ss');
 	public endDate: string;
 	public state: TransactionState = TransactionState.Open;
-	public subtotalPrice: number = 0.00;
+	public exempt: number = 0.00;
+	public taxes: TransactionTax[];
 	public discount: number = 0.00;
 	public totalPrice: number = 0.00;
 	public diners: number = 0;

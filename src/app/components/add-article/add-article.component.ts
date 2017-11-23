@@ -45,9 +45,10 @@ export class AddArticleComponent  implements OnInit {
     'make': '',
     'description': '',
     'posDescription': '',
-    'costPrice': 0.00,
+    'basePrice': 0.00,
     'VATPercentage': 0.00,
     'VATPrice': 0.00,
+    'costPrice': 0.00,
     'markupPercentage': 0.00,
     'markupPrice': 0.00,
     'salePrice': 0.00,
@@ -68,13 +69,16 @@ export class AddArticleComponent  implements OnInit {
     'posDescription': {
       'maxlength':      'No puede exceder los 20 carácteres.'
     },
-    'costPrice': {
+    'basePrice': {
       'required': 'Este campo es requerido.'
     },
     'VATPercentage': {
       'required': 'Este campo es requerido.'
     },
     'VATAmount': {
+      'required': 'Este campo es requerido.'
+    },
+    'costPrice': {
       'required': 'Este campo es requerido.'
     },
     'markupPercentage': {
@@ -136,7 +140,7 @@ export class AddArticleComponent  implements OnInit {
           Validators.maxLength(20)
         ]
       ],
-      'costPrice': [this.article.costPrice, [
+      'basePrice': [this.article.basePrice, [
         Validators.required
         ]
       ],
@@ -146,6 +150,10 @@ export class AddArticleComponent  implements OnInit {
       ],
       'VATAmount': [this.article.VATAmount, [
           Validators.required
+        ]
+      ],
+      'costPrice': [this.article.costPrice, [
+        Validators.required
         ]
       ],
       'markupPercentage': [this.article.markupPercentage, [
@@ -281,43 +289,47 @@ export class AddArticleComponent  implements OnInit {
   public updatePrices(op): void {
     
     switch(op) {
-      case 'costPrice':
-        this.articleForm.value.markupPrice = ((this.articleForm.value.costPrice + this.articleForm.value.VATAmount) * this.articleForm.value.markupPercentage) / 100;
-        this.articleForm.value.VATAmount = (this.articleForm.value.costPrice * this.articleForm.value.VATPercentage) / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.VATAmount + this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+      case 'basePrice':
+        this.articleForm.value.VATAmount = this.articleForm.value.basePrice * this.articleForm.value.VATPercentage / 100;
+        this.articleForm.value.costPrice = this.articleForm.value.basePrice + this.articleForm.value.VATAmount;
+        this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         break;
       case 'VATPercentage':
-        this.articleForm.value.VATAmount = (this.articleForm.value.costPrice * this.articleForm.value.VATPercentage) / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.VATAmount + this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        this.articleForm.value.VATAmount = this.articleForm.value.basePrice * this.articleForm.value.VATPercentage / 100;
+        this.articleForm.value.costPrice = this.articleForm.value.basePrice + this.articleForm.value.VATAmount;
+        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         break;
       case 'markupPercentage':
-        this.articleForm.value.markupPrice = ((this.articleForm.value.costPrice + this.articleForm.value.VATAmount) * this.articleForm.value.markupPercentage) / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.VATAmount + this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         break;
       case 'markupPrice':
-        this.articleForm.value.markupPercentage = (this.articleForm.value.markupPrice / (this.articleForm.value.costPrice + this.articleForm.value.VATAmount)) * 100;
-        this.articleForm.value.salePrice = this.articleForm.value.VATAmount + this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
+        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         break;
       case 'salePrice':
-        if (this.articleForm.value.costPrice === 0) {
+        if (this.articleForm.value.basePrice === 0) {
           this.articleForm.value.VATPercentage = 0;
           this.articleForm.value.VATAmount = 0;
+          this.articleForm.value.costPrice === 0;
           this.articleForm.value.markupPercentage = 0;
           this.articleForm.value.markupPricet = 0;
         } else {
-          this.articleForm.value.markupPrice = this.articleForm.value.salePrice - (this.articleForm.value.costPrice + this.articleForm.value.VATAmount);
-          this.articleForm.value.markupPercentage = (this.articleForm.value.markupPrice / (this.articleForm.value.costPrice + this.articleForm.value.VATAmount)) * 100;
+          this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
+          this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
         }
         break;
       default:
-        this.articleForm.value.markupPrice = ((this.articleForm.value.costPrice + this.articleForm.value.VATAmount) * this.articleForm.value.markupPercentage) / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.VATAmount + this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
+        this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
         break;
     }
 
-    this.articleForm.value.costPrice = parseFloat(this.articleForm.value.costPrice.toFixed(2));
+    this.articleForm.value.basePrice = parseFloat(this.articleForm.value.basePrice.toFixed(2));
     this.articleForm.value.VATPercentage = parseFloat(this.articleForm.value.VATPercentage.toFixed(2));
     this.articleForm.value.VATAmount = parseFloat(this.articleForm.value.VATAmount.toFixed(2));
+    this.articleForm.value.costPrice = parseFloat(this.articleForm.value.costPrice.toFixed(2));
     this.articleForm.value.markupPercentage = parseFloat(this.articleForm.value.markupPercentage.toFixed(2));
     this.articleForm.value.markupPrice = parseFloat(this.articleForm.value.markupPrice.toFixed(3));
     this.articleForm.value.salePrice = parseFloat(this.articleForm.value.salePrice.toFixed(2));
@@ -343,9 +355,10 @@ export class AddArticleComponent  implements OnInit {
     if (!this.article.make) this.article.make = null;
     if (!this.article.description) this.article.description = "";
     if (!this.article.posDescription) this.article.posDescription = "";
-    if (!this.article.costPrice) this.article.costPrice = 0.00;
+    if (!this.article.basePrice) this.article.basePrice = 0.00;
     if (!this.article.VATPercentage) this.article.VATPercentage = 0.00;
     if (!this.article.VATAmount) this.article.VATAmount = 0.00;
+    if (!this.article.costPrice) this.article.costPrice = 0.00;
     if (!this.article.markupPercentage) this.article.markupPercentage = 0.00;
     if (!this.article.markupPrice) this.article.markupPrice = 0.00;
     if (!this.article.salePrice) this.article.salePrice = 0.00;
@@ -360,9 +373,10 @@ export class AddArticleComponent  implements OnInit {
       'make': this.article.make,
       'description': this.article.description,
       'posDescription': this.article.posDescription,
-      'costPrice': this.article.costPrice,
+      'basePrice': this.article.basePrice,
       'VATPercentage': this.article.VATPercentage,
       'VATAmount': this.article.VATAmount,
+      'costPrice': this.article.costPrice,
       'markupPercentage': this.article.markupPercentage,
       'markupPrice': this.article.markupPrice,
       'salePrice': this.article.salePrice,

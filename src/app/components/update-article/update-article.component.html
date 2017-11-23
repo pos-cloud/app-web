@@ -77,13 +77,13 @@
 			</div>
 			<div class="row">
 				<div class="form-group col-md-12">
-					<label for="costPrice" class="control-label">Precio de Costo:</label>
+					<label for="basePrice" class="control-label">Precio Base:</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')" [readonly]="readonly"/>
+						<input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice" step="0.01" (blur)="updatePrices('basePrice')"/>
 					</div>
-					<div *ngIf="formErrors.costPrice" class="alert alert-danger">
-						{{ formErrors.costPrice }}
+					<div *ngIf="formErrors.basePrice" class="alert alert-danger">
+						{{ formErrors.basePrice }}
 					</div>
 				</div>
 			</div>
@@ -100,13 +100,25 @@
 					</div>
 				</div>
 				<div class="form-group col-md-6">
-					<label for="VATAmount" class="control-label">Monto:</label>
+					<label for="VATAmount" class="control-label">Monto IVA:</label>
 					<div class="input-group">
 						<span class="input-group-addon">$</span>
 						<input type="number" class="form-control" formControlName="VATAmount" name="VATAmount" id="VATAmount" step="0.01" (blur)="updatePrices('VATAmount')" readonly/>
 					</div>
 					<div *ngIf="formErrors.VATAmount" class="alert alert-danger">
 						{{ formErrors.VATAmount }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="costPrice" class="control-label">Precio de costo:</label>
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')" readonly/>
+					</div>
+					<div *ngIf="formErrors.costPrice" class="alert alert-danger">
+						{{ formErrors.costPrice }}
 					</div>
 				</div>
 			</div>

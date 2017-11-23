@@ -23,7 +23,7 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('type','name')">Tipo</th>
-            	<th (click)="orderBy('origin')">Origen</th>
+            	<th (click)="orderBy('origin')">Punto de venta</th>
             	<th (click)="orderBy('number')">Número</th>
 	            <th (click)="orderBy('endDate')">Fecha</th>
 	            <th (click)="orderBy('company','name')">Cliente</th>
@@ -39,7 +39,7 @@
             </tr>
             <tr *ngIf="areFiltersVisible"><th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Origen..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Punto de venta..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Fecha..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCompany" placeholder="Cliente..." ></th>
