@@ -36,6 +36,7 @@ export class AddCompanyComponent  implements OnInit {
     'fantasyName': '',
     'type': '',
     'vatCondition': '',
+    'identityType' : '',
     'CUIT': '',
     'DNI': '',
     'address': '',
@@ -58,6 +59,9 @@ export class AddCompanyComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'vatCondition': {
+      'required': 'Este campo es requerido.'
+    },
+    'identityType' : {
       'required': 'Este campo es requerido.'
     },
     'CUIT': {
