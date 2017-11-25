@@ -34,8 +34,7 @@ export class ConfigBackupComponent implements OnInit {
     'companyName': '',
     'companyCUIT': '',
     'companyAddress': '',
-    'companyPhone': '',
-    'ticketFoot': ''
+    'companyPhone': ''
   };
 
   public validationMessages = {
@@ -62,8 +61,6 @@ export class ConfigBackupComponent implements OnInit {
     'companyAddress': {
     },
     'companyPhone': {
-    },
-    'ticketFoot': {
     }
   };
 
@@ -157,9 +154,6 @@ export class ConfigBackupComponent implements OnInit {
       ],
       'companyPhone': [Config.companyPhone, [
         ]
-      ],
-      'ticketFoot': [Config.ticketFoot, [
-        ]
       ]
     });
 
@@ -245,7 +239,7 @@ export class ConfigBackupComponent implements OnInit {
   public setConfigurationSettings(config) {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone, config.ticketFoot);
+    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone);
   }
 
 
@@ -383,7 +377,6 @@ export class ConfigBackupComponent implements OnInit {
     if (!config.companyCUIT) config.companyCUIT = "";
     if (!config.companyAddress) config.companyAddress = "";
     if (!config.companyPhone) config.companyPhone= "";
-    if (!config.ticketFoot) config.ticketFoot = "";
     
     this.configFormBackup.setValue({
       '_id': config._id,
@@ -403,8 +396,7 @@ export class ConfigBackupComponent implements OnInit {
       'companyName': config.companyName,
       'companyCUIT': config.companyCUIT,
       'companyAddress': config.companyAddress,
-      'companyPhone': config.companyPhone,
-      'ticketFoot': config.ticketFoot,
+      'companyPhone': config.companyPhone
     });
   }
 

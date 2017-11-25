@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Configurar servidor</h4>
+  <h4 class="modal-title">Conecta tu POS Cloud</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -14,19 +14,12 @@
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="apiHost" class="control-label">IP - APIHost:</label>
-          <input type="text" class="form-control" formControlName="apiHost" name="apiHost" id="apiHost" [focus]="focusEvent"/>
-          <div *ngIf="formErrors.apiHost" class="alert alert-danger">
-            {{ formErrors.apiHost }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="apiPort" class="control-label">Puerto:</label>
-          <input type="number" class="form-control" formControlName="apiPort" name="apiPort" id="apiPort"/>
-          <div *ngIf="formErrors.apiPort" class="alert alert-danger">
-            {{ formErrors.apiPort }}
+          <label for="accessType" class="control-label">Tipo de acceso</label>
+          <select class="form-control" formControlName="accessType">
+            <option *ngFor="let accessType of accessTypes" [selected]="accessTypeSelected===accessType">{{accessType}}</option>
+          </select>
+          <div *ngIf="formErrors.accessType" class="alert alert-danger">
+            {{ formErrors.accessType }}
           </div>
         </div>
       </div>
@@ -36,6 +29,30 @@
           <input type="password" class="form-control" formControlName="apiConnectionPassword" name="apiConnectionPassword" id="apiConnectionPassword"/>
           <div *ngIf="formErrors.apiConnectionPassword" class="alert alert-danger">
             {{ formErrors.apiConnectionPassword }}
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="accessTypeSelected !== 'Cloud'">
+        <div class="form-group col-md-12">
+          <span *ngIf="!showAdvancedOptions" (click)="showAdvancedOptions=true" class="showAdvancedOptions">Mostrar opciones avanzadas</span>
+          <span *ngIf="showAdvancedOptions" (click)="showAdvancedOptions=false" class="showAdvancedOptions">Ocultar opcioens avanzadas</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12" *ngIf="accessTypeSelected !== 'Cloud' && showAdvancedOptions">
+          <label for="apiHost" class="control-label">IP del Servidor:</label>
+          <input type="text" class="form-control" formControlName="apiHost" name="apiHost" id="apiHost" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.apiHost" class="alert alert-danger">
+            {{ formErrors.apiHost }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12" *ngIf="accessTypeSelected !== 'Cloud' && showAdvancedOptions">
+          <label for="apiPort" class="control-label">Puerto:</label>
+          <input type="number" class="form-control" formControlName="apiPort" name="apiPort" id="apiPort"/>
+          <div *ngIf="formErrors.apiPort" class="alert alert-danger">
+            {{ formErrors.apiPort }}
           </div>
         </div>
       </div>

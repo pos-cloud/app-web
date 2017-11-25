@@ -3,10 +3,11 @@ import { ConfigService } from './services/config.service';
 export class Config {
 
     public _id: string;
-    static apiHost: string = "localhost";
+    static apiHost: string = "181.164.140.166";
     static apiURL: string;
     static apiConnectionPassword: string;
     static apiPort: number = 3000;
+    static accessType: string = "Cloud";
     static pathMongo: string;
     static pathBackup: string;
     static backupTime: string;
@@ -16,7 +17,6 @@ export class Config {
     static companyCUIT: string;
     static companyAddress: string;
     static companyPhone: string;
-    static ticketFoot: string;
 
     constructor() { 
         Config.updateApiURL();
@@ -30,6 +30,10 @@ export class Config {
     public static setApiPort(apiPort: number): void {
         this.apiPort = apiPort;
         Config.updateApiURL();
+    }
+
+    public static setAccessType(accessType: string): void {
+        this.accessType = accessType;
     }
 
     public static setApiConnectionPassword(apiConnectionPassword: string): void {
@@ -47,12 +51,11 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany(companyName, companyCUIT, companyAddress, companyPhone, ticketFoot): void {
+    public static setConfigCompany(companyName, companyCUIT, companyAddress, companyPhone): void {
         Config.companyName = companyName;
         Config.companyCUIT = companyCUIT;
         Config.companyAddress = companyAddress;
         Config.companyPhone= companyPhone;
-        Config.ticketFoot = ticketFoot;
     }
 
     public static updateApiURL() {

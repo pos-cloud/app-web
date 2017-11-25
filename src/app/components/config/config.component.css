@@ -7,3 +7,9 @@
       -webkit-justify-content: center;
       justify-content: center;
 }
+
+.showAdvancedOptions {
+      color: #0275d8;
+      cursor: pointer;
+      font-size: 14px;
+}

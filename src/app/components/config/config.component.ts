@@ -29,11 +29,15 @@ export class ConfigComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public accessTypes: string[] = ["Cloud", "Local"];
+  public accessTypeSelected: string = "Cloud";
+  public showAdvancedOptions: boolean = false;
 
   public formErrors = {
     'apiHost': '',
     'apiPort': '',
-    'apiConnectionPassword': ''
+    'apiConnectionPassword': '',
+    'accessType': ''
   };
 
   public validationMessages = {
@@ -43,6 +47,9 @@ export class ConfigComponent implements OnInit {
     'apiPort': {
     },
     'apiConnectionPassword': {
+      'required': 'Este campo es requerido.'
+    },
+    'accessType': {
       'required': 'Este campo es requerido.'
     },
   };
@@ -96,6 +103,10 @@ export class ConfigComponent implements OnInit {
           Validators.required
         ]
       ],
+      'accessType': [Config.accessType, [
+          Validators.required
+        ]
+      ],
     });
     
     this.configForm.valueChanges
@@ -121,6 +132,8 @@ export class ConfigComponent implements OnInit {
         }
       }
     }
+    
+    this.accessTypeSelected = this.configForm.value.accessType;
   }
 
   public addConfig(): void {
@@ -137,6 +150,7 @@ export class ConfigComponent implements OnInit {
 
     this._configService.getConfigApi().subscribe(
       result => {
+        this.showMessage("Configurando tu POS Cloud...", "success", false); 
         if (!result.configs) {
           this.saveConfig();
         } else {
@@ -204,7 +218,7 @@ export class ConfigComponent implements OnInit {
   }
 
   public setConfigurationSettings(config) {
-    
+    Config.setAccessType(config.accessType);
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
   }
@@ -223,7 +237,6 @@ export class ConfigComponent implements OnInit {
         if (!result.users) {
           this.addEmployeeTypeWaiter();
         } else {
-          this.hideMessage();
           location.reload();
         }
         this.loading = false;
