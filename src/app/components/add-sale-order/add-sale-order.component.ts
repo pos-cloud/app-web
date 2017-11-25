@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -12,7 +12,7 @@ import 'moment/locale/es';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType } from './../../models/transaction-type';
 import { TransactionTax } from './../../models/transaction-tax';
-import { Article, ArticleType } from './../../models/article';
+import { Article, ArticlePrintIn } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Employee } from './../../models/employee';
@@ -66,6 +66,7 @@ export class AddSaleOrderComponent implements OnInit {
   public areMovementsOfArticlesEmpty: boolean = true;
   public userType: string;
   public posType: string;
+  public transactionType: string;
   public table: Table; //Solo se usa si posType es igual a resto
   public loading: boolean = false;
   public areCategoriesVisible: boolean = true;
@@ -149,6 +150,7 @@ export class AddSaleOrderComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+    this.transactionType = pathLocation[3];
 
     this.getPrinters();
 
@@ -164,20 +166,48 @@ export class AddSaleOrderComponent implements OnInit {
       if (transactionId !== undefined) {
         this.getTransaction(transactionId);
       } else {
-        this.getTransactionTypeSaleOrder();
+        if(this.transactionType === "agregar-ticket") {
+          this.getTransactionByType("Ticket");
+        } else if (this.transactionType === "agregar-factura") {
+          this.getTransactionByType("Factura");
+        }
       }
     }
   }
 
-  public getTransactionTypeSaleOrder(): void {
+  public getTransactionByType(type: string): void {
 
-    this._transactionTypeService.getTransactionTypeSaleOrder().subscribe(
+    this._transactionTypeService.getTransactionByType(type).subscribe(
       result => {
         if (!result.transactionTypes) {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionTypes[0];
-          this.getLastSaleOrder();
+          this.getLastTransactionByType();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getLastTransactionByType(): void {
+
+    this.loading = true;
+
+    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+      result => {
+        if (!result.transactions) {
+          this.transaction.origin = 0;
+          this.transaction.number = 1;
+          this.addTransaction();
+        } else {
+          this.transaction.origin = result.transactions[0].origin;
+          this.transaction.number = result.transactions[0].number + 1;
+          this.addTransaction();
         }
         this.loading = false;
       },
@@ -272,7 +302,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.employeeOpening = this.table.employee;
           this.transaction.employeeClosing = this.table.employee;
           this.getOpenTurn(this.table.employee);
-          this.getTransactionTypeSaleOrder();
+          this.getTransactionByType('Ticket');
         }
         this.loading = false;
       },
@@ -294,30 +324,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.turnOpening = result.turns[0];
           this.transaction.turnClosing = result.turns[0];
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getLastSaleOrder(): void {
-
-    this.loading = true;
-
-    this._transactionService.getLastTransactionByType(this.transaction.type).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.transaction.origin = 0;
-          this.transaction.number = 1;
-          this.addTransaction();
-        } else {
-          this.transaction.origin = result.transactions[0].origin;
-          this.transaction.number = result.transactions[0].number + 1;
-          this.addTransaction();
         }
         this.loading = false;
       },
@@ -469,6 +475,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.loading = true;
 
+    console.log(this.transaction);
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -499,11 +506,11 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.typeOfOperationToPrint = 'item';
     for (let movementOfArticle of this.movementsOfArticles) {
-      if (movementOfArticle.type === ArticleType.Bar && movementOfArticle.printed < movementOfArticle.amount) {
+      if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
         this.barArticlesToPrint.push(movementOfArticle);
       }
 
-      if (movementOfArticle.type === ArticleType.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+      if (movementOfArticle.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
         this.kitchenArticlesToPrint.push(movementOfArticle);
       }
     }
@@ -664,7 +671,7 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     this.transaction.taxes = taxes;
-    this.updateTransaction();
+    this.updateTransaction(false);
   }
 
   public editItem(itemData: MovementOfArticle): void {
@@ -778,20 +785,39 @@ export class AddSaleOrderComponent implements OnInit {
 
         this.typeOfOperationToPrint = "charge";
         if (this.movementsOfArticles.length !== 0) {
-          modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-          modalRef.componentInstance.transaction = this.transaction;
-          modalRef.result.then((result) => {
-            if (result === "add-movement-of-cash") {
-              this.openModal('printers');
-            }
-          }, (reason) => {
+          if ((this.transaction.type.name === "Factura" &&
+              this.transaction.company && 
+              this.transaction.type.electronics === "Si")
+              || 
+              (this.transaction.type.name === "Factura" &&
+              this.transaction.type.electronics !== "Si")
+              ||
+              this.transaction.type.name === "Ticket") {
 
-          });
-          break;
-        } else {
-          this.showMessage("No existen productos en el pedido.", "info", true);
-          this.loading = false;
-        }
+                if((this.transaction.type.name === "Factura" &&
+                    this.transaction.type.electronics === "Si" &&
+                    (this.transaction.company.CUIT || this.transaction.company.DNI)) ||
+                    this.transaction.type.name === "Ticket") {
+                      modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+                      modalRef.componentInstance.transaction = this.transaction;
+                      modalRef.result.then((result) => {
+                        if (result === "add-movement-of-cash") {
+                          this.openModal('printers');
+                        }
+                      }, (reason) => {
+                      });
+                } else {
+                  this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
+                  this.loading = false;
+                }
+              } else {
+                this.showMessage("Debe cargar un cliente a la Factura.", "info", true);
+                this.loading = false;
+              }
+          } else {
+            this.showMessage("No existen productos en el pedido.", "info", true);
+            this.loading = false;
+          }
         break;
       case 'printers':
         if (this.countPrinters() > 1) {
@@ -806,7 +832,14 @@ export class AddSaleOrderComponent implements OnInit {
           this.distributeImpressions(this.printersAux[0]);
         } else {
           if (this.typeOfOperationToPrint === "charge") {
-            this.finishCharge();
+            if (this.transaction.type.name !== "Factura" &&
+                this.transaction.type.electronics === "Si") {
+              this.assignOriginAndLetter(0);
+              this.finishCharge();
+            } else {
+              this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
+              this.loading = false;
+            }
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           } else {
@@ -939,7 +972,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     switch (this.typeOfOperationToPrint) {
       case 'charge':
-        this.assignOrigin(printer.origin);
+        this.assignOriginAndLetter(printer.origin);
         this.toPrintCharge(printer);
         break;
       case 'bill':
@@ -957,8 +990,35 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public assignOrigin(origin: number) {
+  public assignOriginAndLetter(origin: number) {
+
     this.transaction.origin = origin;
+    if (this.transaction.company) {
+      console.log("existe c"+ this.transaction.company.vatCondition.transactionLetter);
+      this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+    } else {
+      console.log("no existe c");
+      this.transaction.letter = "X";
+    }
+
+    console.log(this.transaction.letter);
+    this.loading = true;
+
+    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+      result => {
+        if (!result.transactions) {
+          this.showMessage("Error al grabar el punto de venta en el pedido.", "info", true);
+        } else {
+          this.transaction.number = result.transactions[0].number + 1;
+          this.updateTransaction();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public setPrintBill(): void {
@@ -1213,12 +1273,10 @@ export class AddSaleOrderComponent implements OnInit {
       if (Config.companyAddress) content += '<tr><td colspan="12"><font face="Courier" size="2">' + Config.companyAddress + '</font></td></tr>';
       if (Config.companyPhone) content += '<tr><td colspan="12"><font face="Courier" size="2">Tel: ' + Config.companyPhone + '</font></td></tr>';
       content +=
-        '<tr><td colspan="5"><font face="Courier" size="2">P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '</font></td>' +
-        '<td colspan="7" align="right"><font face="Courier" size="2">Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.endDate, 'HH:mm') + '</font></td></tr>';
+        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.startDate, 'DD/MM/YYYY') + '</font></td>' +
+        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
       if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
-      if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
+      if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeOpening.name + '</font></td></tr>';
       if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
       content += '<tr><td colspan="12"><hr></td></tr>';
       for (let movementOfArticle of this.movementsOfArticles) {

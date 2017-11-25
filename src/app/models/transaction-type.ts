@@ -5,6 +5,7 @@ export class TransactionType {
 	public state: TransactionTypeState = TransactionTypeState.Enabled;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: TransactionTypeMovements = TransactionTypeMovements.Inflows;
+	public electronics: string;
 
 	constructor() { }
 }

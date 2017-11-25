@@ -54,7 +54,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "transaction/" + id, { headers: headers }).map (res => res.json());
-  }
+  	}
 
 	updateTransaction(transaction: Transaction) {
 		let headers = new Headers({
@@ -62,7 +62,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.put(Config.apiURL + "transaction/" + transaction._id, transaction, { headers: headers }).map (res => res.json());
-  }
+  	}
 
 	getOpenTransactionByTable(tableId: string) {
 		let headers = new Headers({
@@ -120,7 +120,16 @@ export class TransactionService {
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
-  
+	
+	getLastTransactionByTypeAndOrigin(type: TransactionType, origin: number, letter) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken()
+		});
+		console.log(Config.apiURL + 'transactions/where="type":"' + type._id + '","origin":"' + origin + '","letter":"' + letter + '"&sort="number":-1&limit=1');
+		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '","origin":"' + origin + '","letter":"' + letter + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
+	}
+
 	getLastTransactionByTable(tableId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

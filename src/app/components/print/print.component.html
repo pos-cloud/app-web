@@ -36,10 +36,10 @@
     </div>
     <div class="row">
       <div class="col-md-7">
-        Fecha: {{transaction.endDate | date:'dd/MM/yyyy'}}
+        Fecha: {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
       </div>
       <div class="col-md-5" align="right">
-        Hora: {{transaction.endDate | date:'HH:mm'}}
+        Hora: {{transaction.endDate | dateFormat:'HH:mm'}}
       </div>
     </div>
     <div class="row">
@@ -132,7 +132,7 @@
     </div>
     <div class="row">
       <div class="col-md-7">
-        Fecha: {{transaction.endDate | date:'dd/MM/yyyy'}}
+        Fecha: {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
       </div>
       <div class="col-md-5" align="right">
         Hora: {{transaction.endDate | date:'HH:mm'}}
@@ -203,7 +203,7 @@
     </div>
     <div class="row">
       <div class="col-md-7">
-        Fecha: {{transaction.endDate | date:'dd/MM/yyyy'}}
+        Fecha: {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
       </div>
       <div class="col-md-5" align="right">
         Hora: {{transaction.endDate | date:'HH:mm'}}
@@ -288,12 +288,12 @@
         </tr>
         <tr *ngIf="shiftClosingTransaction">
           <td colspan="12">
-            <font face="Courier" size="2">Tiquets: {{shiftClosingTransaction.amountOrders}}</font>
+            <font face="Courier" size="2">Tickets: {{shiftClosingTransaction.amountOrders}}</font>
           </td>
         </tr>
         <tr *ngIf="!shiftClosingTransaction">
           <td colspan="12">
-            <font face="Courier" size="2">Tiquets: 0</font>
+            <font face="Courier" size="2">Tickets: 0</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingTransaction">
@@ -303,13 +303,13 @@
         </tr>
         <tr *ngIf="!shiftClosingTransaction">
           <td colspan="12">
-            <font face="Courier" size="2">Tiquets Anulados: 0</font>
+            <font face="Courier" size="2">Tickets Anulados: 0</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingTransaction && shiftClosingTransaction.detailCanceled !== ''">
           <td colspan="12">
             <font face="Courier" size="2">
-              <b>Detalle de Tiquets Anulados:</b>
+              <b>Detalle de Tickets Anulados:</b>
             </font>
           </td>
         </tr>

@@ -217,7 +217,7 @@ export class ListTablesComponent implements OnInit {
   }
 
   public addTransaction() {
-    this._router.navigate(['/pos/resto/salones/' + this.filterRoom + '/mesas/' + this.tableSelected._id + '/agregar-pedido']);
+    this._router.navigate(['/pos/resto/salones/' + this.filterRoom + '/mesas/' + this.tableSelected._id + '/agregar-ticket']);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

@@ -19,7 +19,7 @@ export class Article {
     public category: Category;
     public stock: number = 0;
     public barcode: string;
-    public type: ArticleType = ArticleType.Counter;
+    public printIn: ArticlePrintIn = ArticlePrintIn.Counter;
     public printed: boolean;
     public picture: string;
 
@@ -27,7 +27,7 @@ export class Article {
     constructor() {}
 }
 
-export enum ArticleType {
+export enum ArticlePrintIn {
     Bar = <any> "Bar",
     Kitchen = <any> "Cocina",
     Counter = <any> "Mostrador"

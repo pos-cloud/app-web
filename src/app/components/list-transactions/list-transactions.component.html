@@ -23,7 +23,8 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('type','name')">Tipo</th>
-            	<th (click)="orderBy('origin')">Punto de venta</th>
+            	<th (click)="orderBy('origin')">Origen</th>
+            	<th (click)="orderBy('letter')">Letra</th>
             	<th (click)="orderBy('number')">Número</th>
 	            <th (click)="orderBy('endDate')">Fecha</th>
 	            <th (click)="orderBy('company','name')">Cliente</th>
@@ -40,6 +41,7 @@
             <tr *ngIf="areFiltersVisible"><th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Punto de venta..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterLetter" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Fecha..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCompany" placeholder="Cliente..." ></th>
@@ -56,7 +58,8 @@
           </thead>
           <tbody>
             <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type' 
-                                                        | filter: filterOrigin:'origin' 
+                                                        | filter: filterOrigin:'origin'  
+                                                        | filter: filterLetter:'letter' 
                                                         | filter: filterNumber:'number'
                                                         | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
@@ -77,11 +80,12 @@
                                                                     }">
               <td align="left" width="100">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('cancel', transaction)"><i class="fa fa-close"></i></button>
+                <!-- <button type="button" class="btn btn-danger btn-sm" (click)="openModal('cancel', transaction)"><i class="fa fa-close"></i></button> -->
               </td>
               <td *ngIf="transaction.type">{{transaction.type.name}}</td>
               <td *ngIf="!transaction.type"></td>
               <td>{{transaction.origin}}</td>
+              <td>{{transaction.letter}}</td>
               <td>{{transaction.number}}</td>
               <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
               <td *ngIf="!transaction.endDate">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
@@ -125,9 +129,10 @@
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
             <td>
               <b>
-                {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
+                {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
               filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
               | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
               filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
@@ -139,7 +144,7 @@
             <td></td>
             <td>
               <b>
-                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
+                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
               filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
               | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
               filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
@@ -148,7 +153,7 @@
             </td>
             <td>
               <b>
-                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterNumber:'number' | filter:
+                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
               filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
               | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
               filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:

@@ -1,4 +1,4 @@
-import { Article, ArticleType } from './article';
+import { Article, ArticlePrintIn } from './article';
 import { Transaction } from './transaction';
 
 export class MovementOfArticle {
@@ -19,7 +19,7 @@ export class MovementOfArticle {
     public barcode: string;
     public amount: number = 1;
     public notes: string;
-    public type: ArticleType;
+    public printIn: ArticlePrintIn;
     public printed: number = 0;
     public transaction: Transaction = null;
 

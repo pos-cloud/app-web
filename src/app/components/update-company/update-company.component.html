@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="form-group col-md-2">
+				<div class="form-group col-md-3">
 					<label for="identityType" class="control-label"></label>
 					<select class="form-control" formControlName="identityType">
 						<option *ngFor="let identityType of identityTypes" [ngValue]="identityType" [disabled]="readonly">
@@ -49,7 +49,7 @@
 						</option>
 					</select>
 				</div>
-				<div class="form-group col-md-4" *ngIf="identityTypeSelected==='CUIT'">
+				<div class="form-group col-md-9" *ngIf="identityTypeSelected==='CUIT'">
 					<label for="CUIT" class="control-label"></label>
 					<div class="input-group">
 						<input type="text" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent" [readonly]="readonly"/>
@@ -58,7 +58,7 @@
 						{{ formErrors.CUIT }}
 					</div>
 				</div>
-				<div class="form-group col-md-4" *ngIf="identityTypeSelected==='DNI'">
+				<div class="form-group col-md-9" *ngIf="identityTypeSelected==='DNI'">
 					<label for="DNI" class="control-label"></label>
 					<div class="input-group">
 						<input type="text" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent" [readonly]="readonly"/>

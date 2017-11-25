@@ -87,8 +87,9 @@ export class PointOfSaleComponent implements OnInit {
           let transactionType = new TransactionType();
           transactionType.currentAccount = CurrentAcount.Yes;
           transactionType.movement = TransactionTypeMovements.Inflows;
-          transactionType.name = "Orden de Pedido";
+          transactionType.name = "Ticket";
           transactionType.state = TransactionTypeState.Enabled;
+          transactionType.electronics = "No";
           this._transactionTypeService.saveTransactionType(transactionType).subscribe(
             result => {
               if (!result.transactionType) {
@@ -99,6 +100,7 @@ export class PointOfSaleComponent implements OnInit {
                 transactionType.movement = TransactionTypeMovements.Inflows;
                 transactionType.name = "Cobro";
                 transactionType.state = TransactionTypeState.Enabled;
+                transactionType.electronics = "No";
                 this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                   result => {
                     if (!result.transactionType) {
@@ -109,6 +111,7 @@ export class PointOfSaleComponent implements OnInit {
                       transactionType.movement = TransactionTypeMovements.Outflows;
                       transactionType.name = "Nota de Crédito";
                       transactionType.state = TransactionTypeState.Enabled;
+                      transactionType.electronics = "No";
                       this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                         result => {
                           if (!result.transactionType) {
@@ -119,6 +122,7 @@ export class PointOfSaleComponent implements OnInit {
                             transactionType.movement = TransactionTypeMovements.Outflows;
                             transactionType.name = "Saldo Inicial (+)";
                             transactionType.state = TransactionTypeState.Enabled;
+                            transactionType.electronics = "No";
                             this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                               result => {
                                 if (!result.transactionType) {
@@ -129,12 +133,32 @@ export class PointOfSaleComponent implements OnInit {
                                   transactionType.movement = TransactionTypeMovements.Inflows;
                                   transactionType.name = "Saldo Inicial (-)";
                                   transactionType.state = TransactionTypeState.Enabled;
+                                  transactionType.electronics = "No";
                                   this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                                     result => {
                                       if (!result.transactionType) {
                                         this.showMessage(result.message, "info", true);
                                       } else {
-                                        this.hideMessage();
+                                        let transactionType = new TransactionType();
+                                        transactionType.currentAccount = CurrentAcount.Yes;
+                                        transactionType.movement = TransactionTypeMovements.Inflows;
+                                        transactionType.name = "Factura";
+                                        transactionType.state = TransactionTypeState.Enabled;
+                                        transactionType.electronics = "Si";
+                                        this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+                                          result => {
+                                            if (!result.transactionType) {
+                                              this.showMessage(result.message, "info", true);
+                                            } else {
+                                              this.hideMessage();
+                                            }
+                                            this.loading = false;
+                                          },
+                                          error => {
+                                            this.showMessage(error._body, "danger", false);
+                                            this.loading = false;
+                                          }
+                                        );
                                       }
                                       this.loading = false;
                                     },
@@ -344,9 +368,9 @@ export class PointOfSaleComponent implements OnInit {
     this.getOpenTransactions();
   }
   
-  public addSaleOrder(): void {
-    this._router.navigate(['/pos/' + this.posType + '/agregar-pedido']);
-  } 
+  public addSaleOrder(type: string): void {
+    this._router.navigate(['/pos/' + this.posType + '/agregar-' + type]);
+  }
   
   public addTransaction(type: string): void {
     this.openModal('transaction', type);
@@ -426,8 +450,10 @@ export class PointOfSaleComponent implements OnInit {
 
   public openTransaction(transaction: Transaction): void {
 
-    if(transaction.type.name === "Orden de Pedido") {
-      this._router.navigate(['/pos/' + this.posType + '/editar-pedido/' + transaction._id]);
+    if(transaction.type.name === "Ticket") {
+      this._router.navigate(['/pos/' + this.posType + '/editar-ticket/' + transaction._id]);
+    } else if (transaction.type.name === "Factura") {
+      this._router.navigate(['/pos/' + this.posType + '/editar-factura/' + transaction._id]);
     } else {
       this.openModal('transaction', transaction.type.name, transaction);
     }   

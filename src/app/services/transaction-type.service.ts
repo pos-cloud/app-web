@@ -38,12 +38,12 @@ export class TransactionTypeService {
 		return this._http.get(Config.apiURL + "transaction-types", {headers: headers}).map(res => res.json());
 	}
 
-	getTransactionTypeSaleOrder() {
+	getTransactionByType(type: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		return this._http.get(Config.apiURL + 'transaction-types/where="name":"Orden de Pedido"', {headers: headers}).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transaction-types/where="name":"' + type + '"', {headers: headers}).map(res => res.json());
 	}
 
 	getTransactionTypeByName(name: string) {

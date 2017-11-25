@@ -6,7 +6,7 @@ import { SlicePipe } from '@angular/common';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, ArticleType } from './../../models/article';
+import { Article, ArticlePrintIn } from './../../models/article';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
 
@@ -33,7 +33,7 @@ export class UpdateArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
-  public types: ArticleType[] = [ArticleType.Bar, ArticleType.Kitchen, ArticleType.Counter];
+  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Bar, ArticlePrintIn.Kitchen, ArticlePrintIn.Counter];
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
@@ -180,7 +180,7 @@ export class UpdateArticleComponent implements OnInit {
       'barcode': [this.article.barcode, [
         ]
       ],
-      'type': [this.article.type, [
+      'printIn': [this.article.printIn, [
         ]
       ]
     });
@@ -416,7 +416,7 @@ export class UpdateArticleComponent implements OnInit {
 
     if (!this.article.observation) this.article.observation = "";
     if (!this.article.barcode) this.article.barcode = "";
-    if (!this.article.type) this.article.type = ArticleType.Counter;
+    if (!this.article.printIn) this.article.printIn = ArticlePrintIn.Counter;
 
     this.articleForm.setValue({
       '_id': this.article._id,
@@ -434,7 +434,7 @@ export class UpdateArticleComponent implements OnInit {
       'category': category,
       'observation': this.article.observation,
       'barcode': this.article.barcode,
-      'type': this.article.type
+      'printIn': this.article.printIn
     });
   }
 
