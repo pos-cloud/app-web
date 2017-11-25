@@ -6,6 +6,7 @@ export class TransactionType {
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: TransactionTypeMovements = TransactionTypeMovements.Inflows;
 	public electronics: string;
+	public codes: CodeAFIP[];
 
 	constructor() { }
 }
@@ -24,4 +25,9 @@ export enum CurrentAcount {
 	Yes = <any>"Sí",
 	No = <any>"No",
 	Cobra = <any>"Cobra"
+}
+
+export class CodeAFIP {
+	letter: string;
+	code: number;
 }

@@ -9,7 +9,7 @@ import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionTypeState, TransactionTypeMovements, CurrentAcount } from './../../models/transaction-type';
+import { TransactionType, TransactionTypeState, TransactionTypeMovements, CurrentAcount, CodeAFIP } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
 import { RoomService } from './../../services/room.service';
@@ -145,6 +145,20 @@ export class PointOfSaleComponent implements OnInit {
                                         transactionType.name = "Factura";
                                         transactionType.state = TransactionTypeState.Enabled;
                                         transactionType.electronics = "Si";
+                                        let codes = new Array();
+                                        let codeA = new CodeAFIP();
+                                        codeA.letter = "A";
+                                        codeA.code = 1;
+                                        codes.push(codeA);
+                                        let codeB = new CodeAFIP();
+                                        codeB.letter = "B";
+                                        codeB.code = 6;
+                                        codes.push(codeB);
+                                        let codeC = new CodeAFIP();
+                                        codeC.letter = "C";
+                                        codeC.code = 11;
+                                        codes.push(codeC);
+                                        transactionType.codes = codes;
                                         this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                                           result => {
                                             if (!result.transactionType) {
