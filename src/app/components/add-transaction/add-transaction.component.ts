@@ -134,31 +134,6 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction.type = result.transactionTypes[0];
           this.setValueForm();
-          this.getLastTransactionByType();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getLastTransactionByType(): void {
-
-    this.loading = true;
-    
-    this._transactionService.getLastTransactionByType(this.transaction.type).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.transaction.origin = 1;
-          this.transaction.number = 1;
-          this.setValueForm();
-        } else {
-          this.transaction.origin = result.transactions[0].origin;
-          this.transaction.number = result.transactions[0].number + 1;
-          this.setValueForm();
         }
         this.loading = false;
       },
@@ -243,16 +218,47 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.company = this.transactionForm.value.company;
     this.transaction.endDate = this.transactionForm.value.date;
     this.transaction.origin = this.transactionForm.value.origin;
-    this.transaction.number = this.transactionForm.value.number;
+    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+      this.transaction.letter = this.transaction.type.fixedLetter;
+    } else {
+      this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+    }
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.observation = this.transactionForm.value.observation;
 
-    if(this.transaction.state === TransactionState.Open) {
-      this.transaction.state = TransactionState.Pending;
-      this.saveTransaction();
-    } else {
-      this.updateTransaction();
-    }
+    this.getLastTransactionByType();
+  }
+
+  public getLastTransactionByType(): void {
+
+    this.loading = true;
+
+    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+      result => {
+        if (!result.transactions) {
+          this.transaction.number = 1;
+          if(this.transaction.state === TransactionState.Open) {
+            this.transaction.state = TransactionState.Pending;
+            this.saveTransaction();
+          } else {
+            this.updateTransaction();
+          }
+        } else {
+          this.transaction.number = result.transactions[0].number + 1;
+          if(this.transaction.state === TransactionState.Open) {
+            this.transaction.state = TransactionState.Pending;
+            this.saveTransaction();
+          } else {
+            this.updateTransaction();
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public saveTransaction(): void {

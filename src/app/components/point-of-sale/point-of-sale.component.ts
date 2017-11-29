@@ -101,6 +101,7 @@ export class PointOfSaleComponent implements OnInit {
                 transactionType.name = "Cobro";
                 transactionType.state = TransactionTypeState.Enabled;
                 transactionType.electronics = "No";
+                transactionType.fixedLetter = "X";
                 this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                   result => {
                     if (!result.transactionType) {
@@ -123,6 +124,7 @@ export class PointOfSaleComponent implements OnInit {
                             transactionType.name = "Saldo Inicial (+)";
                             transactionType.state = TransactionTypeState.Enabled;
                             transactionType.electronics = "No";
+                            transactionType.fixedLetter = "X";
                             this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                               result => {
                                 if (!result.transactionType) {
@@ -134,6 +136,7 @@ export class PointOfSaleComponent implements OnInit {
                                   transactionType.name = "Saldo Inicial (-)";
                                   transactionType.state = TransactionTypeState.Enabled;
                                   transactionType.electronics = "No";
+                                  transactionType.fixedLetter = "X";
                                   this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                                     result => {
                                       if (!result.transactionType) {

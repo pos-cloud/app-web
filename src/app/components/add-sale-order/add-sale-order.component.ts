@@ -994,14 +994,11 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.transaction.origin = origin;
     if (this.transaction.company) {
-      console.log("existe c"+ this.transaction.company.vatCondition.transactionLetter);
       this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
     } else {
-      console.log("no existe c");
       this.transaction.letter = "X";
     }
 
-    console.log(this.transaction.letter);
     this.loading = true;
 
     this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
