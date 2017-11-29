@@ -7,6 +7,7 @@ export class TransactionType {
 	public movement: TransactionTypeMovements = TransactionTypeMovements.Inflows;
 	public electronics: string;
 	public codes: CodeAFIP[];
+	public fixedOrigin: number;
 	public fixedLetter: string;
 
 	constructor() { }
