@@ -833,9 +833,8 @@ export class AddSaleOrderComponent implements OnInit {
           this.distributeImpressions(this.printersAux[0]);
         } else {
           if (this.typeOfOperationToPrint === "charge") {
-            if (this.transaction.type.name !== "Factura" &&
-                this.transaction.type.electronics === "Si") {
-              this.assignOriginAndLetter(0);
+            if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+              this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
               this.finishCharge();
             } else {
               this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
@@ -857,6 +856,7 @@ export class AddSaleOrderComponent implements OnInit {
           if (result !== "cancel" && result !== "") {
             if(this.typeOfOperationToPrint === "charge") {
               this.assignOriginAndLetter(this.printerSelected.origin);
+              this.finishCharge();
             } else if (this.typeOfOperationToPrint === "bill") {
               this.changeStateOfTable(TableState.Pending, true);
             } else {
