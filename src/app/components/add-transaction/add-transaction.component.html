@@ -33,7 +33,7 @@
       <div class="row">
         <div class="form-group col-md-6">
           <label for="date" class="control-label">Fecha:</label>
-          <input type="date" class="form-control" formControlName="date" name="date" [focus]="focusEvent"/>
+          <input type="date" class="form-control" formControlName="date" name="date"/>
           <div *ngIf="formErrors.date" class="alert alert-danger">
             {{ formErrors.date }}
           </div>
@@ -51,7 +51,7 @@
           <label for="totalPrice" class="control-label">Importe:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01"/>
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" [focus]="focusEvent"/>
           </div>
           <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
             {{ formErrors.totalPrice }}
@@ -75,4 +75,5 @@
       </button>
     </div>
   </form>
+  {{transactionForm.value | json }}
 </section>

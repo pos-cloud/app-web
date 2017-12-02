@@ -18,11 +18,14 @@ import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { CompanyService } from './../../services/company.service';
 
+//Pipes
+import { DateFormatPipe } from './../../pipes/date-format.pipe';
+
 @Component({
   selector: 'app-add-transaction',
   templateUrl: './add-transaction.component.html',
   styleUrls: ['./add-transaction.component.css'],
-  providers: [NgbAlertConfig ]
+  providers: [NgbAlertConfig, DateFormatPipe]
 })
 
 export class AddTransactionComponent implements OnInit {
@@ -36,6 +39,7 @@ export class AddTransactionComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
+  public datePipe = new DateFormatPipe();
 
   public formErrors = {
     'date': '',
@@ -133,6 +137,9 @@ export class AddTransactionComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionTypes[0];
+          if(this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+            this.transaction.origin = this.transaction.type.fixedOrigin;
+          }
           this.setValueForm();
         }
         this.loading = false;
@@ -152,7 +159,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm.setValue({
       'company': this.transaction.company,
-      'date': moment(this.transaction.endDate).format('DD/MM/YYYY HH:mm:ss'),
+      'date': this.datePipe.transform(this.transaction.startDate, 'YYYY-MM-DD'),
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
@@ -161,13 +168,13 @@ export class AddTransactionComponent implements OnInit {
   }
 
   public buildForm(): void {
-
+    
     this.transactionForm = this._fb.group({
       'company': [this.transaction.company, [
           Validators.required
         ]
       ],
-      'date': [moment().format('DD/MM/YYYY HH:mm:ss'), [
+      'date': [this.datePipe.transform(this.transaction.startDate, 'YYYY-MM-DD'), [
           Validators.required
         ]
       ],
@@ -216,7 +223,8 @@ export class AddTransactionComponent implements OnInit {
   public addTransaction(): void {
 
     this.transaction.company = this.transactionForm.value.company;
-    this.transaction.endDate = this.transactionForm.value.date;
+    this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date, 'DD/MM/YYYY hh:mm:ss');
+    this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date, 'DD/MM/YYYY hh:mm:ss');
     this.transaction.origin = this.transactionForm.value.origin;
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
       this.transaction.letter = this.transaction.type.fixedLetter;

@@ -59,6 +59,7 @@ export class AddSaleOrderComponent implements OnInit {
   public lastMovementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
   public printers: Printer[];
+  public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public amountOfItemForm: FormGroup;
   public discountForm: FormGroup;
@@ -832,9 +833,8 @@ export class AddSaleOrderComponent implements OnInit {
           this.distributeImpressions(this.printersAux[0]);
         } else {
           if (this.typeOfOperationToPrint === "charge") {
-            if (this.transaction.type.name !== "Factura" &&
-                this.transaction.type.electronics === "Si") {
-              this.assignOriginAndLetter(0);
+            if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+              this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
               this.finishCharge();
             } else {
               this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
@@ -854,7 +854,18 @@ export class AddSaleOrderComponent implements OnInit {
       case 'errorMessage':
         modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
           if (result !== "cancel" && result !== "") {
-            this.finishCharge();
+            if(this.typeOfOperationToPrint === "charge") {
+              this.assignOriginAndLetter(this.printerSelected.origin);
+              this.finishCharge();
+            } else if (this.typeOfOperationToPrint === "bill") {
+              this.changeStateOfTable(TableState.Pending, true);
+            } else {
+              if (this.posType === 'resto') {
+                this.changeStateOfTable(TableState.Busy, true);
+              } else {
+                this.back();
+              }
+            }
           }
         }, (reason) => {
 
@@ -970,9 +981,10 @@ export class AddSaleOrderComponent implements OnInit {
 
   public distributeImpressions(printer: Printer) {
 
+    this.printerSelected = printer;
+
     switch (this.typeOfOperationToPrint) {
       case 'charge':
-        this.assignOriginAndLetter(printer.origin);
         this.toPrintCharge(printer);
         break;
       case 'bill':
@@ -1236,6 +1248,8 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             if (this.posType === 'resto') {
               this.changeStateOfTable(TableState.Pending, true);
+            } else {
+              this.back();
             }
           }
           this.loading = false;
@@ -1315,7 +1329,7 @@ export class AddSaleOrderComponent implements OnInit {
           if (result.message !== "ok") {
             this.showMessage(result.message, "info", true);
           } else {
-            this.finishCharge();
+            this.assignOriginAndLetter(printerSelected.origin);
           }
           this.loading = false;
         },
@@ -1391,7 +1405,7 @@ export class AddSaleOrderComponent implements OnInit {
             if (this.kitchenArticlesToPrint.length === 0) {
               if (this.posType === 'resto') {
                 this.changeStateOfTable(TableState.Busy, true);
-              } else if (this.posType === 'resto') {
+              } else {
                 this.back();
               }
             } else {
@@ -1472,6 +1486,8 @@ export class AddSaleOrderComponent implements OnInit {
             }
             if (this.posType === 'resto') {
               this.changeStateOfTable(TableState.Busy, true);
+            } else {
+              this.back();
             }
           }
           this.loading = false;
