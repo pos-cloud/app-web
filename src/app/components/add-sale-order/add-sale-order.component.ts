@@ -475,8 +475,7 @@ export class AddSaleOrderComponent implements OnInit {
   public updateTransaction(closed?: boolean): void {
 
     this.loading = true;
-
-    console.log(this.transaction);
+    
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -1251,11 +1250,13 @@ export class AddSaleOrderComponent implements OnInit {
             } else {
               this.back();
             }
+            this.hideMessage();
           }
           this.loading = false;
         },
         error => {
           this.openModal('errorMessage');
+          this.hideMessage();
         }
       );
     } else {
@@ -1330,11 +1331,13 @@ export class AddSaleOrderComponent implements OnInit {
             this.showMessage(result.message, "info", true);
           } else {
             this.assignOriginAndLetter(printerSelected.origin);
+            this.hideMessage();
           }
           this.loading = false;
         },
         error => {
           this.openModal('errorMessage');
+          this.hideMessage();
         }
       );
     } else {
@@ -1412,11 +1415,13 @@ export class AddSaleOrderComponent implements OnInit {
               this.typeOfOperationToPrint = "kitchen";
               this.openModal("printers");
             }
+            this.hideMessage();
           }
           this.loading = false;
         },
         error => {
           this.openModal('errorMessage');
+          this.hideMessage();
         }
       );
     } else {
@@ -1491,9 +1496,11 @@ export class AddSaleOrderComponent implements OnInit {
             }
           }
           this.loading = false;
-        },
+          this.hideMessage();
+        },  
         error => {
           this.openModal('errorMessage');
+          this.hideMessage();
         }
       );
     } else {

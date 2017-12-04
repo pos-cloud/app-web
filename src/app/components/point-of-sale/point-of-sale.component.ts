@@ -22,6 +22,8 @@ import { AddTransactionComponent } from './../add-transaction/add-transaction.co
 import { DeleteTransactionComponent } from './../delete-transaction/delete-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
+import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
+import { ViewTransactionComponent } from './../../components/view-sale-order/view-transaction.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -390,7 +392,7 @@ export class PointOfSaleComponent implements OnInit {
   }
   
   public addTransaction(type: string): void {
-    this.openModal('transaction', type);
+    this.openModal('company', type);
   }
 
   public openModal(op: string, typeTransaction?: string, transaction: Transaction = undefined): void {
@@ -398,6 +400,22 @@ export class PointOfSaleComponent implements OnInit {
     let modalRef;
 
     switch (op) {
+      case 'company':
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef.result.then(
+          (result) => {
+            if (typeof (result) === "object") {
+              if(!transaction) {
+                transaction = new Transaction();
+              }
+              transaction.company = result;
+              this.openModal('transaction', typeTransaction, transaction);
+            }
+          }, (reason) => {
+
+          }
+        );
+        break;
       case 'transaction':
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
@@ -406,6 +424,8 @@ export class PointOfSaleComponent implements OnInit {
           (result) => {
             if (typeof(result) === "object") {
               this.openModal('movement-of-cash', typeTransaction, result);
+            } else if (result === "change-company") {
+              this.openModal('company', typeTransaction, transaction);
             }
           }, (reason) => {
 
@@ -418,13 +438,15 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.result.then((result) => {
           if (result === "add-movement-of-cash") {
             transaction.state = TransactionState.Closed;
-            transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
             this.updateTransaction(transaction);
-            this.getOpenTransactions();
           }
         }, (reason) => {
           this.getOpenTransactions();
         });
+        break;
+      case 'view-transaction':
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
         break;
       case 'cancel-transaction':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
@@ -466,7 +488,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public openTransaction(transaction: Transaction): void {
-
+    
     if(transaction.type.name === "Ticket") {
       this._router.navigate(['/pos/' + this.posType + '/editar-ticket/' + transaction._id]);
     } else if (transaction.type.name === "Factura") {
@@ -501,14 +523,14 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    if(state === "Enviado") {
+    if (state === "Enviado") {
       transaction.state = TransactionState.Sent;
     } else if (state === "Entregado") {
       transaction.state = TransactionState.Delivered;
     }
 
     transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
-    
+
     this.updateTransaction(transaction);
   }
 

@@ -14,26 +14,23 @@
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="company" class="control-label">Cliente</label>
-          <select class="form-control" formControlName="company" *ngIf="transaction.company" name="company">
-            <option  *ngFor="let company of companies"
-                  [selected]="transaction.company._id===company._id"  
-                  [ngValue]="company">
-                  {{company.name}}
-            </option>
-          </select>
-          <select class="form-control" formControlName="company" *ngIf="!transaction.company" name="company">
-            <option *ngFor="let company of companies"
-                    [ngValue]="company">
-                  {{company.name}}
-            </option>
-          </select>
+          <label for="company" class="control-label">Cliente:</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-10">
+          <input type="text" class="form-control" formControlName="company" name="company" readonly/>
+        </div>
+        <div class="col-md-2" align="right">
+          <button type="button" class="btn btn-secondary" (click)="activeModal.close('change-company')">
+            Cambiar
+          </button>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-6">
           <label for="date" class="control-label">Fecha:</label>
-          <input type="date" class="form-control" formControlName="date" name="date"/>
+          <input type="date" class="form-control" formControlName="date" name="date" min="2016-01-01"/>
           <div *ngIf="formErrors.date" class="alert alert-danger">
             {{ formErrors.date }}
           </div>
@@ -75,5 +72,4 @@
       </button>
     </div>
   </form>
-  {{transactionForm.value | json }}
 </section>

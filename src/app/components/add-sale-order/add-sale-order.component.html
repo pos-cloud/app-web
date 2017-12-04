@@ -14,7 +14,7 @@
         <div class="col-md-2">
           <b>Apertura: </b>{{transaction.startDate | dateFormat:'HH:mm'}}
         </div>
-        <div class="col-md-2 offset-md-1">
+        <div class="col-md-2 offset-md-1" *ngIf="posType==='resto'">
           <a class="btn" (click)="openModal('change-employee')"><i class="fa fa-exchange"></i> Cambiar Empleado</a>
         </div>
       </div>

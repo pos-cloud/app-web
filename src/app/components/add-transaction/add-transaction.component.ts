@@ -1,5 +1,5 @@
 //Paquetes de Angular
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, transition } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -82,7 +82,7 @@ export class AddTransactionComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) { 
-    this.companies = new Array();
+    
   }
 
   ngOnInit(): void {
@@ -90,41 +90,17 @@ export class AddTransactionComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    if(!this.transaction) {
-      this.transaction = new Transaction();
+    
+    if(!this.transaction.type) {
       this.transaction.state = TransactionState.Open;
       this.transaction.type = new TransactionType();
-      this.transaction.company = null;
       this.getTransactionTypeByName();
     }
-    this.getCompanies();
     this.buildForm();
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
-  }
-
-  public getCompanies(): void {
-
-    this.loading = true;
-
-    this._companyService.getCompanies().subscribe(
-      result => {
-        if (!result.companies) {
-          this.showMessage(result.message, "info", true);
-          this.companies = null;
-        } else {
-          this.companies = result.companies;
-          this.setValueForm();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public getTransactionTypeByName(): void {
@@ -158,7 +134,7 @@ export class AddTransactionComponent implements OnInit {
     if(!this.transaction.observation) this.transaction.observation = ""; 
 
     this.transactionForm.setValue({
-      'company': this.transaction.company,
+      'company': this.transaction.company.name,
       'date': this.datePipe.transform(this.transaction.startDate, 'YYYY-MM-DD'),
       'origin': this.transaction.origin,
       'number': this.transaction.number,
@@ -170,7 +146,7 @@ export class AddTransactionComponent implements OnInit {
   public buildForm(): void {
     
     this.transactionForm = this._fb.group({
-      'company': [this.transaction.company, [
+      'company': [this.transaction.company.name, [
           Validators.required
         ]
       ],
@@ -221,11 +197,11 @@ export class AddTransactionComponent implements OnInit {
   }
 
   public addTransaction(): void {
-
-    this.transaction.company = this.transactionForm.value.company;
-    this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date, 'DD/MM/YYYY hh:mm:ss');
-    this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date, 'DD/MM/YYYY hh:mm:ss');
+    
+    this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss');
+    this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss');
     this.transaction.origin = this.transactionForm.value.origin;
+
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
       this.transaction.letter = this.transaction.type.fixedLetter;
     } else {
@@ -273,7 +249,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.loading = true;
     this.transaction.madein = this.posType;
-
+    
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {

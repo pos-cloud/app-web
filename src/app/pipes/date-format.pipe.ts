@@ -7,9 +7,12 @@ import 'moment/locale/es';
     name: 'dateFormat'
 })
 export class DateFormatPipe implements PipeTransform {
-	transform(value:any, format:string):any {
+	transform(value:any, format:string, formatDefecto?:string):any {
 		if (value) {
-			return moment(value, 'DD/MM/YYYY HH:mm:ss', true).format(format);
+			if(!formatDefecto) {
+				formatDefecto = 'DD/MM/YYYY HH:mm:ss';
+			}
+			return moment(value, formatDefecto, true).format(format);
 		}
 	}
 }

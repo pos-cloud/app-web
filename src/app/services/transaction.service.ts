@@ -126,7 +126,6 @@ export class TransactionService {
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
-		console.log(Config.apiURL + 'transactions/where="type":"' + type._id + '","origin":"' + origin + '","letter":"' + letter + '"&sort="number":-1&limit=1');
 		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '","origin":"' + origin + '","letter":"' + letter + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
 
