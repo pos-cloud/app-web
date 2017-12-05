@@ -86,6 +86,7 @@ export class AppComponent implements OnInit{
   }
 
   public setApiConfigurationSettings(config) {
+    Config.setAccessType(config.accessType);
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
   }

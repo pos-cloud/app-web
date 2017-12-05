@@ -93,24 +93,20 @@
                                                       | filter: filterPendingTotalPrice:'totalPrice'
                                                       | filter: 'Abierto':'state'
                                                       | orderBy: orderTerm: propertyTerm">
-            <td>
+            <td (click)="openTransaction(transaction)">
               <b>{{transaction.number}}</b>
             </td>
-            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
+            <td (click)="openTransaction(transaction)">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}
               <b>{{transaction.startDate | dateFormat:'HH:mm:ss' }}</b>
             </td>
-            <td *ngIf="transaction.company">{{transaction.company.name}}</td>
-            <td *ngIf="!transaction.company"></td>
-            <td *ngIf="transaction.company">{{transaction.company.address}}</td>
-            <td *ngIf="!transaction.company"></td>
-            <td *ngIf="transaction.company">{{transaction.company.phones}}</td>
-            <td *ngIf="!transaction.company"></td>
-            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td (click)="openTransaction(transaction)" *ngIf="transaction.company">{{transaction.company.name}}</td>
+            <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
+            <td (click)="openTransaction(transaction)" *ngIf="transaction.company">{{transaction.company.address}}</td>
+            <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
+            <td (click)="openTransaction(transaction)" *ngIf="transaction.company">{{transaction.company.phones}}</td>
+            <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
+            <td (click)="openTransaction(transaction)">{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             <td>
-              <button class="btn btn-danger" (click)="openTransaction(transaction)">
-                <i class="fa fa-pencil">
-                </i>
-              </button>
               <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')">
                 <i class="fa fa-motorcycle">
                 </i>
@@ -332,6 +328,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
+            <th></th>
             <th (click)="orderBy('type','name')">Tipo</th>
             <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
@@ -339,6 +336,7 @@
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
+            <th></th>
             <th>
               <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
             </th>
@@ -366,22 +364,21 @@
                                                       | paginate: { itemsPerPage: itemsPerPage, 
                                                                     currentPage: p, 
                                                                     totalItems: totalItems
-                                                                  }"
-                (click)="openTransaction(transaction)">
-            <!-- <td align="left" width="150">
+                                                                  }">
+            <td align="left" width="150">
               <button type="button" class="btn btn-success" (click)="openModal('view-transaction', transaction.type.name, transaction)">
                 <i class="fa fa-eye"></i>
               </button>
               <button type="button" class="btn btn-danger" (click)="openModal('cancel-transaction', transaction.type.name, transaction)"><i class="fa fa-close"></i></button>
-            </td> -->
-            <td>{{transaction.type.name}}</td>
-            <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td *ngIf="!transaction.endDate">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td>
+            </td>
+            <td (click)="openTransaction(transaction)">{{transaction.type.name}}</td>
+            <td *ngIf="transaction.endDate" (click)="openTransaction(transaction)">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td *ngIf="!transaction.endDate" (click)="openTransaction(transaction)">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td (click)="openTransaction(transaction)">
               <b>{{transaction.number}}</b>
             </td>
-            <td *ngIf="transaction.company">{{transaction.company.name}}</td>
-            <td *ngIf="!transaction.company">Consumidor Final</td>
+            <td *ngIf="transaction.company" (click)="openTransaction(transaction)">{{transaction.company.name}}</td>
+            <td *ngIf="!transaction.company" (click)="openTransaction(transaction)">Consumidor Final</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">

@@ -15,3 +15,17 @@
 .nav-item, .navbar-brand {
       margin-left: 10px;
 }
+
+.logo {
+      height: 50px;
+      width: 100px;
+}
+
+.nav-link {
+    color: black;
+}
+
+.active-primary {
+      color: #0275D8;
+      border-bottom: 5px solid #0275D8;
+}

@@ -6,7 +6,7 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Lista de Marcas
+    <div class="card-header bg-primary">Listado de Marcas
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)" >Agregar Marca</button>
         <button class="btn btn-primary" (click)="refresh()"[disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span *ngIf="loading">Cargando</span><span *ngIf="!loading">Actualizar</span></button>

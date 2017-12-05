@@ -7,7 +7,7 @@ export class Config {
     static apiURL: string;
     static apiConnectionPassword: string;
     static apiPort: number = 3000;
-    static accessType: string = "Cloud";
+    static accessType: string = "Local";
     static pathMongo: string;
     static pathBackup: string;
     static backupTime: string;
@@ -33,11 +33,11 @@ export class Config {
     }
 
     public static setAccessType(accessType: string): void {
-        this.accessType = accessType;
+        Config.accessType = accessType;
     }
 
     public static setApiConnectionPassword(apiConnectionPassword: string): void {
-        this.apiConnectionPassword = apiConnectionPassword;
+        Config.apiConnectionPassword = apiConnectionPassword;
     }
 
     public static setConfigToBackup(pathBackup, pathMongo, backupTime): void {

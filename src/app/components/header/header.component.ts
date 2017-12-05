@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 
 import { User } from './../../models/user';
+import { Config } from './../../app.config';
 
 import { UserService } from './../../services/user.service';
 
@@ -17,17 +18,18 @@ export class HeaderComponent implements OnInit, DoCheck {
 
   public identity: User;
   public online: Observable<boolean>;
+  public accessType: string;
 
   constructor(
     public _userService: UserService,
     public _router: Router
-
-  ) { 
-     this.online = Observable.merge(
+  ) {
+    this.online = Observable.merge(
       Observable.of(navigator.onLine),
       Observable.fromEvent(window, 'online').mapTo(true),
       Observable.fromEvent(window, 'offline').mapTo(false)
-    )
+    );
+    this.accessType = Config.accessType;
   }
 
   ngOnInit(): void {
