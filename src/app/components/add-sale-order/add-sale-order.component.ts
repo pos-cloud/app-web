@@ -596,9 +596,12 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addItem(itemData?: MovementOfArticle): void {
 
-    this.filterArticle = "";
-    this.areArticlesVisible = false;
-    this.areCategoriesVisible = true;
+    if(this.filterArticle !== undefined &&
+      this.filterArticle !== "") {
+      this.filterArticle = "";
+      this.areArticlesVisible = false;
+      this.areCategoriesVisible = true;
+    }
 
     if (itemData) {
       if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
