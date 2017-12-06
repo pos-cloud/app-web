@@ -84,3 +84,8 @@
 .list-group-item {
       width: 400px;
 }
+
+.filterArticle {
+      margin-bottom: 10px;
+      margin-right: 10px;
+}

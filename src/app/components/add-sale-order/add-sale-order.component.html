@@ -9,13 +9,16 @@
           <b>Empleado:</b> {{transaction.employeeClosing.name}}
         </div>
         <div class="col-md-3">
-          <b>Cliente: </b><span *ngIf="!transaction.company">Consumidor final</span><span *ngIf="transaction.company">{{transaction.company.name}}</span>
+          <b>Cliente: </b>
+          <span *ngIf="!transaction.company">Consumidor final</span>
+          <span *ngIf="transaction.company">{{transaction.company.name}}</span>
         </div>
         <div class="col-md-2">
           <b>Apertura: </b>{{transaction.startDate | dateFormat:'HH:mm'}}
         </div>
         <div class="col-md-2 offset-md-1" *ngIf="posType==='resto'">
-          <a class="btn" (click)="openModal('change-employee')"><i class="fa fa-exchange"></i> Cambiar Empleado</a>
+          <a class="btn" (click)="openModal('change-employee')">
+            <i class="fa fa-exchange"></i> Cambiar Empleado</a>
         </div>
       </div>
     </div>
@@ -45,15 +48,14 @@
             <tr *ngFor="let movementOfArticle of movementsOfArticles" (click)="editItem(movementOfArticle)">
               <td>{{movementOfArticle.amount}}</td>
               <td>{{movementOfArticle.description}}
-                  <strong *ngIf="movementOfArticle.notes">
-                    <br>
-                    {{movementOfArticle.notes}}
-                  </strong>
+                <strong *ngIf="movementOfArticle.notes">
+                  <br> {{movementOfArticle.notes}}
+                </strong>
               </td>
               <td>{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
               <td align=" left " width="20 ">
                 <!-- <button type="button " class="btn btn-danger btn-sm " (click)="deleteMovementOfArticle(movementOfArticle._id) -->
-              <!-- "><i class="fa fa-trash-o "></i></button> -->
+                <!-- "><i class="fa fa-trash-o "></i></button> -->
               </td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
@@ -66,16 +68,36 @@
         <table class="table table-hover">
           <tbody>
             <tr>
-              <td align="right"><h5><b>Subtotal</b></h5></td>
-              <td align="right"><h5><b>{{(transaction.totalPrice+transaction.discount) | currency:'USD':'1.2-2'}}</b></h5></td>
+              <td align="right">
+                <h5>
+                  <b>Subtotal</b>
+                </h5>
+              </td>
+              <td align="right">
+                <h5>
+                  <b>{{(transaction.totalPrice+transaction.discount) | currency:'USD':'1.2-2'}}</b>
+                </h5>
+              </td>
             </tr>
             <tr>
-              <td align="right"><strong>Descuento</strong></td>
-              <td align="right"><strong>-{{transaction.discount | currency:'USD':'1.2-2'}}</strong></td>
+              <td align="right">
+                <strong>Descuento</strong>
+              </td>
+              <td align="right">
+                <strong>-{{transaction.discount | currency:'USD':'1.2-2'}}</strong>
+              </td>
             </tr>
             <tr>
-              <td align="right"><h3><b>TOTAL</b></h3></td>
-              <td align="right"><h3><b>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</b></h3></td>
+              <td align="right">
+                <h3>
+                  <b>TOTAL</b>
+                </h3>
+              </td>
+              <td align="right">
+                <h3>
+                  <b>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</b>
+                </h3>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -106,14 +128,19 @@
       </div>
     </div>
     <div class="col-md-8">
-      <div class="row">
+      <div class="row filterArticle">
+        <div class="col-md-12">
+          <input type="text" class="form-control" [(ngModel)]="filterArticle" placeholder="Filtrar productos" (ngModelChange)="changeVisibilityArticle()" [focus]="focusEvent">
+        </div>
+      </div>
+      <div class="row filterArticle">
         <div class="col-md-8">
           <nav class="breadcrumb">
             <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}" (click)="showCategories()">Rubros</span>
             <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Productos</span>
           </nav>
         </div>
-        <div class="col-md-2 btn-action btn-large center-content" (click)="addItem()">
+        <div class="col-md-3 btn-action btn-large center-content" (click)="addItem()">
           Agregar Producto
         </div>
         <div class="col-md-1 btn-action btn-large center-content" (click)="close()">
@@ -122,12 +149,13 @@
       </div>
       <div [ngClass]="{'row table-responsive img-container':areArticlesVisible}">
         <div class="col-md-12">
-          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible] = "areArticlesVisible" [filterCategory]="categorySelected"></app-list-articles>
+          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible]="areArticlesVisible" [filterArticle]="filterArticle"
+            [filterCategorySelected]="categorySelected"></app-list-articles>
         </div>
       </div>
       <div [ngClass]="{'row table-responsive img-container':areCategoriesVisible}">
         <div class="col-md-12">
-          <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)"  [areCategoriesVisible]="areCategoriesVisible"></app-list-categories>
+          <app-list-categories (eventSelectCategory)="showArticlesOfCategory($event)" [areCategoriesVisible]="areCategoriesVisible"></app-list-categories>
         </div>
       </div>
     </div>
@@ -136,7 +164,7 @@
 
 <!--MODAL CANTIDAD-->
 <ng-template #content let-c="close" let-d="dismiss">
-  <div  class="modal-header">
+  <div class="modal-header">
     <h4 class="modal-title">Cantidad</h4>
     <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
       <span aria-hidden="true">&times;</span>
@@ -148,7 +176,7 @@
         <div class="form-group col-md-12">
           <label for="description" class="control-label">Descripción:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="description" name="description" id="description"/>
+            <input type="text" class="form-control" formControlName="description" name="description" id="description" />
           </div>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
@@ -163,7 +191,7 @@
       <div class="row">
         <div class="form-group col-md-10">
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="amount" name="amount"/>
+            <input type="number" class="form-control" formControlName="amount" name="amount" />
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
@@ -174,18 +202,18 @@
           <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
         </div>
       </div>
-			<div class="row" *ngIf="isNewItem">
-				<div class="form-group col-md-12">
-					<label for="salePrice" class="control-label">Precio de Venta:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01"/>
-					</div>
-					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
-						{{ formErrors.salePrice }}
-					</div>
-				</div>
-			</div>
+      <div class="row" *ngIf="isNewItem">
+        <div class="form-group col-md-12">
+          <label for="salePrice" class="control-label">Precio de Venta:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" />
+          </div>
+          <div *ngIf="formErrors.salePrice" class="alert alert-danger">
+            {{ formErrors.salePrice }}
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="notes" class="control-label">Notas:</label>
@@ -201,7 +229,7 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
       <button type="button" class="btn btn-danger" *ngIf="!isNewItem" (click)="c('delete_item')">Eliminar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading" >
+      <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
         <span *ngIf="loading">Espere por favor</span>
@@ -212,10 +240,10 @@
 
 <!--MODAL DESCUENTO-->
 <ng-template #contentDiscount let-c="close" let-d="dismiss">
-  <div  class="modal-header">
+  <div class="modal-header">
     <h4 class="modal-title">Descuento</h4>
     <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-    <span aria-hidden="true">&times;</span>
+      <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discount')" autocomplete="off">
@@ -234,7 +262,8 @@
           <label for="percentage" class="control-label">Percentageaje de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01" (blur)="updateDiscounts('percentage')" autofocus/>
+            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01" (blur)="updateDiscounts('percentage')"
+              autofocus/>
           </div>
           <div *ngIf="formErrors.percentage" class="alert alert-danger">
             {{ formErrors.percentage }}
@@ -246,7 +275,8 @@
           <label for="amount" class="control-label">Monto de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" (blur)="updateDiscounts('amount')"/>
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" (blur)="updateDiscounts('amount')"
+            />
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
@@ -268,7 +298,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!discountForm.valid || loading" >
+      <button type="submit" class="btn btn-primary" [disabled]="!discountForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
         <span *ngIf="loading">Espere por favor</span>
@@ -288,7 +318,7 @@
   <div class="modal-body">
     <div class="row">
       <div class="col-md-12">
-        <div class="center-content"  *ngIf="alertMessage !== ''">
+        <div class="center-content" *ngIf="alertMessage !== ''">
           <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
             {{alertMessage}}
           </ngb-alert>
@@ -312,7 +342,7 @@
   <div class="modal-header">
     <h4 class="modal-title">Impresoras</h4>
     <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-    <span aria-hidden="true">&times;</span>
+      <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body container-fluid">
@@ -336,21 +366,21 @@
   <div class="modal-header">
     <h4 class="modal-title">Error de conexión</h4>
     <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-    <span aria-hidden="true">&times;</span>
+      <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body container-fluid">
     <div class="row">
       <div class="col-md-12">
-        Ha ocurrido un error de conexión con la impresora.<br>
-        ¿Desea continuar?
+        Ha ocurrido un error de conexión con la impresora.
+        <br> ¿Desea continuar?
       </div>
     </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
     <button type="submit" class="btn btn-primary" (click)="c('y')">
-        <span>Sí</span>
-      </button>
+      <span>Sí</span>
+    </button>
   </div>
 </ng-template>

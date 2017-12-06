@@ -84,6 +84,8 @@ export class AddSaleOrderComponent implements OnInit {
   public kitchenArticlesToPrint: MovementOfArticle[];
   public barArticlesToPrint: MovementOfArticle[];
   public printSelected: Print;
+  public filterArticle: string;
+  public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
     'description': '',
@@ -167,13 +169,17 @@ export class AddSaleOrderComponent implements OnInit {
       if (transactionId !== undefined) {
         this.getTransaction(transactionId);
       } else {
-        if(this.transactionType === "agregar-ticket") {
+        if (this.transactionType === "agregar-ticket") {
           this.getTransactionByType("Ticket");
         } else if (this.transactionType === "agregar-factura") {
           this.getTransactionByType("Factura");
         }
       }
     }
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   public getTransactionByType(type: string): void {
@@ -217,6 +223,16 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public changeVisibilityArticle(): void {
+    if (this.filterArticle !== "" && this.filterArticle !== undefined) {
+      this.areArticlesVisible = true;
+      this.areCategoriesVisible = false;
+    } else {
+      this.areArticlesVisible = false;
+      this.areCategoriesVisible = true;
+    }
   }
 
   public getPrinters(): void {
@@ -339,22 +355,22 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.amountOfItemForm = this._fb.group({
       '_id': [this.movementOfArticle._id, [
-        ]
+      ]
       ],
       'description': [this.movementOfArticle.description, [
         Validators.required
-        ]
+      ]
       ],
       'amount': [this.movementOfArticle.amount, [
         Validators.required
-        ]
+      ]
       ],
       'salePrice': [this.movementOfArticle.salePrice, [
         Validators.required
-        ]
+      ]
       ],
       'notes': [this.movementOfArticle.notes, [
-        ]
+      ]
       ]
     });
 
@@ -386,16 +402,16 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.discountForm = this._fb.group({
       'amount': [this.transaction.discount, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ],
       'percentage': [this.transaction.discount * 100 / this.transaction.totalPrice, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ],
       'transactionAmount': [this.transaction.totalPrice, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ]
     });
 
@@ -424,14 +440,14 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateDiscounts(op: string): void {
-    
-    if(op === 'percentage') {
-      if(this.discountForm.value.percentage && this.discountForm.value.percentage !== 0) {
+
+    if (op === 'percentage') {
+      if (this.discountForm.value.percentage && this.discountForm.value.percentage !== 0) {
         this.discountForm.value.amount = this.transaction.totalPrice * this.discountForm.value.percentage / 100;
         this.discountForm.value.transactionAmount = this.transaction.totalPrice - (this.transaction.totalPrice * this.discountForm.value.percentage / 100);
       }
     } else if (op === 'amount') {
-      if(this.discountForm.value.amount && this.discountForm.value.amount !== 0) {
+      if (this.discountForm.value.amount && this.discountForm.value.amount !== 0) {
         this.discountForm.value.transactionAmount = this.transaction.totalPrice - this.discountForm.value.amount;
         this.discountForm.value.percentage = this.discountForm.value.amount * 100 / this.transaction.totalPrice;
       }
@@ -475,7 +491,7 @@ export class AddSaleOrderComponent implements OnInit {
   public updateTransaction(closed?: boolean): void {
 
     this.loading = true;
-    
+
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -580,6 +596,10 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addItem(itemData?: MovementOfArticle): void {
 
+    this.filterArticle = "";
+    this.areArticlesVisible = false;
+    this.areCategoriesVisible = true;
+
     if (itemData) {
       if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
         let article: Article = new Article();
@@ -618,10 +638,10 @@ export class AddSaleOrderComponent implements OnInit {
     let isSavedTax: boolean = false;
     this.transaction.exempt = 0;
 
-    for(let movementOfArticle of this.movementsOfArticles) {
-      
-      if(movementOfArticle.VATPercentage !== 0) {
-  
+    for (let movementOfArticle of this.movementsOfArticles) {
+
+      if (movementOfArticle.VATPercentage !== 0) {
+
         let tax = new TransactionTax();
         tax.percentage = movementOfArticle.VATPercentage;
         tax.tax = "IVA";
@@ -629,22 +649,22 @@ export class AddSaleOrderComponent implements OnInit {
         tax.taxAmount = tax.taxBase * movementOfArticle.VATPercentage / 100;
         taxesAUX.push(tax);
 
-        if(VATs.length !== 0) {
+        if (VATs.length !== 0) {
           let exist: boolean = false;
-          for(let VAT of VATs) {
-            if( VAT.tax === tax.tax &&
-                VAT.percentage === tax.percentage) {
+          for (let VAT of VATs) {
+            if (VAT.tax === tax.tax &&
+              VAT.percentage === tax.percentage) {
               exist = true;
             }
           }
-          if(exist === false){
-            VATs.push({ 
+          if (exist === false) {
+            VATs.push({
               "tax": tax.tax,
               "percentage": tax.percentage
             });
           }
         } else {
-          VATs.push({ 
+          VATs.push({
             "tax": tax.tax,
             "percentage": tax.percentage
           });
@@ -654,17 +674,17 @@ export class AddSaleOrderComponent implements OnInit {
       }
     }
 
-    for(let VAT of VATs) {
+    for (let VAT of VATs) {
       let tax = new TransactionTax();
       tax.percentage = VAT.percentage;
       tax.tax = VAT.tax;
       tax.taxAmount = 0;
       tax.taxBase = 0;
-      for(let taxAUX of taxesAUX) {
-        if( taxAUX.percentage === VAT.percentage &&
-            VAT.tax === taxAUX.tax) {
-              tax.taxAmount += taxAUX.taxAmount;
-              tax.taxBase += taxAUX.taxBase;
+      for (let taxAUX of taxesAUX) {
+        if (taxAUX.percentage === VAT.percentage &&
+          VAT.tax === taxAUX.tax) {
+          tax.taxAmount += taxAUX.taxAmount;
+          tax.taxBase += taxAUX.taxBase;
         }
       }
       taxes.push(tax);
@@ -786,38 +806,38 @@ export class AddSaleOrderComponent implements OnInit {
         this.typeOfOperationToPrint = "charge";
         if (this.movementsOfArticles.length !== 0) {
           if ((this.transaction.type.name === "Factura" &&
-              this.transaction.company && 
-              this.transaction.type.electronics === "Si")
-              || 
-              (this.transaction.type.name === "Factura" &&
+            this.transaction.company &&
+            this.transaction.type.electronics === "Si")
+            ||
+            (this.transaction.type.name === "Factura" &&
               this.transaction.type.electronics !== "Si")
-              ||
-              this.transaction.type.name === "Ticket") {
+            ||
+            this.transaction.type.name === "Ticket") {
 
-                if((this.transaction.type.name === "Factura" &&
-                    this.transaction.type.electronics === "Si" &&
-                    (this.transaction.company.CUIT || this.transaction.company.DNI)) ||
-                    this.transaction.type.name === "Ticket") {
-                      modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-                      modalRef.componentInstance.transaction = this.transaction;
-                      modalRef.result.then((result) => {
-                        if (result === "add-movement-of-cash") {
-                          this.openModal('printers');
-                        }
-                      }, (reason) => {
-                      });
-                } else {
-                  this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
-                  this.loading = false;
+            if ((this.transaction.type.name === "Factura" &&
+              this.transaction.type.electronics === "Si" &&
+              (this.transaction.company.CUIT || this.transaction.company.DNI)) ||
+              this.transaction.type.name === "Ticket") {
+              modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+              modalRef.componentInstance.transaction = this.transaction;
+              modalRef.result.then((result) => {
+                if (result === "add-movement-of-cash") {
+                  this.openModal('printers');
                 }
-              } else {
-                this.showMessage("Debe cargar un cliente a la Factura.", "info", true);
-                this.loading = false;
-              }
+              }, (reason) => {
+              });
+            } else {
+              this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
+              this.loading = false;
+            }
           } else {
-            this.showMessage("No existen productos en el pedido.", "info", true);
+            this.showMessage("Debe cargar un cliente a la Factura.", "info", true);
             this.loading = false;
           }
+        } else {
+          this.showMessage("No existen productos en el pedido.", "info", true);
+          this.loading = false;
+        }
         break;
       case 'printers':
         if (this.countPrinters() > 1) {
@@ -842,7 +862,7 @@ export class AddSaleOrderComponent implements OnInit {
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           } else {
-            if(this.posType === "resto") {
+            if (this.posType === "resto") {
               this.changeStateOfTable(TableState.Busy, true);
             } else {
               this.back();
@@ -853,7 +873,7 @@ export class AddSaleOrderComponent implements OnInit {
       case 'errorMessage':
         modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
           if (result !== "cancel" && result !== "") {
-            if(this.typeOfOperationToPrint === "charge") {
+            if (this.typeOfOperationToPrint === "charge") {
               this.assignOriginAndLetter(this.printerSelected.origin);
               this.finishCharge();
             } else if (this.typeOfOperationToPrint === "bill") {
@@ -942,7 +962,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public applyDiscount(percentage: number): void {
 
-    for(let movementOfArticle of this.movementsOfArticles) {
+    for (let movementOfArticle of this.movementsOfArticles) {
       movementOfArticle.markupPercentage -= percentage;
       movementOfArticle.markupPrice = movementOfArticle.costPrice * movementOfArticle.markupPercentage / 100;
       movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.markupPrice;
@@ -1175,7 +1195,7 @@ export class AddSaleOrderComponent implements OnInit {
     for (let movementOfArticle of this.movementsOfArticles) {
       this.transaction.totalPrice = this.transaction.totalPrice + movementOfArticle.salePrice;
     }
-    
+
     this.updateTaxes();
   }
 
@@ -1313,7 +1333,7 @@ export class AddSaleOrderComponent implements OnInit {
         '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
         '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
         '<tr><td colspan="12" align="center"><font face="Courier" size="2">Ticket no válido como factura.</font></td></tr>' +
-        '<tr><td colspan="12" align="center"><font face="Courier" size="2">****Gracias por su visita****</font></td></tr>' +
+        '<tr><td colspan="12" align="center"><font face="Courier" size="2">*Gracias por su visita*</font></td></tr>' +
         '</tbody>' +
         '</table>';
 
@@ -1497,7 +1517,7 @@ export class AddSaleOrderComponent implements OnInit {
           }
           this.loading = false;
           this.hideMessage();
-        },  
+        },
         error => {
           this.openModal('errorMessage');
           this.hideMessage();

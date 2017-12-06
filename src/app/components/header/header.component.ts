@@ -19,11 +19,24 @@ export class HeaderComponent implements OnInit, DoCheck {
   public identity: User;
   public online: Observable<boolean>;
   public accessType: string;
+  public hideMenu: boolean = false;
+
 
   constructor(
     public _userService: UserService,
     public _router: Router
   ) {
+    // let pathLocation: string[] = this._router.url.split('/');
+    // console.log(pathLocation[3]);
+    // if (  pathLocation[3] !== undefined && 
+    //     ( pathLocation[3] === "editar-ticket" ||
+    //       pathLocation[3] === "agregar-ticket")) {
+    //       this.hideMenu = true;
+    // } else {
+    //   this.hideMenu = false;
+    // }
+    // console.log(this.hideMenu);
+
     this.online = Observable.merge(
       Observable.of(navigator.onLine),
       Observable.fromEvent(window, 'online').mapTo(true),
