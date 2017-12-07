@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -79,6 +79,7 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
   public isNewItem: boolean;
+  public isCreateItem: boolean;
   public paymentAmount: number = 0.00;
   public typeOfOperationToPrint: string;
   public kitchenArticlesToPrint: MovementOfArticle[];
@@ -136,7 +137,8 @@ export class AddSaleOrderComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _printerService: PrinterService,
-    public _userService: UserService
+    public _userService: UserService,
+    private cdref: ChangeDetectorRef
   ) {
     this.transaction = new Transaction();
     this.movementOfArticle = new MovementOfArticle();
@@ -233,6 +235,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.areArticlesVisible = false;
       this.areCategoriesVisible = true;
     }
+    this.cdref.detectChanges();
   }
 
   public getPrinters(): void {
@@ -596,13 +599,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addItem(itemData?: MovementOfArticle): void {
 
-    if(this.filterArticle !== undefined &&
-      this.filterArticle !== "") {
-      this.filterArticle = "";
-      this.areArticlesVisible = false;
-      this.areCategoriesVisible = true;
-    }
-
     if (itemData) {
       if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
         let article: Article = new Article();
@@ -611,7 +607,20 @@ export class AddSaleOrderComponent implements OnInit {
         this.movementOfArticle.transaction = this.transaction;
         this.movementOfArticle.amount = 1;
         this.lastMovementOfArticle = this.movementOfArticle;
-        this.saveMovementOfArticle();
+        if (this.filterArticle !== undefined &&
+          this.filterArticle !== "") {
+
+          this.isNewItem = true;
+          this.isCreateItem = false;
+
+          this.buildForm();
+
+          this.setValueFormAmountOfItem();
+          this.cleanFilterArticle();
+          this.openModal('edit_item');
+        } else {
+          this.saveMovementOfArticle();
+        }
       } else {
         this.movementOfArticle = this.lastMovementOfArticle;
         this.movementOfArticle.amount += 1;
@@ -620,17 +629,37 @@ export class AddSaleOrderComponent implements OnInit {
         this.movementOfArticle.costPrice += itemData.costPrice;
         this.movementOfArticle.markupPrice += itemData.markupPrice;
         this.movementOfArticle.salePrice += itemData.salePrice;
-        this.updateMovementOfArticle(this.movementOfArticle);
+        if (this.filterArticle !== undefined &&
+          this.filterArticle !== "") {
+
+          this.isNewItem = false;
+          this.isCreateItem = false;
+
+          this.buildForm();
+
+          this.setValueFormAmountOfItem();
+          this.cleanFilterArticle();
+          this.openModal('edit_item');
+        } else {
+          this.updateMovementOfArticle(this.movementOfArticle);
+        }
       }
 
     } else {
       this.buildForm();
-      this.isNewItem = true;
+      this.isCreateItem = true;
+      this.isNewItem = false;
       this.movementOfArticle = new MovementOfArticle();
       this.setValueFormAmountOfItem();
       this.movementOfArticle.transaction = this.transaction;
       this.openModal('add_new_item');
     }
+  }
+
+  public cleanFilterArticle(): void {
+    this.filterArticle = "";
+    this.areArticlesVisible = false;
+    this.areCategoriesVisible = true;
   }
 
   public updateTaxes(): void {
@@ -699,6 +728,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public editItem(itemData: MovementOfArticle): void {
 
+    this.isCreateItem = false;
     this.isNewItem = false;
 
     this.buildForm();
@@ -733,15 +763,17 @@ export class AddSaleOrderComponent implements OnInit {
 
     switch (op) {
       case 'edit_item':
-
+        let cantidadOriginal = this.movementOfArticle.amount;
         modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
           if (result === "edit_item") {
             this.confirmAmount('edit');
           } else if (result === "delete_item") {
             this.deleteMovementOfArticle();
+          } else {
+            this.movementOfArticle.amount = cantidadOriginal;
           }
         }, (reason) => {
-
+          this.movementOfArticle.amount = cantidadOriginal;
         });
         break;
       case 'add_new_item':
@@ -1097,7 +1129,11 @@ export class AddSaleOrderComponent implements OnInit {
     if (op === 'add') {
       this.saveMovementOfArticle();
     } else if (op === 'edit') {
-      this.updateMovementOfArticle(this.movementOfArticle);
+      if(this.isNewItem) {
+        this.saveMovementOfArticle();
+      } else {
+        this.updateMovementOfArticle(this.movementOfArticle);
+      }
     }
   }
 

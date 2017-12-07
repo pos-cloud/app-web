@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 //Paquetes de terceros
@@ -59,7 +59,8 @@ export class AddMovementOfCashComponent implements OnInit {
     public _movementOfCashService: MovementOfCashService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private cdref: ChangeDetectorRef
   ) {
     this.movementOfCash = new MovementOfCash();
     this.movementOfCash.type = new PaymentMethod();
@@ -139,8 +140,11 @@ export class AddMovementOfCashComponent implements OnInit {
   public setValueForm(): void {
 
     if(!this.movementOfCash.observation) this.movementOfCash.observation = "";
-    
+    this.movementOfCash.amountPaid = parseFloat(this.movementOfCash.amountPaid.toFixed(2));
+    this.movementOfCash.cashChange = parseFloat(this.movementOfCash.cashChange.toFixed(2));
+
     this.movementOfCashForm.setValue({
+      'amountToCharge': parseFloat(this.transaction.totalPrice.toFixed(2)),
       'paymentMethod': this.movementOfCash.type,
       'amountPaid': this.movementOfCash.amountPaid,
       'cashChange': this.movementOfCash.cashChange,
@@ -151,6 +155,10 @@ export class AddMovementOfCashComponent implements OnInit {
   public buildForm(): void {
     
     this.movementOfCashForm = this._fb.group({
+      'amountToCharge': [parseFloat(this.transaction.totalPrice.toFixed(2)), [
+          Validators.required
+        ]
+      ],
       'paymentMethod': [this.movementOfCash.type, [
           Validators.required,
           this.validatePaymentMethod(this.transaction)

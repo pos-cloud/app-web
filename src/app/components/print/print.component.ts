@@ -45,6 +45,7 @@ export class PrintComponent implements OnInit {
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentTicket') contentTicket: ElementRef;
   public pdfURL;
+  public doc;
 
   constructor(
     public _turnService: TurnService,
@@ -55,7 +56,7 @@ export class PrintComponent implements OnInit {
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer
   ) {
-
+    this.doc = new jsPDF();
   }
 
   ngOnInit() {
@@ -252,8 +253,8 @@ export class PrintComponent implements OnInit {
     if (!this.shiftClosingTransaction) { content += '<tr><td colspan="12"><font face="Courier" size="2">Tickets Anulados: 0</font></td></tr>' };
     if (this.shiftClosingTransaction && this.shiftClosingTransaction.detailCanceled !== "") { content += '<tr><td colspan="12"><font face="Courier" size="2"><b>Detalle de Tickets Anulados:</b></font></td></tr>' };
     if (this.shiftClosingTransaction && this.shiftClosingTransaction.detailCanceled !== "") { content += '<tr><td colspan="12"><font face="Courier" size="2">' + this.shiftClosingTransaction.detailCanceled + '</font></td></tr>' };
-    if (this.shiftClosingMovementOfArticle.deletedItems !== "") { content += '<tr><td colspan="12"><font face="Courier" size="2"><b>Detalle de Productos Anulados:</b></font></td></tr>' };
-    if (this.shiftClosingMovementOfArticle.deletedItems !== "") { content += '<tr><td colspan="12"><font face="Courier" size="2">' + this.shiftClosingMovementOfArticle.deletedItems + '</font></td></tr>' };
+    // if (this.shiftClosingMovementOfArticle.deletedItems !== "") { content += '<tr><td colspan="12"><font face="Courier" size="2"><b>Detalle de Productos Anulados:</b></font></td></tr>' };
+    // if (this.shiftClosingMovementOfArticle.deletedItems !== "") { content += '<tr><td colspan="12"><font face="Courier" size="2">' + this.shiftClosingMovementOfArticle.deletedItems + '</font></td></tr>' };
     if (this.shiftClosingMovementOfCash && this.shiftClosingTransaction) { content += '<tr><td colspan="12"><font face="Courier" size="2"><b>Detalle de Medios de Pago</b></font></td></tr>' };
     if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.cash !== 0) { content += '<tr><td colspan="12"><font face="Courier" size="2">Efectivo: ' + decimalPipe.transform(this.shiftClosingMovementOfCash.cash, '1.2-2') + '</font></td></tr>' };
     if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.currentAccount !== 0) { content += '<tr><td colspan="12"><font face="Courier" size="2">Cuenta Corriente: ' + decimalPipe.transform(this.shiftClosingMovementOfCash.currentAccount, '1.2-2') + '</font></td></tr>' };
@@ -264,19 +265,11 @@ export class PrintComponent implements OnInit {
       '</tbody>' +
       '</table>';
 
-    // Default export is a4 paper, portrait, using milimeters for units
-    // var pdf = new jsPDF('p', 'in', 'a4')
-    //   , sizes = [12, 16, 20]
-    //   , fonts = [['Times', 'Roman'], ['Helvetica', ''], ['Times', 'Italic']]
-    //   , font, size, lines
-    //   , margin = 0.5 // inches on a 8.5 x 11 inch sheet.
-    //   , verticalOffset = margin
-    //   , loremipsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id eros turpis. Vivamus tempor urna vitae sapien mollis molestie. Vestibulum in lectus non enim bibendum laoreet at at libero. Etiam malesuada erat sed sem blandit in varius orci porttitor. Sed at sapien urna. Fusce augue ipsum, molestie et adipiscing at, varius quis enim. Morbi sed magna est, vel vestibulum urna. Sed tempor ipsum vel mi pretium at elementum urna tempor. Nulla faucibus consectetur felis, elementum venenatis mi mollis gravida. Aliquam mi ante, accumsan eu tempus vitae, viverra quis justo.\n\nProin feugiat augue in augue rhoncus eu cursus tellus laoreet. Pellentesque eu sapien at diam porttitor venenatis nec vitae velit. Donec ultrices volutpat lectus eget vehicula. Nam eu erat mi, in pulvinar eros. Mauris viverra porta orci, et vehicula lectus sagittis id. Nullam at magna vitae nunc fringilla posuere. Duis volutpat malesuada ornare. Nulla in eros metus. Vivamus a posuere libero.'
-
-    // pdf.fromHTML(this.contentTicket);
-    // this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(pdf.output('dataurlnewwindow'));
-    window.open("data:text/html," + encodeURIComponent(content),
-      "_blank");
+    this.doc.fromHTML(content, 15, 15, {
+      'width': 170,
+      'elementHandlers': {}
+    });
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
 
     // let print = new Print();
     // print.content = content;

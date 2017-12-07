@@ -134,15 +134,16 @@
         </div>
       </div>
       <div class="row filterArticle">
-        <div class="col-md-8">
+        <div class="col-md-11">
           <nav class="breadcrumb">
             <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}" (click)="showCategories()">Rubros</span>
             <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Productos</span>
           </nav>
         </div>
-        <div class="col-md-3 btn-action btn-large center-content" (click)="addItem()">
+        <!-- SE QUITA FUNCION HASTA SABER QUE SE VAN A HACER CON LOS IMPUESTOS DE ARTICULO A AGREGAR -->
+        <!-- <div class="col-md-3 btn-action btn-large center-content" (click)="addItem()">
           Agregar Producto
-        </div>
+        </div> -->
         <div class="col-md-1 btn-action btn-large center-content" (click)="close()">
           Cerrar
         </div>
@@ -172,11 +173,11 @@
   </div>
   <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('edit_item')" autocomplete="off">
     <div class="modal-body container-fluid">
-      <div class="row" *ngIf="isNewItem">
+      <div class="row">
         <div class="form-group col-md-12">
           <label for="description" class="control-label">Descripción:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="description" name="description" id="description" />
+            <input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="!isCreateItem"/>
           </div>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
@@ -191,7 +192,7 @@
       <div class="row">
         <div class="form-group col-md-10">
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="amount" name="amount" />
+            <input type="number" class="form-control" formControlName="amount" name="amount" autofocus/>
           </div>
           <div *ngIf="formErrors.amount" class="alert alert-danger">
             {{ formErrors.amount }}
@@ -202,7 +203,7 @@
           <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
         </div>
       </div>
-      <div class="row" *ngIf="isNewItem">
+      <div class="row" *ngIf="isCreateItem">
         <div class="form-group col-md-12">
           <label for="salePrice" class="control-label">Precio de Venta:</label>
           <div class="input-group">
@@ -228,7 +229,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-      <button type="button" class="btn btn-danger" *ngIf="!isNewItem" (click)="c('delete_item')">Eliminar</button>
+      <button type="button" class="btn btn-danger" *ngIf="!isCreateItem" (click)="c('delete_item')">Eliminar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Aceptar</span>
@@ -262,8 +263,7 @@
           <label for="percentage" class="control-label">Percentageaje de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01" (blur)="updateDiscounts('percentage')"
-              autofocus/>
+            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01" (blur)="updateDiscounts('percentage')" autofocus/>
           </div>
           <div *ngIf="formErrors.percentage" class="alert alert-danger">
             {{ formErrors.percentage }}
