@@ -43,7 +43,7 @@
 				<div class="form-group col-md-3">
 					<label for="identityType" class="control-label"></label>
 					<select class="form-control" formControlName="identityType">
-						<option *ngFor="let identityType of identityTypes" [selected]="identityTypeSelected">
+						<option *ngFor="let identityType of identityTypes" [selected]="identityTypeSelected === identityType">
 							{{identityType}}
 						</option>
 					</select>
@@ -139,4 +139,5 @@
 			</button>
 		</div>
 	</form>
+	{{companyForm.value | json}}
 </section>

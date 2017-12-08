@@ -95,6 +95,8 @@ export class UpdateCompanyComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.vatConditions = new Array();
+    
+    this.buildForm();
     this.getVATConditions();
 
     if (this.company.DNI && this.company.DNI !== "") {
@@ -102,8 +104,6 @@ export class UpdateCompanyComponent implements OnInit {
     } else {
       this.identityTypeSelected = "CUIT";
     }
-
-    this.buildForm();
 
     this.setValueForm();
   }
@@ -198,7 +198,7 @@ export class UpdateCompanyComponent implements OnInit {
       'name': this.company.name,
       'fantasyName': this.company.fantasyName,
       'type': this.company.type,
-      'vatCondition': this.company.vatCondition,
+      'vatCondition': this.company.vatCondition._id,
       'identityType': this.identityTypeSelected,
       'CUIT': this.company.CUIT,
       'DNI': this.company.DNI,

@@ -33,7 +33,9 @@
 				<div class="form-group col-md-5">
 					<label for="vatCondition" class="control-label">Condición de IVA:</label>
 					<select class="form-control" formControlName="vatCondition">
-						<option *ngFor="let vatCondition of vatConditions" [selected]="vatCondition._id===company.vatCondition._id" [value]="vatCondition._id" [disabled]="readonly">{{vatCondition.description}}</option>
+						<option *ngFor="let vatCondition of vatConditions" [selected]="vatCondition._id==company.vatCondition._id" [value]="vatCondition._id" [disabled]="readonly">
+							{{vatCondition.description}}
+						</option>
 					</select>
 					<div *ngIf="formErrors.vatCondition" class="alert alert-danger">
 						{{ formErrors.vatCondition }}
