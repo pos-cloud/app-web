@@ -101,6 +101,7 @@ import { FilterPipe } from './pipes/filter.pipe';
 import { OrderByPipe } from './pipes/order-by.pipe';
 import { DateFormatPipe } from './pipes/date-format.pipe';
 import { TotalPipe } from './pipes/total.pipe';
+import { RoundNumberPipe } from './pipes/round-number.pipe';
 
 //directives
 import { FocusDirective } from './directives/focus.directive';
@@ -157,6 +158,7 @@ import { ExportReceComponent } from './components/export-rece/export-rece.compon
     OrderByPipe,
     DateFormatPipe,
     TotalPipe,
+    RoundNumberPipe,
     AddUserComponent,
     UpdateUserComponent,
     ListUsersComponent,

@@ -47,7 +47,7 @@ export class AddArticleComponent  implements OnInit {
     'posDescription': '',
     'basePrice': 0.00,
     'VATPercentage': 0.00,
-    'VATPrice': 0.00,
+    'VATAmount': 0.00,
     'costPrice': 0.00,
     'markupPercentage': 0.00,
     'markupPrice': 0.00,
