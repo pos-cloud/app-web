@@ -610,6 +610,11 @@ export class AddSaleOrderComponent implements OnInit {
     if (itemData) {
       if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
         let article: Article = new Article();
+        article.basePrice = itemData.basePrice;
+        article.VATAmount = itemData.VATAmount;
+        article.costPrice = itemData.costPrice;
+        article.markupPrice = itemData.markupPrice;
+        article.salePrice = itemData.salePrice;
         this.movementOfArticle = itemData;
         this.movementOfArticle.article = article;
         this.movementOfArticle.article._id = itemData._id;
@@ -1144,6 +1149,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
     this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
     this.movementOfArticle.printed = 0;
+    console.log(this.movementOfArticle.article);
     if (op === 'add') {
       this.saveMovementOfArticle();
     } else if (op === 'edit') {
