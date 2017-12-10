@@ -611,6 +611,8 @@ export class AddSaleOrderComponent implements OnInit {
       if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
         let article: Article = new Article();
         this.movementOfArticle = itemData;
+        this.movementOfArticle.article = article;
+        this.movementOfArticle.article._id = itemData._id;
         this.movementOfArticle.printed = 0;
         this.movementOfArticle.transaction = this.transaction;
         this.movementOfArticle.amount = 1;
@@ -1134,9 +1136,13 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.movementOfArticle.description = this.amountOfItemForm.value.description;
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
-    this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
-    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.salePrice,2);
+    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
+    this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
+    this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
+    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+    this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
+    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
     this.movementOfArticle.printed = 0;
     if (op === 'add') {
       this.saveMovementOfArticle();

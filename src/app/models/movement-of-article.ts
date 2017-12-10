@@ -21,6 +21,7 @@ export class MovementOfArticle {
     public notes: string;
     public printIn: ArticlePrintIn;
     public printed: number = 0;
+    public article: Article;
     public transaction: Transaction = null;
 
 	constructor () {}
