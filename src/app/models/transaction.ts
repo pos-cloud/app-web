@@ -21,7 +21,8 @@ export class Transaction {
 	public state: TransactionState = TransactionState.Open;
 	public exempt: number = 0.00;
 	public taxes: TransactionTax[];
-	public discount: number = 0.00;
+	public discountAmount: number = 0.00;
+	public discountPercent: number = 0.00;
 	public totalPrice: number = 0.00;
 	public diners: number = 0;
 	public observation: string;

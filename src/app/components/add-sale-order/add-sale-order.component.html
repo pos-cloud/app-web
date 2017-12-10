@@ -75,7 +75,7 @@
               </td>
               <td align="right">
                 <h5>
-                  <b>{{(transaction.totalPrice+transaction.discount) | currency:'USD':'1.2-2'}}</b>
+                  <b>{{(transaction.totalPrice+transaction.discountAmount) | currency:'USD':'1.2-2'}}</b>
                 </h5>
               </td>
             </tr>
@@ -84,7 +84,7 @@
                 <strong>Descuento</strong>
               </td>
               <td align="right">
-                <strong>-{{transaction.discount | currency:'USD':'1.2-2'}}</strong>
+                <strong>-{{transaction.discountAmount | currency:'USD':'1.2-2'}}</strong>
               </td>
             </tr>
             <tr>
@@ -254,7 +254,7 @@
           <label for="totalPrice" class="control-label">Monto de la transacción:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" name="totalPrice" min="0" step="0.01" [value]="this.transaction.totalPrice" readonly/>
+            <input type="number" class="form-control" name="totalPrice" min="0" step="0.01" [value]="(this.transaction.totalPrice + this.transaction.discountAmount) | currency:'USD':'1.2-2'" readonly/>
           </div>
         </div>
       </div>

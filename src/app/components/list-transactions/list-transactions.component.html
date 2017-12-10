@@ -110,7 +110,7 @@
                 </h6>
               </td>
               <td>{{transaction.observation}}</td>
-              <td>{{transaction.discount | currency:'USD':'1.2-2'}}</td>
+              <td>{{transaction.discountAmount | currency:'USD':'1.2-2'}}</td>
               <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             </tr>
             <tr align="center" *ngIf="areTransactionsEmpty">

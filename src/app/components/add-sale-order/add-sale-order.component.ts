@@ -43,12 +43,13 @@ import { PrintComponent } from './../../components/print/print.component';
 //Pipes
 import { DecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
+import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-add-sale-order',
   templateUrl: './add-sale-order.component.html',
   styleUrls: ['./add-sale-order.component.css'],
-  providers: [NgbAlertConfig, DateFormatPipe]
+  providers: [NgbAlertConfig, DateFormatPipe, RoundNumberPipe]
 })
 
 export class AddSaleOrderComponent implements OnInit {
@@ -87,6 +88,7 @@ export class AddSaleOrderComponent implements OnInit {
   public printSelected: Print;
   public filterArticle: string;
   public focusEvent = new EventEmitter<boolean>();
+  public roundNumber = new RoundNumberPipe();
 
   public formErrors = {
     'description': '',
@@ -404,17 +406,17 @@ export class AddSaleOrderComponent implements OnInit {
   public buildFormDiscount(): void {
 
     this.discountForm = this._fb.group({
-      'amount': [this.transaction.discount, [
-        Validators.required
-      ]
+      'amount': [this.roundNumber.transform(this.transaction.discountAmount,3), [
+          Validators.required
+        ]
       ],
-      'percentage': [this.transaction.discount * 100 / this.transaction.totalPrice, [
-        Validators.required
-      ]
+      'percentage': [this.roundNumber.transform(this.transaction.discountPercent,2), [
+          Validators.required
+        ]
       ],
-      'transactionAmount': [this.transaction.totalPrice, [
-        Validators.required
-      ]
+      'transactionAmount': [this.roundNumber.transform(this.transaction.totalPrice,2), [
+          Validators.required
+        ]
       ]
     });
 
@@ -446,19 +448,25 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (op === 'percentage') {
       if (this.discountForm.value.percentage && this.discountForm.value.percentage !== 0) {
-        this.discountForm.value.amount = this.transaction.totalPrice * this.discountForm.value.percentage / 100;
-        this.discountForm.value.transactionAmount = this.transaction.totalPrice - (this.transaction.totalPrice * this.discountForm.value.percentage / 100);
+        this.discountForm.value.amount = this.roundNumber.transform(((this.transaction.totalPrice + this.transaction.discountAmount) * this.discountForm.value.percentage / 100),3);
+        this.discountForm.value.transactionAmount = this.roundNumber.transform(((this.transaction.totalPrice + this.transaction.discountAmount) - this.discountForm.value.amount),2);
       }
     } else if (op === 'amount') {
       if (this.discountForm.value.amount && this.discountForm.value.amount !== 0) {
-        this.discountForm.value.transactionAmount = this.transaction.totalPrice - this.discountForm.value.amount;
-        this.discountForm.value.percentage = this.discountForm.value.amount * 100 / this.transaction.totalPrice;
+        this.discountForm.value.transactionAmount = this.roundNumber.transform(((this.transaction.totalPrice + this.transaction.discountAmount) - this.discountForm.value.amount),2);
+        this.discountForm.value.percentage = this.roundNumber.transform((this.discountForm.value.amount * 100 / (this.transaction.totalPrice + this.transaction.discountAmount)),2);
       }
     }
+
     this.setValueFormDiscount();
   }
 
   public setValueFormDiscount() {
+
+    this.discountForm.value.amount = this.roundNumber.transform(this.discountForm.value.amount,3);
+    this.discountForm.value.transactionAmount = this.roundNumber.transform(this.discountForm.value.transactionAmount,2);
+    this.discountForm.value.percentage = this.roundNumber.transform(this.discountForm.value.percentage,2);
+
     this.discountForm.setValue({
       'percentage': this.discountForm.value.percentage,
       'amount': this.discountForm.value.amount,
@@ -677,8 +685,8 @@ export class AddSaleOrderComponent implements OnInit {
         let tax = new TransactionTax();
         tax.percentage = movementOfArticle.VATPercentage;
         tax.tax = "IVA";
-        tax.taxBase = movementOfArticle.salePrice / ((movementOfArticle.VATPercentage / 100) + 1);
-        tax.taxAmount = tax.taxBase * movementOfArticle.VATPercentage / 100;
+        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((movementOfArticle.VATPercentage / 100) + 1),2);
+        tax.taxAmount = this.roundNumber.transform(tax.taxBase * movementOfArticle.VATPercentage / 100,2);
         taxesAUX.push(tax);
 
         if (VATs.length !== 0) {
@@ -747,6 +755,9 @@ export class AddSaleOrderComponent implements OnInit {
     if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
     if (!this.movementOfArticle.notes) this.movementOfArticle.notes = "";
 
+    this.movementOfArticle.amount = this.roundNumber.transform(this.movementOfArticle.amount, 2);
+    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice,2);
+
     this.amountOfItemForm.setValue({
       '_id': this.movementOfArticle._id,
       'description': this.movementOfArticle.description,
@@ -793,9 +804,7 @@ export class AddSaleOrderComponent implements OnInit {
         if (this.movementsOfArticles.length !== 0) {
           modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
             if (result === "apply_discount") {
-              this.transaction.totalPrice = this.discountForm.value.transactionAmount;
-              this.transaction.discount = this.discountForm.value.amount;
-              this.applyDiscount(this.discountForm.value.percentage);
+              this.applyDiscount(this.discountForm.value.percentage, this.discountForm.value.amount);
             }
           }, (reason) => {
 
@@ -995,14 +1004,17 @@ export class AddSaleOrderComponent implements OnInit {
     };
   }
 
-  public applyDiscount(percentage: number): void {
+  public applyDiscount(percentage: number, amount: number): void {
 
     for (let movementOfArticle of this.movementsOfArticles) {
-      movementOfArticle.markupPercentage -= percentage;
-      movementOfArticle.markupPrice = movementOfArticle.costPrice * movementOfArticle.markupPercentage / 100;
-      movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.markupPrice;
+      movementOfArticle.markupPercentage = this.roundNumber.transform(movementOfArticle.markupPercentage - (percentage - this.transaction.discountPercent),2);
+      movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.costPrice * movementOfArticle.markupPercentage / 100, 3);
+      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + movementOfArticle.markupPrice, 2);
       this.updateMovementOfArticle(movementOfArticle);
     }
+    this.transaction.discountPercent = this.roundNumber.transform(percentage, 2);
+    this.transaction.discountAmount = this.roundNumber.transform(amount, 3);
+    this.updateTransaction();
   }
 
   public countPrinters(): number {
@@ -1124,7 +1136,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
     this.movementOfArticle.salePrice = this.amountOfItemForm.value.salePrice;
     this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
-    this.movementOfArticle.salePrice = this.movementOfArticle.amount * this.movementOfArticle.salePrice;
+    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.salePrice,2);
     this.movementOfArticle.printed = 0;
     if (op === 'add') {
       this.saveMovementOfArticle();
@@ -1232,7 +1244,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.totalPrice = 0;
 
     for (let movementOfArticle of this.movementsOfArticles) {
-      this.transaction.totalPrice = this.transaction.totalPrice + movementOfArticle.salePrice;
+      this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice + movementOfArticle.salePrice,2);
     }
 
     this.updateTaxes();
@@ -1285,7 +1297,7 @@ export class AddSaleOrderComponent implements OnInit {
       content +=
         '<tr><td colspan="12"><hr></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '</font></td></tr>' +
+        '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discountAmount, '1.2-2') + '</font></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
         '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
         '</tbody>' +
@@ -1368,7 +1380,7 @@ export class AddSaleOrderComponent implements OnInit {
       content +=
         '<tr><td colspan="12"><hr></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discount, '1.2-2') + '</font></td></tr>' +
+        '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discountAmount, '1.2-2') + '</font></td></tr>' +
         '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
         '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
         '<tr><td colspan="12" align="center"><font face="Courier" size="2">Ticket no válido como factura.</font></td></tr>' +

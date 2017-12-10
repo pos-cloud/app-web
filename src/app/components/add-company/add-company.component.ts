@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -89,8 +89,7 @@ export class AddCompanyComponent  implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    private cdref: ChangeDetectorRef
+    public alertConfig: NgbAlertConfig
   ) { }
 
   ngOnInit(): void {
@@ -184,13 +183,12 @@ export class AddCompanyComponent  implements OnInit {
     }
 
     this.identityTypeSelected = this.companyForm.value.identityType;
-    console.log(this.identityTypeSelected);
+    
     if (this.identityTypeSelected === "CUIT") {
       this.companyForm.value.DNI = "";
     } else {
       this.companyForm.value.CUIT = "";
     }
-    this.cdref.detectChanges();
   }
 
   public getVATConditions(): void {
