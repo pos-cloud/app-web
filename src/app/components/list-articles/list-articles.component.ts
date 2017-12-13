@@ -168,7 +168,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public filterItem(articles: Article[]) {
-    if(articles.length === 1 && this.articles.length >= 2) {
+    if(articles != undefined && articles.length === 1 && this.articles.length >= 2) {
       this.eventAddItem.emit(articles[0]);
     }
     this.filterArticle = "";

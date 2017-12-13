@@ -500,7 +500,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(closed?: boolean): void {
-
+    
     this.loading = true;
 
     this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -905,7 +905,6 @@ export class AddSaleOrderComponent implements OnInit {
           if (this.typeOfOperationToPrint === "charge") {
             if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
               this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-              this.finishCharge();
             } else {
               this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
               this.loading = false;
@@ -926,7 +925,6 @@ export class AddSaleOrderComponent implements OnInit {
           if (result !== "cancel" && result !== "") {
             if (this.typeOfOperationToPrint === "charge") {
               this.assignOriginAndLetter(this.printerSelected.origin);
-              this.finishCharge();
             } else if (this.typeOfOperationToPrint === "bill") {
               this.changeStateOfTable(TableState.Pending, true);
             } else {
@@ -1089,10 +1087,13 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
       result => {
         if (!result.transactions) {
-          this.showMessage("Error al grabar el punto de venta en el pedido.", "info", true);
+          this.transaction.number = 1;
+          this.updateTransaction();
+          this.finishCharge();
         } else {
           this.transaction.number = result.transactions[0].number + 1;
           this.updateTransaction();
+          this.finishCharge();
         }
         this.loading = false;
       },
@@ -1119,13 +1120,13 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.endDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 
-    this.typeOfOperationToPrint = 'charge';
+    this.updateTransaction();
+    
     if (this.posType === "resto") {
-      this.updateTransaction();
       this.table.employee = null;
       this.changeStateOfTable(TableState.Available, true);
     } else {
-      this.updateTransaction(true);
+      this.back();
     }
   }
 
@@ -1149,7 +1150,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
     this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
     this.movementOfArticle.printed = 0;
-    console.log(this.movementOfArticle.article);
     if (op === 'add') {
       this.saveMovementOfArticle();
     } else if (op === 'edit') {
