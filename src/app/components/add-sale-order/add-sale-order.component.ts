@@ -500,7 +500,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(closed?: boolean): void {
-    
+
     this.loading = true;
 
     this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -828,7 +828,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.transaction.state = TransactionState.Canceled;
             this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
             if (this.posType === "resto") {
-              this.updateTransaction();
+              this.updateTransaction(false);
               this.table.employee = null;
               this.changeStateOfTable(TableState.Available, true);
             } else if (this.posType === "mostrador") {
@@ -846,7 +846,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then((result) => {
           if (result) {
             this.transaction.company = result;
-            this.updateTransaction();
+            this.updateTransaction(false);
           }
         }, (reason) => {
 
@@ -948,7 +948,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.transaction.turnClosing = result;
             this.transaction.employeeClosing = result.employee;
             this.table.employee = result.employee;
-            this.updateTransaction();
+            this.updateTransaction(false);
             this.updateTable();
           }
         }, (reason) => {
@@ -1019,7 +1019,7 @@ export class AddSaleOrderComponent implements OnInit {
     }
     this.transaction.discountPercent = this.roundNumber.transform(percentage, 2);
     this.transaction.discountAmount = this.roundNumber.transform(amount, 3);
-    this.updateTransaction();
+    this.updateTransaction(false);
   }
 
   public countPrinters(): number {
@@ -1088,11 +1088,9 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
         if (!result.transactions) {
           this.transaction.number = 1;
-          this.updateTransaction();
           this.finishCharge();
         } else {
           this.transaction.number = result.transactions[0].number + 1;
-          this.updateTransaction();
           this.finishCharge();
         }
         this.loading = false;
@@ -1115,18 +1113,17 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public finishCharge() {
-
     this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
     this.transaction.endDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
 
-    this.updateTransaction();
     
     if (this.posType === "resto") {
+      this.updateTransaction(false);
       this.table.employee = null;
       this.changeStateOfTable(TableState.Available, true);
     } else {
-      this.back();
+      this.updateTransaction(true);
     }
   }
 
