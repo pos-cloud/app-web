@@ -316,8 +316,10 @@ export class UpdateArticleComponent implements OnInit {
       case 'basePrice':
         this.articleForm.value.VATAmount = this.articleForm.value.basePrice * this.articleForm.value.VATPercentage / 100;
         this.articleForm.value.costPrice = this.articleForm.value.basePrice + this.articleForm.value.VATAmount;
-        this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        }
         break;
       case 'VATPercentage':
         this.articleForm.value.VATAmount = this.articleForm.value.basePrice * this.articleForm.value.VATPercentage / 100;
@@ -325,28 +327,29 @@ export class UpdateArticleComponent implements OnInit {
         this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         break;
       case 'markupPercentage':
-        this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        }
         break;
       case 'markupPrice':
-        this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
-        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        }
         break;
       case 'salePrice':
         if (this.articleForm.value.basePrice === 0) {
-          this.articleForm.value.VATPercentage = 0;
           this.articleForm.value.VATAmount = 0;
           this.articleForm.value.costPrice === 0;
-          this.articleForm.value.markupPercentage = 0;
-          this.articleForm.value.markupPricet = 0;
+          this.articleForm.value.markupPercentage = 100;
+          this.articleForm.value.markupPrice = this.articleForm.value.salePrice;
         } else {
           this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
           this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
         }
         break;
       default:
-        this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
-        this.articleForm.value.salePrice = this.articleForm.value.markupPrice + this.articleForm.value.costPrice;
         break;
     }
 
