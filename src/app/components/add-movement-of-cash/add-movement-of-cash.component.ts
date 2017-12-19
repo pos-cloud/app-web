@@ -31,12 +31,15 @@ export class AddMovementOfCashComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public op: string;
+  public surchargeAmount: number = 0;
+  public amountToCharge: number = 0;
 
   public formErrors = {
     'paymentMethod': '',
     'amountPaid': '',
     'cashChange': '',
-    'observation': ''
+    'observation': '',
+    'surchargeAmount': ''
   };
 
   public validationMessages = {
@@ -51,6 +54,8 @@ export class AddMovementOfCashComponent implements OnInit {
     'cashChange': {
     },
     'observation': {
+    }, 
+    'surchargeAmount': {
     },
   };
 
@@ -70,6 +75,7 @@ export class AddMovementOfCashComponent implements OnInit {
   ngOnInit() {
     this.getMovementOfCashesByTransaction();
     this.getPaymentMethods();
+    this.amountToCharge = this.transaction.totalPrice;
     this.buildForm();
   }
 
@@ -84,15 +90,15 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfCashes) {
-          this.movementOfCash.amountPaid = this.transaction.totalPrice;
-          this.movementOfCash.amountCharge = this.transaction.totalPrice;
-          this.paymentChange = (this.movementOfCash.amountPaid - this.transaction.totalPrice).toFixed(2);
+          this.movementOfCash.amountPaid = this.amountToCharge;
+          this.movementOfCash.amountCharge = this.amountToCharge;
+          this.paymentChange = (this.movementOfCash.amountPaid - this.amountToCharge).toFixed(2);
           this.op = "add";
         } else {
           this.movementOfCash = result.movementsOfCashes[0];
           this.op = "update";
         }
-        this.paymentChange = (this.movementOfCash.amountPaid - this.transaction.totalPrice).toFixed(2);
+        this.paymentChange = (this.movementOfCash.amountPaid - this.amountToCharge).toFixed(2);
         this.setValueForm();
         this.loading = false;
       },
@@ -144,18 +150,19 @@ export class AddMovementOfCashComponent implements OnInit {
     this.movementOfCash.cashChange = parseFloat(this.movementOfCash.cashChange.toFixed(2));
 
     this.movementOfCashForm.setValue({
-      'amountToCharge': parseFloat(this.transaction.totalPrice.toFixed(2)),
+      'amountToCharge': parseFloat(this.amountToCharge.toFixed(2)),
       'paymentMethod': this.movementOfCash.type,
       'amountPaid': this.movementOfCash.amountPaid,
       'cashChange': this.movementOfCash.cashChange,
       'observation': this.movementOfCash.observation,
+      'surchargeAmount': this.surchargeAmount,
     });
   }
 
   public buildForm(): void {
     
     this.movementOfCashForm = this._fb.group({
-      'amountToCharge': [parseFloat(this.transaction.totalPrice.toFixed(2)), [
+      'amountToCharge': [parseFloat(this.amountToCharge.toFixed(2)), [
           Validators.required
         ]
       ],
@@ -173,6 +180,9 @@ export class AddMovementOfCashComponent implements OnInit {
         ]
       ],
       'observation': [this.movementOfCash.observation, [
+        ]
+      ],
+      'surchargeAmount': [this.surchargeAmount, [
         ]
       ],
     });
@@ -208,21 +218,41 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
     
-    if (this.movementOfCashForm.value.amountPaid - this.transaction.totalPrice < 0) {
+    if (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.amountToCharge < 0) {
       this.paymentChange = '0.00';
     } else {
-      this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.transaction.totalPrice).toFixed(2);
+      this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.amountToCharge).toFixed(2);
     }
+
+    this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+  }
+
+  public updateAmounts() {
+
+    if (this.movementOfCashForm.value.surchargeAmount < 0 || 
+          (this.movementOfCashForm.value.surchargeAmount >= 0 &&
+          this.movementOfCashForm.value.paymentMethod.name !== "Tarjeta de Crédito")) {
+      this.movementOfCashForm.value.surchargeAmount = 0;
+    }
+
+    this.surchargeAmount = this.movementOfCashForm.value.surchargeAmount;
+    this.amountToCharge = this.transaction.totalPrice + (this.transaction.totalPrice * this.surchargeAmount / 100);
+    this.movementOfCashForm.value.amountToCharge = this.amountToCharge;
+    this.movementOfCash.amountPaid = this.amountToCharge;
+
+    this.setValueForm();
   }
 
   public validateAmountPaid(transaction) {
     return function (input: FormControl) {
       let payValid = false;
       let nameMethod;
+      let amountToCharge;
       if (input.parent && input.parent.controls && input.parent.controls['paymentMethod'].value.name) {
         nameMethod = input.parent.controls['paymentMethod'].value.name;
-        if (transaction.totalPrice <= input.value) {
-          if (transaction.totalPrice < input.value && nameMethod !== 'Efectivo') {
+        amountToCharge = input.parent.controls['amountToCharge'].value;
+        if (amountToCharge <= input.value) {
+          if (amountToCharge < input.value && nameMethod !== 'Efectivo') {
             payValid = false;
           } else {
             payValid = true;
@@ -238,13 +268,13 @@ export class AddMovementOfCashComponent implements OnInit {
     let payValid = true;
     let amountPaid = this.movementOfCashForm.value.amountPaid;
     let nameMethod = this.movementOfCashForm.value.paymentMethod.name;
-      if (transaction.totalPrice <= amountPaid) {
-        if (transaction.totalPrice < amountPaid && nameMethod !== 'Efectivo') {
+      if (this.amountToCharge <= amountPaid) {
+        if (this.amountToCharge < amountPaid && nameMethod !== 'Efectivo') {
           payValid = false;
         } else {
           payValid = true;
         }
-      }
+    }
     return payValid;
   }
 
@@ -252,14 +282,18 @@ export class AddMovementOfCashComponent implements OnInit {
     return function (input: FormControl) {
       let payValid = true;
       let amountPaid;
+      let amountToCharge;
       if (input.parent && input.parent.controls && input.parent.controls['amountPaid'].value) {
         amountPaid = input.parent.controls['amountPaid'].value;
-        if (transaction.totalPrice <= amountPaid) {
-          if (transaction.totalPrice < amountPaid && input.value.name !== 'Efectivo') {
+        amountToCharge = input.parent.controls['amountToCharge'].value;
+        if (amountToCharge <= amountPaid) {
+          if (amountToCharge < amountPaid && input.value.name !== 'Efectivo') {
             payValid = false;
           } else {
             payValid = true;
           }
+        } else {
+          payValid = true;
         }
       }
       return payValid ? null : { payValid: true };
@@ -268,6 +302,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public addMovementOfCash(): void {
     this.movementOfCash.state = MovementOfCashState.Closed;
+    this.movementOfCash.amountCharge = this.movementOfCashForm.value.amountToCharge;
     this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountPaid;
     this.movementOfCash.transaction = this.transaction;
     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
@@ -296,7 +331,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;
-          this.activeModal.close("add-movement-of-cash");
+          this.activeModal.close(this.movementOfCash);
         }
         this.loading = false;
       },
@@ -318,7 +353,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;
-          this.activeModal.close("add-movement-of-cash");
+          this.activeModal.close(this.movementOfCash);
         }
         this.loading = false;
       },

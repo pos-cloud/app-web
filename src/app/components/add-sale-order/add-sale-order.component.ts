@@ -516,7 +516,7 @@ export class AddSaleOrderComponent implements OnInit {
   public updateTransaction(closed?: boolean): void {
 
     this.loading = true;
-
+    
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -886,8 +886,22 @@ export class AddSaleOrderComponent implements OnInit {
               modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
               modalRef.componentInstance.transaction = this.transaction;
               modalRef.result.then((result) => {
-                if (result === "add-movement-of-cash") {
-                  this.openModal('printers');
+                if (typeof result == 'object') {
+                  if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
+                    let movementOfArticle = new MovementOfArticle();
+                    movementOfArticle.code = "0";
+                    movementOfArticle.description = "Recargo con Tarjeta de Crédito";
+                    movementOfArticle.VATPercentage = 21;
+                    movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
+                    movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
+                    movementOfArticle.transaction = this.transaction;
+                    this.movementOfArticle = movementOfArticle;
+                    this.transaction.totalPrice = result.amountPaid;
+                    this.saveMovementOfArticle();
+                    this.openModal('printers');
+                  } else {
+                    this.openModal('printers');
+                  }
                 }
               }, (reason) => {
               });
