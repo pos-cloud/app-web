@@ -436,7 +436,10 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
-          if (result === "add-movement-of-cash") {
+          if (typeof result == 'object') {
+            if (result.amountPaid > transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
+              transaction.totalPrice = result.amountPaid;
+            }
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
           }
