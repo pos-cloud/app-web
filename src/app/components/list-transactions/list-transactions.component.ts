@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionTypeMovements } from './../../models/transaction-type';
@@ -14,6 +14,7 @@ import { ExportReceComponent } from './../../components/export-rece/export-rece.
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
+import { PrintComponent } from 'app/components/print/print.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -40,6 +41,7 @@ export class ListTransactionsComponent implements OnInit {
     public _transactionService: TransactionService,
     public _router: Router,
     public _modalService: NgbModal,
+    public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { }
 
@@ -97,6 +99,11 @@ export class ListTransactionsComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
+        break;
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.typePrint = 'invoice';
         break;
       case 'cancel' :
           modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' })

@@ -18,6 +18,8 @@ import jsPDF from 'jspdf';
 import { TurnService } from './../../services/turn.service';
 import { PrinterService } from './../../services/printer.service';
 import { PrintService } from './../../services/print.service';
+import { TransactionService } from './../../services/transaction.service';
+import { MovementOfArticleService } from './../../services/movement-of-article.service';
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
@@ -42,6 +44,7 @@ export class PrintComponent implements OnInit {
   public companyName: string = Config.companyName;
   public printers: Printer[];
   public printersAux: Printer[];
+  public movementsOfArticles2: MovementOfArticle[];
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentTicket') contentTicket: ElementRef;
   public pdfURL;
@@ -51,6 +54,8 @@ export class PrintComponent implements OnInit {
     public _turnService: TurnService,
     public _printService: PrintService,
     public _printerService: PrinterService,
+    public _transactionService: TransactionService,
+    public _movementOfArticle: MovementOfArticleService,
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
@@ -67,6 +72,11 @@ export class PrintComponent implements OnInit {
       this.getShiftClosingByTransaccion();
       this.getShiftClosingByMovementOfArticle();
       this.getShiftClosingByMovementOfCash();
+    } else if (this.typePrint === "invoice") {
+      this.getTransaction();
+      this.getMovementOfArticle();
+      this.toPrintInvoice();
+
     }
   }
 
@@ -155,6 +165,48 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getTransaction(): void {
+    this.loading = true;
+    
+        this._transactionService.getTransaction(this.transaction._id).subscribe(
+          result => {
+            if (!result.transaction) {
+              this.showMessage(result.message, "info", true);
+              this.loading = false;
+            } else {
+              this.hideMessage();
+              this.transaction = result.transaction;
+            }
+            this.loading = false;
+          },
+          error => {
+            this.showMessage(error._body, "danger", false);
+            this.loading = false;
+          }
+        );
+  }
+
+  public getMovementOfArticle(): void {
+    this.loading = true;
+
+        this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
+          result => {
+            if (!result.movementsOfArticles) {
+              this.showMessage(result.message, "info", true);
+              this.loading = false;
+            } else {
+              this.hideMessage();
+              this.movementsOfArticles2 = result.movementsOfArticles;
+            }
+            this.loading = false;
+          },
+          error => {
+            this.showMessage(error._body, "danger", false);
+            this.loading = false;
+          }
+        );
   }
 
   public print(): void {
@@ -291,6 +343,36 @@ export class PrintComponent implements OnInit {
     // );
     this.loading = false;
     // this.activeModal.close(this.turn);
+  }
+
+  public toPrintInvoice(): void {
+
+  let content: string;
+
+  console.log(this.movementsOfArticles2[0].description);
+
+  content='<table>'+
+          '<p aling=right>Factura</p>'+
+            '<tbody>'+
+              '<tr>'+
+                '<th>Cantidad</th>'+
+                '<th>Producto</th>'+
+                '<th>Precio</th>'+
+                '<th>Total</th>'+
+              '</tr>'+
+            '</tbody'+
+          '</table>';
+
+
+    this.doc.fromHTML(content, 30, 30, {
+      'width': 170,
+      'elementHandlers': {}
+    });
+
+
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+
+    //this.loading = false;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

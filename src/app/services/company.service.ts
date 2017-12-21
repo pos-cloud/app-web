@@ -22,7 +22,7 @@ export class CompanyService {
 		return this._http.get(Config.apiURL + 'companies/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
   }
 
-  getCompany (id) {
+  getCompany (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
