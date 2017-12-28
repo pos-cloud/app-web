@@ -18,6 +18,7 @@ import { Config } from './../../app.config';
 
 //Pipes
 import { DecimalPipe } from '@angular/common'; 
+import { padNumber } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
   selector: 'app-add-article',
@@ -208,20 +209,28 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
+  public padString (n, length) {
+    var  n = n.toString();
+    while(n.length < length)
+         n = "0" + n;
+    return n;
+  }
+
   public getLastArticle(): void {  
 
     this.loading = true;
     
     this._articleService.getLastArticle().subscribe(
         result => {
-          let code = "1";
+          let code = "00001";
           let category: Category = new Category();
           if(result.articles){
             if(result.articles[0] !== undefined) {
               if (!isNaN(parseInt(result.articles[0].code))) {
                 code = (parseInt(result.articles[0].code) + 1) + "";
+                code = this.padString(code,5);
               } else {
-                code = "1";
+                code = "00001";
               }
             }
           }
