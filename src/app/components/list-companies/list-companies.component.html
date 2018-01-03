@@ -127,28 +127,25 @@
               <tr>
                 <th (click)="orderBy('code')">Código </th>
                 <th (click)="orderBy('name')">Nombre </th>
-                <th (click)="orderBy('city')">Ciudad </th>
+                <th (click)="orderBy('DNI')">DNI </th>
                 <th (click)="orderBy('address')">Dirección </th>
                 <th (click)="orderBy('phones')">Teléfonos </th>
-                <th (click)="orderBy('emails')">Emails </th>
               </tr>
               <tr>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm  
                                                     | filter: filterCode:'code'
                                                     | filter: filterName:'name'
-                                                    | filter: filterCity:'city' 
+                                                    | filter: filterDNI:'DNI'
                                                     | filter: filterAddress:'address'
-                                                    | filter: filterPhones:'phones' 
-                                                    | filter: filterEmails:'emails'
+                                                    | filter: filterPhones:'phones'
                                                     | paginate: { itemsPerPage: itemsPerPage, 
                                                                   currentPage: p, 
                                                                   totalItems: totalItems
@@ -156,13 +153,12 @@
                   (click)="selectCompany(company)">
                 <td>{{company.code}}</td>
                 <td>{{company.name}}</td>
-                <td>{{company.city}}</td>
+                <td>{{company.DNI}}</td>
                 <td>{{company.address}}</td>
                 <td>{{company.phones}}</td>
-                <td>{{company.emails}}</td>
               </tr>
               <tr align="center" *ngIf="areCompaniesEmpty">
-                <td colspan="6">No se encontraron empresas</td>
+                <td colspan="5">No se encontraron empresas</td>
               </tr>
             </tbody>
           </table>

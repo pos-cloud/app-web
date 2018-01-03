@@ -248,6 +248,9 @@ export class AddTransactionComponent implements OnInit {
   public saveTransaction(): void {
 
     this.loading = true;
+    if(this.posType === "cuentas-corrientes") {
+      this.posType = "mostrador";
+    }
     this.transaction.madein = this.posType;
     
     this._transactionService.saveTransaction(this.transaction).subscribe(

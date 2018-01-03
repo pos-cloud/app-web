@@ -46,7 +46,9 @@ export class ListCompaniesComponent implements OnInit {
   ngOnInit(): void {
     
     let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
+    if(!this.userType) {
+      this.userType = pathLocation[1];
+    }
     this.getCompanies();
   }
 
