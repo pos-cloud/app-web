@@ -184,9 +184,7 @@ export class AddArticleComponent  implements OnInit {
       ]
     });
 
-    this.articleForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
+    this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
@@ -214,6 +212,11 @@ export class AddArticleComponent  implements OnInit {
     while(n.length < length)
          n = "0" + n;
     return n;
+  }
+
+  public autoCompletar() {
+    this.article.code =this.padString(this.article.code,5);
+    this.setValuesForm();
   }
 
   public getLastArticle(): void {  
@@ -249,7 +252,7 @@ export class AddArticleComponent  implements OnInit {
           this.loading = false;
         }
       );
-   }
+  }
 
   public getMakes(): void {  
 
@@ -271,7 +274,7 @@ export class AddArticleComponent  implements OnInit {
           this.loading = false;
         }
       );
-   }
+  }
 
   public getCategories(): void {  
     

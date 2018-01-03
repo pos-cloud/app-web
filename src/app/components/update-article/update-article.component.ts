@@ -227,7 +227,7 @@ export class UpdateArticleComponent implements OnInit {
           this.loading = false;
         }
       );
-   }
+  }
 
   public getCategories(): void {  
     
@@ -248,7 +248,7 @@ export class UpdateArticleComponent implements OnInit {
           this.loading = false;
         }
       );
-   }
+  }
 
   public updateArticle (): void {
     if(!this.readonly) {
@@ -478,8 +478,7 @@ export class UpdateArticleComponent implements OnInit {
     );
   }
 
-  public fileChangeEvent(fileInput: any){
-    
+  public fileChangeEvent(fileInput: any){  
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
@@ -516,5 +515,17 @@ export class UpdateArticleComponent implements OnInit {
 
   public hideMessage():void {
     this.alertMessage = "";
+  }
+
+  public padString (n, length) {
+    var  n = n.toString();
+    while(n.length < length)
+         n = "0" + n;
+    return n;
+  }
+
+  public autoCompletar() {
+    this.article.code = this.padString(this.article.code,5);
+    this.setValuesForm();
   }
 }
