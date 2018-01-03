@@ -20,6 +20,7 @@ import { MovementOfCashService } from './../../services/movement-of-cash.service
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
+import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 
 @Component({
   selector: 'app-current-account',
@@ -31,9 +32,6 @@ import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-moveme
 export class CurrentAccountComponent implements OnInit {
 
   public transactions: Transaction[];
-  //public companySelected: Company;
-  public companySelectedId: string
-  public companies: Company[];
   public companySelected: Company;
   public movementsOfCashes: MovementOfCash[];
   public areTransactionsEmpty: boolean = true;
@@ -55,7 +53,6 @@ export class CurrentAccountComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) { 
-    this.companies = new Array();
     this.movementsOfCashes = new Array();
   }
 
@@ -63,52 +60,27 @@ export class CurrentAccountComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getCompanies();
-  }
-
-  public getCompanies(): void {
-
-    this.loading = true;
-
-    this._companyService.getCompanies().subscribe(
-      result => {
-        if (!result.companies) {
-          this.showMessage(result.message, "info", true);
-        } else {
-          this.hideMessage();
-          this.companies = result.companies;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
+    this.openModal('company');
   }
 
   public getTransactionsByCompany(): void {
 
     this.loading = true;
     
-    if (this.companySelectedId !== "undefined") {
-      this._transactionService.getTransactionsByCompany(this.companySelectedId).subscribe(
+    if (this.companySelected) {
+      this._transactionService.getTransactionsByCompany(this.companySelected._id).subscribe(
         result => {
           if (!result.transactions) {
-            this.hideMessage();
-            this.loading = false;
-            this.transactions = null;
-            this.areTransactionsEmpty = true;
             this.transactions = new Array();
+            this.areTransactionsEmpty = true;
             this.balance = 0;
           } else {
             this.transactions = result.transactions;
-            this.hideMessage();
-            this.loading = false
             this.getMovementOfCurrentAccountByCompany();
             this.areTransactionsEmpty = false;
-            this.getCompany();
           }
+          this.hideMessage();
+          this.loading = false;
         },
         error => {
           this.showMessage(error._body, "danger", false);
@@ -127,9 +99,9 @@ export class CurrentAccountComponent implements OnInit {
 
     this.loading = true;
 
-    if (this.companySelectedId) {
+    if (this.companySelected) {
 
-      this._movementOfCashService.getMovementOfCurrentAccountByCompany(this.companySelectedId).subscribe(
+      this._movementOfCashService.getMovementOfCurrentAccountByCompany(this.companySelected._id).subscribe(
         result => {
           if (!result.movementsOfCashes) {
             this.hideMessage();
@@ -162,7 +134,7 @@ export class CurrentAccountComponent implements OnInit {
       for (let transaction of transactions) {
         
         if (transaction.state === TransactionState.Closed &&
-          transaction.company._id === this.companySelectedId &&
+          transaction.company._id === this.companySelected._id &&
           transaction.type.currentAccount !== CurrentAcount.No) {
           if (transaction.type.currentAccount === CurrentAcount.Yes &&
             this.getPaymentMethodName(transaction) === "Cuenta Corriente") {
@@ -188,6 +160,10 @@ export class CurrentAccountComponent implements OnInit {
       }
     }
     this.totalItems = this.transactions.length;
+
+    if(this.totalItems <= 0) {
+      this.areTransactionsEmpty = true;
+    }
   }
 
   public getPaymentMethodName(transaction): string {
@@ -216,37 +192,22 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public refresh(): void {
-    if(this.companies.length === 0) {
-      this.getCompanies();
+
+    if(this.companySelected) {
+      this.getTransactionsByCompany();
     } else {
-      if(this.companySelectedId){
-        this.getTransactionsByCompany();
-        
-      } else {
-        this.showMessage("Debe seleccionar una empresa.", "info", true);
-      }
+      this.showMessage("Debe seleccionar una empresa.", "info", true);
     }
   }
 
-  public openModal(op: string, transaction: Transaction): void {
+  public openModal(op: string, transaction?: Transaction): void {
 
     let modalRef;
     switch (op) {
-      case 'delete':
-        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' })
-        modalRef.componentInstance.transaction = transaction;
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getTransactionsByCompany();
-          }
-        }, (reason) => {
-
-        });
-        break;
       case 'transaction':
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
         let transactionAux = new Transaction();
-        transactionAux.company = this.companySelected;      
+        transactionAux.company = this.companySelected;
         modalRef.componentInstance.transaction = transactionAux;
         modalRef.componentInstance.type = "Cobro";
         modalRef.result.then(
@@ -271,8 +232,21 @@ export class CurrentAccountComponent implements OnInit {
             this.updateTransaction(transaction);
           }
         }, (reason) => {
-          this.getOpenTransactions();
+          
         });
+        break;
+      case 'company':
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef.componentInstance.userType = 'pos';
+        modalRef.result.then(
+          (result) => {
+            if (typeof (result) === "object") {
+              this.companySelected = result;
+              this.getTransactionsByCompany();
+            }
+          }, (reason) => {
+          }
+        );
         break;
       default: ;
     }
@@ -280,27 +254,6 @@ export class CurrentAccountComponent implements OnInit {
 
   public addTransaction(transactionCode: number) {
     this._router.navigate(['/pos/mesas/' + transactionCode + '/add-transaction']);
-  }
-
-  public getCompany(): void {
-    this.loading = true;
-    
-        this._companyService.getCompany(this.companySelectedId).subscribe(
-          result => {
-            if (!result.company) {
-              this.showMessage(result.message, "info", true);
-            } else {
-              this.hideMessage();
-              console.log (result.company);
-              this.companySelected = result.company;
-            }
-            this.loading = false;
-          },
-          error => {
-            this.showMessage(error._body, "danger", false);
-            this.loading = false;
-          }
-        );
   }
 
   public updateTransaction(transaction: Transaction): void {
@@ -314,31 +267,6 @@ export class CurrentAccountComponent implements OnInit {
           this.loading = false;
         } else {
           this.refresh();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getOpenTransactions(): void {
-    
-    this.loading = true;
-
-    this._transactionService.getOpenTransaction("mostrador").subscribe(
-      result => {
-        if (!result.transactions) {
-          this.showMessage(result.message, "info", true);
-          this.transactions = null;
-          this.areTransactionsEmpty = true;
-        } else {
-          this.hideMessage();
-          this.transactions = result.transactions;
-          this.totalItems = this.transactions.length;
-          this.areTransactionsEmpty = false;
         }
         this.loading = false;
       },
