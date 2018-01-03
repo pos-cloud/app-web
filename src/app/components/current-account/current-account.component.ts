@@ -52,7 +52,7 @@ export class CurrentAccountComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { 
+  ) {
     this.movementsOfCashes = new Array();
   }
 
@@ -66,7 +66,7 @@ export class CurrentAccountComponent implements OnInit {
   public getTransactionsByCompany(): void {
 
     this.loading = true;
-    
+
     if (this.companySelected) {
       this._transactionService.getTransactionsByCompany(this.companySelected._id).subscribe(
         result => {
@@ -124,15 +124,15 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public filterTransactions(): void {
-    
+
     let transactions: Transaction[] = this.transactions;
     this.transactions = new Array();
     this.balance = 0;
 
-    if(transactions.length > 0) {
+    if (transactions.length > 0) {
 
       for (let transaction of transactions) {
-        
+
         if (transaction.state === TransactionState.Closed &&
           transaction.company._id === this.companySelected._id &&
           transaction.type.currentAccount !== CurrentAcount.No) {
@@ -161,23 +161,23 @@ export class CurrentAccountComponent implements OnInit {
     }
     this.totalItems = this.transactions.length;
 
-    if(this.totalItems <= 0) {
+    if (this.totalItems <= 0) {
       this.areTransactionsEmpty = true;
     }
   }
 
   public getPaymentMethodName(transaction): string {
-    
+
     let name: string = "";
 
     for (let movementOfCash of this.movementsOfCashes) {
-      if(movementOfCash.transaction) {
-        if(movementOfCash.transaction._id === transaction._id){
+      if (movementOfCash.transaction) {
+        if (movementOfCash.transaction._id === transaction._id) {
           name = movementOfCash.type.name;
         }
       }
     }
-    
+
     return name;
   }
 
@@ -193,26 +193,26 @@ export class CurrentAccountComponent implements OnInit {
 
   public refresh(): void {
 
-    if(this.companySelected) {
+    if (this.companySelected) {
       this.getTransactionsByCompany();
     } else {
-      this.showMessage("Debe seleccionar una empresa.", "info", true);
+      this.showMessage("Debe seleccionar una empresa", "info", false);
     }
   }
 
-  public openModal(op: string, transaction?: Transaction): void {
+  public openModal(op: string, transaction?: Transaction, type?: string): void {
 
     let modalRef;
     switch (op) {
       case 'transaction':
-        modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
         let transactionAux = new Transaction();
         transactionAux.company = this.companySelected;
         modalRef.componentInstance.transaction = transactionAux;
         modalRef.componentInstance.type = "Cobro";
         modalRef.result.then(
           (result) => {
-            if (typeof(result) === "object") {
+            if (typeof (result) === "object") {
               this.openModal('movement-of-cash', result);
             }
           }, (reason) => {
@@ -220,7 +220,7 @@ export class CurrentAccountComponent implements OnInit {
           }
         );
         break;
-        case 'movement-of-cash':
+      case 'movement-of-cash':
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
@@ -232,7 +232,7 @@ export class CurrentAccountComponent implements OnInit {
             this.updateTransaction(transaction);
           }
         }, (reason) => {
-          
+
         });
         break;
       case 'company':
@@ -252,14 +252,18 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public addTransaction(transactionCode: number) {
-    this._router.navigate(['/pos/mesas/' + transactionCode + '/add-transaction']);
+  public addTransaction(type: string): void {
+    if (this.companySelected) {
+      this.openModal('transaction', undefined, type);
+    } else {
+      this.showMessage("Debe seleccionar una empresa", "info", false);
+    }
   }
 
   public updateTransaction(transaction: Transaction): void {
-    
+
     this.loading = true;
-    
+
     this._transactionService.updateTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {

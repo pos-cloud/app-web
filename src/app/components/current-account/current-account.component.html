@@ -3,18 +3,18 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Cuenta Corriente
       <div class="pull-right">
-        <button class="btn btn-primary" (click)= "openModal('transaction')">Cobrar</button>
-        <button class="btn btn-primary" (click)="refresh()"[disabled]="loading">
+        <button class="btn btn-primary" (click)="addTransaction('Cobro')">Cobrar</button>
+        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}">
-            </i><span *ngIf="loading">Cargando</span>
-            <span *ngIf="!loading">Actualizar</span>
-          </button>
+          </i>
+          <span *ngIf="loading">Cargando</span>
+          <span *ngIf="!loading">Actualizar</span>
+        </button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>
       </div>
     </div>
-    
     <div class="card-block table-responsive">
       <div class="center-content" *ngIf="alertMessage !== ''">
         <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
@@ -50,11 +50,21 @@
               <th (click)="orderBy('totalPrice')">Monto</th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-              <th><input type="text" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto..."></th>
+              <th>
+                <input type="text" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha...">
+              </th>
+              <th>
+                <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
+              </th>
+              <th>
+                <input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta...">
+              </th>
+              <th>
+                <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
+              </th>
+              <th>
+                <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto...">
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -73,9 +83,7 @@
               <td *ngIf="!transaction.type"></td>
               <td>{{transaction.origin}}</td>
               <td>{{transaction.number}}</td>
-              <td align="right" 
-                  *ngIf="transaction.type.currentAccount !== 'Cobra'"
-                  [ngClass]="{'debit': transaction.type.movement==='Entrada',
+              <td align="right" *ngIf="transaction.type.currentAccount !== 'Cobra'" [ngClass]="{'debit': transaction.type.movement==='Entrada',
                               'credit': transaction.type.movement==='Salida'}">
                 <strong *ngIf="transaction.totalPrice>=0">
                   {{transaction.totalPrice | currency:'USD':'1.2-2'}}
@@ -84,8 +92,7 @@
                   {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
                 </strong>
               </td>
-              <td align="right" *ngIf="transaction.type.currentAccount === 'Cobra'" 
-                                [ngClass]="{'debit': transaction.type.movement==='Salida',
+              <td align="right" *ngIf="transaction.type.currentAccount === 'Cobra'" [ngClass]="{'debit': transaction.type.movement==='Salida',
                                             'credit': transaction.type.movement==='Entrada'}">
                 <strong *ngIf="transaction.totalPrice>=0">
                   {{transaction.totalPrice | currency:'USD':'1.2-2'}}
@@ -100,12 +107,18 @@
             </tr>
           </tbody>
           <tfoot [ngClass]="{'credit':balance>0,'debit':balance<0}">
-            <td><strong>Saldo</strong></td>
+            <td>
+              <strong>Saldo</strong>
+            </td>
             <td></td>
             <td></td>
             <td></td>
-            <td *ngIf="balance>=0"><strong>{{balance | currency:'USD':'1.2-2'}}</strong></td>
-            <td *ngIf="balance<0"><strong>{{balance*-1 | currency:'USD':'1.2-2'}}</strong></td>
+            <td *ngIf="balance>=0">
+              <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
+            </td>
+            <td *ngIf="balance<0">
+              <strong>{{balance*-1 | currency:'USD':'1.2-2'}}</strong>
+            </td>
           </tfoot>
         </table>
       </div>
@@ -113,14 +126,8 @@
     <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls 
-                      class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
-                      nextLabel="Sig."
-                      autoHide="true">
-            </pagination-controls>
+          <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
+          </pagination-controls>
         </div>
         <div class="form-group col-md-2">
           <select class="form-control" [(ngModel)]="itemsPerPage">
