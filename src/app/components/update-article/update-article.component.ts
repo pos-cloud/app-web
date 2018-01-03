@@ -524,8 +524,9 @@ export class UpdateArticleComponent implements OnInit {
     return n;
   }
 
-  public autoCompletar() {
-    this.article.code = this.padString(this.article.code,5);
+  public autoComplete() {
+    this.articleForm.value.code = this.padString(this.articleForm.value.code,5);
+    this.article = this.articleForm.value;
     this.setValuesForm();
   }
 }

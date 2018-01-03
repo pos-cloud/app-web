@@ -214,8 +214,9 @@ export class AddArticleComponent  implements OnInit {
     return n;
   }
 
-  public autoCompletar() {
-    this.article.code =this.padString(this.article.code,5);
+  public autoComplete() {
+    this.articleForm.value.code = this.padString(this.article.code,5);
+    this.article = this.articleForm.value;
     this.setValuesForm();
   }
 
@@ -231,7 +232,6 @@ export class AddArticleComponent  implements OnInit {
             if(result.articles[0] !== undefined) {
               if (!isNaN(parseInt(result.articles[0].code))) {
                 code = (parseInt(result.articles[0].code) + 1) + "";
-                code = this.padString(code,5);
               } else {
                 code = "00001";
               }
