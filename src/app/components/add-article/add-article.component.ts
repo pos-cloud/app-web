@@ -214,9 +214,8 @@ export class AddArticleComponent  implements OnInit {
     return n;
   }
 
-  public autoComplete() {
-    this.articleForm.value.code = this.padString(this.article.code,5);
-    this.article = this.articleForm.value;
+  public autocompleteCode() {
+    this.article.code = this.padString(this.articleForm.value.code, 5);
     this.setValuesForm();
   }
 
@@ -405,6 +404,7 @@ export class AddArticleComponent  implements OnInit {
   public addArticle(): void {
     
     this.loadPosDescription();
+    this.autocompleteCode();
     this.article = this.articleForm.value;
     this.saveArticle();
   }

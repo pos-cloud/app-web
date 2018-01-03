@@ -257,6 +257,7 @@ export class UpdateArticleComponent implements OnInit {
         let slicePipe = new SlicePipe();
         this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
       }
+      this.autocompleteCode();
       this.article = this.articleForm.value;
       if(this.articleForm.value.make) {
         this.getMake();
@@ -524,9 +525,8 @@ export class UpdateArticleComponent implements OnInit {
     return n;
   }
 
-  public autoComplete() {
-    this.articleForm.value.code = this.padString(this.articleForm.value.code,5);
-    this.article = this.articleForm.value;
+  public autocompleteCode() {
+    this.article.code = this.padString(this.articleForm.value.code,5);
     this.setValuesForm();
   }
 }
