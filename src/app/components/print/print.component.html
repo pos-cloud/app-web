@@ -1,5 +1,5 @@
 <iframe [src]="pdfURL" width="500" height="600" type='application/pdf' *ngIf="pdfURL"></iframe>
-<section class="center-content" #contentTicket>
+<!--<section class="center-content" #contentTicket>
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -372,7 +372,7 @@
       </button>
     </div>
   </div>
-</section>
+</section>-->
 
 <!--MODAL IMPRESORA-->
 <ng-template #contentPrinters let-c="close" let-d="dismiss">
