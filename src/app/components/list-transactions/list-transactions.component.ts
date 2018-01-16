@@ -106,7 +106,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.typePrint = 'invoice';
         break;
       case 'cancel' :
-          modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
           modalRef.componentInstance.transaction = transaction;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {

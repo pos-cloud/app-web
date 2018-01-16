@@ -80,7 +80,10 @@
                                                                     }">
               <td align="left" width="100">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('print', transaction)"><i class="fa fa-close"></i></button>
+                <button *ngIf="(transaction.type.name === 'Factura' || transaction.type.name === 'Ticket') && transaction.state === 'Cerrado'" 
+                        type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)">
+                        <i class="fa fa-print"></i>
+                </button>
               </td>
               <td *ngIf="transaction.type">{{transaction.type.name}}</td>
               <td *ngIf="!transaction.type"></td>

@@ -25,11 +25,13 @@ import { ConfigService } from './../../services/config.service';
 //Pipes
 import { DecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
+import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-print',
   templateUrl: './print.component.html',
-  styleUrls: ['./print.component.css']
+  styleUrls: ['./print.component.css'],
+  providers: [RoundNumberPipe]
 })
 export class PrintComponent implements OnInit {
 
@@ -51,6 +53,8 @@ export class PrintComponent implements OnInit {
   @ViewChild('contentTicket') contentTicket: ElementRef;
   public pdfURL;
   public doc;
+  public roundNumber = new RoundNumberPipe();
+  public dateFormat = new DateFormatPipe();
 
   constructor(
     public _turnService: TurnService,
@@ -77,7 +81,6 @@ export class PrintComponent implements OnInit {
       this.getShiftClosingByMovementOfCash();
     } else if (this.typePrint === "invoice") {
       this.getTransaction();
-      
     }
   }
 
@@ -192,7 +195,6 @@ export class PrintComponent implements OnInit {
 
   public getMovementOfArticle(): void {
     this.loading = true;
-    console.log(this.transaction._id);
         this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
           result => {
             if (!result.movementsOfArticles) {
@@ -309,7 +311,6 @@ export class PrintComponent implements OnInit {
     this.showMessage("Imprimiendo, Espere un momento...", "info", false);
 
     this.typePrint = 'turn';
-    let dateFormat = new DateFormatPipe();
     let decimalPipe = new DecimalPipe('ARS');
     let content: string;
 
@@ -319,8 +320,8 @@ export class PrintComponent implements OnInit {
       '<tr><td colspan="12" align="center"><b><font face="Courier">CIERRE DE TURNO</font></b><td></tr>';
     if (Config.companyName) { content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font></b><td></tr>' };
     if (this.turn.employee) { content += '<tr><td colspan="12"><font face="Courier" size="2">Mozo: ' + this.turn.employee.name + '</font></td></tr>' };
-    if (this.turn.startDate) { content += '<tr><td colspan="12"><font face="Courier" size="2">Apertura: ' + dateFormat.transform(this.turn.startDate, 'DD/MM/YYYY HH:mm') + '</font></td></tr>' };
-    if (this.turn.endDate) { content += '<tr><td colspan="12"><font face="Courier" size="2">Cierre: ' + dateFormat.transform(this.turn.endDate, 'DD/MM/YYYY HH:mm') + '</font></td></tr>' };
+    if (this.turn.startDate) { content += '<tr><td colspan="12"><font face="Courier" size="2">Apertura: ' + this.dateFormat.transform(this.turn.startDate, 'DD/MM/YYYY HH:mm') + '</font></td></tr>' };
+    if (this.turn.endDate) { content += '<tr><td colspan="12"><font face="Courier" size="2">Cierre: ' + this.dateFormat.transform(this.turn.endDate, 'DD/MM/YYYY HH:mm') + '</font></td></tr>' };
     if (this.shiftClosingTransaction) { content += '<tr><td colspan="12"><font face="Courier" size="2">Facturado: ' + decimalPipe.transform(this.shiftClosingTransaction.invoicedAmount, '1.2-2') + '</font></td></tr>' };
     if (!this.shiftClosingTransaction) { content += '<tr><td colspan="12"><font face="Courier" size="2">Facturado: $0.00</font></td></tr>' };
     if (this.shiftClosingTransaction) { content += '<tr><td colspan="12"><font face="Courier" size="2">Tickets: ' + this.shiftClosingTransaction.amountOrders + '</font></td></tr>' };
@@ -370,15 +371,12 @@ export class PrintComponent implements OnInit {
   }
 
   public toPrintInvoice(): void {
-
+    
     let doc = new jsPDF('p','mm','A5');
-    let fecha = this.transaction.endDate.split(" ");
 
-    switch(this.transaction.type.name) {
-      case "Factura": 
-
-            
-            //cuadro
+    // switch(this.transaction.type.name) {
+    //   case "Factura": 
+    //         //cuadro
             this.doc.setFont('helvetica')
             this.doc.setFontType('bold')
             this.doc.setDrawColor("Black")
@@ -386,64 +384,91 @@ export class PrintComponent implements OnInit {
             this.doc.text(this.transaction.letter,98,10)
 
             // Detalle de documento
-            this.doc.setFontSize(15)
-            this.doc.text("Factura:",110,10)
-            this.doc.text(this.padString(this.transaction.origin,4)+"-"+this.padString(this.transaction.number,10),140,10)
+            this.doc.setFontSize(20)
+            this.doc.text(this.transaction.type.name,140,10)
             this.doc.setFontSize(10)
-            this.doc.text("Fecha:",110,20)
-            this.doc.text(fecha[0],125,20)
-            this.doc.text("CUIT:",110,25)
-            this.doc.text(this.config[0].companyCUIT,125,25)
-            this.doc.text("Ingresos Brutos:",110,30)
-            this.doc.text("Fecha Inicio de Actividad:",110,35)
+            this.doc.text("Comp. Nº:",110,20)
+            this.doc.text(this.padString(this.transaction.origin,4)+"-"+this.padString(this.transaction.number,10),130,20)
+            this.doc.text("Fecha:",110,25)
+            if (this.transaction.endDate) {
+              this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'),125,25)
+            } else {
+              this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25)
+            }
+            if(this.config[0].companyCUIT) {
+              this.doc.text("CUIT:",110,30)
+              this.doc.text(this.config[0].companyCUIT,125,30)
+            }
+            // this.doc.text("Ingresos Brutos:",110,35)
+            // this.doc.text("Fecha Inicio de Actividad:",110,40)
 
             // Detalle Emisor
+            this.doc.setFontSize(15)
             this.doc.text(this.config[0].companyName,23,20)
             this.doc.setFontSize(10)
-            this.doc.text(this.config[0].companyAddress,25,30)
-            this.doc.text(this.config[0].companyPhone,25,35)
+            this.doc.text(this.config[0].companyAddress,20,30)
+            this.doc.text("("+this.config[0].companyPhone+")",35,35)
 
             // Detalle receptor
             this.doc.setFontSize(10)
-            this.doc.text("Nombre y Apellido:",8,55)
-            this.doc.text(this.transaction.company.name,42,55)
-            this.doc.text("DNI:",8,60)
-            this.doc.text(this.transaction.company.DNI,17,60)
-            this.doc.text("IVA:",8,65)
-            this.doc.text(this.transaction.company.vatCondition.description,17,65)
-            this.doc.text("Direccion:",120,55)
-            this.doc.text(this.transaction.company.address,140,55)
-            this.doc.text("Telefono:",120,60)
-            this.doc.text(this.transaction.company.phones,138,60)
-            this.doc.text("Localidad:",120,65)
-            this.doc.text(this.transaction.company.city,140,65)
+            this.doc.text("Nombre y Apellido:", 8, 55)
+            this.doc.text("Condición de IVA:", 8, 65)
+            this.doc.text("Consumidor Final", 40, 65)
+            this.doc.text("Dirección:", 120, 55)
+            this.doc.text("Teléfono:", 120, 60)
+            this.doc.text("Localidad:", 120, 65)
+
+            if(this.transaction.company) {
+              this.doc.text(this.transaction.company.name,42,55)
+              if (this.transaction.company.DNI) {
+                this.doc.text("DNI:",8,60)
+                this.doc.text(this.transaction.company.DNI,17,60)
+              } else if (this.transaction.company.DNI) {
+                this.doc.text("CUIT:", 8, 60)
+                this.doc.text(this.transaction.company.CUIT, 17, 60)
+              }
+              this.doc.text(this.transaction.company.vatCondition.description,40,65)
+              this.doc.text(this.transaction.company.address,140,55)
+              this.doc.text(this.transaction.company.phones,138,60)
+              this.doc.text(this.transaction.company.city,140,65)
+            } else {
+              this.doc.text("CUIT:", 8, 60)
+              this.doc.text("Consumidor Final", 40, 65)
+            }
 
             var iva21 = 0.00;
             var iva10 = 0.00;
             var iva27 = 0.00;
 
-            for (var x = 0; x < this.transaction.taxes.length; x++) { 
-              if(this.transaction.taxes[x].percentage == 21){
-                iva21 = (this.transaction.taxes[x].taxAmount)
-              }
-              if(this.transaction.taxes[x].percentage == 10.5){
-                iva10 = (this.transaction.taxes[x].taxAmount)
-              }
-              if(this.transaction.taxes[x].percentage == 27){
-                iva27 = (this.transaction.taxes[x].taxAmount)
+            if( this.transaction.taxes) {
+              for (var x = 0; x < this.transaction.taxes.length; x++) { 
+                if(this.transaction.taxes[x].percentage == 21){
+                  iva21 = (this.transaction.taxes[x].taxAmount)
+                }
+                if(this.transaction.taxes[x].percentage == 10.5){
+                  iva10 = (this.transaction.taxes[x].taxAmount)
+                }
+                if(this.transaction.taxes[x].percentage == 27){
+                  iva27 = (this.transaction.taxes[x].taxAmount)
+                }
               }
             }
 
             // Detalle Items
             this.doc.setFontSize(15)
-            this.doc.text("Sub-Total:",148,257)
-            this.doc.text("IVA 21%:",151,263)
-            this.doc.text((iva21).toString(),180,263)
-            this.doc.text("IVA 10.5%:",147,269)
-            this.doc.text((iva10).toString(),180,269)
+            this.doc.text("Sub-Total:",147,257)
+            this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice+this.transaction.discountAmount),2).toString(),180,257)
+            this.doc.text("IVA 21:",147,264)
+            this.doc.text("$ " + this.roundNumber.transform(iva21,2),180,264)
+            this.doc.text("IVA 10.5:",147,271)
+            this.doc.text("$ " + this.roundNumber.transform(iva10,2),180,271)
+            this.doc.text("Exento:",147,278)
+            this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt,2),180,278)
+            this.doc.text("Descuento:",147,285)
+            this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount,2) + ")",180,285)
             this.doc.setFontSize(20)
-            this.doc.text("Total:",155,279)
-            this.doc.text(this.transaction.totalPrice.toString(),180,279)
+            this.doc.text("Total:",147,292)
+            this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice,2),180,292)
             this.doc.setFontSize(10)
             this.doc.text("Observaciones:",10,260)
             this.doc.text("",38,260)
@@ -465,72 +490,86 @@ export class PrintComponent implements OnInit {
 
             var fila = 77;
 
-            for (var i = 0; i < this.movementsOfArticles2.length; i++) { 
-              this.doc.text((this.movementsOfArticles2[0].amount).toString(),6,fila+8)
-              this.doc.text(this.movementsOfArticles2[i].description,25,fila+8)
-              this.doc.text((this.movementsOfArticles2[i].costPrice).toString(),155,fila+8)
-              this.doc.text(this.movementsOfArticles2[i].salePrice.toString(),185,fila+8)
-              
-              fila = fila+8;
+            if (this.movementsOfArticles2.length > 0) {
+              for (var i = 0; i < this.movementsOfArticles2.length; i++) { 
+                this.doc.text((this.movementsOfArticles2[0].amount).toString(),6,fila+8)
+                this.doc.text(this.movementsOfArticles2[i].description,25,fila+8)
+                if (this.movementsOfArticles2[i].article) {
+                  this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].article.salePrice,2),155,fila+8)
+                } else {
+                  this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice, 2), 155, fila + 8)
+                }
+                this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice,2),185,fila+8)
+                
+                fila = fila+8;
+              }
             }
 
             this.doc.setFontStyle("italic")
-            this.doc.setFontSize(20)
+            this.doc.setFontSize(15)
             this.doc.text("Gracias por su compra!",20,290)
 
             this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
-          break;
-      case "Ticket":
-
-          this.doc.text(this.config[0].companyName,50,10)
-          this.doc.setFontSize(15)
-          this.doc.text("Direccion:"+this.config[0].companyAddress,30,20)
-          this.doc.text("Telefono:"+this.config[0].companyPhone,30,27)
-          this.doc.setFontSize(10)
-          this.doc.text("Ticket:",5,50)
-          this.doc.text(this.padString(this.transaction.number,10),20,50)
-          this.doc.text("Fecha:",5,57)
-          this.doc.text(fecha[0],20,57)
+    //       break;
+    //   case "Ticket":
+        //   this.doc.setFontSize(20)
+        //   if (this.config[0].companyName) {
+        //     this.doc.text(this.config[0].companyName,80,10)
+        //   }
+        //   if (this.config[0].companyAddress) {
+        //     this.doc.setFontSize(10)
+        //     this.doc.text("Direccion:" + this.config[0].companyAddress, 30, 20)
+        //   }
+        // if (this.config[0].companyPhone) {
+        //     this.doc.setFontSize(10)
+        //     this.doc.text("Telefono:" + this.config[0].companyPhone, 30, 20)
+        //   }
+        //   this.doc.setFontSize(10)
+        //   this.doc.text("Fecha:",5,50)
+        //   this.doc.text(fecha[0], 15,50)
+        //   this.doc.text("Factura Nº:",5,57)
+        //   this.doc.text(this.padString(this.transaction.number, 10), 22,57)
+        //   this.doc.text("Fecha:",5,50)
+        //   this.doc.text(fecha[0], 15,50)
                       
-          this.doc.line(0, 60, 250, 60) //horizontal
-          this.doc.line(0, 70, 250, 70) //horizontal
-          this.doc.text("Cantidad",5,66)
-          this.doc.text("Descripcion",50,66)
-          this.doc.text("Total",130,66)
+        //   this.doc.line(0, 60, 250, 60) //horizontal
+        //   this.doc.line(0, 70, 250, 70) //horizontal
+        //   this.doc.text("Cantidad",5,66)
+        //   this.doc.text("Descripcion",50,66)
+        //   this.doc.text("Total",130,66)
           
-          this.doc.text("1",10,76)
-          this.doc.text("Camisa",45,76)
-          this.doc.text("100",130,76)
-          
-          var fila = 76;
+        //   var fila = 70;
 
-          for (var i = 0; i < this.movementsOfArticles2.length; i++) { 
-            this.doc.text((this.movementsOfArticles2[0].amount).toString(),10,fila+8)
-            this.doc.text(this.movementsOfArticles2[i].description,45,fila+8)
-            this.doc.text((this.movementsOfArticles2[i].salePrice).toString(),130,fila+8)
+        //   for (var i = 0; i < this.movementsOfArticles2.length; i++) { 
+        //     this.doc.text((this.movementsOfArticles2[0].amount).toString(),10,fila+8)
+        //     this.doc.text(this.movementsOfArticles2[i].description,45,fila+8)
+        //     this.doc.text("$ "+(this.movementsOfArticles2[i].salePrice).toString(),130,fila+8)
             
-            fila = fila+8;
-          }
+        //     fila = fila+8;
+        //   }
 
-          this.doc.setFontSize(30)
-          this.doc.text("Total:",80,170)
-          this.doc.text(this.transaction.totalPrice.toString(),120,170)  
+        //   this.doc.setFontSize(15)
+        //   this.doc.text("Descuento: ", 150, 220)
+        //   this.doc.text("$ (" + this.transaction.discountAmount + ")", 180, 220)  
+        //   this.doc.setFontSize(20)
+        //   this.doc.text("Total: ",150,240)
+        //   this.doc.text("$ " + this.transaction.totalPrice,170,240)  
                       
                       
-          this.doc.setFontStyle("italic")
-          this.doc.setFontSize(20)
-          this.doc.text("Gracias por su compra!",33,190)
-          this.doc.setFontSize(10)
-          this.doc.text("Documento no valido como factura",8,208)
+        //   this.doc.setFontStyle("italic")
+        //   this.doc.setFontSize(15)
+        //   this.doc.text("Gracias por su compra!",75,270)
+        //   this.doc.setFontSize(10)
+        //   this.doc.text("Documento no válido como factura",8,290)
 
-          this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
-          break;
-      case "Cobro":
-          this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
-          break;
-      default:
-          break;
-    }
+        //   this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    //       break;
+    //   case "Cobro":
+    //       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    //       break;
+    //   default:
+    //       break;
+    // }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
