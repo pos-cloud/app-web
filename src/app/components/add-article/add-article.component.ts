@@ -400,7 +400,7 @@ export class AddArticleComponent  implements OnInit {
       'printIn': this.article.printIn
     });
   }
-
+ 
   public addArticle(): void {
     
     this.loadPosDescription();
