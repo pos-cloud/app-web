@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<loginTicketResponse version="1">
+    <header>
+        <source>CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239</source>
+        <destination>SERIALNUMBER=CUIT 20315936773, CN=poscloud</destination>
+        <uniqueId>167803317</uniqueId>
+        <generationTime>2018-02-13T13:12:26.122-03:00</generationTime>
+        <expirationTime>2018-02-14T01:12:26.122-03:00</expirationTime>
+    </header>
+    <credentials>
+        <token>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8c3NvIHZlcnNpb249IjIuMCI+CiAgICA8aWQgc3JjPSJDTj13c2FhLCBPPUFGSVAsIEM9QVIsIFNFUklBTE5VTUJFUj1DVUlUIDMzNjkzNDUwMjM5IiBkc3Q9IkNOPXdzZmUsIE89QUZJUCwgQz1BUiIgdW5pcXVlX2lkPSIzMTQwMTY0MTE3IiBnZW5fdGltZT0iMTUxODUzODI4NiIgZXhwX3RpbWU9IjE1MTg1ODE1NDYiLz4KICAgIDxvcGVyYXRpb24gdHlwZT0ibG9naW4iIHZhbHVlPSJncmFudGVkIj4KICAgICAgICA8bG9naW4gZW50aXR5PSIzMzY5MzQ1MDIzOSIgc2VydmljZT0id3NmZSIgdWlkPSJTRVJJQUxOVU1CRVI9Q1VJVCAyMDMxNTkzNjc3MywgQ049cG9zY2xvdWQiIGF1dGhtZXRob2Q9ImNtcyIgcmVnbWV0aG9kPSIyMiI+CiAgICAgICAgICAgIDxyZWxhdGlvbnM+CiAgICAgICAgICAgICAgICA8cmVsYXRpb24ga2V5PSIyMDMxNTkzNjc3MyIgcmVsdHlwZT0iNCIvPgogICAgICAgICAgICA8L3JlbGF0aW9ucz4KICAgICAgICA8L2xvZ2luPgogICAgPC9vcGVyYXRpb24+Cjwvc3NvPgo=</token>
+        <sign>K5S4qtNEe1xWBUAPdC3/i5UwOQTMo8WcgcO11dbKKpt3S+7sW1ilxZYFsW1ZzAgRxXb2zNedPo+hkyjUm96/5LfOsygv3Ux0qxeI/HXj0QTGGn0cu/iex/9/59KKT3pgCvPOmLvBUTa9jIYaJROfkPaIAlUghIW1NYDvT5qQzQA=</sign>
+    </credentials>
+</loginTicketResponse>

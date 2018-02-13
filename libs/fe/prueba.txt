@@ -1,0 +1,84 @@
+Config que anda
+
+{"companyCUIT":"20315936773"}
+
+{
+	"companyCUIT": "20315936773"
+}
+
+Transaction que anda
+
+{"id":"5a82204b0839ba0850d2b3a7","creationDate":"12/02/2018 20:16:27","operationType":"U","madein":"mostrador","type":{"_id":"5a2865c7aa737a03c0c0b943","creationDate":"06/12/2017 18:48:55","operationType":"C","codes":[{"letter":"A","code":1},{"letter":"B","code":6},{"letter":"C","code":11}],"electronics":"Si","movement":"Entrada","currentAccount":"Sí","state":"Habilitado","name":"Factura","fixedOrigin":3,"v":0},"state":"Abierto","diners":0,"totalPrice":14.52,"discountPercent":0,"discountAmount":0,"exempt":0,"startDate":"12/02/2018 20:16:27","number":1,"letter":"B","origin":3,"v":0,"taxes":[{"percentage":21,"tax":"IVA","taxAmount":2.52,"taxBase":12}],"endDate":"12/02/2018 20:20:43","company":{"_id":"5a29b28076f9a419d0e64bea","creationDate":"07/12/2017 18:28:32","operationType":"C","emails":"","phones":"","city":"","address":"","DNI":"37822892","CUIT":"","vatCondition":{"_id":"5a28774f2d5626129cc81a47","creationDate":"06/12/2017 20:03:43","operationType":"C","transactionLetter":"B","discriminate":"No","description":"Consumidor Final","code":3,"v":0},"type":"Cliente","fantasyName":"","name":"Franco","code":1,"_v":0}}
+
+{
+	"id": "5a82204b0839ba0850d2b3a7",
+	"creationDate": "12/02/2018 20:16:27",
+	"operationType": "U",
+	"madein": "mostrador",
+	"type": {
+		"_id": "5a2865c7aa737a03c0c0b943",
+		"creationDate": "06/12/2017 18:48:55",
+		"operationType": "C",
+		"codes": [{
+			"letter": "A",
+			"code": 1
+		}, {
+			"letter": "B",
+			"code": 6
+		}, {
+			"letter": "C",
+			"code": 11
+		}],
+		"electronics": "Si",
+		"movement": "Entrada",
+		"currentAccount": "Sí",
+		"state": "Habilitado",
+		"name": "Factura",
+		"fixedOrigin": 3,
+		"v": 0
+	},
+	"state": "Abierto",
+	"diners": 0,
+	"totalPrice": 14.52,
+	"discountPercent": 0,
+	"discountAmount": 0,
+	"exempt": 0,
+	"startDate": "12/02/2018 20:16:27",
+	"number": 1,
+	"letter": "B",
+	"origin": 3,
+	"v": 0,
+	"taxes": [{
+		"percentage": 21,
+		"tax": "IVA",
+		"taxAmount": 2.52,
+		"taxBase": 12
+	}],
+	"endDate": "12/02/2018 20:20:43",
+	"company": {
+		"_id": "5a29b28076f9a419d0e64bea",
+		"creationDate": "07/12/2017 18:28:32",
+		"operationType": "C",
+		"emails": "",
+		"phones": "",
+		"city": "",
+		"address": "",
+		"DNI": "37822892",
+		"CUIT": "",
+		"vatCondition": {
+			"_id": "5a28774f2d5626129cc81a47",
+			"creationDate": "06/12/2017 20:03:43",
+			"operationType": "C",
+			"transactionLetter": "B",
+			"discriminate": "No",
+			"description": "Consumidor Final",
+			"code": 3,
+			"v": 0
+		},
+		"type": "Cliente",
+		"fantasyName": "",
+		"name": "Franco",
+		"code": 1,
+		"_v": 0
+	}
+}
