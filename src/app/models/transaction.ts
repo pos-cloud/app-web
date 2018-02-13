@@ -27,6 +27,8 @@ export class Transaction {
 	public diners: number = 0;
 	public observation: string;
 	public madein: string;
+	public CAE: string;
+	public CAEExpirationDate: string;
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;

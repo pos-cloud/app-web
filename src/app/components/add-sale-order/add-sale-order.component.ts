@@ -181,6 +181,8 @@ export class AddSaleOrderComponent implements OnInit {
           this.getTransactionByType("Ticket");
         } else if (this.transactionType === "agregar-factura") {
           this.getTransactionByType("Factura");
+        } else if (this.transactionType === "agregar-nota-credito") {
+          this.getTransactionByType("Nota de Crédito");
         }
       }
     }
@@ -789,6 +791,28 @@ export class AddSaleOrderComponent implements OnInit {
 
   }
 
+  public validateElectronicTransaction(): void {
+    
+    this._transactionService.validateElectronicTransaction(this.transaction).subscribe(
+      result => {
+        if (result.status === 'err'){
+          this.showMessage(result.code + " - " + result.message, "danger", false);
+          this.loading = false;
+        } else {
+          this.transaction.number = result.number;
+          this.transaction.CAE = result.CAE;
+          this.transaction.CAEExpirationDate = result.CAEExpirationDate;
+          this.updateTransaction();
+          this.openModal("printers");
+        }
+      },
+      error => {
+        this.showMessage("Ha ocurrido un error en el servidor: " + error, "danger", false);
+        this.loading = false;
+      }
+    )
+  }
+
   public openModal(op: string): void {
 
     let modalRef;
@@ -867,50 +891,50 @@ export class AddSaleOrderComponent implements OnInit {
         });
         break;
       case 'charge':
-
         this.typeOfOperationToPrint = "charge";
         if (this.movementsOfArticles.length !== 0) {
-          if ((this.transaction.type.name === "Factura" &&
-            this.transaction.company &&
-            this.transaction.type.electronics === "Si")
-            ||
-            (this.transaction.type.name === "Factura" &&
-              this.transaction.type.electronics !== "Si")
-            ||
-            this.transaction.type.name === "Ticket") {
-
-            if ((this.transaction.type.name === "Factura" &&
-              this.transaction.type.electronics === "Si" &&
-              (this.transaction.company.CUIT || this.transaction.company.DNI)) ||
-              this.transaction.type.name === "Ticket") {
-              modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-              modalRef.componentInstance.transaction = this.transaction;
-              modalRef.result.then((result) => {
-                if (typeof result == 'object') {
-                  if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
-                    let movementOfArticle = new MovementOfArticle();
-                    movementOfArticle.code = "0";
-                    movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                    movementOfArticle.VATPercentage = 21;
-                    movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
-                    movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
-                    movementOfArticle.transaction = this.transaction;
-                    this.movementOfArticle = movementOfArticle;
-                    this.transaction.totalPrice = result.amountPaid;
-                    this.saveMovementOfArticle();
-                    this.openModal('printers');
-                  } else {
-                    this.openModal('printers');
+          if (this.transaction.type.electronics === "No" ||
+              (this.transaction.company && this.transaction.type.electronics === "Si")) {
+            if (this.transaction.type.electronics === "No" ||
+                (this.transaction.type.electronics === "Si" &&
+                (this.transaction.company.CUIT || this.transaction.company.DNI))) {
+                modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+                modalRef.componentInstance.transaction = this.transaction;
+                modalRef.result.then((result) => {
+                  if (typeof result == 'object') {
+                    if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
+                      let movementOfArticle = new MovementOfArticle();
+                      movementOfArticle.code = "0";
+                      movementOfArticle.description = "Recargo con Tarjeta de Crédito";
+                      movementOfArticle.VATPercentage = 21;
+                      movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
+                      movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
+                      movementOfArticle.transaction = this.transaction;
+                      this.movementOfArticle = movementOfArticle;
+                      this.transaction.totalPrice = result.amountPaid;
+                      this.saveMovementOfArticle();
+                    }
+                    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                      this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+                      if(this.transaction.type.electronics === "Si") {
+                        this.validateElectronicTransaction();
+                      } else {
+                        this.assignTransactionNumber();
+                      }
+                    } else {
+                      this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
+                      this.loading = false;
+                    }
                   }
+                }, (reason) => {
                 }
-              }, (reason) => {
-              });
+              );
             } else {
               this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
               this.loading = false;
             }
           } else {
-            this.showMessage("Debe cargar un cliente a la Factura.", "info", true);
+            this.showMessage("Debe cargar un cliente al pedido.", "info", true);
             this.loading = false;
           }
         } else {
@@ -933,6 +957,7 @@ export class AddSaleOrderComponent implements OnInit {
           if (this.typeOfOperationToPrint === "charge") {
             if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
               this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+              this.assignTransactionNumber();
             } else {
               this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
               this.loading = false;
@@ -953,6 +978,7 @@ export class AddSaleOrderComponent implements OnInit {
           if (result !== "cancel" && result !== "") {
             if (this.typeOfOperationToPrint === "charge") {
               this.assignOriginAndLetter(this.printerSelected.origin);
+              this.assignTransactionNumber();
             } else if (this.typeOfOperationToPrint === "bill") {
               this.changeStateOfTable(TableState.Pending, true);
             } else {
@@ -1122,23 +1148,31 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     this.loading = true;
+  }
 
-    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.transaction.number = 1;
-          this.finishCharge();
-        } else {
-          this.transaction.number = result.transactions[0].number + 1;
-          this.finishCharge();
+  public assignTransactionNumber() {
+    
+    if(this.transaction.type.electronics !== "Si") {
+      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+        result => {
+          if (!result.transactions) {
+            this.transaction.number = 1;
+            this.finishCharge();
+          } else {
+            this.transaction.number = result.transactions[0].number + 1;
+            this.finishCharge();
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.finishCharge();
+      this.loading = false;
+    }
   }
 
   public setPrintBill(): void {
@@ -1456,6 +1490,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.showMessage(result.message, "info", true);
           } else {
             this.assignOriginAndLetter(printerSelected.origin);
+            this.assignTransactionNumber();
             this.hideMessage();
           }
           this.loading = false;

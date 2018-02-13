@@ -496,6 +496,8 @@ export class PointOfSaleComponent implements OnInit {
       this._router.navigate(['/pos/' + this.posType + '/editar-ticket/' + transaction._id]);
     } else if (transaction.type.name === "Factura") {
       this._router.navigate(['/pos/' + this.posType + '/editar-factura/' + transaction._id]);
+    } else if (transaction.type.name === "Nota de Crédito") {
+      this._router.navigate(['/pos/' + this.posType + '/editar-nota-credito/' + transaction._id]);
     } else {
       this.openModal('transaction', transaction.type.name, transaction);
     }   

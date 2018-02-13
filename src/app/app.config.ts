@@ -5,6 +5,7 @@ export class Config {
     public _id: string;
     static apiHost: string = "181.164.140.166";
     static apiURL: string;
+    static apiURLFE: string = "libs/fe/index.php";
     static apiConnectionPassword: string;
     static apiPort: number = 3000;
     static accessType: string = "Local";
@@ -31,7 +32,7 @@ export class Config {
         this.apiPort = apiPort;
         Config.updateApiURL();
     }
-
+    
     public static setAccessType(accessType: string): void {
         Config.accessType = accessType;
     }
