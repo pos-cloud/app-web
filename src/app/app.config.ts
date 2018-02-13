@@ -3,12 +3,12 @@ import { ConfigService } from './services/config.service';
 export class Config {
 
     public _id: string;
-    static apiHost: string = "181.164.140.166";
+    static apiHost: string = "localhost";
     static apiURL: string;
     static apiURLFE: string = "libs/fe/index.php";
     static apiConnectionPassword: string;
     static apiPort: number = 3000;
-    static accessType: string = "Local";
+    static accessType: string = "Cloud";
     static pathMongo: string;
     static pathBackup: string;
     static backupTime: string;
