@@ -215,7 +215,7 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
     let vatConditionCF = new VATCondition();
-    vatConditionCF.code = 3;
+    vatConditionCF.code = 5;
     vatConditionCF.description = "Consumidor Final";
     vatConditionCF.discriminate = "No";
     vatConditionCF.transactionLetter = "B";
@@ -237,7 +237,7 @@ export class AddCompanyComponent  implements OnInit {
                 this.showMessage(result.message, "info", true);
               } else {
                 let vatConditionM = new VATCondition();
-                vatConditionM.code = 2;
+                vatConditionM.code = 6;
                 vatConditionM.description = "Monotributista";
                 vatConditionM.discriminate = "No";
                 vatConditionM.transactionLetter = "B";
