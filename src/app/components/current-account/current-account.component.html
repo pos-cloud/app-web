@@ -10,6 +10,7 @@
           <span *ngIf="loading">Cargando</span>
           <span *ngIf="!loading">Actualizar</span>
         </button>
+        <button class="btn btn-primary" (click)="openModal('print')">Imprimir</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
         </span>

@@ -103,6 +103,7 @@ export class ListTransactionsComponent implements OnInit {
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.typePrint = 'invoice';
         break;
       case 'cancel' :

@@ -21,6 +21,7 @@ import { DeleteTransactionComponent } from './../../components/delete-transactio
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
+import { PrintComponent } from 'app/components/print/print.component';
 
 @Component({
   selector: 'app-current-account',
@@ -37,7 +38,7 @@ export class CurrentAccountComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = "";
   public userType: string;
-  public orderTerm: string[] = ['-date'];
+  public orderTerm: string[] = ['-endDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -130,9 +131,7 @@ export class CurrentAccountComponent implements OnInit {
     this.balance = 0;
 
     if (transactions.length > 0) {
-
       for (let transaction of transactions) {
-
         if (transaction.state === TransactionState.Closed &&
           transaction.company._id === this.companySelected._id &&
           transaction.type.currentAccount !== CurrentAcount.No) {
@@ -247,6 +246,13 @@ export class CurrentAccountComponent implements OnInit {
           }, (reason) => {
           }
         );
+        break;
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transactions = this.transactions;
+        modalRef.componentInstance.company = this.companySelected;
+        modalRef.componentInstance.typePrint = 'current-account';
+        modalRef.componentInstance.balance = this.balance;
         break;
       default: ;
     }
