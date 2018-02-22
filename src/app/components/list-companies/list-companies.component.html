@@ -60,9 +60,9 @@
                                                                 totalItems: totalItems
                                                               }">
               <td align="left" width="130">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', company)"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', company)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', company)"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', company)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', company)" title="Modificar"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', company)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td>{{company.code}}</td>
               <td>{{company.name}}</td>

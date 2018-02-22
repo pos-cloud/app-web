@@ -54,7 +54,7 @@
                                                                 totalItems: totalItems
                                                               }">
               <td align="left" width="90">
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td>{{cashBox.code}}</td>
               <td>{{cashBox.openingDate | dateFormat:'DD/MM/YYYY' }}</td>

@@ -10,7 +10,7 @@
   <div class="row center-content">
     <div class="btn-group btn-lg" role="group" aria-label="Basic example">
       <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id, 
-                          'btn btn-secondary':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)">
+                          'btn btn-secondary':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)"  title="Cambiar de Salón">
         {{room.description}}
       </button>
     </div>
@@ -107,7 +107,7 @@
             <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
             <td (click)="openTransaction(transaction)">{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             <td>
-              <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')">
+              <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')"  title="Enviar pedido">
                 <i class="fa fa-motorcycle">
                 </i>
               </button>
@@ -193,7 +193,7 @@
             <td *ngIf="!transaction.company"></td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             <td>
-              <button class="btn btn-warning" (click)="changeStateOfTransaction(transaction, 'Entregado')">
+              <button class="btn btn-warning" (click)="changeStateOfTransaction(transaction, 'Entregado')"  title="Entregar">
                 <i class="fa fa-handshake-o">
                 </i>
               </button>
@@ -279,11 +279,11 @@
             <td *ngIf="!transaction.company"></td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
             <td>
-              <button class="btn btn-danger" (click)="openModal('cancel-transaction', '',transaction)">
+              <button class="btn btn-danger" (click)="openModal('cancel-transaction', '',transaction)"  title="Cancelar">
                 <i class="fa fa-close">
                 </i>
               </button>
-              <button class="btn btn-success" (click)="openModal('movement-of-cash', '',transaction)">
+              <button class="btn btn-success" (click)="openModal('movement-of-cash', '',transaction)"  title="Cobrar">
                 <i class="fa fa-credit-card">
                 </i>
               </button>
@@ -366,10 +366,10 @@
                                                                     totalItems: totalItems
                                                                   }">
             <td align="left" width="150">
-              <button type="button" class="btn btn-success" (click)="openModal('view-transaction', transaction.type.name, transaction)">
+              <button type="button" class="btn btn-success" (click)="openModal('view-transaction', transaction.type.name, transaction)"  title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button type="button" class="btn btn-danger" (click)="openModal('cancel-transaction', transaction.type.name, transaction)"><i class="fa fa-close"></i></button>
+              <button type="button" class="btn btn-danger" (click)="openModal('cancel-transaction', transaction.type.name, transaction)" title="Anular"><i class="fa fa-close"></i></button>
             </td>
             <td (click)="openTransaction(transaction)">{{transaction.type.name}}</td>
             <td *ngIf="transaction.endDate" (click)="openTransaction(transaction)">{{transaction.endDate | dateFormat:'DD/MM/YYYY hh:mm:ss' }}</td>

@@ -36,9 +36,9 @@
                                                                   totalItems: totalItems
                                                                 }">
               <td align="left" width="130">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', category)"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-primary  btn-sm" (click)="openModal('update', category)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger  btn-sm" (click)="openModal('delete', category)"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', category)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-primary  btn-sm" (click)="openModal('update', category)" title="Modificar"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger  btn-sm" (click)="openModal('delete', category)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td class="flat">{{category.description}}</td>
             </tr>

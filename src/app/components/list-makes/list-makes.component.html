@@ -36,9 +36,9 @@
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="130">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', make)"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', make)"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', make)"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', make)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', make)" title="Modificar"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', make)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td class="flat">{{make.description}}</td>
             </tr>
