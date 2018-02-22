@@ -406,23 +406,25 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, 240, 240, 240) 
     
     // Detalle Emisor
-    this.doc.setFontSize(this.fontSizes.normal)
-    if (this.config[0].companyCUIT) {
+    if (this.config[0]) {
+      this.doc.setFontSize(this.fontSizes.normal)
+      if (this.config[0].companyCUIT) {
+        this.doc.setFontType('bold')
+        this.doc.text("CUIT:", 110, 30)
+        this.doc.setFontType('normal')
+        this.doc.text(this.config[0].companyCUIT, 125, 30)
+      }
+      // this.doc.text("Ingresos Brutos:",110,35)
+      // this.doc.text("Fecha Inicio de Actividad:",110,40)
+  
+      this.doc.setFontSize(this.fontSizes.extraLarge)
       this.doc.setFontType('bold')
-      this.doc.text("CUIT:", 110, 30)
+      this.doc.text(this.config[0].companyName, 23, 20)
+      this.doc.setFontSize(this.fontSizes.normal)
       this.doc.setFontType('normal')
-      this.doc.text(this.config[0].companyCUIT, 125, 30)
+      this.doc.text(this.config[0].companyAddress, 20, 30)
+      this.doc.text("(" + this.config[0].companyPhone + ")", 35, 35)
     }
-    // this.doc.text("Ingresos Brutos:",110,35)
-    // this.doc.text("Fecha Inicio de Actividad:",110,40)
-
-    this.doc.setFontSize(this.fontSizes.extraLarge)
-    this.doc.setFontType('bold')
-    this.doc.text(this.config[0].companyName, 23, 20)
-    this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.setFontType('normal')
-    this.doc.text(this.config[0].companyAddress, 20, 30)
-    this.doc.text("(" + this.config[0].companyPhone + ")", 35, 35)
 
     // Detalle Receptor
     this.doc.setFontSize(this.fontSizes.normal)
@@ -449,9 +451,15 @@ export class PrintComponent implements OnInit {
       }
       this.doc.setFontType('normal')
       this.doc.text(this.company.vatCondition.description, 40, 65)
-      this.doc.text(this.company.address, 140, 55)
-      this.doc.text(this.company.phones, 138, 60)
-      this.doc.text(this.company.city, 140, 65)
+      if (this.company.address) {
+        this.doc.text(this.company.address, 140, 55)
+      }
+      if (this.company.phones) {
+        this.doc.text(this.company.phones, 138, 60)
+      }
+      if (this.company.city) {
+        this.doc.text(this.company.city, 140, 65)
+      }
     } else {
       this.doc.setFontType('bold')
       this.doc.text("CUIT:", 8, 60)
@@ -461,6 +469,7 @@ export class PrintComponent implements OnInit {
   }
 
   public toPrintCurrentAccount(): void {
+
     this.loading = true;
     this.showMessage("Imprimiendo, Espere un momento...", "info", false);
 
