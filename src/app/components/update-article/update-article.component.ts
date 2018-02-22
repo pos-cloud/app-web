@@ -257,8 +257,8 @@ export class UpdateArticleComponent implements OnInit {
         let slicePipe = new SlicePipe();
         this.articleForm.value.posDescription = slicePipe.transform(this.articleForm.value.description,1,10);
       }
-      this.autocompleteCode();
       this.article = this.articleForm.value;
+      this.autocompleteCode();
       if(this.articleForm.value.make) {
         this.getMake();
       } else {

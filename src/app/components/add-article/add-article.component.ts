@@ -404,8 +404,8 @@ export class AddArticleComponent  implements OnInit {
   public addArticle(): void {
       
     this.loadPosDescription();
-    this.autocompleteCode();
     this.article = this.articleForm.value;
+    this.autocompleteCode();
     this.saveArticle();
   }
 
