@@ -49,6 +49,10 @@ import { DeletePrinterComponent } from './components/delete-printer/delete-print
 import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
+import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
+import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
+import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
+import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
@@ -101,11 +105,15 @@ const _routes: Routes = [
   { path: 'admin/agregar-empresa', component: AddCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-empresa', component: UpdateCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-empresa', component: DeleteCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/impresoras', component: ListPrintersComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/turnos', component: ListTurnsComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/impresoras', component: ListPrintersComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/agregar-impresora', component: AddPrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-impresora', component: UpdatePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-impresora', component: DeletePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/tipos-transaccion', component: ListTransactionTypesComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/agregar-tipo-transaccion', component: AddTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/editar-tipo-transaccion', component: UpdateTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
+  { path: 'admin/eliminar-tipo-transaccion', component: DeleteTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/import', component: ImportComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/config', component: ConfigComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/configuraciones', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },

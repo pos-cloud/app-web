@@ -115,6 +115,10 @@ import { PrintComponent } from './components/print/print.component';
 import { ViewTransactionComponent } from './components/view-sale-order/view-transaction.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { ExportReceComponent } from './components/export-rece/export-rece.component';
+import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
+import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
+import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
+import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
 
 @NgModule({
   declarations: [
@@ -188,7 +192,11 @@ import { ExportReceComponent } from './components/export-rece/export-rece.compon
     PrintComponent,
     ViewTransactionComponent,
     ListTurnsComponent,
-    ExportReceComponent
+    ExportReceComponent,
+    ListTransactionTypesComponent,
+    AddTransactionTypeComponent,
+    UpdateTransactionTypeComponent,
+    DeleteTransactionTypeComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

@@ -1,0 +1,100 @@
+<div class="modal-header">
+  <h4 class="modal-title">Agregar Tipo de Transacción</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="transactionTypeForm" #formAddTable="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="name">¿Nombre del documento con el que se realizará las transacciones?</label>
+          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" />
+          <div *ngIf="formErrors.name" class="alert alert-danger">
+            {{ formErrors.name }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="currentAccount" class="control-label">¿Afecta la cuenta corriente?</label>
+          <select class="form-control" formControlName="currentAccount">
+            <option value="Si">Si</option>
+            <option value="No" selected>No</option>
+            <option value="Cobra">Cobra</option>
+          </select>
+          <div *ngIf="formErrors.currentAccount" class="alert alert-danger">
+            {{ formErrors.currentAccount }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="movement" class="control-label">¿Qué tipo de movimiento de dinero realiza?</label>
+          <select class="form-control" formControlName="movement">
+            <option value="Entrada" selected>Entrada</option>
+            <option value="Salida">Salida</option>
+          </select>
+          <div *ngIf="formErrors.movement" class="alert alert-danger">
+            {{ formErrors.movement }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="fixedOrigin">¿El documento siempre va a tener el mismo punto de venta?, ¿Cuál?</label>
+          <input type="number" class="form-control" formControlName="fixedOrigin" fixedOrigin="fixedOrigin" id="fixedOrigin"/>
+          <div *ngIf="formErrors.fixedOrigin" class="alert alert-danger">
+            {{ formErrors.fixedOrigin }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="fixedLetter">¿El documento siempre va a tener la misma letra?, ¿Cuál?</label>
+          <input type="number" class="form-control" formControlName="fixedLetter" fixedLetter="fixedLetter" id="fixedLetter"/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="electronics" class="control-label">¿Es un documento electrónico?</label>
+          <select class="form-control" formControlName="electronics">
+            <option value="Si">Si</option>
+            <option value="No" selected>No</option>
+          </select>
+          <div *ngIf="formErrors.electronics" class="alert alert-danger">
+            {{ formErrors.electronics }}
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="transactionTypeForm.value.electronics=='Si'">
+        <div class="form-group col-md-4">
+          <label for="codeA">Código AFIP A</label>
+          <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"/>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="codeB">Código AFIP B</label>
+          <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"/>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="codeC">Código AFIP C</label>
+          <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!transactionTypeForm.valid || loading">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

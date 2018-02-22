@@ -1,0 +1,110 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionTypesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Listado de Tipos de transacciones
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)">Agregar Tipo de transacción</button>
+        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
+          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
+          <span *ngIf="loading">Cargando</span>
+          <span *ngIf="!loading">Actualizar</span>
+        </button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+        </span>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>
+              <i class="fa fa-bars"></i>
+            </th>
+            <th (click)="orderBy('name')">Nombre</th>
+            <th (click)="orderBy('currentAccount')">Afecta cuenta corriente</th>
+            <th (click)="orderBy('movement')">Movimiento de dinero</th>
+            <th (click)="orderBy('fixedOrigin')">Origen Fijo</th>
+            <th (click)="orderBy('fixedLetter')">Letra Fija</th>
+            <th (click)="orderBy('electronics')">Documento electrónico</th>
+            <th>Cídigo A</th>
+            <th>Cídigo B</th>
+            <th>Cídigo C</th>
+          </tr>
+          <tr *ngIf="areFiltersVisible">
+            <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCurrentAccount" placeholder="Cuenta Corriente..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterMovement" placeholder="Movimiento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Origen Fijo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterElectronics" placeholder="Electrónico..."></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transactionType of transactionTypes | filter: filterName:'name'
+                                                              | filter: filterCurrentAccount:'currentAccount' 
+                                                              | filter: filterMovement:'movement'
+                                                              | filter: filterFixedOrigin:'fixedOrigin'
+                                                              | filter: filterFixedLetter:''
+                                                              | filter: filterElectronics:''
+                                                              | orderBy: orderTerm: propertyTerm
+                                                              | paginate: { itemsPerPage: itemsPerPage, 
+                                                                            currentPage: p, 
+                                                                            totalItems: totalItems
+                                                                          }">
+            <td align="left" width="130">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transactionType)" title="Ver">
+                <i class="fa fa-eye"></i>
+              </button>
+              <button type="button" class="btn btn-primary  btn-sm" (click)="openModal('update', transactionType)" title="Modificar">
+                <i class="fa fa-pencil"></i>
+              </button>
+              <button type="button" class="btn btn-danger  btn-sm" (click)="openModal('delete', transactionType)" title="Eliminar">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+            <td class="flat">{{transactionType.name}}</td>
+            <td class="flat">{{transactionType.currentAccount}}</td>
+            <td class="flat">{{transactionType.movement}}</td>
+            <td class="flat">{{transactionType.fixedOrigin}}</td>
+            <td class="flat">{{transactionType.fixedLetter}}</td>
+            <td class="flat">{{transactionType.electronics}}</td>
+            <td class="flat">{{getCode(transactionType, "A")}}</td>
+            <td class="flat">{{getCode(transactionType, "B")}}</td>
+            <td class="flat">{{getCode(transactionType, "C")}}</td>
+          </tr>
+          <tr align="center" *ngIf="areTransactionTypesEmpty">
+            <td colspan="2">No se encontraron salones</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-primary">
+      <div class="row">
+        <div class="col-md-10">
+          <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
+          </pagination-controls>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage">
+            <option [value]="5">Mostrar 5 ítems</option>
+            <option [value]="10">Mostrar 10 ítems</option>
+            <option [value]="15">Mostrar 15 ítems</option>
+            <option [value]="20">Mostrar 20 ítems</option>
+            <option [value]="50">Mostrar 50 ítems</option>
+            <option [value]="100">Mostrar 100 ítems</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

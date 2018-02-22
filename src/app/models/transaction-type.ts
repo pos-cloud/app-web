@@ -2,7 +2,6 @@ export class TransactionType {
 
 	public _id: string;
 	public name: string = "";
-	public state: TransactionTypeState = TransactionTypeState.Enabled;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: TransactionTypeMovements = TransactionTypeMovements.Inflows;
 	public electronics: string;
@@ -11,11 +10,6 @@ export class TransactionType {
 	public fixedLetter: string;
 
 	constructor() { }
-}
-
-export enum TransactionTypeState {
-	Enabled = <any> "Habilitado",
-	Disabled = <any> "Deshabilitado"
 }
 
 export enum TransactionTypeMovements {

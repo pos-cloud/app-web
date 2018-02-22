@@ -15,7 +15,7 @@
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-8">
-          <label for="description" class="control-label">Descripción:</label>
+          <label for="description" class="control-label">Descripción</label>
           <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}

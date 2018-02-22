@@ -7,7 +7,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionTypeState, CurrentAcount, TransactionTypeMovements } from './../../models/transaction-type';
+import { TransactionType, CurrentAcount, TransactionTypeMovements } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
@@ -195,7 +195,7 @@ export class CurrentAccountComponent implements OnInit {
     if (this.companySelected) {
       this.getTransactionsByCompany();
     } else {
-      this.showMessage("Debe seleccionar una empresa", "info", false);
+      this.showMessage("Debe seleccionar una empresa", "info", true);
     }
   }
 
@@ -248,11 +248,15 @@ export class CurrentAccountComponent implements OnInit {
         );
         break;
       case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactions = this.transactions;
-        modalRef.componentInstance.company = this.companySelected;
-        modalRef.componentInstance.typePrint = 'current-account';
-        modalRef.componentInstance.balance = this.balance;
+        if(this.companySelected) {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.transactions = this.transactions;
+          modalRef.componentInstance.company = this.companySelected;
+          modalRef.componentInstance.typePrint = 'current-account';
+          modalRef.componentInstance.balance = this.balance;
+        } else {
+          this.showMessage("Debe seleccionar una empresa","info", true);
+        }
         break;
       default: ;
     }
@@ -262,7 +266,7 @@ export class CurrentAccountComponent implements OnInit {
     if (this.companySelected) {
       this.openModal('transaction', undefined, type);
     } else {
-      this.showMessage("Debe seleccionar una empresa", "info", false);
+      this.showMessage("Debe seleccionar una empresa", "info", true);
     }
   }
 

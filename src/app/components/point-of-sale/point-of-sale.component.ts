@@ -9,7 +9,7 @@ import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionTypeState, TransactionTypeMovements, CurrentAcount, CodeAFIP } from './../../models/transaction-type';
+import { TransactionType, TransactionTypeMovements, CurrentAcount, CodeAFIP } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
 import { RoomService } from './../../services/room.service';
@@ -90,7 +90,6 @@ export class PointOfSaleComponent implements OnInit {
           transactionType.currentAccount = CurrentAcount.Yes;
           transactionType.movement = TransactionTypeMovements.Inflows;
           transactionType.name = "Ticket";
-          transactionType.state = TransactionTypeState.Enabled;
           transactionType.electronics = "No";
           this._transactionTypeService.saveTransactionType(transactionType).subscribe(
             result => {
@@ -101,7 +100,6 @@ export class PointOfSaleComponent implements OnInit {
                 transactionType.currentAccount = CurrentAcount.Cobra;
                 transactionType.movement = TransactionTypeMovements.Inflows;
                 transactionType.name = "Cobro";
-                transactionType.state = TransactionTypeState.Enabled;
                 transactionType.electronics = "No";
                 transactionType.fixedLetter = "X";
                 this._transactionTypeService.saveTransactionType(transactionType).subscribe(
@@ -113,7 +111,6 @@ export class PointOfSaleComponent implements OnInit {
                       transactionType.currentAccount = CurrentAcount.Yes;
                       transactionType.movement = TransactionTypeMovements.Outflows;
                       transactionType.name = "Nota de Crédito";
-                      transactionType.state = TransactionTypeState.Enabled;
                       transactionType.electronics = "No";
                       this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                         result => {
@@ -124,7 +121,6 @@ export class PointOfSaleComponent implements OnInit {
                             transactionType.currentAccount = CurrentAcount.Yes;
                             transactionType.movement = TransactionTypeMovements.Outflows;
                             transactionType.name = "Saldo Inicial (+)";
-                            transactionType.state = TransactionTypeState.Enabled;
                             transactionType.electronics = "No";
                             transactionType.fixedLetter = "X";
                             this._transactionTypeService.saveTransactionType(transactionType).subscribe(
@@ -136,7 +132,6 @@ export class PointOfSaleComponent implements OnInit {
                                   transactionType.currentAccount = CurrentAcount.Yes;
                                   transactionType.movement = TransactionTypeMovements.Inflows;
                                   transactionType.name = "Saldo Inicial (-)";
-                                  transactionType.state = TransactionTypeState.Enabled;
                                   transactionType.electronics = "No";
                                   transactionType.fixedLetter = "X";
                                   this._transactionTypeService.saveTransactionType(transactionType).subscribe(
@@ -148,7 +143,6 @@ export class PointOfSaleComponent implements OnInit {
                                         transactionType.currentAccount = CurrentAcount.Yes;
                                         transactionType.movement = TransactionTypeMovements.Inflows;
                                         transactionType.name = "Factura";
-                                        transactionType.state = TransactionTypeState.Enabled;
                                         transactionType.electronics = "Si";
                                         let codes = new Array();
                                         let codeA = new CodeAFIP();
