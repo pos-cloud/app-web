@@ -24,7 +24,7 @@ export enum TransactionTypeMovements {
 }
 
 export enum CurrentAcount {
-	Yes = <any>"Sí",
+	Yes = <any>"Si",
 	No = <any>"No",
 	Cobra = <any>"Cobra"
 }
