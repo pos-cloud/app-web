@@ -15,17 +15,16 @@ export class AuthGuard implements CanActivate {
   ) { }
   
   canActivate( route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    return true;
-    // this.roles = route.data["roles"];
-    // this.identity = this._userService.getIdentity();
-    // if (this.identity && 
-    //     this.identity.employee && 
-    //     this.identity.employee.type && 
-    //     this.identity.employee.type.description === this.roles[0]) {
-    //   return true;
-    // } else {
-    //   this._router.navigate['/'];
-    //   return false;
-    // }
+    this.roles = route.data["roles"];
+    this.identity = this._userService.getIdentity();
+    if (this.identity && 
+        this.identity.employee && 
+        this.identity.employee.type && 
+        this.identity.employee.type.description === this.roles[0]) {
+      return true;
+    } else {
+      this._router.navigate['/'];
+      return false;
+    }
   }
 }

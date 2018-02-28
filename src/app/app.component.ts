@@ -19,6 +19,7 @@ export class AppComponent implements OnInit{
   public alertMessage: string = "";
   public isAPIConected: boolean;
   public loading: boolean = true;
+  public modules: string[];
 
   constructor(
     public _configService: ConfigService,
@@ -34,7 +35,7 @@ export class AppComponent implements OnInit{
   }
 
   public getConfigLocal() {
-
+  
     this.loading = true;
 
     let result = this._configService.getConfigLocal();
@@ -83,6 +84,8 @@ export class AppComponent implements OnInit{
     if(config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if(config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone);
+    if (config.modules) Config.setModules(config.modules);
+    this.modules = config.modules;
   }
 
   public setApiConfigurationSettings(config) {

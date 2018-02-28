@@ -1,4 +1,4 @@
-<nav class="navbar navbar-toggleable-md bg-faded" *ngIf="!hideMenu" >
+<nav class="navbar navbar-toggleable-md bg-faded" *ngIf="!hideMenu">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" 
           data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
           aria-expanded="false" aria-label="Toggle navigation">
@@ -7,16 +7,16 @@
   <a class="navbar-brand" [routerLink]="['inicio']"> POS Cloud</a>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item navbar-inverse" *ngIf="!identity">
+      <li class="nav-item navbar-inverse" *ngIf="identity && identity.employee && identity.employee.type.description === 'Mozo'">
         <a class="nav-link btn" [routerLink]="['pos','resto']" [routerLinkActive]="['active-primary']"><i class="fa fa-cutlery"></i> Resto</a>
       </li>
-      <li class="nav-item" *ngIf="!identity">
+      <li class="nav-item" *ngIf="identity && identity.employee && identity.employee.type.description === 'Mozo'">
         <a class="nav-link btn" [routerLink]="['pos','mostrador']" [routerLinkActive]="['active-primary']"><i class="fa fa-handshake-o"></i> Mostrador</a>
       </li>
-      <li class="nav-item" *ngIf="!identity">
+      <li class="nav-item" *ngIf="identity && identity.employee && identity.employee.type.description === 'Mozo'">
         <a class="nav-link btn" [routerLink]="['pos','delivery']" [routerLinkActive]="['active-primary']"><i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity">
+      <li class="nav-item" ngbDropdown *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-fax"></i> POS</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['pos','resto']" [routerLinkActive]="['active']">Resto</button>
@@ -24,7 +24,7 @@
           <button class="dropdown-item" [routerLink]="['pos','delivery']" [routerLinkActive]="['active']">Delivery</button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity">
+      <li class="nav-item" ngbDropdown *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-shopping-basket"></i> Productos</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</button>
@@ -32,31 +32,31 @@
           <button class="dropdown-item" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity">
+      <li class="nav-item" ngbDropdown *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empresas']" [routerLinkActive]="['active']">Clientes</button>
           <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']" [routerLinkActive]="['active']">Cuentas Corrientes</button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity">
+      <li class="nav-item" ngbDropdown *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</button>
           <button class="dropdown-item" [routerLink]="['admin','turnos']" [routerLinkActive]="['active']">Turnos</button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity">
+      <li class="nav-item" ngbDropdown *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-cutlery"></i> Resto</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</button>
           <button class="dropdown-item" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</button>
         </div>
       </li>
-      <li class="nav-item" *ngIf="identity">
+      <li class="nav-item" *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active-primary']"><i class="fa fa-bar-chart"></i> Ventas</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity">
+      <li class="nav-item" ngbDropdown *ngIf="identity && identity.employee && identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</button>
@@ -75,7 +75,7 @@
         <a class="nav-link btn" *ngIf="identity" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</a>
       </li>
       <li class="nav-item pull-right">
-        <a class="nav-link btn" *ngIf="!identity" [routerLink]="['login']" [routerLinkActive]="['active']"><i class="fa fa-sign-in"></i>Iniciar Sesión</a>
+        <a class="nav-link btn" *ngIf="!identity" (click)="openModal('login')"><i class="fa fa-sign-in"></i>Iniciar Sesión</a>
       </li>
     </ul>
   </div>

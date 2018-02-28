@@ -212,7 +212,7 @@ export class UpdateUserComponent implements OnInit {
             userStorage.employee.type = new EmployeeType();
             userStorage.employee.type._id = result.user.employee.type._id;
             userStorage.employee.type.description = result.user.employee.type.description;
-            localStorage.setItem('user', JSON.stringify(userStorage));
+            sessionStorage.setItem('user', JSON.stringify(userStorage));
           }
           this.activeModal.close('save_close');
         }

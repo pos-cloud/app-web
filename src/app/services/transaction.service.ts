@@ -150,7 +150,7 @@ export class TransactionService {
 		headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
 		let body= 'transaction='+JSON.stringify(transaction)+'&'+'config='+'{"companyCUIT":"'+Config.companyCUIT+'"}';
-		console.log(body);
+		
 		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
 	}
 }

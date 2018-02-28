@@ -6,7 +6,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row" *ngIf="alertMessage">
+	<div class="row" *ngIf="alertMessage !== ''">
 		<div class="center-content">
 			<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
 				{{alertMessage}}

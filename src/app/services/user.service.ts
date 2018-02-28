@@ -100,7 +100,7 @@ export class UserService {
 
   getIdentity(): User {
     
-    let identity: User = JSON.parse(localStorage.getItem('user'));
+    let identity: User = JSON.parse(sessionStorage.getItem('user'));
     if(identity !== undefined && identity !== null) {
       this.identity = identity;
       return this.identity;
@@ -112,7 +112,7 @@ export class UserService {
 
   getToken(): string {
 
-    let token: string = localStorage.getItem('session_token');
+    let token: string = sessionStorage.getItem('session_token');
 
     if (token !== undefined) {
       this.token = token;

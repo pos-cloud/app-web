@@ -25,8 +25,7 @@ export class LoginComponent implements OnInit {
 
   public user: User;
   public loginForm: FormGroup;
-  public alertMessage: string = "";
-  public userType: string = "admin";
+  public alertMessage: string;
   public loading: boolean = false;
   @Input() employeeSelected: Employee;
   @Input() routeRequired: Employee;
@@ -57,18 +56,17 @@ export class LoginComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _router: Router,
     private _route: ActivatedRoute
-    ) { }
+    ) { 
+      this.alertMessage = "";
+    }
 
   ngOnInit() {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
     this.user = new User();
-    if (this.userType === "pos") {
-      if(this.employeeSelected !== undefined){
-        this.getUserOfEmployee();
-        this.employees.push(this.employeeSelected);
-      }
+
+    if (this.employeeSelected !== undefined) {
+      this.getUserOfEmployee();
+      this.employees.push(this.employeeSelected);
     }
     
     this.buildForm();
@@ -151,7 +149,7 @@ export class LoginComponent implements OnInit {
 
   public login(): void {
     
-    if(this.userType === "pos") {
+    if(this.employeeSelected) {
       this.loginWaiter();
     } else {
       this.loginSupervisor();
@@ -169,7 +167,7 @@ export class LoginComponent implements OnInit {
         if (!result.user.employee) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
-        } else { 
+        } else {
           this.activeModal.close(result.user.employee);
         }
       },
@@ -201,7 +199,7 @@ export class LoginComponent implements OnInit {
           userStorage.employee.type = new EmployeeType();
           userStorage.employee.type._id = result.user.employee.type._id;
           userStorage.employee.type.description = result.user.employee.type.description;
-          localStorage.setItem('user', JSON.stringify(userStorage));
+          sessionStorage.setItem('user', JSON.stringify(userStorage));
 
           //Obtener el token del usuario
           this._userService.login(this.user, true).subscribe(
@@ -215,8 +213,8 @@ export class LoginComponent implements OnInit {
                   this.showMessage("El token no se ha generado correctamente", "info", true);
                 } else {
                   this.token = result.token;
-                  localStorage.setItem('session_token', this.token);
-                  this._router.navigate(['/']);
+                  sessionStorage.setItem('session_token', this.token);
+                  this.activeModal.close(this.user);
                 }
 
                 this.loading = false;

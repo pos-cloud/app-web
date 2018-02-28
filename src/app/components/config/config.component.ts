@@ -221,6 +221,7 @@ export class ConfigComponent implements OnInit {
     Config.setAccessType(config.accessType);
     Config.setApiHost(config.apiHost);
     Config.setApiPort(config.apiPort);
+    Config.setModules(config.modules);
   }
 
   //METODO PARA INICIALIZAR EL SISTEMA CON UN USUARIO

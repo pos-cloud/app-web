@@ -41,8 +41,8 @@ export class DeleteUserComponent implements OnInit {
     this._userService.deleteUser(this.user._id).subscribe(
       result => {
         if (this._userService.getIdentity()._id === this.user._id) {
-            localStorage.removeItem("session_token");
-            localStorage.removeItem("user");
+            sessionStorage.removeItem("session_token");
+            sessionStorage.removeItem("user");
             this._router.navigate(['/']);
         }
         this.activeModal.close('delete_close');

@@ -240,6 +240,7 @@ export class ConfigBackupComponent implements OnInit {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone);
+    if (config.modules) Config.setModules(config.modules);
   }
 
 

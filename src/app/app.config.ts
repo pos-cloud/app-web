@@ -9,6 +9,7 @@ export class Config {
     static apiConnectionPassword: string;
     static apiPort: number = 3000;
     static accessType: string = "Cloud";
+    static modules: string[];
     static pathMongo: string;
     static pathBackup: string;
     static backupTime: string;
@@ -35,6 +36,10 @@ export class Config {
     
     public static setAccessType(accessType: string): void {
         Config.accessType = accessType;
+    }
+
+    public static setModules(modules: string[]): void {
+        Config.modules = modules;
     }
 
     public static setApiConnectionPassword(apiConnectionPassword: string): void {

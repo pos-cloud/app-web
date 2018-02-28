@@ -37,7 +37,6 @@ import { PrintService } from './../../services/print.service';
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
-import { LoginComponent } from './../login/login.component';
 import { PrintComponent } from './../../components/print/print.component';
 
 //Pipes
