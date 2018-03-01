@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { Company } from './../../models/company';
+import { Company, CompanyType } from './../../models/company';
 import { Config } from './../../app.config';
 
 import { CompanyService } from './../../services/company.service';
@@ -49,14 +49,22 @@ export class ListCompaniesComponent implements OnInit {
     if(!this.userType) {
       this.userType = pathLocation[1];
     }
-    this.getCompanies();
+    this.getCompaniesByType();
   }
 
-  public getCompanies(): void {  
+  public getCompaniesByType(): void {  
 
     this.loading = true;
 
-    this._companyService.getCompanies().subscribe(
+    let pathLocation: string[] = this._router.url.split('/');
+    let type;
+    if (pathLocation[2] === "clientes") {
+      type = CompanyType.Client;
+    } else if (pathLocation[2] === "proveedores") {
+      type = CompanyType.Provider;
+    }
+
+    this._companyService.getCompaniesByType(type).subscribe(
         result => {
 					if(!result.companies) {
             this.showMessage(result.message, "info", true); 
@@ -89,7 +97,7 @@ export class ListCompaniesComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getCompanies();
+    this.getCompaniesByType();
   }
   
   public openModal(op: string, company:Company): void {
@@ -103,9 +111,9 @@ export class ListCompaniesComponent implements OnInit {
         break;
       case 'add' :
         modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' }).result.then((result) => {
-          this.getCompanies();
+          this.getCompaniesByType();
         }, (reason) => {
-          this.getCompanies();
+          this.getCompaniesByType();
         });
         break;
       case 'update' :
@@ -114,7 +122,7 @@ export class ListCompaniesComponent implements OnInit {
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if(result === 'save_close') {
-              this.getCompanies();
+              this.getCompaniesByType();
             }
           }, (reason) => {
             
@@ -125,7 +133,7 @@ export class ListCompaniesComponent implements OnInit {
           modalRef.componentInstance.company = company;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
-              this.getCompanies();
+              this.getCompaniesByType();
             }
           }, (reason) => {
             

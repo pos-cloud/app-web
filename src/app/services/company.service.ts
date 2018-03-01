@@ -9,56 +9,65 @@ import { UserService } from './user.service';
 @Injectable()
 export class CompanyService {
 
-  constructor(
-    public _http: Http,
-    public _userService: UserService
-  ) { }
+	constructor(
+		public _http: Http,
+		public _userService: UserService
+	) { }
 
-  getLastCompany () {
+  	getLastCompany () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'companies/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
-  }
+  	}
 
-  getCompany (id: string) {
+  	getCompany (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + "company/"+id, { headers: headers }).map (res => res.json());
-  }
+  	}
 
-  getCompanies () {
+  	getCompanies () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.get(Config.apiURL + "companies", { headers: headers }).map (res => res.json());
-  }
+  	}
 
-  saveCompany (company : Company) {
+  
+  	getCompaniesByType (type: string) {
+	  	let headers = new Headers({
+		  'Content-Type': 'application/json',
+		  'Authorization': this._userService.getToken()
+		});
+		return this._http.get(Config.apiURL + 'companies/where="type":"' + type + '"', { headers: headers }).map (res => res.json());
+	}
+	
+	saveCompany (company : Company) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.post(Config.apiURL + "company",company, { headers: headers }).map (res => res.json());
-  }
-  
-  deleteCompany (id: string) {
+	}
+
+	deleteCompany (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "company/"+id, { headers: headers }).map (res => res.json());
-  }
+	}
 
-  updateCompany (company: Company){
+  	updateCompany (company: Company){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken()
 		});
 		return this._http.put(Config.apiURL + "company/"+company._id, company, { headers: headers }).map (res => res.json());
-  }
+  	}
 }

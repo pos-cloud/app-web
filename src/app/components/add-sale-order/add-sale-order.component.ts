@@ -901,6 +901,7 @@ export class AddSaleOrderComponent implements OnInit {
                 modalRef.componentInstance.transaction = this.transaction;
                 modalRef.result.then((result) => {
                   if (typeof result == 'object') {
+                    
                     if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
                       let movementOfArticle = new MovementOfArticle();
                       movementOfArticle.code = "0";
@@ -913,6 +914,7 @@ export class AddSaleOrderComponent implements OnInit {
                       this.transaction.totalPrice = result.amountPaid;
                       this.saveMovementOfArticle();
                     }
+
                     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                       this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
                       if(this.transaction.type.electronics === "Si") {
@@ -921,8 +923,12 @@ export class AddSaleOrderComponent implements OnInit {
                         this.assignTransactionNumber();
                       }
                     } else {
-                      this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
-                      this.loading = false;
+                      if (this.transaction.type.electronics === "Si") {
+                        this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
+                        this.loading = false;
+                      } else {
+                        this.openModal('printers');
+                      }
                     }
                   }
                 }, (reason) => {
@@ -956,11 +962,12 @@ export class AddSaleOrderComponent implements OnInit {
           if (this.typeOfOperationToPrint === "charge") {
             if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
               this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-              this.assignTransactionNumber();
             } else {
-              this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
-              this.loading = false;
+              let origin = 0;
+              this.assignOriginAndLetter(origin);
             }
+            this.assignTransactionNumber();
+            this.loading = false;
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           } else {

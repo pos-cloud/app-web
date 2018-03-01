@@ -6,6 +6,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionTypeMovements } from './../../models/transaction-type';
 import { TransactionService } from './../../services/transaction.service';
+import { Config } from './../../app.config';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
@@ -36,6 +37,7 @@ export class ListTransactionsComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage: number = 10;
   public totalItems = 0;
+  public modules;
 
   constructor(
     public _transactionService: TransactionService,
@@ -50,6 +52,7 @@ export class ListTransactionsComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+    this.modules = Config.modules[0];
     this.getTransactions();
   }
 
