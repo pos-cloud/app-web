@@ -48,7 +48,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     if (this.isAPIConected) {
       this.validateIdentity();
     }
@@ -57,14 +56,23 @@ export class HeaderComponent implements OnInit {
   public validateIdentity(): void {
 
     this.identity = this._userService.getIdentity();
-
+    
     if (this.identity) {
 
       this._router.events.forEach((event: NavigationEvent) => {
         if (event instanceof NavigationStart) {
-          if (event.url === "/pos/mostrador/editar-ticket" ||
-            event.url === "/pos/mostrador/agregar-ticket") {
+          let pathLocation: string[] = event.url.split('/');
+          if (pathLocation[3] === "editar-ticket" ||
+              pathLocation[3] === "agregar-ticket" ||
+              pathLocation[7] === "agregar-ticket" ||
+              pathLocation[7] === "editar-ticket" ||
+              pathLocation[3] === "editar-factura" ||
+              pathLocation[3] === "agregar-factura" ||
+              pathLocation[3] === "editar-nota-credito" ||
+              pathLocation[3] === "agregar-nota-credito") {
             this.hideMenu = true;
+          } else {
+            this.hideMenu = false;
           }
         }
       });

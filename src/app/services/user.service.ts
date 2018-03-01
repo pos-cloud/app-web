@@ -101,6 +101,7 @@ export class UserService {
   getIdentity(): User {
     
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
+    
     if(identity !== undefined && identity !== null) {
       this.identity = identity;
       return this.identity;

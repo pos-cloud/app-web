@@ -27,7 +27,7 @@ export class AppComponent implements OnInit{
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
-    this.isAPIConected = false;
+    this.isAPIConected = true;
   }
 
   ngOnInit(): void {
@@ -63,15 +63,14 @@ export class AppComponent implements OnInit{
         if (!result.configs) {
           this.openModal("config");
           this.isAPIConected = false;
-          this.loading = false;
         } else {
           this.hideMessage();
           this.isAPIConected = true;
           let config = result.configs[0];
           this.setConfigurationSettings(config);
           this.setApiConfigurationSettings(config);
-          this.loading = false;
         }
+        this.loading = false;
       },
       error => {
         this.isAPIConected = false;
