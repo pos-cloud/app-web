@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
   public online: Observable<boolean>;
   public accessType: string;
   public hideMenu: boolean;
-  public modules: string[];
+  public modules;
   public sessionTimer;
   public pathLocation: string[];
   @Input() isAPIConected: boolean;
@@ -48,6 +48,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.modules = Config.modules[0];
     if (this.isAPIConected) {
       this.validateIdentity();
     }

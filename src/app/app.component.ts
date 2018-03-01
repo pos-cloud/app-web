@@ -69,6 +69,10 @@ export class AppComponent implements OnInit{
           let config = result.configs[0];
           this.setConfigurationSettings(config);
           this.setApiConfigurationSettings(config);
+          if(JSON.stringify(config) !== JSON.stringify(this.config)) {
+            if (this._configService.saveConfigLocal(config)) {
+            }
+          }
         }
         this.loading = false;
       },
