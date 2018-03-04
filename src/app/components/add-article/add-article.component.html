@@ -12,153 +12,175 @@
 	</div>
 	<form [formGroup]="articleForm" #formAddArticle="ngForm" (ngSubmit)="addArticle()" autocomplete="off">
 		<div class="modal-body">
-			<div class="row">
-				<div class="form-group col-md-8">
-					<div class="row">
-						<div class="form-group col-md-6">
-							<label for="make" class="control-label">Marca</label>
-							<select class="form-control" formControlName="make">
-								<option *ngFor="let make of makes" [ngValue]="make">{{make.description}}</option>
-							</select>
-							<div *ngIf="formErrors.make" class="alert alert-danger">
-								{{ formErrors.make }}
+			<ngb-tabset>
+				<ngb-tab title="Datos principales">
+					<ng-template ngbTabContent>
+						<div class="row">
+							<div class="form-group col-md-8">
+								<div class="row">
+									<div class="form-group col-md-6">
+										<label for="make" class="control-label">Marca</label>
+										<select class="form-control" formControlName="make">
+											<option *ngFor="let make of makes" [ngValue]="make">{{make.description}}</option>
+										</select>
+										<div *ngIf="formErrors.make" class="alert alert-danger">
+											{{ formErrors.make }}
+										</div>
+									</div>
+									<div class="form-group col-md-6">
+										<label for="code" class="control-label">Código:</label>
+										<input type="text" class="form-control" formControlName="code" name="code" id="code" (blur)="autocompleteCode()" [focus]="focusEvent"
+										/>
+										<div *ngIf="formErrors.code" class="alert alert-danger">
+											{{ formErrors.code }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<input type="file" accept="image/*" (change)="fileChangeEvent($event)" />
 							</div>
 						</div>
-						<div class="form-group col-md-6">
-							<label for="code" class="control-label">Código:</label>
-							<input type="text" class="form-control" formControlName="code" name="code" id="code" (blur)="autocompleteCode()" [focus]="focusEvent" />
-							<div *ngIf="formErrors.code" class="alert alert-danger">
-								{{ formErrors.code }}
+						<div class="row">
+							<div class="form-group col-md-8">
+								<label for="description" class="control-label">Descripción:</label>
+								<input type="text" class="form-control" formControlName="description" name="description" id="description" (blur)="loadPosDescription()"
+								/>
+								<div *ngIf="formErrors.description" class="alert alert-danger">
+									{{ formErrors.description }}
+								</div>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="posDescription" class="control-label">Descripción POS:</label>
+								<input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription" />
+								<div *ngIf="formErrors.posDescription" class="alert alert-danger">
+									{{ formErrors.posDescription }}
+								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-					<input type="file" accept="image/*" (change)="fileChangeEvent($event)"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-8">
-					<label for="description" class="control-label">Descripción:</label>
-					<input type="text" class="form-control" formControlName="description" name="description" id="description" (blur)="loadPosDescription()"/>
-					<div *ngIf="formErrors.description" class="alert alert-danger">
-						{{ formErrors.description }}
-					</div>
-				</div>
-				<div class="form-group col-md-4">
-					<label for="posDescription" class="control-label">Descripción POS:</label>
-					<input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription"/>
-					<div *ngIf="formErrors.posDescription" class="alert alert-danger">
-						{{ formErrors.posDescription }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-6">
-					<label for="category" class="control-label">Rubro:</label>
-					<select class="form-control" formControlName="category">
-						<option *ngFor="let category of categories" [ngValue]="category">{{category.description}}</option>
-					</select>
-					<div *ngIf="formErrors.category" class="alert alert-danger">
-						{{ formErrors.category }}
-					</div>
-				</div>
-				<div class="form-group col-md-6">
-					<label for="printIn" class="control-label">Imprime en:</label>
-					<select class="form-control" formControlName="printIn">
-						<option *ngFor="let printIn of printIns" [ngValue]="printIn">{{printIn}}</option>
-					</select>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="basePrice" class="control-label">Precio Base:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice" step="0.01" (blur)="updatePrices('basePrice')"/>
-					</div>
-					<div *ngIf="formErrors.basePrice" class="alert alert-danger">
-						{{ formErrors.basePrice }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-6">
-					<label for="VATPercentage" class="control-label">IVA:</label>
-					<div class="input-group">
-						<span class="input-group-addon">%</span>
-						<input type="number" class="form-control" formControlName="VATPercentage" name="VATPercentage" id="VATPercentage"
-						 step="0.01" (blur)="updatePrices('VATPercentage')" />
-					</div>
-					<div *ngIf="formErrors.VATPercentage" class="alert alert-danger">
-						{{ formErrors.VATPercentage }}
-					</div>
-				</div>
-				<div class="form-group col-md-6">
-					<label for="VATAmount" class="control-label">Monto IVA:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="VATAmount" name="VATAmount" id="VATAmount" step="0.01" (blur)="updatePrices('VATAmount')" readonly/>
-					</div>
-					<div *ngIf="formErrors.VATAmount" class="alert alert-danger">
-						{{ formErrors.VATAmount }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="costPrice" class="control-label">Precio de costo:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')" readonly/>
-					</div>
-					<div *ngIf="formErrors.costPrice" class="alert alert-danger">
-						{{ formErrors.costPrice }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-6">
-					<label for="markupPercentage" class="control-label">Margen:</label>
-					<div class="input-group">
-						<span class="input-group-addon">%</span>
-						<input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage" id="markupPercentage" step="0.01" (blur)="updatePrices('markupPercentage')"/>
-					</div>
-					<div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
-						{{ formErrors.markupPercentage }}
-					</div>
-				</div>
-				<div class="form-group col-md-6">
-					<label for="markupPrice" class="control-label">Utilidad:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice" step="0.01" (blur)="updatePrices('markupPrice')"/>
-					</div>
-					<div *ngIf="formErrors.markupPrice" class="alert alert-danger">
-						{{ formErrors.markupPrice }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="salePrice" class="control-label">Precio de Venta:</label>
-					<div class="input-group">
-						<span class="input-group-addon">$</span>
-						<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" (blur)="updatePrices('salePrice')"/>
-					</div>
-					<div *ngIf="formErrors.salePrice" class="alert alert-danger">
-						{{ formErrors.salePrice }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="observation" class="control-label">Observación:</label>
-					<div class="input-group">
-						<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
-					</div>
-				</div>
-			</div>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label for="category" class="control-label">Rubro:</label>
+								<select class="form-control" formControlName="category">
+									<option *ngFor="let category of categories" [ngValue]="category">{{category.description}}</option>
+								</select>
+								<div *ngIf="formErrors.category" class="alert alert-danger">
+									{{ formErrors.category }}
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="printIn" class="control-label">Imprime en:</label>
+								<select class="form-control" formControlName="printIn">
+									<option *ngFor="let printIn of printIns" [ngValue]="printIn">{{printIn}}</option>
+								</select>
+							</div>
+						</div>
+					</ng-template>
+				</ngb-tab>
+				<ngb-tab title="Precios">
+					<ng-template ngbTabContent>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label for="basePrice" class="control-label">Precio Base:</label>
+								<div class="input-group">
+									<span class="input-group-addon">$</span>
+									<input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice" step="0.01" (blur)="updatePrices('basePrice')"
+									/>
+								</div>
+								<div *ngIf="formErrors.basePrice" class="alert alert-danger">
+									{{ formErrors.basePrice }}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label for="VATPercentage" class="control-label">IVA:</label>
+								<div class="input-group">
+									<span class="input-group-addon">%</span>
+									<input type="number" class="form-control" formControlName="VATPercentage" name="VATPercentage" id="VATPercentage" step="0.01"
+									 (blur)="updatePrices('VATPercentage')" />
+								</div>
+								<div *ngIf="formErrors.VATPercentage" class="alert alert-danger">
+									{{ formErrors.VATPercentage }}
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="VATAmount" class="control-label">Monto IVA:</label>
+								<div class="input-group">
+									<span class="input-group-addon">$</span>
+									<input type="number" class="form-control" formControlName="VATAmount" name="VATAmount" id="VATAmount" step="0.01" (blur)="updatePrices('VATAmount')"
+									 readonly/>
+								</div>
+								<div *ngIf="formErrors.VATAmount" class="alert alert-danger">
+									{{ formErrors.VATAmount }}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label for="costPrice" class="control-label">Precio de costo:</label>
+								<div class="input-group">
+									<span class="input-group-addon">$</span>
+									<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')"
+									 readonly/>
+								</div>
+								<div *ngIf="formErrors.costPrice" class="alert alert-danger">
+									{{ formErrors.costPrice }}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label for="markupPercentage" class="control-label">Margen:</label>
+								<div class="input-group">
+									<span class="input-group-addon">%</span>
+									<input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage" id="markupPercentage"
+									 step="0.01" (blur)="updatePrices('markupPercentage')" />
+								</div>
+								<div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
+									{{ formErrors.markupPercentage }}
+								</div>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="markupPrice" class="control-label">Utilidad:</label>
+								<div class="input-group">
+									<span class="input-group-addon">$</span>
+									<input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice" step="0.01" (blur)="updatePrices('markupPrice')"
+									/>
+								</div>
+								<div *ngIf="formErrors.markupPrice" class="alert alert-danger">
+									{{ formErrors.markupPrice }}
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label for="salePrice" class="control-label">Precio de Venta:</label>
+								<div class="input-group">
+									<span class="input-group-addon">$</span>
+									<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" (blur)="updatePrices('salePrice')"
+									/>
+								</div>
+								<div *ngIf="formErrors.salePrice" class="alert alert-danger">
+									{{ formErrors.salePrice }}
+								</div>
+							</div>
+						</div>
+					</ng-template>
+				</ngb-tab>
+				<ngb-tab title="Observaciones">
+					<ng-template ngbTabContent>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label for="observation" class="control-label">Observación:</label>
+								<div class="input-group">
+									<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
+								</div>
+							</div>
+						</div>
+					</ng-template>
+				</ngb-tab>
+			</ngb-tabset>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
