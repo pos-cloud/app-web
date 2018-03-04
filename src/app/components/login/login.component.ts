@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -31,6 +31,7 @@ export class LoginComponent implements OnInit {
   @Input() routeRequired: Employee;
   public employees: Employee[] = new Array();
   public token: string;
+  public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
     'name': '',
@@ -70,6 +71,10 @@ export class LoginComponent implements OnInit {
     }
     
     this.buildForm();
+  }
+
+  ngAfterViewInit(): void {
+    this.focusEvent.emit(true);
   }
 
   public getUserOfEmployee(): void {  

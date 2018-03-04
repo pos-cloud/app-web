@@ -93,8 +93,9 @@
                   {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
                 </strong>
               </td>
-              <td align="right" *ngIf="transaction.type.currentAccount === 'Cobra'" [ngClass]="{'debit': transaction.type.movement==='Salida',
-                                            'credit': transaction.type.movement==='Entrada'}">
+              <td align="right" *ngIf="transaction.type.currentAccount === 'Cobra'"
+                                [ngClass]="{  'debit': transaction.type.movement==='Salida',
+                                             'credit': transaction.type.movement==='Entrada'}">
                 <strong *ngIf="transaction.totalPrice>=0">
                   {{transaction.totalPrice | currency:'USD':'1.2-2'}}
                 </strong>

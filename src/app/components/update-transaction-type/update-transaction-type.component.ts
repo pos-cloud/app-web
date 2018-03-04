@@ -74,14 +74,16 @@ export class UpdateTransactionTypeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    console.log(this.transactionType.currentAccount);
+    console.log(CurrentAcount.Cobra);
+    console.log(CurrentAcount);
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
     this.setValueForm();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.focusEvent.emit(true);
   }
 
