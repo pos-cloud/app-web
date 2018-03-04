@@ -21,7 +21,7 @@ export class UpdateCompanyComponent implements OnInit {
 
   @Input() company: Company;
   @Input() readonly: boolean;
-  public types: CompanyType[] = [CompanyType.Client];
+  public types: CompanyType[];
   public vatConditions: VATCondition[];
   public identityTypes: string[] = ["CUIT", "DNI"];
   public identityTypeSelected: string;
@@ -88,12 +88,23 @@ export class UpdateCompanyComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { }
+  ) { 
+    this.types = new Array();
+  }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if (pathLocation[2] === "clientes") {
+      this.types.push(CompanyType.Client);
+    } else if (pathLocation[2] === "proveedores") {
+      this.types.push(CompanyType.Provider);
+    } else {
+      this.types.push(CompanyType.Client);
+      this.types.push(CompanyType.Provider);
+    }
+
     this.vatConditions = new Array();
     
     this.buildForm();

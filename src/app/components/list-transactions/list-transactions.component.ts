@@ -10,7 +10,7 @@ import { Config } from './../../app.config';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
-import { ViewTransactionComponent } from './../../components/view-sale-order/view-transaction.component';
+import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { ExportReceComponent } from './../../components/export-rece/export-rece.component';
 
 //Pipes

@@ -112,7 +112,7 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
 import { PrintComponent } from './components/print/print.component';
-import { ViewTransactionComponent } from './components/view-sale-order/view-transaction.component';
+import { ViewTransactionComponent } from './components/view-transaction/view-transaction.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { ExportReceComponent } from './components/export-rece/export-rece.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';

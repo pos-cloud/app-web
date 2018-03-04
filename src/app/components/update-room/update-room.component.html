@@ -1,6 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="!readonly">Editar Salón</h4>
-  <h4 class="modal-title" *ngIf="readonly">Salón</h4>
+  <h4 class="modal-title" *ngIf="!readonly">Editar Salón {{room.description}}</h4>
+  <h4 class="modal-title" *ngIf="readonly">Salón {{room.description}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>

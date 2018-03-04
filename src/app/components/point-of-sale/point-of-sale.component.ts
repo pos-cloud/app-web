@@ -23,7 +23,7 @@ import { DeleteTransactionComponent } from './../delete-transaction/delete-trans
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
-import { ViewTransactionComponent } from './../../components/view-sale-order/view-transaction.component';
+import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 
 @Component({
   selector: 'app-point-of-sale',

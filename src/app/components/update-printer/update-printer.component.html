@@ -1,6 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="!readonly">Editar Impresora</h4>
-  <h4 class="modal-title" *ngIf="readonly">Impresora</h4>
+  <h4 class="modal-title" *ngIf="!readonly">Editar Impresora {{printer.name}}</h4>
+  <h4 class="modal-title" *ngIf="readonly">Impresora {{printer.name}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
