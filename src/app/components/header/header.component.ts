@@ -70,7 +70,9 @@ export class HeaderComponent implements OnInit {
               pathLocation[3] === "editar-factura" ||
               pathLocation[3] === "agregar-factura" ||
               pathLocation[3] === "editar-nota-credito" ||
-              pathLocation[3] === "agregar-nota-credito") {
+              pathLocation[3] === "agregar-nota-credito" ||
+              pathLocation[3] === "editar-nota-debito" ||
+              pathLocation[3] === "agregar-nota-debito") {
             this.hideMenu = true;
           } else {
             this.hideMenu = false;

@@ -573,8 +573,12 @@ export class PrintComponent implements OnInit {
 
     if (this.movementsOfArticles2.length > 0) {
       for (var i = 0; i < this.movementsOfArticles2.length; i++) { 
-        this.doc.text((this.movementsOfArticles2[0].amount).toString(),6,fila)
-        this.doc.text(this.movementsOfArticles2[i].description,25,fila)
+        if (this.movementsOfArticles2[i].amount) {
+          this.doc.text((this.movementsOfArticles2[i].amount).toString(),6,fila)
+        }
+        if (this.movementsOfArticles2[i].description) {
+          this.doc.text(this.movementsOfArticles2[i].description,25,fila)
+        }
         if (this.movementsOfArticles2[i].article) {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].article.salePrice,2),155,fila)
         } else {
@@ -591,16 +595,20 @@ export class PrintComponent implements OnInit {
     var iva10 = 0.00;
     var iva27 = 0.00;
 
-    if (this.transaction.taxes) {
-      for (var x = 0; x < this.transaction.taxes.length; x++) {
-        if (this.transaction.taxes[x].percentage == 21) {
-          iva21 = (this.transaction.taxes[x].taxAmount)
-        }
-        if (this.transaction.taxes[x].percentage == 10.5) {
-          iva10 = (this.transaction.taxes[x].taxAmount)
-        }
-        if (this.transaction.taxes[x].percentage == 27) {
-          iva27 = (this.transaction.taxes[x].taxAmount)
+    if (this.transaction.company &&
+        this.transaction.company.vatCondition &&
+        this.transaction.company.vatCondition.discriminate === "Si") {
+      if (this.transaction.taxes) {
+        for (var x = 0; x < this.transaction.taxes.length; x++) {
+          if (this.transaction.taxes[x].percentage == 21) {
+            iva21 = (this.transaction.taxes[x].taxAmount)
+          }
+          if (this.transaction.taxes[x].percentage == 10.5) {
+            iva10 = (this.transaction.taxes[x].taxAmount)
+          }
+          if (this.transaction.taxes[x].percentage == 27) {
+            iva27 = (this.transaction.taxes[x].taxAmount)
+          }
         }
       }
     }
@@ -608,7 +616,13 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold')
     this.doc.text("Subtotal:", 147, 247)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice + this.transaction.discountAmount), 2).toString(), 180, 247)
+    if (this.transaction.company &&
+      this.transaction.company.vatCondition &&
+      this.transaction.company.vatCondition.discriminate === "No") {
+      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice + this.transaction.discountAmount), 2).toString(), 180, 247)
+    } else {
+      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice + this.transaction.discountAmount - iva21 - iva10 - iva27), 2).toString(), 180, 247)
+    }
     this.doc.setFontType('bold')
     this.doc.text("IVA 21%:", 147, 254)
     this.doc.setFontType('normal')

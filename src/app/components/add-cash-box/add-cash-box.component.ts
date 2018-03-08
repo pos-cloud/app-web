@@ -57,26 +57,10 @@ export class AddCashBoxComponent  implements OnInit {
   public buildForm(): void {
 
     this.cashBoxForm = this._fb.group({
-      'code': [this.cashBox.code, [
-        ]
-      ],
       'openingDate': [this.cashBox.openingDate, [
         ]
       ],
       'closingDate': [this.cashBox.closingDate, [
-        ]
-      ],
-      'openingCash': [this.cashBox.openingCash, [
-          Validators.required
-        ]
-      ],
-      'closingCash': [this.cashBox.closingCash, [
-        ]
-      ],
-      'invoicedCash': [this.cashBox.invoicedCash, [
-        ]
-      ],
-      'difference': [this.cashBox.difference, [
         ]
       ],
       'state': [this.cashBox.state, [
@@ -113,28 +97,7 @@ export class AddCashBoxComponent  implements OnInit {
     
     this.loading = true;
     this.cashBox = this.cashBoxForm.value;
-    this.getLastCashBox();
-  }
-
-  public getLastCashBox(): void {
-
-    this.loading = true;
-    
-    this._cashBoxService.getLastCashBox().subscribe(
-      result => {
-        if (!result.cashBoxes) {
-          this.cashBox.code = 1;
-          this.saveCashBox();
-        } else {
-          this.cashBox.code = (result.cashBoxes[0].code + 1);
-          this.saveCashBox();
-        }
-			},
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
+    this.saveCashBox();
   }
 
   public saveCashBox(): void {

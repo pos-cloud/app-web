@@ -132,9 +132,11 @@ const _routes: Routes = [
   { path: 'pos/mostrador/agregar-ticket', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/agregar-factura', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/agregar-nota-credito', component: AddSaleOrderComponent },
+  { path: 'pos/mostrador/agregar-nota-debito', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-ticket/:id', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-factura/:id', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-nota-credito/:id', component: AddSaleOrderComponent },
+  { path: 'pos/mostrador/editar-nota-debito/:id', component: AddSaleOrderComponent },
   { path: 'login', component: LoginComponent },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

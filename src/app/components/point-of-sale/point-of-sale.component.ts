@@ -24,6 +24,7 @@ import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-moveme
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
+import { CompanyType } from '../../models/company';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -112,6 +113,20 @@ export class PointOfSaleComponent implements OnInit {
                       transactionType.movement = TransactionTypeMovements.Outflows;
                       transactionType.name = "Nota de Crédito";
                       transactionType.electronics = "No";
+                      let codes = new Array();
+                      let codeA = new CodeAFIP();
+                      codeA.letter = "A";
+                      codeA.code = 3;
+                      codes.push(codeA);
+                      let codeB = new CodeAFIP();
+                      codeB.letter = "B";
+                      codeB.code = 8;
+                      codes.push(codeB);
+                      let codeC = new CodeAFIP();
+                      codeC.letter = "C";
+                      codeC.code = 13;
+                      codes.push(codeC);
+                      transactionType.codes = codes;
                       this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                         result => {
                           if (!result.transactionType) {
@@ -143,7 +158,7 @@ export class PointOfSaleComponent implements OnInit {
                                         transactionType.currentAccount = CurrentAcount.Yes;
                                         transactionType.movement = TransactionTypeMovements.Inflows;
                                         transactionType.name = "Factura";
-                                        transactionType.electronics = "Si";
+                                        transactionType.electronics = "No";
                                         let codes = new Array();
                                         let codeA = new CodeAFIP();
                                         codeA.letter = "A";
@@ -163,7 +178,39 @@ export class PointOfSaleComponent implements OnInit {
                                             if (!result.transactionType) {
                                               this.showMessage(result.message, "info", true);
                                             } else {
-                                              this.hideMessage();
+                                              let transactionType = new TransactionType();
+                                              transactionType.currentAccount = CurrentAcount.Yes;
+                                              transactionType.movement = TransactionTypeMovements.Inflows;
+                                              transactionType.name = "Nota de Débito";
+                                              transactionType.electronics = "No";
+                                              let codes = new Array();
+                                              let codeA = new CodeAFIP();
+                                              codeA.letter = "A";
+                                              codeA.code = 2;
+                                              codes.push(codeA);
+                                              let codeB = new CodeAFIP();
+                                              codeB.letter = "B";
+                                              codeB.code = 7;
+                                              codes.push(codeB);
+                                              let codeC = new CodeAFIP();
+                                              codeC.letter = "C";
+                                              codeC.code = 12;
+                                              codes.push(codeC);
+                                              transactionType.codes = codes;
+                                              this._transactionTypeService.saveTransactionType(transactionType).subscribe(
+                                                result => {
+                                                  if (!result.transactionType) {
+                                                    this.showMessage(result.message, "info", true);
+                                                  } else {
+                                                    this.hideMessage();
+                                                  }
+                                                  this.loading = false;
+                                                },
+                                                error => {
+                                                  this.showMessage(error._body, "danger", false);
+                                                  this.loading = false;
+                                                }
+                                              );
                                             }
                                             this.loading = false;
                                           },
@@ -396,6 +443,7 @@ export class PointOfSaleComponent implements OnInit {
     switch (op) {
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef.componentInstance.type = CompanyType.Client;
         modalRef.result.then(
           (result) => {
             if (typeof (result) === "object") {
@@ -492,6 +540,8 @@ export class PointOfSaleComponent implements OnInit {
       this._router.navigate(['/pos/' + this.posType + '/editar-factura/' + transaction._id]);
     } else if (transaction.type.name === "Nota de Crédito") {
       this._router.navigate(['/pos/' + this.posType + '/editar-nota-credito/' + transaction._id]);
+    } else if (transaction.type.name === "Nota de Débito") {
+      this._router.navigate(['/pos/' + this.posType + '/editar-nota-debito/' + transaction._id]);
     } else {
       this.openModal('transaction', transaction.type.name, transaction);
     }   

@@ -23,6 +23,7 @@ import { SendMailComponent } from './../../components/send-mail/send-mail.compon
 export class ListCompaniesComponent implements OnInit {
 
   public companies: Company[];
+  @Input() type: CompanyType;
   public areCompaniesEmpty: boolean = true;
   public alertMessage: string = "";
   @Input() userType: string;
@@ -46,7 +47,7 @@ export class ListCompaniesComponent implements OnInit {
   ngOnInit(): void {
     
     let pathLocation: string[] = this._router.url.split('/');
-    if(!this.userType) {
+    if (!this.userType) {
       this.userType = pathLocation[1];
     }
     this.getCompaniesByType();
@@ -57,14 +58,15 @@ export class ListCompaniesComponent implements OnInit {
     this.loading = true;
 
     let pathLocation: string[] = this._router.url.split('/');
-    let type;
-    if (pathLocation[2] === "clientes") {
-      type = CompanyType.Client;
-    } else if (pathLocation[2] === "proveedores") {
-      type = CompanyType.Provider;
+    if (!this.type) {
+      if (pathLocation[2] === "clientes") {
+        this.type = CompanyType.Client;
+      } else if (pathLocation[2] === "proveedores") {
+        this.type = CompanyType.Provider;
+      }
     }
 
-    this._companyService.getCompaniesByType(type).subscribe(
+    this._companyService.getCompaniesByType(this.type.toString()).subscribe(
         result => {
 					if(!result.companies) {
             this.showMessage(result.message, "info", true); 

@@ -259,7 +259,45 @@ export class AddCompanyComponent  implements OnInit {
                     if (!result.vatCondition) {
                       this.showMessage(result.message, "info", true);
                     } else {
-                      this.getVATConditions();
+                      let vatConditionM = new VATCondition();
+                      vatConditionM.code = 2;
+                      vatConditionM.description = "Responsable No Inscripto";
+                      vatConditionM.discriminate = "Si";
+                      vatConditionM.transactionLetter = "A";
+
+                      this._vatCondition.saveVATCondition(vatConditionM).subscribe(
+                        result => {
+                          if (!result.vatCondition) {
+                            this.showMessage(result.message, "info", true);
+                          } else {
+                            let vatConditionM = new VATCondition();
+                            vatConditionM.code = 4;
+                            vatConditionM.description = "Exento";
+                            vatConditionM.discriminate = "No";
+                            vatConditionM.transactionLetter = "B";
+
+                            this._vatCondition.saveVATCondition(vatConditionM).subscribe(
+                              result => {
+                                if (!result.vatCondition) {
+                                  this.showMessage(result.message, "info", true);
+                                } else {
+                                  this.getVATConditions();
+                                }
+                                this.loading = false;
+                              },
+                              error => {
+                                this.showMessage(error._body, "danger", false);
+                                this.loading = false;
+                              }
+                            );
+                          }
+                          this.loading = false;
+                        },
+                        error => {
+                          this.showMessage(error._body, "danger", false);
+                          this.loading = false;
+                        }
+                      );
                     }
                     this.loading = false;
                   },

@@ -43,6 +43,7 @@ import { PrintComponent } from './../../components/print/print.component';
 import { DecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { CompanyType } from '../../models/company';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -182,6 +183,8 @@ export class AddSaleOrderComponent implements OnInit {
           this.getTransactionByType("Factura");
         } else if (this.transactionType === "agregar-nota-credito") {
           this.getTransactionByType("Nota de Crédito");
+        } else if (this.transactionType === "agregar-nota-debito") {
+          this.getTransactionByType("Nota de Débito");
         }
       }
     }
@@ -879,7 +882,7 @@ export class AddSaleOrderComponent implements OnInit {
       case 'add_client':
 
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        modalRef.componentInstance.userType = this.userType;
+        modalRef.componentInstance.type = CompanyType.Client;
         modalRef.result.then((result) => {
           if (result) {
             this.transaction.company = result;
@@ -1147,7 +1150,8 @@ export class AddSaleOrderComponent implements OnInit {
   public assignOriginAndLetter(origin: number) {
 
     this.transaction.origin = origin;
-    if (this.transaction.company) {
+    if (this.transaction.company &&
+        this.transaction.company.vatCondition) {
       this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
     } else {
       this.transaction.letter = "X";
