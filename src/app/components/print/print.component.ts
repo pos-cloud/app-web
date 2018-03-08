@@ -619,9 +619,9 @@ export class PrintComponent implements OnInit {
     if (this.transaction.company &&
       this.transaction.company.vatCondition &&
       this.transaction.company.vatCondition.discriminate === "No") {
-      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice + this.transaction.discountAmount), 2).toString(), 180, 247)
+      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice), 2).toString(), 180, 247)
     } else {
-      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice + this.transaction.discountAmount - iva21 - iva10 - iva27), 2).toString(), 180, 247)
+      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice - iva21 - iva10 - iva27), 2).toString(), 180, 247)
     }
     this.doc.setFontType('bold')
     this.doc.text("IVA 21%:", 147, 254)
