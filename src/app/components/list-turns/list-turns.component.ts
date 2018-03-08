@@ -87,7 +87,7 @@ export class ListTurnsComponent implements OnInit {
 
     let modalRef;
     switch(op) {
-      case 'view':
+      case 'print':
           let modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.turn = turn;
           modalRef.componentInstance.typePrint = 'turn';
