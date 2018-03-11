@@ -19,7 +19,7 @@ import { Employee } from './../../models/employee';
 import { Category } from './../../models/category';
 import { Room } from './../../models/room';
 import { Print } from './../../models/print';
-import { Printer, PrinterType } from './../../models/printer';
+import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Turn } from './../../models/turn';
 import { Config } from './../../app.config';
 
@@ -930,7 +930,36 @@ export class AddSaleOrderComponent implements OnInit {
                         this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
                         this.loading = false;
                       } else {
-                        this.openModal('printers');
+                        if(this.transaction.type.printable === "Si") {
+                          if(this.transaction.type.defectPrinter) {
+                            if(this.transaction.type.defectPrinter.type === PrinterType.PDF) {
+                              this.openModal("print");
+                            } else {
+                              this.distributeImpressions(this.transaction.type.defectPrinter);
+                            }
+                          } else {
+                            this.openModal('printers');
+                          }
+                        } else {
+                          if (this.typeOfOperationToPrint === "charge") {
+                            if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                              this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+                            } else {
+                              let origin = 0;
+                              this.assignOriginAndLetter(origin);
+                            }
+                            this.assignTransactionNumber();
+                            this.loading = false;
+                          } else if (this.typeOfOperationToPrint === "bill") {
+                            this.changeStateOfTable(TableState.Pending, true);
+                          } else {
+                            if (this.posType === "resto") {
+                              this.changeStateOfTable(TableState.Busy, true);
+                            } else {
+                              this.back();
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -1019,8 +1048,16 @@ export class AddSaleOrderComponent implements OnInit {
         });
         break;
       case 'print':
-        // modalRef = this._modalService.open(PrintComponent);
-        // modalRef.componentInstance.transaction = this.transaction;
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transaction = this.transaction;
+        modalRef.componentInstance.company = this.transaction.company;
+        modalRef.componentInstance.typePrint = 'invoice';
+        modalRef.result.then((result) => {
+        }, (reason) => {
+          this.assignOriginAndLetter(this.printerSelected.origin);
+          this.assignTransactionNumber();
+          this.hideMessage();
+        });
         // modalRef.componentInstance.print = this.printSelected;
         // if (this.typeOfOperationToPrint === 'charge') {
         //   modalRef.componentInstance.movementsOfArticles = this.movementsOfArticles;
@@ -1103,16 +1140,16 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (this.printers != undefined) {
       for (let printer of this.printers) {
-        if (this.typeOfOperationToPrint === 'charge' && printer.type === PrinterType.Counter) {
+        if (this.typeOfOperationToPrint === 'charge' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typeOfOperationToPrint === 'bill' && printer.type === PrinterType.Counter) {
+        } else if (this.typeOfOperationToPrint === 'bill' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typeOfOperationToPrint === 'bar' && printer.type === PrinterType.Bar) {
+        } else if (this.typeOfOperationToPrint === 'bar' && printer.printIn === PrinterPrintIn.Bar) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typeOfOperationToPrint === 'kitchen' && printer.type === PrinterType.Kitchen) {
+        } else if (this.typeOfOperationToPrint === 'kitchen' && printer.printIn === PrinterPrintIn.Kitchen) {
           this.printersAux.push(printer);
           numberOfPrinters++;
         }
@@ -1437,81 +1474,84 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.loading = true;
     this.showMessage("Imprimiendo, Espere un momento...", "info", false);
-
-    if (this.movementsOfArticles.length !== 0) {
-
-      this.typeOfOperationToPrint = 'charge';
-
-      let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('ARS');
-      let content: string;
-
-      content =
-        '<table>' +
-        '<tbody>';
-      if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
-      if (Config.companyCUIT) content += '<tr><td colspan="12"><font face="Courier" size="2">CUIT Nro.: ' + Config.companyCUIT + '</font></font></td></tr>';
-      if (Config.companyAddress) content += '<tr><td colspan="12"><font face="Courier" size="2">' + Config.companyAddress + '</font></td></tr>';
-      if (Config.companyPhone) content += '<tr><td colspan="12"><font face="Courier" size="2">Tel: ' + Config.companyPhone + '</font></td></tr>';
-      content +=
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.startDate, 'DD/MM/YYYY') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
-      if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
-      if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeOpening.name + '</font></td></tr>';
-      if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
-      content += '<tr><td colspan="12"><hr></td></tr>';
-      for (let movementOfArticle of this.movementsOfArticles) {
+    if(printerSelected.type === PrinterType.PDF) {
+      this.openModal("print");
+    } else {
+      if (this.movementsOfArticles.length !== 0) {
+  
+        this.typeOfOperationToPrint = 'charge';
+  
+        let datePipe = new DateFormatPipe();
+        let decimalPipe = new DecimalPipe('ARS');
+        let content: string;
+  
+        content =
+          '<table>' +
+          '<tbody>';
+        if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
+        if (Config.companyCUIT) content += '<tr><td colspan="12"><font face="Courier" size="2">CUIT Nro.: ' + Config.companyCUIT + '</font></font></td></tr>';
+        if (Config.companyAddress) content += '<tr><td colspan="12"><font face="Courier" size="2">' + Config.companyAddress + '</font></td></tr>';
+        if (Config.companyPhone) content += '<tr><td colspan="12"><font face="Courier" size="2">Tel: ' + Config.companyPhone + '</font></td></tr>';
         content +=
-          '<tr>' +
-          '<td colspan="7"><font face="Courier" size="2">' + movementOfArticle.description + '</font></td>' +
-          '<td colspan="2"><font face="Courier" size="2">' + movementOfArticle.amount + '</font></td>' +
-          '<td colspan="3" align="right"><font face="Courier" size="2">' + decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '</font></td>' +
-          '</tr>';
-        if (movementOfArticle.notes) {
+          '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.startDate, 'DD/MM/YYYY') + '</font></td>' +
+          '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
+        if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
+        if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeOpening.name + '</font></td></tr>';
+        if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
+        content += '<tr><td colspan="12"><hr></td></tr>';
+        for (let movementOfArticle of this.movementsOfArticles) {
           content +=
             '<tr>' +
-            '<td colspan="12"><font face="Courier" size="1"><em>' + movementOfArticle.notes + '<em></font></td>' +
+            '<td colspan="7"><font face="Courier" size="2">' + movementOfArticle.description + '</font></td>' +
+            '<td colspan="2"><font face="Courier" size="2">' + movementOfArticle.amount + '</font></td>' +
+            '<td colspan="3" align="right"><font face="Courier" size="2">' + decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '</font></td>' +
             '</tr>';
+          if (movementOfArticle.notes) {
+            content +=
+              '<tr>' +
+              '<td colspan="12"><font face="Courier" size="1"><em>' + movementOfArticle.notes + '<em></font></td>' +
+              '</tr>';
+          }
         }
-      }
-
-      content +=
-        '<tr><td colspan="12"><hr></td></tr>' +
-        '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discountAmount, '1.2-2') + '</font></td></tr>' +
-        '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
-        '<tr><td colspan="12" align="center"><font face="Courier" size="2">Ticket no válido como factura.</font></td></tr>' +
-        '<tr><td colspan="12" align="center"><font face="Courier" size="2">*Gracias por su visita*</font></td></tr>' +
-        '</tbody>' +
-        '</table>';
-
-      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
-
-      let print = new Print();
-      print.fileName = fileName;
-      print.content = content;
-      print.printer = printerSelected;
-      this.printSelected = print;
-
-      this._printService.toPrint(print).subscribe(
-        result => {
-          if (result.message !== "ok") {
-            this.showMessage(result.message, "info", true);
-          } else {
-            this.assignOriginAndLetter(printerSelected.origin);
-            this.assignTransactionNumber();
+  
+        content +=
+          '<tr><td colspan="12"><hr></td></tr>' +
+          '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
+          '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discountAmount, '1.2-2') + '</font></td></tr>' +
+          '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
+          '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
+          '<tr><td colspan="12" align="center"><font face="Courier" size="2">Ticket no válido como factura.</font></td></tr>' +
+          '<tr><td colspan="12" align="center"><font face="Courier" size="2">*Gracias por su visita*</font></td></tr>' +
+          '</tbody>' +
+          '</table>';
+  
+        let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
+  
+        let print = new Print();
+        print.fileName = fileName;
+        print.content = content;
+        print.printer = printerSelected;
+        this.printSelected = print;
+  
+        this._printService.toPrint(print).subscribe(
+          result => {
+            if (result.message !== "ok") {
+              this.showMessage(result.message, "info", true);
+            } else {
+              this.assignOriginAndLetter(printerSelected.origin);
+              this.assignTransactionNumber();
+              this.hideMessage();
+            }
+            this.loading = false;
+          },
+          error => {
+            this.openModal('errorMessage');
             this.hideMessage();
           }
-          this.loading = false;
-        },
-        error => {
-          this.openModal('errorMessage');
-          this.hideMessage();
-        }
-      );
-    } else {
-      this.showMessage("No existen productos en el pedido.", "info", true);
+        );
+      } else {
+        this.showMessage("No existen productos en el pedido.", "info", true);
+      }
     }
   }
 

@@ -88,6 +88,23 @@
           <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC" [readonly]="readonly"/>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="printable" class="control-label">¿Imprime al finalizar la carga?</label>
+          <select class="form-control" formControlName="printable">
+            <option value="Si" [selected]="'Si'==transactionType.printable" [disabled]="readonly">Si</option>
+            <option value="No" [selected]="'No'==transactionType.printable" [disabled]="readonly">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" *ngIf="transactionTypeForm.value.printable === 'Si'">
+        <div class="form-group col-md-12">
+          <label for="defectPrinter" class="control-label">Selecciona impresora defecto</label>
+          <select class="form-control" formControlName="defectPrinter">
+            <option *ngFor="let printer of printers"  [selected]="transactionType.defectPrinter && printer._id==transactionType.defectPrinter._id" [value]="printer._id" [disabled]="readonly">{{printer.name}}</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

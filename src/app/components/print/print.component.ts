@@ -148,7 +148,6 @@ export class PrintComponent implements OnInit {
         } else {
           this.hideMessage();
           this.shiftClosingTransaction = result.shiftClosing;
-          console.log(this.shiftClosingTransaction);
           this.getShiftClosingByMovementOfArticle();
         }
         this.loading = false;

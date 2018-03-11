@@ -1,3 +1,5 @@
+import { Printer } from './printer';
+
 export class TransactionType {
 
 	public _id: string;
@@ -8,6 +10,8 @@ export class TransactionType {
 	public codes: CodeAFIP[];
 	public fixedOrigin: number;
 	public fixedLetter: string;
+	public printable: string;
+	public defectPrinter: Printer;
 
 	constructor() { }
 }

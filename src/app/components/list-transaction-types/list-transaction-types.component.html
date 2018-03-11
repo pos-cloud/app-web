@@ -35,6 +35,8 @@
             <th>Cídigo A</th>
             <th>Cídigo B</th>
             <th>Cídigo C</th>
+            <th (click)="orderBy('printable')">Imprime al finalizar</th>
+            <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th></th>
@@ -47,6 +49,8 @@
             <th></th>
             <th></th>
             <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
           </tr>
         </thead>
         <tbody>
@@ -54,8 +58,10 @@
                                                               | filter: filterCurrentAccount:'currentAccount' 
                                                               | filter: filterMovement:'movement'
                                                               | filter: filterFixedOrigin:'fixedOrigin'
-                                                              | filter: filterFixedLetter:''
-                                                              | filter: filterElectronics:''
+                                                              | filter: filterFixedLetter:'letter'
+                                                              | filter: filterElectronics:'electronics'
+                                                              | filter: filterPrintable:'printable'
+                                                              | filter: filterDefectPrinter:'name':'defectPrinter'
                                                               | orderBy: orderTerm: propertyTerm
                                                               | paginate: { itemsPerPage: itemsPerPage, 
                                                                             currentPage: p, 
@@ -81,9 +87,12 @@
             <td class="flat">{{getCode(transactionType, "A")}}</td>
             <td class="flat">{{getCode(transactionType, "B")}}</td>
             <td class="flat">{{getCode(transactionType, "C")}}</td>
+            <td class="flat">{{transactionType.printable}}</td>
+            <td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>
+            <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
           </tr>
           <tr align="center" *ngIf="areTransactionTypesEmpty">
-            <td colspan="2">No se encontraron salones</td>
+            <td colspan="12">No se encontraron tipos de transacción</td>
           </tr>
         </tbody>
       </table>

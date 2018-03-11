@@ -24,6 +24,7 @@
               <th (click)="orderBy('origin')">Punto de venta</th>
               <th (click)="orderBy('connectionURL')">URL de conexión</th>
               <th (click)="orderBy('type')">Tipo</th>
+              <th (click)="orderBy('printIn')">Imprime en</th>
             </tr>
             <tr *ngIf="areFiltersVisible">
               <th></th>
@@ -31,6 +32,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Punto de venta..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterConnectionURL" placeholder="URL de conexión..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterPrintIn" placeholder="Imprime en..."></th>
             </tr>
           </thead>
           <tbody>
@@ -38,6 +40,7 @@
                                                 | filter: filterOrigin:'origin'
                                                 | filter: filterConnectionURL:'connectionURL' 
                                                 | filter: filterType:'type'
+                                                | filter: filterPrintIn:'printIn'
                                                 | orderBy: orderTerm: propertyTerm
                                                 | paginate: { itemsPerPage: itemsPerPage, 
                                                               currentPage: p, 
@@ -52,6 +55,7 @@
               <td class="flat">{{printer.origin}}</td>
               <td class="flat">{{printer.connectionURL}}</td>
               <td class="flat">{{printer.type}}</td>
+              <td class="flat">{{printer.printIn}}</td>
             </tr>
             <tr align="center" *ngIf="arePrintersEmpty">
               <td colspan="5">No se encontraron impresoras</td>

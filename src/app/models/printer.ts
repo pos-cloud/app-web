@@ -3,14 +3,21 @@ export class Printer {
     public _id: string;
     public name: string;
     public origin: number = 0;
-    public connectionURL: string = "C:\\printhtml.exe";
-    public type: PrinterType = PrinterType.Counter;
+    public connectionURL: string;
+    public type: PrinterType = PrinterType.PDF;
+    public printIn: PrinterPrintIn = PrinterPrintIn.Counter;
 
-    constructor() {}
+    constructor() { }
 }
 
-export enum PrinterType {
+export enum PrinterPrintIn {
     Bar = <any>"Bar",
     Kitchen = <any>"Cocina",
     Counter = <any>"Mostrador"
+}
+
+export enum PrinterType {
+    PDF = <any>"PDF",
+    Commander = <any>"Comandera",
+    Fiscal = <any>"Fiscal"
 }

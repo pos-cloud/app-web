@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Printer, PrinterType } from './../../models/printer';
+import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 
 import { PrinterService } from './../../services/printer.service';
 
@@ -19,7 +19,8 @@ export class UpdatePrinterComponent implements OnInit {
 
   @Input() printer: Printer;
   @Input() readonly: boolean;
-  public types: PrinterType[] = [PrinterType.Bar, PrinterType.Kitchen, PrinterType.Counter];
+  public types: PrinterType[] = [PrinterType.PDF, PrinterType.Commander, PrinterType.Fiscal];
+  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar];
   public printerForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -29,17 +30,20 @@ export class UpdatePrinterComponent implements OnInit {
   public formErrors = {
     'name': '',
     'connectionURL': '',
-    'type': ''
+    'type': '',
+    'printIn': ''
   };
 
   public validationMessages = {
     'name': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'connectionURL': {
-      'required':       'Este campo es requerido.'
     },
     'type': {
+      'required': 'Este campo es requerido.'
+    },
+    'printIn': {
       'required': 'Este campo es requerido.'
     }
   };
@@ -58,11 +62,12 @@ export class UpdatePrinterComponent implements OnInit {
     this.userType = pathLocation[1];
     this.buildForm();
     this.printerForm.setValue({
-      '_id':this.printer._id,
+      '_id': this.printer._id,
       'name': this.printer.name,
       'origin': this.printer.origin,
       'connectionURL': this.printer.connectionURL,
-      'type': this.printer.type
+      'type': this.printer.type,
+      'printIn': this.printer.printIn
     });
   }
 
@@ -83,14 +88,17 @@ export class UpdatePrinterComponent implements OnInit {
       'origin': [this.printer.origin, [
         ]
       ],
-      'connectionURL': [this.printer.name, [
-          Validators.required
+      'connectionURL': [this.printer.connectionURL, [
         ]
       ],
       'type': [this.printer.type, [
-        Validators.required
-      ]
+          Validators.required
+        ]
       ],
+      'printIn': [this.printer.printIn, [
+          Validators.required
+        ]
+      ]
     });
 
     this.printerForm.valueChanges
@@ -117,8 +125,8 @@ export class UpdatePrinterComponent implements OnInit {
     }
   }
 
-  public updatePrinter (): void {
-    if(!this.readonly) {
+  public updatePrinter(): void {
+    if (!this.readonly) {
       this.loading = true;
       this.printer = this.printerForm.value;
       this.saveChanges();
@@ -126,13 +134,13 @@ export class UpdatePrinterComponent implements OnInit {
   }
 
   public saveChanges(): void {
-    
+
     this.loading = true;
-    
+
     this._printerService.updatePrinter(this.printer).subscribe(
       result => {
         if (!result.printer) {
-          this.showMessage(result.message, "info", true); 
+          this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.printer = result.printer;
@@ -147,14 +155,14 @@ export class UpdatePrinterComponent implements OnInit {
       }
     );
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = "";
   }
 }
