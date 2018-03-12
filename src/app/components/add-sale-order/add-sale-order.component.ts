@@ -923,7 +923,12 @@ export class AddSaleOrderComponent implements OnInit {
                       if(this.transaction.type.electronics === "Si") {
                         this.validateElectronicTransaction();
                       } else {
-                        this.assignTransactionNumber();
+                        if (this.transaction.type.defectPrinter) {
+                          this.printerSelected = this.transaction.type.defectPrinter;
+                          this.distributeImpressions(this.transaction.type.defectPrinter);
+                        } else {
+                          this.openModal('printers');
+                        }
                       }
                     } else {
                       if (this.transaction.type.electronics === "Si") {
@@ -933,11 +938,7 @@ export class AddSaleOrderComponent implements OnInit {
                         if(this.transaction.type.printable === "Si") {
                           if(this.transaction.type.defectPrinter) {
                             this.printerSelected = this.transaction.type.defectPrinter;
-                            if(this.transaction.type.defectPrinter.type === PrinterType.PDF) {
-                              this.openModal("print");
-                            } else {
-                              this.distributeImpressions(this.transaction.type.defectPrinter);
-                            }
+                            this.distributeImpressions(this.transaction.type.defectPrinter);
                           } else {
                             this.openModal('printers');
                           }
@@ -992,13 +993,8 @@ export class AddSaleOrderComponent implements OnInit {
         } else if (this.countPrinters() !== 0) {
           this.distributeImpressions(this.printersAux[0]);
         } else {
-          if (this.typeOfOperationToPrint === "charge") {
-            if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-              this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-            } else {
-              let origin = 0;
-              this.assignOriginAndLetter(origin);
-            }
+          if (this.typeOfOperationToPrint === "charge" && 
+              this.transaction.type.electronics === "No") {
             this.assignTransactionNumber();
             this.loading = false;
           } else if (this.typeOfOperationToPrint === "bill") {
@@ -1055,12 +1051,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
         }, (reason) => {
-          if(this.printerSelected.origin) {
-            this.assignOriginAndLetter(this.printerSelected.origin);
-          } else {
-            this.assignOriginAndLetter(0);
-          }
-          this.assignTransactionNumber();
+          this.finishCharge();
           this.hideMessage();
         });
         // modalRef.componentInstance.print = this.printSelected;
@@ -1172,16 +1163,32 @@ export class AddSaleOrderComponent implements OnInit {
 
     switch (this.typeOfOperationToPrint) {
       case 'charge':
-        this.toPrintCharge(printer);
+        if(printer.type === PrinterType.PDF) {
+          this.openModal("print");
+        } else {
+          this.toPrintCharge(printer);
+        }
         break;
       case 'bill':
-        this.toPrintBill(printer);
+        if (printer.type === PrinterType.PDF) {
+          this.openModal("print");
+        } else {
+          this.toPrintBill(printer);
+        }
         break;
       case 'bar':
-        this.toPrintBar(printer);
+        if (printer.type === PrinterType.PDF) {
+          this.openModal("print");
+        } else {
+          this.toPrintBar(printer);
+        }
         break;
       case 'kitchen':
-        this.toPrintKitchen(printer);
+        if (printer.type === PrinterType.PDF) {
+          this.openModal("print");
+        } else {
+          this.toPrintKitchen(printer);
+        }
         break;
       default:
         this.showMessage("No se reconoce la operación de impresión.", "danger", false);
@@ -1190,7 +1197,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public assignOriginAndLetter(origin: number) {
-
+    
     this.transaction.origin = origin;
     if (this.transaction.company &&
         this.transaction.company.vatCondition) {
@@ -1203,7 +1210,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public assignTransactionNumber() {
-    
+
     if(this.transaction.type.electronics !== "Si") {
       this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
         result => {
@@ -1226,7 +1233,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.loading = false;
     }
   }
-
+  
   public setPrintBill(): void {
     if (this.movementsOfArticles.length !== 0) {
       this.typeOfOperationToPrint = 'bill';

@@ -89,7 +89,6 @@ export class PrintComponent implements OnInit {
     this.printersAux = new Array();
     this.getPrinters();
     this.getConfig();
-    this.getTransactionTypes();
     // if (this.typePrint === "turn") {
     //   this.getShiftClosingByTransaccion();
     //   this.getShiftClosingByMovementOfArticle();
@@ -100,29 +99,6 @@ export class PrintComponent implements OnInit {
     //   this.getConfig();
     //   this.toPrintCurrentAccount();
     // }
-  }
-
-  public getTransactionTypes(): void {
-
-    this.loading = true;
-
-    this._transactionTypeService.getTransactionTypes().subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
-          this.loading = false;
-          this.transactionTypes = null;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.transactionTypes = result.transactionTypes;
-        }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public getPrinters(): void {
@@ -213,28 +189,6 @@ export class PrintComponent implements OnInit {
     );
   }
 
-  public getTransaction(): void {
-    this.loading = true;
-
-    this._transactionService.getTransaction(this.transaction._id).subscribe(
-      result => {
-        if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          this.transaction = result.transaction;
-          this.getMovementOfArticle();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
   public getMovementOfArticle(): void {
     this.loading = true;
     this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
@@ -249,52 +203,7 @@ export class PrintComponent implements OnInit {
           if (this.transaction.CAE &&
               this.transaction.CAEExpirationDate) {
           
-            let codeInvoice = 0;
-
-            if (this.transaction.type.codes.length > 0) {
-              for(let y: number = 0; y < this.transaction.type.codes.length ; y++) {
-                if(this.transaction.letter == this.transaction.type.codes[y].letter) {
-                  codeInvoice = this.transaction.type.codes[y].code;
-                }
-              }
-            }
-
-            let date = this.transaction.CAEExpirationDate.split(' ');
-  
-            let digit = ((this.config[0].companyCUIT).replace('-','')).replace('-','')+codeInvoice+this.transaction.origin+this.transaction.CAE+this.convertDate(date[0]);
-            
-            let uno = 0;
-            let dos = 0;
-  
-            for (let z: number = 0 ; z < digit.length ; z++) {
-  
-              if (z % 2 == 1) {
-                uno = uno + parseInt(digit[z]);
-              } else {
-                dos = dos + parseInt(digit[z]);
-              }
-            }
-  
-            let h = (uno*3) + dos;
-            let checkDigit = 0;
-  
-            while (h%10 != 0) {
-              h++;
-              checkDigit++
-            }
-
-            console.log(((this.config[0].companyCUIT).replace('-','')).replace('-',''));
-            console.log(this.padString(codeInvoice,2));
-            console.log(this.padString(this.transaction.origin.toString(), 4));
-            console.log(this.transaction.CAE);
-            console.log(this.transaction.CAEExpirationDate);
-            
-            this.getBarcode64('interleaved2of5?value='+ ((this.config[0].companyCUIT).replace('-','')).replace('-','')
-                                                      + codeInvoice
-                                                      + this.transaction.origin
-                                                      + this.transaction.CAE
-                                                      + this.convertDate(date[0])
-                                                      + checkDigit );
+            this.calculateBarcode();
           } else {
             this.toPrintInvoice();
           }
@@ -307,6 +216,50 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public calculateBarcode(): void {
+
+    let codeInvoice = 0;
+
+    if (this.transaction.type.codes.length > 0) {
+      for (let y: number = 0; y < this.transaction.type.codes.length; y++) {
+        if (this.transaction.letter == this.transaction.type.codes[y].letter) {
+          codeInvoice = this.transaction.type.codes[y].code;
+        }
+      }
+    }
+
+    let date = this.transaction.CAEExpirationDate.split(' ');
+
+    let digit = ((this.config[0].companyCUIT).replace('-', '')).replace('-', '') + codeInvoice + this.transaction.origin + this.transaction.CAE + this.convertDate(date[0]);
+
+    let uno = 0;
+    let dos = 0;
+
+    for (let z: number = 0; z < digit.length; z++) {
+
+      if (z % 2 == 1) {
+        uno = uno + parseInt(digit[z]);
+      } else {
+        dos = dos + parseInt(digit[z]);
+      }
+    }
+
+    let h = (uno * 3) + dos;
+    let checkDigit = 0;
+
+    while (h % 10 != 0) {
+      h++;
+      checkDigit++
+    }
+
+    this.getBarcode64('interleaved2of5?value=' + ((this.config[0].companyCUIT).replace('-', '')).replace('-', '')
+      + codeInvoice
+      + this.transaction.origin
+      + this.transaction.CAE
+      + this.convertDate(date[0])
+      + checkDigit);
   }
 
   public convertDate(string): void {
@@ -338,7 +291,7 @@ export class PrintComponent implements OnInit {
             this.getShiftClosingByMovementOfArticle();
             this.getShiftClosingByMovementOfCash();
           } else if (this.typePrint === "invoice") {
-            this.getTransaction();
+            this.getMovementOfArticle();
           } else if (this.typePrint === "current-account") {
             this.toPrintCurrentAccount();
           }
@@ -772,11 +725,11 @@ export class PrintComponent implements OnInit {
     this.doc.setTextColor(0, 0, 0)
   }
 
-  public padString(n, length: number): string {
-    let number: string = n.toString();
+  public padString(n, length) {
+    var n = n.toString();
     while (n.length < length)
       n = "0" + n;
-    return number;
+    return n;
   }
 
   public getBarcode64(barcode): void {

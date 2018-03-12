@@ -207,11 +207,11 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
-  public padString(n, length: number): string {
-    let number: string = n.toString();
+  public padString(n, length) {
+    var n = n.toString();
     while(n.length < length)
          n = "0" + n;
-    return number;
+    return n;
   }
 
   public autocompleteCode() {

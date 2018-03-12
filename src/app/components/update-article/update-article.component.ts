@@ -518,11 +518,11 @@ export class UpdateArticleComponent implements OnInit {
     this.alertMessage = "";
   }
 
-  public padString(n, length: number): string {
-    let number: string = n.toString();
-    while(n.length < length)
-         n = "0" + n;
-    return number;
+  public padString(n, length) {
+    var n = n.toString();
+    while (n.length < length)
+      n = "0" + n;
+    return n;
   }
 
   public autocompleteCode() {
