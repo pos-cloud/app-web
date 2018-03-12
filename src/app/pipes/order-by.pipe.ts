@@ -40,22 +40,22 @@ export class OrderByPipe implements PipeTransform {
         if(!Array.isArray(input)) return input;
 
         if(!Array.isArray(config) || (Array.isArray(config) && config.length == 1)){
-            var propertyToCheck:string = !Array.isArray(config) ? config : config[0];
-            var desc = propertyToCheck.substr(0, 1) == '-';
+            let propertyToCheck: string = !Array.isArray(config) ? config : config[0];
+            let desc: boolean = propertyToCheck.substr(0, 1) == '-';
             
             //Array Básico
             if(!propertyToCheck || propertyToCheck == '-' || propertyToCheck == '+'){
                 return !desc ? input.sort() : input.sort().reverse();
             } else {
-                var property:string = propertyToCheck.substr(0, 1) == '+' || propertyToCheck.substr(0, 1) == '-'
+                let property: string = propertyToCheck.substr(0, 1) == '+' || propertyToCheck.substr(0, 1) == '-'
                     ? propertyToCheck.substr(1)
                     : propertyToCheck;
 
                 //a = es el primer objeto a comparar
                 //b = es el segundo objeto a comparar
-                return input.sort(function(a:any,b:any){
+                return input.sort(function(a: any,b: any){
                     
-                    var response;
+                    let response: number;
                     //desc = descendiente o ascendente
                     if(!desc){
                         //Verificamos si no hay un obejeto dentro de otro
@@ -94,13 +94,13 @@ export class OrderByPipe implements PipeTransform {
         } else {
             //Bucle sobre la propiedad de la matriz en orden y ordenar
             return input.sort(function(a:any,b:any){
-                for(var i:number = 0; i < config.length; i++){
-                    var desc = config[i].substr(0, 1) == '-';
-                    var property = config[i].substr(0, 1) == '+' || config[i].substr(0, 1) == '-'
+                for(let i: number = 0; i < config.length; i++){
+                    let desc: boolean = config[i].substr(0, 1) == '-';
+                    let property: string = config[i].substr(0, 1) == '+' || config[i].substr(0, 1) == '-'
                         ? config[i].substr(1)
                         : config[i];
 
-                    var comparison = !desc 
+                    let comparison = !desc 
                         ? OrderByPipe._orderByComparator(a[property], b[property]) 
                         : -OrderByPipe._orderByComparator(a[property], b[property]);
                     

@@ -6,7 +6,7 @@ import { Transaction, TransactionState } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Turn, TurnState } from './../../models/turn';
 import { Print } from './../../models/print';
-import { Printer, PrinterType } from './../../models/printer';
+import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
 import { TransactionType } from './../../models/transaction-type';
@@ -246,61 +246,60 @@ export class PrintComponent implements OnInit {
           this.hideMessage();
           this.movementsOfArticles2 = result.movementsOfArticles;
           
+          if (this.transaction.CAE &&
+              this.transaction.CAEExpirationDate) {
           
-          var x,y,codeInvoice;
-          for (x = 0; x < this.transactionTypes.length ; x++) {
-            if (this.transactionTypes[x].name == 'Factura') {
-              for(y = 0; y < this.transactionTypes[x].codes.length ; y++) {
-                if(this.transaction.letter == this.transactionTypes[x].codes[y].letter) {
-                  codeInvoice = this.transactionTypes[x].codes[y].code
+            let codeInvoice = 0;
+
+            if (this.transaction.type.codes.length > 0) {
+              for(let y: number = 0; y < this.transaction.type.codes.length ; y++) {
+                if(this.transaction.letter == this.transaction.type.codes[y].letter) {
+                  codeInvoice = this.transaction.type.codes[y].code;
                 }
               }
             }
-          };
 
-         // console.log(((this.config[0].companyCUIT).replace('-','')).replace('-',''));
-         // console.log(this.padString(codeInvoice,2));
-         // console.log(this.padString(this.transaction.origin.toString(), 4));
-         // console.log(this.transaction.CAE);
-         // console.log(this.transaction.CAEExpirationDate);
-
-          let date = this.transaction.CAEExpirationDate.split(' ');
-
-          var digito = ((this.config[0].companyCUIT).replace('-','')).replace('-','')+codeInvoice+this.transaction.origin+this.transaction.CAE+this.convertDate(date[0]);
-          
-          var uno = 0;
-          var dos = 0;
-
-          for (var z = 0 ; z<digito.length ; z++) {
-
-            console.log(digito[z]);
-            if (z % 2 == 1) {
-              uno = uno + parseInt(digito [z]);
-            } else {
-              dos = dos + parseInt(digito [z]);
+            let date = this.transaction.CAEExpirationDate.split(' ');
+  
+            let digit = ((this.config[0].companyCUIT).replace('-','')).replace('-','')+codeInvoice+this.transaction.origin+this.transaction.CAE+this.convertDate(date[0]);
+            
+            let uno = 0;
+            let dos = 0;
+  
+            for (let z: number = 0 ; z < digit.length ; z++) {
+  
+              if (z % 2 == 1) {
+                uno = uno + parseInt(digit[z]);
+              } else {
+                dos = dos + parseInt(digit[z]);
+              }
             }
+  
+            let h = (uno*3) + dos;
+            let checkDigit = 0;
+  
+            while (h%10 != 0) {
+              h++;
+              checkDigit++
+            }
+
+            console.log(((this.config[0].companyCUIT).replace('-','')).replace('-',''));
+            console.log(this.padString(codeInvoice,2));
+            console.log(this.padString(this.transaction.origin.toString(), 4));
+            console.log(this.transaction.CAE);
+            console.log(this.transaction.CAEExpirationDate);
+            
+            this.getBarcode64('interleaved2of5?value='+ ((this.config[0].companyCUIT).replace('-','')).replace('-','')
+                                                      + codeInvoice
+                                                      + this.transaction.origin
+                                                      + this.transaction.CAE
+                                                      + this.convertDate(date[0])
+                                                      + checkDigit );
+          } else {
+            this.toPrintInvoice();
           }
-
-          var h = (uno*3)+dos;
-          var digitoVerificador = 0;
-
-          while (h%10 != 0) {
-            h++;
-            digitoVerificador++
-          }
-
-
-         if(this.transaction.CAE != undefined || this.transaction.CAEExpirationDate != undefined ) {
-          this.getBarcode64('interleaved2of5?value='+ ((this.config[0].companyCUIT).replace('-','')).replace('-','')
-                                                    + codeInvoice
-                                                    + this.transaction.origin
-                                                    + this.transaction.CAE
-                                                    + this.convertDate(date[0])
-                                                    + digitoVerificador );
-         } else {
-          this.toPrintInvoice();
-         }
         }
+        this.toPrintInvoice();
         this.loading = false;
       },
       error => {
@@ -379,19 +378,19 @@ export class PrintComponent implements OnInit {
 
     if (this.printers != undefined) {
       for (let printer of this.printers) {
-        if (this.typePrint === 'charge' && printer.type === PrinterType.Counter) {
+        if (this.typePrint === 'charge' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typePrint === 'bill' && printer.type === PrinterType.Counter) {
+        } else if (this.typePrint === 'bill' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typePrint === 'bar' && printer.type === PrinterType.Bar) {
+        } else if (this.typePrint === 'bar' && printer.printIn === PrinterPrintIn.Bar) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typePrint === 'kitchen' && printer.type === PrinterType.Kitchen) {
+        } else if (this.typePrint === 'kitchen' && printer.printIn === PrinterPrintIn.Kitchen) {
           this.printersAux.push(printer);
           numberOfPrinters++;
-        } else if (this.typePrint === 'turn' && printer.type === PrinterType.Counter) {
+        } else if (this.typePrint === 'turn' && printer.printIn === PrinterPrintIn.Counter) {
           this.printersAux.push(printer);
           numberOfPrinters++;
         }
@@ -516,7 +515,9 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.normal)
       this.doc.setFontType('normal')
       this.doc.text(this.config[0].companyAddress, 20, 30)
-      this.doc.text("(" + this.config[0].companyPhone + ")", 35, 35)
+      if (this.config[0].companyPhone) {
+        this.doc.text("(" + this.config[0].companyPhone + ")", 35, 35)
+      }
     }
 
     // Detalle Receptor
@@ -582,7 +583,7 @@ export class PrintComponent implements OnInit {
     this.doc.text("Cuenta Corriente", 140, 10)
 
     // Detalle de comprobantes
-    var fila = 85;
+    let fila = 85;
 
     this.doc.setFontSize(this.fontSizes.normal)
     if (this.transactions.length > 0) {
@@ -662,10 +663,10 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal')
 
     // Detalle de artículos
-    var fila = 85;
+    let fila = 85;
 
     if (this.movementsOfArticles2.length > 0) {
-      for (var i = 0; i < this.movementsOfArticles2.length; i++) {
+      for (let i = 0; i < this.movementsOfArticles2.length; i++) {
         this.doc.text((this.movementsOfArticles2[0].amount).toString(), 6, fila)
         this.doc.text(this.movementsOfArticles2[i].description, 25, fila)
         if (this.movementsOfArticles2[i].article) {
@@ -680,12 +681,12 @@ export class PrintComponent implements OnInit {
     }
 
     // Totales de la transacción
-    var iva21 = 0.00;
-    var iva10 = 0.00;
-    var iva27 = 0.00;
+    let iva21 = 0.00;
+    let iva10 = 0.00;
+    let iva27 = 0.00;
 
     if (this.transaction.taxes) {
-      for (var x = 0; x < this.transaction.taxes.length; x++) {
+      for (let x = 0; x < this.transaction.taxes.length; x++) {
         if (this.transaction.taxes[x].percentage == 21) {
           iva21 = (this.transaction.taxes[x].taxAmount)
         }
@@ -725,17 +726,18 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal')
     this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice, 2), 180, 282)
     this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.setFontType('bold')
-    if(this.transaction.CAE != undefined || this.transaction.CAEExpirationDate != undefined ) {
-      this.doc.text("CAE:", 10, 270)
+    if( this.transaction.CAE &&
+      this.transaction.CAEExpirationDate) {
+      this.doc.setFontType('bold')
+      this.doc.text("CAE:", 10, 272)
       this.doc.text("Fecha Vto:", 10, 280)
       this.doc.setFontType('normal')
-      this.doc.text(this.transaction.CAE, 20, 270)
+      this.doc.text(this.transaction.CAE, 20, 272)
       this.doc.text(this.transaction.CAEExpirationDate, 30, 280)
       
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 10, 250, 100, 10);
+      this.doc.addImage(imgdata, 'PNG', 10, 250, 125, 15);
     }
 
     this.getFooter();
@@ -744,11 +746,10 @@ export class PrintComponent implements OnInit {
   }
 
   public toDataURL(url, callback) {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onload = function () {
-      var reader = new FileReader();
+      let reader = new FileReader();
       reader.onloadend = function () {
-        console.log("entro 1");
         callback(reader.result);
       }
       reader.readAsDataURL(xhr.response);
@@ -768,13 +769,14 @@ export class PrintComponent implements OnInit {
     this.doc.setTextColor(164, 164, 164)
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290)
+    this.doc.setTextColor(0, 0, 0)
   }
 
-  public padString(n, length) {
-    var n = n.toString();
+  public padString(n, length: number): string {
+    let number: string = n.toString();
     while (n.length < length)
       n = "0" + n;
-    return n;
+    return number;
   }
 
   public getBarcode64(barcode): void {

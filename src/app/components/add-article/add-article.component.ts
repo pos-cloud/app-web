@@ -207,11 +207,11 @@ export class AddArticleComponent  implements OnInit {
     }
   }
 
-  public padString (n, length) {
-    var  n = n.toString();
+  public padString(n, length: number): string {
+    let number: string = n.toString();
     while(n.length < length)
          n = "0" + n;
-    return n;
+    return number;
   }
 
   public autocompleteCode() {
@@ -464,10 +464,10 @@ export class AddArticleComponent  implements OnInit {
     
     let articleId = this.article._id;
     return new Promise(function(resolve, reject){
-      var formData:any = new FormData();
-      var xhr = new XMLHttpRequest();
+      let formData: any = new FormData();
+      let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-      for(var i = 0; i < files.length ; i++){
+      for(let i: number = 0; i < files.length ; i++) {
         formData.append('image',files[i], files[i].name);
       }
       xhr.onreadystatechange = function(){

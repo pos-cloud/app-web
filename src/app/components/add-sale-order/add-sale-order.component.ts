@@ -932,6 +932,7 @@ export class AddSaleOrderComponent implements OnInit {
                       } else {
                         if(this.transaction.type.printable === "Si") {
                           if(this.transaction.type.defectPrinter) {
+                            this.printerSelected = this.transaction.type.defectPrinter;
                             if(this.transaction.type.defectPrinter.type === PrinterType.PDF) {
                               this.openModal("print");
                             } else {
@@ -1054,7 +1055,11 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
         }, (reason) => {
-          this.assignOriginAndLetter(this.printerSelected.origin);
+          if(this.printerSelected.origin) {
+            this.assignOriginAndLetter(this.printerSelected.origin);
+          } else {
+            this.assignOriginAndLetter(0);
+          }
           this.assignTransactionNumber();
           this.hideMessage();
         });

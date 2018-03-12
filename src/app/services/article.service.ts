@@ -80,14 +80,14 @@ export class ArticleService {
 	
 	public makeFileRequest(idArticle: String, files: Array<File>) {
 
-		var xhr = new XMLHttpRequest();
+		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-image-article/' + idArticle, true);
 		xhr.setRequestHeader('Authorization', this._userService.getToken());
 
 		return new Promise(function (resolve, reject) {
-			var formData: any = new FormData();
+			let formData: any = new FormData();
 
-			for (var i = 0; i < files.length; i++) {
+			for (let i: number = 0; i < files.length; i++) {
 				formData.append('image', files[i], files[i].name);
 			}
 
