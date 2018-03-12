@@ -923,11 +923,18 @@ export class AddSaleOrderComponent implements OnInit {
                       if(this.transaction.type.electronics === "Si") {
                         this.validateElectronicTransaction();
                       } else {
-                        if (this.transaction.type.defectPrinter) {
-                          this.printerSelected = this.transaction.type.defectPrinter;
-                          this.distributeImpressions(this.transaction.type.defectPrinter);
+                        if (this.transaction.type.printable && 
+                            this.transaction.type.printable === "Si") {
+                          if(this.transaction.type.defectPrinter) {
+                            this.printerSelected = this.transaction.type.defectPrinter;
+                            this.assignTransactionNumber();
+                            this.distributeImpressions(this.transaction.type.defectPrinter);
+                          } else {
+                            this.openModal('printers');
+                          }
                         } else {
-                          this.openModal('printers');
+                            this.assignTransactionNumber();
+                            this.loading = false;
                         }
                       }
                     } else {
