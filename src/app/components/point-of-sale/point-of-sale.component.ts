@@ -9,7 +9,7 @@ import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
 import { RoomService } from './../../services/room.service';
@@ -94,6 +94,8 @@ export class PointOfSaleComponent implements OnInit {
           transactionType.movement = Movements.Inflows;
           transactionType.name = "Ticket";
           transactionType.electronics = "No";
+          transactionType.defectOrders = DefectOrders.Yes;
+          transactionType.requestArticles = RequestArticles.Yes;
           this._transactionTypeService.saveTransactionType(transactionType).subscribe(
             result => {
               if (!result.transactionType) {
@@ -105,6 +107,8 @@ export class PointOfSaleComponent implements OnInit {
                 transactionType.name = "Cobro";
                 transactionType.electronics = "No";
                 transactionType.fixedLetter = "X";
+                transactionType.defectOrders = DefectOrders.No;
+                transactionType.requestArticles = RequestArticles.No;
                 this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                   result => {
                     if (!result.transactionType) {
@@ -129,6 +133,8 @@ export class PointOfSaleComponent implements OnInit {
                       codeC.code = 13;
                       codes.push(codeC);
                       transactionType.codes = codes;
+                      transactionType.defectOrders = DefectOrders.No;
+                      transactionType.requestArticles = RequestArticles.Yes;
                       this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                         result => {
                           if (!result.transactionType) {
@@ -140,6 +146,8 @@ export class PointOfSaleComponent implements OnInit {
                             transactionType.name = "Saldo Inicial (+)";
                             transactionType.electronics = "No";
                             transactionType.fixedLetter = "X";
+                            transactionType.defectOrders = DefectOrders.No;
+                            transactionType.requestArticles = RequestArticles.No;
                             this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                               result => {
                                 if (!result.transactionType) {
@@ -151,6 +159,8 @@ export class PointOfSaleComponent implements OnInit {
                                   transactionType.name = "Saldo Inicial (-)";
                                   transactionType.electronics = "No";
                                   transactionType.fixedLetter = "X";
+                                  transactionType.defectOrders = DefectOrders.No;
+                                  transactionType.requestArticles = RequestArticles.No;
                                   this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                                     result => {
                                       if (!result.transactionType) {
@@ -175,6 +185,8 @@ export class PointOfSaleComponent implements OnInit {
                                         codeC.code = 11;
                                         codes.push(codeC);
                                         transactionType.codes = codes;
+                                        transactionType.defectOrders = DefectOrders.No;
+                                        transactionType.requestArticles = RequestArticles.Yes;
                                         this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                                           result => {
                                             if (!result.transactionType) {
@@ -199,6 +211,8 @@ export class PointOfSaleComponent implements OnInit {
                                               codeC.code = 12;
                                               codes.push(codeC);
                                               transactionType.codes = codes;
+                                              transactionType.defectOrders = DefectOrders.No;
+                                              transactionType.requestArticles = RequestArticles.Yes;
                                               this._transactionTypeService.saveTransactionType(transactionType).subscribe(
                                                 result => {
                                                   if (!result.transactionType) {
