@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionTypeMovements } from './../../models/transaction-type';
+import { Movements } from './../../models/transaction-type';
 import { TransactionService } from './../../services/transaction.service';
 import { Config } from './../../app.config';
 
@@ -124,10 +124,6 @@ export class ListTransactionsComponent implements OnInit {
     }
   };
 
-  public addTransaction(transactionCode: number): void {
-    this._router.navigate(['/pos/mesas/'+transactionCode+'/add-transaction']);
-  }
-
   public calculateTotal(transactions: Transaction[], col, format): string {
 
     let decimalPipe = new DecimalPipe('ARS');
@@ -135,7 +131,7 @@ export class ListTransactionsComponent implements OnInit {
     if (transactions) {
       for(let transaction of transactions) {
         if (transaction[col]) {
-          if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+          if (transaction.type.movement === Movements.Outflows) {
             total -= transaction[col];
           } else {
             total += transaction[col];

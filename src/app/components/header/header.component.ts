@@ -63,16 +63,9 @@ export class HeaderComponent implements OnInit {
       this._router.events.forEach((event: NavigationEvent) => {
         if (event instanceof NavigationStart) {
           let pathLocation: string[] = event.url.split('/');
-          if (pathLocation[3] === "editar-ticket" ||
-              pathLocation[3] === "agregar-ticket" ||
-              pathLocation[7] === "agregar-ticket" ||
-              pathLocation[7] === "editar-ticket" ||
-              pathLocation[3] === "editar-factura" ||
-              pathLocation[3] === "agregar-factura" ||
-              pathLocation[3] === "editar-nota-credito" ||
-              pathLocation[3] === "agregar-nota-credito" ||
-              pathLocation[3] === "editar-nota-debito" ||
-              pathLocation[3] === "agregar-nota-debito") {
+          if (pathLocation[3] === "agregar-transaccion" ||
+              pathLocation[3] === "editar-transaccion" ||
+              pathLocation[7] === "agregar-transaccion") {
             this.hideMenu = true;
           } else {
             this.hideMenu = false;

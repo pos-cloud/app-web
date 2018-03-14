@@ -5,7 +5,9 @@ export class TransactionType {
 	public _id: string;
 	public name: string = "";
 	public currentAccount: CurrentAcount = CurrentAcount.No;
-	public movement: TransactionTypeMovements = TransactionTypeMovements.Inflows;
+	public movement: Movements = Movements.Inflows;
+	public requestArticles: RequestArticles = RequestArticles.No;
+	public defectOrders: DefectOrders = DefectOrders.No;
 	public electronics: string;
 	public codes: CodeAFIP[];
 	public fixedOrigin: number;
@@ -16,7 +18,7 @@ export class TransactionType {
 	constructor() { }
 }
 
-export enum TransactionTypeMovements {
+export enum Movements {
 	Inflows = <any> "Entrada",
 	Outflows = <any> "Salida"
 }
@@ -30,4 +32,14 @@ export enum CurrentAcount {
 export class CodeAFIP {
 	letter: string;
 	code: number;
+}
+
+export enum RequestArticles {
+	Yes = <any>"Si",
+	No = <any>"No"
+}
+
+export enum DefectOrders {
+	Yes = <any>"Si",
+	No = <any>"No"
 }

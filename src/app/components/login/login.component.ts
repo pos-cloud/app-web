@@ -162,14 +162,14 @@ export class LoginComponent implements OnInit {
   } 
 
   public loginWaiter(): void {
-
+    
     this.user = this.loginForm.value;
     this.loading = true;
 
     //Obtener el usuario
     this._userService.login(this.user).subscribe(
       result => {
-        if (!result.user.employee) {
+        if (!result.user) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {

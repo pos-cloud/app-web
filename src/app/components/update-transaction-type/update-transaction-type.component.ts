@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, TransactionTypeMovements, CurrentAcount, CodeAFIP } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders } from './../../models/transaction-type';
 import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
@@ -34,6 +34,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
     'name': '',
     'currentAccount': '',
     'movement': '',
+    'requestArticles': '',
+    'defectOrders': '',
     'fixedOrigin': '',
     'fixedLetter': '',
     'electronics': '',
@@ -53,6 +55,11 @@ export class UpdateTransactionTypeComponent implements OnInit {
     },
     'movement': {
       'required': 'Este campo es requerido.',
+    },
+    'requestArticles': {
+      'required': 'Este campo es requerido.',
+    },
+    'defectOrders': {
     },
     'fixedOrigin': {
     },
@@ -132,8 +139,15 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ], 
       'movement': [this.transactionType.movement, [
-        Validators.required
-      ]
+          Validators.required
+        ]
+      ],
+      'requestArticles': [this.transactionType.requestArticles, [
+          Validators.required
+        ]
+      ],
+      'defectOrders': [this.transactionType.defectOrders, [
+        ]
       ],
       'fixedOrigin': [this.transactionType.fixedOrigin, [
         ]
@@ -193,7 +207,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (!this.transactionType._id) this.transactionType._id = "";
     if (!this.transactionType.name) this.transactionType.name = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
-    if (!this.transactionType.movement) this.transactionType.movement = TransactionTypeMovements.Inflows;
+    if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
+    if (!this.transactionType.requestArticles) this.transactionType.requestArticles = RequestArticles.No;
+    if (!this.transactionType.defectOrders) this.transactionType.defectOrders = DefectOrders.No;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
     if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = "";
     if (!this.transactionType.electronics) this.transactionType.electronics = "No";
@@ -205,6 +221,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'name': this.transactionType.name,
       'currentAccount': this.transactionType.currentAccount,
       'movement': this.transactionType.movement,
+      'requestArticles': this.transactionType.requestArticles,
+      'defectOrders': this.transactionType.defectOrders,
       'fixedOrigin': this.transactionType.fixedOrigin,
       'fixedLetter': this.transactionType.fixedLetter,
       'electronics': this.transactionType.electronics,

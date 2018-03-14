@@ -12,6 +12,7 @@ import { Turn } from './../../models/turn';
 import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
 import { TransactionService } from './../../services/transaction.service';
+import { TransactionTypeService } from './../../services/transaction-type.service';
 import { TurnService } from './../../services/turn.service';
 import { UserService } from './../../services/user.service';
 
@@ -47,6 +48,7 @@ export class ListTablesComponent implements OnInit {
   constructor(
     public _tableService: TableService,
     public _transactionService: TransactionService,
+    public _transactionTypeService: TransactionTypeService,
     public _turnService: TurnService,
     public _userService: UserService,
     public _router: Router,
@@ -184,7 +186,7 @@ export class ListTablesComponent implements OnInit {
                   }, (reason) => {
                   });
                 } else {
-                  this.addTransaction();
+                  this.getDefectOrder('resto');
                 }
         } else {
           this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, "info", true);
@@ -206,7 +208,7 @@ export class ListTablesComponent implements OnInit {
         } else {
           this.hideMessage();
           this.loading = false;
-          this.addTransaction();
+          this.getDefectOrder('resto');
         }
       },
       error => {
@@ -215,9 +217,26 @@ export class ListTablesComponent implements OnInit {
       }
     );
   }
+  
+  public getDefectOrder(posType: string): void {
 
-  public addTransaction() {
-    this._router.navigate(['/pos/resto/salones/' + this.filterRoom + '/mesas/' + this.tableSelected._id + '/agregar-ticket']);
+    this.loading = true;
+
+    this._transactionTypeService.getDefectOrder().subscribe(
+      result => {
+        if (!result.transactionTypes) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.hideMessage();
+          this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + result.transactionTypes[0]._id]);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

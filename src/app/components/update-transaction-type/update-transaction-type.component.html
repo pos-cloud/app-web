@@ -26,9 +26,9 @@
         <div class="form-group col-md-12">
           <label for="currentAccount" class="control-label">¿Afecta la cuenta corriente?</label>
           <select class="form-control" formControlName="currentAccount">
-            <option value="Si" [disabled]="readonly">Si</option>
-            <option value="No" [disabled]="readonly">No</option>
-            <option value="Cobra" [disabled]="readonly">Cobra</option>
+            <option value="Si" [selected]="transactionType.currentAccount=='Si'" [disabled]="readonly">Si</option>
+            <option value="No" [selected]="transactionType.currentAccount=='No'" [disabled]="readonly">No</option>
+            <option value="Cobra" [selected]="transactionType.currentAccount=='Cobra'" [disabled]="readonly">Cobra</option>
           </select>
           <div *ngIf="formErrors.currentAccount" class="alert alert-danger">
             {{ formErrors.currentAccount }}
@@ -39,12 +39,33 @@
         <div class="form-group col-md-12">
           <label for="movement" class="control-label">¿Qué tipo de movimiento de dinero realiza?</label>
           <select class="form-control" formControlName="movement">
-            <option value="Entrada" [disabled]="readonly">Entrada</option>
-            <option value="Salida" [disabled]="readonly">Salida</option>
+            <option value="Entrada" [selected]="transactionType.movement=='Entrada'" [disabled]="readonly">Entrada</option>
+            <option value="Salida" [selected]="transactionType.movement=='Salida'" [disabled]="readonly">Salida</option>
           </select>
           <div *ngIf="formErrors.movement" class="alert alert-danger">
             {{ formErrors.movement }}
           </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="requestArticles" class="control-label">¿Se intercambia artículos en la transacción?</label>
+          <select class="form-control" formControlName="requestArticles">
+            <option value="Si" [selected]="transactionType.requestArticles=='Si'" [disabled]="readonly">Si</option>
+            <option value="No" [selected]="transactionType.requestArticles=='No'" [disabled]="readonly">No</option>
+          </select>
+          <div *ngIf="formErrors.requestArticles" class="alert alert-danger">
+            {{ formErrors.requestArticles }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="defectOrders" class="control-label">¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?</label>
+          <select class="form-control" formControlName="defectOrders">
+            <option value="Si" [selected]="transactionType.defectOrders=='Si'" [disabled]="readonly">Si</option>
+            <option value="No" [selected]="transactionType.defectOrders=='No'" [disabled]="readonly">No</option>
+          </select>
         </div>
       </div>
       <div class="row">

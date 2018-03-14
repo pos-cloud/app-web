@@ -68,7 +68,6 @@ export class AddSaleOrderComponent implements OnInit {
   public areMovementsOfArticlesEmpty: boolean = true;
   public userType: string;
   public posType: string;
-  public transactionType: string;
   public table: Table; //Solo se usa si posType es igual a resto
   public loading: boolean = false;
   public areCategoriesVisible: boolean = true;
@@ -161,31 +160,25 @@ export class AddSaleOrderComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    this.transactionType = pathLocation[3];
-
+    let op = pathLocation[3];
     this.getPrinters();
-
+    
     if (this.posType === "resto") {
-      this.transaction.table = new Table();
       this.table = new Table();
+      this.transaction.table = this.table;
       let tableId = pathLocation[6];
-      if (tableId !== undefined) {
+      if (tableId) {
         this.getOpenTransactionByTable(tableId);
+      } else {
+        this.showMessage("No se ha seleccionado ninguna mesa", "info", false);
       }
     } else {
-      let transactionId = pathLocation[4];
-      if (transactionId !== undefined) {
+      if (op === "agregar-transaccion") {
+        let transactionTypeID = pathLocation[4];
+        this.getTransactionType(transactionTypeID);
+      } else if(op = "editar-transaccion") {
+        let transactionId = pathLocation[4];
         this.getTransaction(transactionId);
-      } else {
-        if (this.transactionType === "agregar-ticket") {
-          this.getTransactionByType("Ticket");
-        } else if (this.transactionType === "agregar-factura") {
-          this.getTransactionByType("Factura");
-        } else if (this.transactionType === "agregar-nota-credito") {
-          this.getTransactionByType("Nota de Crédito");
-        } else if (this.transactionType === "agregar-nota-debito") {
-          this.getTransactionByType("Nota de Débito");
-        }
       }
     }
   }
@@ -194,14 +187,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getTransactionByType(type: string): void {
-
-    this._transactionTypeService.getTransactionByType(type).subscribe(
+  public getTransactionType(transactionTypeID: string): void {
+    
+    this._transactionTypeService.getTransactionType(transactionTypeID).subscribe(
       result => {
-        if (!result.transactionTypes) {
+        if (!result.transactionType) {
           this.showMessage(result.message, "info", true);
         } else {
-          this.transaction.type = result.transactionTypes[0];
+          this.transaction.type = result.transactionType;
           this.getLastTransactionByType();
         }
         this.loading = false;
@@ -333,6 +326,25 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.employeeClosing = this.table.employee;
           this.getOpenTurn(this.table.employee);
           this.getTransactionByType('Ticket');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getTransactionByType(type: string): void {
+
+    this._transactionTypeService.getTransactionByType(type).subscribe(
+      result => {
+        if (!result.transactionTypes) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.transaction.type = result.transactionTypes[0];
+          this.getLastTransactionByType();
         }
         this.loading = false;
       },
@@ -496,7 +508,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.loading = true;
     this.transaction.madein = this.posType;
-
+    
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {

@@ -7,13 +7,14 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, CurrentAcount, TransactionTypeMovements } from './../../models/transaction-type';
+import { TransactionType, CurrentAcount, Movements } from './../../models/transaction-type';
 import { Company, CompanyType } from './../../models/company';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
 //Services
 import { CompanyService } from './../../services/company.service';
 import { TransactionService } from './../../services/transaction.service';
+import { TransactionTypeService } from './../../services/transaction-type.service';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 //Componentes
@@ -48,6 +49,7 @@ export class CurrentAccountComponent implements OnInit {
 
   constructor(
     public _transactionService: TransactionService,
+    public _transactionTypeService: TransactionTypeService,
     public _movementOfCashService: MovementOfCashService,
     public _companyService: CompanyService,
     public _router: Router,
@@ -138,14 +140,14 @@ export class CurrentAccountComponent implements OnInit {
           if (transaction.type.currentAccount === CurrentAcount.Yes &&
             this.getPaymentMethodName(transaction) === "Cuenta Corriente") {
             this.transactions.push(transaction);
-            if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+            if (transaction.type.movement === Movements.Outflows) {
               this.balance += transaction.totalPrice;
             } else {
               this.balance -= transaction.totalPrice;
             }
           } else if (transaction.type.currentAccount === CurrentAcount.Cobra) {
             this.transactions.push(transaction);
-            if (transaction.type.movement === TransactionTypeMovements.Outflows) {
+            if (transaction.type.movement === Movements.Outflows) {
               this.balance -= transaction.totalPrice;
             } else {
               this.balance += transaction.totalPrice;
@@ -199,16 +201,13 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public openModal(op: string, transaction?: Transaction, type?: string): void {
+  public openModal(op: string, transaction?: Transaction): void {
 
     let modalRef;
     switch (op) {
       case 'transaction':
         modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
-        let transactionAux = new Transaction();
-        transactionAux.company = this.companySelected;
-        modalRef.componentInstance.transaction = transactionAux;
-        modalRef.componentInstance.type = "Cobro";
+        modalRef.componentInstance.transaction = transaction;
         modalRef.result.then(
           (result) => {
             if (typeof (result) === "object") {
@@ -265,10 +264,31 @@ export class CurrentAccountComponent implements OnInit {
 
   public addTransaction(type: string): void {
     if (this.companySelected) {
-      this.openModal('transaction', undefined, type);
+      this.getTransactionTypeByName(type);
     } else {
       this.showMessage("Debe seleccionar una empresa", "info", true);
     }
+  }
+
+  public getTransactionTypeByName(name: string): void {
+
+    this._transactionTypeService.getTransactionTypeByName(name).subscribe(
+      result => {
+        if (!result.transactionTypes) {
+          this.showMessage(result.message, "info", true);
+        } else {
+          let transaction = new Transaction();
+          transaction.company = this.companySelected;
+          transaction.type = result.transactionTypes[0];
+          this.openModal('transaction', transaction);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public updateTransaction(transaction: Transaction): void {

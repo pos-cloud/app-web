@@ -33,7 +33,6 @@ export class AddTransactionComponent implements OnInit {
   public transactionForm: FormGroup;
   public companies: Company[];
   @Input() transaction: Transaction;
-  @Input() type: string;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
@@ -91,10 +90,8 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     
-    if(!this.transaction.type) {
-      this.transaction.state = TransactionState.Open;
-      this.transaction.type = new TransactionType();
-      this.getTransactionTypeByName();
+    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+      this.transaction.origin = this.transaction.type.fixedOrigin;
     }
     this.buildForm();
   }
@@ -103,33 +100,9 @@ export class AddTransactionComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getTransactionTypeByName(): void {
-
-    this.loading = true;
-
-    this._transactionTypeService.getTransactionTypeByName(this.type).subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
-        } else {
-          this.transaction.type = result.transactionTypes[0];
-          if(this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-            this.transaction.origin = this.transaction.type.fixedOrigin;
-          }
-          this.setValueForm();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
   public setValueForm(): void {
     
-    if(!this.transaction.origin) this.transaction.origin = 1;
+    if(!this.transaction.origin) this.transaction.origin = 0;
     if(!this.transaction.number) this.transaction.number = 1;     
     if(!this.transaction.observation) this.transaction.observation = ""; 
 
@@ -201,7 +174,7 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss');
     this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss');
     this.transaction.origin = this.transactionForm.value.origin;
-
+    
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
       this.transaction.letter = this.transaction.type.fixedLetter;
     } else {

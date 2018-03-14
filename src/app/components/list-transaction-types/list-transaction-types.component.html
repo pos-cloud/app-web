@@ -29,6 +29,8 @@
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('currentAccount')">Afecta cuenta corriente</th>
             <th (click)="orderBy('movement')">Movimiento de dinero</th>
+            <th (click)="orderBy('requestArticles')">Intercambia productos</th>
+            <th (click)="orderBy('defectOrders')">Para pedidos</th>
             <th (click)="orderBy('fixedOrigin')">Origen Fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
             <th (click)="orderBy('electronics')">Documento electrónico</th>
@@ -43,6 +45,8 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCurrentAccount" placeholder="Cuenta Corriente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMovement" placeholder="Movimiento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterRequestArticles" placeholder="Intercambia productos..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Origen Fijo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterElectronics" placeholder="Electrónico..."></th>
@@ -57,6 +61,8 @@
           <tr *ngFor="let transactionType of transactionTypes | filter: filterName:'name'
                                                               | filter: filterCurrentAccount:'currentAccount' 
                                                               | filter: filterMovement:'movement'
+                                                              | filter: filterRequestArticles:'requestArticles'
+                                                              | filter: filterDefectOrders:'defectOrders'
                                                               | filter: filterFixedOrigin:'fixedOrigin'
                                                               | filter: filterFixedLetter:'letter'
                                                               | filter: filterElectronics:'electronics'
@@ -81,6 +87,8 @@
             <td class="flat">{{transactionType.name}}</td>
             <td class="flat">{{transactionType.currentAccount}}</td>
             <td class="flat">{{transactionType.movement}}</td>
+            <td class="flat">{{transactionType.requestArticles}}</td>
+            <td class="flat">{{transactionType.defectOrders}}</td>
             <td class="flat">{{transactionType.fixedOrigin}}</td>
             <td class="flat">{{transactionType.fixedLetter}}</td>
             <td class="flat">{{transactionType.electronics}}</td>

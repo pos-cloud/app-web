@@ -39,7 +39,7 @@
   <div class="card card-outline-primary list-delivery">
     <div class="card-header bg-primary">Pendientes
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="addSaleOrder('ticket')">Nuevo Pedido</button>
+        <button class="btn btn-primary" (click)="addSaleOrder('delivery')">Nuevo Pedido</button>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
           <span *ngIf="loading">Cargando</span>
@@ -306,13 +306,7 @@
         <div class="btn-group" ngbDropdown>
           <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">Nuevo</button>
           <div class="dropdown-menu" ngbDropdownMenu>
-            <button class="dropdown-item" (click)="addSaleOrder('ticket')">Ticket</button>
-            <button class="dropdown-item" (click)="addSaleOrder('factura')">Factura</button>
-            <button class="dropdown-item" (click)="addTransaction('Cobro')">Cobro</button>
-            <button class="dropdown-item" (click)="addSaleOrder('nota-credito')">Nota de Crédito</button>
-            <button class="dropdown-item" (click)="addSaleOrder('nota-debito')">Nota de Débito</button>
-            <button class="dropdown-item" (click)="addTransaction('Saldo Inicial (+)')">Saldo Inicial (+)</button>
-            <button class="dropdown-item" (click)="addTransaction('Saldo Inicial (-)')">Saldo Inicial (-)</button>
+            <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
           </div>
         </div>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading" [disabled]="loading">
