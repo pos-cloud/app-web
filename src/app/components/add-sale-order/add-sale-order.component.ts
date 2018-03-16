@@ -807,18 +807,21 @@ export class AddSaleOrderComponent implements OnInit {
 
   public validateElectronicTransaction(): void {
     
+    this.showMessage("Validando comprobante con AFIP...", "info", false);
+
     this._transactionService.validateElectronicTransaction(this.transaction).subscribe(
       result => {
         if (result.status === 'err'){
           this.showMessage(result.code + " - " + result.message, "danger", false);
-          this.loading = false;
         } else {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = result.CAEExpirationDate;
           this.updateTransaction();
           this.openModal("printers");
+          this.hideMessage();
         }
+        this.loading = false;
       },
       error => {
         this.showMessage("Ha ocurrido un error en el servidor: " + error, "danger", false);
@@ -932,7 +935,8 @@ export class AddSaleOrderComponent implements OnInit {
 
                     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                       this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                      if(this.transaction.type.electronics === "Si") {
+                      if( this.transaction.type.electronics === "Si" && 
+                          !this.transaction.CAE) {
                         this.validateElectronicTransaction();
                       } else {
                         if (this.transaction.type.printable && 
@@ -1012,10 +1016,13 @@ export class AddSaleOrderComponent implements OnInit {
         } else if (this.countPrinters() !== 0) {
           this.distributeImpressions(this.printersAux[0]);
         } else {
-          if (this.typeOfOperationToPrint === "charge" && 
-              this.transaction.type.electronics === "No") {
-            this.assignTransactionNumber();
-            this.loading = false;
+          if (this.typeOfOperationToPrint === "charge") {
+            if (this.transaction.type.electronics === "No") {
+              this.assignTransactionNumber();
+              this.loading = false;
+            } else {
+              this.finishCharge();
+            }
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           } else {
@@ -1264,10 +1271,10 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public finishCharge() {
+
     this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
     this.transaction.endDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
-
     
     if (this.posType === "resto") {
       this.updateTransaction(false);

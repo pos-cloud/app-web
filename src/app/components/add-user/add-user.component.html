@@ -44,7 +44,7 @@
         </div>
 				<div class="form-group col-md-4">
 					<label for="tokenExpiration" class="control-label">Minutos de sesión:</label>
-					<input type="text" class="form-control" formControlName="tokenExpiration" name="tokenExpiration" id="tokenExpiration"/>
+					<input type="number" class="form-control" formControlName="tokenExpiration" name="tokenExpiration" id="tokenExpiration"/>
 					<div *ngIf="formErrors.tokenExpiration" class="alert alert-danger">
 						{{ formErrors.tokenExpiration }}
 					</div>
