@@ -26,7 +26,7 @@ export enum Movements {
 export enum CurrentAcount {
 	Yes = <any>"Si",
 	No = <any>"No",
-	Cobra = <any>"Cobra"
+	Charge = <any>"Cobra"
 }
 
 export class CodeAFIP {

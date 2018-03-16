@@ -145,7 +145,7 @@ export class CurrentAccountComponent implements OnInit {
             } else {
               this.balance -= transaction.totalPrice;
             }
-          } else if (transaction.type.currentAccount === CurrentAcount.Cobra) {
+          } else if (transaction.type.currentAccount === CurrentAcount.Charge) {
             this.transactions.push(transaction);
             if (transaction.type.movement === Movements.Outflows) {
               this.balance -= transaction.totalPrice;

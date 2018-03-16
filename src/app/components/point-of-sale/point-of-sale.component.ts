@@ -102,7 +102,7 @@ export class PointOfSaleComponent implements OnInit {
                 this.showMessage(result.message, "info", true);
               } else {
                 let transactionType = new TransactionType();
-                transactionType.currentAccount = CurrentAcount.Cobra;
+                transactionType.currentAccount = CurrentAcount.Charge;
                 transactionType.movement = Movements.Inflows;
                 transactionType.name = "Cobro";
                 transactionType.electronics = "No";

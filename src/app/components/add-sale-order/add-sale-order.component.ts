@@ -938,6 +938,9 @@ export class AddSaleOrderComponent implements OnInit {
                       if( this.transaction.type.electronics === "Si" && 
                           !this.transaction.CAE) {
                         this.validateElectronicTransaction();
+                      } else if ( this.transaction.type.electronics === "Si" &&
+                                  this.transaction.CAE) { 
+                        this.finishCharge();
                       } else {
                         if (this.transaction.type.printable && 
                             this.transaction.type.printable === "Si") {
