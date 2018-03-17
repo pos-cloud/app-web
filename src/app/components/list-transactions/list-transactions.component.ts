@@ -52,7 +52,7 @@ export class ListTransactionsComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    this.modules = Config.modules[0];
+    this.modules = Config.modules;
     this.getTransactions();
   }
 

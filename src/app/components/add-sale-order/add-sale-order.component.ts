@@ -1016,7 +1016,7 @@ export class AddSaleOrderComponent implements OnInit {
           }, (reason) => {
 
           });
-        } else if (this.countPrinters() !== 0) {
+        } else if (this.countPrinters() === 1) {
           this.distributeImpressions(this.printersAux[0]);
         } else {
           if (this.typeOfOperationToPrint === "charge") {
@@ -1080,7 +1080,11 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
         }, (reason) => {
-          this.finishCharge();
+          if(this.typeOfOperationToPrint === "charge") {
+            this.finishCharge();
+          } else if (this.typeOfOperationToPrint === "bill") {
+            this.changeStateOfTable(TableState.Pending, true);
+          }
           this.hideMessage();
         });
         // modalRef.componentInstance.print = this.printSelected;
