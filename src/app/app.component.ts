@@ -4,8 +4,6 @@ import { Config } from './app.config';
 
 import { ConfigService } from './services/config.service';
 
-import { ConfigComponent } from './components/config/config.component';
-
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -19,7 +17,7 @@ export class AppComponent implements OnInit{
   public alertMessage: string = "";
   public isAPIConected: boolean;
   public loading: boolean = true;
-  public modules: string[];
+  public modules;
 
   constructor(
     public _configService: ConfigService,
@@ -31,54 +29,27 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.getConfigLocal();
-  }
-
-  public getConfigLocal() {
-  
-    this.loading = true;
-
-    let result = this._configService.getConfigLocal();
-
-    if (!result) {
-      this.openModal("config");
-      this.isAPIConected = false;
-      this.loading = false;
-    } else {
-      this.config = result;
-      this.setConfigurationSettings(this.config);
-      this.setApiConfigurationSettings(this.config);
-      this.hideMessage();
-      this.getConfigApi();
-      this.loading = false;
-    }
+    this.setApiConfigurationSettings();
+    this.getConfigApi();
   }
 
   public getConfigApi() {
-
+    
     this.loading = true;
 
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result.configs) {
-          this.openModal("config");
           this.isAPIConected = false;
         } else {
-          this.hideMessage();
           this.isAPIConected = true;
           let config = result.configs[0];
           this.setConfigurationSettings(config);
-          this.setApiConfigurationSettings(config);
-          if(JSON.stringify(config) !== JSON.stringify(this.config)) {
-            if (this._configService.saveConfigLocal(config)) {
-            }
-          }
         }
         this.loading = false;
       },
       error => {
         this.isAPIConected = false;
-        this.openModal('config');
       }
     );
   }
@@ -87,36 +58,16 @@ export class AppComponent implements OnInit{
     if(config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if(config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone);
-    if (config.modules) Config.setModules(config.modules);
-    this.modules = config.modules;
-  }
-
-  public setApiConfigurationSettings(config) {
-    Config.setAccessType(config.accessType);
-    Config.setApiHost(config.apiHost);
-    Config.setApiPort(config.apiPort);
-  }
-
-  public openModal(op: string): void {
-
-    let modalRef;
-    switch (op) {
-      case 'config':
-
-        modalRef = this._modalService.open(ConfigComponent, { size: 'lg' }).result.then((result) => {
-          if (result === 'save_close') {
-            this.hideMessage();
-            this.isAPIConected = true;
-          } else {
-            this.getConfigApi();
-          }
-        }, (reason) => {
-          this.getConfigApi();
-        });
-        break;
-      default: ;
+    if (config.modules) {
+      Config.setModules(config.modules[0]);
+      this.modules = config.modules[0];
     }
-  };
+  }
+
+  public setApiConfigurationSettings() {
+    Config.setApiHost(window.location.hostname);
+    Config.setApiPort(3000);
+  }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

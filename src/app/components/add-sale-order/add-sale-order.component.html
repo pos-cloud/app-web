@@ -5,18 +5,29 @@
         <div class="col-md-2" *ngIf="transaction.table">
           <b>Mesa:</b> {{transaction.table.description}}
         </div>
-        <div class="col-md-2" *ngIf="transaction.employeeClosing">
-          <b>Empleado:</b> {{transaction.employeeClosing.name}}
+        <div class="col-md-2" *ngIf="posType==='mostrador' && transaction.type">
+          <b>{{transaction.type.name}}</b>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2" *ngIf="transaction.employeeClosing">
+          <b *ngIf="posType!=='resto'">Empleado:</b>
+          <b *ngIf="posType==='resto'">Mozo:</b>
+          {{transaction.employeeClosing.name}}
+        </div>
+        <div class="col-md-2">
           <b>Cliente: </b>
           <span *ngIf="!transaction.company">Consumidor final</span>
           <span *ngIf="transaction.company">{{transaction.company.name}}</span>
         </div>
-        <div class="col-md-2">
-          <b>Apertura: </b>{{transaction.startDate | dateFormat:'HH:mm'}}
+        <div class="col-md-2" *ngIf="posType==='resto'">
+          <b>Comensales:</b>
+          {{transaction.diners}}
         </div>
-        <div class="col-md-2 offset-md-1" *ngIf="posType==='resto'">
+        <div class="col-md-2">
+          <b *ngIf="posType!=='mostrador'">Abierto: </b>
+          <b *ngIf="posType==='mostrador'">Fecha: </b>
+          {{transaction.startDate | dateFormat:'HH:mm'}}
+        </div>
+        <div class="col-md-2" *ngIf="posType==='resto'">
           <a class="btn" (click)="openModal('change-employee')">
             <i class="fa fa-exchange"></i> Cambiar Empleado</a>
         </div>

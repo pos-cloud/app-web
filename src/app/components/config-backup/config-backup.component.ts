@@ -255,13 +255,6 @@ export class ConfigBackupComponent implements OnInit {
           this.loading = false;
         } else {
           this.config = result.configs[0];
-          if (this._configService.saveConfigLocal(this.config)) {
-            this.showMessage("Se guardaron los cambios.", "success", false);
-            this.buildFormBackup();
-            this.getConfig();
-          } else {
-            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
-          }
         }
         this.loading = false;
       },
@@ -283,13 +276,8 @@ export class ConfigBackupComponent implements OnInit {
           this.loading = false;
         } else {
           this.config = result.configs[0];
-          if (this._configService.saveConfigLocal(this.config)) {
-            this.showMessage("Se guardaron los cambios.", "success", false);
             this.buildFormEmail();
             this.getConfig();
-          } else {
-            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
-          }
         }
         this.loading = false;
       },
@@ -311,13 +299,8 @@ export class ConfigBackupComponent implements OnInit {
           this.loading = false;
         } else {
           this.config = result.configs[0];
-          if (this._configService.saveConfigLocal(this.config)) {
-            this.showMessage("Se guardaron los cambios.", "success", false);
-            this.buildFormCompany();
-            this.getConfig();
-          } else {
-            this.showMessage("Ha ocurrido un error en el navegador. Recarge la página.", "danger", false);
-          }
+          this.buildFormCompany();
+          this.getConfig();
         }
         this.loading = false;
       },

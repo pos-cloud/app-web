@@ -105,7 +105,6 @@ import { RoundNumberPipe } from './pipes/round-number.pipe';
 
 //directives
 import { FocusDirective } from './directives/focus.directive';
-import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
@@ -182,7 +181,6 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
     ListPrintersComponent,
     AddMovementOfCashComponent,
     ImportComponent,
-    ConfigComponent,
     ConfigBackupComponent,
     AddTransactionComponent,
     CurrentAccountComponent,

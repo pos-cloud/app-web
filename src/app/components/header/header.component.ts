@@ -24,10 +24,10 @@ export class HeaderComponent implements OnInit {
   public online: Observable<boolean>;
   public accessType: string;
   public hideMenu: boolean;
-  public modules;
   public sessionTimer;
   public pathLocation: string[];
   @Input() isAPIConected: boolean;
+  @Input() modules;
 
   constructor(
     public _userService: UserService,
@@ -38,7 +38,6 @@ export class HeaderComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
-    this.hideMenu = false;
     this.online = Observable.merge(
       Observable.of(navigator.onLine),
       Observable.fromEvent(window, 'online').mapTo(true),
@@ -48,7 +47,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.modules = Config.modules[0];
     if (this.isAPIConected) {
       this.validateIdentity();
     }
@@ -59,7 +57,6 @@ export class HeaderComponent implements OnInit {
     this.identity = this._userService.getIdentity();
     
     if (this.identity) {
-
       this._router.events.forEach((event: NavigationEvent) => {
         if (event instanceof NavigationStart) {
           let pathLocation: string[] = event.url.split('/');

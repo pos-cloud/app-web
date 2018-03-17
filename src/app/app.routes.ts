@@ -55,7 +55,6 @@ import { ListTransactionTypesComponent } from './components/list-transaction-typ
 import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ImportComponent } from './components/import/import.component';
-import { ConfigComponent } from './components/config/config.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
@@ -116,7 +115,6 @@ const _routes: Routes = [
   { path: 'admin/editar-tipo-transaccion', component: UpdateTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/eliminar-tipo-transaccion', component: DeleteTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/import', component: ImportComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
-  { path: 'admin/config', component: ConfigComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/configuraciones', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/cuentas-corrientes', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/send-mail', component: SendMailComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },

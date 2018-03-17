@@ -13,16 +13,6 @@ export class ConfigService {
 		public _userService: UserService
 	) { }
 
-	getConfigLocal() {
-		return JSON.parse(localStorage.getItem("config"));
-	}
-
-	saveConfigLocal(config: Config) {
-		localStorage.removeItem('config');
-		localStorage.setItem('config', JSON.stringify(config));
-		return true;
-	}
-
 	getConfigApi() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

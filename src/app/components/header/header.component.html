@@ -6,23 +6,29 @@
   </button>
   <a class="navbar-brand" [routerLink]="['inicio']"> POS Cloud</a>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto" *ngIf="modules">
       <li class="nav-item navbar-inverse" *ngIf=" identity &&
                                                   identity.employee && 
                                                   identity.employee.type.description === 'Mozo' && 
-                                                  this.modules.sale[0].resto === 'Yes'">
+                                                  modules &&
+                                                  modules.sale &&
+                                                  modules.sale[0].resto === 'Yes'">
         <a class="nav-link btn" [routerLink]="['pos','resto']" [routerLinkActive]="['active-primary']"><i class="fa fa-cutlery"></i> Resto</a>
       </li>
       <li class="nav-item" *ngIf="identity && 
                                   identity.employee && 
                                   identity.employee.type.description === 'Mozo' && 
-                                  this.modules.sale[1].counter === 'Yes'">
+                                  modules && 
+                                  modules.sale &&
+                                  modules.sale[1].counter === 'Yes'">
         <a class="nav-link btn" [routerLink]="['pos','mostrador']" [routerLinkActive]="['active-primary']"><i class="fa fa-handshake-o"></i> Mostrador</a>
       </li>
       <li class="nav-item" *ngIf="identity &&
                                   identity.employee && 
                                   identity.employee.type.description === 'Mozo' && 
-                                  this.modules.sale[2].delivery === 'Yes'">
+                                  modules && 
+                                  modules.sale &&
+                                  modules.sale[2].delivery === 'Yes'">
         <a class="nav-link btn" [routerLink]="['pos','delivery']" [routerLinkActive]="['active-primary']"><i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity && 
@@ -30,13 +36,15 @@
                                               identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-fax"></i> POS</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngIf="this.modules.sale[0].resto === 'Yes'">
+          <div *ngIf="modules && modules.sale && modules.sale[0].resto === 'Yes'">
             <button class="dropdown-item" [routerLink]="['pos','resto']" [routerLinkActive]="['active']">Resto</button>
           </div>
-          <div *ngIf="this.modules.sale[1].counter === 'Yes'">
+          <div *ngIf="modules && modules.sale && modules.sale[1].counter === 'Yes'">
             <button class="dropdown-item" [routerLink]="['pos','mostrador']" [routerLinkActive]="['active']">Mostrador</button>
           </div>
-          <div *ngIf="this.modules.sale[2].delivery === 'Yes'">
+          <div *ngIf="modules && 
+                      modules.sale &&
+                      modules.sale[2].delivery === 'Yes'">
             <button class="dropdown-item" [routerLink]="['pos','delivery']" [routerLinkActive]="['active']">Delivery</button>
           </div>
         </div>
@@ -56,9 +64,11 @@
                                               identity.employee.type.description === 'Supervisor'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngIf="this.modules.sale[0].resto === 'Yes' || 
-                      this.modules.sale[1].counter === 'Yes' ||
-                      this.modules.sale[2].delivery === 'Yes'">
+          <div *ngIf="modules && 
+                      modules.sale &&
+                      (modules.sale[0].resto === 'Yes' || 
+                      modules.sale[1].counter === 'Yes' ||
+                      modules.sale[2].delivery === 'Yes')">
             <button class="dropdown-item" [routerLink]="['admin','clientes']" [routerLinkActive]="['active']">Clientes</button>
           </div>
           <div *ngIf="modules.purchase === 'Yes'">
@@ -73,7 +83,7 @@
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</button>
-          <div *ngIf="this.modules.sale[0].resto === 'Yes'">
+          <div *ngIf="modules && modules.sale && modules.sale[0].resto === 'Yes'">
             <button class="dropdown-item" [routerLink]="['admin','turnos']" [routerLinkActive]="['active']">Turnos</button>
           </div>
         </div>
@@ -81,7 +91,9 @@
       <li class="nav-item" ngbDropdown *ngIf="identity && 
                                               identity.employee && 
                                               identity.employee.type.description === 'Supervisor' && 
-                                              this.modules.sale[0].resto === 'Yes'">
+                                              modules &&
+                                              modules.sale &&
+                                              modules.sale[0].resto === 'Yes'">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-cutlery"></i> Resto</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</button>
@@ -107,7 +119,7 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="nav-item"  *ngIf="accessType === 'Cloud'">
-        <span class="badge badge-success" *ngIf="online | async; else elseBlock">Online</span>
+        <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
         <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
       </li>
       <li class="nav-item">
