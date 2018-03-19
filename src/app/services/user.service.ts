@@ -37,11 +37,7 @@ export class UserService {
     return this._http.get(Config.apiURL + "users/" + query, { headers: headers }).map (res => res.json());
 	}
 
-  login(user: User, token: boolean = undefined) {
-
-    if(token !== undefined) {
-      user.token = token;
-    }
+  login(user: User) {
 
     let headers = new Headers({
       'Content-Type': 'application/json',

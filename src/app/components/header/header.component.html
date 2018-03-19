@@ -25,15 +25,16 @@
       </li>
       <li class="nav-item" *ngIf="identity &&
                                   identity.employee && 
-                                  identity.employee.type.description === 'Mozo' && 
+                                  identity.employee.type.description === 'Mozo' &&
                                   modules && 
                                   modules.sale &&
                                   modules.sale[2].delivery === 'Yes'">
         <a class="nav-link btn" [routerLink]="['pos','delivery']" [routerLinkActive]="['active-primary']"><i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity && 
+      <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description === 'Supervisor'">
+                                              identity.employee.type.description !== 'Mozo') ||
+                                              (identity && !identity.employee)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-fax"></i> POS</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && modules.sale && modules.sale[0].resto === 'Yes'">
@@ -49,9 +50,10 @@
           </div>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity && 
+      <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description === 'Supervisor'">
+                                              identity.employee.type.description !== 'Mozo') ||
+                                              (identity && !identity.employee)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-shopping-basket"></i> Productos</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</button>
@@ -59,9 +61,10 @@
           <button class="dropdown-item" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity && 
+      <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description === 'Supervisor'">
+                                              identity.employee.type.description !== 'Mozo') ||
+                                              (identity && !identity.employee)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
@@ -77,9 +80,10 @@
           <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes']" [routerLinkActive]="['active']">Cuentas Corrientes</button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity && 
+      <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description === 'Supervisor'">
+                                              identity.employee.type.description !== 'Mozo') ||
+                                              (identity && !identity.employee)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</button>
@@ -88,9 +92,10 @@
           </div>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity && 
+      <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description === 'Supervisor' && 
+                                              identity.employee.type.description !== 'Mozo') ||
+                                              (identity && !identity.employee) && 
                                               modules &&
                                               modules.sale &&
                                               modules.sale[0].resto === 'Yes'">
@@ -100,14 +105,16 @@
           <button class="dropdown-item" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</button>
         </div>
       </li>
-      <li class="nav-item" *ngIf="identity && 
+      <li class="nav-item" *ngIf="(identity &&
                                   identity.employee && 
-                                  identity.employee.type.description === 'Supervisor'">
+                                  identity.employee.type.description !== 'Mozo') ||
+                                  (identity && !identity.employee)">
         <a class="nav-link btn" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active-primary']"><i class="fa fa-bar-chart"></i> Ventas</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity && 
+      <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description === 'Supervisor'">
+                                              identity.employee.type.description !== 'Mozo') ||
+                                              (identity && !identity.employee)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</button>

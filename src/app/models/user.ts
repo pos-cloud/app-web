@@ -6,7 +6,7 @@ export class User {
 	public name: string;
 	public password: string;
 	public state: UserState;
-	public token: boolean;
+	public token: string;
 	public tokenExpiration: number;
 	public employee: Employee = null;
 

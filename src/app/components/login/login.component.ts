@@ -30,7 +30,6 @@ export class LoginComponent implements OnInit {
   @Input() employeeSelected: Employee;
   @Input() routeRequired: Employee;
   public employees: Employee[] = new Array();
-  public token: string;
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
@@ -154,77 +153,40 @@ export class LoginComponent implements OnInit {
 
   public login(): void {
     
-    if(this.employeeSelected) {
-      this.loginWaiter();
-    } else {
-      this.loginSupervisor();
-    }
-  } 
-
-  public loginWaiter(): void {
-    
     this.user = this.loginForm.value;
+    this.showMessage("Comprobando usuario...", "info", false);
     this.loading = true;
 
-    //Obtener el usuario
+    //Obtener el token del usuario
     this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
           this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.activeModal.close(result.user.employee);
-        }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    )
-  }
-
-  public loginSupervisor(): void {
-    
-    this.user = this.loginForm.value;
-    this.loading = true;
-
-    //Obtener el usuario
-    this._userService.login(this.user).subscribe(
-      result => {
-        if (!result.user) {
-          this.showMessage(result.message, "info", true);
-          this.loading = false;
-        } else {
+          this.showMessage("Ingresando...", "success", false);
+          this.user = result.user;
           let userStorage = new User();
-          userStorage._id = result.user._id;
-          userStorage.name = result.user.name;
-          userStorage.employee = new Employee();
-          userStorage.employee._id = result.user.employee._id;
-          userStorage.employee.name = result.user.employee.name;
-          userStorage.employee.type = new EmployeeType();
-          userStorage.employee.type._id = result.user.employee.type._id;
-          userStorage.employee.type.description = result.user.employee.type.description;
+          userStorage._id = this.user._id;
+          userStorage.name = this.user.name;
+          if (this.user.employee) {
+            userStorage.employee = new Employee();
+            userStorage.employee._id = this.user.employee._id;
+            userStorage.employee.name = this.user.employee.name;
+            userStorage.employee.type = new EmployeeType();
+            userStorage.employee.type._id = this.user.employee.type._id;
+            userStorage.employee.type.description = this.user.employee.type.description;
+          }
           sessionStorage.setItem('user', JSON.stringify(userStorage));
+          sessionStorage.setItem('session_token', this.user.token);
 
-          //Obtener el token del usuario
-          this._userService.login(this.user, true).subscribe(
-            result => {
-              if (!result.token) {
-                this.showMessage(result.message, "info", true);
-                this.loading = false;
-              } else {
-                this.hideMessage();
-                if (!result.token) {
-                  this.showMessage("El token no se ha generado correctamente", "info", true);
-                } else {
-                  this.token = result.token;
-                  sessionStorage.setItem('session_token', this.token);
-                  this.activeModal.close(this.user);
-                }
-
-                this.loading = false;
-              }
-            });
+          if (this.employeeSelected) {
+            this.activeModal.close(this.user.employee);
+          } else {
+            this.activeModal.close(this.user);
+          }
+          
+          this.loading = false;
         }
       },
       error => {

@@ -9,6 +9,8 @@ export class AuthGuard implements CanActivate {
 
   public roles: Array<string>;
   public identity: User;
+  public token: string;
+
   constructor(
     private _router: Router,
     private _userService: UserService
@@ -17,14 +19,31 @@ export class AuthGuard implements CanActivate {
   canActivate( route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     this.roles = route.data["roles"];
     this.identity = this._userService.getIdentity();
-    if (this.identity && 
-        this.identity.employee && 
-        this.identity.employee.type && 
-        this.identity.employee.type.description === this.roles[0]) {
-      return true;
-    } else {
-      this._router.navigate['/'];
-      return false;
-    }
+    this.token = this._userService.getToken();
+    return true;
+    // if (this.identity && 
+    //     this.identity.employee && 
+    //     this.identity.employee.type && 
+    //     this.identity.employee.type.description === this.roles[0]) {
+    //       // if(this.token && this.token !== "") {
+    //       //   this._userService.isValidToken(this.token).subscribe(
+    //       //     result => {
+    //       //       if (!result.user) {
+                  
+    //       //       } else {
+                  
+    //       //       }
+    //       //     },
+    //       //     error => {
+    //       //     }
+    //       //   );
+    //       // } else {
+    //       //   return false;
+    //       // }
+    //       return true;
+    // } else {
+    //   this._router.navigate['/'];
+    //   return false;
+    // }
   }
 }
