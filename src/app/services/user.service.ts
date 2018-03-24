@@ -8,15 +8,13 @@ import { Config } from './../app.config';
 @Injectable()
 export class UserService {
 
-  public identity: User;
-  public token: string;
-
   constructor(public _http: Http) { }
 
   getLastUser() {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.get(Config.apiURL + 'users/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -24,7 +22,8 @@ export class UserService {
   getUser(id) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.get(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
 	}
@@ -32,7 +31,8 @@ export class UserService {
   getUsers(query?: string, when?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.get(Config.apiURL + "users/" + query, { headers: headers }).map (res => res.json());
 	}
@@ -41,7 +41,8 @@ export class UserService {
 
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.post(Config.apiURL + "login", user, { headers: headers }).map (res => res.json());
 	}
@@ -49,7 +50,8 @@ export class UserService {
   saveUser(user: User) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.post(Config.apiURL + "user", user, {headers: headers}).map (res => res.json());
   }
@@ -57,7 +59,8 @@ export class UserService {
   deleteUser (id: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.delete(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
   }
@@ -65,7 +68,8 @@ export class UserService {
   updateUser (user: User){
     let headers = new Headers({ 
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.put(Config.apiURL + "user/" + user._id, user, { headers: headers }).map (res => res.json());
   }
@@ -73,7 +77,8 @@ export class UserService {
   getUserOfEmployee(employeeId: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.get(Config.apiURL + 'users/where="employee":"' + employeeId + '"&limit=1', { headers: headers }).map (res => res.json());
   }
@@ -81,7 +86,8 @@ export class UserService {
   isValidToken(token: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, ""), { headers: headers }).map(res => res.json());
   }
@@ -89,7 +95,8 @@ export class UserService {
   checkPermission(employee: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this.getToken()
+      'Authorization': this.getToken(),
+			'Database': this.getDatabase()
     });
     return this._http.get(Config.apiURL + "check_permission/" + employee, { headers: headers }).map(res => res.json());
   }
@@ -99,11 +106,9 @@ export class UserService {
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
     
     if(identity !== undefined && identity !== null) {
-      this.identity = identity;
-      return this.identity;
+      return identity;
     } else {
-      this.identity = undefined;
-      return this.identity;
+      return undefined;
     }
   }
 
@@ -112,11 +117,20 @@ export class UserService {
     let token: string = sessionStorage.getItem('session_token');
 
     if (token !== undefined) {
-      this.token = token;
+      return token;
     } else {
-      this.token = undefined;
+      return undefined;
     }
+  }
 
-    return token;
+  getDatabase(): string {
+
+    let database: string = localStorage.getItem('database');
+
+    if (database !== undefined) {
+      return database;
+    } else {
+      return undefined;
+    }
   }
 }

@@ -17,7 +17,8 @@ export class PaymentMethodService {
   getLastPaymentMethod () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'payment-methods/sort="name":-1&limit=1', { headers: headers }).map (res => res.json());
   }
@@ -25,7 +26,8 @@ export class PaymentMethodService {
   getPaymentMethod (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "payment-method/"+id, { headers: headers }).map (res => res.json());
   }
@@ -33,7 +35,8 @@ export class PaymentMethodService {
   getPaymentMethods () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "payment-methods", { headers: headers }).map (res => res.json());
   }
@@ -41,7 +44,8 @@ export class PaymentMethodService {
   savePaymentMethod (paymentMethod : PaymentMethod) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "payment-method",paymentMethod, { headers: headers }).map (res => res.json());
   }
@@ -49,7 +53,8 @@ export class PaymentMethodService {
   deletePaymentMethod (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "payment-method/"+id, { headers: headers }).map (res => res.json());
   }
@@ -57,7 +62,8 @@ export class PaymentMethodService {
   updatePaymentMethod (paymentMethod: PaymentMethod){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "payment-method/"+paymentMethod._id, paymentMethod, { headers: headers }).map (res => res.json());
   }

@@ -17,7 +17,8 @@ export class PrintService {
 	toPrint(print: Print) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + 'to-print', print, { headers: headers }).map(res => res.json());
 	}
@@ -25,7 +26,8 @@ export class PrintService {
 	getBarcode(barcode : string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL +'barcode/'+ barcode, { headers: headers }).map(res => res.json());
 	}

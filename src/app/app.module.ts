@@ -113,7 +113,6 @@ import { SelectEmployeeComponent } from './components/select-employee/select-emp
 import { PrintComponent } from './components/print/print.component';
 import { ViewTransactionComponent } from './components/view-transaction/view-transaction.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
-import { ExportReceComponent } from './components/export-rece/export-rece.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
 import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
 import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
@@ -190,7 +189,6 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
     PrintComponent,
     ViewTransactionComponent,
     ListTurnsComponent,
-    ExportReceComponent,
     ListTransactionTypesComponent,
     AddTransactionTypeComponent,
     UpdateTransactionTypeComponent,
@@ -200,8 +198,7 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
     AddMovementOfCashComponent,
     SelectEmployeeComponent,
     PrintComponent,
-    ViewTransactionComponent,
-    ExportReceComponent
+    ViewTransactionComponent
   ],
   imports: [
     BrowserModule,

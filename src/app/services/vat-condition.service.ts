@@ -17,7 +17,8 @@ export class VATConditionService {
 	getLastVATCondition() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'vat-conditions/sort="code":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -25,7 +26,8 @@ export class VATConditionService {
 	getVATCondition(id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "vat-condition/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -33,7 +35,8 @@ export class VATConditionService {
 	getVATConditions() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "vat-conditions", { headers: headers }).map(res => res.json());
 	}
@@ -41,7 +44,8 @@ export class VATConditionService {
 	saveVATCondition(vatCondition: VATCondition) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "vat-condition", vatCondition, { headers: headers }).map(res => res.json());
 	}
@@ -49,7 +53,8 @@ export class VATConditionService {
 	saveVATConditions(vatConditions: VATCondition[]) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "vat-condition", vatConditions, { headers: headers }).map(res => res.json());
 	}
@@ -57,7 +62,8 @@ export class VATConditionService {
 	deleteVATCondition(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "vat-condition/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -65,7 +71,8 @@ export class VATConditionService {
 	updateVATCondition(vatCondition: VATCondition) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "vat-condition/" + vatCondition._id, vatCondition, { headers: headers }).map(res => res.json());
 	}

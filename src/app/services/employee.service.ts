@@ -17,7 +17,8 @@ export class EmployeeService {
   getLastEmployee () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'employees/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,7 +26,8 @@ export class EmployeeService {
   getEmployee (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -33,7 +35,8 @@ export class EmployeeService {
   getEmployees () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "employees", { headers: headers }).map (res => res.json());
 	}
@@ -41,7 +44,8 @@ export class EmployeeService {
   getWaiters () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "employees", { headers: headers }).map (res => res.json());
 	}
@@ -49,7 +53,8 @@ export class EmployeeService {
   saveEmployee(employee: Employee) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
     });
     return this._http.post(Config.apiURL + "employee", employee, { headers: headers }).map(res => res.json());
 	}
@@ -57,7 +62,8 @@ export class EmployeeService {
   deleteEmployee (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
   }
@@ -65,7 +71,8 @@ export class EmployeeService {
   updateEmployee (employee: Employee){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "employee/"+employee._id, employee, { headers: headers }).map (res => res.json());
   }

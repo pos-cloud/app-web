@@ -55,7 +55,7 @@ export class HeaderComponent implements OnInit {
   public validateIdentity(): void {
 
     this.identity = this._userService.getIdentity();
-    console.log(this.identity);
+    
     if (this.identity) {
       this._router.events.forEach((event: NavigationEvent) => {
         if (event instanceof NavigationStart) {

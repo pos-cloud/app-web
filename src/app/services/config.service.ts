@@ -16,7 +16,8 @@ export class ConfigService {
 	getConfigApi() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "config", { headers: headers }).map (res => res.json());
 	}
@@ -24,7 +25,8 @@ export class ConfigService {
 	getlicense() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "/download-license", { headers: headers }).map (res => res.json());
 	}
@@ -32,7 +34,8 @@ export class ConfigService {
 	saveConfigApi(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "config", config, { headers: headers }).map (res => res.json());
 	}
@@ -40,7 +43,8 @@ export class ConfigService {
 	updateConfig(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "config/" + config._id, config, { headers: headers }).map (res => res.json());
 	}
@@ -48,7 +52,8 @@ export class ConfigService {
 	updateConfigBackup(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "config-backup/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
@@ -56,7 +61,8 @@ export class ConfigService {
 	updateConfigEmail(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "config-email/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
@@ -64,7 +70,8 @@ export class ConfigService {
 	updateConfigCompany(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "config-company/" + config._id, config, { headers: headers }).map(res => res.json());
 	}

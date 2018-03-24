@@ -17,7 +17,8 @@ export class ArticleService {
   getLastArticle () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'articles/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,7 +26,8 @@ export class ArticleService {
   getArticle (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -33,7 +35,8 @@ export class ArticleService {
   getArticles () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "articles", { headers: headers }).map (res => res.json());
 	}
@@ -41,7 +44,8 @@ export class ArticleService {
   saveArticle(article: Article) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
     });
     return this._http.post(Config.apiURL + "article",article, { headers: headers }).map (res => res.json());
   }
@@ -49,7 +53,8 @@ export class ArticleService {
   deleteArticle (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
   }
@@ -57,7 +62,8 @@ export class ArticleService {
   updateArticle (article: Article){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "article/"+article._id, article, { headers: headers }).map (res => res.json());
   }
@@ -65,7 +71,8 @@ export class ArticleService {
   getArticlesByCategory (categoryId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'articles/where="category":"'+categoryId+'"', { headers: headers }).map (res => res.json());
 	}
@@ -73,7 +80,8 @@ export class ArticleService {
   uploadImagen (id : string){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "upload-image/"+id,"", { headers: headers }).map (res => res.json());
 	}
@@ -83,6 +91,7 @@ export class ArticleService {
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-image-article/' + idArticle, true);
 		xhr.setRequestHeader('Authorization', this._userService.getToken());
+		xhr.setRequestHeader('Database', this._userService.getDatabase());
 
 		return new Promise(function (resolve, reject) {
 			let formData: any = new FormData();

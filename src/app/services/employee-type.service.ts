@@ -17,7 +17,8 @@ export class EmployeeTypeService {
   getLastEmployeeType () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'employees/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
   }
@@ -25,7 +26,8 @@ export class EmployeeTypeService {
   getEmployeeType (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "employee-type/"+id, { headers: headers }).map (res => res.json());
   }
@@ -33,7 +35,8 @@ export class EmployeeTypeService {
   getEmployeeTypes () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "employee-types", { headers: headers }).map (res => res.json());
   }
@@ -41,7 +44,8 @@ export class EmployeeTypeService {
   saveEmployeeType (employeeType: EmployeeType) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "employee-type",employeeType, { headers: headers }).map (res => res.json());
   }
@@ -49,7 +53,8 @@ export class EmployeeTypeService {
   deleteEmployeeType (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "employee-type/"+id, { headers: headers }).map (res => res.json());
   }
@@ -57,7 +62,8 @@ export class EmployeeTypeService {
   updateEmployeeType (employeeType: EmployeeType){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "employee-type/"+employeeType._id, employeeType, { headers: headers }).map (res => res.json());
   }

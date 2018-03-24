@@ -817,7 +817,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = result.CAEExpirationDate;
-          this.updateTransaction();
+          this.updateTransaction(false);
           this.openModal("printers");
           this.hideMessage();
         }

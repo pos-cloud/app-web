@@ -22,6 +22,7 @@
 							<label for="name" class="control-label">Usuario</label>
 							<div class="input-group">
 								<input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+								<span class="input-group-addon" [hidden]="!database">@{{database}}</span>
 							</div>
 							<div *ngIf="formErrors.name" class="alert alert-danger">
 								{{ formErrors.name }}

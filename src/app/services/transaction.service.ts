@@ -19,7 +19,8 @@ export class TransactionService {
 	getTransaction(id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "transaction/" + id, { headers: headers }).map (res => res.json());
 	}
@@ -27,7 +28,8 @@ export class TransactionService {
 	getTransactions() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "transactions", { headers: headers }).map (res => res.json());
 	}
@@ -35,7 +37,8 @@ export class TransactionService {
 	getTransactionsByCompany(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"', { headers: headers }).map(res => res.json());
 	}
@@ -43,7 +46,8 @@ export class TransactionService {
 	saveTransaction(transaction: Transaction) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "transaction", transaction, { headers: headers }).map (res => res.json());
 	}
@@ -51,7 +55,8 @@ export class TransactionService {
 	deleteTransaction(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "transaction/" + id, { headers: headers }).map (res => res.json());
   	}
@@ -59,7 +64,8 @@ export class TransactionService {
 	updateTransaction(transaction: Transaction) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "transaction/" + transaction._id, transaction, { headers: headers }).map (res => res.json());
   	}
@@ -67,7 +73,8 @@ export class TransactionService {
 	getOpenTransactionByTable(tableId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '","state":"' + TransactionState.Open + '"&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -75,7 +82,8 @@ export class TransactionService {
 	getOpenSaleOrdersByEmployee(employeeId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}}],"employeeClosing":"' + employeeId + '"&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -83,7 +91,8 @@ export class TransactionService {
 	getOpenTransaction(posType: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 
 			'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}},{"madein":"'+posType+'"}]', { headers: headers }).map(res => res.json());
@@ -92,7 +101,8 @@ export class TransactionService {
 	getTransactionsByEmployee(employeeId: string, date: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/' + employeeId + '/' + date, { headers: headers }).map (res => res.json());
 	}
@@ -100,7 +110,8 @@ export class TransactionService {
 	getLastTransaction() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -108,7 +119,8 @@ export class TransactionService {
 	getLastTransactionByOrigin(origin: number) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="origin":"' + origin + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -116,7 +128,8 @@ export class TransactionService {
 	getLastTransactionByType(type: TransactionType) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -124,7 +137,8 @@ export class TransactionService {
 	getLastTransactionByTypeAndOrigin(type: TransactionType, origin: number, letter) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '","origin":"' + origin + '","letter":"' + letter + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -132,17 +146,10 @@ export class TransactionService {
 	getLastTransactionByTable(tableId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
-
-	getFileAfip (period) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken()
-		});
-		return this._http.post(Config.apiURL + 'documentQuery', period).map (res => res.json());
 	}
 
 	validateElectronicTransaction(transaction: Transaction) {

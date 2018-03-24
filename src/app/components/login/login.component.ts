@@ -24,6 +24,7 @@ import { TableService } from './../../services/table.service';
 export class LoginComponent implements OnInit {
 
   public user: User;
+  public database: string;
   public loginForm: FormGroup;
   public alertMessage: string;
   public loading: boolean = false;
@@ -58,6 +59,7 @@ export class LoginComponent implements OnInit {
     private _route: ActivatedRoute
     ) { 
       this.alertMessage = "";
+      this.database = this._userService.getDatabase();
     }
 
   ngOnInit() {
@@ -153,7 +155,15 @@ export class LoginComponent implements OnInit {
 
   public login(): void {
     
-    this.user = this.loginForm.value;
+    this.loadDatabase();
+    
+    if (this.database && this.loginForm.value.name.indexOf('@') === -1) {
+      this.user.name = this.loginForm.value.name;
+    } else {
+      this.user.name = this.loginForm.value.name.split("@")[0];
+    }
+    this.user.password = this.loginForm.value.password;
+
     this.showMessage("Comprobando usuario...", "info", false);
     this.loading = true;
 
@@ -185,7 +195,6 @@ export class LoginComponent implements OnInit {
           } else {
             this.activeModal.close(this.user);
           }
-          
           this.loading = false;
         }
       },
@@ -194,6 +203,13 @@ export class LoginComponent implements OnInit {
         this.loading = false;
       }
     )
+  }
+
+  public loadDatabase(): void {
+
+    if (!this.database || (this.loginForm.value.name.indexOf('@') !== -1 && this.database !== this.loginForm.value.name.split("@")[1])) {
+      localStorage.setItem('database', this.loginForm.value.name.split("@")[1].toLowerCase());
+    }
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {
