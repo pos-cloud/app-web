@@ -13,7 +13,7 @@ import { DeleteTransactionComponent } from './../../components/delete-transactio
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 
 //Pipes
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { PrintComponent } from 'app/components/print/print.component';
 
 @Component({
@@ -123,24 +123,24 @@ export class ListTransactionsComponent implements OnInit {
     }
   };
 
-  public calculateTotal(transactions: Transaction[], col, format): string {
+  // public calculateTotal(transactions: Transaction[], col, format): string {
 
-    let decimalPipe = new DecimalPipe('ARS');
-    let total = 0;
-    if (transactions) {
-      for(let transaction of transactions) {
-        if (transaction[col]) {
-          if (transaction.type.movement === Movements.Outflows) {
-            total -= transaction[col];
-          } else {
-            total += transaction[col];
-          }
-        }
-      }
-    }
+  //   let currencyPipe = new CurrencyPipe('ARS');
+  //   let total = 0;
+  //   if (transactions) {
+  //     for(let transaction of transactions) {
+  //       if (transaction[col]) {
+  //         if (transaction.type.movement === Movements.Outflows) {
+  //           total -= transaction[col];
+  //         } else {
+  //           total += transaction[col];
+  //         }
+  //       }
+  //     }
+  //   }
 
-    return decimalPipe.transform(total, format);
-  }
+  //   return currencyPipe.transform(total, format, 'symbol', "2");
+  // }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
