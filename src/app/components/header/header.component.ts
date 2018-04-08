@@ -11,6 +11,7 @@ import { Config } from './../../app.config';
 import { UserService } from './../../services/user.service';
 
 import { LoginComponent } from './../../components/login/login.component';
+import { RegisterComponent } from '../register/register.component';
 
 @Component({
   selector: 'app-header',
@@ -92,6 +93,15 @@ export class HeaderComponent implements OnInit {
         modalRef.result.then((result) => {
           if (typeof result == 'object') {
             this.validateIdentity();
+          }
+        }, (reason) => {
+        });
+        break;
+      case 'register':
+        modalRef = this._modalService.open(RegisterComponent);
+        modalRef.result.then((result) => {
+          if (typeof result == 'object') {
+            
           }
         }, (reason) => {
         });

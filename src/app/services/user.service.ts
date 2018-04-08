@@ -55,6 +55,13 @@ export class UserService {
     });
     return this._http.post(Config.apiURL + "user", user, {headers: headers}).map (res => res.json());
   }
+
+  register(data) {
+    let headers = new Headers({
+      'Content-Type': 'application/json'
+    });
+    return this._http.post(Config.apiURL + "register", data, { headers: headers }).map(res => res.json());
+  }
   
   deleteUser (id: string) {
     let headers = new Headers({

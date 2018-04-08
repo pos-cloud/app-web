@@ -58,6 +58,7 @@ import { ImportComponent } from './components/import/import.component';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
+import { RegisterComponent } from './components/register/register.component';
 
 import { AuthGuard } from './guards/auth.guard';
 
@@ -65,6 +66,7 @@ const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'admin/productos', component: ListArticlesComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/agregar-producto', component: AddArticleComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
   { path: 'admin/editar-producto', component: UpdateArticleComponent, canActivate: [AuthGuard], data: { roles: ['Supervisor'] } },
@@ -129,7 +131,6 @@ const _routes: Routes = [
   { path: 'pos/mostrador', component: PointOfSaleComponent },
   { path: 'pos/mostrador/agregar-transaccion/:type', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-transaccion/:id', component: AddSaleOrderComponent },
-  { path: 'login', component: LoginComponent },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 

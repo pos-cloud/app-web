@@ -31,7 +31,7 @@ export class AddCompanyComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'code': 1,
+    'code': '',
     'name': '',
     'fantasyName': '',
     'type': '',

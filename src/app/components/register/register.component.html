@@ -1,0 +1,95 @@
+<div class="modal-header">
+  <h4 class="modal-title">Registrar</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="employeeName" class="control-label">Nombre y Apellido:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="employeeName" name="employeeName" id="employeeName" [focus]="focusEvent" />
+          </div>
+          <div *ngIf="formErrors.employeeName" class="alert alert-danger">
+            {{ formErrors.employeeName }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="companyName" class="control-label">Nombre del Negocio:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName"/>
+          </div>
+          <div *ngIf="formErrors.companyName" class="alert alert-danger">
+            {{ formErrors.companyName }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="email" class="control-label">E-mail:</label>
+          <div class="input-group">
+            <input type="email" class="form-control" formControlName="email" name="email" id="email" placeholder="juan@example.com"/>
+          </div>
+          <div *ngIf="formErrors.email" class="alert alert-danger">
+            {{ formErrors.email }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="phone" class="control-label">Teléfono:</label>
+          <div class="input-group">
+            <input type="phone" class="form-control" formControlName="phone" name="phone" id="phone"/>
+          </div>
+          <div *ngIf="formErrors.phone" class="alert alert-danger">
+            {{ formErrors.phone }}
+          </div>
+        </div>
+      </div>
+      <label class="control-label">Tipo de negocio:</label>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <div class="input-group-text">
+            <input type="checkbox" class="form-control" formControlName="counter" counter="counter" id="counter" disabled />Venta por Mostrador
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <div class="input-group-text">
+            <input type="checkbox" class="form-control" formControlName="resto" name="resto" id="resto" />Restaurante
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <div class="input-group-text">
+            <input type="checkbox" class="form-control" formControlName="delivery" name="delivery" id="delivery" />Delivery
+          </div>
+        </div>
+      </div>
+      <label class="control-label">Tipo de transacciones:</label>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <div class="input-group-text">
+            <input type="checkbox" class="form-control" formControlName="electronicTransaction" name="electronicTransaction" id="electronicTransaction" />Factura Electrónica
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || loading">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Registrar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

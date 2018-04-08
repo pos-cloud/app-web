@@ -94,7 +94,7 @@ import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.c
 import { LoginComponent } from './components/login/login.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ImportComponent } from './components/import/import.component';
-import { SimpleTinyComponent } from './components/simple-tiny/simple-tiny.components';
+import { RegisterComponent } from './components/register/register.component';
 
 //pipes
 import { FilterPipe } from './pipes/filter.pipe';
@@ -184,7 +184,6 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
     AddTransactionComponent,
     CurrentAccountComponent,
     SendMailComponent,
-    SimpleTinyComponent,
     SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
@@ -192,7 +191,8 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
     ListTransactionTypesComponent,
     AddTransactionTypeComponent,
     UpdateTransactionTypeComponent,
-    DeleteTransactionTypeComponent
+    DeleteTransactionTypeComponent,
+    RegisterComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

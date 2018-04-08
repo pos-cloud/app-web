@@ -70,6 +70,7 @@
               <td>{{company.type}}</td>
               <td *ngIf="company.CUIT && company.CUIT !== ''">{{company.CUIT}}</td>
               <td *ngIf="company.DNI && company.DNI !== ''">{{company.DNI}}</td>
+              <td *ngIf="!company.DNI && !company.CUIT"></td>
               <td>{{company.address}}</td>
               <td>{{company.city}}</td>
               <td>{{company.phones}}</td>

@@ -1,0 +1,178 @@
+import { Component, OnInit, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { User, UserState } from './../../models/user';
+import { Employee } from './../../models/employee';
+import { EmployeeType } from './../../models/employee-type';
+import { Company } from '../../models/company';
+
+import { UserService } from './../../services/user.service';
+import { EmployeeService } from './../../services/employee.service';
+import { EmployeeTypeService } from './../../services/employee-type.service';
+import { CompanyService } from './../../services/company.service';
+
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
+  providers: [NgbAlertConfig]
+})
+
+export class RegisterComponent implements OnInit {
+
+  public registerForm: FormGroup;
+  public alertMessage: string = "";
+  public userType: string;
+  public loading: boolean = false;
+  public states: UserState[] = [UserState.Enabled, UserState.Disabled];
+  public employees: Employee[] = new Array();
+  public focusEvent = new EventEmitter<boolean>();
+
+  public formErrors = {
+    'employeeName': '',
+    'companyName': '',
+    'email': '',
+    'phone': '',
+    'counter': '',
+    'resto': '',
+    'delivery': '',
+    'electronicTransaction': ''
+  };
+
+  public validationMessages = {
+    'employeeName': {
+      'required': 'Este campo es requerido.'
+    },
+    'companyName': {
+      'required': 'Este campo es requerido.'
+    },
+    'email': {
+      'required': 'Este campo es requerido.'
+    },
+    'phone': {
+      'required': 'Este campo es requerido.'
+    },
+    'counter': {
+    },
+    'resto': {
+    },
+    'delivery': {
+    },
+    'electronicTransaction': {
+    }
+  };
+
+  constructor(
+    public _companyService: CompanyService,
+    public _userService: UserService,
+    public _employeeService: EmployeeService,
+    public _employeeTypeService: EmployeeTypeService,
+    public _fb: FormBuilder,
+    public _router: Router,
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
+  ) { }
+
+  ngOnInit(): void {
+
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.buildForm();
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+
+  public buildForm(): void {
+
+    this.registerForm = this._fb.group({
+      'employeeName': ['', [
+          Validators.required
+        ]
+      ],
+      'companyName': ['', [
+          Validators.required
+        ]
+      ],
+      'email': ['', [
+          Validators.required
+        ]
+      ],
+      'phone': ['', [
+          Validators.required
+        ]
+      ],
+      'counter': [true, [
+        ]
+      ],
+      'resto': [false, [
+        ]
+      ],
+      'delivery': [false, [
+        ]
+      ],
+      'electronicTransaction': [false, [
+        ]
+      ]
+    });
+
+    this.registerForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged();
+    this.focusEvent.emit(true);
+  }
+
+  public onValueChanged(data?: any): void {
+ 
+    if (!this.registerForm) { return; }
+    const form = this.registerForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  public register(): void {
+
+    this.loading = true;
+    this._userService.register(this.registerForm.value).subscribe(
+      result => {
+        console.log(result);
+        if(result.message != 'ok') {
+          this.showMessage(result.message, "info", true);
+        } else {
+          this.showMessage("Se ha registrado con éxito", "success", false);
+          this.buildForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage(): void {
+    this.alertMessage = "";
+  }
+}
