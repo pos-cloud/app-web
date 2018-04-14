@@ -7,7 +7,6 @@ export class Config {
     static apiHost: string = "localhost";
     static apiURL: string;
     static apiURLFE: string = "libs/fe/index.php";
-    static apiConnectionPassword: string;
     static apiPort: number = 3000;
     static accessType: string = "Cloud";
     static modules: string[];
@@ -44,10 +43,6 @@ export class Config {
 
     public static setModules(modules: string[]): void {
         Config.modules = modules;
-    }
-
-    public static setApiConnectionPassword(apiConnectionPassword: string): void {
-        Config.apiConnectionPassword = apiConnectionPassword;
     }
 
     public static setConfigToBackup(pathBackup, pathMongo, backupTime): void {
