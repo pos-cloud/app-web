@@ -958,7 +958,7 @@ export class AddSaleOrderComponent implements OnInit {
                       }
                     } else {
                       if (this.transaction.type.electronics === "Si") {
-                        this.showMessage("Debe configurar un punto de venta para facturar.", "info", true);
+                        this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
                         this.loading = false;
                       } else {
                         if(this.transaction.type.printable === "Si") {

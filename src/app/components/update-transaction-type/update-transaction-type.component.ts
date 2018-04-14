@@ -52,7 +52,6 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'required': 'Este campo es requerido.',
     },
     'labelPrint': {
-      'required': 'Este campo es requerido.',
     },
     'currentAccount': {
       'required': 'Este campo es requerido.',
@@ -139,7 +138,6 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ],
       'labelPrint': [this.transactionType.labelPrint, [
-          Validators.required
         ]
       ],
       'currentAccount': [this.transactionType.currentAccount, [

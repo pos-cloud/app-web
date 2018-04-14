@@ -57,7 +57,8 @@ export class AppComponent implements OnInit{
   public setConfigurationSettings(config) {
     if(config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if(config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone);
+    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
+                                                    config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome;
     if (config.modules) {
       Config.setModules(config.modules[0]);
       this.modules = config.modules[0];

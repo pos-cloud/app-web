@@ -141,6 +141,36 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Condición de IVA:</span>
+              <select class="form-control" formControlName="companyVatCondition" name="companyVatCondition" id="companyVatCondition">
+                <option *ngFor="let vatCondition of vatConditions" 
+                        [selected]="config.companyVatCondition && vatCondition._id==config.companyVatCondition._id"
+                        [value]="vatCondition._id">
+                  {{vatCondition.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades</span>
+              <input type="text" class="form-control" formControlName="companyStartOfActivity" name="companyStartOfActivity" id="companyStartOfActivity" aria-describedby="basic-addon1">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Ingresos Brutos</span>
+              <input type="text" class="form-control" formControlName="companyGrossIncome" name="companyGrossIncome" id="companyGrossIncome" aria-describedby="basic-addon1">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Dirección</span>
               <input type="text" class="form-control" formControlName="companyAddress" name="companyAddress" id="companyAddress" aria-describedby="basic-addon1">
             </div>

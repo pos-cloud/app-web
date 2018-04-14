@@ -13,7 +13,7 @@ import { TransactionType } from './../../models/transaction-type';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import jsPDF from 'jspdf';
+import * as jsPDF from 'jspdf';
 
 //Servicios
 import { TurnService } from './../../services/turn.service';
@@ -81,7 +81,6 @@ export class PrintComponent implements OnInit {
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer
   ) {
-    this.doc = new jsPDF();
   }
 
   ngOnInit() {
@@ -350,6 +349,8 @@ export class PrintComponent implements OnInit {
   }
 
   public getHeader(): void {
+
+    this.doc = new jsPDF();
 
     this.doc.setDrawColor(110, 110, 110)
 

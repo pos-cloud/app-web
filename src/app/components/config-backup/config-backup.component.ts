@@ -6,7 +6,10 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 
 import { Config } from './../../app.config';
+import { VATCondition } from 'app/models/vat-condition';
+
 import { ConfigService } from './../../services/config.service';
+import { VATConditionService } from './../../services/vat-condition.service';
 
 @Component({
   selector: 'app-config-backup',
@@ -17,6 +20,7 @@ import { ConfigService } from './../../services/config.service';
 export class ConfigBackupComponent implements OnInit {
 
   public userType: string;
+  public vatConditions: VATCondition[];
   public config: Config;
   public configFormBackup: FormGroup;
   public configFormEmail: FormGroup;
@@ -33,6 +37,9 @@ export class ConfigBackupComponent implements OnInit {
     'emailPassword': '',
     'companyName': '',
     'companyCUIT': '',
+    'companyVatCondition': '',
+    'companyStartOfActivity': '',
+    'companyGrossIncome': '',
     'companyAddress': '',
     'companyPhone': ''
   };
@@ -58,6 +65,12 @@ export class ConfigBackupComponent implements OnInit {
     },
     'companyCUIT': {
     },
+    'companyVatCondition': {
+    },
+    'companyStartOfActivity': {
+    },
+    'companyGrossIncome': {
+    },
     'companyAddress': {
     },
     'companyPhone': {
@@ -67,6 +80,7 @@ export class ConfigBackupComponent implements OnInit {
   constructor(
     public _router: Router,
     public _configService: ConfigService,
+    public _vatCondition: VATConditionService,
     public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig,
   ) { }
@@ -76,6 +90,7 @@ export class ConfigBackupComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.config = new Config();
+    this.getVatConditions();
     this.buildFormBackup();
     this.buildFormEmail();
     this.buildFormCompany();
@@ -149,6 +164,15 @@ export class ConfigBackupComponent implements OnInit {
       'companyCUIT': [Config.companyCUIT, [
         ]
       ],
+      'companyVatCondition': [Config.companyVatCondition, [
+        ]
+      ],
+      'companyStartOfActivity': [Config.companyStartOfActivity, [
+        ]
+      ],
+      'companyGrossIncome': [Config.companyGrossIncome, [
+        ]
+      ],
       'companyAddress': [Config.companyAddress, [
         ]
       ],
@@ -218,6 +242,27 @@ export class ConfigBackupComponent implements OnInit {
     }
   }
 
+  public getVatConditions(): void {
+
+    this.loading = true;
+
+    this._vatCondition.getVATConditions().subscribe(
+      result => {
+        if (!result.vatConditions) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.vatConditions = result.vatConditions;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
   public addConfigBackup() {
     this.config = this.configFormBackup.value;
     this.setConfigurationSettings(this.config);
@@ -239,7 +284,9 @@ export class ConfigBackupComponent implements OnInit {
   public setConfigurationSettings(config) {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone);
+    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, 
+                                                    config.companyPhone, config.companyVatCondition, 
+                                                    config.companyStartOfActivity, config.companyGrossIncome);
     if (config.modules) Config.setModules(config.modules[0]);
   }
 
@@ -359,8 +406,17 @@ export class ConfigBackupComponent implements OnInit {
     if (!config.emailPassword) config.emailPassword = "";
     if (!config.companyName) config.companyName = "";
     if (!config.companyCUIT) config.companyCUIT = "";
+    if (!config.companyStartOfActivity) config.companyStartOfActivity = "";
+    if (!config.companyGrossIncome) config.companyGrossIncome = "";
     if (!config.companyAddress) config.companyAddress = "";
     if (!config.companyPhone) config.companyPhone= "";
+
+    let vatConditionId;
+    if (!config.vatCondition || !config.companyVatCondition._id) {
+      vatConditionId = '';
+    } else {
+      vatConditionId = config.companyVatCondition._id;
+    }
     
     this.configFormBackup.setValue({
       '_id': config._id,
@@ -380,7 +436,10 @@ export class ConfigBackupComponent implements OnInit {
       'companyName': config.companyName,
       'companyCUIT': config.companyCUIT,
       'companyAddress': config.companyAddress,
-      'companyPhone': config.companyPhone
+      'companyPhone': config.companyPhone,
+      'companyVatCondition': vatConditionId,
+      'companyStartOfActivity': config.companyStartOfActivity,
+      'companyGrossIncome': config.companyGrossIncome
     });
   }
 

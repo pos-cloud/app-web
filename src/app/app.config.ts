@@ -1,4 +1,5 @@
 import { ConfigService } from './services/config.service';
+import { VATCondition } from './models/vat-condition';
 
 export class Config {
 
@@ -19,6 +20,9 @@ export class Config {
     static companyCUIT: string;
     static companyAddress: string;
     static companyPhone: string;
+    static companyVatCondition: VATCondition;
+    static companyStartOfActivity: string;
+    static companyGrossIncome: string;
 
     constructor() { 
         Config.updateApiURL();
@@ -57,11 +61,15 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany(companyName, companyCUIT, companyAddress, companyPhone): void {
+    public static setConfigCompany( companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition, 
+                                    companyStartOfActivity, companyGrossIncome): void {
         Config.companyName = companyName;
         Config.companyCUIT = companyCUIT;
         Config.companyAddress = companyAddress;
-        Config.companyPhone= companyPhone;
+        Config.companyPhone = companyPhone;
+        Config.companyVatCondition = companyVatCondition;
+        Config.companyStartOfActivity = companyStartOfActivity;
+        Config.companyGrossIncome = companyGrossIncome;
     }
 
     public static updateApiURL() {
