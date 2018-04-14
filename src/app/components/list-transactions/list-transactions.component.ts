@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Rx';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -36,7 +37,7 @@ export class ListTransactionsComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage: number = 10;
   public totalItems = 0;
-  public modules;
+  public modules: Observable<{}>;
 
   constructor(
     public _transactionService: TransactionService,
@@ -51,7 +52,7 @@ export class ListTransactionsComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    this.modules = Config.modules;
+    this.modules = Observable.of(Config.modules);
     this.getTransactions();
   }
 

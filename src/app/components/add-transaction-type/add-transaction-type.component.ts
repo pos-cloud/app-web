@@ -31,6 +31,7 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public formErrors = {
     'name': '',
+    'labelPrint': '',
     'currentAccount': '',
     'movement': '',
     'requestArticles': '',
@@ -47,6 +48,9 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public validationMessages = {
     'name': {
+      'required': 'Este campo es requerido.',
+    },
+    'labelPrint': {
       'required': 'Este campo es requerido.',
     },
     'currentAccount': {
@@ -128,6 +132,10 @@ export class AddTransactionTypeComponent implements OnInit {
 
     this.transactionTypeForm = this._fb.group({
       'name': [this.transactionType.name, [
+          Validators.required
+        ]
+      ],
+      'labelPrint': [this.transactionType.labelPrint, [
           Validators.required
         ]
       ],
@@ -217,6 +225,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.transactionType.name) this.transactionType.name = "";
+    if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
     if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
     if (!this.transactionType.requestArticles) this.transactionType.requestArticles = RequestArticles.No;
@@ -229,6 +238,7 @@ export class AddTransactionTypeComponent implements OnInit {
 
     this.transactionTypeForm.setValue({
       'name': this.transactionType.name,
+      'labelPrint': this.transactionType.labelPrint,
       'currentAccount': this.transactionType.currentAccount,
       'movement': this.transactionType.movement,
       'requestArticles': this.transactionType.requestArticles,

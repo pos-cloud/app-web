@@ -1440,7 +1440,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = 'charge';
 
       let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('ARS');
+      let decimalPipe = new DecimalPipe('UDS');
       let content: string;
 
       content =
@@ -1527,7 +1527,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.typeOfOperationToPrint = 'charge';
   
         let datePipe = new DateFormatPipe();
-        let decimalPipe = new DecimalPipe('ARS');
+        let decimalPipe = new DecimalPipe('UDS');
         let content: string;
   
         content =
@@ -1610,7 +1610,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = 'bar';
 
       let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('ARS');
+      let decimalPipe = new DecimalPipe('UDS');
       let content: string;
 
       content =
@@ -1694,7 +1694,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = 'kitchen';
 
       let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('ARS');
+      let decimalPipe = new DecimalPipe('UDS');
       let content: string;
 
       content =

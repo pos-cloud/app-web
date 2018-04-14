@@ -23,6 +23,15 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="labelPrint">¿Como saldrá el nombre del comprobante en la impresión?</label>
+          <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" />
+          <div *ngIf="formErrors.labelPrint" class="alert alert-danger">
+            {{ formErrors.labelPrint }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="currentAccount" class="control-label">¿Afecta la cuenta corriente?</label>
           <select class="form-control" formControlName="currentAccount">
             <option value="Si">Si</option>

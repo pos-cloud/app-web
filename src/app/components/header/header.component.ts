@@ -89,6 +89,7 @@ export class HeaderComponent implements OnInit {
 
     switch (op) {
       case 'login':
+        this._router.navigate(['/']);
         modalRef = this._modalService.open(LoginComponent);
         modalRef.result.then((result) => {
           if (typeof result == 'object') {
@@ -98,14 +99,7 @@ export class HeaderComponent implements OnInit {
         });
         break;
       case 'register':
-        modalRef = this._modalService.open(RegisterComponent);
-        modalRef.result.then((result) => {
-          if (typeof result == 'object') {
-            
-          }
-        }, (reason) => {
-        });
-        break;
+        this._router.navigate(['register']);
       default:
         break;
     }

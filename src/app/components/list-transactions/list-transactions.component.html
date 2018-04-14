@@ -1,4 +1,4 @@
-<section class="container-fluid" *ngIf="userType=='admin' && this.modules.sale[0].resto === 'Yes'">
+<section class="container-fluid" *ngIf="userType=='admin' && (modules | async)?.sale[0].resto === 'Yes'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -192,7 +192,7 @@
   </div>
 </section>
 
-<section class="container-fluid" *ngIf="userType=='admin' && this.modules.sale[0].resto !== 'Yes'">
+<section class="container-fluid" *ngIf="userType=='admin' && (modules | async)?.sale[0].resto !== 'Yes'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -297,7 +297,7 @@
               <td colspan="16">No se encontraron transacciones</td>
             </tr>
           </tbody>
-          <tfoot>
+          <!-- <tfoot>
             <td>
               <strong>Totales</strong>
             </td>
@@ -328,7 +328,7 @@
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'totalPrice', '1.2-2') }}
               </b>
             </td>
-          </tfoot>
+          </tfoot> -->
         </table>
       </div>
       <div class="card-footer bg-primary">

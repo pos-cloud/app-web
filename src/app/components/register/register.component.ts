@@ -150,12 +150,10 @@ export class RegisterComponent implements OnInit {
     this.loading = true;
     this._userService.register(this.registerForm.value).subscribe(
       result => {
-        console.log(result);
-        if(result.message != 'ok') {
+        if(!result.user) {
           this.showMessage(result.message, "info", true);
         } else {
-          this.showMessage("Se ha registrado con éxito", "success", false);
-          this.buildForm();
+          this.login(result.user);
         }
         this.loading = false;
       },
@@ -164,6 +162,48 @@ export class RegisterComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public login(user): void {
+
+    this.showMessage("Comprobando usuario...", "info", false);
+    this.loading = true;
+    
+    localStorage.setItem('database', this.registerForm.value.companyName.replace(/ /g, '_').toLocaleLowerCase());
+
+    //Obtener el token del usuario
+    this._userService.login(user).subscribe(
+      result => {
+        if (!result.user) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.showMessage("Ingresando...", "success", false);
+          user = result.user;
+          let userStorage = new User();
+          userStorage._id = user._id;
+          userStorage.name = user.name;
+          if (user.employee) {
+            userStorage.employee = new Employee();
+            userStorage.employee._id = user.employee._id;
+            userStorage.employee.name = user.employee.name;
+            userStorage.employee.type = new EmployeeType();
+            userStorage.employee.type._id = user.employee.type._id;
+            userStorage.employee.type.description = user.employee.type.description;
+          }
+          sessionStorage.setItem('user', JSON.stringify(userStorage));
+          sessionStorage.setItem('session_token', user.token);
+          
+          this._router.navigate(['inicio']);
+
+          this.loading = false;
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    )
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

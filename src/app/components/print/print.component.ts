@@ -473,7 +473,12 @@ export class PrintComponent implements OnInit {
           } else {
             this.doc.text(this.dateFormat.transform(transaction.startDate, 'DD/MM/YYYY'), 15, row)
           }
-          this.doc.text(transaction.type.name, 55, row)
+          if (transaction.type.labelPrint && 
+              transaction.type.labelPrint !== "") {
+            this.doc.text(transaction.type.labelPrint, 55, row)
+          } else {
+            this.doc.text(transaction.type.name, 55, row)
+          }
           this.doc.text(this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 10), 115, row)
           this.doc.setFontType('bold')
           this.doc.text("$ " + this.roundNumber.transform(transaction.totalPrice, 2), 175, row)
