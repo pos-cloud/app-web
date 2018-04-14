@@ -195,6 +195,7 @@ export class RegisterComponent implements OnInit {
           sessionStorage.setItem('session_token', user.token);
           
           this._router.navigate(['inicio']);
+          location.reload();
 
           this.loading = false;
         }
