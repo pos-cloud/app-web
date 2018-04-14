@@ -24,93 +24,6 @@
       </form>
     </div>
   </div>
-  <!-- Backup -->
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Respaldo</div>
-    <div class= 'card-block'> 
-      <form [formGroup]="configFormBackup" #formAddConfig="ngForm" (ngSubmit)="addConfigBackup()" autocomplete="off">
-        <div class="row">  
-          <div class="form-group col-md-12"> 
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Ubicacion de Mongo</span>
-              <input type="text" class="form-control" formControlName="pathMongo" name="pathMongo" id="pathMongo" aria-describedby="basic-addon1">
-            </div>
-            <div *ngIf="formErrors.pathMongo" class="alert alert-danger">
-                {{ formErrors.pathMongo }}
-            </div>
-          </div>
-        </div>
-        <div class= "row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Ubicacion de Backup</span>
-              <input type="text" class="form-control" formControlName="pathBackup" name="pathBackup" id="pathBackup" aria-describedby="basic-addon1">
-            </div>
-            <div *ngIf="formErrors.pathBackup" class="alert alert-danger">
-                {{ formErrors.pathBackup }}
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <label for="backupTime" class="control-label">Hora del Backup:</label>
-            <input type="time" class="form-control" formControlName="backupTime" name="backupTime" id="backupTime"/>
-            <div *ngIf="formErrors.backupTime" class="alert alert-danger">
-              {{ formErrors.backupTime }}
-            </div>
-          </div>
-        </div>
-        <div class= "row">
-          <div class= "form-group col-md-12">
-            <button type="submit" class="btn btn-primary" [disabled]="!configFormBackup.valid || loading" >
-              <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-              <span *ngIf="!loading">Guardar</span>
-              <span *ngIf="loading">Espere por favor</span>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-  <!-- Email -->
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Email</div>
-    <div class= 'card-block'>
-      <form [formGroup]="configFormEmail" #formAddConfig="ngForm" (ngSubmit)="addConfigEmail()" autocomplete="off">
-        <div class="row">
-          <div class= "form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Cuenta de Mail</span>
-              <input type="text" class="form-control" formControlName="emailAccount" name="emailAccount" id="emailAccount" aria-describedby="basic-addon1">
-            </div>
-            <div *ngIf="formErrors.emailAccount" class="alert alert-danger">
-                {{ formErrors.emailAccount }}
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class= "form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Contraseña de Mail</span>
-              <input type="password" class="form-control" formControlName="emailPassword" name="emailPassword" id="emailPassword" aria-describedby="basic-addon1" >
-            </div>
-            <div *ngIf="formErrors.emailPassword" class="alert alert-danger">
-                {{ formErrors.emailPassword }}
-            </div>
-          </div>
-        </div>
-        <div class= "row">
-          <div class= "form-group col-md-12">
-            <button type="submit" class="btn btn-primary" [disabled]="!configFormEmail.valid || loading" >
-              <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-              <span *ngIf="!loading">Guardar</span>
-              <span *ngIf="loading">Espere por favor</span>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
   <!--Company-->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Datos de la Empresa</div>
@@ -143,9 +56,8 @@
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Condición de IVA:</span>
               <select class="form-control" formControlName="companyVatCondition" name="companyVatCondition" id="companyVatCondition">
-                <option *ngFor="let vatCondition of vatConditions" 
-                        [selected]="config.companyVatCondition && vatCondition._id==config.companyVatCondition._id"
-                        [value]="vatCondition._id">
+                <option *ngFor="let vatCondition of vatConditions" [selected]="config.companyVatCondition && vatCondition._id==config.companyVatCondition._id"
+                  [value]="vatCondition._id">
                   {{vatCondition.description}}
                 </option>
               </select>
@@ -156,7 +68,8 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades</span>
-              <input type="text" class="form-control" formControlName="companyStartOfActivity" name="companyStartOfActivity" id="companyStartOfActivity" aria-describedby="basic-addon1">
+              <input type="text" class="form-control" formControlName="companyStartOfActivity" name="companyStartOfActivity" id="companyStartOfActivity"
+                aria-describedby="basic-addon1">
             </div>
           </div>
         </div>
@@ -164,7 +77,8 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Ingresos Brutos</span>
-              <input type="text" class="form-control" formControlName="companyGrossIncome" name="companyGrossIncome" id="companyGrossIncome" aria-describedby="basic-addon1">
+              <input type="text" class="form-control" formControlName="companyGrossIncome" name="companyGrossIncome" id="companyGrossIncome"
+                aria-describedby="basic-addon1">
             </div>
           </div>
         </div>
@@ -193,6 +107,71 @@
         <div class="row">
           <div class="form-group col-md-12">
             <button type="submit" class="btn btn-primary" [disabled]="!configFormCompany.valid || loading">
+              <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+              <span *ngIf="!loading">Guardar</span>
+              <span *ngIf="loading">Espere por favor</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Email -->
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Email</div>
+    <div class='card-block'>
+      <form [formGroup]="configFormEmail" #formAddConfig="ngForm" (ngSubmit)="addConfigEmail()" autocomplete="off">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Cuenta de Mail</span>
+              <input type="text" class="form-control" formControlName="emailAccount" name="emailAccount" id="emailAccount" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.emailAccount" class="alert alert-danger">
+              {{ formErrors.emailAccount }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Contraseña de Mail</span>
+              <input type="password" class="form-control" formControlName="emailPassword" name="emailPassword" id="emailPassword" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.emailPassword" class="alert alert-danger">
+              {{ formErrors.emailPassword }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormEmail.valid || loading">
+              <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+              <span *ngIf="!loading">Guardar</span>
+              <span *ngIf="loading">Espere por favor</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Backup -->
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Respaldo</div>
+    <div class= 'card-block'> 
+      <form [formGroup]="configFormBackup" #formAddConfig="ngForm" (ngSubmit)="addConfigBackup()" autocomplete="off">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="backupTime" class="control-label">Hora del Backup:</label>
+            <input type="time" class="form-control" formControlName="backupTime" name="backupTime" id="backupTime"/>
+            <div *ngIf="formErrors.backupTime" class="alert alert-danger">
+              {{ formErrors.backupTime }}
+            </div>
+          </div>
+        </div>
+        <div class= "row">
+          <div class= "form-group col-md-12">
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormBackup.valid || loading" >
               <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
               <span *ngIf="!loading">Guardar</span>
               <span *ngIf="loading">Espere por favor</span>

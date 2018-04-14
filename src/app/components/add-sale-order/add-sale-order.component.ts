@@ -935,11 +935,9 @@ export class AddSaleOrderComponent implements OnInit {
 
                     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                       this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                      if( this.transaction.type.electronics === "Si" && 
-                          !this.transaction.CAE) {
+                      if( this.transaction.type.electronics === "Si" && !this.transaction.CAE) {
                         this.validateElectronicTransaction();
-                      } else if ( this.transaction.type.electronics === "Si" &&
-                                  this.transaction.CAE) { 
+                      } else if ( this.transaction.type.electronics === "Si" && this.transaction.CAE) { 
                         this.finishCharge();
                       } else {
                         if (this.transaction.type.printable && 

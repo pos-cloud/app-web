@@ -30,8 +30,6 @@ export class ConfigBackupComponent implements OnInit {
   public loading: boolean = false;
 
   public formErrors = {
-    'pathMongo' : '',
-    'pathBackup' : '',
     'backupTime' : '',
     'emailAccount': '',
     'emailPassword': '',
@@ -45,12 +43,6 @@ export class ConfigBackupComponent implements OnInit {
   };
 
   public validationMessages = {
-    'pathMongo': {
-      'required':       'Este campo es requerido.'
-    },
-    'pathBackup' : {
-        'required':     'Este campo es requerido.'
-    },
     'backupTime' : {
       'required':     'Este campo es requerido.'
     },
@@ -107,11 +99,9 @@ export class ConfigBackupComponent implements OnInit {
         ]
       ],
       'pathMongo': [ Config.pathMongo, [
-          Validators.required
         ]
       ],
       'pathBackup' : [ Config.pathBackup, [
-          Validators.required
         ]
       ],
       'backupTime' : [ Config.backupTime, [
