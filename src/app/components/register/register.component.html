@@ -17,7 +17,7 @@
           <div class="modal-body">
             <div class="row">
               <div class="form-group col-md-12">
-                <label for="employeeName" class="control-label">Nombre y Apellido:</label>
+                <label for="employeeName" class="control-label">Tu nombre y apellido:</label>
                 <div class="input-group">
                   <input type="text" class="form-control" formControlName="employeeName" name="employeeName" id="employeeName" [focus]="focusEvent" />
                 </div>
@@ -28,7 +28,7 @@
             </div>
             <div class="row">
               <div class="form-group col-md-12">
-                <label for="companyName" class="control-label">Nombre del Negocio:</label>
+                <label for="companyName" class="control-label">Nombre de tu negocio:</label>
                 <div class="input-group">
                   <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName"/>
                 </div>
@@ -39,7 +39,7 @@
             </div>
             <div class="row">
               <div class="form-group col-md-12">
-                <label for="email" class="control-label">E-mail:</label>
+                <label for="email" class="control-label">Tu e-mail:</label>
                 <div class="input-group">
                   <input type="email" class="form-control" formControlName="email" name="email" id="email" placeholder="juan@example.com"/>
                 </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="row">
               <div class="form-group col-md-12">
-                <label for="phone" class="control-label">Teléfono:</label>
+                <label for="phone" class="control-label">Tu teléfono:</label>
                 <div class="input-group">
                   <input type="phone" class="form-control" formControlName="phone" name="phone" id="phone"/>
                 </div>
@@ -59,31 +59,30 @@
                 </div>
               </div>
             </div>
-            <label class="control-label">Tipo de negocio:</label>
             <div class="row">
-              <div class="form-group col-md-4">
-                <div class="input-group-text">
-                  <input type="checkbox" class="form-control" formControlName="counter" counter="counter" id="counter" disabled />Venta por Mostrador
-                </div>
-              </div>
-              <div class="form-group col-md-4">
-                <div class="input-group-text">
-                  <input type="checkbox" class="form-control" formControlName="resto" name="resto" id="resto" />Restaurante
-                </div>
-              </div>
-              <div class="form-group col-md-4">
-                <div class="input-group-text">
-                  <input type="checkbox" class="form-control" formControlName="delivery" name="delivery" id="delivery" />Delivery
+              <div class="form-group col-md-12">
+                <label for="category" class="control-label">Tu tipo de negocio</label>
+                <select class="form-control" formControlName="category" (change)="checkModules($event.target.value)">
+                  <option *ngFor="let category of categories" [value]="category">
+                    {{category}}
+                  </option>
+                </select>
+                <div *ngIf="formErrors.category" class="alert alert-danger">
+                  {{ formErrors.category }}
                 </div>
               </div>
             </div>
-            <label class="control-label">Tipo de transacciones:</label>
+            <p><b>
+              SELECCIONA LOS COMPONENTES QUE DESEA<br>AGREGAR A TU SISTEMA POS CLOUD
+            </b></p>
             <div class="row">
-              <div class="form-group col-md-4">
-                <div class="input-group-text">
-                  <input type="checkbox" class="form-control" formControlName="electronicTransaction" name="electronicTransaction" id="electronicTransaction" />Factura Electrónica
-                </div>
-              </div>
+              <input type="checkbox" formControlName="resto" name="resto" id="resto" /> ¿Quieres controlar las mesas de tu local?
+            </div>
+            <div class="row">
+              <input type="checkbox" formControlName="delivery" name="delivery" id="delivery" /> ¿Quieres manejar repartos y entregas? (Delivery)
+            </div>
+            <div class="row">
+              <input type="checkbox" formControlName="electronicTransaction" name="electronicTransaction" id="electronicTransaction" /> ¿Quieres realizar facturas electrónicas?
             </div>
           </div>
           <div class="modal-footer">

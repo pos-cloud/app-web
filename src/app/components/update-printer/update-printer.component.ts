@@ -19,7 +19,7 @@ export class UpdatePrinterComponent implements OnInit {
 
   @Input() printer: Printer;
   @Input() readonly: boolean;
-  public types: PrinterType[] = [PrinterType.PDF, PrinterType.Commander, PrinterType.Fiscal];
+  public types: PrinterType[] = [PrinterType.PDF];
   public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar];
   public printerForm: FormGroup;
   public alertMessage: string = "";

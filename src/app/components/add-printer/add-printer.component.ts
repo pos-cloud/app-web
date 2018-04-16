@@ -18,7 +18,7 @@ import { PrinterService } from './../../services/printer.service';
 export class AddPrinterComponent implements OnInit {
 
   public printer: Printer;
-  public types: PrinterType[] = [PrinterType.PDF, PrinterType.Commander, PrinterType.Fiscal];
+  public types: PrinterType[] = [PrinterType.PDF];
   public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar];
   public printerForm: FormGroup;
   public alertMessage: string = "";

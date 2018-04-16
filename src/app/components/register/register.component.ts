@@ -30,10 +30,12 @@ export class RegisterComponent implements OnInit {
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
+  public categories: string[] = ["Restaurante", "Delivery", "Bar", "Tienda de ropa", "Cafetería", "Kiosco", "Venta de artículos","Otro"];
 
   public formErrors = {
     'employeeName': '',
     'companyName': '',
+    'category': '',
     'email': '',
     'phone': '',
     'counter': '',
@@ -47,6 +49,9 @@ export class RegisterComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'companyName': {
+      'required': 'Este campo es requerido.'
+    },
+    'category': {
       'required': 'Este campo es requerido.'
     },
     'email': {
@@ -98,6 +103,10 @@ export class RegisterComponent implements OnInit {
           Validators.required
         ]
       ],
+      'category': ['', [
+          Validators.required
+        ]
+      ],
       'email': ['', [
           Validators.required
         ]
@@ -143,6 +152,61 @@ export class RegisterComponent implements OnInit {
         }
       }
     }
+  }
+
+  public checkModules(category: string) {
+
+    switch(category) {
+      case "Restaurante": 
+        this.registerForm.value.resto = true;
+        this.registerForm.value.delivery = false;
+        break;
+      case "Delivery":
+        this.registerForm.value.resto = false;
+        this.registerForm.value.delivery = true;
+        break;
+      case "Bar":
+        this.registerForm.value.resto = true;
+        this.registerForm.value.delivery = false;
+        break;
+      case "Tienda de ropa":
+        this.registerForm.value.resto = false;
+        this.registerForm.value.delivery = false;
+        break;
+      case "Cafetería":
+        this.registerForm.value.resto = true;
+        this.registerForm.value.delivery = false;
+        break;
+      case "Kiosco":
+        this.registerForm.value.resto = false;
+        this.registerForm.value.delivery = false;
+        break;
+      case "Venta de artículos":
+        this.registerForm.value.resto = false;
+        this.registerForm.value.delivery = false;
+        break;
+      case "Otro":
+        this.registerForm.value.resto = false;
+        this.registerForm.value.delivery = false;
+        break;
+    }
+
+    this.setValueForm();
+  }
+
+  public setValueForm(): void {
+
+    this.registerForm.setValue({
+      'employeeName': this.registerForm.value.employeeName,
+      'companyName': this.registerForm.value.companyName,
+      'category': this.registerForm.value.category,
+      'email': this.registerForm.value.email,
+      'phone': this.registerForm.value.phone,
+      'counter': this.registerForm.value.counter,
+      'resto': this.registerForm.value.resto,
+      'delivery': this.registerForm.value.delivery,
+      'electronicTransaction': this.registerForm.value.electronicTransaction,
+    });
   }
 
   public register(): void {
@@ -193,8 +257,7 @@ export class RegisterComponent implements OnInit {
           }
           sessionStorage.setItem('user', JSON.stringify(userStorage));
           sessionStorage.setItem('session_token', user.token);
-          
-          this._router.navigate(['inicio']);
+          this._router.navigate(['/']);
           location.reload();
 
           this.loading = false;
