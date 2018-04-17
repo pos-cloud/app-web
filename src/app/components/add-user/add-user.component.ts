@@ -46,6 +46,7 @@ export class AddUserComponent  implements OnInit {
     'state': {
     },
     'employee': {
+      'required': 'Este campo es requerido.'
     },
     'tokenExpiration': {
       'required':       'Este campo es requerido.'
@@ -89,6 +90,7 @@ export class AddUserComponent  implements OnInit {
         ]
       ],
       'employee': [this.user.employee, [
+          Validators.required
         ]
       ],
       'tokenExpiration': [this.user.tokenExpiration, [

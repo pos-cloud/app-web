@@ -8,8 +8,8 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto" *ngIf="modules">
       <li class="nav-item navbar-inverse" *ngIf=" identity &&
-                                                  identity.employee && 
-                                                  identity.employee.type.description === 'Administrador' && 
+                                                  identity.employee &&
+                                                  identity.employee.type.description !== 'Administrador' && 
                                                   modules &&
                                                   modules.sale &&
                                                   modules.sale[0].resto === 'Yes'">
@@ -17,7 +17,7 @@
       </li>
       <li class="nav-item" *ngIf="identity && 
                                   identity.employee && 
-                                  identity.employee.type.description === 'Administrador' && 
+                                  identity.employee.type.description !== 'Administrador' && 
                                   modules && 
                                   modules.sale &&
                                   modules.sale[1].counter === 'Yes'">
@@ -25,7 +25,7 @@
       </li>
       <li class="nav-item" *ngIf="identity &&
                                   identity.employee && 
-                                  identity.employee.type.description === 'Administrador' &&
+                                  identity.employee.type.description !== 'Administrador' &&
                                   modules && 
                                   modules.sale &&
                                   modules.sale[2].delivery === 'Yes'">
@@ -33,7 +33,7 @@
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description !== 'Administrador')">
+                                              identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-fax"></i> POS</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
@@ -55,7 +55,7 @@
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description !== 'Administrador')">
+                                              identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-shopping-basket"></i> Productos</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</button>
@@ -65,7 +65,7 @@
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description !== 'Administrador')">
+                                              identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
@@ -85,7 +85,7 @@
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description !== 'Administrador')">
+                                              identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</button>
@@ -96,7 +96,7 @@
       </li>
       <li class="nav-item" ngbDropdown *ngIf="identity &&
                                               identity.employee && 
-                                              identity.employee.type.description !== 'Administrador' && 
+                                              identity.employee.type.description === 'Administrador' && 
                                               modules &&
                                               modules.sale &&
                                               modules.sale[0].resto === 'Yes'">
@@ -108,12 +108,12 @@
       </li>
       <li class="nav-item" *ngIf="(identity &&
                                   identity.employee && 
-                                  identity.employee.type.description !== 'Administrador')">
+                                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" [routerLink]="['admin','transacciones']" [routerLinkActive]="['active-primary']"><i class="fa fa-bar-chart"></i> Ventas</a>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&
                                               identity.employee && 
-                                              identity.employee.type.description !== 'Administrador')">
+                                              identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top"><i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</button>

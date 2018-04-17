@@ -48,6 +48,7 @@ export class UpdateUserComponent implements OnInit {
     'state': {
     },
     'employee': {
+      'required': 'Este campo es requerido.'
     },
     'tokenExpiration': {
       'required':       'Este campo es requerido.'
@@ -110,6 +111,7 @@ export class UpdateUserComponent implements OnInit {
         ]
       ],
       'employee': [this.user.employee, [
+        Validators.required
         ]
       ],
       'tokenExpiration': [this.user.tokenExpiration, [
@@ -167,7 +169,11 @@ export class UpdateUserComponent implements OnInit {
     if(!this.readonly) {
       this.loading = true;
       this.user = this.userForm.value;
-      this.getEmployee();
+      if(this.userForm.value.employee) {
+        this.getEmployee();
+      } else {
+        this.saveChanges();
+      }
     }
   }
 
@@ -206,12 +212,14 @@ export class UpdateUserComponent implements OnInit {
             let userStorage = new User();
             userStorage._id = result.user._id;
             userStorage.name = result.user.name;
-            userStorage.employee = new Employee();
-            userStorage.employee._id = result.user.employee._id;
-            userStorage.employee.name = result.user.employee.name;
-            userStorage.employee.type = new EmployeeType();
-            userStorage.employee.type._id = result.user.employee.type._id;
-            userStorage.employee.type.description = result.user.employee.type.description;
+            if(result.user.employee) {
+              userStorage.employee = new Employee();
+              userStorage.employee._id = result.user.employee._id;
+              userStorage.employee.name = result.user.employee.name;
+              userStorage.employee.type = new EmployeeType();
+              userStorage.employee.type._id = result.user.employee.type._id;
+              userStorage.employee.type.description = result.user.employee.type.description;
+            }
             sessionStorage.setItem('user', JSON.stringify(userStorage));
           }
           this.activeModal.close('save_close');

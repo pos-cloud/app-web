@@ -7,7 +7,7 @@ export class User {
 	public password: string;
 	public state: UserState;
 	public token: string;
-	public tokenExpiration: number;
+	public tokenExpiration: number = 1440;
 	public employee: Employee = null;
 
 	constructor () {}
