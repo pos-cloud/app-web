@@ -75,7 +75,11 @@ export class HeaderComponent implements OnInit {
         this.sessionCount();
       });
     } else {
-      this.openModal("login");
+      if(this._userService.getDatabase()) {
+        this.openModal("login");
+      } else {
+        this.openModal("register");
+      }
     }
   }
 
@@ -94,6 +98,8 @@ export class HeaderComponent implements OnInit {
         modalRef.result.then((result) => {
           if (typeof result == 'object') {
             this.validateIdentity();
+            this._router.navigate(['/']);
+            location.reload();
           }
         }, (reason) => {
         });

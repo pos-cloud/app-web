@@ -52,7 +52,7 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="employee" class="control-label">Empleado Asociado</label>
+          <label for="employee" class="control-label">Empleado Asociado (Opcional)</label>
           <select class="form-control" formControlName="employee">
             <option *ngFor="let employee of employees" [ngValue]="employee">{{employee.name}}</option>
           </select>

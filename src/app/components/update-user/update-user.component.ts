@@ -46,9 +46,9 @@ export class UpdateUserComponent implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'state': {
+      'required': 'Este campo es requerido.'
     },
     'employee': {
-      'required': 'Este campo es requerido.'
     },
     'tokenExpiration': {
       'required':       'Este campo es requerido.'
@@ -75,7 +75,7 @@ export class UpdateUserComponent implements OnInit {
 
   public loadData(user: User):void {
     
-    let employeeId: string = "";
+    let employeeId: string = undefined;
     if(user.employee !== null) {
       employeeId = user.employee._id;
     }
@@ -108,10 +108,10 @@ export class UpdateUserComponent implements OnInit {
         ]
       ],
       'state': [this.user.state, [
+          Validators.required
         ]
       ],
       'employee': [this.user.employee, [
-        Validators.required
         ]
       ],
       'tokenExpiration': [this.user.tokenExpiration, [

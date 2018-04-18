@@ -122,7 +122,8 @@ export class SelectEmployeeComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           for (let waiter of result.employees) {
-            if (waiter.type.description === "Mozo") {
+            if (waiter.type.description === "Mozo" ||
+                waiter.type.description === "Administrador") {
               this.waiters.push(waiter);
             }
           }
