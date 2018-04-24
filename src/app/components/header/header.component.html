@@ -55,7 +55,8 @@
       </li>
       <li class="nav-item" *ngIf="(identity &&
                                   identity.employee && 
-                                  identity.employee.type.description === 'Administrador')">
+                                  identity.employee.type.description === 'Administrador') &&
+                                  modules && modules.sale && modules.purchase === 'Yes'">
         <a class="nav-link btn" [routerLink]="['pos','mostrador','compra']" [routerLinkActive]="['active-primary']"><i class="fa fa-bar-chart"></i> Compras</a>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&
@@ -86,7 +87,7 @@
             <button class="dropdown-item" [routerLink]="['admin','proveedores']" [routerLinkActive]="['active']">Proveedores</button>
           </div>
           <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes','cliente']" [routerLinkActive]="['active']">Cuentas Corrientes Clientes</button>
-          <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes','proveedor']" [routerLinkActive]="['active']">Cuentas Corrientes Proveedores</button>
+          <button class="dropdown-item" *ngIf="modules && modules.sale && modules.purchase === 'Yes'" [routerLink]="['admin','cuentas-corrientes','proveedor']" [routerLinkActive]="['active']">Cuentas Corrientes Proveedores</button>
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&

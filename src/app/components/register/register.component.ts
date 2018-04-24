@@ -41,7 +41,9 @@ export class RegisterComponent implements OnInit {
     'counter': '',
     'resto': '',
     'delivery': '',
-    'electronicTransaction': ''
+    'electronicTransaction': '',
+    'purchase': '',
+    'stock': ''
   };
 
   public validationMessages = {
@@ -67,6 +69,10 @@ export class RegisterComponent implements OnInit {
     'delivery': {
     },
     'electronicTransaction': {
+    },
+    'purchase': {
+    },
+    'stock': {
     }
   };
 
@@ -125,6 +131,12 @@ export class RegisterComponent implements OnInit {
         ]
       ],
       'electronicTransaction': [false, [
+        ]
+      ],
+      'purchase': [false, [
+        ]
+      ],
+      'stock': [false, [
         ]
       ]
     });
@@ -206,6 +218,8 @@ export class RegisterComponent implements OnInit {
       'resto': this.registerForm.value.resto,
       'delivery': this.registerForm.value.delivery,
       'electronicTransaction': this.registerForm.value.electronicTransaction,
+      'purchase': this.registerForm.value.purchase,
+      'stock': this.registerForm.value.stock,
     });
   }
 
