@@ -3,17 +3,18 @@ import { Printer } from './printer';
 export class TransactionType {
 
 	public _id: string;
+	public transactionMovement: TransactionMovement;
 	public name: string = "";
 	public labelPrint: string;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: Movements = Movements.Inflows;
 	public requestArticles: RequestArticles = RequestArticles.No;
 	public defectOrders: DefectOrders = DefectOrders.No;
-	public electronics: string;
+	public electronics: string = "No";
 	public codes: CodeAFIP[];
-	public fixedOrigin: number;
+	public fixedOrigin: number = 1;
 	public fixedLetter: string;
-	public printable: string;
+	public printable: string = "No";
 	public defectPrinter: Printer;
 
 	constructor() { }
@@ -43,4 +44,10 @@ export enum RequestArticles {
 export enum DefectOrders {
 	Yes = <any>"Si",
 	No = <any>"No"
+}
+
+export enum TransactionMovement {
+	Sale = <any>"Venta",
+	Purchase = <any>"Compra",
+	Stock = <any>"Stock"
 }

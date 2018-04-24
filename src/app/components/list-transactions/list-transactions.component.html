@@ -1,11 +1,12 @@
-<section class="container-fluid" *ngIf="userType=='admin' && (modules | async)?.sale[0].resto === 'Yes'">
+<!-- SECCION RESTO -->
+<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas' && (modules | async)?.sale[0].resto === 'Yes'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Transacciones
+    <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
         <button class="btn btn-primary" (click)="refresh()"[disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
@@ -29,7 +30,7 @@
 	            <th (click)="orderBy('company','name')">Cliente</th>
             	<th (click)="orderBy('table','description')">Mesa</th>
             	<th (click)="orderBy('employeeClosing','name')">Mozo</th>
-            	<th (click)="orderBy('turnOpening','startDate')">Turn</th>
+            	<th (click)="orderBy('turnOpening','startDate')">Turno</th>
 	            <th (click)="orderBy('diners')">Comensales</th>
 	            <th (click)="orderBy('madein')">Canal</th>
 	            <th (click)="orderBy('state')">Estado</th>
@@ -192,14 +193,15 @@
   </div>
 </section>
 
-<section class="container-fluid" *ngIf="userType=='admin' && (modules | async)?.sale[0].resto !== 'Yes'">
+<!-- SECCION MOSTRADOR -->
+<section class="container-fluid" *ngIf="userType=='admin' && (((modules | async)?.sale[0].resto !== 'Yes') || listType==='Compras')">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Transacciones
+    <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
         <button class="btn btn-primary" (click)="refresh()"[disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>

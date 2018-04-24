@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement } from './../../models/transaction-type';
 import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
@@ -22,6 +22,7 @@ import { PrinterService } from './../../services/printer.service';
 export class AddTransactionTypeComponent implements OnInit {
 
   public transactionType: TransactionType;
+  public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock];
   public transactionTypeForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -30,6 +31,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public printers: Printer[];
 
   public formErrors = {
+    'transactionMovement': '',
     'name': '',
     'labelPrint': '',
     'currentAccount': '',
@@ -47,6 +49,9 @@ export class AddTransactionTypeComponent implements OnInit {
   };
 
   public validationMessages = {
+    'transactionMovement': {
+      'required': 'Este campo es requerido.',
+    },
     'name': {
       'required': 'Este campo es requerido.',
     },
@@ -90,7 +95,8 @@ export class AddTransactionTypeComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
-  ) { }
+  ) { 
+  }
 
   ngOnInit(): void {
 
@@ -115,7 +121,6 @@ export class AddTransactionTypeComponent implements OnInit {
         if (!result.printers) {
           this.printers = undefined;
         } else {
-          this.hideMessage();
           this.printers = result.printers;
         }
         this.loading = false;
@@ -130,6 +135,10 @@ export class AddTransactionTypeComponent implements OnInit {
   public buildForm(): void {
 
     this.transactionTypeForm = this._fb.group({
+      'transactionMovement': [this.transactionType.transactionMovement, [
+          Validators.required
+        ]
+      ],
       'name': [this.transactionType.name, [
           Validators.required
         ]
@@ -222,6 +231,8 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public setValueForm(): void {
 
+    if (!this.transactionType.transactionMovement && this.transactionMovements.length > 0) this.transactionType.transactionMovement = TransactionMovement.Sale;
+    if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = null;
     if (!this.transactionType.name) this.transactionType.name = "";
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
@@ -235,6 +246,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
 
     this.transactionTypeForm.setValue({
+      'transactionMovement': this.transactionType.transactionMovement,
       'name': this.transactionType.name,
       'labelPrint': this.transactionType.labelPrint,
       'currentAccount': this.transactionType.currentAccount,

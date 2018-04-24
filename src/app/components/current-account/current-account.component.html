@@ -3,7 +3,8 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Cuenta Corriente
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="addTransaction('Cobro')">Cobrar</button>
+        <button *ngIf="companySelected && companySelected.type === 'Cliente'" class="btn btn-primary" (click)="addTransaction('Cobro')">Cobrar</button>
+        <button *ngIf="companySelected && companySelected.type === 'Proveedor'" class="btn btn-primary" (click)="addTransaction('Pago')">Pagar</button>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}">
           </i>
@@ -24,7 +25,7 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="company" class="control-label">Cliente:</label>
+          <label *ngIf="companySelected" for="company" class="control-label">{{companySelected.type}}:</label>
         </div>
       </div>
       <div class="row">

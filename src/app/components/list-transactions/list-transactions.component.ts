@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
+import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction, TransactionState } from './../../models/transaction';
-import { Movements } from './../../models/transaction-type';
-import { TransactionService } from './../../services/transaction.service';
+import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 import { Config } from './../../app.config';
+
+import { TransactionService } from './../../services/transaction.service';
+import { TransactionTypeService } from './../../services/transaction-type.service';
 
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
@@ -30,7 +32,7 @@ export class ListTransactionsComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = "";
   public userType: string;
-  public posType: string;
+  public listType: string;
   public orderTerm: string[] = ['-endDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -51,18 +53,22 @@ export class ListTransactionsComponent implements OnInit {
     
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.posType = pathLocation[2];
+    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.modules = Observable.of(Config.modules);
-    this.getTransactions();
+    if (this.listType === "Compras") {
+      this.getTransactionsByMovement(TransactionMovement.Purchase);
+    } else if (this.listType === "Ventas") {
+      this.getTransactionsByMovement(TransactionMovement.Sale);
+    }
   }
 
-  public getTransactions(): void {  
+  public getTransactionsByMovement(transactionMovement: TransactionMovement): void {  
 
     this.loading = true;
     
-    this._transactionService.getTransactions().subscribe(
+    this._transactionService.getTransactionsByMovement(transactionMovement).subscribe(
       result => {
-        if(!result.transactions) {
+        if (!result.transactions) {
           this.loading = false;
           this.transactions = null;
           this.areTransactionsEmpty = true;
@@ -92,7 +98,11 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getTransactions();
+    if (this.listType === "Compras") {
+      this.getTransactionsByMovement(TransactionMovement.Purchase);
+    } else if (this.listType === "Ventas") {
+      this.getTransactionsByMovement(TransactionMovement.Sale);
+    }
   }
   
   public openModal(op: string, transaction:Transaction): void {
@@ -113,8 +123,12 @@ export class ListTransactionsComponent implements OnInit {
           modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
           modalRef.componentInstance.transaction = transaction;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
-              this.getTransactions();
+            if (result === 'delete_close') {
+              if (this.listType === "Compras") {
+                this.getTransactionsByMovement(TransactionMovement.Purchase);
+              } else if (this.listType === "Ventas") {
+                this.getTransactionsByMovement(TransactionMovement.Sale);
+              }
             }
           }, (reason) => {
             

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement } from './../../models/transaction-type';
 import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
@@ -23,6 +23,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
 
   @Input() transactionType: TransactionType;
   @Input() readonly: boolean;
+  public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock];
   public transactionTypeForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -31,6 +32,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
   public printers: Printer[];
 
   public formErrors = {
+    'transactionMovement': '',
     'name': '',
     'labelPrint': '',
     'currentAccount': '',
@@ -48,6 +50,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
   };
 
   public validationMessages = {
+    'transactionMovement': {
+      'required': 'Este campo es requerido.',
+    },
     'name': {
       'required': 'Este campo es requerido.',
     },
@@ -133,6 +138,10 @@ export class UpdateTransactionTypeComponent implements OnInit {
           Validators.required
         ]
       ],
+      'transactionMovement': [this.transactionType.transactionMovement, [
+          Validators.required
+        ]
+      ],
       'name': [this.transactionType.name, [
           Validators.required
         ]
@@ -211,6 +220,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.transactionType._id) this.transactionType._id = "";
+    if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = TransactionMovement.Sale;
     if (!this.transactionType.name) this.transactionType.name = "";
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
@@ -225,6 +235,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
+      'transactionMovement': this.transactionType.transactionMovement,
       'name': this.transactionType.name,
       'labelPrint': this.transactionType.labelPrint,
       'currentAccount': this.transactionType.currentAccount,

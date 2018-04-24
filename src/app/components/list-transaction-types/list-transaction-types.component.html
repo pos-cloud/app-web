@@ -26,6 +26,7 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
+            <th (click)="orderBy('transactionMovement')">Movimiento</th>
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('labelPrint')">Etiqueta</th>
             <th (click)="orderBy('currentAccount')">Afecta cuenta corriente</th>
@@ -43,6 +44,7 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTransactionMovement" placeholder="Movimiento..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterLabelPrint" placeholder="Etiqueta..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCurrentAccount" placeholder="Cuenta Corriente..."></th>
@@ -60,7 +62,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transactionType of transactionTypes | filter: filterName:'name'
+          <tr *ngFor="let transactionType of transactionTypes | filter: filterTransactionMovement:'transactionMovement'
+                                                              | filter: filterName:'name'
                                                               | filter: filterLabelPrint:'labelPrint' 
                                                               | filter: filterCurrentAccount:'currentAccount' 
                                                               | filter: filterMovement:'movement'
@@ -87,6 +90,7 @@
                 <i class="fa fa-trash-o"></i>
               </button>
             </td>
+            <td class="flat">{{transactionType.transactionMovement}}</td>
             <td class="flat">{{transactionType.name}}</td>
             <td class="flat">{{transactionType.labelPrint}}</td>
             <td class="flat">{{transactionType.currentAccount}}</td>

@@ -15,6 +15,17 @@
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="transactionMovement" class="control-label">¿Qué tipo de movimiento es el comprobante que quieres?</label>
+          <select class="form-control" formControlName="transactionMovement">
+            <option *ngFor="let transactionMovement of transactionMovements" [selected]="transactionType.transactionMovement===transactionMovement" [ngValue]="transactionMovement">{{transactionMovement}}</option>
+          </select>
+          <div *ngIf="formErrors.transactionMovement" class="alert alert-danger">
+            {{ formErrors.transactionMovement }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="name">¿Nombre del documento con el que se realizará las transacciones?</label>
           <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.name" class="alert alert-danger">

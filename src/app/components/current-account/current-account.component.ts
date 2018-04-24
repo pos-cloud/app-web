@@ -7,7 +7,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, CurrentAcount, Movements } from './../../models/transaction-type';
+import { TransactionType, CurrentAcount, Movements, TransactionMovement } from './../../models/transaction-type';
 import { Company, CompanyType } from './../../models/company';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
@@ -235,7 +235,9 @@ export class CurrentAccountComponent implements OnInit {
         break;
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        modalRef.componentInstance.type = CompanyType.Client;
+        let pathLocation: string[] = this._router.url.split('/');
+        let companyType = pathLocation[3].charAt(0).toUpperCase() + pathLocation[3].slice(1);
+        modalRef.componentInstance.type = companyType;
         modalRef.componentInstance.userType = 'pos';
         modalRef.result.then(
           (result) => {

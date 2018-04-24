@@ -13,7 +13,7 @@
           <b *ngIf="posType==='resto'">Mozo:</b>
           {{transaction.employeeClosing.name}}
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="transaction.type && transaction.type.transactionMovement ==='Venta'">
           <b>Cliente: </b>
           <span *ngIf="!transaction.company">Consumidor final</span>
           <span *ngIf="transaction.company">{{transaction.company.name}}</span>
@@ -25,7 +25,7 @@
         <div class="col-md-2">
           <b *ngIf="posType!=='mostrador'">Abierto: </b>
           <b *ngIf="posType==='mostrador'">Fecha: </b>
-          {{transaction.startDate | dateFormat:'HH:mm'}}
+          {{transaction.startDate | dateFormat:'DD/MM/YYYY HH:mm'}}
         </div>
         <div class="col-md-2" *ngIf="posType==='resto'">
           <a class="btn" (click)="openModal('change-employee')">
@@ -123,12 +123,14 @@
       </div>
       <div class="row" *ngIf="posType!=='resto'">
         <div class="col-md-12 btn-action btn-large center-content" (click)="openModal('charge')">
-          Cobrar
+          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Compra'">Pagar</span>
+          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Venta'">Cobrar</span>
         </div>
       </div>
       <div class="row">
         <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('add_client')">
-          Cliente
+          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Compra'">Proveedor</span>
+          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Venta'">Cliente</span>
         </div>
         <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
           Descuento

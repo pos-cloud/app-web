@@ -10,7 +10,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 import { TransactionTax } from './../../models/transaction-tax';
 import { Article, ArticlePrintIn } from './../../models/article';
 import { MovementOfArticle } from './../../models/movement-of-article';
@@ -897,7 +897,11 @@ export class AddSaleOrderComponent implements OnInit {
       case 'add_client':
 
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        modalRef.componentInstance.type = CompanyType.Client;
+        if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+          modalRef.componentInstance.type = CompanyType.Provider;
+        } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          modalRef.componentInstance.type = CompanyType.Client;
+        }
         modalRef.result.then((result) => {
           if (result) {
             this.transaction.company = result;
@@ -910,98 +914,104 @@ export class AddSaleOrderComponent implements OnInit {
       case 'charge':
         this.typeOfOperationToPrint = "charge";
         if (this.movementsOfArticles.length !== 0) {
-          if (this.transaction.type.electronics === "No" ||
-              (this.transaction.company && this.transaction.type.electronics === "Si")) {
+          if((this.transaction.type.transactionMovement === TransactionMovement.Purchase && this.transaction.company) ||
+              this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             if (this.transaction.type.electronics === "No" ||
-                (this.transaction.type.electronics === "Si" &&
-                (this.transaction.company.CUIT || this.transaction.company.DNI))) {
-                modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-                modalRef.componentInstance.transaction = this.transaction;
-                modalRef.result.then((result) => {
-                  if (typeof result == 'object') {
-                    
-                    if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
-                      let movementOfArticle = new MovementOfArticle();
-                      movementOfArticle.code = "0";
-                      movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                      movementOfArticle.VATPercentage = 21;
-                      movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
-                      movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
-                      movementOfArticle.transaction = this.transaction;
-                      this.movementOfArticle = movementOfArticle;
-                      this.transaction.totalPrice = result.amountPaid;
-                      this.saveMovementOfArticle();
-                    }
-
-                    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                      this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                      if( this.transaction.type.electronics === "Si" && !this.transaction.CAE) {
-                        this.validateElectronicTransaction();
-                      } else if ( this.transaction.type.electronics === "Si" && this.transaction.CAE) { 
-                        this.finishCharge();
-                      } else {
-                        if (this.transaction.type.printable && 
-                            this.transaction.type.printable === "Si") {
-                          if(this.transaction.type.defectPrinter) {
-                            this.printerSelected = this.transaction.type.defectPrinter;
-                            this.assignTransactionNumber();
-                            this.distributeImpressions(this.transaction.type.defectPrinter);
-                          } else {
-                            this.openModal('printers');
-                          }
-                        } else {
-                            this.assignTransactionNumber();
-                            this.loading = false;
-                        }
+                (this.transaction.company && this.transaction.type.electronics === "Si")) {
+              if (this.transaction.type.electronics === "No" ||
+                  (this.transaction.type.electronics === "Si" &&
+                  (this.transaction.company.CUIT || this.transaction.company.DNI))) {
+                  modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+                  modalRef.componentInstance.transaction = this.transaction;
+                  modalRef.result.then((result) => {
+                    if (typeof result == 'object') {
+                      
+                      if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
+                        let movementOfArticle = new MovementOfArticle();
+                        movementOfArticle.code = "0";
+                        movementOfArticle.description = "Recargo con Tarjeta de Crédito";
+                        movementOfArticle.VATPercentage = 21;
+                        movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
+                        movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
+                        movementOfArticle.transaction = this.transaction;
+                        this.movementOfArticle = movementOfArticle;
+                        this.transaction.totalPrice = result.amountPaid;
+                        this.saveMovementOfArticle();
                       }
-                    } else {
-                      if (this.transaction.type.electronics === "Si") {
-                        this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
-                        this.loading = false;
-                      } else {
-                        if(this.transaction.type.printable === "Si") {
-                          if(this.transaction.type.defectPrinter) {
-                            this.printerSelected = this.transaction.type.defectPrinter;
-                            this.distributeImpressions(this.transaction.type.defectPrinter);
-                          } else {
-                            this.openModal('printers');
-                          }
+  
+                      if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                        this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+                        if( this.transaction.type.electronics === "Si" && !this.transaction.CAE) {
+                          this.validateElectronicTransaction();
+                        } else if ( this.transaction.type.electronics === "Si" && this.transaction.CAE) { 
+                          this.finishCharge();
                         } else {
-                          if (this.typeOfOperationToPrint === "charge") {
-                            if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                              this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+                          if (this.transaction.type.printable && 
+                              this.transaction.type.printable === "Si") {
+                            if(this.transaction.type.defectPrinter) {
+                              this.printerSelected = this.transaction.type.defectPrinter;
+                              this.assignTransactionNumber();
+                              this.distributeImpressions(this.transaction.type.defectPrinter);
                             } else {
-                              let origin = 0;
-                              this.assignOriginAndLetter(origin);
+                              this.openModal('printers');
                             }
-                            this.assignTransactionNumber();
-                            this.loading = false;
-                          } else if (this.typeOfOperationToPrint === "bill") {
-                            this.changeStateOfTable(TableState.Pending, true);
                           } else {
-                            if (this.posType === "resto") {
-                              this.changeStateOfTable(TableState.Busy, true);
-                            } else {
-                              this.back();
-                            }
+                              this.assignTransactionNumber();
+                              this.loading = false;
                           }
                         }
+                      } else {
+                        if (this.transaction.type.electronics === "Si") {
+                          this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
+                          this.loading = false;
+                        } else {
+                          if(this.transaction.type.printable === "Si") {
+                            if(this.transaction.type.defectPrinter) {
+                              this.printerSelected = this.transaction.type.defectPrinter;
+                              this.distributeImpressions(this.transaction.type.defectPrinter);
+                            } else {
+                              this.openModal('printers');
+                            }
+                          } else {
+                            if (this.typeOfOperationToPrint === "charge") {
+                              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                                this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+                              } else {
+                                let origin = 0;
+                                this.assignOriginAndLetter(origin);
+                              }
+                              this.assignTransactionNumber();
+                              this.loading = false;
+                            } else if (this.typeOfOperationToPrint === "bill") {
+                              this.changeStateOfTable(TableState.Pending, true);
+                            } else {
+                              if (this.posType === "resto") {
+                                this.changeStateOfTable(TableState.Busy, true);
+                              } else {
+                                this.back();
+                              }
+                            }
+                          }
+                        }
                       }
                     }
+                  }, (reason) => {
                   }
-                }, (reason) => {
-                }
-              );
+                );
+              } else {
+                this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
+                this.loading = false;
+              }
             } else {
-              this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
+              this.showMessage("Debe cargar un cliente al pedido.", "info", true);
               this.loading = false;
             }
           } else {
-            this.showMessage("Debe cargar un cliente al pedido.", "info", true);
+            this.showMessage("Debe seleccionar un proveedor para la transacción.", "info", true);
             this.loading = false;
           }
         } else {
-          this.showMessage("No existen productos en el pedido.", "info", true);
+          this.showMessage("No existen productos en la transacción.", "info", true);
           this.loading = false;
         }
         break;
@@ -1293,6 +1303,12 @@ export class AddSaleOrderComponent implements OnInit {
   public back(): void {
     if (this.posType === "resto") {
       this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
+    } else if (this.posType === "mostrador") {
+      if(this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+        this._router.navigate(['/pos/' + this.posType + '/compra']);
+      } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+        this._router.navigate(['/pos/' + this.posType + '/venta']);
+      }
     } else {
       this._router.navigate(['/pos/' + this.posType]);
     }

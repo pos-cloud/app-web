@@ -9,7 +9,7 @@ import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
 import { RoomService } from './../../services/room.service';
@@ -40,6 +40,7 @@ export class PointOfSaleComponent implements OnInit {
   public transactions: Transaction[] = new Array();
   public areTransactionsEmpty: boolean = true;
   public transactionTypes: TransactionType[];
+  public transactionMovement: TransactionMovement;
   public userType: string;
   public propertyTerm: string;
   public orderTerm: string[] = ['number'];
@@ -69,8 +70,13 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+    if (pathLocation[3] === "venta") {
+      this.transactionMovement = TransactionMovement.Sale;
+    } else if (pathLocation[3] === "compra") {
+      this.transactionMovement = TransactionMovement.Purchase;
+    }
 
-    this.getTransactionTypes();
+    this.getTransactionTypesByMovement();
 
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
@@ -78,20 +84,22 @@ export class PointOfSaleComponent implements OnInit {
     } else if (this.posType === "delivery") {
       this.getOpenTransactions();
     } else if (this.posType === "mostrador") {
-      this.getOpenTransactions();
+      this.getOpenTransactionsByMovement(this.transactionMovement);
     }
   }
 
-  public getTransactionTypes(): void {
+  public getTransactionTypesByMovement(): void {
+    
+    this.loading = true;
 
-    this._transactionTypeService.getTransactionTypes().subscribe(
+    this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
       result => {
         if (!result.transactionTypes) {
           this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           this.transactionTypes = result.transactionTypes;
         }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -134,7 +142,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public getOpenTransactions(): void {
-
+    
     this.loading = true;
 
     this._transactionService.getOpenTransaction(this.posType).subscribe(
@@ -150,6 +158,31 @@ export class PointOfSaleComponent implements OnInit {
           this.areTransactionsEmpty = false;
         }
         this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getOpenTransactionsByMovement(transactionMovement: TransactionMovement): void {
+
+    this.loading = true;
+
+    this._transactionService.getOpenTransactionsByMovement(transactionMovement).subscribe(
+      result => {
+        if (!result.transactions) {
+          this.loading = false;
+          this.transactions = null;
+          this.areTransactionsEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.transactions = result.transactions;
+          this.totalItems = this.transactions.length;
+          this.areTransactionsEmpty = false;
+        }
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -203,7 +236,11 @@ export class PointOfSaleComponent implements OnInit {
     switch (op) {
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        modalRef.componentInstance.type = CompanyType.Client;
+        if (typeTransaction.transactionMovement === TransactionMovement.Purchase) {
+          modalRef.componentInstance.type = CompanyType.Provider;
+        } else if (typeTransaction.transactionMovement === TransactionMovement.Sale) {
+          modalRef.componentInstance.type = CompanyType.Client;
+        }
         modalRef.result.then(
           (result) => {
             if (typeof (result) === "object") {
