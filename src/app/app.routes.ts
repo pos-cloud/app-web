@@ -59,6 +59,7 @@ import { ConfigBackupComponent } from './components/config-backup/config-backup.
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { RegisterComponent } from './components/register/register.component';
+import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 
 import { AuthGuard } from './guards/auth.guard';
 
@@ -123,6 +124,7 @@ const _routes: Routes = [
   { path: 'admin/cuentas-corrientes/cliente', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/cuentas-corrientes/proveedor', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/send-mail', component: SendMailComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/export-citi', component: ExportCitiComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },

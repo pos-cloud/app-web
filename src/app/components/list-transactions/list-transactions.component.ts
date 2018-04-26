@@ -15,6 +15,8 @@ import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sal
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 
+import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
+
 //Pipes
 import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { PrintComponent } from 'app/components/print/print.component';
@@ -156,6 +158,16 @@ export class ListTransactionsComponent implements OnInit {
 
   //   return currencyPipe.transform(total, format, 'symbol', "2");
   // }
+
+  public exportCiti(): void {
+      
+    let modalRef = this._modalService.open(ExportCitiComponent, { size: 'lg' }).result.then((result) => {
+      if(result === 'export') {
+      }
+    }, (reason) => {
+      
+    });
+  }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

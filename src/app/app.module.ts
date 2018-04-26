@@ -117,6 +117,7 @@ import { ListTransactionTypesComponent } from './components/list-transaction-typ
 import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
 import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
 import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
+import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 
 @NgModule({
   declarations: [
@@ -192,7 +193,8 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
     AddTransactionTypeComponent,
     UpdateTransactionTypeComponent,
     DeleteTransactionTypeComponent,
-    RegisterComponent
+    RegisterComponent,
+    ExportCitiComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

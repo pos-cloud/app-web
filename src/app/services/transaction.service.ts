@@ -178,4 +178,13 @@ export class TransactionService {
 		
 		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
 	}
+
+	getFileAfip (period) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.post(Config.apiURL + 'documentQuery', period).map (res => res.json());
+	}
 }
