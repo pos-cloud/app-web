@@ -89,6 +89,7 @@ import { DeletePrinterComponent } from './components/delete-printer/delete-print
 import { UpdatePrinterComponent } from './components/update-printer/update-printer.component';
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { AddMovementOfCashComponent } from './components/add-movement-of-cash/add-movement-of-cash.component';
+import { AddArticleStockComponent } from './components/add-article-stock/add-article-stock.component';
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -194,7 +195,8 @@ import { ExportCitiComponent } from './components/export-citi/export-citi.compon
     UpdateTransactionTypeComponent,
     DeleteTransactionTypeComponent,
     RegisterComponent,
-    ExportCitiComponent
+    ExportCitiComponent,
+    AddArticleStockComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

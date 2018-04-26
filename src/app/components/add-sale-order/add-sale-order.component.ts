@@ -1308,6 +1308,8 @@ export class AddSaleOrderComponent implements OnInit {
         this._router.navigate(['/pos/' + this.posType + '/compra']);
       } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
         this._router.navigate(['/pos/' + this.posType + '/venta']);
+      } else if (this.transaction.type.transactionMovement === TransactionMovement.Stock) {
+        this._router.navigate(['/pos/' + this.posType + '/stock']);
       }
     } else {
       this._router.navigate(['/pos/' + this.posType]);

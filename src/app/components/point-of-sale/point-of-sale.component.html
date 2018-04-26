@@ -327,7 +327,8 @@
             <th (click)="orderBy('type','name')">Tipo</th>
             <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('company','name')">Cliente</th>
+            <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Venta'">Cliente</th>
+            <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Compra'">Proveedor</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
@@ -341,8 +342,11 @@
             <th>
               <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
             </th>
-            <th>
+            <th *ngIf="transactionMovement === 'Venta'">
               <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente...">
+            </th>
+            <th *ngIf="transactionMovement === 'Compra'">
+              <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor...">
             </th>
             <th>
               <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
@@ -372,8 +376,9 @@
             <td (click)="openTransaction(transaction)">
               <b>{{transaction.number}}</b>
             </td>
-            <td *ngIf="transaction.company" (click)="openTransaction(transaction)">{{transaction.company.name}}</td>
-            <td *ngIf="!transaction.company" (click)="openTransaction(transaction)">Consumidor Final</td>
+            <td *ngIf="transaction.company && (transactionMovement === 'Compra' || transactionMovement === 'Venta')" (click)="openTransaction(transaction)">{{transaction.company.name}}</td>
+            <td *ngIf="!transaction.company && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)">Consumidor Final</td>
+            <td *ngIf="!transaction.company && (transactionMovement === 'Compra')" (click)="openTransaction(transaction)"></td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">

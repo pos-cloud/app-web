@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement, ModififyStock, StockMovement } from './../../models/transaction-type';
 import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
@@ -37,6 +37,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
     'labelPrint': '',
     'currentAccount': '',
     'movement': '',
+    'modifyStock': '',
+    'stockMovement': '',
     'requestArticles': '',
     'defectOrders': '',
     'fixedOrigin': '',
@@ -62,7 +64,10 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'required': 'Este campo es requerido.',
     },
     'movement': {
-      'required': 'Este campo es requerido.',
+    },
+    'modifyStock': {
+    },
+    'stockMovement': {
     },
     'requestArticles': {
       'required': 'Este campo es requerido.',
@@ -154,7 +159,12 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ], 
       'movement': [this.transactionType.movement, [
-          Validators.required
+        ]
+      ],
+      'modifyStock': [this.transactionType.modifyStock, [
+        ]
+      ],
+      'stockMovement': [this.transactionType.stockMovement, [
         ]
       ],
       'requestArticles': [this.transactionType.requestArticles, [
@@ -225,6 +235,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
     if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
+    if (!this.transactionType.modifyStock) this.transactionType.modifyStock = ModififyStock.No;
+    if (!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Outflows;
     if (!this.transactionType.requestArticles) this.transactionType.requestArticles = RequestArticles.No;
     if (!this.transactionType.defectOrders) this.transactionType.defectOrders = DefectOrders.No;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
@@ -240,6 +252,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'labelPrint': this.transactionType.labelPrint,
       'currentAccount': this.transactionType.currentAccount,
       'movement': this.transactionType.movement,
+      'modifyStock': this.transactionType.modifyStock,
+      'stockMovement': this.transactionType.stockMovement,
       'requestArticles': this.transactionType.requestArticles,
       'defectOrders': this.transactionType.defectOrders,
       'fixedOrigin': this.transactionType.fixedOrigin,

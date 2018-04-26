@@ -135,6 +135,7 @@ const _routes: Routes = [
   { path: 'pos/delivery/editar-transaccion/:id', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/compra', component: PointOfSaleComponent },
   { path: 'pos/mostrador/venta', component: PointOfSaleComponent },
+  { path: 'pos/mostrador/stock', component: PointOfSaleComponent },
   { path: 'pos/mostrador/agregar-transaccion/:type', component: AddSaleOrderComponent },
   { path: 'pos/mostrador/editar-transaccion/:id', component: AddSaleOrderComponent },
   { path: '**', pathMatch: 'full', redirectTo: '' }

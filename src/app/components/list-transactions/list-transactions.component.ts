@@ -14,7 +14,6 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
-
 import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
 
 //Pipes
@@ -52,7 +51,7 @@ export class ListTransactionsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
@@ -61,13 +60,15 @@ export class ListTransactionsComponent implements OnInit {
       this.getTransactionsByMovement(TransactionMovement.Purchase);
     } else if (this.listType === "Ventas") {
       this.getTransactionsByMovement(TransactionMovement.Sale);
+    } else if (this.listType === "Stock") {
+      this.getTransactionsByMovement(TransactionMovement.Stock);
     }
   }
 
-  public getTransactionsByMovement(transactionMovement: TransactionMovement): void {  
+  public getTransactionsByMovement(transactionMovement: TransactionMovement): void {
 
     this.loading = true;
-    
+
     this._transactionService.getTransactionsByMovement(transactionMovement).subscribe(
       result => {
         if (!result.transactions) {
@@ -89,12 +90,12 @@ export class ListTransactionsComponent implements OnInit {
     );
   }
 
-  public orderBy (term: string, property?: string): void {
+  public orderBy(term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-" + term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -104,13 +105,15 @@ export class ListTransactionsComponent implements OnInit {
       this.getTransactionsByMovement(TransactionMovement.Purchase);
     } else if (this.listType === "Ventas") {
       this.getTransactionsByMovement(TransactionMovement.Sale);
+    } else if (this.listType === "Stock") {
+      this.getTransactionsByMovement(TransactionMovement.Stock);
     }
   }
-  
-  public openModal(op: string, transaction:Transaction): void {
+
+  public openModal(op: string, transaction: Transaction): void {
 
     let modalRef;
-    switch(op) {
+    switch (op) {
       case 'view':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
@@ -121,22 +124,24 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.typePrint = 'invoice';
         break;
-      case 'cancel' :
-          modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
-          modalRef.componentInstance.transaction = transaction;
-          modalRef.result.then((result) => {
-            if (result === 'delete_close') {
-              if (this.listType === "Compras") {
-                this.getTransactionsByMovement(TransactionMovement.Purchase);
-              } else if (this.listType === "Ventas") {
-                this.getTransactionsByMovement(TransactionMovement.Sale);
-              }
+      case 'cancel':
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.result.then((result) => {
+          if (result === 'delete_close') {
+            if (this.listType === "Compras") {
+              this.getTransactionsByMovement(TransactionMovement.Purchase);
+            } else if (this.listType === "Ventas") {
+              this.getTransactionsByMovement(TransactionMovement.Sale);
+            } else if (this.listType === "Stock") {
+              this.getTransactionsByMovement(TransactionMovement.Stock);
             }
-          }, (reason) => {
-            
-          });
+          }
+        }, (reason) => {
+
+        });
         break;
-      default : ;
+      default: ;
     }
   };
 
@@ -160,22 +165,22 @@ export class ListTransactionsComponent implements OnInit {
   // }
 
   public exportCiti(): void {
-      
+
     let modalRef = this._modalService.open(ExportCitiComponent, { size: 'lg' }).result.then((result) => {
-      if(result === 'export') {
+      if (result === 'export') {
       }
     }, (reason) => {
-      
-    });
-  }
 
+    });
+  }  
+  
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
+  public hideMessage(): void {
     this.alertMessage = "";
   }
 }

@@ -8,6 +8,8 @@ export class TransactionType {
 	public labelPrint: string;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: Movements = Movements.Inflows;
+	public modifyStock: ModififyStock = ModififyStock.No;
+	public stockMovement: StockMovement = StockMovement.Inflows;
 	public requestArticles: RequestArticles = RequestArticles.No;
 	public defectOrders: DefectOrders = DefectOrders.No;
 	public electronics: string = "No";
@@ -23,6 +25,16 @@ export class TransactionType {
 export enum Movements {
 	Inflows = <any> "Entrada",
 	Outflows = <any> "Salida"
+}
+
+export enum StockMovement {
+	Inflows = <any>"Entrada",
+	Outflows = <any>"Salida"
+}
+
+export enum ModififyStock {
+	Yes = <any>"Si",
+	No = <any>"No"
 }
 
 export enum CurrentAcount {

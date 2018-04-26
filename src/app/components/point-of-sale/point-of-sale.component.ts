@@ -74,6 +74,8 @@ export class PointOfSaleComponent implements OnInit {
       this.transactionMovement = TransactionMovement.Sale;
     } else if (pathLocation[3] === "compra") {
       this.transactionMovement = TransactionMovement.Purchase;
+    } else if (pathLocation[3] === "stock") {
+      this.transactionMovement = TransactionMovement.Stock;
     }
 
     this.getTransactionTypesByMovement();

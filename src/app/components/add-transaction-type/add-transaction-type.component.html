@@ -78,6 +78,30 @@
           </div>
         </div>
       </div>
+      <div class="row" *ngIf="transactionTypeForm.value.requestArticles === 'Si'">
+        <div class="form-group col-md-12">
+          <label for="modifyStock" class="control-label">¿La transacción afecta stock?</label>
+          <select class="form-control" formControlName="modifyStock">
+            <option value="Si">Si</option>
+            <option value="No" selected>No</option>
+          </select>
+          <div *ngIf="formErrors.modifyStock" class="alert alert-danger">
+            {{ formErrors.modifyStock }}
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="transactionTypeForm.value.modifyStock === 'Si'">
+        <div class="form-group col-md-12">
+          <label for="stockMovement" class="control-label">¿Como modifica al stock?</label>
+          <select class="form-control" formControlName="stockMovement">
+            <option value="Entrada" selected>Entrada</option>
+            <option value="Salida">Salida</option>
+          </select>
+          <div *ngIf="formErrors.stockMovement" class="alert alert-danger">
+            {{ formErrors.stockMovement }}
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="defectOrders" class="control-label">¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?</label>
