@@ -49,6 +49,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     'codeC': '',
     'printable': '',
     'defectPrinter': '',
+    'tax': ''
   };
 
   public validationMessages = {
@@ -90,6 +91,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
     'printable': {
     },
     'defectPrinter': {
+    },
+    'tax': {
     }
   };
 
@@ -198,6 +201,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
       ],
       'defectPrinter': [this.transactionType.defectPrinter, [
         ]
+      ],
+      'tax': [this.transactionType.tax, [
+        ]
       ]
     });
 
@@ -244,6 +250,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (!this.transactionType.electronics) this.transactionType.electronics = "No";
     if (!this.transactionType.printable) this.transactionType.printable = "No";
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
+    if (!this.transactionType.tax) this.transactionType.tax = "";
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -263,7 +270,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'codeB': this.getCode(this.transactionType, "B"),
       'codeC': this.getCode(this.transactionType, "C"),
       'printable': this.transactionType.printable,
-      'defectPrinter': this.transactionType.defectPrinter
+      'defectPrinter': this.transactionType.defectPrinter,
+      'tax' : this.transactionType.tax
     });
   }
 

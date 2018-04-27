@@ -18,6 +18,7 @@ export class TransactionType {
 	public fixedLetter: string;
 	public printable: string = "No";
 	public defectPrinter: Printer;
+	public tax: String;
 
 	constructor() { }
 }
