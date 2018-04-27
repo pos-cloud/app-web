@@ -185,6 +185,6 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.post(Config.apiURL + 'documentQuery', period).map (res => res.json());
+		return this._http.post(Config.apiURL + 'documentQuery', period, { headers: headers }).map (res => res.json());
 	}
 }

@@ -15,7 +15,7 @@
   <form [formGroup]="exportCitiForm" #formExportCiti="ngForm" (ngSubmit)="exportCiti()" autocomplete="off">
     <div class="modal-body">
       <div class = "row">
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-6">
 					<label for="destination" class="control-label">Destino:</label>
 					<input type="text" class="form-control" formControlName="destination" name="destination" id="destination"/>
 					<div *ngIf="formErrors.destination" class="alert alert-danger">
@@ -38,13 +38,6 @@
 						<input type="text" class="form-control" formControlName="year" name="year" id="year" />
 						<div *ngIf="formErrors.year" class="alert alert-danger">
 							{{ formErrors.year }}
-						</div>
-				</div>
-				<div class="form-group col-md-4">
-						<label for="pointofsale" class="control-label">Punto de venta:</label>
-						<input type="text" class="form-control" formControlName="pointofsale" name="pointofsale" id="pointofsale" />
-						<div *ngIf="formErrors.pointofsale" class="alert alert-danger">
-							{{ formErrors.pointofsale }}
 						</div>
 				</div>
 			</div>

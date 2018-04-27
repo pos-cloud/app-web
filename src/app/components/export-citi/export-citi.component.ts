@@ -40,11 +40,6 @@ export class ExportCitiComponent implements OnInit {
       'required':     'Este campo es requerido.',
       'minlength':      'El año debe contener 4 digitos.',
       'maxlength':      'El año debe contener 4 digitos.',
-    },
-    'pointofsale' : {
-      'required':     'Este campo es requerido',
-      'minlength':      'El punto de venta debe contener 4 digitos.',
-      'maxlength':      'El punto de venta debe contener 4 digitos.',
     }
   };
 
@@ -63,8 +58,7 @@ export class ExportCitiComponent implements OnInit {
     this.exportCitiForm.setValue({
       'destination': 'C:\\temp\\',
       'month': '',
-      'year' : '',
-      'pointofsale': ''
+      'year' : ''
     });
   }
 
@@ -82,12 +76,6 @@ export class ExportCitiComponent implements OnInit {
         Validators.required,
         Validators.maxLength(4),
         Validators.minLength(4),
-        ]
-      ],
-      'pointofsale':[, [
-        Validators.required,
-        Validators.maxLength(5),
-        Validators.minLength(5),
         ]
       ],
     });
