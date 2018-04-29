@@ -109,12 +109,10 @@ export class ExportCitiComponent implements OnInit {
     this.modelToImport = this.exportCitiForm.value;
     this._serviceTransaction.getFileAfip(this.modelToImport).subscribe(
     result => {
-        if (!result) {
+        if (result.message !== "OK") {
           this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           this.showMessage("El archivo se genero correctamente.", "success", false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

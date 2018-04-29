@@ -8,7 +8,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="exportCiti()">Exportar</button>
+        <button class="btn btn-primary" (click)="exportCiti()">Exportar Régimen de Información</button>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
           <span *ngIf="loading">Cargando</span>
@@ -234,6 +234,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
+        <button class="btn btn-primary" *ngIf="listType === 'Ventas'" (click)="exportCiti()">Exportar Régimen de Información</button>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
           <span *ngIf="loading">Cargando</span>
