@@ -7,10 +7,12 @@ import { SlicePipe } from '@angular/common';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticlePrintIn } from './../../models/article';
+import { ArticleStock } from './../../models/article-stock';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
 
 import { ArticleService } from './../../services/article.service';
+import { ArticleStockService } from './../../services/article-stock.service';
 import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
 
@@ -29,6 +31,8 @@ import { DecimalPipe } from '@angular/common';
 export class UpdateArticleComponent implements OnInit {
 
   @Input() article: Article;
+  public articleStock: ArticleStock;
+  public stockExist: boolean;
   @Input() readonly: boolean;
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
@@ -43,17 +47,17 @@ export class UpdateArticleComponent implements OnInit {
   public apiURL = Config.apiURL;
 
   public formErrors = {
-    'code': "1",
+    'code': '',
     'make': '',
     'description': '',
     'posDescription': '',
-    'basePrice': 0.00,
-    'VATPercentage': 0.00,
-    'VATAmount': 0.00,
-    'costPrice': 0.00,
-    'markupPercentage': 0.00,
-    'markupPrice': 0.00,
-    'salePrice': 0.00,
+    'basePrice': '',
+    'VATPercentage': '',
+    'VATAmount': '',
+    'costPrice': '',
+    'markupPercentage': '',
+    'markupPrice': '',
+    'salePrice': '',
     'category': ''
   };
 
@@ -98,6 +102,7 @@ export class UpdateArticleComponent implements OnInit {
 
   constructor(
     public _articleService: ArticleService,
+    public _articleStockService: ArticleStockService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _fb: FormBuilder,
@@ -113,6 +118,7 @@ export class UpdateArticleComponent implements OnInit {
     this.buildForm();
     this.getMakes();
     this.getCategories();
+    this.getArticleStock();
     this.setValuesForm();
   }
 
@@ -214,19 +220,19 @@ export class UpdateArticleComponent implements OnInit {
     this.loading = true;
     
     this._makeService.getMakes().subscribe(
-        result => {
-          if(!result.makes) {
-          } else {
-            this.hideMessage();
-            this.makes = result.makes;
-          }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
+      result => {
+        if(!result.makes) {
+        } else {
+          this.hideMessage();
+          this.makes = result.makes;
         }
-      );
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getCategories(): void {  
@@ -277,7 +283,6 @@ export class UpdateArticleComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
-          this.loading = false;
           this.article.make = result.make;
           this.getCategory();
         }
@@ -303,6 +308,7 @@ export class UpdateArticleComponent implements OnInit {
           this.loadPosDescription();
           this.saveChanges();
         }
+        this.loading = true;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -459,7 +465,7 @@ export class UpdateArticleComponent implements OnInit {
                 this.resultUpload = result;
                 this.article.picture = this.resultUpload.filename;
                 this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
-                this.activeModal.close('save_close');
+                this.updateArticleStock();
               },
               (error) => {
                 this.showMessage(error, "danger", false);
@@ -467,7 +473,7 @@ export class UpdateArticleComponent implements OnInit {
               );
           } else {
             this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
-            this.activeModal.close('save_close');
+            this.updateArticleStock();
           }
         }
         this.loading = false;
@@ -506,6 +512,84 @@ export class UpdateArticleComponent implements OnInit {
       xhr.open('POST', Config.apiURL + 'upload-image/'+articleId,true);
       xhr.send(formData);
     });
+  }
+
+  public updateStock(articleStock: ArticleStock): void {
+    this.articleStock = articleStock;
+  }
+
+  public updateArticleStock() {
+    if (!this.articleStock) {
+      this.articleStock = new ArticleStock();
+    }
+
+    if (this.articleStock && !this.articleStock.article) {
+      this.articleStock.article = this.article;
+    }
+    
+    this._articleStockService.updateArticleStock(this.articleStock).subscribe(
+      result => {
+        if (!result.articleStock) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.articleStock = result.articleStock;
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getArticleStock(): void {
+
+    this.loading = true;
+
+    this._articleStockService.getStockByArticle(this.article._id).subscribe(
+      result => {
+        if (!result.articleStocks) {
+          this.saveArticleStock();
+        } else {
+          this.articleStock = result.articleStocks[0];
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveArticleStock(): void {
+
+    if (!this.articleStock) {
+      this.articleStock = new ArticleStock();
+    }
+
+    if (this.articleStock && !this.articleStock.article) {
+      this.articleStock.article = this.article;
+    }
+
+    this._articleStockService.saveArticleStock(this.articleStock).subscribe(
+      result => {
+        if (!result.articleStock) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.articleStock = result.articleStock;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {

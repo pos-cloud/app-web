@@ -3,8 +3,10 @@ import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { ArticleStock } from './../models/article-stock';
+import { Article } from './../models/article';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
+import { TransactionMovement } from '../models/transaction-type';
 
 @Injectable()
 export class ArticleStockService {
@@ -41,6 +43,15 @@ export class ArticleStockService {
 		return this._http.get(Config.apiURL + "article-stocks", { headers: headers }).map(res => res.json());
 	}
 
+	getStockByArticle(articleId: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'article-stocks/where="article": "' + articleId +  '"', { headers: headers }).map(res => res.json());
+	}
+
 	saveArticleStock(articleStock: ArticleStock) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -66,5 +77,15 @@ export class ArticleStockService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "article-stock/" + articleStock._id, articleStock, { headers: headers }).map(res => res.json());
+	}
+
+	updateRealStock(article: Article, amount: number, transactionType: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		
+		return this._http.put(Config.apiURL + 'amount-stock-by-article/' + article._id, '{"amount":' + amount + ', "transactionType":"' + transactionType + '"}', { headers: headers }).map(res => res.json());
 	}
 }

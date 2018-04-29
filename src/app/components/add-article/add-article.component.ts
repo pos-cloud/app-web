@@ -7,10 +7,12 @@ import { SlicePipe } from '@angular/common';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticlePrintIn } from './../../models/article';
+import { ArticleStock } from './../../models/article-stock';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
 
 import { ArticleService } from './../../services/article.service';
+import { ArticleStockService } from './../../services/article-stock.service';
 import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
 
@@ -30,6 +32,7 @@ import { padNumber } from '@ng-bootstrap/ng-bootstrap/util/util';
 export class AddArticleComponent  implements OnInit {
 
   public article: Article;
+  public articleStock: ArticleStock;
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
@@ -98,6 +101,7 @@ export class AddArticleComponent  implements OnInit {
 
   constructor(
     public _articleService: ArticleService,
+    public _articleStockService: ArticleStockService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _fb: FormBuilder,
@@ -427,10 +431,7 @@ export class AddArticleComponent  implements OnInit {
                 this.resultUpload = result;
                 this.article.picture = this.resultUpload.filename;
                 this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-                this.article = new Article();
-                this.filesToUpload = null;
-                this.buildForm();
-                this.getLastArticle();
+                this.saveArticleStock();
               },
               (error) => {
                 this.showMessage(error, "danger", false);
@@ -438,10 +439,7 @@ export class AddArticleComponent  implements OnInit {
               );
           } else {
             this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-            this.article = new Article();
-            this.filesToUpload = null;
-            this.buildForm();
-            this.getLastArticle();
+            this.saveArticleStock();
           }
         }
         this.loading = false;
@@ -483,6 +481,41 @@ export class AddArticleComponent  implements OnInit {
       xhr.open('POST', Config.apiURL + 'upload-image/'+articleId,true);
       xhr.send(formData);
     });
+  }
+
+  public addStock(articleStock: ArticleStock): void {
+    this.articleStock = articleStock;
+  }
+
+  public saveArticleStock() {
+    
+    if(!this.articleStock) {
+      this.articleStock = new ArticleStock();
+    }
+
+    if(this.articleStock && !this.articleStock.article) {
+      this.articleStock.article = this.article;
+    }
+
+    this._articleStockService.saveArticleStock(this.articleStock).subscribe(
+      result => {
+        if (!result.articleStock) {
+          this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.articleStock = result.articleStock;
+          this.article = new Article();
+          this.filesToUpload = null;
+          this.buildForm();
+          this.getLastArticle();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

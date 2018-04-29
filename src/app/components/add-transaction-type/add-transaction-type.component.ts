@@ -35,6 +35,7 @@ export class AddTransactionTypeComponent implements OnInit {
     'name': '',
     'labelPrint': '',
     'currentAccount': '',
+    'movement': '',
     'modifyStock': '',
     'stockMovement': '',
     'requestArticles': '',

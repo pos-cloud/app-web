@@ -32,6 +32,8 @@
             <th (click)="orderBy('currentAccount')">Afecta cuenta corriente</th>
             <th (click)="orderBy('movement')">Movimiento de dinero</th>
             <th (click)="orderBy('requestArticles')">Intercambia productos</th>
+            <th (click)="orderBy('modifyStock')">Modifica el stock</th>
+            <th (click)="orderBy('stockMovement')">Movimiento de stock</th>
             <th (click)="orderBy('defectOrders')">Para pedidos</th>
             <th (click)="orderBy('fixedOrigin')">Origen Fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
@@ -50,6 +52,8 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterCurrentAccount" placeholder="Cuenta Corriente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMovement" placeholder="Movimiento..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestArticles" placeholder="Intercambia productos..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterModifyStock" placeholder="Modifica el stock..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterStockMovement" placeholder="Movimiento de stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Origen Fijo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
@@ -68,6 +72,8 @@
                                                               | filter: filterCurrentAccount:'currentAccount' 
                                                               | filter: filterMovement:'movement'
                                                               | filter: filterRequestArticles:'requestArticles'
+                                                              | filter: filterModifyStock:'modifyStock'
+                                                              | filter: filterStockMovement:'stockMovement'
                                                               | filter: filterDefectOrders:'defectOrders'
                                                               | filter: filterFixedOrigin:'fixedOrigin'
                                                               | filter: filterFixedLetter:'letter'
@@ -96,6 +102,8 @@
             <td class="flat">{{transactionType.currentAccount}}</td>
             <td class="flat">{{transactionType.movement}}</td>
             <td class="flat">{{transactionType.requestArticles}}</td>
+            <td class="flat">{{transactionType.modifyStock}}</td>
+            <td class="flat">{{transactionType.stockMovement}}</td>
             <td class="flat">{{transactionType.defectOrders}}</td>
             <td class="flat">{{transactionType.fixedOrigin}}</td>
             <td class="flat">{{transactionType.fixedLetter}}</td>
@@ -108,7 +116,7 @@
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
           </tr>
           <tr align="center" *ngIf="areTransactionTypesEmpty">
-            <td colspan="14">No se encontraron tipos de transacción</td>
+            <td colspan="16">No se encontraron tipos de transacción</td>
           </tr>
         </tbody>
       </table>

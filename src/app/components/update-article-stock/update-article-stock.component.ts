@@ -10,22 +10,22 @@ import { ArticleStock } from './../../models/article-stock';
 import { ArticleStockService } from './../../services/article-stock.service';
 
 @Component({
-  selector: 'app-add-article-stock',
-  templateUrl: './add-article-stock.component.html',
-  styleUrls: ['./add-article-stock.component.css'],
+  selector: 'app-update-article-stock',
+  templateUrl: './update-article-stock.component.html',
+  styleUrls: ['./update-article-stock.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddArticleStockComponent implements OnInit {
+export class UpdateArticleStockComponent implements OnInit {
 
-  public articleStock: ArticleStock;
+  @Input() articleStock: ArticleStock;
   @Input() article: Article;
   public articleStockForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  @Output() eventAddStock: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
+  @Output() eventUpdateStock: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
 
   public formErrors = {
     'article': '',
@@ -55,14 +55,13 @@ export class AddArticleStockComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
+  ) {
   }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.articleStock = new ArticleStock();
     this.buildForm();
   }
 
@@ -73,6 +72,9 @@ export class AddArticleStockComponent implements OnInit {
   public buildForm(): void {
 
     this.articleStockForm = this._fb.group({
+      '_id': [this.articleStock._id, [
+        ]
+      ],
       'article': [this.articleStock.article, [
           Validators.required
         ]
@@ -116,9 +118,24 @@ export class AddArticleStockComponent implements OnInit {
     }
   }
 
-  public addStock() {
+  public setValueForm() {
+    
+    if (!this.articleStock.article) this.articleStock.article = new Article();
+    if (!this.articleStock.realStock) this.articleStock.realStock = 0.00;
+    if (!this.articleStock.maxStock) this.articleStock.maxStock = 0.00;
+    if (!this.articleStock.minStock) this.articleStock.minStock = 0.00;
+
+    this.articleStockForm.setValue({
+      'article': this.articleStock.article._id,
+      'realStock': this.articleStock.realStock,
+      'maxStock': this.articleStock.maxStock,
+      'minStock': this.articleStock.minStock
+    });
+  }
+
+  public updateStock(): void {
     this.articleStock = this.articleStockForm.value;
-    this.eventAddStock.emit(this.articleStock);
+    this.eventUpdateStock.emit(this.articleStock);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

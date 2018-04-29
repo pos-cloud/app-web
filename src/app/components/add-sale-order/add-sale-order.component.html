@@ -13,7 +13,7 @@
           <b *ngIf="posType==='resto'">Mozo:</b>
           {{transaction.employeeClosing.name}}
         </div>
-        <div class="col-md-2" *ngIf="transaction.type && transaction.type.transactionMovement ==='Venta'">
+        <div class="col-md-2" *ngIf="transactionMovement && transactionMovement ==='Venta'">
           <b>Cliente: </b>
           <span *ngIf="!transaction.company">Consumidor final</span>
           <span *ngIf="transaction.company">{{transaction.company.name}}</span>
@@ -90,14 +90,14 @@
                 </h5>
               </td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td align="right">
                 <strong>Descuento</strong>
               </td>
               <td align="right">
                 <strong>({{transaction.discountAmount | currency:'USD':'1.2-2'}})</strong>
               </td>
-            </tr>
+            </tr> -->
             <tr>
               <td align="right">
                 <h3>
@@ -113,7 +113,7 @@
           </tbody>
         </table>
       </div>
-      <div class="row" *ngIf="posType==='resto'">
+      <div class="row" *ngIf="posType==='resto' && transactionMovement && transactionMovement !== 'Stock'">
         <div class="col-md-6 btn-action btn-large center-content" (click)="setPrintBill()">
           Cuenta
         </div>
@@ -121,22 +121,27 @@
           Cobrar
         </div>
       </div>
-      <div class="row" *ngIf="posType!=='resto'">
+      <div class="row" *ngIf="posType!=='resto' && transactionMovement && transactionMovement !== 'Stock'">
         <div class="col-md-12 btn-action btn-large center-content" (click)="openModal('charge')">
-          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Compra'">Pagar</span>
-          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Venta'">Cobrar</span>
+          <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
+          <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('add_client')">
-          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Compra'">Proveedor</span>
-          <span *ngIf="transaction.type && transaction.type.transactionMovement ==='Venta'">Cliente</span>
+      <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
+        <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('add_client')">
+          <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Proveedor</span>
+          <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cliente</span>
         </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
+        <!-- <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
           Descuento
-        </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel_transaction')">
+        </div> -->
+        <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('cancel_transaction')">
           Anular
+        </div>
+      </div>
+      <div class="row" *ngIf="transactionMovement && transactionMovement === 'Stock'">
+        <div class="col-md-12 btn-action btn-large center-content" (click)="updateRealStock()">
+          <span>Procesar Stock</span>
         </div>
       </div>
     </div>

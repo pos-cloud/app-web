@@ -146,6 +146,9 @@
           <div *ngIf="modules">
             <button class="dropdown-item" [routerLink]="['admin','stock']" [routerLinkActive]="['active']">Transacciones de Stock</button>
           </div>
+          <div *ngIf="modules">
+            <button class="dropdown-item" [routerLink]="['admin','stock-de-articulos']" [routerLinkActive]="['active']">Stock de artículos</button>
+          </div>
         </div>
       </li>
       <li class="nav-item" ngbDropdown *ngIf="(identity &&

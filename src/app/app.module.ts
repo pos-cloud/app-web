@@ -34,6 +34,7 @@ import { MailService } from './services/send-mail.service';
 import { MovementOfCashService } from './services/movement-of-cash.service';
 import { PrintService } from './services/print.service';
 import { VATConditionService } from './services/vat-condition.service';
+import { ArticleStockService } from './services/article-stock.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -119,6 +120,8 @@ import { AddTransactionTypeComponent } from './components/add-transaction-type/a
 import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
 import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
+import { UpdateArticleStockComponent } from './components/update-article-stock/update-article-stock.component';
+import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 
 @NgModule({
   declarations: [
@@ -196,7 +199,9 @@ import { ExportCitiComponent } from './components/export-citi/export-citi.compon
     DeleteTransactionTypeComponent,
     RegisterComponent,
     ExportCitiComponent,
-    AddArticleStockComponent
+    AddArticleStockComponent,
+    UpdateArticleStockComponent,
+    ListArticleStocksComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -239,7 +244,8 @@ import { ExportCitiComponent } from './components/export-citi/export-citi.compon
     PrintService,
     AuthGuard,
     MailService,
-    VATConditionService
+    VATConditionService,
+    ArticleStockService
   ],
   bootstrap: [AppComponent]
 })

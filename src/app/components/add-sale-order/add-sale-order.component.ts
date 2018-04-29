@@ -10,9 +10,10 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, ModififyStock, StockMovement } from './../../models/transaction-type';
 import { TransactionTax } from './../../models/transaction-tax';
 import { Article, ArticlePrintIn } from './../../models/article';
+import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Employee } from './../../models/employee';
@@ -44,6 +45,7 @@ import { DecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { CompanyType } from '../../models/company';
+import { ArticleStockService } from '../../services/article-stock.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -55,6 +57,7 @@ import { CompanyType } from '../../models/company';
 export class AddSaleOrderComponent implements OnInit {
 
   public transaction: Transaction;
+  public transactionMovement: string;
   public alertMessage: string = "";
   public movementOfArticle: MovementOfArticle;
   public lastMovementOfArticle: MovementOfArticle;
@@ -88,6 +91,7 @@ export class AddSaleOrderComponent implements OnInit {
   public filterArticle: string;
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber = new RoundNumberPipe();
+  public amountModifyStock = 0; //Saber cuando termina de actualizar el stock
 
   public formErrors = {
     'description': '',
@@ -134,6 +138,7 @@ export class AddSaleOrderComponent implements OnInit {
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _movementOfArticleService: MovementOfArticleService,
+    public _articleStockService: ArticleStockService,
     public _tableService: TableService,
     public _turnService: TurnService,
     public _printService: PrintService,
@@ -195,6 +200,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionType;
+          this.transactionMovement = ""+this.transaction.type.transactionMovement;
           this.getLastTransactionByType();
         }
         this.loading = false;
@@ -298,6 +304,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
+          this.transactionMovement = "" + this.transaction.type.transactionMovement;
           this.getMovementsOfTransaction();
         }
         this.loading = false;
@@ -652,8 +659,8 @@ export class AddSaleOrderComponent implements OnInit {
         this.movementOfArticle.transaction = this.transaction;
         this.movementOfArticle.amount = 1;
         this.lastMovementOfArticle = this.movementOfArticle;
-        if (this.filterArticle !== undefined &&
-          this.filterArticle !== "") {
+        if (( this.filterArticle !== undefined && this.filterArticle !== "") || 
+              this.transaction.type.transactionMovement === TransactionMovement.Stock) {
 
           this.isNewItem = true;
           this.isCreateItem = false;
@@ -674,8 +681,8 @@ export class AddSaleOrderComponent implements OnInit {
         this.movementOfArticle.costPrice += itemData.costPrice;
         this.movementOfArticle.markupPrice += itemData.markupPrice;
         this.movementOfArticle.salePrice += itemData.salePrice;
-        if (this.filterArticle !== undefined &&
-          this.filterArticle !== "") {
+        if ((this.filterArticle !== undefined && this.filterArticle !== "") ||
+          this.transaction.type.transactionMovement === TransactionMovement.Stock) {
 
           this.isNewItem = false;
           this.isCreateItem = false;
@@ -944,7 +951,7 @@ export class AddSaleOrderComponent implements OnInit {
                         if( this.transaction.type.electronics === "Si" && !this.transaction.CAE) {
                           this.validateElectronicTransaction();
                         } else if ( this.transaction.type.electronics === "Si" && this.transaction.CAE) { 
-                          this.finishCharge();
+                          this.finishTransaction();
                         } else {
                           if (this.transaction.type.printable && 
                               this.transaction.type.printable === "Si") {
@@ -1032,7 +1039,7 @@ export class AddSaleOrderComponent implements OnInit {
               this.assignTransactionNumber();
               this.loading = false;
             } else {
-              this.finishCharge();
+              this.finishTransaction();
             }
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
@@ -1089,7 +1096,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then((result) => {
         }, (reason) => {
           if(this.typeOfOperationToPrint === "charge") {
-            this.finishCharge();
+            this.finishTransaction();
           } else if (this.typeOfOperationToPrint === "bill") {
             this.changeStateOfTable(TableState.Pending, true);
           }
@@ -1121,7 +1128,7 @@ export class AddSaleOrderComponent implements OnInit {
         //         this.changeStateOfTable(TableState.Pending, true);
         //       }
         //     } else if (this.typeOfOperationToPrint === 'charge') {
-        //       this.finishCharge();
+        //       this.finishTransaction();
         //     } else if (this.typeOfOperationToPrint === 'bar') {
         //       for (let movementOfArticle of this.barArticlesToPrint) {
         //         movementOfArticle.printed += movementOfArticle.amount;
@@ -1257,10 +1264,10 @@ export class AddSaleOrderComponent implements OnInit {
         result => {
           if (!result.transactions) {
             this.transaction.number = 1;
-            this.finishCharge();
+            this.finishTransaction();
           } else {
             this.transaction.number = result.transactions[0].number + 1;
-            this.finishCharge();
+            this.finishTransaction();
           }
           this.loading = false;
         },
@@ -1270,7 +1277,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     } else {
-      this.finishCharge();
+      this.finishTransaction();
       this.loading = false;
     }
   }
@@ -1285,7 +1292,7 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public finishCharge() {
+  public finishTransaction() {
 
     this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
     this.transaction.endDate = this.transaction.endDate;
@@ -1301,10 +1308,63 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public back(): void {
+
+    if(this.typeOfOperationToPrint === "charge") {
+      if( this.transaction.type.modifyStock === ModififyStock.Yes && 
+          this.amountModifyStock < this.movementsOfArticles.length) {
+            
+        this.updateRealStock();
+      } else {
+        this.backFinal();
+      }
+    } else {
+      this.backFinal();
+    }
+  }
+
+  public updateRealStock(): void {
+    
+    if(this.movementsOfArticles.length > 0) {
+      this.loading = true;
+  
+      let amountToModify;
+  
+      if(this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.name === "Inventario") {
+        amountToModify = this.movementsOfArticles[this.amountModifyStock].amount;
+      } else {
+        amountToModify = this.movementsOfArticles[this.amountModifyStock].amount * -1;
+      }
+  
+      this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
+        result => {
+          if (!result.articleStock) {
+            this.showMessage(result.message, "info", true);
+          } else {
+            this.amountModifyStock ++;
+            if(this.transaction.type.transactionMovement === TransactionMovement.Stock &&
+              this.amountModifyStock === this.movementsOfArticles.length) {
+              this.finishTransaction();
+            } else {
+              this.back();
+            }
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
+        }
+      );
+    } else {
+      this.showMessage("No se encuentran artículos en la transacción", "info", true);
+    }
+  }
+
+  public backFinal(): void {
     if (this.posType === "resto") {
       this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
     } else if (this.posType === "mostrador") {
-      if(this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+      if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
         this._router.navigate(['/pos/' + this.posType + '/compra']);
       } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
         this._router.navigate(['/pos/' + this.posType + '/venta']);

@@ -146,7 +146,7 @@ export class PointOfSaleComponent implements OnInit {
   public getOpenTransactions(): void {
     
     this.loading = true;
-
+    console.log(this.posType);
     this._transactionService.getOpenTransaction(this.posType).subscribe(
       result => {
         if (!result.transactions) {
@@ -194,7 +194,15 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getOpenTransactions();
+    let pathLocation: string[] = this._router.url.split('/');
+    if (this.posType === "resto") {
+      this.roomSelected._id = pathLocation[4];
+      this.getRooms();
+    } else if (this.posType === "delivery") {
+      this.getOpenTransactions();
+    } else if (this.posType === "mostrador") {
+      this.getOpenTransactionsByMovement(this.transactionMovement);
+    }
   }
 
   public addSaleOrder(posType: string): void {

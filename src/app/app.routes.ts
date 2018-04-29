@@ -62,6 +62,8 @@ import { RegisterComponent } from './components/register/register.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 
 import { AuthGuard } from './guards/auth.guard';
+import { ArticleStock } from './models/article-stock';
+import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -125,6 +127,7 @@ const _routes: Routes = [
   { path: 'admin/cuentas-corrientes/proveedor', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/send-mail', component: SendMailComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/export-citi', component: ExportCitiComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/stock-de-articulos', component: ListArticleStocksComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },
