@@ -229,7 +229,7 @@ export class AddTransactionComponent implements OnInit {
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha añadido con éxito.", "success", true);
@@ -251,7 +251,7 @@ export class AddTransactionComponent implements OnInit {
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha actualizado con éxito.", "success", true);

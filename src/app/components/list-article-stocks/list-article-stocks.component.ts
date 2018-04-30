@@ -53,7 +53,7 @@ export class ListArticleStocksComponent implements OnInit {
       result => {
         console.log(result);
         if (!result.articleStocks || result.articleStocks.length <= 0) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.articleStocks = null;
           this.areArticleStocksEmpty = true;

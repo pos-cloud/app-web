@@ -149,7 +149,7 @@ export class UpdateUserComponent implements OnInit {
     this._employeeService.getEmployees().subscribe(
         result => {
 					if(!result.employees) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
 					  this.employees = null;
 					} else {
@@ -182,7 +182,7 @@ export class UpdateUserComponent implements OnInit {
     this._employeeService.getEmployee(this.userForm.value.employee).subscribe(
         result => {
           if(!result.employee) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -203,7 +203,7 @@ export class UpdateUserComponent implements OnInit {
     this._userService.updateUser(this.user).subscribe(
     result => {
         if (!result.user) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.user = result.user;

@@ -229,7 +229,7 @@ export class RegisterComponent implements OnInit {
     this._userService.register(this.registerForm.value).subscribe(
       result => {
         if(!result.user) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.login(result.user);
         }
@@ -253,7 +253,7 @@ export class RegisterComponent implements OnInit {
     this._userService.login(user).subscribe(
       result => {
         if (!result.user) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.showMessage("Ingresando...", "success", false);

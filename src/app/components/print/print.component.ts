@@ -117,7 +117,7 @@ export class PrintComponent implements OnInit {
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result.configs) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -146,7 +146,7 @@ export class PrintComponent implements OnInit {
     this._turnService.getShiftClosingByTransaccion(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.getShiftClosingByMovementOfArticle();
         } else {
           this.hideMessage();
@@ -169,7 +169,7 @@ export class PrintComponent implements OnInit {
     this._turnService.getShiftClosingByMovementOfArticle(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.getShiftClosingByMovementOfCash();
         } else {
           this.hideMessage();
@@ -192,7 +192,7 @@ export class PrintComponent implements OnInit {
     this._turnService.getShiftClosingByMovementOfCash(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.toPrintTurn();
         } else {
           this.hideMessage();
@@ -213,7 +213,7 @@ export class PrintComponent implements OnInit {
     this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.hideMessage();

@@ -126,7 +126,7 @@ export class ImportComponent  implements OnInit {
     this._importService.import(this.modelToImport).subscribe(
       result => {
         if (result.message !== 'ok') {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.showMessage("Se ha importado con éxito.", "success", false);

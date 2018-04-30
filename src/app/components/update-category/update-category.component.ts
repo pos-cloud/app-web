@@ -117,7 +117,7 @@ export class UpdateCategoryComponent implements OnInit {
     this._categoryService.updateCategory(this.category).subscribe(
       result => {
         if (!result.category) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.category = result.category;

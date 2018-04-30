@@ -110,7 +110,7 @@ export class ExportCitiComponent implements OnInit {
     this._serviceTransaction.getFileAfip(this.modelToImport).subscribe(
     result => {
         if (result.message !== "OK") {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         } else {
           this.showMessage("El archivo se genero correctamente.", "success", false);
         }

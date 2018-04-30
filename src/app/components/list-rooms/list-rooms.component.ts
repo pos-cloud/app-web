@@ -52,7 +52,7 @@ export class ListRoomsComponent implements OnInit {
     this._roomService.getRooms().subscribe(
         result => {
           if(!result.rooms) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
             this.rooms = null;
             this.areRoomsEmpty = true;

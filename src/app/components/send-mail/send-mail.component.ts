@@ -109,7 +109,7 @@ export class SendMailComponent implements OnInit {
     this._serviceMail.sendMail(this.modelToImport).subscribe(
     result => {
         if (!result) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.showMessage("El mail se envio correctamente.", "success", false);

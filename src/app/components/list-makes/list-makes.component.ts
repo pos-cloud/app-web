@@ -53,7 +53,7 @@ export class ListMakesComponent implements OnInit {
     this._makeService.getMakes().subscribe(
         result => {
           if(!result.makes) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
             this.makes = null;
             this.areMakesEmpty = true;

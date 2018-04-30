@@ -65,7 +65,8 @@
       </li>
       <li class="nav-item" *ngIf="identity &&
                                   identity.employee && 
-                                  identity.employee.type.description === 'Administrador'">
+                                  identity.employee.type.description === 'Administrador' &&
+                                  modules && modules.stock === 'Yes'">
         <a class="nav-link btn" [routerLink]="['pos','mostrador','stock']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-bar-chart"></i> Stock</a>
       </li>
@@ -143,10 +144,10 @@
                       modules.purchase === 'Yes'">
             <button class="dropdown-item" [routerLink]="['admin','compras']" [routerLinkActive]="['active']">Transacciones de Compras</button>
           </div>
-          <div *ngIf="modules">
+          <div *ngIf="modules && modules.stock === 'Yes'">
             <button class="dropdown-item" [routerLink]="['admin','stock']" [routerLinkActive]="['active']">Transacciones de Stock</button>
           </div>
-          <div *ngIf="modules">
+          <div *ngIf="modules && modules.stock === 'Yes'">
             <button class="dropdown-item" [routerLink]="['admin','stock-de-articulos']" [routerLinkActive]="['active']">Stock de artículos</button>
           </div>
         </div>

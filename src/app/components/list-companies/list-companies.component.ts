@@ -69,7 +69,7 @@ export class ListCompaniesComponent implements OnInit {
     this._companyService.getCompaniesByType(this.type.toString()).subscribe(
         result => {
 					if(!result.companies) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
 					  this.companies = null;
             this.areCompaniesEmpty = true;

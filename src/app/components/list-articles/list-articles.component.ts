@@ -70,7 +70,7 @@ export class ListArticlesComponent implements OnInit {
     this._articleService.getArticles().subscribe(
       result => {
         if (!result.articles) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.articles = null;
           this.areArticlesEmpty = true;

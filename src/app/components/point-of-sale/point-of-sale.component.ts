@@ -97,7 +97,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transactionTypes = result.transactionTypes;
         }
@@ -117,7 +117,7 @@ export class PointOfSaleComponent implements OnInit {
     this._roomService.getRooms().subscribe(
         result => {
           if(!result.rooms) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -150,7 +150,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionService.getOpenTransaction(this.posType).subscribe(
       result => {
         if (!result.transactions) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.transactions = null;
           this.areTransactionsEmpty = true;
         } else {
@@ -216,7 +216,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionTypeService.getDefectOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.transactionTypes = null;
         } else {
           this._router.navigate(['/pos/' + posType + '/agregar-transaccion/' + result.transactionTypes[0]._id]);
@@ -355,7 +355,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionService.updateTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.refresh();

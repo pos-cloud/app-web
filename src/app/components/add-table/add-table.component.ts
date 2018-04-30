@@ -127,7 +127,7 @@ export class AddTableComponent  implements OnInit {
         result => {
           let room: Room  = new Room();
           if(!result.rooms) {
-            this.showMessage(result.message, "info", true);
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
             this.loading = false;
           } else {
             this.loading = false;
@@ -164,7 +164,7 @@ export class AddTableComponent  implements OnInit {
     this._tableService.saveTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.table = result.table;

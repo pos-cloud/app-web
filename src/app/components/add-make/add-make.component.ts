@@ -101,7 +101,7 @@ export class AddMakeComponent  implements OnInit {
     this._makeService.saveMake(this.make).subscribe(
       result => {
         if (!result.make) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.make = result.make;

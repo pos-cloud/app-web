@@ -126,7 +126,7 @@ export class AddPrinterComponent implements OnInit {
     this._printerService.savePrinter(this.printer).subscribe(
       result => {
         if (!result.printer) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.printer = result.printer;
           this.showMessage("La impresora se ha añadido con éxito.", "success", false);

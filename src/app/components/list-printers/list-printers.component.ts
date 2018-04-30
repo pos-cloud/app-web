@@ -52,7 +52,7 @@ export class ListPrintersComponent implements OnInit {
     this._printerService.getPrinters().subscribe(
         result => {
           if(!result.printers) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
             this.printers = null;
             this.arePrintersEmpty = true;

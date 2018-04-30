@@ -55,7 +55,7 @@ export class ListCashBoxesComponent implements OnInit {
     this._cashBoxService.getCashBoxes().subscribe(
         result => {
 					if(!result.cashBoxes) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
 					  this.cashBoxes = null;
             this.areCashBoxesEmpty = true;

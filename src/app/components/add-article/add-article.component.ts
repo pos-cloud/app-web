@@ -286,7 +286,7 @@ export class AddArticleComponent  implements OnInit {
     this._categoryService.getCategories().subscribe(
         result => {
           if(!result.categories) {
-            this.showMessage(result.message, "info", true);
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
             this.hideMessage();
             this.categories = result.categories;
@@ -420,7 +420,7 @@ export class AddArticleComponent  implements OnInit {
     this._articleService.saveArticle(this.article).subscribe(
     result => {
         if (!result.article) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.article = result.article;
@@ -500,7 +500,7 @@ export class AddArticleComponent  implements OnInit {
     this._articleStockService.saveArticleStock(this.articleStock).subscribe(
       result => {
         if (!result.articleStock) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.articleStock = result.articleStock;

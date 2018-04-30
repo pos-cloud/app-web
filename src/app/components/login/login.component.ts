@@ -85,7 +85,7 @@ export class LoginComponent implements OnInit {
     this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
       result => {
         if(!result.users) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
           this.user = null;
         } else {
@@ -171,7 +171,7 @@ export class LoginComponent implements OnInit {
     this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.showMessage("Ingresando...", "success", false);

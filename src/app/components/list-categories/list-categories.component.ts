@@ -63,7 +63,7 @@ export class ListCategoriesComponent implements OnInit {
     this._categoryService.getCategories().subscribe(
       result => {
         if(!result.categories) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
           this.categories = null;
           this.areCategoriesEmpty = true;

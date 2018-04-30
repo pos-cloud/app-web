@@ -76,7 +76,7 @@ export class AddEmployeeComponent  implements OnInit {
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
         if (!result.employeeTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.loading = false;
@@ -179,7 +179,7 @@ export class AddEmployeeComponent  implements OnInit {
     this._employeeService.saveEmployee(this.employee).subscribe(
     result => {
         if (!result.employee) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.employee = result.employee;

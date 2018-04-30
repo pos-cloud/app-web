@@ -105,7 +105,7 @@ export class AddCategoryComponent  implements OnInit {
     this._categoryService.saveCategory(this.category).subscribe(
       result => {
         if (!result.category) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.category = result.category;

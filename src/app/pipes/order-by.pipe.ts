@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { DateFormatPipe } from './date-format.pipe';
 
 @Pipe({
   name: 'orderBy',
@@ -36,7 +37,7 @@ export class OrderByPipe implements PipeTransform {
     //arg2 = si existe objeto de otro objeto es la propiedad del segundo objeto a comparar
     transform(input:any, [config = '+'], arg2?: string): any{
 
-        //Si no existe mas de un elemento
+        //Si no existe mas de un elemento en la lista a ordenar
         if(!Array.isArray(input)) return input;
 
         if(!Array.isArray(config) || (Array.isArray(config) && config.length == 1)){
@@ -85,7 +86,12 @@ export class OrderByPipe implements PipeTransform {
                             }
                             response = -OrderByPipe._orderByComparator(a[property][arg2], b[property][arg2]);
                         } else {
-                            response = -OrderByPipe._orderByComparator(a[property], b[property]);
+                            if (property.toLowerCase().includes('date')) {
+                                let dateFormat: DateFormatPipe = new DateFormatPipe();
+                                response = -OrderByPipe._orderByComparator(dateFormat.transform(a[property], "YYYY/MM/DD HH:mm:ss"), dateFormat.transform(b[property], "YYYY/MM/DD HH:mm:ss"));
+                            } else {
+                                response = -OrderByPipe._orderByComparator(a[property], b[property]);
+                            }
                         }
                     }
                     return response;

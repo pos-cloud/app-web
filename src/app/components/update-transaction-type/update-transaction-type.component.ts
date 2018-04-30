@@ -324,7 +324,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     this._transactionTypeService.updateTransactionType(this.transactionType).subscribe(
       result => {
         if (!result.transactionType) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.transactionType = result.transactionType;

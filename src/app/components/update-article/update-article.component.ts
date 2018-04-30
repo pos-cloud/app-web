@@ -242,7 +242,7 @@ export class UpdateArticleComponent implements OnInit {
     this._categoryService.getCategories().subscribe(
         result => {
           if(!result.categories) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           } else {
             this.hideMessage();
             this.categories = result.categories;
@@ -280,7 +280,7 @@ export class UpdateArticleComponent implements OnInit {
     this._makeService.getMake(this.articleForm.value.make).subscribe(
       result => {
         if (!result.make) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
           this.article.make = result.make;
@@ -302,7 +302,7 @@ export class UpdateArticleComponent implements OnInit {
     this._categoryService.getCategory(this.articleForm.value.category).subscribe(
       result => {
         if (!result.category) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.article.category = result.category;
           this.loadPosDescription();
@@ -455,7 +455,7 @@ export class UpdateArticleComponent implements OnInit {
     this._articleService.updateArticle(this.article).subscribe(
       result => {
         if (!result.article) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.article = result.article;
           if (this.filesToUpload) {
@@ -530,7 +530,7 @@ export class UpdateArticleComponent implements OnInit {
     this._articleStockService.updateArticleStock(this.articleStock).subscribe(
       result => {
         if (!result.articleStock) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.articleStock = result.articleStock;
@@ -578,7 +578,7 @@ export class UpdateArticleComponent implements OnInit {
     this._articleStockService.saveArticleStock(this.articleStock).subscribe(
       result => {
         if (!result.articleStock) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.articleStock = result.articleStock;

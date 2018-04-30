@@ -51,7 +51,7 @@ export class ListUsersComponent implements OnInit {
     this._userService.getUsers("","list").subscribe(
         result => {
 					if(!result.users) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
 					  this.users = null;
             this.areUsersEmpty = true;

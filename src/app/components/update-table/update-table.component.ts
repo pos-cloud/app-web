@@ -129,7 +129,7 @@ export class UpdateTableComponent implements OnInit {
     this._roomService.getRooms().subscribe(
         result => {
           if(!result.rooms) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -164,7 +164,7 @@ export class UpdateTableComponent implements OnInit {
     this._roomService.getRoom(this.tableForm.value.room).subscribe(
         result => {
           if(!result.room) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -187,7 +187,7 @@ export class UpdateTableComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.table = result.table;

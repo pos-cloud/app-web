@@ -116,7 +116,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this._paymentMethodService.getPaymentMethods().subscribe(
       result => {
         if (!result.paymentMethods){
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {  
           this.paymentMethods = result.paymentMethods;
           if(this.transaction.type.name === "Saldo Inicial (+)" || 
@@ -327,7 +327,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
       result => {
         if (!result.movementOfCash) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;
@@ -349,7 +349,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfCashService.updateMovementOfCash(this.movementOfCash).subscribe(
       result => {
         if (!result.movementOfCash) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;

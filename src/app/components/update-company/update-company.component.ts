@@ -227,7 +227,7 @@ export class UpdateCompanyComponent implements OnInit {
     this._vatCondition.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.vatConditions = result.vatConditions;
         }
@@ -284,7 +284,7 @@ export class UpdateCompanyComponent implements OnInit {
     this._companyService.updateCompany(this.company).subscribe(
     result => {
         if (!result.company) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.company = result.company;
           this.showMessage("La empresa se ha actualizado con éxito.", "success", false);

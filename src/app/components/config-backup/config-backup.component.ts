@@ -238,7 +238,7 @@ export class ConfigBackupComponent implements OnInit {
     this._vatCondition.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.vatConditions = result.vatConditions;
@@ -288,7 +288,7 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigBackup(this.config).subscribe(
       result => {
         if (!result.configs) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.configs[0];
@@ -312,7 +312,7 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigEmail(this.config).subscribe(
       result => {
         if (!result.configs) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.configs[0];
@@ -336,7 +336,7 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigCompany(this.config).subscribe(
       result => {
         if (!result.configs) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.config = result.configs[0];
@@ -357,9 +357,9 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.getlicense().subscribe(
       result => {
         if(!result.configs) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         } else {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         }
         this.loading = false;
       },
@@ -377,7 +377,7 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.getConfigApi().subscribe(
       result => {
         if(!result.configs) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         } else {
           let config = result.configs[0];
           this.config = config;

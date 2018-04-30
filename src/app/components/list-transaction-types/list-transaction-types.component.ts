@@ -52,7 +52,7 @@ export class ListTransactionTypesComponent implements OnInit {
     this._transactionTypeService.getTransactionTypes().subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.transactionTypes = null;
           this.areTransactionTypesEmpty = true;

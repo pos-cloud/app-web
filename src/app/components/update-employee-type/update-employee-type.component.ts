@@ -110,7 +110,7 @@ export class UpdateEmployeeTypeComponent implements OnInit {
     this._employeeTypeService.updateEmployeeType(this.employeeType).subscribe(
     result => {
         if (!result.employeeType) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.employeeType = result.employeeType;

@@ -237,7 +237,7 @@ export class AddCompanyComponent  implements OnInit {
     this._vatCondition.saveVATCondition(vatConditionCF).subscribe(
       result => {
         if (!result.vatCondition) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           let vatConditionRI = new VATCondition();
           vatConditionRI.code = 1;
@@ -248,7 +248,7 @@ export class AddCompanyComponent  implements OnInit {
           this._vatCondition.saveVATCondition(vatConditionRI).subscribe(
             result => {
               if (!result.vatCondition) {
-                this.showMessage(result.message, "info", true);
+                if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
               } else {
                 let vatConditionM = new VATCondition();
                 vatConditionM.code = 6;
@@ -259,7 +259,7 @@ export class AddCompanyComponent  implements OnInit {
                 this._vatCondition.saveVATCondition(vatConditionM).subscribe(
                   result => {
                     if (!result.vatCondition) {
-                      this.showMessage(result.message, "info", true);
+                      if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
                     } else {
                       let vatConditionM = new VATCondition();
                       vatConditionM.code = 2;
@@ -270,7 +270,7 @@ export class AddCompanyComponent  implements OnInit {
                       this._vatCondition.saveVATCondition(vatConditionM).subscribe(
                         result => {
                           if (!result.vatCondition) {
-                            this.showMessage(result.message, "info", true);
+                            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
                           } else {
                             let vatConditionM = new VATCondition();
                             vatConditionM.code = 4;
@@ -281,7 +281,7 @@ export class AddCompanyComponent  implements OnInit {
                             this._vatCondition.saveVATCondition(vatConditionM).subscribe(
                               result => {
                                 if (!result.vatCondition) {
-                                  this.showMessage(result.message, "info", true);
+                                  if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
                                 } else {
                                   this.getVATConditions();
                                 }
@@ -381,7 +381,7 @@ export class AddCompanyComponent  implements OnInit {
     this._companyService.saveCompany(this.company).subscribe(
     result => {
         if (!result.company) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.company = result.company;

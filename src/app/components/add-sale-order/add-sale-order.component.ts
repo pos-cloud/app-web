@@ -197,7 +197,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionTypeService.getTransactionType(transactionTypeID).subscribe(
       result => {
         if (!result.transactionType) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionType;
           this.transactionMovement = ""+this.transaction.type.transactionMovement;
@@ -323,7 +323,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.getTable(id).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
           this.table = result.table;
@@ -348,7 +348,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionTypeService.getTransactionByType(type).subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionTypes[0];
           this.getLastTransactionByType();
@@ -519,7 +519,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
@@ -543,7 +543,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
           if (closed) {
@@ -606,7 +606,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.table = result.table;
           if (closed) {
@@ -629,7 +629,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.table = result.table;
         }
@@ -1338,7 +1338,7 @@ export class AddSaleOrderComponent implements OnInit {
       this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
         result => {
           if (!result.articleStock) {
-            this.showMessage(result.message, "info", true);
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
             this.amountModifyStock ++;
             if(this.transaction.type.transactionMovement === TransactionMovement.Stock &&
@@ -1406,7 +1406,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
           this.movementOfArticle = result.movementOfArticle;
@@ -1570,7 +1570,7 @@ export class AddSaleOrderComponent implements OnInit {
       this._printService.toPrint(print).subscribe(
         result => {
           if (result.message !== "ok") {
-            this.showMessage(result.message, "info", true);
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
             if (this.posType === 'resto') {
               this.changeStateOfTable(TableState.Pending, true);
@@ -1657,7 +1657,7 @@ export class AddSaleOrderComponent implements OnInit {
         this._printService.toPrint(print).subscribe(
           result => {
             if (result.message !== "ok") {
-              this.showMessage(result.message, "info", true);
+              if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
             } else {
               this.assignOriginAndLetter(printerSelected.origin);
               this.assignTransactionNumber();
@@ -1730,7 +1730,7 @@ export class AddSaleOrderComponent implements OnInit {
       this._printService.toPrint(print).subscribe(
         result => {
           if (result.message !== "ok") {
-            this.showMessage(result.message, "info", true);
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
             for (let movementOfArticle of this.barArticlesToPrint) {
               movementOfArticle.printed = movementOfArticle.amount;
@@ -1814,7 +1814,7 @@ export class AddSaleOrderComponent implements OnInit {
       this._printService.toPrint(print).subscribe(
         result => {
           if (result.message !== "ok") {
-            this.showMessage(result.message, "info", true);
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
             for (let movementOfArticle of this.kitchenArticlesToPrint) {
               movementOfArticle.printed = movementOfArticle.amount;
@@ -1846,7 +1846,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.updatePrices();
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.

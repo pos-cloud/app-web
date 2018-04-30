@@ -101,7 +101,7 @@ export class AddRoomComponent  implements OnInit {
     this._roomService.saveRoom(this.room).subscribe(
       result => {
         if (!result.room) {
-          this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
           this.loading = false;
         } else {
           this.room = result.room;

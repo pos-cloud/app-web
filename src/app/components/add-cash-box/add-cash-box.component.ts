@@ -107,7 +107,7 @@ export class AddCashBoxComponent  implements OnInit {
     this._cashBoxService.saveCashBox(this.cashBox).subscribe(
       result => {
         if (!result.cashBox) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.cashBox = result.cashBox;

@@ -76,7 +76,7 @@ export class ListTablesComponent implements OnInit {
     this._tableService.getTables().subscribe(
       result => {
         if (!result.tables) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.tables = null;
           this.areTablesEmpty = true;
@@ -203,7 +203,7 @@ export class ListTablesComponent implements OnInit {
     this._tableService.updateTable(this.tableSelected).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -225,7 +225,7 @@ export class ListTablesComponent implements OnInit {
     this._transactionTypeService.getDefectOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.hideMessage();
           this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + result.transactionTypes[0]._id]);

@@ -51,7 +51,7 @@ export class ListEmployeesComponent implements OnInit {
     this._employeeService.getEmployees().subscribe(
         result => {
 					if(!result.employees) {
-            this.showMessage(result.message, "info", true); 
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
 					  this.employees = null;
             this.areEmployeesEmpty = true;

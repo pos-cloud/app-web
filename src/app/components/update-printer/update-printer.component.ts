@@ -140,7 +140,7 @@ export class UpdatePrinterComponent implements OnInit {
     this._printerService.updatePrinter(this.printer).subscribe(
       result => {
         if (!result.printer) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.printer = result.printer;

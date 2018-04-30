@@ -116,7 +116,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._employeeService.getEmployees().subscribe(
       result => {
         if (!result.employees) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -254,7 +254,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._turnService.updateTurn(this.turn).subscribe(
       result => {
         if (!result.turn) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           let modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.turn = result.turn;
@@ -315,7 +315,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._turnService.saveTurn(this.turn).subscribe(
       result => {
         if (!result.turn) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.turn = result.turn;
           if (this.op === "change-employee") {
@@ -370,7 +370,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.table = result.table;

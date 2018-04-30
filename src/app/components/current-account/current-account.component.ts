@@ -277,7 +277,7 @@ export class CurrentAccountComponent implements OnInit {
     this._transactionTypeService.getTransactionTypeByName(name).subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           let transaction = new Transaction();
           transaction.company = this.companySelected;
@@ -300,7 +300,7 @@ export class CurrentAccountComponent implements OnInit {
     this._transactionService.updateTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "info", true);
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.refresh();
