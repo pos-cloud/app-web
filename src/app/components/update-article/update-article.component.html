@@ -165,11 +165,11 @@
 						</div>
 					</ng-template>
 				</ngb-tab>
-				<ngb-tab title="Stock">
+				<!-- <ngb-tab title="Stock">
 					<ng-template ngbTabContent>
 						<app-update-article-stock [articleStock]="articleStock" [article]="article" (eventUpdateStock)="updateStock($event)"></app-update-article-stock>
 					</ng-template>
-				</ngb-tab>
+				</ngb-tab> -->
 				<ngb-tab title="Observaciones">
 					<ng-template ngbTabContent>
 						<div class="row">
@@ -180,6 +180,11 @@
 								</div>
 							</div>
 						</div>
+					</ng-template>
+				</ngb-tab>
+				<ngb-tab title="Variantes">
+					<ng-template ngbTabContent>
+						<app-list-variants (eventReturnVariants)="manageVariants($event)" [variantsLocals]="variants" [article]="article"></app-list-variants>
 					</ng-template>
 				</ngb-tab>
 			</ngb-tabset>

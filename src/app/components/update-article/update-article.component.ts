@@ -1,25 +1,29 @@
+//Angular
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { SlicePipe } from '@angular/common'; 
-
+//Terceros
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article, ArticlePrintIn } from './../../models/article';
+//Models
+import { Article, ArticlePrintIn, ContainsVariants, ArticleType } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
+import { Variant } from '../../models/variant';
+import { Config } from './../../app.config';
 
+//Services
 import { ArticleService } from './../../services/article.service';
 import { ArticleStockService } from './../../services/article-stock.service';
 import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
-
-import { Config } from './../../app.config';
+import { VariantService } from './../../services/variant.service';
 
 //Pipes
-import { DecimalPipe } from '@angular/common'; 
+import { DecimalPipe } from '@angular/common';
+import { SlicePipe } from '@angular/common'; 
 
 @Component({
   selector: 'app-update-article',
@@ -37,6 +41,7 @@ export class UpdateArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
+  public variants: Variant[] = new Array();
   public printIns: ArticlePrintIn[] = [ArticlePrintIn.Bar, ArticlePrintIn.Kitchen, ArticlePrintIn.Counter];
   public alertMessage: string = "";
   public userType: string;
@@ -45,6 +50,7 @@ export class UpdateArticleComponent implements OnInit {
   public filesToUpload: Array<File>;
   public resultUpload;
   public apiURL = Config.apiURL;
+  public numberOfRequestsStored: number = 0;
 
   public formErrors = {
     'code': '',
@@ -105,6 +111,7 @@ export class UpdateArticleComponent implements OnInit {
     public _articleStockService: ArticleStockService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
+    public _variantService: VariantService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -257,6 +264,7 @@ export class UpdateArticleComponent implements OnInit {
   }
 
   public updateArticle (): void {
+
     if(!this.readonly) {
       this.loading = true;
       if(this.articleForm.value.posDescription === "") {
@@ -265,12 +273,82 @@ export class UpdateArticleComponent implements OnInit {
       }
       this.article = this.articleForm.value;
       this.autocompleteCode();
+      this.article.type = ArticleType.Final;
+      if (this.variants && this.variants.length > 0) {
+        this.article.containsVariants = ContainsVariants.Yes;
+      } else {
+        this.article.containsVariants = ContainsVariants.No;
+      }
       if(this.articleForm.value.make) {
         this.getMake();
       } else {
         this.getCategory();
       }
     }
+  }
+
+  public saveVariants(articleParent: Article): void {
+
+    if (this.variants && this.variants.length > 0 &&
+      this.numberOfRequestsStored < this.variants.length) {
+      let variant = this.variants[this.numberOfRequestsStored];
+      variant.articleParent = articleParent;
+      let articleChild = articleParent;
+      articleChild.type = ArticleType.Variant;
+      articleChild.containsVariants = ContainsVariants.No;
+      this.saveArticleChild(articleChild, variant);
+    } else {
+      this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
+    }
+  }
+
+  public saveArticleChild(article: Article, variant: Variant): void {
+
+    this.loading = true;
+
+    this._articleService.saveArticle(article).subscribe(
+      result => {
+        if (!result.article) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          article = result.article;
+          variant.articleChild = article;
+          this.saveVariant(variant);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveVariant(variant: Variant): void {
+
+    this.loading = true;
+
+    this._variantService.saveVariant(variant).subscribe(
+      result => {
+        if (!result.variant) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          variant = result.variant;
+          this.numberOfRequestsStored++;
+          this.saveVariants(variant.articleParent);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public manageVariants(variants: Variant[]): void {
+    this.variants = variants;
   }
 
   public getMake(): void {
@@ -464,16 +542,22 @@ export class UpdateArticleComponent implements OnInit {
               (result) => {
                 this.resultUpload = result;
                 this.article.picture = this.resultUpload.filename;
-                this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
-                this.updateArticleStock();
+                if (this.article.containsVariants === ContainsVariants.Yes) {
+                  this.saveVariants(this.article);
+                } else {
+                  this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
+                }
               },
               (error) => {
                 this.showMessage(error, "danger", false);
               }
               );
           } else {
-            this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
-            this.updateArticleStock();
+            if (this.article.containsVariants === ContainsVariants.Yes) {
+              this.saveVariants(this.article);
+            } else {
+              this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
+            }
           }
         }
         this.loading = false;

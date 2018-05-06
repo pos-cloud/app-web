@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { Article } from './../models/article';
+import { Article, ArticleType } from './../models/article';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
 
@@ -39,6 +39,15 @@ export class ArticleService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "articles", { headers: headers }).map (res => res.json());
+	}
+
+	getFinalArticles() {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'articles/where="type":"' + ArticleType.Final + '"', { headers: headers }).map(res => res.json());
 	}
 
 	saveArticle(article: Article) {

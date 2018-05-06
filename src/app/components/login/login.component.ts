@@ -199,7 +199,11 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        if(error.status === 0) {
+          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", "danger", false);
+        } else {
+          this.showMessage(error._body, "danger", false);
+        }
         this.loading = false;
       }
     )

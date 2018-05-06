@@ -60,6 +60,8 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
+import { ListVariantTypesComponent } from './components/list-variant-types/list-variant-types.component';
+import { ListVariantValuesComponent } from './components/list-variant-values/list-variant-values.component';
 
 import { AuthGuard } from './guards/auth.guard';
 import { ArticleStock } from './models/article-stock';
@@ -117,7 +119,9 @@ const _routes: Routes = [
   { path: 'admin/agregar-impresora', component: AddPrinterComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/editar-impresora', component: UpdatePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-impresora', component: DeletePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/tipos-transaccion', component: ListTransactionTypesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/tipos-de-transacciones', component: ListTransactionTypesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/tipos-de-variantes', component: ListVariantTypesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/valores-de-variantes', component: ListVariantValuesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-tipo-transaccion', component: AddTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/editar-tipo-transaccion', component: UpdateTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-tipo-transaccion', component: DeleteTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },

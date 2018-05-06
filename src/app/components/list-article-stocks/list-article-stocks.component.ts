@@ -51,7 +51,6 @@ export class ListArticleStocksComponent implements OnInit {
 
     this._articleStockService.getArticleStocks().subscribe(
       result => {
-        console.log(result);
         if (!result.articleStocks || result.articleStocks.length <= 0) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;

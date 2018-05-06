@@ -1,0 +1,43 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="user=='admin'">
+  <app-add-variant [article]="article" (eventAddVariant)="addVariant($event)"></app-add-variant>
+  <div class="center-content" *ngIf="alertMessage !== '' && !areVariantValuesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>
+          <i class="fa fa-bars"></i>
+        </th>
+        <th>Tipo </th>
+        <th>Descripción </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let variant of variants">
+        <td align="left" width="130">
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteVariantDB(variant)" title="Eliminar">
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </td>
+        <td class="flat">{{variant.type.name}}</td>
+        <td class="flat">{{variant.value.description}}</td>
+      </tr>
+      <tr *ngFor="let variantLocal of variantsLocals">
+        <td align="left" width="130">
+          <button type="button" class="btn btn-danger btn-sm" (click)="deleteVariantLocal(variantLocal)" title="Eliminar">
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </td>
+        <td class="flat">{{variantLocal.type.name}}</td>
+        <td class="flat">{{variantLocal.value.description}}</td>
+      </tr>
+      <tr align="center" *ngIf="areVariantsEmpty">
+        <td colspan="3">No se encontraron variantes</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

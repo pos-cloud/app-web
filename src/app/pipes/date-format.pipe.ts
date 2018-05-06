@@ -10,9 +10,12 @@ export class DateFormatPipe implements PipeTransform {
 	transform(value:any, format:string, formatDefecto?:string):any {
 		if (value) {
 			if(!formatDefecto) {
+				// Cambio de formato de fecha
+				// formatDefecto = 'YYYY-MM-DDTHH:mm:ssZ';
 				formatDefecto = 'DD/MM/YYYY HH:mm:ss';
 			}
-			return moment(value, formatDefecto, true).format(format);
+			var date = moment(new Date(value)).format(format);
+			return date;
 		}
 	}
 }

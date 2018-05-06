@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { DateFormatPipe } from './date-format.pipe';
 
 @Pipe({
     name: 'filter'
@@ -11,6 +12,7 @@ export class FilterPipe implements PipeTransform {
     strArg: string = "";
     terms: string[];
     valueAux: any[];
+    dateFormat: DateFormatPipe = new DateFormatPipe();
 
     transform(value: any[], term: string, property: string, subobject?: string): any {
 
@@ -61,9 +63,12 @@ export class FilterPipe implements PipeTransform {
                             }
                         }
                     } else if (property !== undefined) {
-                        
-                        if (key != "_id" && key === property) {  //rechaza buscar por _id, y verifica si cual es la propiedad del objeto
 
+                        if (key != "_id" && key === property) {  //rechaza buscar por _id, y verifica si cual es la propiedad del objeto
+                            
+                            // Cambio de formato de fecha
+                            // item[key] = this.dateFormat.transform(item[key], 'DD/MM/YYYY HH:mm:ss');
+                            
                             this.strVal = "" + item[key];
                             this.strArg = term;
 

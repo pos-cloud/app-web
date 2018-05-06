@@ -60,14 +60,14 @@ export class ListArticlesComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getArticles();
+    this.getFinalArticles();
   }
 
-  public getArticles(): void {
+  public getFinalArticles(): void {
 
     this.loading = true;
 
-    this._articleService.getArticles().subscribe(
+    this._articleService.getFinalArticles().subscribe(
       result => {
         if (!result.articles) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
@@ -100,7 +100,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getArticles();
+    this.getFinalArticles();
   }
 
   public openModal(op: string, article: Article): void {
@@ -114,9 +114,9 @@ export class ListArticlesComponent implements OnInit {
         break;
       case 'add':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' }).result.then((result) => {
-          this.getArticles();
+          this.getFinalArticles();
         }, (reason) => {
-          this.getArticles();
+          this.getFinalArticles();
         });
         break;
       case 'update':
@@ -125,7 +125,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           if (result === 'save_close') {
-            this.getArticles();
+            this.getFinalArticles();
           }
         }, (reason) => {
 
@@ -136,7 +136,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.article = article;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.getArticles();
+            this.getFinalArticles();
           }
         }, (reason) => {
 
@@ -153,7 +153,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {
-            this.getArticles();
+            this.getFinalArticles();
           }
         }, (reason) => {
 

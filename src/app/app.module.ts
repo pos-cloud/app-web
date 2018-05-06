@@ -35,6 +35,8 @@ import { MovementOfCashService } from './services/movement-of-cash.service';
 import { PrintService } from './services/print.service';
 import { VATConditionService } from './services/vat-condition.service';
 import { ArticleStockService } from './services/article-stock.service';
+import { VariantTypeService } from './services/variant-type.service';
+import { VariantService } from './services/variant.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -122,6 +124,19 @@ import { DeleteTransactionTypeComponent } from './components/delete-transaction-
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 import { UpdateArticleStockComponent } from './components/update-article-stock/update-article-stock.component';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
+import { AddVariantComponent } from './components/add-variant/add-variant.component';
+import { DeleteVariantComponent } from './components/delete-variant/delete-variant.component';
+import { ListVariantsComponent } from './components/list-variants/list-variants.component';
+import { AddVariantTypeComponent } from './components/add-variant-type/add-variant-type.component';
+import { UpdateVariantTypeComponent } from './components/update-variant-type/update-variant-type.component';
+import { DeleteVariantTypeComponent } from './components/delete-variant-type/delete-variant-type.component';
+import { ListVariantTypesComponent } from './components/list-variant-types/list-variant-types.component';
+import { ListVariantValuesComponent } from './components/list-variant-values/list-variant-values.component';
+import { DeleteVariantValueComponent } from './components/delete-variant-value/delete-variant-value.component';
+import { UpdateVariantValueComponent } from './components/update-variant-value/update-variant-value.component';
+import { AddVariantValueComponent } from './components/add-variant-value/add-variant-value.component';
+import { VariantValue } from './models/variant-value';
+import { VariantValueService } from './services/variant-value.service';
 
 @NgModule({
   declarations: [
@@ -201,13 +216,33 @@ import { ListArticleStocksComponent } from './components/list-article-stocks/lis
     ExportCitiComponent,
     AddArticleStockComponent,
     UpdateArticleStockComponent,
-    ListArticleStocksComponent
+    ListArticleStocksComponent,
+    AddVariantComponent,
+    DeleteVariantComponent,
+    ListVariantsComponent,
+    AddVariantTypeComponent,
+    UpdateVariantTypeComponent,
+    DeleteVariantTypeComponent,
+    ListVariantTypesComponent,
+    ListVariantValuesComponent,
+    DeleteVariantValueComponent,
+    UpdateVariantValueComponent,
+    AddVariantValueComponent
+    
   ],
   entryComponents: [
     AddMovementOfCashComponent,
     SelectEmployeeComponent,
     PrintComponent,
-    ViewTransactionComponent
+    ViewTransactionComponent,
+    AddVariantTypeComponent,
+    DeleteVariantTypeComponent,
+    UpdateVariantTypeComponent,
+    AddVariantComponent,
+    DeleteVariantComponent,
+    AddVariantValueComponent,
+    UpdateVariantValueComponent,
+    DeleteVariantValueComponent
   ],
   imports: [
     BrowserModule,
@@ -245,7 +280,10 @@ import { ListArticleStocksComponent } from './components/list-article-stocks/lis
     AuthGuard,
     MailService,
     VATConditionService,
-    ArticleStockService
+    ArticleStockService,
+    VariantTypeService,
+    VariantService,
+    VariantValueService
   ],
   bootstrap: [AppComponent]
 })

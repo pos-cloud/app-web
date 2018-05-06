@@ -4,7 +4,9 @@ import { Category } from './category';
 export class Article {
 
     public _id: string;
-    public code: string = "1";
+    public type: ArticleType = ArticleType.Final;
+    public containsVariants: ContainsVariants = ContainsVariants.No;
+    public code: string = "00001";
     public description: string = "";
     public posDescription: string = "";
     public observation: string;
@@ -31,4 +33,15 @@ export enum ArticlePrintIn {
     Bar = <any> "Bar",
     Kitchen = <any> "Cocina",
     Counter = <any> "Mostrador"
+}
+
+export enum ArticleType {
+    Final = <any>"Final",
+    Variant = <any>"Variante",
+    Ingredient = <any>"Ingrediente"
+}
+
+export enum ContainsVariants {
+    Yes = <any>"Si",
+    No = <any>"No"
 }

@@ -1,26 +1,30 @@
+//Angular
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { SlicePipe } from '@angular/common'; 
-
+//Terceros
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { padNumber } from '@ng-bootstrap/ng-bootstrap/util/util';
 
-import { Article, ArticlePrintIn } from './../../models/article';
+//Models
+import { Article, ArticlePrintIn, ContainsVariants, ArticleType } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
+import { Variant } from '../../models/variant';
+import { Config } from './../../app.config';
 
+//Services
 import { ArticleService } from './../../services/article.service';
 import { ArticleStockService } from './../../services/article-stock.service';
 import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
-
-import { Config } from './../../app.config';
+import { VariantService } from './../../services/variant.service';
 
 //Pipes
 import { DecimalPipe } from '@angular/common'; 
-import { padNumber } from '@ng-bootstrap/ng-bootstrap/util/util';
+import { SlicePipe } from '@angular/common'; 
 
 @Component({
   selector: 'app-add-article',
@@ -36,6 +40,7 @@ export class AddArticleComponent  implements OnInit {
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
+  public variants: Variant[] = new Array();
   public printIns: ArticlePrintIn[] = [ArticlePrintIn.Bar, ArticlePrintIn.Kitchen, ArticlePrintIn.Counter];
   public alertMessage: string = "";
   public userType: string;
@@ -43,9 +48,11 @@ export class AddArticleComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public resultUpload;
   public apiURL = Config.apiURL;
+  public filesToUpload: Array<File>;
+  public numberOfRequestsStored: number = 0;
 
   public formErrors = {
-    'code': "1",
+    'code': '',
     'make': '',
     'description': '',
     'posDescription': '',
@@ -102,19 +109,21 @@ export class AddArticleComponent  implements OnInit {
   constructor(
     public _articleService: ArticleService,
     public _articleStockService: ArticleStockService,
+    public _variantService: VariantService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    this.article = new Article();
+  }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.article = new Article ();
     this.buildForm();
     this.getMakes();
   }
@@ -285,7 +294,7 @@ export class AddArticleComponent  implements OnInit {
     
     this._categoryService.getCategories().subscribe(
         result => {
-          if(!result.categories) {
+          if (!result.categories) {
             if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
             this.hideMessage();
@@ -369,7 +378,7 @@ export class AddArticleComponent  implements OnInit {
   public setValuesForm(): void {
 
     if (!this.article._id) this.article._id = "";
-    if (!this.article.code) this.article.code = "1";
+    if (!this.article.code) this.article.code = "000001";
     if (!this.article.make) this.article.make = null;
     if (!this.article.description) this.article.description = "";
     if (!this.article.posDescription) this.article.posDescription = "";
@@ -406,10 +415,15 @@ export class AddArticleComponent  implements OnInit {
   }
  
   public addArticle(): void {
-      
     this.loadPosDescription();
     this.article = this.articleForm.value;
     this.autocompleteCode();
+    this.article.type = ArticleType.Final;
+    if(this.variants && this.variants.length > 0) {
+      this.article.containsVariants = ContainsVariants.Yes;
+    } else {
+      this.article.containsVariants = ContainsVariants.No;
+    }
     this.saveArticle();
   }
 
@@ -430,16 +444,30 @@ export class AddArticleComponent  implements OnInit {
               (result) => {
                 this.resultUpload = result;
                 this.article.picture = this.resultUpload.filename;
-                this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-                this.saveArticleStock();
+                if(this.article.containsVariants === ContainsVariants.Yes) {
+                  this.saveVariants(this.article);
+                } else {
+                  this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+                  this.article = new Article();
+                  this.filesToUpload = null;
+                  this.buildForm();
+                  this.getLastArticle();
+                }
               },
               (error) => {
                 this.showMessage(error, "danger", false);
               }
               );
           } else {
-            this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-            this.saveArticleStock();
+            if (this.article.containsVariants === ContainsVariants.Yes) {
+              this.saveVariants(this.article);
+            } else {
+              this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+              this.article = new Article();
+              this.filesToUpload = null;
+              this.buildForm();
+              this.getLastArticle();
+            }
           }
         }
         this.loading = false;
@@ -450,8 +478,6 @@ export class AddArticleComponent  implements OnInit {
       }
     );
   }
-
-  public filesToUpload: Array <File>;
 
   public fileChangeEvent(fileInput: any): void {
 
@@ -487,27 +513,64 @@ export class AddArticleComponent  implements OnInit {
     this.articleStock = articleStock;
   }
 
-  public saveArticleStock() {
+  // public saveArticleStock(article: Article): void {
     
-    if(!this.articleStock) {
-      this.articleStock = new ArticleStock();
-    }
+  //   this.loading = true;
 
-    if(this.articleStock && !this.articleStock.article) {
-      this.articleStock.article = this.article;
-    }
+  //   if(!this.articleStock) {
+  //     this.articleStock = new ArticleStock();
+  //   }
 
-    this._articleStockService.saveArticleStock(this.articleStock).subscribe(
+  //   this.articleStock.article = article;
+
+  //   this._articleStockService.saveArticleStock(this.articleStock).subscribe(
+  //     result => {
+  //       if (!result.articleStock) {
+  //         if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+  //       } else {
+  //         this.articleStock = result.articleStock;
+  //       }
+  //       this.loading = false;
+  //     },
+  //     error => {
+  //       this.showMessage(error._body, "danger", false);
+  //       this.loading = false;
+  //     }
+  //   );
+  // }
+
+  public saveVariants(articleParent: Article): void {
+
+    if( this.variants && this.variants.length > 0 && 
+        this.numberOfRequestsStored < this.variants.length) {
+          let variant = this.variants[this.numberOfRequestsStored];
+          variant.articleParent = articleParent;
+          let articleChild = articleParent;
+          articleChild.type = ArticleType.Variant;
+          articleChild.containsVariants = ContainsVariants.No;
+          this.saveArticleChild(articleChild ,variant);
+    } else {
+      this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+      this.article = new Article();
+      this.filesToUpload = null;
+      this.buildForm();
+      this.getLastArticle();
+    }
+  }
+
+  public saveArticleChild(article: Article, variant: Variant): void {
+
+    this.loading = true;
+
+    this._articleService.saveArticle(article).subscribe(
       result => {
-        if (!result.articleStock) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        if (!result.article) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.articleStock = result.articleStock;
-          this.article = new Article();
-          this.filesToUpload = null;
-          this.buildForm();
-          this.getLastArticle();
+          article = result.article;
+          variant.articleChild = article;
+          this.saveVariant(variant);
         }
         this.loading = false;
       },
@@ -516,6 +579,32 @@ export class AddArticleComponent  implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public saveVariant(variant: Variant): void {
+    
+    this.loading = true;
+
+    this._variantService.saveVariant(variant).subscribe(
+      result => {
+        if (!result.variant) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          variant = result.variant;
+          this.numberOfRequestsStored++;
+          this.saveVariants(variant.articleParent);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public manageVariants(variants: Variant[]): void {
+    this.variants = variants;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
