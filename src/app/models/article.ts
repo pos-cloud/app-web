@@ -5,7 +5,7 @@ export class Article {
 
     public _id: string;
     public type: ArticleType = ArticleType.Final;
-    public containsVariants: ContainsVariants = ContainsVariants.No;
+    public containsVariants: boolean = false;
     public code: string = "00001";
     public description: string = "";
     public posDescription: string = "";
@@ -25,7 +25,6 @@ export class Article {
     public printed: boolean;
     public picture: string;
 
-
     constructor() {}
 }
 
@@ -39,9 +38,4 @@ export enum ArticleType {
     Final = <any>"Final",
     Variant = <any>"Variante",
     Ingredient = <any>"Ingrediente"
-}
-
-export enum ContainsVariants {
-    Yes = <any>"Si",
-    No = <any>"No"
 }

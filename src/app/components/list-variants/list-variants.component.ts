@@ -128,14 +128,14 @@ export class ListVariantsComponent implements OnInit {
 
   public addVariant(variant: Variant): void {
     
-    if(!this.existsVariant(variant)) {
+    if(!this.variantExists(variant)) {
       this.variantsLocals.push(variant);
     }
     
     this.refresh();
   }
 
-  public existsVariant(variant: Variant): boolean {
+  public variantExists(variant: Variant): boolean {
 
     var exists: boolean = false;
 

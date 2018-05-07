@@ -70,27 +70,27 @@
         <div class="form-group col-md-12">
           <label for="requestArticles" class="control-label">¿Se intercambia artículos en la transacción?</label>
           <select class="form-control" formControlName="requestArticles">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
           </select>
           <div *ngIf="formErrors.requestArticles" class="alert alert-danger">
             {{ formErrors.requestArticles }}
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transactionTypeForm.value.requestArticles === 'Si'">
+      <div class="row" *ngIf="transactionTypeForm.value.requestArticles">
         <div class="form-group col-md-12">
           <label for="modifyStock" class="control-label">¿La transacción afecta stock?</label>
           <select class="form-control" formControlName="modifyStock">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
           </select>
           <div *ngIf="formErrors.modifyStock" class="alert alert-danger">
             {{ formErrors.modifyStock }}
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transactionTypeForm.value.modifyStock === 'Si'">
+      <div class="row" *ngIf="transactionTypeForm.value.modifyStock">
         <div class="form-group col-md-12">
           <label for="stockMovement" class="control-label">¿Como modifica al stock?</label>
           <select class="form-control" formControlName="stockMovement">
@@ -106,8 +106,8 @@
         <div class="form-group col-md-12">
           <label for="defectOrders" class="control-label">¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?</label>
           <select class="form-control" formControlName="defectOrders">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
           </select>
         </div>
       </div>
@@ -130,15 +130,15 @@
         <div class="form-group col-md-12">
           <label for="electronics" class="control-label">¿Es un documento electrónico?</label>
           <select class="form-control" formControlName="electronics">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
           </select>
           <div *ngIf="formErrors.electronics" class="alert alert-danger">
             {{ formErrors.electronics }}
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transactionTypeForm.value.electronics=='Si'">
+      <div class="row" *ngIf="transactionTypeForm.value.electronics">
         <div class="form-group col-md-4">
           <label for="codeA">Código AFIP A</label>
           <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"/>
@@ -156,12 +156,12 @@
         <div class="form-group col-md-12">
           <label for="printable" class="control-label">¿Imprime al finalizar la carga?</label>
           <select class="form-control" formControlName="printable">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
           </select>
         </div>
       </div>
-      <div class="row" *ngIf="transactionTypeForm.value.printable === 'Si'">
+      <div class="row" *ngIf="transactionTypeForm.value.printable">
         <div class="form-group col-md-12">
           <label for="defectPrinter" class="control-label">Selecciona impresora defecto</label>
           <select class="form-control" formControlName="defectPrinter">
@@ -173,8 +173,8 @@
         <div class="form-group col-md-12">
           <label for="tax">¿La transacción afecta el libor de IVA?</label>
           <select class="form-control" formControlName="tax">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
           </select>
         </div>
       </div>

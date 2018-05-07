@@ -212,110 +212,9 @@ export class AddCompanyComponent  implements OnInit {
     this._vatCondition.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          this.saveVATConditions();
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.vatConditions = result.vatConditions;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public saveVATConditions(): void {
-
-    this.loading = true;
-    let vatConditionCF = new VATCondition();
-    vatConditionCF.code = 5;
-    vatConditionCF.description = "Consumidor Final";
-    vatConditionCF.discriminate = "No";
-    vatConditionCF.transactionLetter = "B";
-
-    this._vatCondition.saveVATCondition(vatConditionCF).subscribe(
-      result => {
-        if (!result.vatCondition) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {
-          let vatConditionRI = new VATCondition();
-          vatConditionRI.code = 1;
-          vatConditionRI.description = "Responsable Inscripto";
-          vatConditionRI.discriminate = "Si";
-          vatConditionRI.transactionLetter = "A";
-
-          this._vatCondition.saveVATCondition(vatConditionRI).subscribe(
-            result => {
-              if (!result.vatCondition) {
-                if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-              } else {
-                let vatConditionM = new VATCondition();
-                vatConditionM.code = 6;
-                vatConditionM.description = "Monotributista";
-                vatConditionM.discriminate = "No";
-                vatConditionM.transactionLetter = "B";
-
-                this._vatCondition.saveVATCondition(vatConditionM).subscribe(
-                  result => {
-                    if (!result.vatCondition) {
-                      if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-                    } else {
-                      let vatConditionM = new VATCondition();
-                      vatConditionM.code = 2;
-                      vatConditionM.description = "Responsable No Inscripto";
-                      vatConditionM.discriminate = "Si";
-                      vatConditionM.transactionLetter = "A";
-
-                      this._vatCondition.saveVATCondition(vatConditionM).subscribe(
-                        result => {
-                          if (!result.vatCondition) {
-                            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-                          } else {
-                            let vatConditionM = new VATCondition();
-                            vatConditionM.code = 4;
-                            vatConditionM.description = "Exento";
-                            vatConditionM.discriminate = "No";
-                            vatConditionM.transactionLetter = "B";
-
-                            this._vatCondition.saveVATCondition(vatConditionM).subscribe(
-                              result => {
-                                if (!result.vatCondition) {
-                                  if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-                                } else {
-                                  this.getVATConditions();
-                                }
-                                this.loading = false;
-                              },
-                              error => {
-                                this.showMessage(error._body, "danger", false);
-                                this.loading = false;
-                              }
-                            );
-                          }
-                          this.loading = false;
-                        },
-                        error => {
-                          this.showMessage(error._body, "danger", false);
-                          this.loading = false;
-                        }
-                      );
-                    }
-                    this.loading = false;
-                  },
-                  error => {
-                    this.showMessage(error._body, "danger", false);
-                    this.loading = false;
-                  }
-                );
-              }
-              this.loading = false;
-            },
-            error => {
-              this.showMessage(error._body, "danger", false);
-              this.loading = false;
-            }
-          );
         }
         this.loading = false;
       },
@@ -381,8 +280,7 @@ export class AddCompanyComponent  implements OnInit {
     this._companyService.saveCompany(this.company).subscribe(
     result => {
         if (!result.company) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
-          this.loading = false;
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.company = result.company;
           this.showMessage("La empresa se ha añadido con éxito.", "success", false);

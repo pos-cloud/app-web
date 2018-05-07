@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { TransactionType, DefectOrders, TransactionMovement } from './../models/transaction-type';
+import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
 
@@ -56,7 +56,7 @@ export class TransactionTypeService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transaction-types/where="defectOrders":"' + DefectOrders.Yes + '"', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transaction-types/where="defectOrders":' + true + '', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionByType(type: string) {

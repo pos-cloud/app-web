@@ -155,6 +155,7 @@ export class AddVariantValueComponent implements OnInit {
           this.variantValue = result.variantValue;
           this.showMessage("El valor de variante se ha añadido con éxito.", "success", true);
           this.variantValue = new VariantValue();
+          this.variantValue.type = this.variantValueForm.value.type;
           this.buildForm();
         }
         this.loading = false;

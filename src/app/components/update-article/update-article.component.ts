@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //Models
-import { Article, ArticlePrintIn, ContainsVariants, ArticleType } from './../../models/article';
+import { Article, ArticlePrintIn, ArticleType } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { Make } from './../../models/make';
 import { Category } from './../../models/category';
@@ -42,7 +42,7 @@ export class UpdateArticleComponent implements OnInit {
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
-  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Bar, ArticlePrintIn.Kitchen, ArticlePrintIn.Counter];
+  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter];
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
@@ -275,9 +275,9 @@ export class UpdateArticleComponent implements OnInit {
       this.autocompleteCode();
       this.article.type = ArticleType.Final;
       if (this.variants && this.variants.length > 0) {
-        this.article.containsVariants = ContainsVariants.Yes;
+        this.article.containsVariants = true;
       } else {
-        this.article.containsVariants = ContainsVariants.No;
+        this.article.containsVariants = false;
       }
       if(this.articleForm.value.make) {
         this.getMake();
@@ -295,7 +295,7 @@ export class UpdateArticleComponent implements OnInit {
       variant.articleParent = articleParent;
       let articleChild = articleParent;
       articleChild.type = ArticleType.Variant;
-      articleChild.containsVariants = ContainsVariants.No;
+      articleChild.containsVariants = false;
       this.saveArticleChild(articleChild, variant);
     } else {
       this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
@@ -542,7 +542,7 @@ export class UpdateArticleComponent implements OnInit {
               (result) => {
                 this.resultUpload = result;
                 this.article.picture = this.resultUpload.filename;
-                if (this.article.containsVariants === ContainsVariants.Yes) {
+                if (this.article.containsVariants) {
                   this.saveVariants(this.article);
                 } else {
                   this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
@@ -553,7 +553,7 @@ export class UpdateArticleComponent implements OnInit {
               }
               );
           } else {
-            if (this.article.containsVariants === ContainsVariants.Yes) {
+            if (this.article.containsVariants) {
               this.saveVariants(this.article);
             } else {
               this.showMessage("El artículo se ha actualizado con éxito.", "success", false);

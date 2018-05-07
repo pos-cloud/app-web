@@ -18,7 +18,6 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 //Componentes
-import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';

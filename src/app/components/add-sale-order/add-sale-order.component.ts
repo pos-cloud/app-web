@@ -10,7 +10,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement, ModififyStock, StockMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
 import { TransactionTax } from './../../models/transaction-tax';
 import { Article, ArticlePrintIn } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
@@ -23,6 +23,7 @@ import { Print } from './../../models/print';
 import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Turn } from './../../models/turn';
 import { Config } from './../../app.config';
+import { CompanyType } from '../../models/company';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -33,19 +34,20 @@ import { TurnService } from './../../services/turn.service';
 import { PrinterService } from './../../services/printer.service';
 import { UserService } from './../../services/user.service';
 import { PrintService } from './../../services/print.service';
+import { ArticleStockService } from '../../services/article-stock.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
-import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
+import { AddMovementOfArticleComponent } from './../add-movement-of-article/add-movement-of-article.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 import { PrintComponent } from './../../components/print/print.component';
+import { DeleteTransactionComponent } from '../delete-transaction/delete-transaction.component';
+import { AddMovementOfCashComponent } from '../add-movement-of-cash/add-movement-of-cash.component';
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
-import { CompanyType } from '../../models/company';
-import { ArticleStockService } from '../../services/article-stock.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -59,16 +61,11 @@ export class AddSaleOrderComponent implements OnInit {
   public transaction: Transaction;
   public transactionMovement: string;
   public alertMessage: string = "";
-  public movementOfArticle: MovementOfArticle;
-  public lastMovementOfArticle: MovementOfArticle;
   public movementsOfArticles: MovementOfArticle[];
   public printers: Printer[];
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
-  public amountOfItemForm: FormGroup;
-  public discountForm: FormGroup;
   public paymentForm: FormGroup;
-  public areMovementsOfArticlesEmpty: boolean = true;
   public userType: string;
   public posType: string;
   public table: Table; //Solo se usa si posType es igual a resto
@@ -76,13 +73,8 @@ export class AddSaleOrderComponent implements OnInit {
   public areCategoriesVisible: boolean = true;
   public areArticlesVisible: boolean = false;
   public categorySelected: Category;
-  @ViewChild('content') content: ElementRef;
-  @ViewChild('contentCancelOrder') contentCancelOrder: ElementRef;
-  @ViewChild('contentDiscount') contentDiscount: ElementRef;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
-  public isNewItem: boolean;
-  public isCreateItem: boolean;
   public paymentAmount: number = 0.00;
   public typeOfOperationToPrint: string;
   public kitchenArticlesToPrint: MovementOfArticle[];
@@ -92,46 +84,7 @@ export class AddSaleOrderComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber = new RoundNumberPipe();
   public amountModifyStock = 0; //Saber cuando termina de actualizar el stock
-
-  public formErrors = {
-    'description': '',
-    'amount': '',
-    'salePrice': ''
-  };
-
-  public validationMessages = {
-    'description': {
-      'required': 'Este campo es requerido.'
-    },
-    'amount': {
-      'required': 'Este campo es requerido.'
-    },
-    'salePrice': {
-      'required': 'Este campo es requerido.'
-    }
-  };
-
-  public formErrorsDiscount = {
-    'totalPrice': '',
-    'amount': '',
-    'percentage': '',
-    'transactionAmount': ''
-  };
-
-  public validationMessagesDiscount = {
-    'totalPrice': {
-      'required': 'Este campo es requerido.'
-    },
-    'amount': {
-      'required': 'Este campo es requerido.'
-    },
-    'percentage': {
-      'required': 'Este campo es requerido.'
-    },
-    'transactionAmount': {
-      'required': 'Este campo es requerido.'
-    }
-  };
+  public areMovementsOfArticlesEmpty: boolean = true;
 
   constructor(
     public _fb: FormBuilder,
@@ -151,7 +104,6 @@ export class AddSaleOrderComponent implements OnInit {
     private cdref: ChangeDetectorRef
   ) {
     this.transaction = new Transaction();
-    this.movementOfArticle = new MovementOfArticle();
     this.movementsOfArticles = new Array();
     this.categorySelected = new Category();
     this.printers = new Array();
@@ -383,134 +335,6 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public buildForm(): void {
-
-    this.amountOfItemForm = this._fb.group({
-      '_id': [this.movementOfArticle._id, [
-      ]
-      ],
-      'description': [this.movementOfArticle.description, [
-        Validators.required
-      ]
-      ],
-      'amount': [this.movementOfArticle.amount, [
-        Validators.required
-      ]
-      ],
-      'salePrice': [this.movementOfArticle.salePrice, [
-        Validators.required
-      ]
-      ],
-      'notes': [this.movementOfArticle.notes, [
-      ]
-      ]
-    });
-
-    this.amountOfItemForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
-    this.onValueChanged();
-  }
-
-  public onValueChanged(data?: any): void {
-
-    if (!this.amountOfItemForm) { return; }
-    const form = this.amountOfItemForm;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
-  }
-
-  public buildFormDiscount(): void {
-    this.discountForm = this._fb.group({
-      'totalPrice': [this.roundNumber.transform(this.transaction.totalPrice + this.transaction.discountAmount,2), [
-          Validators.required
-        ]
-      ],
-      'amount': [this.roundNumber.transform(this.transaction.discountAmount,3), [
-          Validators.required
-        ]
-      ],
-      'percentage': [this.roundNumber.transform(this.transaction.discountPercent,3), [
-          Validators.required
-        ]
-      ],
-      'transactionAmount': [this.roundNumber.transform(this.transaction.totalPrice,2), [
-          Validators.required
-        ]
-      ]
-    });
-
-    this.discountForm.valueChanges
-      .subscribe(data => this.onValueChangedDiscount(data));
-
-    this.onValueChangedDiscount();
-  }
-
-  public onValueChangedDiscount(data?: any): void {
-
-    if (!this.discountForm) { return; }
-    const form = this.discountForm;
-
-    for (const field in this.formErrorsDiscount) {
-      this.formErrorsDiscount[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessagesDiscount[field];
-        for (const key in control.errors) {
-          this.formErrorsDiscount[field] += messages[key] + ' ';
-        }
-      }
-    }
-  }
-
-  public updateDiscounts(op: string): void {
-
-    if (op === 'percentage') {
-      if (this.discountForm.value.percentage && this.discountForm.value.percentage >= 0) {
-        this.discountForm.value.amount = this.roundNumber.transform(((this.transaction.totalPrice + this.transaction.discountAmount) * this.discountForm.value.percentage / 100),3);
-        this.discountForm.value.transactionAmount = this.roundNumber.transform(((this.transaction.totalPrice + this.transaction.discountAmount) - this.discountForm.value.amount),2);
-      } else {
-        this.discountForm.value.amount = 0;
-        this.discountForm.value.percentage = 0;
-      }
-    } else if (op === 'amount') {
-      if (this.discountForm.value.amount && this.discountForm.value.amount >= 0) {
-        this.discountForm.value.transactionAmount = this.roundNumber.transform(((this.transaction.totalPrice + this.transaction.discountAmount) - this.discountForm.value.amount),2);
-        this.discountForm.value.percentage = this.roundNumber.transform((this.discountForm.value.amount * 100 / (this.transaction.totalPrice + this.transaction.discountAmount)),3);
-      } else {
-        this.discountForm.value.amount = 0;
-        this.discountForm.value.percentage = 0;
-      }
-    }
-
-    this.setValueFormDiscount();
-  }
-
-  public setValueFormDiscount() {
-
-    this.discountForm.value.amount = this.roundNumber.transform(this.discountForm.value.amount,3);
-    this.discountForm.value.transactionAmount = this.roundNumber.transform(this.discountForm.value.transactionAmount,2);
-    this.discountForm.value.percentage = this.roundNumber.transform(this.discountForm.value.percentage,3);
-
-    this.discountForm.setValue({
-      'totalPrice': this.transaction.totalPrice + this.transaction.discountAmount,
-      'percentage': this.discountForm.value.percentage,
-      'amount': this.discountForm.value.amount,
-      'transactionAmount': this.discountForm.value.transactionAmount
-    });
-  }
-
   public addTransaction(): void {
 
     this.loading = true;
@@ -642,70 +466,62 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public addItem(itemData?: MovementOfArticle): void {
+  public addItem(itemData: MovementOfArticle): void {
 
-    if (itemData) {
-      if (!this.lastMovementOfArticle || itemData.code !== this.lastMovementOfArticle.code) {
-        let article: Article = new Article();
-        article.basePrice = itemData.basePrice;
-        article.VATAmount = itemData.VATAmount;
-        article.costPrice = itemData.costPrice;
-        article.markupPrice = itemData.markupPrice;
-        article.salePrice = itemData.salePrice;
-        this.movementOfArticle = itemData;
-        this.movementOfArticle.article = article;
-        this.movementOfArticle.article._id = itemData._id;
-        this.movementOfArticle.printed = 0;
-        this.movementOfArticle.transaction = this.transaction;
-        this.movementOfArticle.amount = 1;
-        this.lastMovementOfArticle = this.movementOfArticle;
-        if (( this.filterArticle !== undefined && this.filterArticle !== "") || 
-              this.transaction.type.transactionMovement === TransactionMovement.Stock) {
+    let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData._id);
 
-          this.isNewItem = true;
-          this.isCreateItem = false;
+    if (!movementOfArticle) {
+      movementOfArticle = itemData;
+      movementOfArticle.article = new Article();
+      movementOfArticle.article._id = itemData._id;
+      movementOfArticle.printed = 0;
+      movementOfArticle.transaction = this.transaction;
+      movementOfArticle.amount = 1;
+      this.saveMovementOfArticle(movementOfArticle);
+    } else {
+      movementOfArticle.amount += 1; 
+      movementOfArticle.basePrice += itemData.basePrice;
+      movementOfArticle.VATAmount += itemData.VATAmount;
+      movementOfArticle.costPrice += itemData.costPrice;
+      movementOfArticle.markupPrice += itemData.markupPrice;
+      movementOfArticle.salePrice += itemData.salePrice;
+      this.updateMovementOfArticle(movementOfArticle);
+    }
+  }
 
-          this.buildForm();
-
-          this.setValueFormAmountOfItem();
-          this.cleanFilterArticle();
-          this.openModal('edit_item');
-        } else {
-          this.saveMovementOfArticle();
-        }
-      } else {
-        this.movementOfArticle = this.lastMovementOfArticle;
-        this.movementOfArticle.amount += 1;
-        this.movementOfArticle.basePrice += itemData.basePrice;
-        this.movementOfArticle.VATAmount += itemData.VATAmount;
-        this.movementOfArticle.costPrice += itemData.costPrice;
-        this.movementOfArticle.markupPrice += itemData.markupPrice;
-        this.movementOfArticle.salePrice += itemData.salePrice;
-        if ((this.filterArticle !== undefined && this.filterArticle !== "") ||
-          this.transaction.type.transactionMovement === TransactionMovement.Stock) {
-
-          this.isNewItem = false;
-          this.isCreateItem = false;
-
-          this.buildForm();
-
-          this.setValueFormAmountOfItem();
-          this.cleanFilterArticle();
-          this.openModal('edit_item');
-        } else {
-          this.updateMovementOfArticle(this.movementOfArticle);
+  public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
+    
+    let movementOfArticle: MovementOfArticle;
+    
+    if(this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+      for(let movementOfArticleAux of this.movementsOfArticles) {
+        if (movementOfArticleAux.article._id === articleId) {
+          movementOfArticle = movementOfArticleAux;
         }
       }
-
-    } else {
-      this.buildForm();
-      this.isCreateItem = true;
-      this.isNewItem = false;
-      this.movementOfArticle = new MovementOfArticle();
-      this.setValueFormAmountOfItem();
-      this.movementOfArticle.transaction = this.transaction;
-      this.openModal('add_new_item');
     }
+
+    return movementOfArticle;
+  }
+
+  public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
+
+    this.loading = true;
+
+    this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
+      result => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.getMovementsOfTransaction();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public cleanFilterArticle(): void {
@@ -778,40 +594,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.updateTransaction(false);
   }
 
-  public editItem(itemData: MovementOfArticle): void {
-
-    this.isCreateItem = false;
-    this.isNewItem = false;
-
-    this.buildForm();
-
-    this.movementOfArticle = itemData;
-    this.setValueFormAmountOfItem();
-
-    this.openModal('edit_item');
-  }
-
-  public setValueFormAmountOfItem(): void {
-
-    if (!this.movementOfArticle._id) this.movementOfArticle._id = "";
-    if (!this.movementOfArticle.description) this.movementOfArticle.description = "";
-    if (!this.movementOfArticle.amount) this.movementOfArticle.amount = 1;
-    if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
-    if (!this.movementOfArticle.notes) this.movementOfArticle.notes = "";
-
-    this.movementOfArticle.amount = this.roundNumber.transform(this.movementOfArticle.amount, 2);
-    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice,2);
-
-    this.amountOfItemForm.setValue({
-      '_id': this.movementOfArticle._id,
-      'description': this.movementOfArticle.description,
-      'amount': this.movementOfArticle.amount,
-      'salePrice': this.movementOfArticle.salePrice,
-      'notes': this.movementOfArticle.notes,
-    });
-
-  }
-
   public validateElectronicTransaction(): void {
     
     this.showMessage("Validando comprobante con AFIP...", "info", false);
@@ -837,57 +619,29 @@ export class AddSaleOrderComponent implements OnInit {
     )
   }
 
-  public openModal(op: string): void {
+  public openModal(op: string, movementOfArticle?: MovementOfArticle): void {
 
     let modalRef;
 
     switch (op) {
-      case 'edit_item':
-        let cantidadOriginal = this.movementOfArticle.amount;
-        modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
-          if (result === "edit_item") {
-            this.confirmAmount('edit');
-          } else if (result === "delete_item") {
-            this.deleteMovementOfArticle();
-          } else {
-            this.movementOfArticle.amount = cantidadOriginal;
-          }
-        }, (reason) => {
-          this.movementOfArticle.amount = cantidadOriginal;
-        });
-        break;
-      case 'add_new_item':
-
-        modalRef = this._modalService.open(this.content, { size: 'lg' }).result.then((result) => {
-          if (result === "edit_item") {
-            this.confirmAmount('add');
+      case 'movement_of_article':
+        modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg' });
+        modalRef.componentInstance.movementOfArticle = movementOfArticle;
+        modalRef.result.then((result) => {
+          if (result === "save" ||
+              result === "update" ||
+              result === "delete") {
+            this.getMovementsOfTransaction();
           }
         }, (reason) => {
 
         });
         break;
-      case 'apply_discount':
-
-        this.buildFormDiscount();
-
-        if (this.movementsOfArticles.length !== 0) {
-          modalRef = this._modalService.open(this.contentDiscount, { size: 'lg' }).result.then((result) => {
-            if (result === "apply_discount") {
-              this.applyDiscount(this.discountForm.value.percentage, this.discountForm.value.amount);
-            }
-          }, (reason) => {
-
-          });
-        } else {
-          this.showMessage("No existen productos en el pedido.", "info", true);
-          this.loading = false;
-        }
-        break;
-      case 'cancel_transaction':
-
-        modalRef = this._modalService.open(this.contentCancelOrder, { size: 'lg' }).result.then((result) => {
-          if (result === "cancel_transaction") {
-            this.transaction.state = TransactionState.Canceled;
+      case 'cancel':
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = this.transaction;
+        modalRef.result.then((result) => {
+          if (result === 'delete_close') {
             this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
             if (this.posType === "resto") {
               this.updateTransaction(false);
@@ -920,106 +674,84 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'charge':
         this.typeOfOperationToPrint = "charge";
-        if (this.movementsOfArticles.length !== 0) {
-          if((this.transaction.type.transactionMovement === TransactionMovement.Purchase && this.transaction.company) ||
-              this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-            if (this.transaction.type.electronics === "No" ||
-                (this.transaction.company && this.transaction.type.electronics === "Si")) {
-              if (this.transaction.type.electronics === "No" ||
-                  (this.transaction.type.electronics === "Si" &&
-                  (this.transaction.company.CUIT || this.transaction.company.DNI))) {
-                  modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-                  modalRef.componentInstance.transaction = this.transaction;
-                  modalRef.result.then((result) => {
-                    if (typeof result == 'object') {
-                      
-                      if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
-                        let movementOfArticle = new MovementOfArticle();
-                        movementOfArticle.code = "0";
-                        movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                        movementOfArticle.VATPercentage = 21;
-                        movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
-                        movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
-                        movementOfArticle.transaction = this.transaction;
-                        this.movementOfArticle = movementOfArticle;
-                        this.transaction.totalPrice = result.amountPaid;
-                        this.saveMovementOfArticle();
-                      }
-  
+        
+        if(this.isValidCharge()) {
+
+          modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+          modalRef.componentInstance.transaction = this.transaction;
+          modalRef.result.then((result) => {
+            if (typeof result == 'object') {
+
+              if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
+                let movementOfArticle = new MovementOfArticle();
+                movementOfArticle.code = "0";
+                movementOfArticle.description = "Recargo con Tarjeta de Crédito";
+                movementOfArticle.VATPercentage = 21;
+                movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
+                movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
+                movementOfArticle.transaction = this.transaction;
+                this.transaction.totalPrice = result.amountPaid;
+                this.saveMovementOfArticle(movementOfArticle);
+              }
+
+              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
+                if (this.transaction.type.electronics && !this.transaction.CAE) {
+                  this.validateElectronicTransaction();
+                } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                  this.finishTransaction();
+                } else {
+                  if (this.transaction.type.printable &&
+                    this.transaction.type.printable) {
+                    if (this.transaction.type.defectPrinter) {
+                      this.printerSelected = this.transaction.type.defectPrinter;
+                      this.assignTransactionNumber();
+                      this.distributeImpressions(this.transaction.type.defectPrinter);
+                    } else {
+                      this.openModal('printers');
+                    }
+                  } else {
+                    this.assignTransactionNumber();
+                    this.loading = false;
+                  }
+                }
+              } else {
+                if (this.transaction.type.electronics) {
+                  this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
+                  this.loading = false;
+                } else {
+                  if (this.transaction.type.printable) {
+                    if (this.transaction.type.defectPrinter) {
+                      this.printerSelected = this.transaction.type.defectPrinter;
+                      this.distributeImpressions(this.transaction.type.defectPrinter);
+                    } else {
+                      this.openModal('printers');
+                    }
+                  } else {
+                    if (this.typeOfOperationToPrint === "charge") {
                       if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                         this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                        if( this.transaction.type.electronics === "Si" && !this.transaction.CAE) {
-                          this.validateElectronicTransaction();
-                        } else if ( this.transaction.type.electronics === "Si" && this.transaction.CAE) { 
-                          this.finishTransaction();
-                        } else {
-                          if (this.transaction.type.printable && 
-                              this.transaction.type.printable === "Si") {
-                            if(this.transaction.type.defectPrinter) {
-                              this.printerSelected = this.transaction.type.defectPrinter;
-                              this.assignTransactionNumber();
-                              this.distributeImpressions(this.transaction.type.defectPrinter);
-                            } else {
-                              this.openModal('printers');
-                            }
-                          } else {
-                              this.assignTransactionNumber();
-                              this.loading = false;
-                          }
-                        }
                       } else {
-                        if (this.transaction.type.electronics === "Si") {
-                          this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
-                          this.loading = false;
-                        } else {
-                          if(this.transaction.type.printable === "Si") {
-                            if(this.transaction.type.defectPrinter) {
-                              this.printerSelected = this.transaction.type.defectPrinter;
-                              this.distributeImpressions(this.transaction.type.defectPrinter);
-                            } else {
-                              this.openModal('printers');
-                            }
-                          } else {
-                            if (this.typeOfOperationToPrint === "charge") {
-                              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                                this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                              } else {
-                                let origin = 0;
-                                this.assignOriginAndLetter(origin);
-                              }
-                              this.assignTransactionNumber();
-                              this.loading = false;
-                            } else if (this.typeOfOperationToPrint === "bill") {
-                              this.changeStateOfTable(TableState.Pending, true);
-                            } else {
-                              if (this.posType === "resto") {
-                                this.changeStateOfTable(TableState.Busy, true);
-                              } else {
-                                this.back();
-                              }
-                            }
-                          }
-                        }
+                        let origin = 0;
+                        this.assignOriginAndLetter(origin);
+                      }
+                      this.assignTransactionNumber();
+                      this.loading = false;
+                    } else if (this.typeOfOperationToPrint === "bill") {
+                      this.changeStateOfTable(TableState.Pending, true);
+                    } else {
+                      if (this.posType === "resto") {
+                        this.changeStateOfTable(TableState.Busy, true);
+                      } else {
+                        this.back();
                       }
                     }
-                  }, (reason) => {
                   }
-                );
-              } else {
-                this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
-                this.loading = false;
+                }
               }
-            } else {
-              this.showMessage("Debe cargar un cliente al pedido.", "info", true);
-              this.loading = false;
             }
-          } else {
-            this.showMessage("Debe seleccionar un proveedor para la transacción.", "info", true);
-            this.loading = false;
-          }
-        } else {
-          this.showMessage("No existen productos en la transacción.", "info", true);
-          this.loading = false;
+          }, (reason) => {
+          });
         }
         break;
       case 'printers':
@@ -1035,7 +767,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.distributeImpressions(this.printersAux[0]);
         } else {
           if (this.typeOfOperationToPrint === "charge") {
-            if (this.transaction.type.electronics === "No") {
+            if (!this.transaction.type.electronics) {
               this.assignTransactionNumber();
               this.loading = false;
             } else {
@@ -1102,79 +834,46 @@ export class AddSaleOrderComponent implements OnInit {
           }
           this.hideMessage();
         });
-        // modalRef.componentInstance.print = this.printSelected;
-        // if (this.typeOfOperationToPrint === 'charge') {
-        //   modalRef.componentInstance.movementsOfArticles = this.movementsOfArticles;
-        // } else if (this.typeOfOperationToPrint === 'bill') {
-        //   modalRef.componentInstance.movementsOfArticles = this.movementsOfArticles;
-        // } else if (this.typeOfOperationToPrint === 'bar') {
-        //   modalRef.componentInstance.movementsOfArticles = this.barArticlesToPrint;
-        // } else if (this.typeOfOperationToPrint === 'kitchen') {
-        //   modalRef.componentInstance.movementsOfArticles = this.kitchenArticlesToPrint;
-        // }
-        // modalRef.componentInstance.typePrint = this.typeOfOperationToPrint;
-        // modalRef.result.then(
-        //   (result) => {
-        //     if (this.typeOfOperationToPrint === 'kitchen') {
-        //       for (let movementOfArticle of this.kitchenArticlesToPrint) {
-        //         movementOfArticle.printed += movementOfArticle.amount;
-        //         this.updateMovementOfArticle(movementOfArticle);
-        //       }
-        //       if (this.posType === 'resto') {
-        //         this.changeStateOfTable(TableState.Pending, true);
-        //       }
-        //     } else if (this.typeOfOperationToPrint === 'bill') {
-        //       if (this.posType === 'resto') {
-        //         this.changeStateOfTable(TableState.Pending, true);
-        //       }
-        //     } else if (this.typeOfOperationToPrint === 'charge') {
-        //       this.finishTransaction();
-        //     } else if (this.typeOfOperationToPrint === 'bar') {
-        //       for (let movementOfArticle of this.barArticlesToPrint) {
-        //         movementOfArticle.printed += movementOfArticle.amount;
-        //         this.updateMovementOfArticle(movementOfArticle);
-        //       }
-        //       if (this.kitchenArticlesToPrint.length === 0) {
-        //         if (this.posType === 'resto') {
-        //           this.changeStateOfTable(TableState.Pending, true);
-        //         } else if (this.posType === 'resto') {
-        //           this.back();
-        //         }
-        //       } else {
-        //         this.typeOfOperationToPrint = "kitchen";
-        //         this.openModal("printers");
-        //       }
-        //     }
-        // }, (reason) => {
-
-        // });
         break;
       default: ;
     };
   }
 
-  public applyDiscount(percentage: number, amount: number): void {
-    
-    for (let movementOfArticle of this.movementsOfArticles) {
-      if(percentage !== 0) {
-        movementOfArticle.markupPercentage = this.roundNumber.transform(movementOfArticle.markupPercentage - (percentage - this.transaction.discountPercent),2);
-        if(movementOfArticle.costPrice === 0) {
-          movementOfArticle.salePrice = this.roundNumber.transform((movementOfArticle.article.salePrice - (movementOfArticle.article.salePrice * percentage / 100)), 2);
-          movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice, 3);
-        } else {
-          movementOfArticle.markupPrice = this.roundNumber.transform((movementOfArticle.costPrice * movementOfArticle.markupPercentage / 100), 3);
-          movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.costPrice + movementOfArticle.markupPrice, 2);
-        }
-      } else {
-        movementOfArticle.markupPercentage = movementOfArticle.article.markupPercentage;
-        movementOfArticle.salePrice = movementOfArticle.article.salePrice;
-        movementOfArticle.markupPrice = movementOfArticle.article.markupPrice;
-      }
-      this.updateMovementOfArticle(movementOfArticle);
+  public isValidCharge(): boolean {
+
+    let isValidCharge = true;
+
+    if (this.movementsOfArticles.length <= 0) {
+      isValidCharge = false;
+      this.showMessage("No existen productos en la transacción.", "info", true);
     }
-    this.transaction.discountPercent = this.roundNumber.transform(percentage, 3);
-    this.transaction.discountAmount = this.roundNumber.transform(amount, 3);
-    this.updateTransaction(false);
+
+    if (isValidCharge &&
+      this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+      !this.transaction.company) {
+      isValidCharge = false;
+      this.showMessage("Debe seleccionar un proveedor para la transacción.", "info", true);
+    }
+
+    if (isValidCharge &&
+      this.transaction.type.electronics &&
+      this.transaction.totalPrice > 1000 &&
+      !this.transaction.company) {
+      isValidCharge = false;
+      this.showMessage("Debe indentificar al cliente para documentos electrónicos con monto mayor a $1.000,00.", "info", true);
+    }
+
+    if (isValidCharge &&
+        this.transaction.type.electronics &&
+        this.transaction.company &&
+        ((!this.transaction.company.CUIT || (this.transaction.company.CUIT && this.transaction.company.CUIT !== "")) ||
+        (!this.transaction.company.DNI || (this.transaction.company.DNI && this.transaction.company.DNI !== "")))) {
+      isValidCharge = false;
+      this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
+      this.loading = false;
+    }
+
+    return isValidCharge;
   }
 
   public countPrinters(): number {
@@ -1214,28 +913,7 @@ export class AddSaleOrderComponent implements OnInit {
         if(printer.type === PrinterType.PDF) {
           this.openModal("print");
         } else {
-          this.toPrintCharge(printer);
-        }
-        break;
-      case 'bill':
-        if (printer.type === PrinterType.PDF) {
-          this.openModal("print");
-        } else {
-          this.toPrintBill(printer);
-        }
-        break;
-      case 'bar':
-        if (printer.type === PrinterType.PDF) {
-          this.openModal("print");
-        } else {
-          this.toPrintBar(printer);
-        }
-        break;
-      case 'kitchen':
-        if (printer.type === PrinterType.PDF) {
-          this.openModal("print");
-        } else {
-          this.toPrintKitchen(printer);
+         
         }
         break;
       default:
@@ -1259,7 +937,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public assignTransactionNumber() {
 
-    if(this.transaction.type.electronics !== "Si") {
+    if(this.transaction.type.electronics) {
       this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
         result => {
           if (!result.transactions) {
@@ -1280,6 +958,28 @@ export class AddSaleOrderComponent implements OnInit {
       this.finishTransaction();
       this.loading = false;
     }
+  }
+
+  public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
+
+    this.loading = true;
+
+    this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
+      result => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.hideMessage();
+          movementOfArticle = result.movementOfArticle;
+          this.getMovementsOfTransaction();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
   
   public setPrintBill(): void {
@@ -1310,7 +1010,7 @@ export class AddSaleOrderComponent implements OnInit {
   public back(): void {
 
     if(this.typeOfOperationToPrint === "charge") {
-      if( this.transaction.type.modifyStock === ModififyStock.Yes && 
+      if( this.transaction.type.modifyStock && 
           this.amountModifyStock < this.movementsOfArticles.length) {
             
         this.updateRealStock();
@@ -1376,68 +1076,6 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public confirmAmount(op: string): void {
-
-    this.movementOfArticle.description = this.amountOfItemForm.value.description;
-    this.movementOfArticle.amount = this.amountOfItemForm.value.amount;
-    this.movementOfArticle.notes = this.amountOfItemForm.value.notes;
-    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
-    this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
-    this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
-    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-    this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
-    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-    this.movementOfArticle.printed = 0;
-    if (op === 'add') {
-      this.saveMovementOfArticle();
-    } else if (op === 'edit') {
-      if(this.isNewItem) {
-        this.saveMovementOfArticle();
-      } else {
-        this.updateMovementOfArticle(this.movementOfArticle);
-      }
-    }
-  }
-
-  public saveMovementOfArticle(): void {
-
-    this.loading = true;
-
-    this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
-      result => {
-        if (!result.movementOfArticle) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {
-          this.hideMessage();
-          this.movementOfArticle = result.movementOfArticle;
-          this.getMovementsOfTransaction();
-          this.movementOfArticle = new MovementOfArticle();
-          this.buildForm();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public addAmount(): void {
-    this.movementOfArticle.amount += 1;
-    this.setValueFormAmountOfItem();
-  }
-
-  public subtractAmount(): void {
-    if (this.amountOfItemForm.value.amount > 1) {
-      this.movementOfArticle.amount -= 1;
-      this.setValueFormAmountOfItem();
-    } else {
-      this.movementOfArticle.amount = 1;
-      this.setValueFormAmountOfItem();
-    }
-  }
-
   public getMovementsOfTransaction(): void {
 
     this.loading = true;
@@ -1447,12 +1085,10 @@ export class AddSaleOrderComponent implements OnInit {
         if (!result.movementsOfArticles) {
           this.areMovementsOfArticlesEmpty = true;
           this.movementsOfArticles = new Array();
-          this.lastMovementOfArticle = undefined;
           this.updatePrices();
         } else {
           this.areMovementsOfArticlesEmpty = false;
-          this.movementsOfArticles = result.movementsOfArticles;
-          this.lastMovementOfArticle = result.movementsOfArticles[result.movementsOfArticles.length - 1];
+          this.movementsOfArticles = result.movementsOfArticles; 
           this.updatePrices();
         }
         this.loading = false;
@@ -1470,25 +1106,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.areArticlesVisible = false;
   }
 
-  public deleteMovementOfArticle(): void {
-
-    this.loading = true;
-
-    this._movementOfArticleService.deleteMovementOfArticle(this.amountOfItemForm.value._id).subscribe(
-      result => {
-        this.getMovementsOfTransaction();
-        this.activeModal.close();
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
-  }
-
-
-
   public updatePrices(): void {
 
     this.transaction.totalPrice = 0;
@@ -1504,360 +1121,6 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     this.updateTaxes();
-  }
-
-  public toPrintBill(printerSelected: Printer): void {
-
-    this.loading = true;
-    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
-
-    if (this.movementsOfArticles.length !== 0) {
-
-      this.typeOfOperationToPrint = 'charge';
-
-      let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('UDS');
-      let content: string;
-
-      content =
-        '<table>' +
-        '<tbody>';
-      if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
-      if (Config.companyCUIT) content += '<tr><td colspan="12"><font face="Courier" size="2">CUIT Nro.: ' + Config.companyCUIT + '</font></font></td></tr>';
-      if (Config.companyAddress) content += '<tr><td colspan="12"><font face="Courier" size="2">' + Config.companyAddress + '</font></td></tr>';
-      if (Config.companyPhone) content += '<tr><td colspan="12"><font face="Courier" size="2">Tel: ' + Config.companyPhone + '</font></td></tr>';
-      content +=
-        '<tr><td colspan="5"><font face="Courier" size="2">P.V. Nro.: ' + decimalPipe.transform(this.transaction.origin, '4.0-0').replace(/,/g, "") + '</font></td>' +
-        '<td colspan="7" align="right"><font face="Courier" size="2">Nro. T.            ' + decimalPipe.transform(this.transaction.number, '8.0-0').replace(/,/g, "") + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.endDate, 'HH:mm') + '</font></td></tr>';
-      if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
-      if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
-      if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
-      content += '<tr><td colspan="12"><hr></td></tr>';
-      for (let movementOfArticle of this.movementsOfArticles) {
-        content +=
-          '<tr>' +
-          '<td colspan="7"><font face="Courier" size="2">' + movementOfArticle.description + '</font></td>' +
-          '<td colspan="2"><font face="Courier" size="2">' + movementOfArticle.amount + '</font></td>' +
-          '<td colspan="3" align="right"><font face="Courier" size="2">' + decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '</font></td>' +
-          '</tr>';
-        if (movementOfArticle.notes) {
-          content +=
-            '<tr>' +
-            '<td colspan="12"><font face="Courier" size="1"><em>' + movementOfArticle.notes + '<em></font></td>' +
-            '</tr>';
-        }
-      }
-
-      content +=
-        '<tr><td colspan="12"><hr></td></tr>' +
-        '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discountAmount, '1.2-2') + '</font></td></tr>' +
-        '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
-        '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
-        '</tbody>' +
-        '</table>';
-
-      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
-
-      let print = new Print();
-      print.fileName = fileName;
-      print.content = content;
-      print.printer = printerSelected;
-      this.printSelected = print;
-
-      this._printService.toPrint(print).subscribe(
-        result => {
-          if (result.message !== "ok") {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          } else {
-            if (this.posType === 'resto') {
-              this.changeStateOfTable(TableState.Pending, true);
-            } else {
-              this.back();
-            }
-            this.hideMessage();
-          }
-          this.loading = false;
-        },
-        error => {
-          this.openModal('errorMessage');
-          this.hideMessage();
-        }
-      );
-    } else {
-      this.showMessage("No existen productos en el pedido.", "info", true);
-    }
-  }
-
-  public toPrintCharge(printerSelected: Printer): void {
-
-    this.loading = true;
-    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
-    if(printerSelected.type === PrinterType.PDF) {
-      this.openModal("print");
-    } else {
-      if (this.movementsOfArticles.length !== 0) {
-  
-        this.typeOfOperationToPrint = 'charge';
-  
-        let datePipe = new DateFormatPipe();
-        let decimalPipe = new DecimalPipe('UDS');
-        let content: string;
-  
-        content =
-          '<table>' +
-          '<tbody>';
-        if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
-        if (Config.companyCUIT) content += '<tr><td colspan="12"><font face="Courier" size="2">CUIT Nro.: ' + Config.companyCUIT + '</font></font></td></tr>';
-        if (Config.companyAddress) content += '<tr><td colspan="12"><font face="Courier" size="2">' + Config.companyAddress + '</font></td></tr>';
-        if (Config.companyPhone) content += '<tr><td colspan="12"><font face="Courier" size="2">Tel: ' + Config.companyPhone + '</font></td></tr>';
-        content +=
-          '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.startDate, 'DD/MM/YYYY') + '</font></td>' +
-          '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
-        if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
-        if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeOpening.name + '</font></td></tr>';
-        if (this.transaction.company) content += '<tr><td colspan="12"><font face="Courier" size="2">Cliente: ' + this.transaction.company.name + '</font></td></tr>';
-        content += '<tr><td colspan="12"><hr></td></tr>';
-        for (let movementOfArticle of this.movementsOfArticles) {
-          content +=
-            '<tr>' +
-            '<td colspan="7"><font face="Courier" size="2">' + movementOfArticle.description + '</font></td>' +
-            '<td colspan="2"><font face="Courier" size="2">' + movementOfArticle.amount + '</font></td>' +
-            '<td colspan="3" align="right"><font face="Courier" size="2">' + decimalPipe.transform(movementOfArticle.salePrice, '1.2-2') + '</font></td>' +
-            '</tr>';
-          if (movementOfArticle.notes) {
-            content +=
-              '<tr>' +
-              '<td colspan="12"><font face="Courier" size="1"><em>' + movementOfArticle.notes + '<em></font></td>' +
-              '</tr>';
-          }
-        }
-  
-        content +=
-          '<tr><td colspan="12"><hr></td></tr>' +
-          '<tr><td colspan="6"><font face="Courier" size="2">Descuento:</font></td>' +
-          '<td colspan="6" align="right"><font face="Courier" size="2">' + '-' + decimalPipe.transform(this.transaction.discountAmount, '1.2-2') + '</font></td></tr>' +
-          '<tr><td colspan="6"><font face="Courier" size="2"><b>Total:</b></font></td>' +
-          '<td colspan="6" align="right"><font face="Courier" size="2"><b>' + decimalPipe.transform(this.transaction.totalPrice, '1.2-2') + '</b></font></td></tr>' +
-          '<tr><td colspan="12" align="center"><font face="Courier" size="2">Ticket no válido como factura.</font></td></tr>' +
-          '<tr><td colspan="12" align="center"><font face="Courier" size="2">*Gracias por su visita*</font></td></tr>' +
-          '</tbody>' +
-          '</table>';
-  
-        let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
-  
-        let print = new Print();
-        print.fileName = fileName;
-        print.content = content;
-        print.printer = printerSelected;
-        this.printSelected = print;
-  
-        this._printService.toPrint(print).subscribe(
-          result => {
-            if (result.message !== "ok") {
-              if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-            } else {
-              this.assignOriginAndLetter(printerSelected.origin);
-              this.assignTransactionNumber();
-              this.hideMessage();
-            }
-            this.loading = false;
-          },
-          error => {
-            this.openModal('errorMessage');
-            this.hideMessage();
-          }
-        );
-      } else {
-        this.showMessage("No existen productos en el pedido.", "info", true);
-      }
-    }
-  }
-
-  public toPrintBar(printerSelected: Printer): void {
-
-    this.loading = true;
-    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
-
-    if (this.movementsOfArticles.length !== 0) {
-
-      this.typeOfOperationToPrint = 'bar';
-
-      let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('UDS');
-      let content: string;
-
-      content =
-        '<table>' +
-        '<tbody>' +
-        '<tr><td colspan="12" align="center"><b><font face="Courier">BAR</font><td></tr>';
-      if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
-      content +=
-        '<tr><td colspan="12"><font face="Courier" size="2">Nro. Pedido ' + this.transaction.number + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
-      if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
-      if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
-      content += '<tr><td colspan="12"><hr></td></tr>';
-      for (let movementOfArticle of this.barArticlesToPrint) {
-        content +=
-          '<tr>' +
-          '<td colspan="3"><font face="Courier" size="2">' + (movementOfArticle.amount - movementOfArticle.printed) + '</font></td>' +
-          '<td colspan="9"><font face="Courier" size="2">' + movementOfArticle.description + '</font></td>' +
-          '</tr>';
-        if (movementOfArticle.notes) {
-          content +=
-            '<tr>' +
-            '<td colspan="12"><font face="Courier" size="1"><em>' + movementOfArticle.notes + '<em></font></td>' +
-            '</tr>';
-        }
-      }
-
-      content +=
-        '</tbody>' +
-        '</table>';
-
-      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
-
-      let print = new Print();
-      print.fileName = fileName;
-      print.content = content;
-      print.printer = printerSelected;
-      this.printSelected = print;
-
-      this._printService.toPrint(print).subscribe(
-        result => {
-          if (result.message !== "ok") {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          } else {
-            for (let movementOfArticle of this.barArticlesToPrint) {
-              movementOfArticle.printed = movementOfArticle.amount;
-              this.updateMovementOfArticle(movementOfArticle);
-            }
-            if (this.kitchenArticlesToPrint.length === 0) {
-              if (this.posType === 'resto') {
-                this.changeStateOfTable(TableState.Busy, true);
-              } else {
-                this.back();
-              }
-            } else {
-              this.typeOfOperationToPrint = "kitchen";
-              this.openModal("printers");
-            }
-            this.hideMessage();
-          }
-          this.loading = false;
-        },
-        error => {
-          this.openModal('errorMessage');
-          this.hideMessage();
-        }
-      );
-    } else {
-      this.showMessage("No existen productos en el pedido.", "info", true);
-    }
-  }
-
-  public toPrintKitchen(printerSelected: Printer): void {
-
-    this.loading = true;
-    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
-
-    if (this.movementsOfArticles.length !== 0) {
-
-      this.typeOfOperationToPrint = 'kitchen';
-
-      let datePipe = new DateFormatPipe();
-      let decimalPipe = new DecimalPipe('UDS');
-      let content: string;
-
-      content =
-        '<table>' +
-        '<tbody>' +
-        '<tr><td colspan="12" align="center"><b><font face="Courier">COCINA</font><td></tr>';
-      if (Config.companyName) content += '<tr><td colspan="12" align="center"><b><font face="Courier">' + Config.companyName + '</font><td></tr>';
-      content +=
-        '<tr><td colspan="12"><font face="Courier" size="2">Nro. Pedido ' + this.transaction.number + '</font></td></tr>' +
-        '<tr><td colspan="7"><font face="Courier" size="2">Fecha ' + datePipe.transform(this.transaction.endDate, 'DD/MM/YYYY') + '</font></td>' +
-        '<td colspan="5" align="right"><font face="Courier" size="2">Hora ' + datePipe.transform(this.transaction.startDate, 'HH:mm') + '</font></td></tr>';
-      if (this.transaction.table) content += '<tr><td colspan="4"><font face="Courier" size="2">Mesa: ' + this.transaction.table.description + '</font></td>';
-      if (this.transaction.employeeClosing) content += '<td colspan="8" align="right"><font face="Courier" size="2">Mozo: ' + this.transaction.employeeClosing.name + '</font></td></tr>';
-      content += '<tr><td colspan="12"><hr></td></tr>';
-      for (let movementOfArticle of this.kitchenArticlesToPrint) {
-        content +=
-          '<tr>' +
-          '<td colspan="3"><font face="Courier" size="2">' + (movementOfArticle.amount - movementOfArticle.printed) + '</font></td>' +
-          '<td colspan="9"><font face="Courier" size="2">' + movementOfArticle.description + '</font></td>' +
-          '</tr>';
-        if (movementOfArticle.notes) {
-          content +=
-            '<tr>' +
-            '<td colspan="12"><font face="Courier" size="1"><em>' + movementOfArticle.notes + '<em></font></td>' +
-            '</tr>';
-        }
-      }
-
-      content +=
-        '</tbody>' +
-        '</table>';
-
-      let fileName: string = 'pedido-' + this.transaction.origin + '-' + this.transaction.number;
-
-      let print = new Print();
-      print.fileName = fileName;
-      print.content = content;
-      print.printer = printerSelected;
-      this.printSelected = print;
-
-      this._printService.toPrint(print).subscribe(
-        result => {
-          if (result.message !== "ok") {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          } else {
-            for (let movementOfArticle of this.kitchenArticlesToPrint) {
-              movementOfArticle.printed = movementOfArticle.amount;
-              this.updateMovementOfArticle(movementOfArticle);
-            }
-            if (this.posType === 'resto') {
-              this.changeStateOfTable(TableState.Busy, true);
-            } else {
-              this.back();
-            }
-          }
-          this.loading = false;
-          this.hideMessage();
-        },
-        error => {
-          this.openModal('errorMessage');
-          this.hideMessage();
-        }
-      );
-    } else {
-      this.showMessage("No existen productos en el pedido.", "info", true);
-    }
-  }
-
-  public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
-
-    this.loading = true;
-
-    this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
-      result => {
-        if (!result.movementOfArticle) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {
-          this.updatePrices();
-          //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

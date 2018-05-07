@@ -1,5 +1,5 @@
 <!-- SECCION RESTO -->
-<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas' && (modules | async)?.sale[0].resto === 'Yes'">
+<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas' && (modules | async)?.sale[0].resto">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -225,7 +225,7 @@
 </section>
 
 <!-- SECCION MOSTRADOR -->
-<section class="container-fluid" *ngIf="userType=='admin' && ((listType==='Ventas' && (modules | async)?.sale[0].resto !== 'Yes') || listType==='Compras')">
+<section class="container-fluid" *ngIf="userType=='admin' && ((listType==='Ventas' && !(modules | async)?.sale[0].resto) || listType==='Compras')">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -415,7 +415,7 @@
 </section>
 
 <!-- SECCION STOCK -->
-<section class="container-fluid" *ngIf="userType=='admin' && (((modules | async)?.stock === 'Yes') && listType==='Stock')">
+<section class="container-fluid" *ngIf="userType=='admin' && (((modules | async)?.stock) && listType==='Stock')">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}

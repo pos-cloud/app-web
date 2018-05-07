@@ -56,7 +56,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let movementOfArticle of movementsOfArticles" (click)="editItem(movementOfArticle)">
+            <tr *ngFor="let movementOfArticle of movementsOfArticles" (click)="openModal('movement_of_article', movementOfArticle)">
               <td>{{movementOfArticle.amount}}</td>
               <td>{{movementOfArticle.description}}
                 <strong *ngIf="movementOfArticle.notes">
@@ -113,15 +113,7 @@
           </tbody>
         </table>
       </div>
-      <div class="row" *ngIf="posType==='resto' && transactionMovement && transactionMovement !== 'Stock'">
-        <div class="col-md-6 btn-action btn-large center-content" (click)="setPrintBill()">
-          Cuenta
-        </div>
-        <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('charge')">
-          Cobrar
-        </div>
-      </div>
-      <div class="row" *ngIf="posType!=='resto' && transactionMovement && transactionMovement !== 'Stock'">
+      <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
         <div class="col-md-12 btn-action btn-large center-content" (click)="openModal('charge')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
@@ -132,9 +124,6 @@
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Proveedor</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cliente</span>
         </div>
-        <!-- <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
-          Descuento
-        </div> -->
         <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('cancel_transaction')">
           Anular
         </div>
@@ -158,10 +147,6 @@
             <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Productos</span>
           </nav>
         </div>
-        <!-- SE QUITA FUNCION HASTA SABER QUE SE VAN A HACER CON LOS IMPUESTOS DE ARTICULO A AGREGAR -->
-        <!-- <div class="col-md-3 btn-action btn-large center-content" (click)="addItem()">
-          Agregar Producto
-        </div> -->
         <div class="col-md-1 btn-action btn-large center-content" (click)="close()">
           Cerrar
         </div>
@@ -180,180 +165,6 @@
     </div>
   </div>
 </section>
-
-<!--MODAL CANTIDAD-->
-<ng-template #content let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">Cantidad</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <form [formGroup]="amountOfItemForm" #formConfirmCant="ngForm" (ngSubmit)="c('edit_item')" autocomplete="off">
-    <div class="modal-body container-fluid">
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="description" class="control-label">Descripción:</label>
-          <div class="input-group">
-            <input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="!isCreateItem"/>
-          </div>
-          <div *ngIf="formErrors.description" class="alert alert-danger">
-            {{ formErrors.description }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="amount" class="control-label">Ingrese la Cantidad:</label>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-10">
-          <div class="input-group">
-            <input type="number" class="form-control" formControlName="amount" name="amount" autofocus/>
-          </div>
-          <div *ngIf="formErrors.amount" class="alert alert-danger">
-            {{ formErrors.amount }}
-          </div>
-        </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
-          <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
-        </div>
-      </div>
-      <div class="row" *ngIf="isCreateItem">
-        <div class="form-group col-md-12">
-          <label for="salePrice" class="control-label">Precio de Venta:</label>
-          <div class="input-group">
-            <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" />
-          </div>
-          <div *ngIf="formErrors.salePrice" class="alert alert-danger">
-            {{ formErrors.salePrice }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="notes" class="control-label">Notas:</label>
-          <div class="input-group">
-            <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
-          </div>
-          <div *ngIf="formErrors.notes" class="alert alert-danger">
-            {{ formErrors.notes }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-      <button type="button" class="btn btn-danger" *ngIf="!isCreateItem" (click)="c('delete_item')">Eliminar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!amountOfItemForm.valid || loading">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Aceptar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </form>
-</ng-template>
-
-<!--MODAL DESCUENTO-->
-<ng-template #contentDiscount let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">Descuento</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="c('apply_discount')" autocomplete="off">
-    <div class="modal-body container-fluid">
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="totalPrice" class="control-label">Monto de la transacción:</label>
-          <div class="input-group">
-            <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" readonly/>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="percentage" class="control-label">Percentageaje de descuento:</label>
-          <div class="input-group">
-            <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="percentage" name="percentage" step="0.01" (blur)="updateDiscounts('percentage')" autofocus/>
-          </div>
-          <div *ngIf="formErrors.percentage" class="alert alert-danger">
-            {{ formErrors.percentage }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="amount" class="control-label">Monto de descuento:</label>
-          <div class="input-group">
-            <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" (blur)="updateDiscounts('amount')"
-            />
-          </div>
-          <div *ngIf="formErrors.amount" class="alert alert-danger">
-            {{ formErrors.amount }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="transactionAmount" class="control-label">Monto de la transacción con descuento:</label>
-          <div class="input-group">
-            <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="transactionAmount" name="transactionAmount" step="0.01" readonly/>
-          </div>
-          <div *ngIf="formErrors.transactionAmount" class="alert alert-danger">
-            {{ formErrors.transactionAmount }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!discountForm.valid || loading">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Aceptar</span>
-        <span *ngIf="loading">Espere por favor</span>
-      </button>
-    </div>
-  </form>
-</ng-template>
-
-<!--MODAL ANULAR-->
-<ng-template #contentCancelOrder let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">Cancelar Pedido</h4>
-    <button type="button" class="close" aria-label="Close" (click)="c(close_click)">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="center-content" *ngIf="alertMessage !== ''">
-          <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-            {{alertMessage}}
-          </ngb-alert>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <p>¿Está seguro de anular el pedido?</p>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
-    <button type="submit" class="btn btn-primary" (click)="c('cancel_transaction')">Aceptar</button>
-  </div>
-</ng-template>
 
 <!--MODAL IMPRESORA-->
 <ng-template #contentPrinters let-c="close" let-d="dismiss">

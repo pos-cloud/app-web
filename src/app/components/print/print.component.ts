@@ -594,7 +594,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal')
     if (this.transaction.company &&
         this.transaction.company.vatCondition &&
-        this.transaction.company.vatCondition.discriminate === "Si") {
+        this.transaction.company.vatCondition.discriminate) {
       this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice - iva21 - iva10 - iva27), 2).toString(), 180, 247)
     } else {
       this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice), 2).toString(), 180, 247)

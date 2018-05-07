@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement, ModififyStock, StockMovement } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement } from './../../models/transaction-type';
 import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
@@ -241,16 +241,16 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
     if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
-    if (!this.transactionType.modifyStock) this.transactionType.modifyStock = ModififyStock.No;
+    if (!this.transactionType.modifyStock) this.transactionType.modifyStock = false;
     if (!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Outflows;
-    if (!this.transactionType.requestArticles) this.transactionType.requestArticles = RequestArticles.No;
-    if (!this.transactionType.defectOrders) this.transactionType.defectOrders = DefectOrders.No;
+    if (!this.transactionType.requestArticles) this.transactionType.requestArticles = false;
+    if (!this.transactionType.defectOrders) this.transactionType.defectOrders = false;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
     if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = "";
-    if (!this.transactionType.electronics) this.transactionType.electronics = "No";
-    if (!this.transactionType.printable) this.transactionType.printable = "No";
+    if (!this.transactionType.electronics) this.transactionType.electronics  = false;
+    if (!this.transactionType.printable) this.transactionType.printable  = false;
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
-    if (!this.transactionType.tax) this.transactionType.tax = "No";
+    if (!this.transactionType.tax) this.transactionType.tax  = false;
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,

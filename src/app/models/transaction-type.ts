@@ -8,17 +8,17 @@ export class TransactionType {
 	public labelPrint: string;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: Movements = Movements.Inflows;
-	public modifyStock: ModififyStock = ModififyStock.No;
+	public modifyStock: boolean = false;
 	public stockMovement: StockMovement = StockMovement.Inflows;
-	public requestArticles: RequestArticles = RequestArticles.No;
-	public defectOrders: DefectOrders = DefectOrders.No;
-	public electronics: string = "No";
+	public requestArticles: boolean = false;
+	public defectOrders: boolean = false;
+	public electronics: boolean = false;
 	public codes: CodeAFIP[];
 	public fixedOrigin: number = 1;
 	public fixedLetter: string;
-	public printable: string = "No";
+	public printable: boolean = false;
 	public defectPrinter: Printer;
-	public tax: string = "No";
+	public tax: boolean = false;
 
 	constructor() { }
 }
@@ -33,11 +33,6 @@ export enum StockMovement {
 	Outflows = <any>"Salida"
 }
 
-export enum ModififyStock {
-	Yes = <any>"Si",
-	No = <any>"No"
-}
-
 export enum CurrentAcount {
 	Yes = <any>"Si",
 	No = <any>"No",
@@ -47,16 +42,6 @@ export enum CurrentAcount {
 export class CodeAFIP {
 	letter: string;
 	code: number;
-}
-
-export enum RequestArticles {
-	Yes = <any>"Si",
-	No = <any>"No"
-}
-
-export enum DefectOrders {
-	Yes = <any>"Si",
-	No = <any>"No"
 }
 
 export enum TransactionMovement {

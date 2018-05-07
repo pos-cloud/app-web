@@ -1,0 +1,77 @@
+<div class="modal-header">
+  <h4 class="modal-title">Agregar Artículo</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="movementOfArticleForm" #formAddMovementOfArticle="ngForm" (ngSubmit)="addMovementOfArticle()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="description" class="control-label">Descripción:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="!isCreateItem"
+            />
+          </div>
+          <div *ngIf="formErrors.description" class="alert alert-danger">
+            {{ formErrors.description }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="amount" class="control-label">Ingrese la Cantidad:</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-10">
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="amount" name="amount" autofocus/>
+          </div>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-danger" (click)="subtractAmount()">-</button>
+          <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
+        </div>
+      </div>
+      <div class="row" *ngIf="isCreateItem">
+        <div class="form-group col-md-12">
+          <label for="salePrice" class="control-label">Precio de Venta:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" />
+          </div>
+          <div *ngIf="formErrors.salePrice" class="alert alert-danger">
+            {{ formErrors.salePrice }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="notes" class="control-label">Notas:</label>
+          <div class="input-group">
+            <textarea type="text" class="form-control" formControlName="notes" name="notes" id="notes" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="deleteMovementOfArticle()" [disabled]="isCreateItem">Eliminar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!movementOfArticleForm.valid || loading">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

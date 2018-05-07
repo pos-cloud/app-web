@@ -186,7 +186,6 @@ export class AddVariantComponent implements OnInit {
     this.variant = this.variantForm.value;
     this.eventAddVariant.emit(this.variant);
     this.variant = new Variant();
-    this.variantTypeSelected = null;
     this.setValueForm();
     this.buildForm();
   }

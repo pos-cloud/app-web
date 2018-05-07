@@ -1,0 +1,17 @@
+.center-content {
+      margin-top: 30px;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-justify-content: center;
+      justify-content: center;
+}
+    
+img.mediana{
+  width: 200px; height: 150px;
+}
+
+.btn {
+      cursor: pointer;
+}

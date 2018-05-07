@@ -9,7 +9,7 @@ import { Employee } from './../../models/employee';
 import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, RequestArticles, DefectOrders, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement } from './../../models/transaction-type';
 import { PaymentMethod } from './../../models/payment-method';
 
 import { RoomService } from './../../services/room.service';
@@ -231,7 +231,7 @@ export class PointOfSaleComponent implements OnInit {
   }
   
   public addTransaction(type: TransactionType): void {
-    if(type.requestArticles === RequestArticles.Yes) {
+    if(type.requestArticles) {
       this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
     } else {
       this.openModal('company', type);
@@ -340,7 +340,7 @@ export class PointOfSaleComponent implements OnInit {
 
   public openTransaction(transaction: Transaction): void {
     
-    if(transaction.type.requestArticles === RequestArticles.Yes) {
+    if(transaction.type.requestArticles) {
       this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
     } else {
       this.openModal('transaction', transaction.type, transaction);

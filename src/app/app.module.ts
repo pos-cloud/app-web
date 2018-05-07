@@ -137,6 +137,7 @@ import { UpdateVariantValueComponent } from './components/update-variant-value/u
 import { AddVariantValueComponent } from './components/add-variant-value/add-variant-value.component';
 import { VariantValue } from './models/variant-value';
 import { VariantValueService } from './services/variant-value.service';
+import { AddMovementOfArticleComponent } from './components/add-movement-of-article/add-movement-of-article.component';
 
 @NgModule({
   declarations: [
@@ -227,8 +228,8 @@ import { VariantValueService } from './services/variant-value.service';
     ListVariantValuesComponent,
     DeleteVariantValueComponent,
     UpdateVariantValueComponent,
-    AddVariantValueComponent
-    
+    AddVariantValueComponent,
+    AddMovementOfArticleComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -242,7 +243,8 @@ import { VariantValueService } from './services/variant-value.service';
     DeleteVariantComponent,
     AddVariantValueComponent,
     UpdateVariantValueComponent,
-    DeleteVariantValueComponent
+    DeleteVariantValueComponent,
+    AddMovementOfArticleComponent
   ],
   imports: [
     BrowserModule,

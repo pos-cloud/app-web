@@ -19,7 +19,7 @@ export class AddPrinterComponent implements OnInit {
 
   public printer: Printer;
   public types: PrinterType[] = [PrinterType.PDF];
-  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar];
+  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter];
   public printerForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
