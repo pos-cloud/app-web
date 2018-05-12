@@ -16,8 +16,7 @@
         <div class="form-group col-md-12">
           <label for="description" class="control-label">Descripción:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="!isCreateItem"
-            />
+            <input type="text" class="form-control" formControlName="description" name="description" id="description" [readonly]="!isCreateItem"/>
           </div>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}

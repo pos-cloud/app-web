@@ -25,6 +25,7 @@ import { VariantService } from './../../services/variant.service';
 //Pipes
 import { DecimalPipe } from '@angular/common'; 
 import { SlicePipe } from '@angular/common'; 
+import { VariantType } from '../../models/variant-type';
 
 @Component({
   selector: 'app-add-article',
@@ -41,6 +42,8 @@ export class AddArticleComponent  implements OnInit {
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
+  public variantsStored = new Array();
+  public raffledVariants: Variant[] = Array();
   public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter];
   public alertMessage: string = "";
   public userType: string;
@@ -49,20 +52,26 @@ export class AddArticleComponent  implements OnInit {
   public resultUpload;
   public apiURL = Config.apiURL;
   public filesToUpload: Array<File>;
-  public numberOfRequestsStored: number = 0;
+  public numberOfVariantsStored: number = 0;
+  public numberOfVariantsToStore: number = 0;
+  public numberOfGroupOfVariantsStored: number = 0;
+  public numberOfGroupOfVariantsToStore: number = 0;
+  public numberOfArticleChildStored: number = 0;
+  public numberOfArticleChildToStore: number = 0;
+  public uniqueVariantTypes: VariantType[] = new Array();
 
   public formErrors = {
     'code': '',
     'make': '',
     'description': '',
     'posDescription': '',
-    'basePrice': 0.00,
-    'VATPercentage': 0.00,
-    'VATAmount': 0.00,
-    'costPrice': 0.00,
-    'markupPercentage': 0.00,
-    'markupPrice': 0.00,
-    'salePrice': 0.00,
+    'basePrice': '',
+    'VATPercentage': '',
+    'VATAmount': '',
+    'costPrice': '',
+    'markupPercentage': '',
+    'markupPrice': '',
+    'salePrice': '',
     'category': ''
   };
 
@@ -445,12 +454,13 @@ export class AddArticleComponent  implements OnInit {
                 this.resultUpload = result;
                 this.article.picture = this.resultUpload.filename;
                 if(this.article.containsVariants) {
-                  this.saveVariants(this.article);
+                  this.addVariants(this.article);
                 } else {
                   this.showMessage("El artículo se ha añadido con éxito.", "success", false);
                   this.article = new Article();
                   this.filesToUpload = null;
                   this.buildForm();
+                  this.variants = new Array();
                   this.getLastArticle();
                 }
               },
@@ -460,12 +470,13 @@ export class AddArticleComponent  implements OnInit {
               );
           } else {
             if (this.article.containsVariants) {
-              this.saveVariants(this.article);
+              this.addVariants(this.article);
             } else {
               this.showMessage("El artículo se ha añadido con éxito.", "success", false);
               this.article = new Article();
               this.filesToUpload = null;
               this.buildForm();
+              this.variants = new Array();
               this.getLastArticle();
             }
           }
@@ -539,38 +550,87 @@ export class AddArticleComponent  implements OnInit {
   //   );
   // }
 
-  public saveVariants(articleParent: Article): void {
+  public addVariants(articleParent: Article): void {
 
-    if( this.variants && this.variants.length > 0 && 
-        this.numberOfRequestsStored < this.variants.length) {
-          let variant = this.variants[this.numberOfRequestsStored];
-          variant.articleParent = articleParent;
-          let articleChild = articleParent;
-          articleChild.type = ArticleType.Variant;
-          articleChild.containsVariants = false;
-          this.saveArticleChild(articleChild ,variant);
+    this.numberOfArticleChildToStore = 1;
+
+    let variantTypes: VariantType[] = new Array();
+
+    if (this.variants && this.variants.length > 0) {
+      for(let variant of this.variants) {
+        variantTypes.push(variant.type);
+      }
+    }
+
+    this.uniqueVariantTypes = this.getUniqueValues(variantTypes);
+    this.numberOfVariantsToStore = this.uniqueVariantTypes.length;
+
+    for (let i = 0; i < this.uniqueVariantTypes.length; i++) {
+      this.numberOfArticleChildToStore *= this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes);
+    }
+    
+    this.numberOfGroupOfVariantsToStore = this.numberOfArticleChildToStore;
+
+    this.addArticleChildren(articleParent);
+  }
+
+  public getUniqueValues(array: Array<any>): Array<any> {
+
+    let uniqueArray = new Array();
+
+    for (let index = 0; index < array.length; index++) {
+      let el = array[index];
+      if (uniqueArray.indexOf(el) === -1) uniqueArray.push(el);
+    }
+
+    return uniqueArray;
+  }
+
+  public getDuplicateValues(value: any, array: Array<any>): number {
+
+    let duplicateArray = new Array();
+    let cant = 0;
+
+    for (let index = 0; index < array.length; index++) {
+      if (value._id === array[index]._id) {
+        cant++;
+      }
+    }
+
+    return cant;
+  }
+
+  public addArticleChildren(articleParent: Article): void {
+
+    if(this.numberOfArticleChildStored < this.numberOfArticleChildToStore) {
+
+      let articleChild = articleParent;
+      articleChild.type = ArticleType.Variant;
+      articleChild.containsVariants = false;
+      this.saveArticleChild(articleParent, articleChild);
     } else {
       this.showMessage("El artículo se ha añadido con éxito.", "success", false);
       this.article = new Article();
       this.filesToUpload = null;
       this.buildForm();
+      this.variants = new Array();
       this.getLastArticle();
     }
   }
 
-  public saveArticleChild(article: Article, variant: Variant): void {
+  public saveArticleChild(articleParent: Article, articleChild: Article): void {
 
     this.loading = true;
 
-    this._articleService.saveArticle(article).subscribe(
+    this._articleService.saveArticle(articleChild).subscribe(
       result => {
         if (!result.article) {
           if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
-          article = result.article;
-          variant.articleChild = article;
-          this.saveVariant(variant);
+          articleChild = result.article;
+          this.numberOfArticleChildStored++;
+          this.numberOfGroupOfVariantsStored = 0;
+          this.saveVariants(articleParent, articleChild);
         }
         this.loading = false;
       },
@@ -579,6 +639,78 @@ export class AddArticleComponent  implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public saveVariants(articleParent: Article, articleChild: Article): void {
+
+    if (this.numberOfGroupOfVariantsStored === 0) {
+      if (!this.raffledVariants || (this.raffledVariants && this.raffledVariants.length === 0)) {
+        let exists = false;
+        do {
+          for (let uniqueVariantType of this.uniqueVariantTypes) {
+            let variant = this.getVariantByType(uniqueVariantType);
+            variant.articleParent = articleParent;
+            variant.articleChild = articleChild;
+            this.raffledVariants.push(variant);
+          }
+
+          if(this.variantsExists()) {
+            exists = true;
+            this.raffledVariants = new Array();
+          } else {
+            exists = false;
+          }
+        } while(exists);
+      }
+      this.variantsStored[this.numberOfGroupOfVariantsStored] = this.raffledVariants;
+      this.numberOfVariantsStored = 0;
+      this.saveGroupOfVariants(articleParent, articleChild);
+    } else {
+      this.addArticleChildren(articleParent);
+    }
+  }
+
+  public variantsExists(): boolean {
+
+    let exists: boolean = false;
+    let equals: number = 0;
+
+    for (let i = 0; i < this.variantsStored.length; i++) {
+      for (let j = 0; j < this.raffledVariants.length; j++) { 
+        for (let k = 0; k < this.variantsStored[i].length; k++) {
+          if (this.raffledVariants[j].value._id == this.variantsStored[i][k].value._id) {
+            equals++;
+          }
+        }
+      }
+      exists = equals === this.uniqueVariantTypes.length;
+      equals = 0;
+    }
+    
+    return exists;
+  }
+
+  public getVariantByType(variantType: VariantType): Variant {
+
+    let variant;
+
+    do {
+      let random: number = Math.round(Math.random() * ((this.variants.length - 1) - 0) + 0);
+      variant = this.variants[random];
+    } while (variant.type._id !== variantType._id);
+
+    return variant;
+  }
+
+  public saveGroupOfVariants(articleParent: Article, articleChild: Article): void {
+
+    if (this.numberOfVariantsStored < this.numberOfVariantsToStore) {
+      this.saveVariant(this.raffledVariants[this.numberOfVariantsStored]);
+    } else {
+      this.numberOfGroupOfVariantsStored++;
+      this.raffledVariants = new Array();
+      this.saveVariants(articleParent, articleChild);
+    }
   }
 
   public saveVariant(variant: Variant): void {
@@ -591,8 +723,8 @@ export class AddArticleComponent  implements OnInit {
           if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           variant = result.variant;
-          this.numberOfRequestsStored++;
-          this.saveVariants(variant.articleParent);
+          this.numberOfVariantsStored++;
+          this.saveGroupOfVariants(variant.articleParent, variant.articleChild);
         }
         this.loading = false;
       },
