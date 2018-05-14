@@ -378,7 +378,7 @@ export class PointOfSaleComponent implements OnInit {
       transaction.state = TransactionState.Delivered;
     }
 
-    transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
+    transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
     this.updateTransaction(transaction);
   }

@@ -16,7 +16,7 @@ export class Transaction {
 	public origin: number = 0;
 	public letter: string = "X";
 	public number: number = 0;
-	public startDate: string = moment().format('DD/MM/YYYY HH:mm:ss');
+	public startDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public endDate: string;
 	public state: TransactionState = TransactionState.Open;
 	public exempt: number = 0.00;

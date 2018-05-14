@@ -42,6 +42,31 @@
           <button type="button" class="btn btn-success" (click)="addAmount()">+</button>
         </div>
       </div>
+      <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
+        <div class="form-group col-md-12">
+          <label for="variants" class="control-label">Seleccione las variantes:</label>
+        </div>
+      </div>
+      <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
+        <div class="form-group col-md-12">
+          <span *ngFor="let variantType of variantTypes">
+            {{ variantType.name }}
+            <div class="row">
+              <button type="button" 
+                      class="btn btn-variant"
+                      *ngFor="let variant of getVariantsByType(variantType)" 
+                      [ngClass]="{'btn-primary': selectedVariants[variant.type.name] !== null && selectedVariants[variant.type.name] === variant.value.description, 
+                                  'btn-secondary': selectedVariants[variant.type.name] === null  || selectedVariants[variant.type.name] !== variant.value.description}"
+                      (click)="selectVariant(variant.type, variant.value)" >
+                      {{ variant.value.description }}
+              </button>
+            </div>
+          </span>
+        </div>
+        <div *ngIf="errVariant" class="alert alert-danger">
+          {{ errVariant }}
+        </div>
+      </div>
       <div class="row" *ngIf="isCreateItem">
         <div class="form-group col-md-12">
           <label for="salePrice" class="control-label">Precio de Venta:</label>

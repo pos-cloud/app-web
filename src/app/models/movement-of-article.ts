@@ -1,5 +1,7 @@
 import { Article, ArticlePrintIn } from './article';
 import { Transaction } from './transaction';
+import { Make } from './make';
+import { Category } from './category';
 
 export class MovementOfArticle {
 
@@ -14,8 +16,8 @@ export class MovementOfArticle {
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
     public salePrice: number = 0.00;
-    public make: string;
-    public category: string;
+    public make: Make;
+    public category: Category;
     public barcode: string;
     public amount: number = 1;
     public notes: string;

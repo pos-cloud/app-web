@@ -472,12 +472,15 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (!movementOfArticle) {
       movementOfArticle = itemData;
-      movementOfArticle.article = new Article();
-      movementOfArticle.article._id = itemData._id;
+      movementOfArticle._id = "";
       movementOfArticle.printed = 0;
       movementOfArticle.transaction = this.transaction;
       movementOfArticle.amount = 1;
-      this.saveMovementOfArticle(movementOfArticle);
+      if(movementOfArticle.article.containsVariants) {
+        this.openModal("movement_of_article", movementOfArticle);
+      } else {
+        this.saveMovementOfArticle(movementOfArticle);
+      }
     } else {
       movementOfArticle.amount += 1; 
       movementOfArticle.basePrice += itemData.basePrice;
@@ -642,7 +645,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.transaction = this.transaction;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
+            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             if (this.posType === "resto") {
               this.updateTransaction(false);
               this.table.employee = null;
@@ -994,7 +997,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public finishTransaction() {
 
-    this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
+    this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     this.transaction.endDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
     

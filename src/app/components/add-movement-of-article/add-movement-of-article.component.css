@@ -8,10 +8,23 @@
       justify-content: center;
 }
     
-img.mediana{
+img.mediana {
   width: 200px; height: 150px;
+}
+
+.selectVariant {
+      height: 150px;
+}
+
+.form-check {
+      margin-left: 40px;
 }
 
 .btn {
       cursor: pointer;
+}
+
+.btn-variant {
+      width: 150px;
+      margin-left: 20px;
 }

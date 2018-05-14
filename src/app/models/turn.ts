@@ -6,7 +6,7 @@ import 'moment/locale/es';
 export class Turn {
 	
 	public _id: string;
-	public startDate: string = moment().format('DD/MM/YYYY HH:mm:ss');
+	public startDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public endDate: string;
 	public state: TurnState = TurnState.Open;
 	public employee: Employee = null;

@@ -108,7 +108,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm.setValue({
       'company': this.transaction.company.name,
-      'date': this.datePipe.transform(this.transaction.startDate, 'YYYY-MM-DD'),
+      'date': this.transaction.startDate,
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
@@ -123,7 +123,7 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
-      'date': [this.datePipe.transform(this.transaction.startDate, 'YYYY-MM-DD'), [
+      'date': [this.transaction.startDate, [
           Validators.required
         ]
       ],
@@ -171,8 +171,8 @@ export class AddTransactionComponent implements OnInit {
 
   public addTransaction(): void {
     
-    this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss');
-    this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss');
+    this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
+    this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
     this.transaction.origin = this.transactionForm.value.origin;
     
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {

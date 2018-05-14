@@ -8,13 +8,18 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //Models
 import { MovementOfArticle } from '../../models/movement-of-article';
+import { Article } from '../../models/article';
+import { Variant } from '../../models/variant';
+import { VariantValue } from '../../models/variant-value';
+import { VariantType } from '../../models/variant-type';
 
 //Services
 import { MovementOfArticleService } from '../../services/movement-of-article.service';
+import { VariantService } from '../../services/variant.service';
+import { VariantValueService } from '../../services/variant-value.service';
 
 //Pipes
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
-import { Article } from '../../models/article';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -26,6 +31,10 @@ import { Article } from '../../models/article';
 export class AddMovementOfArticleComponent implements OnInit {
 
   @Input() movementOfArticle: MovementOfArticle;
+  public variants: Variant[];
+  public selectedVariants;
+  public variantTypes: VariantType[];
+  public areVariantsEmpty: boolean = true;
   public movementOfArticleForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -33,6 +42,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   @Input() isCreateItem: boolean;
   public roundNumber: RoundNumberPipe;
+  public errVariant: string;
 
   public formErrors = {
     'description': '',
@@ -54,6 +64,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
+    public _variantService: VariantService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -63,12 +74,16 @@ export class AddMovementOfArticleComponent implements OnInit {
       this.isCreateItem = false;
     }
     this.roundNumber = new RoundNumberPipe();
+    this.selectedVariants = {};
   }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if(this.movementOfArticle.article && this.movementOfArticle.article.containsVariants) {
+      this.getVariantsByArticleParent();
+    }
     this.buildForm();
   }
 
@@ -123,6 +138,110 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
   }
 
+  public isValidSelectedVariants(): boolean {
+    
+    let isValid: boolean = true;
+
+    if(this.movementOfArticle.article.containsVariants) {
+      if(this.variantTypes.length > 0) {
+        for(let type of this.variantTypes) {
+          if(this.selectedVariants[type.name] === null) {
+            isValid = false;
+          }
+        }
+      }
+    }
+
+    return isValid;
+  }
+
+  public getVariantsByArticleParent(): void {
+
+    this.loading = true;
+
+    this._variantService.getVariantsByArticleParent(this.movementOfArticle.article).subscribe(
+      result => {
+        if (!result.variants) {
+          this.areVariantsEmpty = true;
+          this.variants = null;
+        } else {
+          this.variants = result.variants;
+          this.variantTypes = this.getUniqueValues('type', this.variants);
+          this.initializeSelectedVariants();
+          this.areVariantsEmpty = false;
+
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public initializeSelectedVariants(): void {
+    
+    if(this.variantTypes && this.variantTypes.length > 0) {
+      for(let type of this.variantTypes) {
+        let key = type.name;
+        this.selectedVariants[key] = null;
+      }
+    }
+  }
+
+  public getVariantsByType(variantType: VariantType): Variant[] {
+
+    let variantsToReturn: Variant[] = new Array();
+
+    for(let variant of this.variants) {
+      if (variant.type._id === variantType._id) {
+        if (variantsToReturn.length > 0) {
+          for(let variantAux of variantsToReturn) {
+            if(variant.value._id !== variantAux.value._id) {
+              variantsToReturn.push(variant);
+            }
+          }
+        } else {
+          variantsToReturn.push(variant);
+        }
+      }
+    }
+
+    return variantsToReturn;
+  }
+
+  public getUniqueValues(property: string, array: Array<any>): Array<any> {
+
+    let uniqueArray = new Array();
+    let exists = false;
+
+    for (let i = 0; i < array.length; i++) {
+      let el = array[i][property];
+      exists = false;
+      for(let j = 0; j < uniqueArray.length; j++) {
+        if (array[i][property]._id === uniqueArray[j]._id) {
+          exists = true;
+        }
+      }
+      if(!exists) {
+        uniqueArray.push(el);
+      }
+    }
+
+    return uniqueArray;
+  }
+
+  public selectVariant(type: VariantType, value: VariantValue): void {
+
+    let key = type.name;
+    if (value.description === this.selectedVariants[key]) {
+      this.selectedVariants[key] = null;
+    } else {
+      this.selectedVariants[key] = value.description;
+    }
+  }
+
   public addAmount(): void {
     this.movementOfArticle.amount += 1;
     this.setValueForm();
@@ -158,21 +277,98 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public addMovementOfArticle(): void {
 
-    this.movementOfArticle.description = this.movementOfArticleForm.value.description;
-    this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-    this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
-    this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
-    this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
-    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-    this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
-    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-    
-    if(this.movementOfArticle._id && this.movementOfArticle._id !== "") {
-      this.updateMovementOfArticle();
+    let isValidForm = this.movementOfArticleForm.valid;
+
+
+    if(this.movementOfArticle.article.containsVariants) {
+      if(!this.isValidSelectedVariants()) {
+        isValidForm = false;    
+        this.errVariant = "Debe seleccionar una variante";
+      } else {
+        this.errVariant = undefined;
+        let article = this.getArticleBySelectedVariants();
+        this.movementOfArticle.article = article;
+        this.movementOfArticle.description = this.movementOfArticleForm.value.description;
+        this.movementOfArticle.notes = "";
+        let variantsAux: Variant[] = this.getVariantsByArticleChild(article);
+        for(let i = 0; i < variantsAux.length; i++) {
+          this.movementOfArticle.notes += variantsAux[i].value.description;
+          if(variantsAux[i+1]) {
+            this.movementOfArticle.notes += " / ";
+          } else {
+            this.movementOfArticle.notes += "\r\n";
+          }
+        }
+        if (this.movementOfArticleForm.value.notes) {
+          this.movementOfArticle.notes += this.movementOfArticleForm.value.notes;
+        }
+        this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
+        this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
+        this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
+        this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+        this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
+        this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+        if (this.movementOfArticle._id && this.movementOfArticle._id !== "") {
+          this.updateMovementOfArticle();
+        } else {
+          this.saveMovementOfArticle();
+        }
+      }
     } else {
-      this.saveMovementOfArticle();
+      this.movementOfArticle.description = this.movementOfArticleForm.value.description;
+      this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+      this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+      this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
+      this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
+      this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
+      this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+      this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
+      this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+
+      if (this.movementOfArticle._id && this.movementOfArticle._id !== "") {
+        this.updateMovementOfArticle();
+      } else {
+        this.saveMovementOfArticle();
+      }
     }
+  }
+
+  public getArticleBySelectedVariants(): Article {
+    
+    let article;
+    
+    if(this.variants.length > 0) {
+      for(let variant of this.variants) {
+        if(variant.value.description === this.selectedVariants[variant.type.name]) {
+          for (let variantAux of this.variants) {
+            if (variant.articleChild._id === variantAux.articleChild._id) {
+              if (variant.value.description === this.selectedVariants[variant.type.name]) {
+                article = variant.articleChild;
+              } else {
+                article = null;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return article;
+  }
+
+  public getVariantsByArticleChild(article: Article): Variant[] {
+
+    let variantsToReturn: Variant[] = new Array();
+
+    if (this.variants.length > 0) {
+      for (let variant of this.variants) {
+        if (variant.articleChild._id === article._id) {
+          variantsToReturn.push(variant);
+        }
+      }
+    }
+
+    return variantsToReturn;
   }
 
   public saveMovementOfArticle(): void {

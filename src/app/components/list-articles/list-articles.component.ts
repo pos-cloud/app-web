@@ -14,6 +14,7 @@ import { DeleteArticleComponent } from './../../components/delete-article/delete
 import { ImportComponent } from './../../components/import/import.component';
 
 import { Config } from './../../app.config';
+import { MovementOfArticle } from '../../models/movement-of-article';
 
 @Component({
   selector: 'app-list-articles',
@@ -32,7 +33,7 @@ export class ListArticlesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<Article> = new EventEmitter<Article>();
+  @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategorySelected: Category;
   @Input() filterArticle: string;
@@ -163,13 +164,31 @@ export class ListArticlesComponent implements OnInit {
     }
   };
 
-  public addItem(articleSelected) {
-    this.eventAddItem.emit(articleSelected);
+  public addItem(articleSelected: Article) {
+    let movementOfArticle = new MovementOfArticle();
+    movementOfArticle.article = articleSelected;
+    movementOfArticle.code = articleSelected.code;
+    movementOfArticle.description = articleSelected.description;
+    movementOfArticle.observation = articleSelected.observation;
+    movementOfArticle.basePrice = articleSelected.basePrice;
+    movementOfArticle.VATPercentage = articleSelected.VATPercentage;
+    movementOfArticle.VATAmount = articleSelected.VATAmount;
+    movementOfArticle.costPrice = articleSelected.costPrice;
+    movementOfArticle.markupPercentage = articleSelected.markupPercentage;
+    movementOfArticle.markupPrice = articleSelected.markupPrice;
+    movementOfArticle.salePrice = articleSelected.salePrice;
+    movementOfArticle.make = articleSelected.make;
+    movementOfArticle.category = articleSelected.category;
+    movementOfArticle.barcode = articleSelected.barcode;
+    movementOfArticle.amount = 1;
+    this.eventAddItem.emit(movementOfArticle);
   }
 
   public filterItem(articles: Article[]) {
     if(articles != undefined && articles.length === 1 && this.articles.length >= 2) {
-      this.eventAddItem.emit(articles[0]);
+      let movementOfArticle: any = articles[0];
+      movementOfArticle.article = articles[0];
+      this.eventAddItem.emit();
     }
     this.filterArticle = "";
   }
