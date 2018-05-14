@@ -78,7 +78,7 @@ export class ListVariantsComponent implements OnInit {
           }
           this.variants = null;
         } else {
-          this.variants = result.variants;
+          this.variants = this.getUniqueVariants(result.variants);
           this.areVariantsEmpty = false;
         }
         this.loading = false;
@@ -88,6 +88,32 @@ export class ListVariantsComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+  
+  public getUniqueVariants(variants: Variant[]): Variant[] {
+    
+    let variantsToReturn: Variant[] = new Array();
+
+    for (let variant of variants) {
+      console.log(variant.value.description);
+      if (variantsToReturn.length > 0) {
+        let exists: boolean = false;
+        for (let variantAux of variantsToReturn) {
+          if (variantAux.value._id === variant.value._id) {
+            exists = true;
+          }
+        }
+        if(!exists) {
+          variantsToReturn.push(variant);
+        }
+      } else {
+        console.log("agrega variant");
+        console.log(variant.value._id);
+        variantsToReturn.push(variant);
+      }
+    }
+
+    return variantsToReturn;
   }
 
   public refresh(): void {
