@@ -34,6 +34,7 @@ export class AddCompanyComponent  implements OnInit {
     'code': '',
     'name': '',
     'fantasyName': '',
+    'entryDate': '',
     'type': '',
     'vatCondition': '',
     'identityType' : '',
@@ -54,6 +55,8 @@ export class AddCompanyComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'fantasyName': {
+    },
+    'entryDate': {
     },
     'type': {
       'required':       'Este campo es requerido.'
@@ -133,6 +136,9 @@ export class AddCompanyComponent  implements OnInit {
         ]
       ],
       'fantasyName': [this.company.fantasyName, [
+        ]
+      ],
+      'entryDate': [this.company.entryDate, [
         ]
       ],
       'type': [this.company.type, [
@@ -242,6 +248,7 @@ export class AddCompanyComponent  implements OnInit {
             'code': code,
             'name': '',
             'fantasyName': '',
+            'entryDate': this.company.entryDate,
             'type': this.company.type,
             'vatCondition': this.vatConditions[0],
             'identityType': this.identityTypes[0],

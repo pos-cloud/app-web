@@ -108,7 +108,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm.setValue({
       'company': this.transaction.company.name,
-      'date': this.transaction.startDate,
+      'date': moment(this.transaction.startDate).format('YYYY-MM-DD'),
       'origin': this.transaction.origin,
       'number': this.transaction.number,
       'totalPrice': this.transaction.totalPrice,
@@ -123,7 +123,7 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
-      'date': [this.transaction.startDate, [
+      'date': [moment(this.transaction.startDate).format('YYYY-MM-DD'), [
           Validators.required
         ]
       ],

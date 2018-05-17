@@ -11,7 +11,7 @@
       <form [formGroup]="" #formAddConfig="ngForm" (ngSubmit)="downloadlicense()" autocomplete="off">
         <div class= "row">
           <div class="form-group col-md-2">
-            <b>Vence {{config.expirationLicense}}</b>
+            <b>Vence {{ config.expirationLicense | dateFormat:'DD/MM/YYYY hh:mm:ss' }}</b>
           </div>
           <div class= "form-group col-md-10">
             <button type="submit" class="btn btn-primary" [disabled]="loading" >

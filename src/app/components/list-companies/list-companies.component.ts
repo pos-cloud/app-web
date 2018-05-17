@@ -53,7 +53,7 @@ export class ListCompaniesComponent implements OnInit {
     this.getCompaniesByType();
   }
 
-  public getCompaniesByType(): void {  
+  public getCompaniesByType(): void {
 
     this.loading = true;
 
@@ -86,7 +86,7 @@ export class ListCompaniesComponent implements OnInit {
           this.loading = false;
 				}
       );
-   }
+  }
 
   public orderBy (term: string, property?: string): void {
 

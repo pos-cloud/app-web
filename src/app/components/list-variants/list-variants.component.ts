@@ -95,7 +95,6 @@ export class ListVariantsComponent implements OnInit {
     let variantsToReturn: Variant[] = new Array();
 
     for (let variant of variants) {
-      console.log(variant.value.description);
       if (variantsToReturn.length > 0) {
         let exists: boolean = false;
         for (let variantAux of variantsToReturn) {
@@ -107,8 +106,6 @@ export class ListVariantsComponent implements OnInit {
           variantsToReturn.push(variant);
         }
       } else {
-        console.log("agrega variant");
-        console.log(variant.value._id);
         variantsToReturn.push(variant);
       }
     }

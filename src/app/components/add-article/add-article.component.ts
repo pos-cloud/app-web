@@ -444,29 +444,28 @@ export class AddArticleComponent  implements OnInit {
     result => {
         if (!result.article) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          this.loading = false;
         } else {
           this.article = result.article;
           if (this.filesToUpload) {
             this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
               .then(
-              (result) => {
-                this.resultUpload = result;
-                this.article.picture = this.resultUpload.filename;
-                if(this.article.containsVariants) {
-                  this.addVariants(this.article);
-                } else {
-                  this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-                  this.article = new Article();
-                  this.filesToUpload = null;
-                  this.buildForm();
-                  this.variants = new Array();
-                  this.getLastArticle();
+                (result) => {
+                  this.resultUpload = result;
+                  this.article.picture = this.resultUpload.filename;
+                  if(this.article.containsVariants) {
+                    this.addVariants(this.article);
+                  } else {
+                    this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+                    this.article = new Article();
+                    this.filesToUpload = null;
+                    this.buildForm();
+                    this.variants = new Array();
+                    this.getLastArticle();
+                  }
+                },
+                (error) => {
+                  this.showMessage(error, "danger", false);
                 }
-              },
-              (error) => {
-                this.showMessage(error, "danger", false);
-              }
               );
           } else {
             if (this.article.containsVariants) {
@@ -552,6 +551,8 @@ export class AddArticleComponent  implements OnInit {
 
   public addVariants(articleParent: Article): void {
 
+    this.loading = true;
+
     this.numberOfArticleChildToStore = 1;
 
     let variantTypes: VariantType[] = new Array();
@@ -609,6 +610,7 @@ export class AddArticleComponent  implements OnInit {
       articleChild.containsVariants = false;
       this.saveArticleChild(articleParent, articleChild);
     } else {
+      this.loading = false;
       this.showMessage("El artículo se ha añadido con éxito.", "success", false);
       this.article = new Article();
       this.filesToUpload = null;
@@ -642,6 +644,8 @@ export class AddArticleComponent  implements OnInit {
   }
 
   public saveVariants(articleParent: Article, articleChild: Article): void {
+
+    this.loading = true;
 
     if (this.numberOfGroupOfVariantsStored === 0) {
       if (!this.raffledVariants || (this.raffledVariants && this.raffledVariants.length === 0)) {
@@ -704,6 +708,8 @@ export class AddArticleComponent  implements OnInit {
 
   public saveGroupOfVariants(articleParent: Article, articleChild: Article): void {
 
+    this.loading = true;
+    
     if (this.numberOfVariantsStored < this.numberOfVariantsToStore) {
       this.saveVariant(this.raffledVariants[this.numberOfVariantsStored]);
     } else {

@@ -39,7 +39,11 @@ export class DeleteArticleComponent implements OnInit {
 
     this._articleService.deleteArticle(this.article._id).subscribe(
       result => {
-        this.activeModal.close('delete_close');
+        if (!result.article) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.activeModal.close('delete_close');
+        }
         this.loading = false;
       },
       error => {
