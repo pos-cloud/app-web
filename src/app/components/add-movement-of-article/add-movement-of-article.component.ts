@@ -208,6 +208,8 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
     }
 
+    variantsToReturn = this.getUniqueVariants(variantsToReturn);
+
     return variantsToReturn;
   }
 
@@ -225,6 +227,27 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
       }
       if(!exists) {
+        uniqueArray.push(el);
+      }
+    }
+
+    return uniqueArray;
+  }
+
+  public getUniqueVariants(array: Array<any>): Array<any> {
+
+    let uniqueArray = new Array();
+    let exists = false;
+
+    for (let i = 0; i < array.length; i++) {
+      let el = array[i];
+      exists = false;
+      for (let j = 0; j < uniqueArray.length; j++) {
+        if (array[i].value._id === uniqueArray[j].value._id) {
+          exists = true;
+        }
+      }
+      if (!exists) {
         uniqueArray.push(el);
       }
     }

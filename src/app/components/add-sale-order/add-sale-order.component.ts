@@ -469,7 +469,7 @@ export class AddSaleOrderComponent implements OnInit {
   public addItem(itemData: MovementOfArticle): void {
 
     let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData._id);
-
+    
     if (!movementOfArticle) {
       movementOfArticle = itemData;
       movementOfArticle._id = "";
