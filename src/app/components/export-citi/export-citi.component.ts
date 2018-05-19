@@ -21,6 +21,7 @@ export class ExportCitiComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public modelToImport: Array<String>;
   public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09","10","11","12"];
+  public ToggleButton: boolean;
 
   public formErrors = {
     'destination': '',
@@ -113,6 +114,7 @@ export class ExportCitiComponent implements OnInit {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         } else {
           this.showMessage("El archivo se genero correctamente.", "success", false);
+          this.ToggleButton = true;
         }
         this.loading = false;
       },
