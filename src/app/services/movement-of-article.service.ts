@@ -39,7 +39,16 @@ export class MovementOfArticleService {
       'Database': this._userService.getDatabase()
     });
     return this._http.get(Config.apiURL + "movements-of-articles", { headers: headers }).map (res => res.json());
-	}
+  }
+  
+  movementOfArticleExists(movementOfArticle: MovementOfArticle) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.get(Config.apiURL + 'movements-of-articles/where="article":"' + movementOfArticle.article._id + '","transaction":"' + movementOfArticle.transaction._id + '"', { headers: headers }).map(res => res.json());
+  }
 
   saveMovementOfArticle (movementOfArticle: MovementOfArticle) {
     let headers = new Headers({

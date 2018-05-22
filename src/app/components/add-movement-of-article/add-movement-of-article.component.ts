@@ -12,14 +12,18 @@ import { Article } from '../../models/article';
 import { Variant } from '../../models/variant';
 import { VariantValue } from '../../models/variant-value';
 import { VariantType } from '../../models/variant-type';
+import { ArticleStock } from '../../models/article-stock';
 
 //Services
 import { MovementOfArticleService } from '../../services/movement-of-article.service';
 import { VariantService } from '../../services/variant.service';
 import { VariantValueService } from '../../services/variant-value.service';
+import { ArticleStockService } from '../../services/article-stock.service';
 
 //Pipes
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+import { TransactionMovement } from '../../models/transaction-type';
+import { version } from 'punycode';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -31,16 +35,16 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 export class AddMovementOfArticleComponent implements OnInit {
 
   @Input() movementOfArticle: MovementOfArticle;
+  public articleStock: ArticleStock;
   public variants: Variant[];
-  public selectedVariants;
   public variantTypes: VariantType[];
+  public selectedVariants;
   public areVariantsEmpty: boolean = true;
   public movementOfArticleForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  @Input() isCreateItem: boolean;
   public roundNumber: RoundNumberPipe;
   public errVariant: string;
 
@@ -64,15 +68,13 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
+    public _articleStockService: ArticleStockService,
     public _variantService: VariantService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
-    if(this.isCreateItem) {
-      this.isCreateItem = false;
-    }
     this.roundNumber = new RoundNumberPipe();
     this.selectedVariants = {};
   }
@@ -299,9 +301,8 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public addMovementOfArticle(): void {
-
+    
     let isValidForm = this.movementOfArticleForm.valid;
-
 
     if(this.movementOfArticle.article.containsVariants) {
       if(!this.isValidSelectedVariants()) {
@@ -309,74 +310,75 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.errVariant = "Debe seleccionar una variante";
       } else {
         this.errVariant = undefined;
-        let article = this.getArticleBySelectedVariants();
-        this.movementOfArticle.article = article;
-        this.movementOfArticle.description = this.movementOfArticleForm.value.description;
-        this.movementOfArticle.notes = "";
-        let variantsAux: Variant[] = this.getVariantsByArticleChild(article);
-        for(let i = 0; i < variantsAux.length; i++) {
-          this.movementOfArticle.notes += variantsAux[i].value.description;
-          if(variantsAux[i+1]) {
-            this.movementOfArticle.notes += " / ";
-          } else {
-            this.movementOfArticle.notes += "\r\n";
-          }
-        }
-        if (this.movementOfArticleForm.value.notes) {
-          this.movementOfArticle.notes += this.movementOfArticleForm.value.notes;
-        }
-        this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
-        this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
-        this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
-        this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-        this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
-        this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-        if (this.movementOfArticle._id && this.movementOfArticle._id !== "") {
-          this.updateMovementOfArticle();
+        this.movementOfArticle.article = this.getArticleBySelectedVariants();
+        if(this.movementOfArticle.transaction.type.modifyStock) {
+          this.getArticleStock();
         } else {
-          this.saveMovementOfArticle();
+          this.movementOfArticleExists();
         }
+        
       }
     } else {
-      this.movementOfArticle.description = this.movementOfArticleForm.value.description;
-      this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-      this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-      this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
-      this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
-      this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
-      this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-      this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
-      this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-
-      if (this.movementOfArticle._id && this.movementOfArticle._id !== "") {
-        this.updateMovementOfArticle();
+      if (this.movementOfArticle.transaction.type.modifyStock) {
+        this.getArticleStock();
       } else {
-        this.saveMovementOfArticle();
+        this.movementOfArticleExists();
       }
     }
   }
 
+  public getArticleStock(): void {
+    
+    this.loading = true;
+
+    this._articleStockService.getStockByArticle(this.movementOfArticle.article._id).subscribe(
+      result => {
+        if (!result.articleStocks || result.articleStocks.length <= 0) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+          this.movementOfArticleExists();
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.articleStock = result.articleStocks[0];
+          this.movementOfArticleExists();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
   public getArticleBySelectedVariants(): Article {
     
-    let article;
+    let articleToReturn: Article;
+    let articles: Article[] = new Array();
     
     if(this.variants.length > 0) {
       for(let variant of this.variants) {
         if(variant.value.description === this.selectedVariants[variant.type.name]) {
-          for (let variantAux of this.variants) {
-            if (variant.articleChild._id === variantAux.articleChild._id) {
-              if (variant.value.description === this.selectedVariants[variant.type.name]) {
-                article = variant.articleChild;
-              } else {
-                article = null;
-              }
-            }
+          articles.push(variant.articleChild);
+        }
+      }
+    }
+    
+    if (articles.length > 0) {
+      for (let article of articles) {
+        let count = 0;
+        for (let articleAux of articles) {
+          if(article._id === articleAux._id) {
+            count++;
           }
+        }
+        if(count == this.variantTypes.length) {
+          articleToReturn = article;
         }
       }
     }
 
-    return article;
+    return articleToReturn;
   }
 
   public getVariantsByArticleChild(article: Article): Variant[] {
@@ -394,8 +396,98 @@ export class AddMovementOfArticleComponent implements OnInit {
     return variantsToReturn;
   }
 
-  public saveMovementOfArticle(): void {
+  public movementOfArticleExists(): void {
 
+    this.loading = true;
+
+    this._movementOfArticleService.movementOfArticleExists(this.movementOfArticle).subscribe(
+      result => {
+        if (!result.movementsOfArticles) {
+          if (this.movementOfArticle.article.containsVariants) {
+            this.loadDescriptionOfVariants();
+          } else {
+            this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+          }
+          this.movementOfArticle.description = this.movementOfArticleForm.value.description;
+          this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
+          this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
+          this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+          this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+          this.verifyPermissions("save");
+        } else {
+          if(this.movementOfArticle._id && this.movementOfArticle._id !== "") {
+            this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+          } else {
+            this.movementOfArticle._id = result.movementsOfArticles[0]._id;
+            this.movementOfArticle.amount += result.movementsOfArticles[0].amount;
+          }
+          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
+          this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
+          this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+          this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+          this.verifyPermissions("update");
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public verifyPermissions(op: string):void {
+
+    let allowed = true;
+
+    if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+        !this.movementOfArticle.article.allowSale) {
+      allowed = false;
+      this.showMessage("El artículo no esta habilitado para la venta", "info", true);
+    }
+
+    if( this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+        this.movementOfArticle.transaction.type.modifyStock &&
+        !this.movementOfArticle.article.allowSaleWithoutStock &&
+        this.articleStock &&
+        this.movementOfArticle.amount > this.articleStock.realStock) {
+      allowed = false;
+      this.showMessage("No tiene el stock suficiente para vender este artículo", "info", true);
+    }
+
+    if (allowed) {
+      if(op === "update") {
+        this.updateMovementOfArticle();
+      } else {
+        this.saveMovementOfArticle();
+      }
+    } 
+  }
+
+  public loadDescriptionOfVariants(): void {
+
+    this.movementOfArticle.notes = "";
+    let variantsAux: Variant[] = this.getVariantsByArticleChild(this.movementOfArticle.article);
+    for (let i = 0; i < variantsAux.length; i++) {
+      this.movementOfArticle.notes += variantsAux[i].value.description;
+      if (variantsAux[i + 1]) {
+        this.movementOfArticle.notes += " / ";
+      } else {
+        this.movementOfArticle.notes += "\r\n";
+      }
+    }
+    if (this.movementOfArticleForm.value.notes) {
+      this.movementOfArticle.notes += this.movementOfArticleForm.value.notes;
+    }
+  }
+
+  public saveMovementOfArticle(): void {
+    
     this.loading = true;
 
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(

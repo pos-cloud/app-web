@@ -112,7 +112,11 @@ export class ListCompaniesComponent implements OnInit {
           modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
+        if(this.type) {
+          modalRef.componentInstance.companyType = this.type;
+        }
+        modalRef.result.then((result) => {
           this.getCompaniesByType();
         }, (reason) => {
           this.getCompaniesByType();

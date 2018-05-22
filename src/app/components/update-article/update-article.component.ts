@@ -204,6 +204,15 @@ export class UpdateArticleComponent implements OnInit {
       ],
       'printIn': [this.article.printIn, [
         ]
+      ],
+      'allowPurchase': [this.article.allowPurchase, [
+        ]
+      ],
+      'allowSale': [this.article.allowSale, [
+        ]
+      ],
+      'allowSaleWithoutStock': [this.article.allowSaleWithoutStock, [
+        ]
       ]
     });
 
@@ -404,7 +413,7 @@ export class UpdateArticleComponent implements OnInit {
           }
         } while (exists);
       }
-      this.variantsStored[this.numberOfGroupOfVariantsStored] = this.raffledVariants;
+      this.variantsStored.push(this.raffledVariants);
       this.numberOfVariantsStored = 0;
       this.saveGroupOfVariants(articleParent, articleChild);
     } else {
@@ -418,14 +427,20 @@ export class UpdateArticleComponent implements OnInit {
     let equals: number = 0;
 
     for (let i = 0; i < this.variantsStored.length; i++) {
-      for (let j = 0; j < this.raffledVariants.length; j++) {
-        for (let k = 0; k < this.variantsStored[i].length; k++) {
-          if (this.raffledVariants[j].value._id == this.variantsStored[i][k].value._id) {
-            equals++;
+      if (!exists) {
+        for (let j = 0; j < this.raffledVariants.length; j++) {
+          for (let k = 0; k < this.variantsStored[i].length; k++) {
+            if (this.raffledVariants[j].value._id == this.variantsStored[i][k].value._id) {
+              equals++;
+            }
           }
         }
+        exists = equals === this.uniqueVariantTypes.length;
+        equals = 0;
       }
-      exists = equals === this.uniqueVariantTypes.length;
+      if (equals === this.uniqueVariantTypes.length) {
+        exists = true;
+      }
       equals = 0;
     }
 
@@ -620,6 +635,9 @@ export class UpdateArticleComponent implements OnInit {
     if (!this.article.markupPercentage) this.article.markupPercentage = 0.00;
     if (!this.article.markupPrice) this.article.markupPrice = 0.00;
     if (!this.article.salePrice) this.article.salePrice = 0.00;
+    if (!this.article.allowPurchase === undefined) this.article.allowPurchase = true;
+    if (!this.article.allowSale === undefined) this.article.allowSale = true;
+    if (!this.article.allowSaleWithoutStock === undefined) this.article.allowSaleWithoutStock = false;
 
     let category;
     if (!this.article.category) {
@@ -652,7 +670,10 @@ export class UpdateArticleComponent implements OnInit {
       'category': category,
       'observation': this.article.observation,
       'barcode': this.article.barcode,
-      'printIn': this.article.printIn
+      'printIn': this.article.printIn,
+      'allowPurchase': this.article.allowPurchase,
+      'allowSale': this.article.allowSale,
+      'allowSaleWithoutStock': this.article.allowSaleWithoutStock
     });
   }
 

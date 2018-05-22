@@ -468,27 +468,108 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addItem(itemData: MovementOfArticle): void {
 
-    let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData._id);
-    
-    if (!movementOfArticle) {
-      movementOfArticle = itemData;
-      movementOfArticle._id = "";
-      movementOfArticle.printed = 0;
-      movementOfArticle.transaction = this.transaction;
-      movementOfArticle.amount = 1;
-      if(movementOfArticle.article.containsVariants) {
-        this.openModal("movement_of_article", movementOfArticle);
+    if(!itemData.article.containsVariants) {
+
+      let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
+      
+      if (!movementOfArticle) {
+        movementOfArticle = itemData;
+        movementOfArticle.transaction = this.transaction;
+        if (this.transaction.type.modifyStock) {
+          this.getArticleStock("save", movementOfArticle);
+        } else {
+          this.verifyPermissions("save", movementOfArticle, null);
+        }
       } else {
-        this.saveMovementOfArticle(movementOfArticle);
+        if (this.transaction.type.modifyStock) {
+          this.getArticleStock("update", movementOfArticle);
+        } else {
+          this.verifyPermissions("update", movementOfArticle, null);
+        }
       }
     } else {
-      movementOfArticle.amount += 1; 
-      movementOfArticle.basePrice += itemData.basePrice;
-      movementOfArticle.VATAmount += itemData.VATAmount;
-      movementOfArticle.costPrice += itemData.costPrice;
-      movementOfArticle.markupPrice += itemData.markupPrice;
-      movementOfArticle.salePrice += itemData.salePrice;
-      this.updateMovementOfArticle(movementOfArticle);
+      let movementOfArticle: MovementOfArticle;
+      movementOfArticle = itemData;
+      movementOfArticle.transaction = this.transaction;
+      if (this.transaction.type.modifyStock) {
+        this.getArticleStock("modal", movementOfArticle);
+      } else {
+        this.verifyPermissions("modal", movementOfArticle, null);
+      }
+    }
+  }
+
+  public getArticleStock(op: string, movementOfArticle: MovementOfArticle): void {
+    
+    this.loading = true;
+
+    this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
+      result => {
+        if (!result.articleStocks || result.articleStocks.length <= 0) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+          this.verifyPermissions(op, movementOfArticle, null);
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          let articleStock = result.articleStocks[0];
+          this.verifyPermissions(op, movementOfArticle, articleStock);
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public verifyPermissions(op: string, movementOfArticle: MovementOfArticle, articleStock: ArticleStock): void {
+
+    let allowed = true;
+
+    if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+      !movementOfArticle.article.allowSale) {
+      allowed = false;
+      this.showMessage("El artículo no esta habilitado para la venta", "info", true);
+    }
+
+    if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+      !movementOfArticle.article.allowPurchase) {
+      allowed = false;
+      this.showMessage("El artículo no esta habilitado para la compra", "info", true);
+    }
+
+    if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+      movementOfArticle.transaction.type.modifyStock &&
+      !movementOfArticle.article.allowSaleWithoutStock &&
+      articleStock &&
+      (movementOfArticle.amount+1) > articleStock.realStock) {
+      allowed = false;
+      this.showMessage("No tiene el stock suficiente para vender este artículo", "info", true);
+    }
+    
+    if (allowed) {
+      if (op === "modal") {
+        movementOfArticle._id = "";
+        movementOfArticle.printed = 0;
+        movementOfArticle.transaction = this.transaction;
+        movementOfArticle.amount = 1;
+        this.openModal("movement_of_article", movementOfArticle);
+      } else if (op === "save") {
+        movementOfArticle._id = "";
+        movementOfArticle.printed = 0;
+        movementOfArticle.transaction = this.transaction;
+        movementOfArticle.amount = 1;
+        this.saveMovementOfArticle(movementOfArticle);
+      } else if (op === "update") {
+        movementOfArticle.amount += 1;
+        movementOfArticle.basePrice += movementOfArticle.basePrice;
+        movementOfArticle.VATAmount += movementOfArticle.VATAmount;
+        movementOfArticle.costPrice += movementOfArticle.costPrice;
+        movementOfArticle.markupPrice += movementOfArticle.markupPrice;
+        movementOfArticle.salePrice += movementOfArticle.salePrice;
+        this.updateMovementOfArticle(movementOfArticle);
+      }
     }
   }
 
@@ -645,13 +726,11 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.transaction = this.transaction;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             if (this.posType === "resto") {
-              this.updateTransaction(false);
               this.table.employee = null;
               this.changeStateOfTable(TableState.Available, true);
             } else if (this.posType === "mostrador") {
-              this.updateTransaction(true);
+              this.back();
             }
           }
         }, (reason) => {

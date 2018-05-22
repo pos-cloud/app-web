@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -20,6 +20,7 @@ import { VATConditionService } from './../../services/vat-condition.service';
 export class AddCompanyComponent  implements OnInit {
 
   public company: Company;
+  @Input() companyType: CompanyType;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
   public identityTypes: string[] = ["CUIT","DNI"];
@@ -102,9 +103,11 @@ export class AddCompanyComponent  implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if(pathLocation[2] === "clientes") {
+    if( pathLocation[2] === "clientes" ||
+      this.companyType && this.companyType === CompanyType.Client) {
       this.types.push(CompanyType.Client);
-    } else if (pathLocation[2] === "proveedores") {
+    } else if (pathLocation[2] === "proveedores" ||
+      this.companyType && this.companyType === CompanyType.Provider) {
       this.types.push(CompanyType.Provider);
     } else {
       this.types.push(CompanyType.Client);

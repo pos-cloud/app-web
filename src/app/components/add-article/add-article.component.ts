@@ -203,6 +203,15 @@ export class AddArticleComponent  implements OnInit {
       ],
       'printIn': [this.article.printIn, [
         ]
+      ],
+      'allowPurchase': [this.article.allowPurchase, [
+        ]
+      ],
+      'allowSale': [this.article.allowSale, [
+        ]
+      ],
+      'allowSaleWithoutStock': [this.article.allowSaleWithoutStock, [
+        ]
       ]
     });
 
@@ -402,6 +411,9 @@ export class AddArticleComponent  implements OnInit {
     if (!this.article.observation) this.article.observation = "";
     if (!this.article.barcode) this.article.barcode = "";
     if (!this.article.printIn) this.article.printIn = ArticlePrintIn.Counter;
+    if (!this.article.allowPurchase === undefined) this.article.allowPurchase = true;
+    if (!this.article.allowSale === undefined) this.article.allowSale = true;
+    if (!this.article.allowSaleWithoutStock === undefined) this.article.allowSaleWithoutStock = false;
     
     this.articleForm.setValue({
       '_id': this.article._id,
@@ -419,7 +431,10 @@ export class AddArticleComponent  implements OnInit {
       'category': this.article.category,
       'observation': this.article.observation,
       'barcode': this.article.barcode,
-      'printIn': this.article.printIn
+      'printIn': this.article.printIn,
+      'allowPurchase': this.article.allowPurchase,
+      'allowSale': this.article.allowSale,
+      'allowSaleWithoutStock': this.article.allowSaleWithoutStock
     });
   }
  
@@ -657,7 +672,7 @@ export class AddArticleComponent  implements OnInit {
             variant.articleChild = articleChild;
             this.raffledVariants.push(variant);
           }
-
+          
           if(this.variantsExists()) {
             exists = true;
             this.raffledVariants = new Array();
@@ -666,8 +681,9 @@ export class AddArticleComponent  implements OnInit {
           }
         } while(exists);
       }
-      this.variantsStored[this.numberOfGroupOfVariantsStored] = this.raffledVariants;
+      this.variantsStored.push(this.raffledVariants);
       this.numberOfVariantsStored = 0;
+      
       this.saveGroupOfVariants(articleParent, articleChild);
     } else {
       this.addArticleChildren(articleParent);
@@ -675,22 +691,27 @@ export class AddArticleComponent  implements OnInit {
   }
 
   public variantsExists(): boolean {
-
+    
     let exists: boolean = false;
     let equals: number = 0;
-
+    
     for (let i = 0; i < this.variantsStored.length; i++) {
-      for (let j = 0; j < this.raffledVariants.length; j++) { 
-        for (let k = 0; k < this.variantsStored[i].length; k++) {
-          if (this.raffledVariants[j].value._id == this.variantsStored[i][k].value._id) {
-            equals++;
+      if(!exists) {
+        for (let j = 0; j < this.raffledVariants.length; j++) {
+          for (let k = 0; k < this.variantsStored[i].length; k++) {
+            if (this.raffledVariants[j].type._id == this.variantsStored[i][k].type._id)  {
+              if (this.raffledVariants[j].value._id == this.variantsStored[i][k].value._id) {
+                equals++;
+              }
+            }
           }
         }
       }
-      exists = equals === this.uniqueVariantTypes.length;
+      if (equals === this.uniqueVariantTypes.length) {
+        exists = true;
+      }
       equals = 0;
     }
-    
     return exists;
   }
 
@@ -709,7 +730,7 @@ export class AddArticleComponent  implements OnInit {
   public saveGroupOfVariants(articleParent: Article, articleChild: Article): void {
 
     this.loading = true;
-    
+
     if (this.numberOfVariantsStored < this.numberOfVariantsToStore) {
       this.saveVariant(this.raffledVariants[this.numberOfVariantsStored]);
     } else {

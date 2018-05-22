@@ -185,10 +185,31 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public filterItem(articles: Article[]) {
-    if(articles != undefined && articles.length === 1 && this.articles.length >= 2) {
-      let movementOfArticle: any = articles[0];
-      movementOfArticle.article = articles[0];
-      this.eventAddItem.emit();
+    let article = articles[0];
+    if( articles && 
+        articles.length === 1 && 
+        this.articles.length >= 2 &&
+        ( article.barcode === this.filterArticle ||
+          article.description === this.filterArticle ||
+          article.posDescription === this.filterArticle ||
+          article.code === this.filterArticle)) {
+      let movementOfArticle = new MovementOfArticle();
+      movementOfArticle.article = article;
+      movementOfArticle.code = article.code;
+      movementOfArticle.description = article.description;
+      movementOfArticle.observation = article.observation;
+      movementOfArticle.basePrice = article.basePrice;
+      movementOfArticle.VATPercentage = article.VATPercentage;
+      movementOfArticle.VATAmount = article.VATAmount;
+      movementOfArticle.costPrice = article.costPrice;
+      movementOfArticle.markupPercentage = article.markupPercentage;
+      movementOfArticle.markupPrice = article.markupPrice;
+      movementOfArticle.salePrice = article.salePrice;
+      movementOfArticle.make = article.make;
+      movementOfArticle.category = article.category;
+      movementOfArticle.barcode = article.barcode;
+      movementOfArticle.amount = 1;
+      this.eventAddItem.emit(movementOfArticle);
     }
     this.filterArticle = "";
   }
