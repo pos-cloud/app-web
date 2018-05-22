@@ -35,6 +35,7 @@ import { version } from 'punycode';
 export class AddMovementOfArticleComponent implements OnInit {
 
   @Input() movementOfArticle: MovementOfArticle;
+  public containsVariants: Boolean;
   public articleStock: ArticleStock;
   public variants: Variant[];
   public variantTypes: VariantType[];
@@ -83,7 +84,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if(this.movementOfArticle.article && this.movementOfArticle.article.containsVariants) {
+    this.containsVariants = this.movementOfArticle.article.containsVariants;
+    if(this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
     }
     this.buildForm();
@@ -144,7 +146,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     
     let isValid: boolean = true;
 
-    if(this.movementOfArticle.article.containsVariants) {
+    if(this.containsVariants) {
       if(this.variantTypes.length > 0) {
         for(let type of this.variantTypes) {
           if(this.selectedVariants[type.name] === null) {
@@ -301,10 +303,10 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public addMovementOfArticle(): void {
-    
+
     let isValidForm = this.movementOfArticleForm.valid;
 
-    if(this.movementOfArticle.article.containsVariants) {
+    if(this.containsVariants) {
       if(!this.isValidSelectedVariants()) {
         isValidForm = false;    
         this.errVariant = "Debe seleccionar una variante";
@@ -334,11 +336,9 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._articleStockService.getStockByArticle(this.movementOfArticle.article._id).subscribe(
       result => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.movementOfArticleExists();
         } else {
-          this.hideMessage();
           this.loading = false;
           this.articleStock = result.articleStocks[0];
           this.movementOfArticleExists();
@@ -403,7 +403,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._movementOfArticleService.movementOfArticleExists(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          if (this.movementOfArticle.article.containsVariants) {
+          if (this.containsVariants) {
             this.loadDescriptionOfVariants();
           } else {
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
@@ -470,7 +470,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public loadDescriptionOfVariants(): void {
-
+    
     this.movementOfArticle.notes = "";
     let variantsAux: Variant[] = this.getVariantsByArticleChild(this.movementOfArticle.article);
     for (let i = 0; i < variantsAux.length; i++) {

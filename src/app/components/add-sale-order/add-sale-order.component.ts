@@ -506,11 +506,9 @@ export class AddSaleOrderComponent implements OnInit {
     this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
       result => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.verifyPermissions(op, movementOfArticle, null);
         } else {
-          this.hideMessage();
           this.loading = false;
           let articleStock = result.articleStocks[0];
           this.verifyPermissions(op, movementOfArticle, articleStock);
