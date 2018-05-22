@@ -467,7 +467,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public addItem(itemData: MovementOfArticle): void {
-
+    
     if(!itemData.article.containsVariants) {
 
       let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
@@ -490,12 +490,11 @@ export class AddSaleOrderComponent implements OnInit {
     } else {
       let movementOfArticle: MovementOfArticle;
       movementOfArticle = itemData;
+      movementOfArticle._id = "";
       movementOfArticle.transaction = this.transaction;
-      if (this.transaction.type.modifyStock) {
-        this.getArticleStock("modal", movementOfArticle);
-      } else {
-        this.verifyPermissions("modal", movementOfArticle, null);
-      }
+      movementOfArticle.printed = 0;
+      movementOfArticle.amount = 1;
+      this.openModal("movement_of_article", movementOfArticle);
     }
   }
 
@@ -525,35 +524,28 @@ export class AddSaleOrderComponent implements OnInit {
 
     let allowed = true;
 
-    if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+    if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       !movementOfArticle.article.allowSale) {
       allowed = false;
       this.showMessage("El artículo no esta habilitado para la venta", "info", true);
     }
 
-    if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+    if (this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
       !movementOfArticle.article.allowPurchase) {
       allowed = false;
       this.showMessage("El artículo no esta habilitado para la compra", "info", true);
     }
 
-    if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
-      movementOfArticle.transaction.type.modifyStock &&
+    if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+      this.transaction.type.modifyStock &&
       !movementOfArticle.article.allowSaleWithoutStock &&
-      articleStock &&
-      (movementOfArticle.amount+1) > articleStock.realStock) {
+      (!articleStock || ((articleStock && movementOfArticle.amount + 1) > articleStock.realStock))) {
       allowed = false;
-      this.showMessage("No tiene el stock suficiente para vender este artículo", "info", true);
+      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", "info", true);
     }
     
     if (allowed) {
-      if (op === "modal") {
-        movementOfArticle._id = "";
-        movementOfArticle.printed = 0;
-        movementOfArticle.transaction = this.transaction;
-        movementOfArticle.amount = 1;
-        this.openModal("movement_of_article", movementOfArticle);
-      } else if (op === "save") {
+      if (op === "save") {
         movementOfArticle._id = "";
         movementOfArticle.printed = 0;
         movementOfArticle.transaction = this.transaction;

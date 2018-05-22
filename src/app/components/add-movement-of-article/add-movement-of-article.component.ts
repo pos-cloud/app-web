@@ -336,6 +336,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._articleStockService.getStockByArticle(this.movementOfArticle.article._id).subscribe(
       result => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
+          console.log("no tiene");
           this.loading = false;
           this.movementOfArticleExists();
         } else {
@@ -454,10 +455,12 @@ export class AddMovementOfArticleComponent implements OnInit {
     if( this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
         this.movementOfArticle.transaction.type.modifyStock &&
         !this.movementOfArticle.article.allowSaleWithoutStock &&
-        this.articleStock &&
-        this.movementOfArticle.amount > this.articleStock.realStock) {
+        (!this.articleStock || (this.articleStock && this.movementOfArticle.amount > this.articleStock.realStock))) {
       allowed = false;
-      this.showMessage("No tiene el stock suficiente para vender este artículo", "info", true);
+      console.log("No tiene el stock suficiente para vender la cantidad solicitada.");
+      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", "info", true);
+    } else {
+      console.log("entro a stock suficiente");
     }
 
     if (allowed) {
