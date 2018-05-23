@@ -30,7 +30,6 @@ export class UpdateArticleStockComponent implements OnInit {
   public formErrors = {
     'article': '',
     'realStock': '',
-    'maxStock': '',
     'minStock': ''
   };
 
@@ -39,9 +38,6 @@ export class UpdateArticleStockComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'realStock': {
-      'required': 'Este campo es requerido.'
-    },
-    'maxStock': {
       'required': 'Este campo es requerido.'
     },
     'minStock': {
@@ -83,10 +79,6 @@ export class UpdateArticleStockComponent implements OnInit {
           Validators.required
         ]
       ],
-      'maxStock': [this.articleStock.maxStock, [
-          Validators.required
-        ]
-      ],
       'minStock': [this.articleStock.minStock, [
           Validators.required
         ]
@@ -122,13 +114,11 @@ export class UpdateArticleStockComponent implements OnInit {
     
     if (!this.articleStock.article) this.articleStock.article = new Article();
     if (!this.articleStock.realStock) this.articleStock.realStock = 0.00;
-    if (!this.articleStock.maxStock) this.articleStock.maxStock = 0.00;
     if (!this.articleStock.minStock) this.articleStock.minStock = 0.00;
 
     this.articleStockForm.setValue({
       'article': this.articleStock.article._id,
       'realStock': this.articleStock.realStock,
-      'maxStock': this.articleStock.maxStock,
       'minStock': this.articleStock.minStock
     });
   }
