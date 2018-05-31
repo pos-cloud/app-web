@@ -253,16 +253,16 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
     if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
-    if (!this.transactionType.modifyStock) this.transactionType.modifyStock = false;
+    if (!this.transactionType.modifyStock === undefined) this.transactionType.modifyStock = false;
     if (!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Outflows;
-    if (!this.transactionType.requestArticles) this.transactionType.requestArticles = false;
-    if (!this.transactionType.defectOrders) this.transactionType.defectOrders = false;
+    if (!this.transactionType.requestArticles === undefined) this.transactionType.requestArticles = false;
+    if (!this.transactionType.defectOrders === undefined) this.transactionType.defectOrders = false;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
     if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = "";
-    if (!this.transactionType.electronics) this.transactionType.electronics = false;
-    if (!this.transactionType.printable) this.transactionType.printable = false;
+    if (!this.transactionType.electronics === undefined) this.transactionType.electronics = false;
+    if (!this.transactionType.printable === undefined) this.transactionType.printable = false;
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
-    if (!this.transactionType.tax) this.transactionType.tax = false;
+    if (!this.transactionType.tax === undefined) this.transactionType.tax = false;
 
     this.transactionTypeForm.setValue({
       'transactionMovement': this.transactionType.transactionMovement,

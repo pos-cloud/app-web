@@ -19,9 +19,11 @@ export class Article {
     public salePrice: number = 0.00;
     public make: Make;
     public category: Category;
-    public stock: number = 0;
     public barcode: string;
     public printIn: ArticlePrintIn = ArticlePrintIn.Counter;
+    public allowPurchase: Boolean = true;
+    public allowSale: Boolean = true;
+    public allowSaleWithoutStock: Boolean = false;
     public printed: boolean;
     public picture: string;
 

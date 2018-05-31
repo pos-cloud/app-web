@@ -76,5 +76,15 @@ export class CompanyService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "company/"+company._id, company, { headers: headers }).map (res => res.json());
-  	}
+	}
+	  
+	getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		var query = '{"type":"' + type +'","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
+		return this._http.get(Config.apiURL + "quantity-of-companies-by-type/" + query, { headers: headers }).map(res => res.json());
+	}
 }

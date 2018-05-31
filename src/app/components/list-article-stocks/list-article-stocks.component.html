@@ -28,7 +28,6 @@
             <th (click)="orderBy('article','code')">Artículo </th>
             <th (click)="orderBy('article','description')">Descripción </th>
             <th (click)="orderBy('realStock')">Stock Actual </th>
-            <th (click)="orderBy('maxStock')">Stock Máximo </th>
             <th (click)="orderBy('minStock')">Stock Mínimo </th>
           </tr>
           <tr *ngIf="areFiltersVisible">
@@ -36,7 +35,6 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="Código..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRealStock" placeholder="Stock Actual..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterMaxStock" placeholder="Stock Máximo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMinStock" placeholder="Stock Mínimo..."></th>
           </tr>
         </thead>
@@ -44,7 +42,6 @@
           <tr *ngFor="let articleStock of articleStocks | filter: filterCode:'code':'article' 
                                                         | filter: filterDescription:'description':'article'
                                                         | filter: filterRealStock:'realStock'
-                                                        | filter: filterMaxStock:'maxStock'
                                                         | filter: filterMinStock:'minStock'
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage, 
@@ -63,7 +60,6 @@
             <td class="flat">{{articleStock.article.code}}</td>
             <td class="flat">{{articleStock.article.description}}</td>
             <td class="flat">{{articleStock.realStock}}</td>
-            <td class="flat">{{articleStock.maxStock}}</td>
             <td class="flat">{{articleStock.minStock}}</td>
           </tr>
           <tr align="center" *ngIf="areArticleStocksEmpty">
