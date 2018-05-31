@@ -51,8 +51,15 @@
                                                                       currentPage: p, 
                                                                       totalItems: totalItems
                                                                     }">
-            <td align="left" width="130">
-            </td>
+
+
+            <td align="left" width="100">
+             
+              <button type="button" class="btn btn-secondary btn-sm" title="Imprimir" *ngIf="'articleStock.realStock' >= '0'"  (click)= "openModal('print', articleStock )">
+                <i class="fa fa-print"></i>
+              </button>
+             
+            </td>  
             <td class="flat">{{articleStock.article.code}}</td>
             <td class="flat">{{articleStock.article.description}}</td>
             <td class="flat">{{articleStock.realStock}}</td>

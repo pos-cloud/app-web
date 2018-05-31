@@ -10,6 +10,8 @@ import { AddArticleStockComponent } from './../../components/add-article-stock/a
 import { UpdateArticleStockComponent } from './../../components/update-article-stock/update-article-stock.component';
 import { ImportComponent } from './../../components/import/import.component';
 
+import { PrintComponent } from 'app/components/print/print.component';
+
 @Component({
   selector: 'app-list-article-stocks',
   templateUrl: './list-article-stocks.component.html',
@@ -86,7 +88,6 @@ export class ListArticleStocksComponent implements OnInit {
   }
 
   public openModal(op: string, articleStock: ArticleStock): void {
-
     let modalRef;
     switch (op) {
       case 'view':
@@ -113,7 +114,13 @@ export class ListArticleStocksComponent implements OnInit {
 
         });
         break;
-      default: ;
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.articleStock = articleStock;
+        modalRef.componentInstance.typePrint = 'barcode';
+        break;
+      default: 
+        break;
     }
   };
 

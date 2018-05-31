@@ -22,6 +22,8 @@ export class Config {
     static companyVatCondition: VATCondition;
     static companyStartOfActivity: string;
     static companyGrossIncome: string;
+    static heightLabel: number;
+    static widthLabel: number;
 
     constructor() { 
         Config.updateApiURL();
@@ -65,6 +67,11 @@ export class Config {
         Config.companyVatCondition = companyVatCondition;
         Config.companyStartOfActivity = companyStartOfActivity;
         Config.companyGrossIncome = companyGrossIncome;
+    }
+
+    public static setConfigLabel( heightLabel, widthLabel ): void {
+        Config.heightLabel = heightLabel;
+        Config.widthLabel = widthLabel;
     }
 
     public static updateApiURL() {

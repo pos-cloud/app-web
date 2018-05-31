@@ -75,4 +75,13 @@ export class ConfigService {
 		});
 		return this._http.put(Config.apiURL + "config-company/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
+
+	updateConfigLabel(config: Config) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.put(Config.apiURL + "config-label/" + config._id, config, { headers: headers }).map(res => res.json());
+	}
 }

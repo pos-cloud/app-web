@@ -25,6 +25,7 @@ export class ConfigBackupComponent implements OnInit {
   public configFormBackup: FormGroup;
   public configFormEmail: FormGroup;
   public configFormCompany: FormGroup;
+  public configFormLabel: FormGroup;
   public focusEvent = new EventEmitter<boolean>();
   public alertMessage: string = "";
   public loading: boolean = false;
@@ -39,7 +40,9 @@ export class ConfigBackupComponent implements OnInit {
     'companyStartOfActivity': '',
     'companyGrossIncome': '',
     'companyAddress': '',
-    'companyPhone': ''
+    'companyPhone': '',
+    'heightLabel' : '',
+    'widthLabel' : ''
   };
 
   public validationMessages = {
@@ -66,6 +69,10 @@ export class ConfigBackupComponent implements OnInit {
     'companyAddress': {
     },
     'companyPhone': {
+    },
+    'heightLabel' : {
+    },
+    'widthLabel' : {
     }
   };
 
@@ -86,6 +93,7 @@ export class ConfigBackupComponent implements OnInit {
     this.buildFormBackup();
     this.buildFormEmail();
     this.buildFormCompany();
+    this.buildFormLabel();
   }
 
   ngAfterViewInit() {
@@ -177,6 +185,28 @@ export class ConfigBackupComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
+  public buildFormLabel() {
+    this.configFormLabel = this._fb.group({
+      '_id': [this.config._id, [
+        Validators.required
+        ]
+      ],
+      'heightLabel': [Config.heightLabel, [
+        Validators.required
+        ]
+      ],
+      'widthLabel': [Config.widthLabel, [
+        ]
+      ]
+    });
+
+    this.configFormLabel.valueChanges
+      .subscribe(data => this.onValueChangedLabel(data));
+
+    this.onValueChangedLabel();
+    this.focusEvent.emit(true);
+  }
+
   public onValueChangedBackup(data?: any): void {
     
     if (!this.configFormBackup) { return; }
@@ -231,6 +261,24 @@ export class ConfigBackupComponent implements OnInit {
     }
   }
 
+  public onValueChangedLabel(data?: any): void {
+
+    if (!this.configFormLabel) { return; }
+    const form = this.configFormLabel;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
   public getVatConditions(): void {
 
     this.loading = true;
@@ -271,12 +319,19 @@ export class ConfigBackupComponent implements OnInit {
     this.updateConfigCompany();
   }
 
+  public addConfigLabel() {
+    this.config = this.configFormLabel.value;
+    this.setConfigurationSettings(this.config);
+    this.updateConfigLabel();
+  }
+
   public setConfigurationSettings(config) {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, 
                                                     config.companyPhone, config.companyVatCondition, 
                                                     config.companyStartOfActivity, config.companyGrossIncome);
+    if (config.heightLabel) Config.setConfigLabel (config.heightLabel, config.widthLabel);
     if (config.modules) Config.setModules(config.modules[0]);
   }
 
@@ -353,6 +408,30 @@ export class ConfigBackupComponent implements OnInit {
     )
   }
 
+  public updateConfigLabel(): void {
+
+    this.loading = true;
+
+    this._configService.updateConfigLabel(this.config).subscribe(
+      result => {
+        if (!result.configs) {
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.config = result.configs[0];
+          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.getConfig();
+          this.buildFormLabel();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    )
+  }
+
   public downloadlicense(): void {
     this._configService.getlicense().subscribe(
       result => {
@@ -405,7 +484,9 @@ export class ConfigBackupComponent implements OnInit {
     if (!config.companyStartOfActivity) config.companyStartOfActivity = "";
     if (!config.companyGrossIncome) config.companyGrossIncome = "";
     if (!config.companyAddress) config.companyAddress = "";
-    if (!config.companyPhone) config.companyPhone= "";
+    if (!config.companyPhone) config.companyPhone = "";
+    if (!config.heightLabel) config.heightLabel = "";
+    if (!config.widthLabel) config.widthLabel = "";
     
     this.configFormBackup.setValue({
       '_id': config._id,
@@ -429,6 +510,12 @@ export class ConfigBackupComponent implements OnInit {
       'companyVatCondition': config.companyVatCondition,
       'companyStartOfActivity': config.companyStartOfActivity,
       'companyGrossIncome': config.companyGrossIncome
+    });
+
+    this.configFormLabel.setValue({
+      '_id': config._id,
+      'heightLabel': config.heightLabel,
+      'widthLabel': config.widthLabel,
     });
   }
 

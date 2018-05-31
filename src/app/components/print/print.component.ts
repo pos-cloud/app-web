@@ -10,6 +10,7 @@ import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
 import { TransactionType } from './../../models/transaction-type';
+import { ArticleStock } from './../../models/article-stock';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -23,6 +24,7 @@ import { TransactionService } from './../../services/transaction.service';
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { ConfigService } from './../../services/config.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
+import { ArticleStockService } from './../../services/article-stock.service';
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
@@ -44,6 +46,7 @@ export class PrintComponent implements OnInit {
   @Input() turn: Turn;
   @Input() typePrint;
   @Input() balance;
+  @Input() articleStock : ArticleStock;
   public loading: boolean;
   public alertMessage: string = "";
   public shiftClosingTransaction;
@@ -76,6 +79,7 @@ export class PrintComponent implements OnInit {
     public _transactionService: TransactionService,
     public _movementOfArticle: MovementOfArticleService,
     public _configService: ConfigService,
+    public _articleStockService: ArticleStockService,
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
@@ -128,6 +132,8 @@ export class PrintComponent implements OnInit {
             this.getMovementOfArticle();
           } else if (this.typePrint === "current-account") {
             this.toPrintCurrentAccount();
+          } else if (this.typePrint === "barcode") {
+            this.getBarcode64('code128?value='+this.articleStock.article.code,'barcode');
           }
         }
         this.loading = false;
@@ -278,7 +284,7 @@ export class PrintComponent implements OnInit {
       + this.transaction.origin
       + this.transaction.CAE
       + this.convertDate(date[0])
-      + checkDigit);
+      + checkDigit,'invoice');
   }
 
   public convertDate(string): void {
@@ -649,6 +655,36 @@ export class PrintComponent implements OnInit {
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
+  public toPrintBarcode(): void {
+    
+    console.log( this.config[0].heightLabel,this.config[0].widthLabel);
+    
+
+    this.doc = new jsPDF('l','mm', [this.config[0].heightLabel,this.config[0].widthLabel]);
+
+    this.doc.text(this.articleStock.article.description, 40, 10)
+      
+    let imgdata = 'data:image/png;base64,' + this.barcode64;
+
+    this.doc.addImage(imgdata, 'PNG', 10, 15, 80, 10);
+    
+    for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
+      
+      
+      this.doc.addPage();
+      
+      this.doc.text(this.articleStock.article.description, 40, 10)
+      
+      let imgdata = 'data:image/png;base64,' + this.barcode64;
+
+      this.doc.addImage(imgdata, 'PNG', 10, 15, 80, 10);
+
+    }
+
+    
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+  }
+
   public getGreeting() {
 
     this.doc.setFontStyle("italic")
@@ -691,12 +727,22 @@ export class PrintComponent implements OnInit {
     return n;
   }
 
-  public getBarcode64(barcode): void {
+  public getBarcode64(barcode, op : string): void {
 
     this._printService.getBarcode(barcode).subscribe(
       result => {
         this.barcode64 = result.bc64;
-        this.toPrintInvoice();
+        switch (op) {
+          case 'invoice':
+            this.toPrintInvoice();
+            break;
+          case 'barcode':
+            this.toPrintBarcode();
+            break;
+        
+          default:
+            break;
+        } 
       },
       error => {
 
