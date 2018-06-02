@@ -689,8 +689,18 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontStyle("italic")
     this.doc.setFontSize(this.fontSizes.large)
-    this.doc.text("Gracias por su visita!", 80, 280)
+    this.doc.text(this.config[0].footerInvoice, 5, 280)
     this.doc.setFontStyle("normal")
+  }
+
+  public getFooter() {
+
+    // Pie de la impresión
+    this.doc.setFontStyle("normal")
+    this.doc.setTextColor(164, 164, 164)
+    this.doc.setFontSize(this.fontSizes.normal)
+    this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290)
+    this.doc.setTextColor(0, 0, 0)
   }
 
   public toDataURL(url, callback) {
@@ -707,18 +717,7 @@ export class PrintComponent implements OnInit {
     xhr.send();
   }
 
-  public getFooter() {
 
-    // Pie de la impresión
-    this.doc.setFontStyle("italic")
-    this.doc.setFontSize(this.fontSizes.large)
-    this.doc.text("Gracias por su visita!", 80, 280)
-    this.doc.setFontStyle("normal")
-    this.doc.setTextColor(164, 164, 164)
-    this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290)
-    this.doc.setTextColor(0, 0, 0)
-  }
 
   public padString(n, length) {
     var n = n.toString();

@@ -41,6 +41,7 @@ export class ConfigBackupComponent implements OnInit {
     'companyGrossIncome': '',
     'companyAddress': '',
     'companyPhone': '',
+    'footerInvoice': '',
     'heightLabel' : '',
     'widthLabel' : ''
   };
@@ -69,6 +70,8 @@ export class ConfigBackupComponent implements OnInit {
     'companyAddress': {
     },
     'companyPhone': {
+    },
+    'footerInvoice': {
     },
     'heightLabel' : {
     },
@@ -174,6 +177,9 @@ export class ConfigBackupComponent implements OnInit {
         ]
       ],
       'companyPhone': [Config.companyPhone, [
+        ]
+      ],
+      'footerInvoice': [Config.footerInvoice, [ 
         ]
       ]
     });
@@ -330,7 +336,7 @@ export class ConfigBackupComponent implements OnInit {
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, 
                                                     config.companyPhone, config.companyVatCondition, 
-                                                    config.companyStartOfActivity, config.companyGrossIncome);
+                                                    config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice);
     if (config.heightLabel) Config.setConfigLabel (config.heightLabel, config.widthLabel);
     if (config.modules) Config.setModules(config.modules[0]);
   }
@@ -485,6 +491,7 @@ export class ConfigBackupComponent implements OnInit {
     if (!config.companyGrossIncome) config.companyGrossIncome = "";
     if (!config.companyAddress) config.companyAddress = "";
     if (!config.companyPhone) config.companyPhone = "";
+    if (!config.footerInvoice) config.footerInvoice = "";
     if (!config.heightLabel) config.heightLabel = "";
     if (!config.widthLabel) config.widthLabel = "";
     
@@ -509,7 +516,8 @@ export class ConfigBackupComponent implements OnInit {
       'companyPhone': config.companyPhone,
       'companyVatCondition': config.companyVatCondition,
       'companyStartOfActivity': config.companyStartOfActivity,
-      'companyGrossIncome': config.companyGrossIncome
+      'companyGrossIncome': config.companyGrossIncome,
+      'footerInvoice': config.footerInvoice
     });
 
     this.configFormLabel.setValue({
