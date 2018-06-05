@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
 import { ArticleStock } from './../models/article-stock';
 import { Article } from './../models/article';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
-import { TransactionMovement } from '../models/transaction-type';
 
 @Injectable()
 export class ArticleStockService {
@@ -85,7 +83,6 @@ export class ArticleStockService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		
 		return this._http.put(Config.apiURL + 'amount-stock-by-article/' + article._id, '{"amount":' + amount + ', "transactionType":"' + transactionType + '"}', { headers: headers }).map(res => res.json());
 	}
 }

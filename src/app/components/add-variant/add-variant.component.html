@@ -32,6 +32,36 @@
           <button type="submit" class="btn btn-success" [disabled]="!variantForm.valid || loading">Agregar</button>
         </div>
       </div>
+      <div class="row table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th  width="130"><i class="fa fa-bars"></i></th>
+              <th>Código</th>
+              <th>Variante</th>
+              <th>Código de barras</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let articleAux of articlesWithVariants">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteVariant(articleAux)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" title="Editar" (click)="updateVariant(articleAux)">
+                  <i class="fa fa-pencil"></i>
+                </button>
+              </td>
+              <td class="flat"><input type="text" [value]="articleAux.code"/></td>
+              <td class="flat" width="430">{{articleAux.variantDescription}}</td>
+              <td class="flat"><input type="text" [value]="articleAux.barcode"/></td>
+            </tr>
+            <tr align="center" *ngIf="!articlesWithVariants || articlesWithVariants.length === 0">
+              <td colspan="10">No se encontraron variantes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </form>
 </section>

@@ -5,22 +5,23 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article } from './../../models/article';
 import { Category } from './../../models/category';
+import { Config } from './../../app.config';
+import { MovementOfArticle } from '../../models/movement-of-article';
+import { Taxes } from './../../models/taxes';
 
 import { ArticleService } from './../../services/article.service';
 
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
-import { UpdateArticleComponent } from './../../components/update-article/update-article.component';
 import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
 import { ImportComponent } from './../../components/import/import.component';
 
-import { Config } from './../../app.config';
-import { MovementOfArticle } from '../../models/movement-of-article';
+import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
   styleUrls: ['./list-articles.component.css'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig, RoundNumberPipe]
 })
 
 export class ListArticlesComponent implements OnInit {
@@ -40,6 +41,7 @@ export class ListArticlesComponent implements OnInit {
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public roundNumber = new RoundNumberPipe();
 
   constructor(
     public _articleService: ArticleService,
@@ -109,27 +111,27 @@ export class ListArticlesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
         modalRef.componentInstance.article = article;
-        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "view";
         break;
       case 'add':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = "add";
+        modalRef.result.then((result) => {
           this.getFinalArticles();
         }, (reason) => {
           this.getFinalArticles();
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
         modalRef.componentInstance.article = article;
-        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = "update";
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getFinalArticles();
-          }
+          this.getFinalArticles();
         }, (reason) => {
-
+          this.getFinalArticles();
         });
         break;
       case 'delete':
@@ -165,18 +167,27 @@ export class ListArticlesComponent implements OnInit {
   };
 
   public addItem(articleSelected: Article) {
+    
     let movementOfArticle = new MovementOfArticle();
     movementOfArticle.article = articleSelected;
     movementOfArticle.code = articleSelected.code;
     movementOfArticle.description = articleSelected.description;
     movementOfArticle.observation = articleSelected.observation;
     movementOfArticle.basePrice = articleSelected.basePrice;
-    movementOfArticle.VATPercentage = articleSelected.VATPercentage;
-    movementOfArticle.VATAmount = articleSelected.VATAmount;
     movementOfArticle.costPrice = articleSelected.costPrice;
     movementOfArticle.markupPercentage = articleSelected.markupPercentage;
     movementOfArticle.markupPrice = articleSelected.markupPrice;
     movementOfArticle.salePrice = articleSelected.salePrice;
+    let tax: Taxes = new Taxes();
+    let taxes: Taxes[] = new Array();
+    for (let taxAux of articleSelected.taxes) {
+      tax.percentage = this.roundNumber.transform(taxAux.percentage);
+      tax.tax = taxAux.tax;
+      tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+      tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+      taxes.push(tax);
+    }
+    movementOfArticle.taxes = taxes;
     movementOfArticle.make = articleSelected.make;
     movementOfArticle.category = articleSelected.category;
     movementOfArticle.barcode = articleSelected.barcode;
@@ -185,33 +196,34 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public filterItem(articles: Article[]) {
-    let article = articles[0];
-    if( articles && 
-        articles.length === 1 && 
-        this.articles.length >= 2 &&
-        ( article.barcode === this.filterArticle ||
-          article.description === this.filterArticle ||
-          article.posDescription === this.filterArticle ||
-          article.code === this.filterArticle)) {
-      let movementOfArticle = new MovementOfArticle();
-      movementOfArticle.article = article;
-      movementOfArticle.code = article.code;
-      movementOfArticle.description = article.description;
-      movementOfArticle.observation = article.observation;
-      movementOfArticle.basePrice = article.basePrice;
-      movementOfArticle.VATPercentage = article.VATPercentage;
-      movementOfArticle.VATAmount = article.VATAmount;
-      movementOfArticle.costPrice = article.costPrice;
-      movementOfArticle.markupPercentage = article.markupPercentage;
-      movementOfArticle.markupPrice = article.markupPrice;
-      movementOfArticle.salePrice = article.salePrice;
-      movementOfArticle.make = article.make;
-      movementOfArticle.category = article.category;
-      movementOfArticle.barcode = article.barcode;
-      movementOfArticle.amount = 1;
-      this.eventAddItem.emit(movementOfArticle);
+    
+    if (articles && articles.length > 0) {
+      let article = articles[0];
+      if( articles && 
+          articles.length === 1 && 
+          this.articles.length >= 2 &&
+          ( article.barcode === this.filterArticle ||
+            article.description === this.filterArticle ||
+            article.posDescription === this.filterArticle ||
+            article.code === this.filterArticle)) {
+        let movementOfArticle = new MovementOfArticle();
+        movementOfArticle.article = article;
+        movementOfArticle.code = article.code;
+        movementOfArticle.description = article.description;
+        movementOfArticle.observation = article.observation;
+        movementOfArticle.basePrice = article.basePrice;
+        movementOfArticle.costPrice = article.costPrice;
+        movementOfArticle.markupPercentage = article.markupPercentage;
+        movementOfArticle.markupPrice = article.markupPrice;
+        movementOfArticle.salePrice = article.salePrice;
+        movementOfArticle.make = article.make;
+        movementOfArticle.category = article.category;
+        movementOfArticle.barcode = article.barcode;
+        movementOfArticle.amount = 1;
+        this.eventAddItem.emit(movementOfArticle);
+      }
+      this.filterArticle = "";
     }
-    this.filterArticle = "";
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

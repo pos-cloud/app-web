@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
 import { Make } from './../models/make';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
@@ -11,7 +10,7 @@ export class MakeService {
 
   constructor(
     public _http: Http,
-    public _userService: UserService
+	public _userService: UserService
   ) { }
 
   getLastMake () {

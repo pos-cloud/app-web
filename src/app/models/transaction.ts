@@ -3,9 +3,8 @@ import { CashBox } from './cash-box';
 import { Table } from './table';
 import { Employee } from './employee';
 import { Turn } from './turn';
-import { PaymentMethod } from './payment-method';
 import { TransactionType } from './transaction-type';
-import { TransactionTax } from './transaction-tax';
+import { Taxes } from './taxes';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -20,7 +19,7 @@ export class Transaction {
 	public endDate: string;
 	public state: TransactionState = TransactionState.Open;
 	public exempt: number = 0.00;
-	public taxes: TransactionTax[];
+	public taxes: Taxes[];
 	public discountAmount: number = 0.00;
 	public discountPercent: number = 0.00;
 	public totalPrice: number = 0.00;

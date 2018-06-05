@@ -1,5 +1,6 @@
 import { Make } from './make';
 import { Category } from './category';
+import { Taxes } from './taxes';
 
 export class Article {
 
@@ -9,10 +10,10 @@ export class Article {
     public code: string = "00001";
     public description: string = "";
     public posDescription: string = "";
+    public variantDescription: string;
     public observation: string;
     public basePrice: number = 0.00;
-    public VATPercentage: number = 21.00;
-    public VATAmount: number = 0.00;
+    public taxes: Taxes[];
     public costPrice: number = 0.00;
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;

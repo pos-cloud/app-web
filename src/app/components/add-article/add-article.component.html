@@ -1,5 +1,7 @@
 <div class="modal-header">
-	<h4 class="modal-title">Agregar Producto</h4>
+	<h4 class="modal-title" *ngIf="operation==='add'">Agregar Producto</h4>
+	<h4 class="modal-title" *ngIf="operation==='update'">Editar Producto {{article.code}} - {{article.description}}</h4>
+	<h4 class="modal-title" *ngIf="operation==='view'">Producto {{article.code}} - {{article.description}}</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -21,7 +23,7 @@
 									<div class="form-group col-md-6">
 										<label for="make" class="control-label">Marca</label>
 										<select class="form-control" formControlName="make">
-											<option *ngFor="let make of makes" [ngValue]="make">{{make.description}}</option>
+											<option *ngFor="let make of makes" [selected]="article.make && make._id===article.make._id" [value]="make._id" [disabled]="readonly">{{make.description}}</option>
 										</select>
 										<div *ngIf="formErrors.make" class="alert alert-danger">
 											{{ formErrors.make }}
@@ -29,34 +31,41 @@
 									</div>
 									<div class="form-group col-md-6">
 										<label for="code" class="control-label">Código:</label>
-										<input type="text" class="form-control" formControlName="code" name="code" id="code" (blur)="autocompleteCode()" [focus]="focusEvent" />
+										<input type="text" class="form-control" formControlName="code" name="code" id="code" (blur)="autocompleteCode()" [focus]="focusEvent" [readonly]="readonly"/>
 										<div *ngIf="formErrors.code" class="alert alert-danger">
 											{{ formErrors.code }}
 										</div>
 									</div>
 								</div>
+								<div class="row">
+									<div class="form-group col-md-8">
+										<label for="description" class="control-label">Descripción:</label>
+										<input type="text" class="form-control" formControlName="description" name="description" id="description" (blur)="loadPosDescription()" [readonly]="readonly"/>
+										<div *ngIf="formErrors.description" class="alert alert-danger">
+											{{ formErrors.description }}
+										</div>
+									</div>
+									<div class="form-group col-md-4">
+										<label for="posDescription" class="control-label">Descripción POS:</label>
+										<input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription" [readonly]="readonly"/>
+										<div *ngIf="formErrors.posDescription" class="alert alert-danger">
+											{{ formErrors.posDescription }}
+										</div>
+									</div>
+								</div>
 							</div>
-							<div class="form-group col-md-4">
+							<div class="form-group col-md-4" *ngIf="operation === 'add'">
 								<div class="custom-file">
 									<label class="custom-file-label btn btn-action" for="customFileLang">Seleccionar Imagen</label>
-									<input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)" />
+									<input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)"/>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="form-group col-md-8">
-								<label for="description" class="control-label">Descripción:</label>
-								<input type="text" class="form-control" formControlName="description" name="description" id="description" (blur)="loadPosDescription()"
-								/>
-								<div *ngIf="formErrors.description" class="alert alert-danger">
-									{{ formErrors.description }}
-								</div>
-							</div>
-							<div class="form-group col-md-4">
-								<label for="posDescription" class="control-label">Descripción POS:</label>
-								<input type="text" class="form-control" formControlName="posDescription" name="posDescription" id="posDescription" />
-								<div *ngIf="formErrors.posDescription" class="alert alert-danger">
-									{{ formErrors.posDescription }}
+							<div class="form-group col-md-4" *ngIf="operation !== 'add'">
+								<div class="custom-file">
+									<label class="custom-file-label btn btn-action" for="customFileLang" *ngIf="operation === 'update'">Cambiar Imagen</label>
+									<input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)"/>
+									<img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120" class="img-fluid">
+									<img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined" [src]="apiURL + 'get-image-article/'+article.picture" height="120" width="120" class="img-fluid">
 								</div>
 							</div>
 						</div>
@@ -64,7 +73,7 @@
 							<div class="form-group col-md-6">
 								<label for="category" class="control-label">Rubro:</label>
 								<select class="form-control" formControlName="category">
-									<option *ngFor="let category of categories" [ngValue]="category">{{category.description}}</option>
+									<option *ngFor="let category of categories" [selected]="article.category && category._id===article.category._id" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
 								</select>
 								<div *ngIf="formErrors.category" class="alert alert-danger">
 									{{ formErrors.category }}
@@ -73,7 +82,7 @@
 							<div class="form-group col-md-6">
 								<label for="printIn" class="control-label">Imprime en:</label>
 								<select class="form-control" formControlName="printIn">
-									<option *ngFor="let printIn of printIns" [ngValue]="printIn">{{printIn}}</option>
+									<option *ngFor="let printIn of printIns" [ngValue]="printIn" [disabled]="readonly">{{printIn}}</option>
 								</select>
 							</div>
 						</div>
@@ -86,45 +95,20 @@
 								<label for="basePrice" class="control-label">Precio Base:</label>
 								<div class="input-group">
 									<span class="input-group-addon">$</span>
-									<input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice" step="0.01" (blur)="updatePrices('basePrice')"
-									/>
+									<input type="number" class="form-control" formControlName="basePrice" name="basePrice" id="basePrice" step="0.01" (blur)="updatePrices('basePrice')" [readonly]="readonly"/>
 								</div>
 								<div *ngIf="formErrors.basePrice" class="alert alert-danger">
 									{{ formErrors.basePrice }}
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="form-group col-md-6">
-								<label for="VATPercentage" class="control-label">IVA:</label>
-								<div class="input-group">
-									<span class="input-group-addon">%</span>
-									<input type="number" class="form-control" formControlName="VATPercentage" name="VATPercentage" id="VATPercentage" step="0.01"
-									 (blur)="updatePrices('VATPercentage')" />
-								</div>
-								<div *ngIf="formErrors.VATPercentage" class="alert alert-danger">
-									{{ formErrors.VATPercentage }}
-								</div>
-							</div>
-							<div class="form-group col-md-6">
-								<label for="VATAmount" class="control-label">Monto IVA:</label>
-								<div class="input-group">
-									<span class="input-group-addon">$</span>
-									<input type="number" class="form-control" formControlName="VATAmount" name="VATAmount" id="VATAmount" step="0.01" (blur)="updatePrices('VATAmount')"
-									 readonly/>
-								</div>
-								<div *ngIf="formErrors.VATAmount" class="alert alert-danger">
-									{{ formErrors.VATAmount }}
-								</div>
-							</div>
-						</div>
+						<app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [articleTaxes]="taxes"></app-add-article-tax>
 						<div class="row">
 							<div class="form-group col-md-12">
 								<label for="costPrice" class="control-label">Precio de costo:</label>
 								<div class="input-group">
 									<span class="input-group-addon">$</span>
-									<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')"
-									 readonly/>
+									<input type="number" class="form-control" formControlName="costPrice" name="costPrice" id="costPrice" step="0.01" (blur)="updatePrices('costPrice')" readonly/>
 								</div>
 								<div *ngIf="formErrors.costPrice" class="alert alert-danger">
 									{{ formErrors.costPrice }}
@@ -136,8 +120,7 @@
 								<label for="markupPercentage" class="control-label">Margen:</label>
 								<div class="input-group">
 									<span class="input-group-addon">%</span>
-									<input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage" id="markupPercentage"
-									 step="0.01" (blur)="updatePrices('markupPercentage')" />
+									<input type="number" class="form-control" formControlName="markupPercentage" name="markupPercentage" id="markupPercentage" step="0.01" (blur)="updatePrices('markupPercentage')" [readonly]="readonly"/>
 								</div>
 								<div *ngIf="formErrors.markupPercentage" class="alert alert-danger">
 									{{ formErrors.markupPercentage }}
@@ -147,8 +130,7 @@
 								<label for="markupPrice" class="control-label">Utilidad:</label>
 								<div class="input-group">
 									<span class="input-group-addon">$</span>
-									<input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice" step="0.01" (blur)="updatePrices('markupPrice')"
-									/>
+									<input type="number" class="form-control" formControlName="markupPrice" name="markupPrice" id="markupPrice" step="0.01" (blur)="updatePrices('markupPrice')" [readonly]="readonly"/>
 								</div>
 								<div *ngIf="formErrors.markupPrice" class="alert alert-danger">
 									{{ formErrors.markupPrice }}
@@ -160,8 +142,7 @@
 								<label for="salePrice" class="control-label">Precio de Venta:</label>
 								<div class="input-group">
 									<span class="input-group-addon">$</span>
-									<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" (blur)="updatePrices('salePrice')"
-									/>
+									<input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" (blur)="updatePrices('salePrice')" [readonly]="readonly"/>
 								</div>
 								<div *ngIf="formErrors.salePrice" class="alert alert-danger">
 									{{ formErrors.salePrice }}
@@ -181,7 +162,7 @@
 							<div class="form-group col-md-12">
 								<label for="observation" class="control-label">Observación:</label>
 								<div class="input-group">
-									<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2"></textarea>
+									<textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
 								</div>
 							</div>
 						</div>
@@ -189,7 +170,7 @@
 				</ngb-tab>
 				<ngb-tab title="Variantes">
 					<ng-template ngbTabContent>
-						<app-list-variants (eventReturnVariants)="manageVariants($event)" [variantsLocals]="variants"></app-list-variants>
+						<app-add-variant (eventAddVariants)="manageVariants($event)" [articlesWithVariants]="articlesWithVariants" [article]="article"></app-add-variant>
 					</ng-template>
 				</ngb-tab>
 				<ngb-tab title="Configuraciones">
@@ -198,8 +179,8 @@
 							<div class="form-group col-md-12">
 								<label for="allowPurchase" class="control-label">¿El artículo está habilitado para la compra?</label>
 								<select class="form-control" formControlName="allowPurchase">
-									<option [value]="true">Si</option>
-									<option [value]="false">No</option>
+									<option [value]="true" [disabled]="readonly">Si</option>
+									<option [value]="false" [disabled]="readonly">No</option>
 								</select>
 							</div>
 						</div>
@@ -207,8 +188,8 @@
 							<div class="form-group col-md-12">
 								<label for="allowSale" class="control-label">¿El artículo está habilitado para la venta?</label>
 								<select class="form-control" formControlName="allowSale">
-									<option [value]="true">Si</option>
-									<option [value]="false">No</option>
+									<option [value]="true" [disabled]="readonly">Si</option>
+									<option [value]="false" [disabled]="readonly">No</option>
 								</select>
 							</div>
 						</div>
@@ -216,8 +197,8 @@
 							<div class="form-group col-md-12">
 								<label for="allowSaleWithoutStock" class="control-label">¿Se puede vender el artículo sin stock disponible?</label>
 								<select class="form-control" formControlName="allowSaleWithoutStock">
-									<option [value]="true">Si</option>
-									<option [value]="false">No</option>
+									<option [value]="true" [disabled]="readonly">Si</option>
+									<option [value]="false" [disabled]="readonly">No</option>
 								</select>
 							</div>
 						</div>
@@ -225,8 +206,9 @@
 				</ngb-tab>
 			</ngb-tabset>
 		</div>
-		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+		<div class="modal-footer" *ngIf="!readonly">
+			<button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+			<button type="button" class="btn btn-secondary" (click)="cleanForm()" *ngIf="hasChanged && operation==='add'">Nuevo</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Guardar</span>

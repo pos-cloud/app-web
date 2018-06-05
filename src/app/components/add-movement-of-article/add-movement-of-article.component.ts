@@ -291,7 +291,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     if (!this.movementOfArticle.notes) this.movementOfArticle.notes = "";
     if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
 
-    this.movementOfArticle.amount = this.roundNumber.transform(this.movementOfArticle.amount, 2);
+    this.movementOfArticle.amount = this.roundNumber.transform(this.movementOfArticle.amount);
 
     this.movementOfArticleForm.setValue({
       '_id': this.movementOfArticle._id,
@@ -336,7 +336,6 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._articleStockService.getStockByArticle(this.movementOfArticle.article._id).subscribe(
       result => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
-          console.log("no tiene");
           this.loading = false;
           this.movementOfArticleExists();
         } else {
@@ -411,12 +410,11 @@ export class AddMovementOfArticleComponent implements OnInit {
           }
           this.movementOfArticle.description = this.movementOfArticleForm.value.description;
           this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
-          this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
-          this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
-          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-          this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
-          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice);
+          this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
+          this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
           this.verifyPermissions("save");
         } else {
           if(this.movementOfArticle._id && this.movementOfArticle._id !== "") {
@@ -425,12 +423,11 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle._id = result.movementsOfArticles[0]._id;
             this.movementOfArticle.amount += result.movementsOfArticles[0].amount;
           }
-          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice, 2);
-          this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice, 2);
-          this.movementOfArticle.VATAmount = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.VATAmount, 2);
-          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
-          this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice, 2);
-          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice, 2);
+          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice);
+          this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
+          this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice);
+          this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
           this.verifyPermissions("update");
         }
         this.loading = false;
@@ -457,10 +454,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         !this.movementOfArticle.article.allowSaleWithoutStock &&
         (!this.articleStock || (this.articleStock && this.movementOfArticle.amount > this.articleStock.realStock))) {
       allowed = false;
-      console.log("No tiene el stock suficiente para vender la cantidad solicitada.");
       this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", "info", true);
-    } else {
-      console.log("entro a stock suficiente");
     }
 
     if (allowed) {

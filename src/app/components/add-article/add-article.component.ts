@@ -1,5 +1,5 @@
 //Angular
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -14,6 +14,8 @@ import { Make } from './../../models/make';
 import { Category } from './../../models/category';
 import { Variant } from '../../models/variant';
 import { Config } from './../../app.config';
+import { VariantType } from '../../models/variant-type';
+import { Taxes } from '../../models/taxes';
 
 //Services
 import { ArticleService } from './../../services/article.service';
@@ -23,9 +25,8 @@ import { CategoryService } from './../../services/category.service';
 import { VariantService } from './../../services/variant.service';
 
 //Pipes
-import { DecimalPipe } from '@angular/common'; 
-import { SlicePipe } from '@angular/common'; 
-import { VariantType } from '../../models/variant-type';
+import { DecimalPipe } from '@angular/common';
+import { SlicePipe } from '@angular/common';
 
 @Component({
   selector: 'app-add-article',
@@ -34,16 +35,20 @@ import { VariantType } from '../../models/variant-type';
   providers: [NgbAlertConfig, DecimalPipe]
 })
 
-export class AddArticleComponent  implements OnInit {
+export class AddArticleComponent implements OnInit {
 
-  public article: Article;
+  @Input() article: Article;
+  @Input() operation: string;
+  @Input() readonly: boolean;
   public articleStock: ArticleStock;
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
+  public articlesWithVariants: Article[] = new Array();
   public variantsStored = new Array();
   public raffledVariants: Variant[] = Array();
+  public taxes: Taxes[] = new Array();
   public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter];
   public alertMessage: string = "";
   public userType: string;
@@ -58,7 +63,10 @@ export class AddArticleComponent  implements OnInit {
   public numberOfGroupOfVariantsToStore: number = 0;
   public numberOfArticleChildStored: number = 0;
   public numberOfArticleChildToStore: number = 0;
+  public numberOfArticleTaxStored: number = 0;
+  public numberOfArticleTaxToStore: number = 0;
   public uniqueVariantTypes: VariantType[] = new Array();
+  public hasChanged: boolean = false;
 
   public formErrors = {
     'code': '',
@@ -66,8 +74,6 @@ export class AddArticleComponent  implements OnInit {
     'description': '',
     'posDescription': '',
     'basePrice': '',
-    'VATPercentage': '',
-    'VATAmount': '',
     'costPrice': '',
     'markupPercentage': '',
     'markupPrice': '',
@@ -77,25 +83,19 @@ export class AddArticleComponent  implements OnInit {
 
   public validationMessages = {
     'code': {
-      'required':       'Este campo es requerido.',
-      'maxlength':      'No puede exceder los 5 carácteres.'
+      'required': 'Este campo es requerido.',
+      'maxlength': 'No puede exceder los 5 carácteres.'
     },
     'make': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'description': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'posDescription': {
-      'maxlength':      'No puede exceder los 20 carácteres.'
+      'maxlength': 'No puede exceder los 20 carácteres.'
     },
     'basePrice': {
-      'required': 'Este campo es requerido.'
-    },
-    'VATPercentage': {
-      'required': 'Este campo es requerido.'
-    },
-    'VATAmount': {
       'required': 'Este campo es requerido.'
     },
     'costPrice': {
@@ -108,10 +108,10 @@ export class AddArticleComponent  implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'salePrice': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     },
     'category': {
-      'required':       'Este campo es requerido.'
+      'required': 'Este campo es requerido.'
     }
   };
 
@@ -126,7 +126,9 @@ export class AddArticleComponent  implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
-    this.article = new Article();
+    if(!this.article) {
+      this.article = new Article();
+    }
   }
 
   ngOnInit(): void {
@@ -135,6 +137,14 @@ export class AddArticleComponent  implements OnInit {
     this.userType = pathLocation[1];
     this.buildForm();
     this.getMakes();
+    if(this.operation === "update") {
+      this.taxes = this.article.taxes;
+      this.setValuesForm();
+    } else if (this.operation === "view") {
+      this.taxes = this.article.taxes;
+      this.readonly = true;
+      this.setValuesForm();
+    }
   }
 
   ngAfterViewInit() {
@@ -145,73 +155,65 @@ export class AddArticleComponent  implements OnInit {
 
     this.articleForm = this._fb.group({
       '_id': [this.article._id, [
-        ]
+      ]
       ],
       'code': [this.article.code, [
-          Validators.required,
-          Validators.maxLength(5)
-        ]
+        Validators.required,
+        Validators.maxLength(5)
+      ]
       ],
       'make': [this.article.make, [
-        ]
+      ]
       ],
       'description': [this.article.description, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ],
       'posDescription': [this.article.posDescription, [
-          Validators.maxLength(20)
-        ]
+        Validators.maxLength(20)
+      ]
       ],
       'basePrice': [this.article.basePrice, [
         Validators.required
-        ]
-      ],
-      'VATPercentage': [this.article.VATPercentage, [
-          Validators.required
-        ]
-      ],
-      'VATAmount': [this.article.VATAmount, [
-          Validators.required
-        ]
+      ]
       ],
       'costPrice': [this.article.costPrice, [
         Validators.required
-        ]
+      ]
       ],
       'markupPercentage': [this.article.markupPercentage, [
         Validators.required
-        ]
+      ]
       ],
       'markupPrice': [this.article.markupPrice, [
         Validators.required
-        ]
+      ]
       ],
       'salePrice': [this.article.salePrice, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ],
       'category': [this.article.category, [
-          Validators.required
-        ]
+        Validators.required
+      ]
       ],
       'observation': [this.article.observation, [
-        ]
+      ]
       ],
       'barcode': [this.article.barcode, [
-        ]
+      ]
       ],
       'printIn': [this.article.printIn, [
-        ]
+      ]
       ],
       'allowPurchase': [this.article.allowPurchase, [
-        ]
+      ]
       ],
       'allowSale': [this.article.allowSale, [
-        ]
+      ]
       ],
       'allowSaleWithoutStock': [this.article.allowSaleWithoutStock, [
-        ]
+      ]
       ]
     });
 
@@ -240,8 +242,8 @@ export class AddArticleComponent  implements OnInit {
 
   public padString(n, length) {
     var n = n.toString();
-    while(n.length < length)
-         n = "0" + n;
+    while (n.length < length)
+      n = "0" + n;
     return n;
   }
 
@@ -250,99 +252,168 @@ export class AddArticleComponent  implements OnInit {
     this.setValuesForm();
   }
 
-  public getLastArticle(): void {  
+  public getLastArticle(): void {
 
     this.loading = true;
-    
+
     this._articleService.getLastArticle().subscribe(
-        result => {
-          let code = "00001";
-          let category: Category = new Category();
-          if(result.articles){
-            if(result.articles[0] !== undefined) {
-              if (!isNaN(parseInt(result.articles[0].code))) {
-                code = (parseInt(result.articles[0].code) + 1) + "";
-              } else {
-                code = "00001";
-              }
+      result => {
+        let code = "00001";
+        let category: Category = new Category();
+        if (result.articles) {
+          if (result.articles[0] !== undefined) {
+            if (!isNaN(parseInt(result.articles[0].code))) {
+              code = (parseInt(result.articles[0].code) + 1) + "";
+            } else {
+              code = "00001";
             }
           }
-          if(this.categories[0] !== undefined) {
-            category = this.categories[0];
-          }
-
-          this.article.code = code;
-          this.article.make = this.makes[0];
-          this.article.category = category;
-          this.setValuesForm();
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
         }
-      );
+        if (this.categories[0] !== undefined) {
+          category = this.categories[0];
+        }
+
+        this.article.code = code;
+        this.article.make = this.makes[0];
+        this.article.category = category;
+        this.setValuesForm();
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
-  public getMakes(): void {  
+  public getArticleStock(): void {
 
     this.loading = true;
-    
+
+    this._articleStockService.getStockByArticle(this.article._id).subscribe(
+      result => {
+        if (!result.articleStocks) {
+          this.saveArticleStock();
+        } else {
+          this.articleStock = result.articleStocks[0];
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveArticleStock(): void {
+
+    if (!this.articleStock) {
+      this.articleStock = new ArticleStock();
+    }
+
+    if (this.articleStock && !this.articleStock.article) {
+      this.articleStock.article = this.article;
+    }
+
+    this._articleStockService.saveArticleStock(this.articleStock).subscribe(
+      result => {
+        if (!result.articleStock) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.articleStock = result.articleStock;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getMakes(): void {
+
+    this.loading = true;
+
     this._makeService.getMakes().subscribe(
-        result => {
-          if(!result.makes) {
-            this.getCategories();
-          } else {
-            this.hideMessage();
-            this.makes = result.makes;
-            this.getCategories();
-          }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
+      result => {
+        if (!result.makes) {
+          this.getCategories();
+        } else {
+          this.hideMessage();
+          this.makes = result.makes;
+          this.getCategories();
         }
-      );
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
-  public getCategories(): void {  
-    
+  public getCategories(): void {
+
     this.loading = true;
-    
+
     this._categoryService.getCategories().subscribe(
-        result => {
-          if (!result.categories) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          } else {
-            this.hideMessage();
-            this.categories = result.categories;
+      result => {
+        if (!result.categories) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.hideMessage();
+          this.categories = result.categories;
+          if(this.operation === "add") {
             this.getLastArticle();
           }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
         }
-      );
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public updatePrices(op): void {
-    
-    switch(op) {
+
+    switch (op) {
       case 'basePrice':
-        this.articleForm.value.VATAmount = this.articleForm.value.basePrice * this.articleForm.value.VATPercentage / 100;
-        this.articleForm.value.costPrice = this.articleForm.value.basePrice + this.articleForm.value.VATAmount;
-        if(!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+        if (this.taxes.length > 0) {
+          this.articleForm.value.costPrice = 0;
+          for (let articleTax of this.taxes) {
+            articleTax.taxBase = this.articleForm.value.basePrice;
+            articleTax.taxAmount = this.articleForm.value.basePrice * articleTax.percentage / 100;
+            this.articleForm.value.costPrice += (articleTax.taxAmount);
+          }
+          this.articleForm.value.costPrice += this.articleForm.value.basePrice;
+        } else {
+          this.articleForm.value.costPrice = this.articleForm.value.basePrice;
+        }
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
           this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
-      case 'VATPercentage':
-        this.articleForm.value.VATAmount = this.articleForm.value.basePrice * this.articleForm.value.VATPercentage / 100;
-        this.articleForm.value.costPrice = this.articleForm.value.basePrice + this.articleForm.value.VATAmount;
-        this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+      case 'taxes':
+        if (this.taxes.length > 0) {
+          this.articleForm.value.costPrice = 0;
+          for (let articleTax of this.taxes) {
+            articleTax.taxBase = this.articleForm.value.basePrice;
+            articleTax.taxAmount = this.articleForm.value.basePrice * articleTax.percentage / 100;
+            this.articleForm.value.costPrice += (articleTax.taxAmount);
+          }
+          this.articleForm.value.costPrice += this.articleForm.value.basePrice;
+        } else {
+          this.articleForm.value.costPrice = this.articleForm.value.basePrice;
+        }
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        }
         break;
       case 'markupPercentage':
         if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
@@ -358,7 +429,6 @@ export class AddArticleComponent  implements OnInit {
         break;
       case 'salePrice':
         if (this.articleForm.value.basePrice === 0) {
-          this.articleForm.value.VATAmount = 0;
           this.articleForm.value.costPrice === 0;
           this.articleForm.value.markupPercentage = 100;
           this.articleForm.value.markupPrice = this.articleForm.value.salePrice;
@@ -372,8 +442,6 @@ export class AddArticleComponent  implements OnInit {
     }
 
     this.articleForm.value.basePrice = parseFloat(this.articleForm.value.basePrice.toFixed(2));
-    this.articleForm.value.VATPercentage = parseFloat(this.articleForm.value.VATPercentage.toFixed(2));
-    this.articleForm.value.VATAmount = parseFloat(this.articleForm.value.VATAmount.toFixed(2));
     this.articleForm.value.costPrice = parseFloat(this.articleForm.value.costPrice.toFixed(2));
     this.articleForm.value.markupPercentage = parseFloat(this.articleForm.value.markupPercentage.toFixed(2));
     this.articleForm.value.markupPrice = parseFloat(this.articleForm.value.markupPrice.toFixed(3));
@@ -397,38 +465,56 @@ export class AddArticleComponent  implements OnInit {
 
     if (!this.article._id) this.article._id = "";
     if (!this.article.code) this.article.code = "000001";
-    if (!this.article.make) this.article.make = null;
+    
+    let make;
+    if (!this.article.make) {
+      make = null;
+    } else {
+      if (this.article.make._id) {
+        make = this.article.make._id;
+      } else {
+        make = this.article.make;
+      }
+    }
+
     if (!this.article.description) this.article.description = "";
     if (!this.article.posDescription) this.article.posDescription = "";
     if (!this.article.basePrice) this.article.basePrice = 0.00;
-    if (!this.article.VATPercentage) this.article.VATPercentage = 0.00;
-    if (!this.article.VATAmount) this.article.VATAmount = 0.00;
     if (!this.article.costPrice) this.article.costPrice = 0.00;
     if (!this.article.markupPercentage) this.article.markupPercentage = 0.00;
     if (!this.article.markupPrice) this.article.markupPrice = 0.00;
     if (!this.article.salePrice) this.article.salePrice = 0.00;
-    if (!this.article.category) this.article.category = null;
+    
+    let category;
+    if (!this.article.category) {
+      category = null;
+    } else {
+      if (this.article.category._id) {
+        category = this.article.category._id;
+      } else {
+        category = this.article.category;
+      }
+    }
+
     if (!this.article.observation) this.article.observation = "";
     if (!this.article.barcode) this.article.barcode = "";
     if (!this.article.printIn) this.article.printIn = ArticlePrintIn.Counter;
     if (!this.article.allowPurchase === undefined) this.article.allowPurchase = true;
     if (!this.article.allowSale === undefined) this.article.allowSale = true;
     if (!this.article.allowSaleWithoutStock === undefined) this.article.allowSaleWithoutStock = false;
-    
+
     this.articleForm.setValue({
       '_id': this.article._id,
       'code': this.article.code,
-      'make': this.article.make,
+      'make': make,
       'description': this.article.description,
       'posDescription': this.article.posDescription,
       'basePrice': this.article.basePrice,
-      'VATPercentage': this.article.VATPercentage,
-      'VATAmount': this.article.VATAmount,
       'costPrice': this.article.costPrice,
       'markupPercentage': this.article.markupPercentage,
       'markupPrice': this.article.markupPrice,
       'salePrice': this.article.salePrice,
-      'category': this.article.category,
+      'category': category,
       'observation': this.article.observation,
       'barcode': this.article.barcode,
       'printIn': this.article.printIn,
@@ -437,29 +523,40 @@ export class AddArticleComponent  implements OnInit {
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock
     });
   }
- 
+
   public addArticle(): void {
-    this.loadPosDescription();
-    this.article = this.articleForm.value;
-    this.autocompleteCode();
-    this.article.type = ArticleType.Final;
-    if(this.variants && this.variants.length > 0) {
-      this.article.containsVariants = true;
-    } else {
-      this.article.containsVariants = false;
+    
+    if (!this.readonly) {
+      this.loading = true;
+      this.loadPosDescription();
+      this.article = this.articleForm.value;
+      this.autocompleteCode();
+      this.article.type = ArticleType.Final;
+      if (this.variants && this.variants.length > 0) {
+        this.article.containsVariants = true;
+      } else {
+        this.article.containsVariants = false;
+      }
+      this.article.taxes = this.taxes;
+      if (this.operation === "add") {
+        this.saveArticle();
+      } else if (this.operation === "update") {
+        this.updateArticle();
+      }
     }
-    this.saveArticle();
   }
 
   public saveArticle(): void {
     
     this.loading = true;
-    
+
     this._articleService.saveArticle(this.article).subscribe(
-    result => {
+      result => {
         if (!result.article) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
+          this.hasChanged = true;
           this.article = result.article;
           if (this.filesToUpload) {
             this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
@@ -467,15 +564,57 @@ export class AddArticleComponent  implements OnInit {
                 (result) => {
                   this.resultUpload = result;
                   this.article.picture = this.resultUpload.filename;
-                  if(this.article.containsVariants) {
+                  if (this.article.containsVariants) {
                     this.addVariants(this.article);
                   } else {
+                    this.loading = false;
                     this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-                    this.article = new Article();
-                    this.filesToUpload = null;
-                    this.buildForm();
-                    this.variants = new Array();
-                    this.getLastArticle();
+                  }
+                },
+                (error) => {
+                  this.loading = false;
+                  this.showMessage(error, "danger", false);
+                }
+              );
+          } else {
+            if (this.article.containsVariants) {
+              this.addVariants(this.article);
+            } else {
+              this.loading = false;
+              this.showMessage("El artículo se ha añadido con éxito.", "success", false);
+            }
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public updateArticle(): void {
+
+    this.loading = true;
+
+    this._articleService.updateArticle(this.article).subscribe(
+      result => {
+        if (!result.article) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.hasChanged = true;
+          this.article = result.article;
+          if (this.filesToUpload) {
+            this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
+              .then(
+                (result) => {
+                  this.resultUpload = result;
+                  this.article.picture = this.resultUpload.filename;
+                  if (this.article.containsVariants) {
+                    this.addVariants(this.article);
+                  } else {
+                    this.loading = false;
+                    this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
                   }
                 },
                 (error) => {
@@ -486,12 +625,8 @@ export class AddArticleComponent  implements OnInit {
             if (this.article.containsVariants) {
               this.addVariants(this.article);
             } else {
-              this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-              this.article = new Article();
-              this.filesToUpload = null;
-              this.buildForm();
-              this.variants = new Array();
-              this.getLastArticle();
+              this.loading = false;
+              this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
             }
           }
         }
@@ -504,34 +639,52 @@ export class AddArticleComponent  implements OnInit {
     );
   }
 
+  public cleanForm() {
+    this.article = new Article();
+    this.taxes = new Array();
+    this.filesToUpload = null;
+    this.buildForm();
+    this.variants = new Array();
+    this.getLastArticle();
+  }
+
+  public closeModal() {
+    this.activeModal.close(this.hasChanged);
+  }
+
   public fileChangeEvent(fileInput: any): void {
 
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
   public makeFileRequest(files: Array<File>) {
-    
+
     let articleId = this.article._id;
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
       let formData: any = new FormData();
       let xhr: XMLHttpRequest = new XMLHttpRequest();
 
-      for(let i: number = 0; i < files.length ; i++) {
-        formData.append('image',files[i], files[i].name);
+      for (let i: number = 0; i < files.length; i++) {
+        formData.append('image', files[i], files[i].name);
       }
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4){
-          if(xhr.status == 200){
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
             resolve(JSON.parse(xhr.response));
-          }else {
+          } else {
             reject(xhr.response);
           }
         }
       }
-      
-      xhr.open('POST', Config.apiURL + 'upload-image/'+articleId,true);
+
+      xhr.open('POST', Config.apiURL + 'upload-image/' + articleId, true);
       xhr.send(formData);
     });
+  }
+
+  public addArticleTaxes(articleTaxes: Taxes[]): void {
+    this.taxes = articleTaxes;
+    this.updatePrices("taxes");
   }
 
   public addStock(articleStock: ArticleStock): void {
@@ -539,7 +692,7 @@ export class AddArticleComponent  implements OnInit {
   }
 
   // public saveArticleStock(article: Article): void {
-    
+
   //   this.loading = true;
 
   //   if(!this.articleStock) {
@@ -573,7 +726,7 @@ export class AddArticleComponent  implements OnInit {
     let variantTypes: VariantType[] = new Array();
 
     if (this.variants && this.variants.length > 0) {
-      for(let variant of this.variants) {
+      for (let variant of this.variants) {
         variantTypes.push(variant.type);
       }
     }
@@ -584,7 +737,7 @@ export class AddArticleComponent  implements OnInit {
     for (let i = 0; i < this.uniqueVariantTypes.length; i++) {
       this.numberOfArticleChildToStore *= this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes);
     }
-    
+
     this.numberOfGroupOfVariantsToStore = this.numberOfArticleChildToStore;
 
     this.addArticleChildren(articleParent);
@@ -618,7 +771,7 @@ export class AddArticleComponent  implements OnInit {
 
   public addArticleChildren(articleParent: Article): void {
 
-    if(this.numberOfArticleChildStored < this.numberOfArticleChildToStore) {
+    if (this.numberOfArticleChildStored < this.numberOfArticleChildToStore) {
 
       let articleChild = articleParent;
       articleChild.type = ArticleType.Variant;
@@ -627,11 +780,6 @@ export class AddArticleComponent  implements OnInit {
     } else {
       this.loading = false;
       this.showMessage("El artículo se ha añadido con éxito.", "success", false);
-      this.article = new Article();
-      this.filesToUpload = null;
-      this.buildForm();
-      this.variants = new Array();
-      this.getLastArticle();
     }
   }
 
@@ -647,9 +795,9 @@ export class AddArticleComponent  implements OnInit {
           articleChild = result.article;
           this.numberOfArticleChildStored++;
           this.numberOfGroupOfVariantsStored = 0;
+          this.numberOfArticleTaxStored = 0;
           this.saveVariants(articleParent, articleChild);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -672,18 +820,18 @@ export class AddArticleComponent  implements OnInit {
             variant.articleChild = articleChild;
             this.raffledVariants.push(variant);
           }
-          
-          if(this.variantsExists()) {
+
+          if (this.variantsExists()) {
             exists = true;
             this.raffledVariants = new Array();
           } else {
             exists = false;
           }
-        } while(exists);
+        } while (exists);
       }
       this.variantsStored.push(this.raffledVariants);
       this.numberOfVariantsStored = 0;
-      
+
       this.saveGroupOfVariants(articleParent, articleChild);
     } else {
       this.addArticleChildren(articleParent);
@@ -691,15 +839,15 @@ export class AddArticleComponent  implements OnInit {
   }
 
   public variantsExists(): boolean {
-    
+
     let exists: boolean = false;
     let equals: number = 0;
-    
+
     for (let i = 0; i < this.variantsStored.length; i++) {
-      if(!exists) {
+      if (!exists) {
         for (let j = 0; j < this.raffledVariants.length; j++) {
           for (let k = 0; k < this.variantsStored[i].length; k++) {
-            if (this.raffledVariants[j].type._id == this.variantsStored[i][k].type._id)  {
+            if (this.raffledVariants[j].type._id == this.variantsStored[i][k].type._id) {
               if (this.raffledVariants[j].value._id == this.variantsStored[i][k].value._id) {
                 equals++;
               }
@@ -741,7 +889,7 @@ export class AddArticleComponent  implements OnInit {
   }
 
   public saveVariant(variant: Variant): void {
-    
+
     this.loading = true;
 
     this._variantService.saveVariant(variant).subscribe(
@@ -753,7 +901,6 @@ export class AddArticleComponent  implements OnInit {
           this.numberOfVariantsStored++;
           this.saveGroupOfVariants(variant.articleParent, variant.articleChild);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -762,8 +909,8 @@ export class AddArticleComponent  implements OnInit {
     );
   }
 
-  public manageVariants(variants: Variant[]): void {
-    this.variants = variants;
+  public manageVariants(articlesWithVariants: Article[]): void {
+    this.articlesWithVariants = articlesWithVariants;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

@@ -488,7 +488,7 @@ export class PrintComponent implements OnInit {
           }
           this.doc.text(this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 10), 115, row)
           this.doc.setFontType('bold')
-          this.doc.text("$ " + this.roundNumber.transform(transaction.totalPrice, 2), 175, row)
+          this.doc.text("$ " + this.roundNumber.transform(transaction.totalPrice), 175, row)
           this.doc.setFontType('normal')
 
           row += 8;
@@ -501,7 +501,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold')
     this.doc.setFontSize(this.fontSizes.large)
     this.doc.text("Total de la Cuenta Corriente", 5, 246)
-    this.doc.text("$ " + this.roundNumber.transform(this.balance, 2), 175, 246)
+    this.doc.text("$ " + this.roundNumber.transform(this.balance), 175, 246)
     this.doc.line(0, 250, 240, 250)
 
     this.getGreeting();
@@ -566,11 +566,11 @@ export class PrintComponent implements OnInit {
           this.doc.text(this.movementsOfArticles2[i].description, 25, row)
         }
         if (this.movementsOfArticles2[i].article) {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].article.salePrice, 2), 155, row)
+          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].article.salePrice), 155, row)
         } else {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice, 2), 155, row)
+          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice), 155, row)
         }
-        this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice, 2), 185, row)
+        this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice), 185, row)
 
         row += 8;
       }
@@ -601,9 +601,9 @@ export class PrintComponent implements OnInit {
     if (this.transaction.company &&
         this.transaction.company.vatCondition &&
         this.transaction.company.vatCondition.discriminate) {
-      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice - iva21 - iva10 - iva27), 2).toString(), 180, 247)
+      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice - iva21 - iva10 - iva27)).toString(), 180, 247)
     } else {
-      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice), 2).toString(), 180, 247)
+      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice)).toString(), 180, 247)
       iva21 = 0;
       iva10 = 0;
       iva27 = 0;
@@ -611,25 +611,25 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold')
     this.doc.text("IVA 21%:", 147, 254)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(iva21, 2), 180, 254)
+    this.doc.text("$ " + this.roundNumber.transform(iva21), 180, 254)
     this.doc.setFontType('bold')
     this.doc.text("IVA 10.5%:", 147, 261)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(iva10, 2), 180, 261)
+    this.doc.text("$ " + this.roundNumber.transform(iva10), 180, 261)
     this.doc.setFontType('bold')
     this.doc.text("Exento:", 147, 268)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt, 2), 180, 268)
+    this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, 268)
     this.doc.setFontType('bold')
     this.doc.text("Descuento:", 147, 275)
     this.doc.setFontType('normal')
-    this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount, 2) + ")", 180, 275)
+    this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 180, 275)
     this.doc.setFontSize(this.fontSizes.extraLarge)
     this.doc.setFontType('bold')
     this.doc.setFontSize(this.fontSizes.large)
     this.doc.text("Total:", 147, 282)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice, 2), 180, 282)
+    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, 282)
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.setFontType('bold')
     this.doc.text("Observaciones:", 10, 250)
@@ -656,9 +656,6 @@ export class PrintComponent implements OnInit {
   }
 
   public toPrintBarcode(): void {
-    
-    console.log( this.config[0].heightLabel,this.config[0].widthLabel);
-    
 
     this.doc = new jsPDF('l','mm', [this.config[0].heightLabel,this.config[0].widthLabel]);
 
@@ -689,7 +686,11 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontStyle("italic")
     this.doc.setFontSize(this.fontSizes.large)
-    this.doc.text(this.config[0].footerInvoice, 5, 280)
+    if (this.config[0] && this.config[0].footerInvoice) {
+      this.doc.text(this.config[0].footerInvoice, 5, 280)
+    } else {
+      this.doc.text("Gracias por su visita!", 5, 280)
+    }
     this.doc.setFontStyle("normal")
   }
 

@@ -146,6 +146,7 @@ export class PointOfSaleComponent implements OnInit {
   public getOpenTransactions(): void {
     
     this.loading = true;
+
     this._transactionService.getOpenTransaction(this.posType).subscribe(
       result => {
         if (!result.transactions) {
@@ -304,7 +305,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result === "delete_close") {
-            this.getOpenTransactions();
+            this.refresh();
           }
         }, (reason) => {
 

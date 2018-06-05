@@ -1,0 +1,51 @@
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="articleTaxForm" #formAddVariantValue="ngForm" (ngSubmit)="addArticleTax()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-5">
+          <label for="tax" class="control-label">Impuesto</label>
+          <select class="form-control" formControlName="tax">
+            <option *ngFor="let tax of taxes" [ngValue]="tax">{{tax.name}}</option>
+          </select>
+          <div *ngIf="formErrors.tax" class="alert alert-danger">
+            {{ formErrors.tax }}
+          </div>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="percentage" class="control-label">Porcentaje:</label>
+          <div class="input-group">
+            <span class="input-group-addon">%</span>
+            <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" step="0.01"/>
+          </div>
+          <div *ngIf="formErrors.percentage" class="alert alert-danger">
+            {{ formErrors.percentage }}
+          </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="value" class="control-label">Acción</label>
+          <button type="submit" class="btn btn-success" [disabled]="!articleTaxForm.valid || loading">Agregar</button>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-hover">
+          <tbody>
+            <tr *ngFor="let articleTaxAux of articleTaxes">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticleTax(articleTaxAux)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+              <td class="flat">{{articleTaxAux.tax.name}}</td>
+              <td class="flat">{{articleTaxAux.percentage}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</section>

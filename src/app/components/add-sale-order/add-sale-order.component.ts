@@ -11,7 +11,7 @@ import 'moment/locale/es';
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
-import { TransactionTax } from './../../models/transaction-tax';
+import { Taxes } from './../../models/taxes';
 import { Article, ArticlePrintIn } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
@@ -24,6 +24,7 @@ import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Turn } from './../../models/turn';
 import { Config } from './../../app.config';
 import { CompanyType } from '../../models/company';
+import { Tax } from '../../models/tax';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -145,6 +146,8 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getTransactionType(transactionTypeID: string): void {
+    
+    this.loading = true;
     
     this._transactionTypeService.getTransactionType(transactionTypeID).subscribe(
       result => {
@@ -360,8 +363,8 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public updateTransaction(closed?: boolean): void {
-
+  public updateTransaction(closed: boolean = false): void {
+    
     this.loading = true;
     
     this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -521,7 +524,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public verifyPermissions(op: string, movementOfArticle: MovementOfArticle, articleStock: ArticleStock): void {
-
+    
     let allowed = true;
 
     if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
@@ -553,11 +556,20 @@ export class AddSaleOrderComponent implements OnInit {
         this.saveMovementOfArticle(movementOfArticle);
       } else if (op === "update") {
         movementOfArticle.amount += 1;
-        movementOfArticle.basePrice += movementOfArticle.basePrice;
-        movementOfArticle.VATAmount += movementOfArticle.VATAmount;
-        movementOfArticle.costPrice += movementOfArticle.costPrice;
-        movementOfArticle.markupPrice += movementOfArticle.markupPrice;
-        movementOfArticle.salePrice += movementOfArticle.salePrice;
+        movementOfArticle.basePrice += movementOfArticle.article.basePrice;
+        movementOfArticle.costPrice += movementOfArticle.article.costPrice;
+        movementOfArticle.markupPrice += movementOfArticle.article.markupPrice;
+        movementOfArticle.salePrice += movementOfArticle.article.salePrice;
+        let tax: Taxes = new Taxes();
+        let taxes: Taxes[] = new Array();
+        for (let taxAux of movementOfArticle.article.taxes) {
+          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          tax.tax = taxAux.tax;
+          tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+          tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+          taxes.push(tax);
+        }
+        movementOfArticle.taxes = taxes;
         this.updateMovementOfArticle(movementOfArticle);
       }
     }
@@ -567,7 +579,7 @@ export class AddSaleOrderComponent implements OnInit {
     
     let movementOfArticle: MovementOfArticle;
     
-    if(this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for(let movementOfArticleAux of this.movementsOfArticles) {
         if (movementOfArticleAux.article._id === articleId) {
           movementOfArticle = movementOfArticleAux;
@@ -606,66 +618,44 @@ export class AddSaleOrderComponent implements OnInit {
 
   public updateTaxes(): void {
 
-    let taxes: TransactionTax[] = new Array();
-    let taxesAUX: TransactionTax[] = new Array();
-    let VATs: any[] = new Array();
-    let isSavedTax: boolean = false;
-    this.transaction.exempt = 0;
+    let transactionTaxes: Taxes[] = new Array();
+    let transactionTaxesAUX: Taxes[] = new Array();
 
     for (let movementOfArticle of this.movementsOfArticles) {
 
-      if (movementOfArticle.VATPercentage !== 0) {
+      if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
 
-        let tax = new TransactionTax();
-        tax.percentage = movementOfArticle.VATPercentage;
-        tax.tax = "IVA";
-        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((movementOfArticle.VATPercentage / 100) + 1),2);
-        tax.taxAmount = this.roundNumber.transform(tax.taxBase * movementOfArticle.VATPercentage / 100,2);
-        taxesAUX.push(tax);
-
-        if (VATs.length !== 0) {
-          let exist: boolean = false;
-          for (let VAT of VATs) {
-            if (VAT.tax === tax.tax &&
-              VAT.percentage === tax.percentage) {
-              exist = true;
-            }
-          }
-          if (exist === false) {
-            VATs.push({
-              "tax": tax.tax,
-              "percentage": tax.percentage
-            });
-          }
-        } else {
-          VATs.push({
-            "tax": tax.tax,
-            "percentage": tax.percentage
-          });
+        let transactionTax: Taxes = new Taxes();
+        for(let taxesAux of movementOfArticle.taxes) {
+          transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
+          transactionTax.tax = taxesAux.tax;
+          transactionTax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((taxesAux.percentage / 100) + 1));
+          transactionTax.taxAmount = this.roundNumber.transform(transactionTax.taxBase * taxesAux.percentage / 100);
         }
+        transactionTaxesAUX.push(transactionTax);
       } else {
         this.transaction.exempt += movementOfArticle.salePrice;
       }
     }
 
-    for (let VAT of VATs) {
-      let tax = new TransactionTax();
-      tax.percentage = VAT.percentage;
-      tax.tax = VAT.tax;
-      tax.taxAmount = 0;
-      tax.taxBase = 0;
-      for (let taxAUX of taxesAUX) {
-        if (taxAUX.percentage === VAT.percentage &&
-          VAT.tax === taxAUX.tax) {
-          tax.taxAmount += taxAUX.taxAmount;
-          tax.taxBase += taxAUX.taxBase;
+    for (let transactionTaxAux of transactionTaxesAUX) {
+      let exists: boolean = false;
+      for(let transactionTax of transactionTaxes) {
+        if(transactionTaxAux.tax._id === transactionTax.tax._id &&
+          transactionTaxAux.percentage === transactionTax.percentage) {
+          transactionTax.taxAmount += transactionTaxAux.taxAmount;
+          transactionTax.taxBase += transactionTaxAux.taxBase;
+          exists = true;
         }
       }
-      taxes.push(tax);
+
+      if(!exists) {
+        transactionTaxes.push(transactionTaxAux);
+      }
     }
 
-    this.transaction.taxes = taxes;
-    this.updateTransaction(false);
+    this.transaction.taxes = transactionTaxes;
+    this.updateTransaction();
   }
 
   public validateElectronicTransaction(): void {
@@ -702,13 +692,9 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg' });
         modalRef.componentInstance.movementOfArticle = movementOfArticle;
         modalRef.result.then((result) => {
-          if (result === "save" ||
-              result === "update" ||
-              result === "delete") {
-            this.getMovementsOfTransaction();
-          }
+          this.getMovementsOfTransaction();
         }, (reason) => {
-
+          this.getMovementsOfTransaction();
         });
         break;
       case 'cancel':
@@ -758,9 +744,9 @@ export class AddSaleOrderComponent implements OnInit {
                 let movementOfArticle = new MovementOfArticle();
                 movementOfArticle.code = "0";
                 movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                movementOfArticle.VATPercentage = 21;
+                // movementOfArticle.VATPercentage = 21;
                 movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
-                movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
+                // movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
                 movementOfArticle.transaction = this.transaction;
                 this.transaction.totalPrice = result.amountPaid;
                 this.saveMovementOfArticle(movementOfArticle);
@@ -1084,7 +1070,6 @@ export class AddSaleOrderComponent implements OnInit {
     if(this.typeOfOperationToPrint === "charge") {
       if( this.transaction.type.modifyStock && 
           this.amountModifyStock < this.movementsOfArticles.length) {
-            
         this.updateRealStock();
       } else {
         this.backFinal();
@@ -1097,10 +1082,11 @@ export class AddSaleOrderComponent implements OnInit {
   public updateRealStock(): void {
     
     if(this.movementsOfArticles.length > 0) {
+
       this.loading = true;
   
       let amountToModify;
-  
+      
       if(this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.name === "Inventario") {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount;
       } else {
@@ -1112,12 +1098,11 @@ export class AddSaleOrderComponent implements OnInit {
           if (!result.articleStock) {
             if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           } else {
-            this.amountModifyStock ++;
-            if(this.transaction.type.transactionMovement === TransactionMovement.Stock &&
-              this.amountModifyStock === this.movementsOfArticles.length) {
+            this.amountModifyStock++;
+            if(this.amountModifyStock === this.movementsOfArticles.length) {
               this.finishTransaction();
             } else {
-              this.back();
+              this.updateRealStock();
             }
           }
           this.loading = false;
@@ -1149,7 +1134,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getMovementsOfTransaction(): void {
-
+    
     this.loading = true;
 
     this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
@@ -1160,7 +1145,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.updatePrices();
         } else {
           this.areMovementsOfArticlesEmpty = false;
-          this.movementsOfArticles = result.movementsOfArticles; 
+          this.movementsOfArticles = result.movementsOfArticles;
           this.updatePrices();
         }
         this.loading = false;
@@ -1179,12 +1164,12 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updatePrices(): void {
-
+    
     this.transaction.totalPrice = 0;
 
     if(this.movementsOfArticles.length !== 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice + movementOfArticle.salePrice,2);
+        this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice + movementOfArticle.salePrice);
       }
     } else {
       this.transaction.totalPrice = 0;

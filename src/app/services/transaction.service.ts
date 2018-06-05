@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
 import { Transaction, TransactionState } from './../models/transaction';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
-import { Company } from './../models/company';
 import { UserService } from './user.service';
 
 @Injectable()

@@ -33,7 +33,7 @@
             <th (click)="orderBy('category','description')">Rubro</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
             <th (click)="orderBy('observation')">Observation</th>
-            <th (click)="orderBy('barcode')">Codigo de Barra</th>
+            <th (click)="orderBy('barcode')">Código de Barra</th>
             <th (click)="orderBy('type')">Tipo</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
@@ -128,7 +128,7 @@
 </section>
 
 <!--POS-->
-<section class="container-fluid" *ngIf="userType=='pos'">
+<section class="container-fluid" *ngIf="userType && userType==='pos'">
   <!--<input type="search" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." (onfocus)="showArticles()">-->
   <div class="row" *ngIf="areArticlesVisible">
     <div *ngFor="let article of articles  | filter: filterArticle | filter: filterCategorySelected.description:'description':'category'">

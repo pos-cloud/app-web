@@ -6,6 +6,7 @@ import { HttpModule } from '@angular/http';
 //paquetes de terceros
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination';//https://www.npmjs.com/package/ngx-pagination
+import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 //rutas
 import { RoutingModule } from './app.routes';
@@ -37,6 +38,8 @@ import { VATConditionService } from './services/vat-condition.service';
 import { ArticleStockService } from './services/article-stock.service';
 import { VariantTypeService } from './services/variant-type.service';
 import { VariantService } from './services/variant.service';
+import { TaxService } from './services/tax.service';
+import { VariantValueService } from './services/variant-value.service';
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -47,7 +50,6 @@ import { HomeComponent } from './components/home/home.component';
 import { AppComponent } from './app.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
-import { UpdateArticleComponent } from './components/update-article/update-article.component';
 import { DeleteArticleComponent } from './components/delete-article/delete-article.component';
 import { ListEmployeesComponent } from './components/list-employees/list-employees.component';
 import { AddEmployeeComponent } from './components/add-employee/add-employee.component';
@@ -93,22 +95,6 @@ import { UpdatePrinterComponent } from './components/update-printer/update-print
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { AddMovementOfCashComponent } from './components/add-movement-of-cash/add-movement-of-cash.component';
 import { AddArticleStockComponent } from './components/add-article-stock/add-article-stock.component';
-
-import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
-import { LoginComponent } from './components/login/login.component';
-import { ClockComponent } from './components/clock/clock.component';
-import { ImportComponent } from './components/import/import.component';
-import { RegisterComponent } from './components/register/register.component';
-
-//pipes
-import { FilterPipe } from './pipes/filter.pipe';
-import { OrderByPipe } from './pipes/order-by.pipe';
-import { DateFormatPipe } from './pipes/date-format.pipe';
-import { TotalPipe } from './pipes/total.pipe';
-import { RoundNumberPipe } from './pipes/round-number.pipe';
-
-//directives
-import { FocusDirective } from './directives/focus.directive';
 import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
@@ -135,9 +121,29 @@ import { ListVariantValuesComponent } from './components/list-variant-values/lis
 import { DeleteVariantValueComponent } from './components/delete-variant-value/delete-variant-value.component';
 import { UpdateVariantValueComponent } from './components/update-variant-value/update-variant-value.component';
 import { AddVariantValueComponent } from './components/add-variant-value/add-variant-value.component';
-import { VariantValue } from './models/variant-value';
-import { VariantValueService } from './services/variant-value.service';
 import { AddMovementOfArticleComponent } from './components/add-movement-of-article/add-movement-of-article.component';
+import { AddArticleTaxComponent } from './components/add-article-tax/add-article-tax.component';
+import { AddTaxComponent } from './components/add-tax/add-tax.component';
+import { UpdateTaxComponent } from './components/update-tax/update-tax.component';
+import { DeleteTaxComponent } from './components/delete-tax/delete-tax.component';
+import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
+
+
+import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
+import { LoginComponent } from './components/login/login.component';
+import { ClockComponent } from './components/clock/clock.component';
+import { ImportComponent } from './components/import/import.component';
+import { RegisterComponent } from './components/register/register.component';
+
+//pipes
+import { FilterPipe } from './pipes/filter.pipe';
+import { OrderByPipe } from './pipes/order-by.pipe';
+import { DateFormatPipe } from './pipes/date-format.pipe';
+import { TotalPipe } from './pipes/total.pipe';
+import { RoundNumberPipe } from './pipes/round-number.pipe';
+
+//directives
+import { FocusDirective } from './directives/focus.directive';
 
 @NgModule({
   declarations: [
@@ -146,7 +152,6 @@ import { AddMovementOfArticleComponent } from './components/add-movement-of-arti
     HeaderComponent,
     ListArticlesComponent,
     AddArticleComponent,
-    UpdateArticleComponent,
     DeleteArticleComponent,
     ListEmployeesComponent,
     AddEmployeeComponent,
@@ -229,7 +234,12 @@ import { AddMovementOfArticleComponent } from './components/add-movement-of-arti
     DeleteVariantValueComponent,
     UpdateVariantValueComponent,
     AddVariantValueComponent,
-    AddMovementOfArticleComponent
+    AddMovementOfArticleComponent,
+    AddArticleTaxComponent,
+    AddTaxComponent,
+    UpdateTaxComponent,
+    DeleteTaxComponent,
+    ListTaxesComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -244,7 +254,10 @@ import { AddMovementOfArticleComponent } from './components/add-movement-of-arti
     AddVariantValueComponent,
     UpdateVariantValueComponent,
     DeleteVariantValueComponent,
-    AddMovementOfArticleComponent
+    AddMovementOfArticleComponent,
+    AddTaxComponent,
+    UpdateTaxComponent,
+    DeleteTaxComponent
   ],
   imports: [
     BrowserModule,
@@ -253,7 +266,8 @@ import { AddMovementOfArticleComponent } from './components/add-movement-of-arti
     HttpModule,
     RoutingModule,
     NgbModule.forRoot(),
-    NgxPaginationModule
+    NgxPaginationModule,
+    ChartsModule
   ],
   providers: [
     NgbActiveModal,
@@ -285,7 +299,8 @@ import { AddMovementOfArticleComponent } from './components/add-movement-of-arti
     ArticleStockService,
     VariantTypeService,
     VariantService,
-    VariantValueService
+    VariantValueService,
+    TaxService
   ],
   bootstrap: [AppComponent]
 })

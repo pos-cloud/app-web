@@ -6,7 +6,6 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
 import { AddArticleComponent } from './components/add-article/add-article.component';
-import { UpdateArticleComponent } from './components/update-article/update-article.component';
 import { DeleteArticleComponent } from './components/delete-article/delete-article.component';
 import { ListEmployeesComponent } from './components/list-employees/list-employees.component';
 import { AddEmployeeComponent } from './components/add-employee/add-employee.component';
@@ -66,6 +65,7 @@ import { ListVariantValuesComponent } from './components/list-variant-values/lis
 import { AuthGuard } from './guards/auth.guard';
 import { ArticleStock } from './models/article-stock';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
+import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -74,7 +74,6 @@ const _routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'admin/productos', component: ListArticlesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-producto', component: AddArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-producto', component: UpdateArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-producto', component: DeleteArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/empleados', component: ListEmployeesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-empleado', component: AddEmployeeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
@@ -132,6 +131,7 @@ const _routes: Routes = [
   { path: 'admin/send-mail', component: SendMailComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/export-citi', component: ExportCitiComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/stock-de-articulos', component: ListArticleStocksComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/impuestos', component: ListTaxesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },

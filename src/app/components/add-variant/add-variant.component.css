@@ -11,3 +11,11 @@
 .btn {
       cursor: pointer;
 }
+
+.checkbox {
+      margin-left: 20px;
+}
+
+section {
+      width: 700px;
+}
