@@ -23,13 +23,11 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>
-              <i class="fa fa-bars"></i>
-            </th>
+            <th><i class="fa fa-bars"></i></th>
             <th (click)="orderBy('transactionMovement')">Movimiento</th>
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('labelPrint')">Etiqueta</th>
-            <th (click)="orderBy('currentAccount')">Afecta cuenta corriente</th>
+            <th (click)="orderBy('currentAccount')">Afecta CC</th>
             <th (click)="orderBy('movement')">Movimiento de dinero</th>
             <th (click)="orderBy('requestArticles')">Intercambia productos</th>
             <th (click)="orderBy('modifyStock')">Modifica el stock</th>
@@ -37,12 +35,14 @@
             <th (click)="orderBy('defectOrders')">Para pedidos</th>
             <th (click)="orderBy('fixedOrigin')">Origen Fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
-            <th (click)="orderBy('electronics')">Documento electrónico</th>
+            <th (click)="orderBy('electronics')">Electrónico</th>
             <th>Cídigo A</th>
             <th>Cídigo B</th>
             <th>Cídigo C</th>
             <th (click)="orderBy('printable')">Imprime al finalizar</th>
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
+            <th (click)="orderBy('tax')">Afecta Libro IVA</th>
+            <th (click)="orderBy('allowAPP')">APP</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th></th>
@@ -63,6 +63,8 @@
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="Afechta Libro IVA..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="APP..."></th>
           </tr>
         </thead>
         <tbody>
@@ -80,6 +82,8 @@
                                                               | filter: filterElectronics:'electronics'
                                                               | filter: filterPrintable:'printable'
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
+                                                              | filter: filterTax:'tax'
+                                                              | filter: filterAllowAPP:'allowAPP'
                                                               | orderBy: orderTerm: propertyTerm
                                                               | paginate: { itemsPerPage: itemsPerPage, 
                                                                             currentPage: p, 
@@ -114,9 +118,11 @@
             <td class="flat">{{transactionType.printable}}</td>
             <td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
+            <td class="flat">{{transactionType.tax}}</td>
+            <td class="flat">{{transactionType.allowAPP}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionTypesEmpty">
-            <td colspan="16">No se encontraron tipos de transacción</td>
+            <td colspan="18">No se encontraron tipos de transacción</td>
           </tr>
         </tbody>
       </table>

@@ -178,6 +178,15 @@
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="allowAPP">¿Permitir usar en la aplicación?</label>
+          <select class="form-control" formControlName="allowAPP">
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

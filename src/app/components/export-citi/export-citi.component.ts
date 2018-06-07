@@ -7,6 +7,9 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { TransactionService } from './../../services/transaction.service';
+import { UserService } from '../../services/user.service';
+
+import { Config } from './../../app.config';
 
 @Component({
   selector: 'app-export-citi',
@@ -18,65 +21,49 @@ export class ExportCitiComponent implements OnInit {
   public exportCitiForm: FormGroup;
   public alertMessage: string = "";
   public loading: boolean = false;
-  public focusEvent = new EventEmitter<boolean>();
-  public modelToImport: Array<String>;
-  public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09","10","11","12"];
-  public ToggleButton: boolean;
+  public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+  public years = ["2018", "2019", "2020", "2021", "2022"];
+  public toggleButton: boolean;
+  public VATPeriod: string;
+  public compURL: string;
+  public aliURL: string;
 
   public formErrors = {
-    'destination': '',
     'month': '',
-    'year' : '',
-    'pointofsale': ''
+    'year' : ''
   };
 
   public validationMessages = {
-    'destination' : {
-      'required':     'Este campo es requerido.'
-    },
     'month' : {
       'required':     'Este campo es requerido.'
     },
     'year' : {
-      'required':     'Este campo es requerido.',
-      'minlength':      'El año debe contener 4 digitos.',
-      'maxlength':      'El año debe contener 4 digitos.',
+      'required':     'Este campo es requerido.'
     }
   };
-
 
   constructor(
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _serviceTransaction: TransactionService
+    public _transactionService: TransactionService,
+    public _userService: UserService
   ) { }
 
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.buildForm();
-    this.exportCitiForm.setValue({
-      'destination': 'C:\\temp\\',
-      'month': '',
-      'year' : ''
-    });
   }
 
   public buildForm(): void {
     this.exportCitiForm = this._fb.group({
-      'destination': ["C:/temp/", [
-        Validators.required
-        ]
-      ],
-      'month': [moment().format("MM"), [
+      'month': [moment().subtract(1, "month").format("MM"), [
         Validators.required
         ]
       ],
       'year': [moment().format("YYYY"), [
-        Validators.required,
-        Validators.maxLength(4),
-        Validators.minLength(4),
+        Validators.required
         ]
       ],
     });
@@ -107,14 +94,19 @@ export class ExportCitiComponent implements OnInit {
   public exportCiti(): void {
     
     this.loading = true;
-    this.modelToImport = this.exportCitiForm.value;
-    this._serviceTransaction.getFileAfip(this.modelToImport).subscribe(
-    result => {
+
+    this.VATPeriod = this.exportCitiForm.value.year + this.exportCitiForm.value.month;
+
+    this._transactionService.exportCiti(this.VATPeriod).subscribe(
+      result => {
         if (result.message !== "OK") {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         } else {
-          this.showMessage("El archivo se genero correctamente.", "success", false);
-          this.ToggleButton = true;
+          this.showMessage("Los archivos se generaron correctamente.", "success", false);
+          this.compURL = Config.apiURL + "download-file/" + this._userService.getDatabase() + "\\comp" + this.VATPeriod + ".txt";
+          console.log(this.compURL);
+          this.aliURL = Config.apiURL + "download-file/" + this._userService.getDatabase() + "\\ali" + this.VATPeriod + ".txt";
+          this.toggleButton = true;
         }
         this.loading = false;
       },

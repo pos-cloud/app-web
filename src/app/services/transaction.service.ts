@@ -177,12 +177,22 @@ export class TransactionService {
 		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
 	}
 
-	getFileAfip (period) {
+	exportCiti(VATPeriod: string) {
+
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.post(Config.apiURL + 'documentQuery', period, { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + "export-citi/" + VATPeriod, { headers: headers }).map(res => res.json());
+	}
+
+	downloadFile(fileName: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + "download-file/" + fileName, { headers: headers }).map(res => res.json());
 	}
 }

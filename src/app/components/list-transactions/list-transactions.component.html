@@ -117,8 +117,7 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button *ngIf="(transaction.type.requestArticles === 'Si') && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm"
-                (click)="openModal('print', transaction)" title="Imprimir">
+              <button *ngIf="transaction.type.requestArticles && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" click)="openModal('print', transaction)" title="Imprimir">
                 <i class="fa fa-print"></i>
               </button>
             </td>
@@ -323,11 +322,7 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button *ngIf="(transaction.type.name === 'Factura' || 
-                                transaction.type.name === 'Ticket' || 
-                                transaction.type.name === 'Nota de Débito' ||
-                                transaction.type.name === 'Nota de Crédito') && 
-                                transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)"
+              <button *ngIf="transaction.type.requestArticles && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)"
                 title="Imprimir">
                 <i class="fa fa-print"></i>
               </button>
@@ -486,11 +481,7 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button *ngIf="(transaction.type.name === 'Factura' || 
-                                transaction.type.name === 'Ticket' || 
-                                transaction.type.name === 'Nota de Débito' ||
-                                transaction.type.name === 'Nota de Crédito') && 
-                                transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)"
+              <button *ngIf="transaction.type.requestArticles" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)"
                 title="Imprimir">
                 <i class="fa fa-print"></i>
               </button>

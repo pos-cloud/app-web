@@ -166,7 +166,7 @@ export class ListTransactionsComponent implements OnInit {
 
   public exportCiti(): void {
 
-    let modalRef = this._modalService.open(ExportCitiComponent, { size: 'lg' }).result.then((result) => {
+    let modalRef = this._modalService.open(ExportCitiComponent).result.then((result) => {
       if (result === 'export') {
       }
     }, (reason) => {

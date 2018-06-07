@@ -36,6 +36,7 @@ import { PrinterService } from './../../services/printer.service';
 import { UserService } from './../../services/user.service';
 import { PrintService } from './../../services/print.service';
 import { ArticleStockService } from '../../services/article-stock.service';
+import { TaxService } from '../../services/tax.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
@@ -102,7 +103,8 @@ export class AddSaleOrderComponent implements OnInit {
     public _modalService: NgbModal,
     public _printerService: PrinterService,
     public _userService: UserService,
-    private cdref: ChangeDetectorRef
+    private cdref: ChangeDetectorRef,
+    private _taxService: TaxService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -670,6 +672,8 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = result.CAEExpirationDate;
+          this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
+          this.transaction.state = TransactionState.Closed;
           this.updateTransaction(false);
           this.openModal("printers");
           this.hideMessage();
@@ -739,19 +743,15 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef.componentInstance.transaction = this.transaction;
           modalRef.result.then((result) => {
             if (typeof result == 'object') {
-
               if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
                 let movementOfArticle = new MovementOfArticle();
-                movementOfArticle.code = "0";
+                movementOfArticle.code = "00000";
                 movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                // movementOfArticle.VATPercentage = 21;
                 movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
-                // movementOfArticle.VATAmount = movementOfArticle.salePrice * movementOfArticle.VATPercentage / 100;
                 movementOfArticle.transaction = this.transaction;
                 this.transaction.totalPrice = result.amountPaid;
-                this.saveMovementOfArticle(movementOfArticle);
+                this.getTaxVAT(movementOfArticle);
               }
-
               if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                 this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
                 if (this.transaction.type.electronics && !this.transaction.CAE) {
@@ -895,6 +895,36 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       default: ;
     };
+  }
+
+  public getTaxVAT(movementOfArticle: MovementOfArticle): void {
+    
+    this.loading = true;
+
+    let taxes: Taxes[] = new Array();
+    let tax: Taxes = new Taxes();
+    tax.percentage = 21.00;
+    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+    tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+
+    this._taxService.getTaxes('where="name":"IVA"').subscribe(
+      result => {
+        if (!result.taxes) {
+          this.loading = false;
+          this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", "info", true);
+        } else {
+          this.hideMessage();
+          tax.tax = result.taxes[0];
+          taxes.push(tax);
+          movementOfArticle.taxes = taxes;
+          this.saveMovementOfArticle(movementOfArticle);
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public isValidCharge(): boolean {
@@ -1053,9 +1083,8 @@ export class AddSaleOrderComponent implements OnInit {
   public finishTransaction() {
 
     this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    this.transaction.endDate = this.transaction.endDate;
+    this.transaction.expirationDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
-    
     if (this.posType === "resto") {
       this.updateTransaction(false);
       this.table.employee = null;
@@ -1092,26 +1121,35 @@ export class AddSaleOrderComponent implements OnInit {
       } else {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount * -1;
       }
-  
-      this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
-        result => {
-          if (!result.articleStock) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          } else {
-            this.amountModifyStock++;
-            if(this.amountModifyStock === this.movementsOfArticles.length) {
-              this.finishTransaction();
+      
+      if (this.movementsOfArticles[this.amountModifyStock].article) {
+        this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
+          result => {
+            if (!result.articleStock) {
+              if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
             } else {
-              this.updateRealStock();
+              this.amountModifyStock++;
+              if(this.amountModifyStock === this.movementsOfArticles.length) {
+                this.finishTransaction();
+              } else {
+                this.updateRealStock();
+              }
             }
+            this.loading = false;
+          },
+          error => {
+            this.showMessage(error._body, "danger", false);
+            this.loading = false;
           }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
+        );
+      } else {
+        this.amountModifyStock++;
+        if (this.amountModifyStock === this.movementsOfArticles.length) {
+          this.finishTransaction();
+        } else {
+          this.updateRealStock();
         }
-      );
+      }
     } else {
       this.showMessage("No se encuentran artículos en la transacción", "info", true);
     }

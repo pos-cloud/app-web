@@ -17,6 +17,8 @@ export class Transaction {
 	public number: number = 0;
 	public startDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public endDate: string;
+	public expirationDate: string;
+	public VATPeriod: string = moment().format('YYYYMM');
 	public state: TransactionState = TransactionState.Open;
 	public exempt: number = 0.00;
 	public taxes: Taxes[];

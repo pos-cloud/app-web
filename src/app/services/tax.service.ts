@@ -31,13 +31,17 @@ export class TaxService {
 		return this._http.get(Config.apiURL + "tax/" + id, { headers: headers }).map(res => res.json());
 	}
 
-	getTaxes() {
+	getTaxes(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "taxes", { headers: headers }).map(res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + 'taxes/' + query, { headers: headers }).map(res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "taxes", { headers: headers }).map(res => res.json());
+		}
 	}
 
 	saveTax(tax: Tax) {

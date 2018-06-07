@@ -380,6 +380,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    transaction.expirationDate = transaction.endDate;
 
     this.updateTransaction(transaction);
   }

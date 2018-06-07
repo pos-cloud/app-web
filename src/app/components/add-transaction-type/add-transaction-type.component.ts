@@ -48,7 +48,8 @@ export class AddTransactionTypeComponent implements OnInit {
     'codeC': '',
     'printable': '',
     'defectPrinter': '',
-    'tax': ''
+    'tax': '',
+    'allowAPP': ''
   };
 
   public validationMessages = {
@@ -92,6 +93,8 @@ export class AddTransactionTypeComponent implements OnInit {
     'defectPrinter': {
     },
     'tax': { 
+    },
+    'allowAPP': {
     }
   };
 
@@ -201,6 +204,9 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'tax': [this.transactionType.tax, [
         ]
+      ],
+      'allowAPP': [this.transactionType.allowAPP, [
+        ]
       ]
     });
 
@@ -263,6 +269,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.printable === undefined) this.transactionType.printable = false;
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
     if (!this.transactionType.tax === undefined) this.transactionType.tax = false;
+    if (!this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
 
     this.transactionTypeForm.setValue({
       'transactionMovement': this.transactionType.transactionMovement,
@@ -282,7 +289,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'codeC': this.getCode(this.transactionType, "C"),
       'printable': this.transactionType.printable,
       'defectPrinter': this.transactionType.defectPrinter,
-      'tax' : this.transactionType.tax
+      'tax': this.transactionType.tax,
+      'allowAPP': this.transactionType.allowAPP
     });
   }
 

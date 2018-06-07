@@ -64,8 +64,8 @@
 								<div class="custom-file">
 									<label class="custom-file-label btn btn-action" for="customFileLang" *ngIf="operation === 'update'">Cambiar Imagen</label>
 									<input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)"/>
-									<img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120" class="img-fluid">
-									<img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined" [src]="apiURL + 'get-image-article/'+article.picture" height="120" width="120" class="img-fluid">
+									<img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120">
+									<img *ngIf="article.picture !== 'default.jpg' && article.picture !== undefined" [src]="apiURL + 'get-image-article/'+article.picture" height="120" width="120">
 								</div>
 							</div>
 						</div>

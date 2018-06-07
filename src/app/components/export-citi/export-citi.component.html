@@ -1,17 +1,15 @@
-<div class="modal-header">
-  <h4 class="modal-title">Exportar Régimen de Información</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
-  <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-
 <section class="container-fluid">
+	<div class="modal-header">
+		<h4 class="modal-title">Exportar Régimen de Información</h4>
+		<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
   <div class="center-content"  *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
-
   <form [formGroup]="exportCitiForm" #formExportCiti="ngForm" (ngSubmit)="exportCiti()" autocomplete="off">
     <div class="modal-body">
 			<div class = "row">
@@ -26,7 +24,9 @@
 				</div>
 				<div class="form-group col-md-4">
 						<label for="year" class="control-label">Año:</label>
-						<input type="text" class="form-control" formControlName="year" name="year" id="year" />
+						<select class="form-control" formControlName="year">
+							<option *ngFor="let year of years" [ngValue]="year">{{year}}</option>
+						</select>
 						<div *ngIf="formErrors.year" class="alert alert-danger">
 							{{ formErrors.year }}
 						</div>
@@ -37,13 +37,14 @@
         <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
         <button type="submit" class="btn btn-primary" [disabled]="!exportCitiForm.valid || loading" >
           <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="!loading">Comprobar</span>
+          <span *ngIf="!loading">Exportar</span>
           <span *ngIf="loading">Espere por favor</span>
 				</button>
 		</div>
-		<div class ="modal-footer" *ngIf="ToggleButton">
-				<button type="button" class="btn btn-secondary" [disabled]="!ToggleButton" ><a href="http://localhost:3000/api/downloadComp">Descargar Comprobantes</a></button>
-				<button type="button" class="btn btn-secondary" [disabled]="!ToggleButton" ><a href="http://localhost:3000/api/downloadAli">Descargar Alicuotas</a></button>
+		<div class ="modal-footer" *ngIf="toggleButton">
+			<!-- <a href="http://localhost:3000/api/downloadComp">Descargar Comprobantes</a> -->
+				<button type="button" class="btn btn-success"><a href="localhost:3000/api/download-file/comp201806.txt">Descargar Comprobantes</a></button>
+				<button type="button" class="btn btn-success"><a href="localhost:3000/api/download-file/ali201806.txt">Descargar Alícuotas</a></button>
 		</div>
   </form>
 

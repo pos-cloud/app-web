@@ -381,12 +381,12 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.extraLarge)
       this.doc.setFontType('bold')
       if (this.config[0].companyName) {
-        this.doc.text(this.config[0].companyName, 23, 20)
+        this.doc.text(this.config[0].companyName, 10, 20)
       }
       this.doc.setFontSize(this.fontSizes.normal)
       this.doc.setFontType('normal')
       if (this.config[0].companyAddress) {
-        this.doc.text(this.config[0].companyAddress, 20, 30)
+        this.doc.text(this.config[0].companyAddress, 35, 30)
       }
       if (this.config[0].companyPhone) {
         this.doc.text("(" + this.config[0].companyPhone + ")", 35, 35)
@@ -576,63 +576,51 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    // Totales de la transacción
-    let iva21 = 0.00;
-    let iva10 = 0.00;
-    let iva27 = 0.00;
-
-    if (this.transaction.taxes) {
-      for (let x = 0; x < this.transaction.taxes.length; x++) {
-        if (this.transaction.taxes[x].percentage == 21) {
-          iva21 = (this.transaction.taxes[x].taxAmount)
-        }
-        if (this.transaction.taxes[x].percentage == 10.5) {
-          iva10 = (this.transaction.taxes[x].taxAmount)
-        }
-        if (this.transaction.taxes[x].percentage == 27) {
-          iva27 = (this.transaction.taxes[x].taxAmount)
-        }
-      }
-    }
-
     this.doc.setFontType('bold')
     this.doc.text("Subtotal:", 147, 247)
     this.doc.setFontType('normal')
+    let rowTotals = 254;
+    let subtotal = this.transaction.totalPrice;
+    subtotal -= this.roundNumber.transform(this.transaction.discountAmount);
+    subtotal -= this.roundNumber.transform(this.transaction.exempt);
     if (this.transaction.company &&
         this.transaction.company.vatCondition &&
-        this.transaction.company.vatCondition.discriminate) {
-      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice - iva21 - iva10 - iva27)).toString(), 180, 247)
+        this.transaction.company.vatCondition.discriminate &&
+        this.transaction.taxes.length > 0) {
+
+          this.doc.setFontType('bold')
+          for(let tax of this.transaction.taxes) {
+            this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals)
+            this.doc.setFontType('normal')
+            this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 180, rowTotals)
+            subtotal -= this.roundNumber.transform(tax.taxAmount);
+            rowTotals += 8;
+          }
+      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
     } else {
-      this.doc.text("$ " + this.roundNumber.transform((this.transaction.totalPrice)).toString(), 180, 247)
-      iva21 = 0;
-      iva10 = 0;
-      iva27 = 0;
+      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
+    }
+
+    if(this.transaction.exempt && this.transaction.exempt > 0) {
+      this.doc.text("Exento:", 147, rowTotals)
+      this.doc.setFontType('normal')
+      this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals)
+      rowTotals += 8;
     }
     this.doc.setFontType('bold')
-    this.doc.text("IVA 21%:", 147, 254)
+    this.doc.text("Descuento:", 147, rowTotals)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(iva21), 180, 254)
-    this.doc.setFontType('bold')
-    this.doc.text("IVA 10.5%:", 147, 261)
-    this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(iva10), 180, 261)
-    this.doc.setFontType('bold')
-    this.doc.text("Exento:", 147, 268)
-    this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, 268)
-    this.doc.setFontType('bold')
-    this.doc.text("Descuento:", 147, 275)
-    this.doc.setFontType('normal')
-    this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 180, 275)
+    this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 180, rowTotals)
+    rowTotals += 8;
     this.doc.setFontSize(this.fontSizes.extraLarge)
     this.doc.setFontType('bold')
     this.doc.setFontSize(this.fontSizes.large)
-    this.doc.text("Total:", 147, 282)
+    this.doc.text("Total:", 147, rowTotals)
     this.doc.setFontType('normal')
-    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, 282)
+    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, rowTotals)
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.setFontType('bold')
-    this.doc.text("Observaciones:", 10, 250)
+    this.doc.text("Observaciones:", 10, 246)
     this.doc.setFontType('normal')
     this.doc.text("", 38, 250)
     if( this.transaction.CAE &&

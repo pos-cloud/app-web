@@ -77,8 +77,7 @@ export class CurrentAccountComponent implements OnInit {
             this.areTransactionsEmpty = true;
             this.balance = 0;
           } else {
-            this.transactions = result.transactions;
-            this.getMovementOfCurrentAccountByCompany();
+            this.getMovementOfCurrentAccountByCompany(result.transactions);
             this.areTransactionsEmpty = false;
           }
           this.hideMessage();
@@ -97,7 +96,7 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public getMovementOfCurrentAccountByCompany(): void {
+  public getMovementOfCurrentAccountByCompany(transactions: Transaction[]): void {
 
     this.loading = true;
 
@@ -110,7 +109,7 @@ export class CurrentAccountComponent implements OnInit {
           } else {
             this.hideMessage();
             this.movementsOfCashes = result.movementsOfCashes;
-            this.filterTransactions();
+            this.filterTransactions(transactions);
           }
           this.loading = false;
         },
@@ -125,9 +124,8 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public filterTransactions(): void {
+  public filterTransactions(transactions: Transaction[]): void {
 
-    let transactions: Transaction[] = this.transactions;
     this.transactions = new Array();
     this.balance = 0;
 

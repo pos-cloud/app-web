@@ -19,6 +19,7 @@ export class TransactionType {
 	public printable: boolean = false;
 	public defectPrinter: Printer;
 	public tax: boolean = false;
+	public allowAPP: boolean = false;
 
 	constructor() { }
 }

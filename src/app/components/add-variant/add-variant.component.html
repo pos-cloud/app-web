@@ -37,7 +37,6 @@
           <thead>
             <tr>
               <th  width="130"><i class="fa fa-bars"></i></th>
-              <th>Código</th>
               <th>Variante</th>
               <th>Código de barras</th>
             </tr>
@@ -48,11 +47,7 @@
                 <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteVariant(articleAux)">
                   <i class="fa fa-trash-o"></i>
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" title="Editar" (click)="updateVariant(articleAux)">
-                  <i class="fa fa-pencil"></i>
-                </button>
               </td>
-              <td class="flat"><input type="text" [value]="articleAux.code"/></td>
               <td class="flat" width="430">{{articleAux.variantDescription}}</td>
               <td class="flat"><input type="text" [value]="articleAux.barcode"/></td>
             </tr>

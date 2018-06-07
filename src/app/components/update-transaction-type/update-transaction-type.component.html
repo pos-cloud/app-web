@@ -162,20 +162,29 @@
           </select>
         </div>
       </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="tax">¿La transacción afecta el libro de IVA?</label>
-          <select class="form-control" formControlName="tax">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
       <div class="row" *ngIf="transactionTypeForm.value.printable">
         <div class="form-group col-md-12">
           <label for="defectPrinter" class="control-label">Selecciona impresora defecto</label>
           <select class="form-control" formControlName="defectPrinter">
             <option *ngFor="let printer of printers"  [selected]="transactionType.defectPrinter && printer._id==transactionType.defectPrinter._id" [value]="printer._id" [disabled]="readonly">{{printer.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="tax">¿La transacción afecta el libro de IVA?</label>
+          <select class="form-control" formControlName="tax">
+            <option value="true" [selected]="transactionType.tax === true">Si</option>
+            <option value="false" [selected]="transactionType.tax === false">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="allowAPP">¿Permitir usar en la aplicación?</label>
+          <select class="form-control" formControlName="allowAPP">
+            <option value="true" [selected]="transactionType.allowAPP === true">Si</option>
+            <option value="false" [selected]="transactionType.allowAPP === false">No</option>
           </select>
         </div>
       </div>

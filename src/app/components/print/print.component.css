@@ -47,3 +47,10 @@ section {
 	padding-top: 45px;
 	padding-bottom: 45px;
 }
+
+.full-screen {
+	left: -400px;
+	position: absolute;
+	width: 100vh;
+	height: 100vh;
+}
