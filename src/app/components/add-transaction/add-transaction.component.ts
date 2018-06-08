@@ -10,8 +10,9 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 import { Company } from './../../models/company';
+import { Taxes } from '../../models/taxes';
 
 //Services
 import { TransactionService } from './../../services/transaction.service';
@@ -20,6 +21,7 @@ import { CompanyService } from './../../services/company.service';
 
 //Pipes
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
+import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-add-transaction',
@@ -33,19 +35,23 @@ export class AddTransactionComponent implements OnInit {
   public transactionForm: FormGroup;
   public companies: Company[];
   @Input() transaction: Transaction;
+  public taxes: Taxes[] = new Array();
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
   public datePipe = new DateFormatPipe();
+  public letters: string[] = ["A", "B", "C", "E", "M", "R", "X"];
+  public roundNumber = new RoundNumberPipe();
 
   public formErrors = {
     'date': '',
     'origin': '',
+    'letter': '',
     'number': '',
-    'amount': '',
-    'paymentMethod': '',
+    'basePrice': '',
+    'exempt': '',
     'totalPrice': '',
     'company': ''
   };
@@ -60,13 +66,19 @@ export class AddTransactionComponent implements OnInit {
     'origin': {
       'required': 'Este campo es requerido.'
     },
+    'letter': {
+      'required': 'Este campo es requerido.'
+    },
     'number': {
       'required': 'Este campo es requerido.'
     },
-    'totalPrice': {
+    'basePrice': {
       'required': 'Este campo es requerido.'
     },
-    'paymentMethod': {
+    'exempt': {
+      'required': 'Este campo es requerido.'
+    },
+    'totalPrice': {
       'required': 'Este campo es requerido.'
     }
   };
@@ -81,7 +93,6 @@ export class AddTransactionComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) { 
-    
   }
 
   ngOnInit(): void {
@@ -93,6 +104,11 @@ export class AddTransactionComponent implements OnInit {
     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
       this.transaction.origin = this.transaction.type.fixedOrigin;
     }
+
+    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+      this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+    }
+
     this.buildForm();
   }
 
@@ -100,9 +116,10 @@ export class AddTransactionComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public setValueForm(): void {
+  public setValuesForm(): void {
     
-    if(!this.transaction.origin) this.transaction.origin = 0;
+    if (!this.transaction.origin) this.transaction.origin = 0;
+    if (!this.transaction.letter) this.transaction.letter = "A";     
     if(!this.transaction.number) this.transaction.number = 1;     
     if(!this.transaction.observation) this.transaction.observation = ""; 
 
@@ -110,7 +127,10 @@ export class AddTransactionComponent implements OnInit {
       'company': this.transaction.company.name,
       'date': moment(this.transaction.startDate).format('YYYY-MM-DD'),
       'origin': this.transaction.origin,
+      'letter': this.transaction.letter,
       'number': this.transaction.number,
+      'basePrice': this.transactionForm.value.basePrice,
+      'exempt': this.transaction.exempt,
       'totalPrice': this.transaction.totalPrice,
       'observation': this.transaction.observation
     });
@@ -127,11 +147,23 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
+      'letter': [this.transaction.letter, [
+          Validators.required
+        ]
+      ],
       'origin': [this.transaction.origin, [
           Validators.required
         ]
       ],
       'number': [this.transaction.number, [
+          Validators.required
+        ]
+      ],
+      'basePrice': [0.00, [
+          Validators.required
+        ]
+      ],
+      'exempt': [this.transaction.exempt, [
           Validators.required
         ]
       ],
@@ -169,6 +201,62 @@ export class AddTransactionComponent implements OnInit {
     }
   }
 
+  public addTransactionTaxes(taxes: Taxes[]): void {
+    this.taxes = taxes;
+    this.updatePrices("taxes");
+  }
+
+  public updatePrices(op: string): void {
+    switch(op) {
+      case "basePrice":
+        this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice + this.transactionForm.value.exempt;
+        this.updateTaxes();
+        break;
+      case "exempt":
+        this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice + this.transactionForm.value.exempt;
+        this.updateTaxes();
+        break;
+      case "taxes": 
+        this.updateTaxes();
+        break;
+      case "totalPrice":
+        this.updateTaxes();
+        break;
+    }
+    
+    this.transactionForm.value.basePrice = this.roundNumber.transform(this.transactionForm.value.basePrice);
+    this.transactionForm.value.exempt = this.roundNumber.transform(this.transactionForm.value.exempt);
+    this.transactionForm.value.totalPrice = this.roundNumber.transform(this.transactionForm.value.totalPrice);
+
+    this.transaction.exempt = this.transactionForm.value.exempt;
+    this.transaction.totalPrice = this.transactionForm.value.totalPrice;
+    this.transaction.origin = this.transactionForm.value.origin;
+    this.transaction.number = this.transactionForm.value.number;
+    this.transaction.letter = this.transactionForm.value.letter;
+    this.transaction.observation = this.transactionForm.value.observation;
+    this.setValuesForm();
+  }
+
+  public updateTaxes(): void {
+
+    let transactionTaxes: Taxes[] = new Array();
+    this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice;
+
+    if (this.taxes && this.taxes.length > 0) {
+      let transactionTax: Taxes = new Taxes();
+      for (let taxesAux of this.taxes) {
+        transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
+        transactionTax.tax = taxesAux.tax;
+        transactionTax.taxBase = this.roundNumber.transform(this.transactionForm.value.basePrice);
+        transactionTax.taxAmount = this.roundNumber.transform(transactionTax.taxBase * taxesAux.percentage / 100);
+        this.transactionForm.value.totalPrice += transactionTax.taxAmount;
+      }
+      transactionTaxes.push(transactionTax);
+    }
+    this.transactionForm.value.totalPrice += this.transactionForm.value.exempt;
+    this.transaction.taxes = transactionTaxes;
+  }
+
   public addTransaction(): void {
     
     this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
@@ -176,11 +264,16 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.expirationDate = this.transaction.endDate;
     this.transaction.origin = this.transactionForm.value.origin;
     
-    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
-      this.transaction.letter = this.transaction.type.fixedLetter;
+    if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+        this.transaction.letter = this.transaction.type.fixedLetter;
+      } else {
+        this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+      }
     } else {
-      this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+      this.transaction.letter = this.transactionForm.value.letter;
     }
+
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.observation = this.transactionForm.value.observation;
 
