@@ -28,8 +28,6 @@ export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
   public alertMessage: string;
   public loading: boolean = false;
-  @Input() employeeSelected: Employee;
-  @Input() routeRequired: Employee;
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
 
@@ -64,48 +62,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
 
-    this.user = new User();
-
-    if (this.employeeSelected !== undefined) {
-      this.getUserOfEmployee();
-      this.employees.push(this.employeeSelected);
-    }
-    
+    this.user = new User();    
     this.buildForm();
   }
 
   ngAfterViewInit(): void {
     this.focusEvent.emit(true);
-  }
-
-  public getUserOfEmployee(): void {  
-    
-    this.loading = true;
-    
-    this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
-      result => {
-        if(!result.users) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
-          this.loading = false;
-          this.user = null;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.user = result.users[0];
-          this.loginForm.setValue({
-            '_id': this.user._id,
-            'name': this.user.name,
-            'password': '',
-            'state': this.user.state,
-            'employee': this.user.employee._id
-          });
-        }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public buildForm(): void {
@@ -122,9 +84,6 @@ export class LoginComponent implements OnInit {
         ]
       ],
       'state': [this.user.state, [
-        ]
-      ],
-      'employee': [this.user.employee, [
         ]
       ]
     });
@@ -189,12 +148,7 @@ export class LoginComponent implements OnInit {
           }
           sessionStorage.setItem('user', JSON.stringify(userStorage));
           sessionStorage.setItem('session_token', this.user.token);
-
-          if (this.employeeSelected) {
-            this.activeModal.close(this.user.employee);
-          } else {
-            this.activeModal.close(this.user);
-          }
+          this.activeModal.close(this.user);
           this.loading = false;
         }
       },

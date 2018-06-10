@@ -18,7 +18,6 @@ import { TurnService } from './../../services/turn.service';
 import { UserService } from './../../services/user.service';
 import { TransactionService } from './../../services/transaction.service';
 
-import { LoginComponent } from './../../components/login/login.component';
 import { PrintComponent } from './../../components/print/print.component';
 import { TransferState } from '@angular/platform-browser';
 

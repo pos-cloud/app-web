@@ -17,7 +17,7 @@
 		<div class="center-content">
 			<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
 				<div class="modal-body">
-					<div class="row" *ngIf="!employeeSelected">
+					<div class="row">
 						<div class="form-group col-md-12">
 							<label for="name" class="control-label">Usuario</label>
 							<div class="input-group">
@@ -27,16 +27,6 @@
 							<div *ngIf="formErrors.name" class="alert alert-danger">
 								{{ formErrors.name }}
 							</div>
-						</div>
-					</div>
-					<div class="row" *ngIf="employeeSelected">
-						<div class="form-group col-md-12">
-							<label for="employee" class="control-label">Empleado</label>
-							<select class="form-control" formControlName="employee">
-								<option *ngFor="let employee of employees" [selected]="employee._id==employeeSelected._id" [value]="employee._id">
-									{{employee.name}}
-								</option>
-							</select>
 						</div>
 					</div>
 					<div class="row">
