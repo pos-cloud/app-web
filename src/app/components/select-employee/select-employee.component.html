@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Seleccionar Empleado</h4>
+  <h4 class="modal-title">Seleccionar {{ typeEmployee }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -16,10 +16,10 @@
         <div class="form-group col-md-12">
           <label for="employee" class="control-label">Asignar el empleado</label>
           <select class="form-control" formControlName="employee">
-            <option *ngFor="let waiter of waiters"
-                    [selected]="waiter._id==employee._id" 
-                    [ngValue]="waiter">
-                  {{waiter.name}}
+            <option *ngFor="let employee of employees"
+                    [selected]="employeeSelected && employee._id === employeeSelected._id" 
+                    [ngValue]="employee">
+                  {{employee.name}}
             </option>
           </select>
           <div *ngIf="formErrors.employee" class="alert alert-danger">
@@ -27,23 +27,28 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="op !== 'open-turn' && op !== 'close-turn'">
+      <div class="row" *ngIf="table">
         <div class="form-group col-md-12">
           <label for="chair" class="control-label">Comensales:</label>
         </div>
       </div>
-      <div class="row" *ngIf="op !== 'open-turn' && op !== 'close-turn'">
+      <div class="row" *ngIf="table">
         <div class="form-group col-md-8">
           <div class="input-group">
             <input type="number" class="form-control" formControlName="chair" name="chair" id="chair"/>
-          </div>
-          <div *ngIf="formErrors.chair" class="alert alert-danger">
-            {{ formErrors.chair }}
           </div>
         </div>
         <div class="col-md-4" align="right">
           <button type="button" class="btn btn-danger" (click)="subtractChair()">-</button>
           <button type="button" class="btn btn-success" (click)="addChair()">+</button>
+        </div>
+      </div>
+      <div class="row" *ngIf="requireLogin">
+        <div class="form-group col-md-12">
+          <label for="password" class="control-label">Password:</label>
+          <div class="input-group">
+            <input type="password" class="form-control" formControlName="password" name="password" id="password" />
+          </div>
         </div>
       </div>
     </div>

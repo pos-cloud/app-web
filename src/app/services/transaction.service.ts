@@ -23,13 +23,17 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + "transaction/" + id, { headers: headers }).map (res => res.json());
 	}
 
-	getTransactions() {
+	getTransactions(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "transactions", { headers: headers }).map (res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + "transactions/" + query, { headers: headers }).map (res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "transactions", { headers: headers }).map(res => res.json());
+		}
 	}
 
 	getTransactionsByMovement(transactionMovement: TransactionMovement) {

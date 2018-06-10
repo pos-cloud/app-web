@@ -70,15 +70,6 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    if (pathLocation[3] === "venta") {
-      this.transactionMovement = TransactionMovement.Sale;
-    } else if (pathLocation[3] === "compra") {
-      this.transactionMovement = TransactionMovement.Purchase;
-    } else if (pathLocation[3] === "stock") {
-      this.transactionMovement = TransactionMovement.Stock;
-    }
-
-    this.getTransactionTypesByMovement();
 
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
@@ -86,6 +77,14 @@ export class PointOfSaleComponent implements OnInit {
     } else if (this.posType === "delivery") {
       this.getOpenTransactions();
     } else if (this.posType === "mostrador") {
+      if (pathLocation[3] === "venta") {
+        this.transactionMovement = TransactionMovement.Sale;
+      } else if (pathLocation[3] === "compra") {
+        this.transactionMovement = TransactionMovement.Purchase;
+      } else if (pathLocation[3] === "stock") {
+        this.transactionMovement = TransactionMovement.Stock;
+      }
+      this.getTransactionTypesByMovement();
       this.getOpenTransactionsByMovement(this.transactionMovement);
     }
   }
@@ -314,9 +313,10 @@ export class PointOfSaleComponent implements OnInit {
       case 'open-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
+        modalRef.componentInstance.typeEmployee = 'Mozo';
         modalRef.componentInstance.op = 'open-turn';
         modalRef.result.then((result) => {
-          if (typeof result == "object") {
+          if (result.turn) {
             this.showMessage("El turno se ha abierto correctamente", "success", true);
           }
         }, (reason) => {
@@ -326,10 +326,26 @@ export class PointOfSaleComponent implements OnInit {
       case 'close-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
+        modalRef.componentInstance.typeEmployee = 'Mozo';
         modalRef.componentInstance.op = 'close-turn';
         modalRef.result.then((result) => {
-          if (typeof result == "object") {
+          if (result.turn) {
             this.showMessage("El turno se ha cerrado correctamente", "success", true);
+          }
+        }, (reason) => {
+
+        });
+        break;
+      case 'select-employee':
+        modalRef = this._modalService.open(SelectEmployeeComponent);
+        modalRef.componentInstance.requireLogin = false;
+        modalRef.componentInstance.op = 'select-employee';
+        modalRef.componentInstance.typeEmployee = 'Repartidor';
+        modalRef.result.then((result) => {
+          if (result.employee) {
+            transaction.state = TransactionState.Sent;
+            transaction.employeeOpening = result.employee;
+            this.updateTransaction(transaction);
           }
         }, (reason) => {
 
@@ -374,7 +390,7 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
 
     if (state === "Enviado") {
-      transaction.state = TransactionState.Sent;
+      this.openModal('select-employee', transaction.type, transaction);
     } else if (state === "Entregado") {
       transaction.state = TransactionState.Delivered;
     }

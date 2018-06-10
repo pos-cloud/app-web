@@ -32,8 +32,7 @@ export class AddUserComponent  implements OnInit {
     'name': '',
     'password': '',
     'state': '',
-    'employee': '',
-    'tokenExpiration': ''
+    'employee': ''
   };
 
   public validationMessages = {
@@ -47,9 +46,6 @@ export class AddUserComponent  implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'employee': {
-    },
-    'tokenExpiration': {
-      'required':       'Este campo es requerido.'
     }
   };
 
@@ -91,10 +87,6 @@ export class AddUserComponent  implements OnInit {
         ]
       ],
       'employee': [this.user.employee, [
-        ]
-      ],
-      'tokenExpiration': [this.user.tokenExpiration, [
-          Validators.required
         ]
       ]
     });
@@ -151,6 +143,7 @@ export class AddUserComponent  implements OnInit {
     
     this.loading = true;
     this.user = this.userForm.value;
+    this.user.tokenExpiration = 1440;
     this.saveUser();
   }
 
@@ -162,7 +155,6 @@ export class AddUserComponent  implements OnInit {
     result => {
         if (!result.user) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
-          this.loading = false;
         } else {
           this.user = result.user;
           this.showMessage("El usuario se ha añadido con éxito.", "success", false);

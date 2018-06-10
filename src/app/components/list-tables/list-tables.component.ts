@@ -177,10 +177,11 @@ export class ListTablesComponent implements OnInit {
                   modalRef = this._modalService.open(SelectEmployeeComponent);
                   modalRef.componentInstance.table = this.tableSelected;
                   modalRef.componentInstance.requireLogin = false;
+                  modalRef.componentInstance.typeEmployee = "Mozo";
                   modalRef.componentInstance.op = "charge";
                   modalRef.result.then((result) => {
-                    if (typeof result == 'object') {
-                      this.tableSelected.employee = result;
+                    if (result.employee) {
+                      this.tableSelected.employee = result.employee;
                       this.assignEmployee();
                     }
                   }, (reason) => {

@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-6">
           <label for="state" class="control-label">Habilitado</label>
           <select class="form-control" formControlName="state">
             <option *ngFor="let state of states" [ngValue]="state" [disabled]="readonly">{{state}}</option>
@@ -43,17 +43,8 @@
             {{ formErrors.state }}
           </div>
         </div>
-				<div class="form-group col-md-4">
-					<label for="tokenExpiration" class="control-label">Minutos de sesión:</label>
-					<input type="number" class="form-control" formControlName="tokenExpiration" name="tokenExpiration" id="tokenExpiration" [readonly]="readonly"/>
-					<div *ngIf="formErrors.tokenExpiration" class="alert alert-danger">
-						{{ formErrors.tokenExpiration }}
-					</div>
-				</div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="employee" class="control-label">Empleado Asociado (Opcional)</label>
+        <div class="form-group col-md-6">
+          <label for="employee" class="control-label">Empleado Asociado</label>
           <select class="form-control" formControlName="employee">
             <option *ngFor="let employee of employees" [selected]="user.employee && employee._id==user.employee._id" [value]="employee._id" [disabled]="readonly">{{employee.name}}</option>
           </select>

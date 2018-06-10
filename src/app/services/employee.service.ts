@@ -31,13 +31,17 @@ export class EmployeeService {
 		return this._http.get(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
 	}
 
-  getEmployees () {
+  getEmployees (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "employees", { headers: headers }).map (res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + "employees/" + query, { headers: headers }).map (res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "employees", { headers: headers }).map(res => res.json());
+		}
 	}
   
   getWaiters () {

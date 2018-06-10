@@ -1,16 +1,18 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { Employee } from './../../models/employee';
+import { User } from '../../models/user';
 import { Table } from './../../models/table';
 import { Turn, TurnState } from './../../models/turn';
 import { Transaction, TransactionState } from './../../models/transaction';
 
 import { EmployeeService } from './../../services/employee.service';
+import { EmployeeTypeService } from './../../services/employee-type.service';
 import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { UserService } from './../../services/user.service';
@@ -18,6 +20,7 @@ import { TransactionService } from './../../services/transaction.service';
 
 import { LoginComponent } from './../../components/login/login.component';
 import { PrintComponent } from './../../components/print/print.component';
+import { TransferState } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-select-employee',
@@ -27,14 +30,15 @@ import { PrintComponent } from './../../components/print/print.component';
 export class SelectEmployeeComponent implements OnInit {
 
   public selectEmployeeForm: FormGroup;
-  public employee: Employee;
-  public table: Table;
+  public employeeSelected: Employee;
   public turn: Turn;
-  public waiters: Employee[] = new Array();
+  public employees: Employee[] = new Array();
   public alertMessage: string = "";
   public loading: boolean = false;
   @Input() requireLogin: boolean;
   @Input() op: string;
+  @Input() typeEmployee: string;
+  @Input() table: Table;
 
   public formErrors = {
     'employee': '',
@@ -46,13 +50,13 @@ export class SelectEmployeeComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'chair': {
-      'required': 'Este campo es requerido.'
     }
   };
 
   constructor(
     public _fb: FormBuilder,
     public _employeeService: EmployeeService,
+    public _employeeTypeService: EmployeeTypeService,
     public _tableService: TableService,
     public _turnService: TurnService,
     public _userService: UserService,
@@ -63,24 +67,27 @@ export class SelectEmployeeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.employee = new Employee();
-    if (!this.table) {
-      this.table = new Table();
-    }
+
+    this.employeeSelected = new Employee();
+
+    this.getEmployeeTypes('where="description":"' + this.typeEmployee + '"');
+    
     this.buildForm();
-    this.getWaiters();
+    this.setValuesForm();
   }
 
   public buildForm(): void {
 
     this.selectEmployeeForm = this._fb.group({
-      'employee': [this.employee.name, [
-        Validators.required
-      ]
+      'employee': [this.employeeSelected.name, [
+          Validators.required
+        ]
       ],
-      'chair': [this.table.chair, [
-        Validators.required
-      ]
+      'chair': [0, [
+        ]
+      ],
+      'password': ['', [
+        ]
       ]
     });
 
@@ -108,35 +115,20 @@ export class SelectEmployeeComponent implements OnInit {
     }
   }
 
-  public getWaiters(): void {
+  public getEmployeeTypes(query: string): void {
 
-    this.waiters = new Array();
+    this.employees = new Array();
     this.loading = true;
 
-    this._employeeService.getEmployees().subscribe(
+    this._employeeTypeService.getEmployeeTypes(query).subscribe(
       result => {
-        if (!result.employees) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        if (!result.employeeTypes) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.hideMessage();
           this.loading = false;
-          for (let waiter of result.employees) {
-            if (waiter.type.description === "Mozo" ||
-                waiter.type.description === "Administrador") {
-              this.waiters.push(waiter);
-            }
-          }
-          if (this.waiters.length === 0) {
-            this.showMessage("No se encontraron mozos", "info", true);
-            this.loading = false;
-          } else {
-            this.employee = this.waiters[0];
-            this.selectEmployeeForm.setValue({
-              'employee': this.employee,
-              'chair': this.table.chair
-            });
-          }
+          this.getEmployees('where="type":"' + result.employeeTypes[0]._id + '"');
         }
       },
       error => {
@@ -146,53 +138,55 @@ export class SelectEmployeeComponent implements OnInit {
     );
   }
 
-  public openModal(op: string): void {
+  public getEmployees(query: string): void {
 
-    let modalRef;
-
-    switch (op) {
-      case 'login':
-        modalRef = this._modalService.open(LoginComponent);
-        modalRef.componentInstance.employeeSelected = this.employee;
-        modalRef.result.then((result) => {
-          if (typeof result == 'object') {
-            this.employee = result;
-            if (this.op === 'open-turn') {
-              this.openTurn();
-            } else if (this.op === 'close-turn') {
-              this.closeTurn();
-            } else if (this.op === 'change-employee') {
-              if (this.turn) {
-                this.activeModal.close(this.turn);
-              } else {
-                this.openTurn();
-              }
-            } else if (this.op === 'charge') {
-              if (this.turn) {
-                this.activeModal.close(this.employee);
-              } else {
-                this.openTurn();
-              }
-            }
-          }
-          this.loading = false;
-        }, (reason) => {
-          this.loading = false;
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  public getTransactionsOpenByEmployee(): void {
-
+    this.employees = new Array();
     this.loading = true;
 
-    this._transactionService.getOpenSaleOrdersByEmployee(this.employee._id).subscribe(
+    this._employeeService.getEmployees(query).subscribe(
+      result => {
+        if (!result.employees) {
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.employees = result.employees;
+          this.employeeSelected = this.employees[0];
+          this.setValuesForm();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public setValuesForm(): void {
+
+    var chair = 0;
+    var password = '';
+
+    if (!this.employeeSelected && this.employees.length > 0) this.employeeSelected = this.employees[0];
+    if (!this.employeeSelected && this.employees.length === 0) this.employeeSelected = null;
+    if (this.table && this.table.chair) chair = this.table.chair;
+
+    this.selectEmployeeForm.setValue({
+      'employee': this.employeeSelected,
+      'chair': chair,
+      'password': this.selectEmployeeForm.value.password
+    });
+  }
+  
+  public getTransactions(query: string, turn?: Turn): void {
+    
+    this.loading = true;
+
+    this._transactionService.getTransactions(query).subscribe(
       result => {
         if (!result.transactions) {
-          this.getUserOfEmployee();
+          this.closeTurn(turn);
         } else {
           this.showMessage("No puede cerrar el turno del empleado si tiene pedidos pendientes", "info", true);
         }
@@ -209,32 +203,29 @@ export class SelectEmployeeComponent implements OnInit {
 
     this.loading = true;
 
-    this._turnService.getOpenTurn(this.employee._id).subscribe(
+    this._turnService.getOpenTurn(this.employeeSelected._id).subscribe(
       result => {
         if (!result.turns) {
           if (this.op === "close-turn") {
             this.showMessage("El empleado no tiene turnos abiertos", "info", true);
           } else {
-            this.getUserOfEmployee();
+            this.openTurn();
           }
         } else {
-          this.turn = result.turns[0];
-          if (this.op === 'open-turn') {
-            this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
-          } else if (this.op === 'close-turn') {
-            this.getTransactionsOpenByEmployee();
-          } else if (this.op === 'change-employee') {
-            if (this.requireLogin) {
-              this.getUserOfEmployee();
-            } else {
-              this.activeModal.close(this.employee);
-            }
-          } else if (this.op === 'charge') {
-            if (this.requireLogin) {
-              this.openModal('login');
-            } else {
-              this.activeModal.close(this.employee);
-            }
+          switch(this.op) {
+            case "open-turn":
+              this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
+              break;
+            case "close-turn":
+              let turn = result.turns[0];
+              this.getTransactions('where="turnOpening":"' + turn._id + '"},{"$or":[{"state":"' + TransactionState.Pending + '"},{"state": "' + TransactionState.Open + '"}]', turn);
+              break;
+            case "change-employee":
+              this.activeModal.close({ employee: this.employeeSelected, turn: turn });
+              break;
+            case "charge":
+              this.activeModal.close({ employee: this.employeeSelected });
+              break;
           }
         }
         this.loading = false;
@@ -246,12 +237,12 @@ export class SelectEmployeeComponent implements OnInit {
     );
   }
 
-  public closeTurn(): void {
+  public closeTurn(turn: Turn): void {
 
-    this.turn.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    this.turn.state = TurnState.Closed;
+    turn.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    turn.state = TurnState.Closed;
 
-    this._turnService.updateTurn(this.turn).subscribe(
+    this._turnService.updateTurn(turn).subscribe(
       result => {
         if (!result.turn) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
@@ -260,9 +251,9 @@ export class SelectEmployeeComponent implements OnInit {
           modalRef.componentInstance.turn = result.turn;
           modalRef.componentInstance.typePrint = 'turn';
           modalRef.result.then((result) => {
-            this.activeModal.close(result);
+            this.activeModal.close({ turn: result.turn });
           }, (reason) => {
-            this.activeModal.close(result);
+            this.activeModal.close({ turn: result.turn });
           });
         }
         this.loading = false;
@@ -278,24 +269,12 @@ export class SelectEmployeeComponent implements OnInit {
 
     this.loading = true;
 
-    this._userService.getUserOfEmployee(this.employee._id).subscribe(
+    this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
       result => {
         if (!result.users) {
-          if (this.op === 'close-turn') {
-            this.closeTurn();
-          } else if (this.op === 'change-employee') {
-            if (this.turn) {
-              this.activeModal.close(this.turn);
-            } else {
-              this.openTurn();
-            }
-          } else if (this.op === 'open-turn') {
-            this.openTurn();
-          } else if (this.op === 'charge') {
-            this.openTurn();
-          }
+          this.showMessage("Tienes configurado para que pida autorización, pero no tiene creado un usuario el empleado.", "info", true);
         } else {
-          this.openModal('login');
+          this.login(result.users[0]);
         }
         this.loading = false;
       },
@@ -308,20 +287,26 @@ export class SelectEmployeeComponent implements OnInit {
 
   public openTurn(): void {
 
-    this.turn = new Turn();
-    this.turn.employee = this.employee;
+    let turn = new Turn();
+    turn.employee = this.employeeSelected;
     this.loading = true;
 
-    this._turnService.saveTurn(this.turn).subscribe(
+    this._turnService.saveTurn(turn).subscribe(
       result => {
         if (!result.turn) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
-          this.turn = result.turn;
-          if (this.op === "change-employee") {
-            this.activeModal.close(this.turn);
-          } else {
-            this.activeModal.close(this.employee);
+          turn = result.turn;
+          switch(this.op) {
+            case "change-employee":
+              this.activeModal.close({ employee: this.employeeSelected, turn: turn });
+              break;
+            case "open-turn":
+              this.activeModal.close({ turn: turn });
+              break;
+            case "charge":
+              this.activeModal.close({ employee: this.employeeSelected });
+              break;
           }
         }
         this.loading = false;
@@ -334,12 +319,37 @@ export class SelectEmployeeComponent implements OnInit {
   }
 
   public selectEmployee(): void {
-    this.employee = this.selectEmployeeForm.value.employee;
-    this.table.chair = this.selectEmployeeForm.value.chair;
-    if (this.op !== 'turn' && this.op !== 'close-turn') {
-      this.updateTable();
+
+    this.employeeSelected = this.selectEmployeeForm.value.employee;
+
+    if (this.requireLogin) {
+      this.getUserOfEmployee();
+    } else {
+      switch (this.op) {
+        case "open-turn":
+          this.getOpenTurn();
+          break;
+        case "close-turn":
+          this.getOpenTurn();
+          break;
+        case "select-employee":
+          if (this.table) {
+            this.table.chair = this.selectEmployeeForm.value.chair;
+            this.activeModal.close({ employee: this.employeeSelected, table: this.table });
+          } else {
+            this.activeModal.close({ employee: this.employeeSelected });
+          }
+          break;
+        case "charge":
+          this.getOpenTurn();
+          break;
+        case "change-employee":
+          this.getOpenTurn();
+          break;
+          default:
+            break;
+      }
     }
-    this.getOpenTurn();
   }
 
   public addChair(): void {
@@ -363,25 +373,56 @@ export class SelectEmployeeComponent implements OnInit {
     }
   }
 
-  public updateTable(): void {
-
+  public login(user: User): void {
+    
     this.loading = true;
+    
+    user.password = this.selectEmployeeForm.value.password;
 
-    this._tableService.updateTable(this.table).subscribe(
+    //Obtener el token del usuario
+    this._userService.login(user).subscribe(
       result => {
-        if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        if (!result.user) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.table = result.table;
+          user = result.user;
+          this.loading = false;
+          switch(this.op) {
+            case "open-turn":
+              this.getOpenTurn();
+              break;
+            case "close-turn":
+              this.getOpenTurn();
+              break;
+            case "select-employee":
+              if (this.table) {
+                this.table.chair = this.selectEmployeeForm.value.chair;
+                this.activeModal.close({ employee: this.employeeSelected, table: this.table });
+              } else {
+                this.activeModal.close({ employee: this.employeeSelected });
+              }
+              break;
+            case "charge":
+              this.getOpenTurn();
+              break;
+            case "change-employee":
+              this.getOpenTurn();
+              break;
+            default:
+              break;
+          }
         }
-        this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        if (error.status === 0) {
+          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", "danger", false);
+        } else {
+          this.showMessage(error._body, "danger", false);
+        }
         this.loading = false;
       }
-    );
+    )
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

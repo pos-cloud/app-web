@@ -34,8 +34,7 @@ export class UpdateUserComponent implements OnInit {
     'name': '',
     'password': '',
     'state': '',
-    'employee': '',
-    'tokenExpiration': ''
+    'employee': ''
   };
 
   public validationMessages = {
@@ -49,9 +48,6 @@ export class UpdateUserComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'employee': {
-    },
-    'tokenExpiration': {
-      'required':       'Este campo es requerido.'
     }
   };
 
@@ -84,8 +80,7 @@ export class UpdateUserComponent implements OnInit {
       'name': user.name,
       'password': user.password,
       'state': user.state,
-      'employee': employeeId,
-      'tokenExpiration': user.tokenExpiration
+      'employee': employeeId
     });
   }
 
@@ -112,10 +107,6 @@ export class UpdateUserComponent implements OnInit {
         ]
       ],
       'employee': [this.user.employee, [
-        ]
-      ],
-      'tokenExpiration': [this.user.tokenExpiration, [
-          Validators.required
         ]
       ]
     });
@@ -169,6 +160,7 @@ export class UpdateUserComponent implements OnInit {
     if(!this.readonly) {
       this.loading = true;
       this.user = this.userForm.value;
+      this.user.tokenExpiration = 1440;
       if(this.userForm.value.employee) {
         this.getEmployee();
       } else {

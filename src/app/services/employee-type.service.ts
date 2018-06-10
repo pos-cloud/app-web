@@ -31,13 +31,17 @@ export class EmployeeTypeService {
 		return this._http.get(Config.apiURL + "employee-type/"+id, { headers: headers }).map (res => res.json());
   }
 
-  getEmployeeTypes () {
+  getEmployeeTypes (query: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "employee-types", { headers: headers }).map (res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + "employee-types/" + query, { headers: headers }).map (res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "employee-types", { headers: headers }).map(res => res.json());
+		}
   }
 
   saveEmployeeType (employeeType: EmployeeType) {

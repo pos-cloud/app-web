@@ -237,6 +237,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transactions[0];
+          this.transactionMovement = ""+this.transaction.type.transactionMovement;
           this.table = this.transaction.table;
           this.getMovementsOfTransaction();
         }
@@ -289,7 +290,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.employeeOpening = this.table.employee;
           this.transaction.employeeClosing = this.table.employee;
           this.getOpenTurn(this.table.employee);
-          this.getTransactionByType('Ticket');
+          this.getDefectOrder();
         }
         this.loading = false;
       },
@@ -300,14 +301,17 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public getTransactionByType(type: string): void {
+  public getDefectOrder(): void {
 
-    this._transactionTypeService.getTransactionByType(type).subscribe(
+    this.loading = true;
+
+    this._transactionTypeService.getDefectOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transaction.type = result.transactionTypes[0];
+          this.transactionMovement = "" + this.transaction.type.transactionMovement;
           this.getLastTransactionByType();
         }
         this.loading = false;
@@ -865,10 +869,11 @@ export class AddSaleOrderComponent implements OnInit {
       case 'change-employee':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = true;
+        modalRef.componentInstance.typeEmployee = "Mozo";
         modalRef.componentInstance.op = "change-employee";
         modalRef.result.then((result) => {
-          if (typeof result == 'object') {
-            this.transaction.turnClosing = result;
+          if (result.employee) {
+            this.transaction.turnClosing = result.turn;
             this.transaction.employeeClosing = result.employee;
             this.table.employee = result.employee;
             this.updateTransaction(false);

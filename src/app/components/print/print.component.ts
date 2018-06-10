@@ -1,6 +1,7 @@
 //Paquetes de angular
 import { Component, OnInit, Input, ElementRef, ViewChild, transition } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
@@ -27,7 +28,7 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { ArticleStockService } from './../../services/article-stock.service';
 
 //Pipes
-import { DecimalPipe } from '@angular/common';
+import { DeprecatedDecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
@@ -307,8 +308,7 @@ export class PrintComponent implements OnInit {
     
     this.getHeader();
 
-    this.typePrint = 'turn';
-    let decimalPipe = new DecimalPipe('ARS');
+    let decimalPipe = new DeprecatedDecimalPipe('es-AR');
 
     // Título
     this.doc.setFontSize(this.fontSizes.extraLarge)
