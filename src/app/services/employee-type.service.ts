@@ -31,7 +31,7 @@ export class EmployeeTypeService {
 		return this._http.get(Config.apiURL + "employee-type/"+id, { headers: headers }).map (res => res.json());
   }
 
-  getEmployeeTypes (query: string) {
+  getEmployeeTypes (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
