@@ -1,5 +1,5 @@
 <!-- SECCION RESTO -->
-<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas' && (modules | async)?.sale[0].resto">
+<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas' && (modules | async)?.sale.resto">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -224,7 +224,7 @@
 </section>
 
 <!-- SECCION MOSTRADOR -->
-<section class="container-fluid" *ngIf="userType=='admin' && ((listType==='Ventas' && !(modules | async)?.sale[0].resto) || listType==='Compras')">
+<section class="container-fluid" *ngIf="userType=='admin' && ((listType==='Ventas' && !(modules | async)?.sale.resto) || listType==='Compras')">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}

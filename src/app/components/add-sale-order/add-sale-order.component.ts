@@ -484,13 +484,15 @@ export class AddSaleOrderComponent implements OnInit {
       if (!movementOfArticle) {
         movementOfArticle = itemData;
         movementOfArticle.transaction = this.transaction;
-        if (this.transaction.type.modifyStock) {
+        if (Config.modules.stock &&
+            this.transaction.type.modifyStock) {
           this.getArticleStock("save", movementOfArticle);
         } else {
           this.verifyPermissions("save", movementOfArticle, null);
         }
       } else {
-        if (this.transaction.type.modifyStock) {
+        if (Config.modules.stock &&
+            this.transaction.type.modifyStock) {
           this.getArticleStock("update", movementOfArticle);
         } else {
           this.verifyPermissions("update", movementOfArticle, null);
@@ -545,10 +547,11 @@ export class AddSaleOrderComponent implements OnInit {
       this.showMessage("El artículo no esta habilitado para la compra", "info", true);
     }
 
-    if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-      this.transaction.type.modifyStock &&
-      !movementOfArticle.article.allowSaleWithoutStock &&
-      (!articleStock || ((articleStock && movementOfArticle.amount + 1) > articleStock.realStock))) {
+    if (Config.modules.stock &&
+        this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+        this.transaction.type.modifyStock &&
+        !movementOfArticle.article.allowSaleWithoutStock &&
+        (!articleStock || ((articleStock && movementOfArticle.amount + 1) > articleStock.realStock))) {
       allowed = false;
       this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", "info", true);
     }
@@ -1102,7 +1105,8 @@ export class AddSaleOrderComponent implements OnInit {
   public back(): void {
 
     if(this.typeOfOperationToPrint === "charge") {
-      if( this.transaction.type.modifyStock && 
+      if( Config.modules.stock &&
+          this.transaction.type.modifyStock && 
           this.amountModifyStock < this.movementsOfArticles.length) {
         this.updateRealStock();
       } else {

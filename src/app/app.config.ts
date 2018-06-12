@@ -9,7 +9,7 @@ export class Config {
     static apiURLFE: string = "libs/fe/index.php";
     static apiPort: number = 3000;
     static accessType: string = "Cloud";
-    static modules: string[];
+    static modules;
     static pathMongo: string;
     static pathBackup: string;
     static backupTime: string;
@@ -44,7 +44,7 @@ export class Config {
         Config.accessType = accessType;
     }
 
-    public static setModules(modules: string[]): void {
+    public static setModules(modules): void {
         Config.modules = modules;
     }
 

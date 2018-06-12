@@ -11,7 +11,7 @@
                                                   identity.employee.type.description !== 'Administrador' && 
                                                   modules &&
                                                   modules.sale &&
-                                                  modules.sale[0].resto">
+                                                  modules.sale.resto">
         <a class="nav-link btn" [routerLink]="['pos','resto']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-cutlery"></i> Resto</a>
       </li>
@@ -20,7 +20,7 @@
                                   identity.employee.type.description !== 'Administrador' && 
                                   modules && 
                                   modules.sale &&
-                                  modules.sale[1].counter">
+                                  modules.sale.counter">
         <a class="nav-link btn" [routerLink]="['pos','mostrador','venta']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-handshake-o"></i> Mostrador</a>
       </li>
@@ -29,7 +29,7 @@
                                   identity.employee.type.description !== 'Administrador' &&
                                   modules && 
                                   modules.sale &&
-                                  modules.sale[2].delivery">
+                                  modules.sale.delivery">
         <a class="nav-link btn" [routerLink]="['pos','delivery']" [routerLinkActive]="['active-primary']">
           <i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
@@ -41,17 +41,17 @@
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
                       modules.sale && 
-                      modules.sale[0].resto">
+                      modules.sale.resto">
             <button class="dropdown-item" [routerLink]="['pos','resto']" [routerLinkActive]="['active']">Resto</button>
           </div>
           <div *ngIf="modules && 
                       modules.sale && 
-                      modules.sale[1].counter">
+                      modules.sale.counter">
             <button class="dropdown-item" [routerLink]="['pos','mostrador','venta']" [routerLinkActive]="['active']">Mostrador</button>
           </div>
           <div *ngIf="modules && 
                       modules.sale &&
-                      modules.sale[2].delivery">
+                      modules.sale.delivery">
             <button class="dropdown-item" [routerLink]="['pos','delivery']" [routerLinkActive]="['active']">Delivery</button>
           </div>
         </div>
@@ -89,9 +89,9 @@
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
                       modules.sale &&
-                      (modules.sale[0].resto || 
-                      modules.sale[1].counter ||
-                      modules.sale[2].delivery)">
+                      (modules.sale.resto || 
+                      modules.sale.counter ||
+                      modules.sale.delivery)">
             <button class="dropdown-item" [routerLink]="['admin','clientes']" [routerLinkActive]="['active']">Clientes</button>
           </div>
           <div *ngIf="modules && 
@@ -111,7 +111,7 @@
           <i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</button>
-          <div *ngIf="modules && modules.sale && modules.sale[0].resto">
+          <div *ngIf="modules && modules.sale && modules.sale.resto">
             <button class="dropdown-item" [routerLink]="['admin','turnos']" [routerLinkActive]="['active']">Turnos</button>
           </div>
         </div>
@@ -121,7 +121,7 @@
                                               identity.employee.type.description === 'Administrador' && 
                                               modules &&
                                               modules.sale &&
-                                              modules.sale[0].resto">
+                                              modules.sale.resto">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-cutlery"></i> Resto</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -137,7 +137,7 @@
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
                       modules.sale && 
-                      modules.sale[1].counter">
+                      modules.sale.counter">
             <button class="dropdown-item" [routerLink]="['admin','ventas']" [routerLinkActive]="['active']">Transacciones de Ventas</button>
           </div>
           <div *ngIf="modules && 

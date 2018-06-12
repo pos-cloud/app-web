@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 
 //paquetes de terceros
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
@@ -261,13 +263,19 @@ import { FocusDirective } from './directives/focus.directive';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
     RoutingModule,
     NgbModule.forRoot(),
     NgxPaginationModule,
-    ChartsModule
+    ChartsModule,
+    MatButtonModule, 
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [
     NgbActiveModal,

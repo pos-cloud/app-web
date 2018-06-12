@@ -60,8 +60,8 @@ export class AppComponent implements OnInit{
     if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
                                                     config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice);
     if (config.modules) {
-      Config.setModules(config.modules[0]);
-      this.modules = config.modules[0];
+      Config.setModules(config.modules);
+      this.modules = config.modules;
     }
   }
 

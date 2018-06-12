@@ -13,6 +13,7 @@ import { Variant } from '../../models/variant';
 import { VariantValue } from '../../models/variant-value';
 import { VariantType } from '../../models/variant-type';
 import { ArticleStock } from '../../models/article-stock';
+import { Config } from './../../app.config';
 
 //Services
 import { MovementOfArticleService } from '../../services/movement-of-article.service';
@@ -48,6 +49,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber: RoundNumberPipe;
   public errVariant: string;
+  public config: Config;
 
   public formErrors = {
     'description': '',
@@ -313,7 +315,8 @@ export class AddMovementOfArticleComponent implements OnInit {
       } else {
         this.errVariant = undefined;
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
-        if(this.movementOfArticle.transaction.type.modifyStock) {
+        if (Config.modules.stock &&
+            this.movementOfArticle.transaction.type.modifyStock) {
           this.getArticleStock();
         } else {
           this.movementOfArticleExists();
@@ -321,7 +324,8 @@ export class AddMovementOfArticleComponent implements OnInit {
         
       }
     } else {
-      if (this.movementOfArticle.transaction.type.modifyStock) {
+      if (Config.modules.stock &&
+          this.movementOfArticle.transaction.type.modifyStock) {
         this.getArticleStock();
       } else {
         this.movementOfArticleExists();
@@ -449,7 +453,8 @@ export class AddMovementOfArticleComponent implements OnInit {
       this.showMessage("El artículo no esta habilitado para la venta", "info", true);
     }
 
-    if( this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
+    if (Config.modules.stock &&
+        this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
         this.movementOfArticle.transaction.type.modifyStock &&
         !this.movementOfArticle.article.allowSaleWithoutStock &&
         (!this.articleStock || (this.articleStock && this.movementOfArticle.amount > this.articleStock.realStock))) {

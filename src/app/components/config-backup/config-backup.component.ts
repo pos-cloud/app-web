@@ -338,7 +338,7 @@ export class ConfigBackupComponent implements OnInit {
                                                     config.companyPhone, config.companyVatCondition, 
                                                     config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice);
     if (config.heightLabel) Config.setConfigLabel (config.heightLabel, config.widthLabel);
-    if (config.modules) Config.setModules(config.modules[0]);
+    if (config.modules) Config.setModules(config.modules);
   }
 
 
