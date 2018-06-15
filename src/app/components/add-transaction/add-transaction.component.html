@@ -75,7 +75,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="transaction.type.requestTaxes">
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
@@ -97,7 +97,7 @@
           </div>
         </div>
       </div>
-      <app-add-article-tax (eventAddArticleTax)="addTransactionTaxes($event)" [articleTaxes]="taxes"></app-add-article-tax>
+      <app-add-article-tax (eventAddArticleTax)="addTransactionTaxes($event)" [articleTaxes]="taxes" *ngIf="transaction.type.requestTaxes"></app-add-article-tax>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="totalPrice" class="control-label">Importe Total:</label>

@@ -172,6 +172,18 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="requestTaxes" class="control-label">¿Permite cargar impuestos en la transacción?</label>
+          <select class="form-control" formControlName="requestTaxes">
+            <option value="true" [selected]="transactionType.requestTaxes === true">Si</option>
+            <option value="false" [selected]="transactionType.requestTaxes === false">No</option>
+          </select>
+          <div *ngIf="formErrors.requestTaxes" class="alert alert-danger">
+            {{ formErrors.requestTaxes }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="tax">¿La transacción afecta el libro de IVA?</label>
           <select class="form-control" formControlName="tax">
             <option value="true" [selected]="transactionType.tax === true">Si</option>

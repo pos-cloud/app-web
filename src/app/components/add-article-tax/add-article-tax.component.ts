@@ -141,7 +141,7 @@ export class AddArticleTaxComponent implements OnInit {
     this._taxService.getTaxes().subscribe(
       result => {
         if (!result.taxes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.hideMessage();
         } else {
           this.hideMessage();
           this.taxes = result.taxes;

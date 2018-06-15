@@ -216,15 +216,17 @@ export class PrintComponent implements OnInit {
   }
 
   public getMovementOfArticle(): void {
+
     this.loading = true;
+
     this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.showMessage("No se encontraron artículos en la transacción", "info", false);
           this.loading = false;
         } else {
           this.hideMessage();
-          this.movementsOfArticles2 = result.movementsOfArticles;
+          this.movementsOfArticles = result.movementsOfArticles;
           
           if (this.transaction.CAE &&
               this.transaction.CAEExpirationDate) {
@@ -234,7 +236,6 @@ export class PrintComponent implements OnInit {
             this.toPrintInvoice();
           }
         }
-        this.toPrintInvoice();
         this.loading = false;
       },
       error => {
@@ -513,6 +514,7 @@ export class PrintComponent implements OnInit {
 
   public toPrintInvoice(): void {
 
+    console.log("toPrintInvoice");
     // Encabezado de la transacción
     this.getHeader();
     this.getClient();
@@ -556,21 +558,21 @@ export class PrintComponent implements OnInit {
 
     // Detalle de artículos
     var row = 85;
-
-    if (this.movementsOfArticles2.length > 0) {
-      for (var i = 0; i < this.movementsOfArticles2.length; i++) {
-        if (this.movementsOfArticles2[i].amount) {
-          this.doc.text((this.movementsOfArticles2[i].amount).toString(), 6, row)
+    
+    if (this.movementsOfArticles.length > 0) {
+      for (var i = 0; i < this.movementsOfArticles.length; i++) {
+        if (this.movementsOfArticles[i].amount) {
+          this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row)
         }
-        if (this.movementsOfArticles2[i].description) {
-          this.doc.text(this.movementsOfArticles2[i].description, 25, row)
+        if (this.movementsOfArticles[i].description) {
+          this.doc.text(this.movementsOfArticles[i].description, 25, row)
         }
-        if (this.movementsOfArticles2[i].article) {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].article.salePrice), 155, row)
+        if (this.movementsOfArticles[i].article) {
+          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].article.salePrice), 155, row)
         } else {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice), 155, row)
+          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 155, row)
         }
-        this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles2[i].salePrice), 185, row)
+        this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row)
 
         row += 8;
       }
@@ -722,6 +724,7 @@ export class PrintComponent implements OnInit {
         this.barcode64 = result.bc64;
         switch (op) {
           case 'invoice':
+            console.log("1");
             this.toPrintInvoice();
             break;
           case 'barcode':
@@ -739,9 +742,11 @@ export class PrintComponent implements OnInit {
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
+    console.log("showMessage");
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
+    console.log(this.alertMessage);
   }
 
   public hideMessage(): void {

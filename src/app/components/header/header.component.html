@@ -1,18 +1,30 @@
-<nav class="navbar navbar-toggleable-md bg-faded" *ngIf="!hideMenu">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav  class="navbar navbar-toggleable-md bg-faded" 
+      *ngIf="!hideMenu">
+  <button class="navbar-toggler navbar-toggler-right" 
+          type="button" 
+          data-toggle="collapse" 
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" 
+          aria-expanded="false" 
+          aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" [routerLink]="['inicio']"> POS Cloud</a>
+  <a class="navbar-brand" [routerLink]="['inicio']">
+      POS Cloud
+  </a>
+<!-- MENU VENDEDOR -->
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto" *ngIf="modules">
-      <li class="nav-item navbar-inverse" *ngIf=" identity &&
-                                                  identity.employee &&
-                                                  identity.employee.type.description !== 'Administrador' && 
-                                                  modules &&
-                                                  modules.sale &&
-                                                  modules.sale.resto">
-        <a class="nav-link btn" [routerLink]="['pos','resto']" [routerLinkActive]="['active-primary']">
+      <li class="nav-item navbar-inverse" 
+          *ngIf=" identity &&
+                  identity.employee &&
+                  identity.employee.type.description !== 'Administrador' && 
+                  modules &&
+                  modules.sale &&
+                  modules.sale.resto">
+        <a  class="nav-link btn" 
+            [routerLink]="['pos','resto']" 
+            [routerLinkActive]="['active-primary']">
           <i class="fa fa-cutlery"></i> Resto</a>
       </li>
       <li class="nav-item" *ngIf="identity && 
@@ -21,7 +33,9 @@
                                   modules && 
                                   modules.sale &&
                                   modules.sale.counter">
-        <a class="nav-link btn" [routerLink]="['pos','mostrador','venta']" [routerLinkActive]="['active-primary']">
+        <a  class="nav-link btn" 
+            [routerLink]="['pos','mostrador','venta']" 
+            [routerLinkActive]="['active-primary']">
           <i class="fa fa-handshake-o"></i> Mostrador</a>
       </li>
       <li class="nav-item" *ngIf="identity &&
@@ -30,29 +44,46 @@
                                   modules && 
                                   modules.sale &&
                                   modules.sale.delivery">
-        <a class="nav-link btn" [routerLink]="['pos','delivery']" [routerLinkActive]="['active-primary']">
+        <a  class="nav-link btn" 
+            [routerLink]="['pos','delivery']" 
+            [routerLinkActive]="['active-primary']">
           <i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador')">
+<!-- MENU ADMINISTRADOR -->
+      <li class="nav-item" 
+          ngbDropdown 
+          *ngIf="(identity &&
+                  identity.employee && 
+                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-fax"></i> Ventas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
                       modules.sale && 
                       modules.sale.resto">
-            <button class="dropdown-item" [routerLink]="['pos','resto']" [routerLinkActive]="['active']">Resto</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['pos','resto']" 
+                    [routerLinkActive]="['active']">
+              Resto
+            </button>
           </div>
           <div *ngIf="modules && 
                       modules.sale && 
                       modules.sale.counter">
-            <button class="dropdown-item" [routerLink]="['pos','mostrador','venta']" [routerLinkActive]="['active']">Mostrador</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['pos','mostrador','venta']" 
+                    [routerLinkActive]="['active']">
+              Mostrador
+            </button>
           </div>
           <div *ngIf="modules && 
                       modules.sale &&
                       modules.sale.delivery">
-            <button class="dropdown-item" [routerLink]="['pos','delivery']" [routerLinkActive]="['active']">Delivery</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['pos','delivery']" 
+                    [routerLinkActive]="['active']">
+              Delivery
+            </button>
           </div>
         </div>
       </li>
@@ -60,30 +91,50 @@
                                   identity.employee && 
                                   identity.employee.type.description === 'Administrador' &&
                                   modules && modules.purchase && modules.purchase">
-        <a class="nav-link btn" [routerLink]="['pos','mostrador','compra']" [routerLinkActive]="['active-primary']">
+        <a  class="nav-link btn" 
+            [routerLink]="['pos','mostrador','compra']" 
+            [routerLinkActive]="['active-primary']">
           <i class="fa fa-bar-chart"></i> Compras</a>
       </li>
       <li class="nav-item" *ngIf="identity &&
                                   identity.employee && 
                                   identity.employee.type.description === 'Administrador' &&
                                   modules && modules.stock">
-        <a class="nav-link btn" [routerLink]="['pos','mostrador','stock']" [routerLinkActive]="['active-primary']">
+        <a  class="nav-link btn" 
+            [routerLink]="['pos','mostrador','stock']" 
+            [routerLinkActive]="['active-primary']">
           <i class="fa fa-bar-chart"></i> Stock</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador')">
+      <li class="nav-item" 
+          ngbDropdown 
+          *ngIf="(identity &&
+                  identity.employee && 
+                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-shopping-basket"></i> Productos</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item" [routerLink]="['admin','productos']" [routerLinkActive]="['active']">Productos</button>
-          <button class="dropdown-item" [routerLink]="['admin','marcas']" [routerLinkActive]="['active']">Marcas</button>
-          <button class="dropdown-item" [routerLink]="['admin','rubros']" [routerLinkActive]="['active']">Rubros</button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','productos']" 
+                  [routerLinkActive]="['active']">
+            Productos
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','marcas']" 
+                  [routerLinkActive]="['active']">
+            Marcas
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','rubros']" 
+                  [routerLinkActive]="['active']">
+            Rubros
+          </button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador')">
+      <li class="nav-item" 
+          ngbDropdown
+          *ngIf="(identity &&
+                  identity.employee && 
+                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -92,79 +143,180 @@
                       (modules.sale.resto || 
                       modules.sale.counter ||
                       modules.sale.delivery)">
-            <button class="dropdown-item" [routerLink]="['admin','clientes']" [routerLinkActive]="['active']">Clientes</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','clientes']" 
+                    [routerLinkActive]="['active']">
+                    Clientes
+            </button>
           </div>
           <div *ngIf="modules && 
                       modules.sale &&
+                      (modules.sale.resto || 
+                      modules.sale.counter ||
+                      modules.sale.delivery) &&
                       modules.purchase">
-            <button class="dropdown-item" [routerLink]="['admin','proveedores']" [routerLinkActive]="['active']">Proveedores</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','proveedores']" 
+                    [routerLinkActive]="['active']">
+              Proveedores
+            </button>
           </div>
-          <button class="dropdown-item" [routerLink]="['admin','cuentas-corrientes','cliente']" [routerLinkActive]="['active']">Cuentas Corrientes Clientes</button>
-          <button class="dropdown-item" *ngIf="modules && modules.sale && modules.purchase" [routerLink]="['admin','cuentas-corrientes','proveedor']"
-            [routerLinkActive]="['active']">Cuentas Corrientes Proveedores</button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','cuentas-corrientes','cliente']" 
+                  [routerLinkActive]="['active']"
+                  *ngIf= "modules && 
+                          modules.sale &&
+                          (modules.sale.resto || 
+                          modules.sale.counter ||
+                          modules.sale.delivery) &&
+                          modules.currentAccount">
+            Cuentas Corrientes Clientes
+          </button>
+          <button class="dropdown-item" 
+                  *ngIf=" modules &&
+                          modules.purchase &&
+                          modules.currentAccount"
+                  [routerLink]="['admin','cuentas-corrientes','proveedor']"
+                  [routerLinkActive]="['active']">
+            Cuentas Corrientes Proveedores
+          </button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador')">
+      <li class="nav-item" 
+          ngbDropdown 
+          *ngIf="(identity &&
+                  identity.employee && 
+                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item" [routerLink]="['admin','empleados']" [routerLinkActive]="['active']">Empleados</button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','empleados']" 
+                  [routerLinkActive]="['active']">
+            Empleados
+          </button>
           <div *ngIf="modules && modules.sale && modules.sale.resto">
-            <button class="dropdown-item" [routerLink]="['admin','turnos']" [routerLinkActive]="['active']">Turnos</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','turnos']" 
+                    [routerLinkActive]="['active']">
+              Turnos
+            </button>
           </div>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador' && 
-                                              modules &&
-                                              modules.sale &&
-                                              modules.sale.resto">
+      <li class="nav-item" 
+          ngbDropdown 
+          *ngIf="identity &&
+                identity.employee && 
+                identity.employee.type.description === 'Administrador' && 
+                modules &&
+                modules.sale &&
+                modules.sale.resto">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-cutlery"></i> Resto</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item" [routerLink]="['admin','mesas']" [routerLinkActive]="['active']">Mesas</button>
-          <button class="dropdown-item" [routerLink]="['admin','salones']" [routerLinkActive]="['active']">Salones</button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','mesas']" 
+                  [routerLinkActive]="['active']">
+            Mesas
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','salones']" 
+                  [routerLinkActive]="['active']">
+            Salones
+          </button>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador')">
+      <li class="nav-item" 
+          ngbDropdown
+          *ngIf="(identity &&
+                  identity.employee && 
+                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-bar-chart"></i> Reportes</a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngIf="modules && 
-                      modules.sale && 
-                      modules.sale.counter">
-            <button class="dropdown-item" [routerLink]="['admin','ventas']" [routerLinkActive]="['active']">Transacciones de Ventas</button>
+                      modules.sale &&
+                      (modules.sale.resto || 
+                      modules.sale.counter ||
+                      modules.sale.delivery)">
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','ventas']" 
+                    [routerLinkActive]="['active']">
+              Ventas
+            </button>
           </div>
           <div *ngIf="modules && 
                       modules.purchase">
-            <button class="dropdown-item" [routerLink]="['admin','compras']" [routerLinkActive]="['active']">Transacciones de Compras</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','compras']" 
+                    [routerLinkActive]="['active']">
+              Compras
+            </button>
           </div>
           <div *ngIf="modules && modules.stock">
-            <button class="dropdown-item" [routerLink]="['admin','stock']" [routerLinkActive]="['active']">Transacciones de Stock</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','stock']" 
+                    [routerLinkActive]="['active']">
+              Movimientos de Stock
+            </button>
           </div>
           <div *ngIf="modules && modules.stock">
-            <button class="dropdown-item" [routerLink]="['admin','stock-de-articulos']" [routerLinkActive]="['active']">Stock de artículos</button>
+            <button class="dropdown-item" 
+                    [routerLink]="['admin','stock-de-articulos']" 
+                    [routerLinkActive]="['active']">
+              Inventario
+            </button>
           </div>
         </div>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee && 
-                                              identity.employee.type.description === 'Administrador')">
+      <li class="nav-item" 
+          ngbDropdown 
+          *ngIf="(identity &&
+                  identity.employee && 
+                  identity.employee.type.description === 'Administrador')">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <button class="dropdown-item" [routerLink]="['admin','usuarios']" [routerLinkActive]="['active']">Usuarios</button>
-          <button class="dropdown-item" [routerLink]="['admin','configuraciones']" [routerLinkActive]="['active']">Generales</button>
-          <button class="dropdown-item" [routerLink]="['admin','impresoras']" [routerLinkActive]="['active']">Impresoras</button>
-          <button class="dropdown-item" [routerLink]="['admin','tipos-de-transacciones']" [routerLinkActive]="['active']">Tipos de Transacciones</button>
-          <button class="dropdown-item" [routerLink]="['admin','tipos-de-variantes']" [routerLinkActive]="['active']">Tipos de Variantes</button>
-          <button class="dropdown-item" [routerLink]="['admin','valores-de-variantes']" [routerLinkActive]="['active']">Valores de Variantes</button>
-          <button class="dropdown-item" [routerLink]="['admin','impuestos']" [routerLinkActive]="['active']">Impuestos</button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','usuarios']" 
+                  [routerLinkActive]="['active']">
+            Usuarios
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','configuraciones']" 
+                  [routerLinkActive]="['active']">
+            Generales
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','impresoras']" 
+                  [routerLinkActive]="['active']">
+            Impresoras
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','tipos-de-transacciones']" 
+                  [routerLinkActive]="['active']">
+            Tipos de Transacciones
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','tipos-de-variantes']" 
+                  [routerLinkActive]="['active']"
+                  *ngIf=" modules &&
+                          modules.variants">
+            Tipos de Variantes
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','valores-de-variantes']" 
+                  [routerLinkActive]="['active']"
+                  *ngIf=" modules &&
+                          modules.variants">
+            Valores de Variantes
+          </button>
+          <button class="dropdown-item" 
+                  [routerLink]="['admin','impuestos']" 
+                  [routerLinkActive]="['active']">
+            Impuestos
+          </button>
         </div>
       </li>
     </ul>

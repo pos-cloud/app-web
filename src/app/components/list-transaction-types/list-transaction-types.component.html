@@ -41,6 +41,7 @@
             <th>Cídigo C</th>
             <th (click)="orderBy('printable')">Imprime al finalizar</th>
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
+            <th (click)="orderBy('requestTaxes')">Pide impuestos</th>
             <th (click)="orderBy('tax')">Afecta Libro IVA</th>
             <th (click)="orderBy('allowAPP')">APP</th>
           </tr>
@@ -63,6 +64,7 @@
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterRequestTaxes" placeholder="Pide impuestos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="Afechta Libro IVA..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="APP..."></th>
           </tr>
@@ -82,6 +84,7 @@
                                                               | filter: filterElectronics:'electronics'
                                                               | filter: filterPrintable:'printable'
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
+                                                              | filter: filterRequestTaxes:'requestTaxes'
                                                               | filter: filterTax:'tax'
                                                               | filter: filterAllowAPP:'allowAPP'
                                                               | orderBy: orderTerm: propertyTerm
@@ -118,11 +121,12 @@
             <td class="flat">{{transactionType.printable}}</td>
             <td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
+            <td class="flat">{{transactionType.requestTaxes}}</td>
             <td class="flat">{{transactionType.tax}}</td>
             <td class="flat">{{transactionType.allowAPP}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionTypesEmpty">
-            <td colspan="18">No se encontraron tipos de transacción</td>
+            <td colspan="19">No se encontraron tipos de transacción</td>
           </tr>
         </tbody>
       </table>

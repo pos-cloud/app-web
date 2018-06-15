@@ -11,6 +11,7 @@ export class TransactionType {
 	public modifyStock: boolean = false;
 	public stockMovement: StockMovement = StockMovement.Inflows;
 	public requestArticles: boolean = false;
+	public requestTaxes: boolean = false;
 	public defectOrders: boolean = false;
 	public electronics: boolean = false;
 	public codes: CodeAFIP[];

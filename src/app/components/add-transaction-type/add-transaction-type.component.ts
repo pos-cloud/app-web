@@ -39,6 +39,7 @@ export class AddTransactionTypeComponent implements OnInit {
     'modifyStock': '',
     'stockMovement': '',
     'requestArticles': '',
+    'requestTaxes': '',
     'defectOrders': '',
     'fixedOrigin': '',
     'fixedLetter': '',
@@ -71,6 +72,9 @@ export class AddTransactionTypeComponent implements OnInit {
     'stockMovement': {
     },
     'requestArticles': {
+      'required': 'Este campo es requerido.',
+    },
+    'requestTaxes': {
       'required': 'Este campo es requerido.',
     },
     'defectOrders': {
@@ -174,6 +178,10 @@ export class AddTransactionTypeComponent implements OnInit {
           Validators.required
         ]
       ],
+      'requestTaxes': [this.transactionType.requestTaxes, [
+          Validators.required
+        ]
+      ],
       'defectOrders': [this.transactionType.defectOrders, [
         ]
       ],
@@ -262,6 +270,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.modifyStock === undefined) this.transactionType.modifyStock = false;
     if (!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Outflows;
     if (!this.transactionType.requestArticles === undefined) this.transactionType.requestArticles = false;
+    if (!this.transactionType.requestTaxes === undefined) this.transactionType.requestTaxes = false;
     if (!this.transactionType.defectOrders === undefined) this.transactionType.defectOrders = false;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
     if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = "";
@@ -280,6 +289,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'modifyStock': this.transactionType.modifyStock,
       'stockMovement': this.transactionType.stockMovement,
       'requestArticles': this.transactionType.requestArticles,
+      'requestTaxes': this.transactionType.requestTaxes,
       'defectOrders': this.transactionType.defectOrders,
       'fixedOrigin': this.transactionType.fixedOrigin,
       'fixedLetter': this.transactionType.fixedLetter,

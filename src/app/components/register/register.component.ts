@@ -41,7 +41,7 @@ export class RegisterComponent implements OnInit {
     'counter': '',
     'resto': '',
     'delivery': '',
-    'electronicTransaction': '',
+    'electronicTransactions': '',
     'purchase': '',
     'stock': ''
   };
@@ -68,7 +68,7 @@ export class RegisterComponent implements OnInit {
     },
     'delivery': {
     },
-    'electronicTransaction': {
+    'electronicTransactions': {
     },
     'purchase': {
     },
@@ -130,7 +130,7 @@ export class RegisterComponent implements OnInit {
       'delivery': [false, [
         ]
       ],
-      'electronicTransaction': [false, [
+      'electronicTransactions': [false, [
         ]
       ],
       'purchase': [false, [
@@ -217,7 +217,7 @@ export class RegisterComponent implements OnInit {
       'counter': this.registerForm.value.counter,
       'resto': this.registerForm.value.resto,
       'delivery': this.registerForm.value.delivery,
-      'electronicTransaction': this.registerForm.value.electronicTransaction,
+      'electronicTransactions': this.registerForm.value.electronicTransactions,
       'purchase': this.registerForm.value.purchase,
       'stock': this.registerForm.value.stock,
     });
