@@ -20,21 +20,23 @@
           <thead>
             <tr>
               <th><i class="fa fa-bars"></i></th>
-              <th (click)="orderBy('name')">Nombre </th>
-              <th (click)="orderBy('fantasyName')">Nombre de Fantasía </th>
-              <th (click)="orderBy('type')">Tipo </th>
-              <th (click)="orderBy('DNI')">DNI </th>
-              <th (click)="orderBy('CUIT')">CUIT </th>
-              <th (click)="orderBy('address')">Dirección </th>
-              <th (click)="orderBy('city')">Ciudad </th>
-              <th (click)="orderBy('phones')">Teléfonos </th>
-              <th (click)="orderBy('emails')">Emails </th>
+              <th (click)="orderBy('name')">Nombre</th>
+              <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
+              <th (click)="orderBy('type')">Tipo</th>
+              <th (click)="orderBy('vatCondition','description')">Condición de IVA</th>
+              <th (click)="orderBy('DNI')">DNI</th>
+              <th (click)="orderBy('CUIT')">CUIT</th>
+              <th (click)="orderBy('address')">Dirección</th>
+              <th (click)="orderBy('city')">Ciudad</th>
+              <th (click)="orderBy('phones')">Teléfonos</th>
+              <th (click)="orderBy('emails')">Emails</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
@@ -47,6 +49,7 @@
             <tr *ngFor="let company of companies  | filter: filterName:'name' 
                                                   | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterType:'type'
+                                                  | filter: filterVATCondition:'description':'vatCondition'
                                                   | filter: filterCUIT:'CUIT'
                                                   | filter: filterDNI:'DNI'
                                                   | filter: filterAddress:'address'
@@ -66,6 +69,7 @@
               <td>{{company.name}}</td>
               <td>{{company.fantasyName}}</td>
               <td>{{company.type}}</td>
+              <td>{{company.vatCondition.description}}</td>
               <td>{{company.DNI}}</td>
               <td>{{company.CUIT}}</td>
               <td>{{company.address}}</td>

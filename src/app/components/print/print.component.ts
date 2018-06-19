@@ -514,7 +514,6 @@ export class PrintComponent implements OnInit {
 
   public toPrintInvoice(): void {
 
-    console.log("toPrintInvoice");
     // Encabezado de la transacción
     this.getHeader();
     this.getClient();
@@ -724,7 +723,6 @@ export class PrintComponent implements OnInit {
         this.barcode64 = result.bc64;
         switch (op) {
           case 'invoice':
-            console.log("1");
             this.toPrintInvoice();
             break;
           case 'barcode':
@@ -742,11 +740,9 @@ export class PrintComponent implements OnInit {
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
-    console.log("showMessage");
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
-    console.log(this.alertMessage);
   }
 
   public hideMessage(): void {

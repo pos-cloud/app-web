@@ -86,7 +86,7 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button *ngIf="transaction.type.requestArticles && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" click)="openModal('print', transaction)" title="Imprimir">
+              <button *ngIf="transaction.type.requestArticles && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir">
                 <i class="fa fa-print"></i>
               </button>
             </td>

@@ -1,6 +1,6 @@
 //Paquetes Angular
-import { Component, OnInit, ElementRef, ViewChild, EventEmitter, Output, Input, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ElementRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -10,21 +10,18 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
+import { TransactionMovement, StockMovement } from './../../models/transaction-type';
 import { Taxes } from './../../models/taxes';
-import { Article, ArticlePrintIn } from './../../models/article';
+import { ArticlePrintIn } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
 import { Employee } from './../../models/employee';
 import { Category } from './../../models/category';
-import { Room } from './../../models/room';
 import { Print } from './../../models/print';
 import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
-import { Turn } from './../../models/turn';
 import { Config } from './../../app.config';
 import { CompanyType } from '../../models/company';
-import { Tax } from '../../models/tax';
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -47,7 +44,6 @@ import { DeleteTransactionComponent } from '../delete-transaction/delete-transac
 import { AddMovementOfCashComponent } from '../add-movement-of-cash/add-movement-of-cash.component';
 
 //Pipes
-import { DecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
@@ -761,6 +757,7 @@ export class AddSaleOrderComponent implements OnInit {
                 this.transaction.totalPrice = result.amountPaid;
                 this.getTaxVAT(movementOfArticle);
               }
+
               if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                 this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
                 if (this.transaction.type.electronics && !this.transaction.CAE) {
@@ -1023,6 +1020,8 @@ export class AddSaleOrderComponent implements OnInit {
   public assignOriginAndLetter(origin: number) {
     
     this.transaction.origin = origin;
+    console.log("assignOriginAndLetter");
+    console.log(this.transaction.company);
     if (this.transaction.company &&
         this.transaction.company.vatCondition) {
       this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;

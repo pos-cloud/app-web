@@ -104,7 +104,6 @@ export class ExportCitiComponent implements OnInit {
         } else {
           this.showMessage("Los archivos se generaron correctamente.", "success", false);
           this.compURL = Config.apiURL + "download-file/" + this._userService.getDatabase() + "\\comp" + this.VATPeriod + ".txt";
-          console.log(this.compURL);
           this.aliURL = Config.apiURL + "download-file/" + this._userService.getDatabase() + "\\ali" + this.VATPeriod + ".txt";
           this.toggleButton = true;
         }
