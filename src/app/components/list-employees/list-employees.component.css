@@ -30,3 +30,11 @@
  .my-pagination /deep/ .ngx-pagination {
     color: white;
 }
+
+::placeholder {
+      color: #D8D8D8;
+}
+
+.filters {
+      background-color: #F8F8F8;
+}

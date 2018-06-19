@@ -7,9 +7,9 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Turnos
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="refresh()"[disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span *ngIf="loading">Cargando</span><span *ngIf="!loading">Actualizar</span></button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
     </div>
@@ -23,7 +23,7 @@
               <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('employee','name')">Empleado</th>
             </tr>
-            <tr *ngIf="areFiltersVisible"><th>
+            <tr *ngIf="areFiltersVisible" class="filters"><th>
               <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Apertura..."></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Cierre..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..."></th>

@@ -8,14 +8,14 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Tipos de Variantes
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)">Agregar Tipo de Variante</button>
+        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Tipo de Variante</i></button>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
           <span *ngIf="loading">Cargando</span>
           <span *ngIf="!loading">Actualizar</span>
         </button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
     </div>
@@ -28,7 +28,7 @@
             </th>
             <th (click)="orderBy('name')">Nombre </th>
           </tr>
-          <tr *ngIf="areFiltersVisible">
+          <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
             <th>
               <input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Descripción...">

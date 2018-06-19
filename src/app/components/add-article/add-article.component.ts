@@ -273,8 +273,7 @@ export class AddArticleComponent implements OnInit {
           category = this.categories[0];
         }
 
-        this.article.code = code;
-        this.article.make = this.makes[0];
+        this.article.code = this.padString(code, 5);
         this.article.category = category;
         this.setValuesForm();
         this.loading = false;
@@ -361,7 +360,7 @@ export class AddArticleComponent implements OnInit {
     this._categoryService.getCategories().subscribe(
       result => {
         if (!result.categories) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.getLastArticle();
         } else {
           this.hideMessage();
           this.categories = result.categories;

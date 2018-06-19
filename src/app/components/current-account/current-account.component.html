@@ -13,7 +13,7 @@
         </button>
         <button class="btn btn-primary" (click)="openModal('print')">Imprimir</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
     </div>
@@ -51,7 +51,7 @@
               <th (click)="orderBy('number')">Número</th>
               <th (click)="orderBy('totalPrice')">Monto</th>
             </tr>
-            <tr *ngIf="areFiltersVisible">
+            <tr *ngIf="areFiltersVisible" class="filters">
               <th><input type="date" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>

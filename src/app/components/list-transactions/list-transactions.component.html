@@ -9,13 +9,9 @@
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
         <button class="btn btn-primary" (click)="exportCiti()">Exportar Régimen de Información</button>
-        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="loading">Cargando</span>
-          <span *ngIf="!loading">Actualizar</span>
-        </button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
     </div>
@@ -43,7 +39,7 @@
             <th (click)="orderBy('discount')">Descuento</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible">
+          <tr *ngIf="areFiltersVisible" class="filters">
             <th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
@@ -207,13 +203,9 @@
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
         <button class="btn btn-primary" (click)="exportCiti()">Exportar Régimen de Información</button>
-        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="loading">Cargando</span>
-          <span *ngIf="!loading">Actualizar</span>
-        </button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
     </div>
@@ -236,7 +228,7 @@
             <th (click)="orderBy('discount')">Descuento</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible">
+          <tr *ngIf="areFiltersVisible" class="filters">
             <th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
@@ -381,13 +373,9 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="loading">Cargando</span>
-          <span *ngIf="!loading">Actualizar</span>
-        </button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
     </div>
@@ -406,7 +394,7 @@
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible">
+          <tr *ngIf="areFiltersVisible" class="filters">
             <th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
