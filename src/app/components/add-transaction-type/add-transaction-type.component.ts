@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement } from './../../models/transaction-type';
-import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
 import { TransactionTypeService } from './../../services/transaction-type.service';
@@ -32,25 +31,7 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public formErrors = {
     'transactionMovement': '',
-    'name': '',
-    'labelPrint': '',
-    'currentAccount': '',
-    'movement': '',
-    'modifyStock': '',
-    'stockMovement': '',
-    'requestArticles': '',
-    'requestTaxes': '',
-    'defectOrders': '',
-    'fixedOrigin': '',
-    'fixedLetter': '',
-    'electronics': '',
-    'codeA': '',
-    'codeB': '',
-    'codeC': '',
-    'printable': '',
-    'defectPrinter': '',
-    'tax': '',
-    'allowAPP': ''
+    'name': ''
   };
 
   public validationMessages = {
@@ -59,46 +40,6 @@ export class AddTransactionTypeComponent implements OnInit {
     },
     'name': {
       'required': 'Este campo es requerido.',
-    },
-    'labelPrint': {
-    },
-    'currentAccount': {
-      'required': 'Este campo es requerido.',
-    },
-    'movement': {
-    },
-    'modifyStock': {
-    },
-    'stockMovement': {
-    },
-    'requestArticles': {
-      'required': 'Este campo es requerido.',
-    },
-    'requestTaxes': {
-      'required': 'Este campo es requerido.',
-    },
-    'defectOrders': {
-    },
-    'fixedOrigin': {
-    },
-    'fixedLetter': {
-    },
-    'electronics': {
-      'required': 'Este campo es requerido.',
-    },
-    'codeA': {
-    },
-    'codeB': {
-    },
-    'codeC': {
-    },
-    'printable': {
-    },
-    'defectPrinter': {
-    },
-    'tax': { 
-    },
-    'allowAPP': {
     }
   };
 
@@ -162,7 +103,6 @@ export class AddTransactionTypeComponent implements OnInit {
         ]
       ],
       'currentAccount': [this.transactionType.currentAccount, [
-          Validators.required
         ]
       ], 
       'movement': [this.transactionType.movement, [
@@ -175,11 +115,9 @@ export class AddTransactionTypeComponent implements OnInit {
         ]
       ],
       'requestArticles': [this.transactionType.requestArticles, [
-          Validators.required
         ]
       ],
       'requestTaxes': [this.transactionType.requestTaxes, [
-          Validators.required
         ]
       ],
       'defectOrders': [this.transactionType.defectOrders, [
@@ -192,7 +130,6 @@ export class AddTransactionTypeComponent implements OnInit {
         ]
       ], 
       'electronics': [this.transactionType.electronics, [
-          Validators.required,
         ]
       ],
       'codeA': [this.getCode(this.transactionType,"A"), [

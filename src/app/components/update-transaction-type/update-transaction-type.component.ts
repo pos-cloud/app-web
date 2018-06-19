@@ -33,24 +33,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
 
   public formErrors = {
     'transactionMovement': '',
-    'name': '',
-    'labelPrint': '',
-    'currentAccount': '',
-    'movement': '',
-    'modifyStock': '',
-    'stockMovement': '',
-    'requestArticles': '',
-    'requestTaxes': '',
-    'defectOrders': '',
-    'fixedOrigin': '',
-    'fixedLetter': '',
-    'electronics': '',
-    'codeA': '',
-    'codeB': '',
-    'codeC': '',
-    'printable': '',
-    'defectPrinter': '',
-    'tax': ''
+    'name': ''
   };
 
   public validationMessages = {
@@ -59,44 +42,6 @@ export class UpdateTransactionTypeComponent implements OnInit {
     },
     'name': {
       'required': 'Este campo es requerido.',
-    },
-    'labelPrint': {
-    },
-    'currentAccount': {
-      'required': 'Este campo es requerido.',
-    },
-    'movement': {
-    },
-    'modifyStock': {
-    },
-    'stockMovement': {
-    },
-    'requestArticles': {
-      'required': 'Este campo es requerido.',
-    },
-    'requestTaxes': {
-      'required': 'Este campo es requerido.',
-    },
-    'defectOrders': {
-    },
-    'fixedOrigin': {
-    },
-    'fixedLetter': {
-    },
-    'electronics': {
-      'required': 'Este campo es requerido.',
-    },
-    'codeA': {
-    },
-    'codeB': {
-    },
-    'codeC': {
-    },
-    'printable': {
-    },
-    'defectPrinter': {
-    },
-    'tax': {
     }
   };
 
@@ -162,7 +107,6 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ],
       'currentAccount': [this.transactionType.currentAccount, [
-          Validators.required
         ]
       ], 
       'movement': [this.transactionType.movement, [
@@ -175,11 +119,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ],
       'requestArticles': [this.transactionType.requestArticles, [
-          Validators.required
         ]
       ],
       'requestTaxes': [this.transactionType.requestTaxes, [
-          Validators.required
         ]
       ],
       'defectOrders': [this.transactionType.defectOrders, [
@@ -192,7 +134,6 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ], 
       'electronics': [this.transactionType.electronics, [
-          Validators.required,
         ]
       ],
       'codeA': [this.getCode(this.transactionType,"A"), [
@@ -211,6 +152,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ],
       'tax': [this.transactionType.tax, [
+        ]
+      ],
+      'allowAPP': [this.transactionType.allowAPP, [
         ]
       ]
     });
@@ -259,7 +203,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (!this.transactionType.electronics === undefined) this.transactionType.electronics  = false;
     if (!this.transactionType.printable === undefined) this.transactionType.printable  = false;
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
-    if (!this.transactionType.tax === undefined) this.transactionType.tax  = false;
+    if (!this.transactionType.tax === undefined) this.transactionType.tax = false;
+    if (!this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -281,7 +226,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'codeC': this.getCode(this.transactionType, "C"),
       'printable': this.transactionType.printable,
       'defectPrinter': this.transactionType.defectPrinter,
-      'tax' : this.transactionType.tax
+      'tax': this.transactionType.tax,
+      'allowAPP': this.transactionType.allowAPP
     });
   }
 
