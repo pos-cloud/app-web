@@ -35,7 +35,6 @@ export class AddCompanyComponent  implements OnInit {
     'code': '',
     'name': '',
     'fantasyName': '',
-    'entryDate': '',
     'type': '',
     'vatCondition': '',
     'identityType' : '',
@@ -56,8 +55,6 @@ export class AddCompanyComponent  implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'fantasyName': {
-    },
-    'entryDate': {
     },
     'type': {
       'required':       'Este campo es requerido.'
@@ -114,12 +111,12 @@ export class AddCompanyComponent  implements OnInit {
       this.types.push(CompanyType.Provider);
     }
 
+    this.company = new Company();
     this.vatConditions = new Array();
-    this.getVATConditions();
-    this.company = new Company ();
     this.company.type = this.types[0];
-    this.getLastCompany();
     this.buildForm();
+    this.getVATConditions();
+    this.getLastCompany();
     this.identityTypeSelected = "CUIT";
   }
 
@@ -139,9 +136,6 @@ export class AddCompanyComponent  implements OnInit {
         ]
       ],
       'fantasyName': [this.company.fantasyName, [
-        ]
-      ],
-      'entryDate': [this.company.entryDate, [
         ]
       ],
       'type': [this.company.type, [
@@ -206,12 +200,49 @@ export class AddCompanyComponent  implements OnInit {
     }
 
     this.identityTypeSelected = this.companyForm.value.identityType;
+  }
+
+  public setValueForm(): void {
+
+    if (!this.company._id) this.company._id = "";
+    if (!this.company.code) this.company.code = 1;
+    if (!this.company.name) this.company.name = "";
+    if (!this.company.fantasyName) this.company.fantasyName = "";
+    if (!this.company.type) CompanyType.Client;
+    if (!this.identityTypeSelected) this.company.DNI = "";
+    if (!this.company.CUIT) this.company.CUIT = "";
+    if (!this.company.DNI) this.company.DNI = "";
+    if (!this.company.address) this.company.address = "";
+    if (!this.company.city) this.company.city = "";
+    if (!this.company.phones) this.company.phones = "";
+    if (!this.company.emails) this.company.emails = "";
+
+    let vatCondition: VATCondition = null;
     
-    if (this.identityTypeSelected === "CUIT") {
-      this.companyForm.value.DNI = "";
+    if (!this.company.vatCondition) {
+      if (!this.vatConditions || this.vatConditions.length === 0) {
+        vatCondition = null;
+      } else {
+        vatCondition = this.vatConditions[0];
+      }
     } else {
-      this.companyForm.value.CUIT = "";
+      vatCondition = this.company.vatCondition;
     }
+    
+    this.companyForm.setValue({
+      'code': this.company.code,
+      'name': this.company.name,
+      'fantasyName': this.company.fantasyName,
+      'type': this.company.type,
+      'vatCondition': vatCondition,
+      'identityType': this.identityTypeSelected,
+      'CUIT': this.company.CUIT,
+      'DNI': this.company.DNI,
+      'address': this.company.address,
+      'city': this.company.city,
+      'phones': this.company.phones,
+      'emails': this.company.emails
+    });
   }
 
   public getVATConditions(): void {
@@ -224,6 +255,7 @@ export class AddCompanyComponent  implements OnInit {
           if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.vatConditions = result.vatConditions;
+          this.company.vatCondition = this.vatConditions[0];
         }
         this.loading = false;
       },
@@ -247,21 +279,10 @@ export class AddCompanyComponent  implements OnInit {
             }
           }
           
-          this.companyForm.setValue({
-            'code': code,
-            'name': '',
-            'fantasyName': '',
-            'entryDate': this.company.entryDate,
-            'type': this.company.type,
-            'vatCondition': this.vatConditions[0],
-            'identityType': this.identityTypes[0],
-            'CUIT': '',
-            'DNI': '',
-            'address': '',
-            'city': '',
-            'phones': '',
-            'emails': ''
-          });
+          this.company.code = code;
+          this.company.vatCondition = this.vatConditions[0];
+          this.identityTypeSelected = this.identityTypes[0];
+          this.setValueForm();
           this.loading = false;
         },
         error => {

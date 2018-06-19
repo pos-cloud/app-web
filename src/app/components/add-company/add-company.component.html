@@ -53,7 +53,7 @@
 				<div class="form-group col-md-9" *ngIf="identityTypeSelected==='DNI'">
 					<label for="DNI" class="control-label"></label>
 					<div class="input-group">
-						<input type="number" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent" />
+						<input type="number" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent"/>
 					</div>
 					<div *ngIf="formErrors.DNI" class="alert alert-danger">
 						{{ formErrors.DNI }}

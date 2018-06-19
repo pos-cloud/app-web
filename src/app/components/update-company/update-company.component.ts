@@ -185,7 +185,7 @@ export class UpdateCompanyComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.company._id) this.company._id = "";
-    if (!this.company.code) this.company.code = 0;
+    if (!this.company.code) this.company.code = 1;
     if (!this.company.name) this.company.name = "";
     if (!this.company.fantasyName) this.company.fantasyName = "";
     if (!this.company.type) CompanyType.Client;
@@ -203,13 +203,25 @@ export class UpdateCompanyComponent implements OnInit {
       this.identityTypeSelected = "CUIT";
     }
     
+    let vatCondition: VATCondition = null;
+
+    if (!this.company.vatCondition) {
+      if (!this.vatConditions || this.vatConditions.length === 0) {
+        vatCondition = null;
+      } else {
+        vatCondition = this.vatConditions[0];
+      }
+    } else {
+      vatCondition = this.company.vatCondition;
+    }
+    
     this.companyForm.setValue({
       '_id': this.company._id,
       'code': this.company.code,
       'name': this.company.name,
       'fantasyName': this.company.fantasyName,
       'type': this.company.type,
-      'vatCondition': this.company.vatCondition._id,
+      'vatCondition': vatCondition._id,
       'identityType': this.identityTypeSelected,
       'CUIT': this.company.CUIT,
       'DNI': this.company.DNI,
