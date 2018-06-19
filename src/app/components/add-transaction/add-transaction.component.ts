@@ -44,6 +44,7 @@ export class AddTransactionComponent implements OnInit {
   public datePipe = new DateFormatPipe();
   public letters: string[] = ["A", "B", "C", "E", "M", "R", "X"];
   public roundNumber = new RoundNumberPipe();
+  public transactionMovement: string;
 
   public formErrors = {
     'date': '',
@@ -100,6 +101,8 @@ export class AddTransactionComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+
+    this.transactionMovement = this.transaction.type.transactionMovement.toString();
     
     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
       this.transaction.origin = this.transaction.type.fixedOrigin;

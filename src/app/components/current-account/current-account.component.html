@@ -52,21 +52,11 @@
               <th (click)="orderBy('totalPrice')">Monto</th>
             </tr>
             <tr *ngIf="areFiltersVisible">
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto...">
-              </th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto..."></th>
             </tr>
           </thead>
           <tbody>

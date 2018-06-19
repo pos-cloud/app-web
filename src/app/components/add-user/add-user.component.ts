@@ -46,6 +46,7 @@ export class AddUserComponent  implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'employee': {
+      'required': 'Este campo es requerido.'
     }
   };
 
@@ -87,6 +88,7 @@ export class AddUserComponent  implements OnInit {
         ]
       ],
       'employee': [this.user.employee, [
+          Validators.required
         ]
       ]
     });

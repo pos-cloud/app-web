@@ -31,37 +31,21 @@
             <th (click)="orderBy('description')">Descripción</th>
             <th (click)="orderBy('make','description')">Marca</th>
             <th (click)="orderBy('category','description')">Rubro</th>
+            <th (click)="orderBy('salePrice')">Precio de Costo</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
             <th (click)="orderBy('observation')">Observation</th>
             <th (click)="orderBy('barcode')">Código de Barra</th>
-            <th (click)="orderBy('type')">Tipo</th>
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th></th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="#...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterMake" placeholder="Marca...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterCategory" placeholder="Rubro...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterSalePrice" placeholder="Precio de Venta...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterTermObservation" placeholder="Observación...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterTermBarcode" placeholder="Código de Barra...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="#..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterMake" placeholder="Marca..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCategory" placeholder="Rubro..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCostPrice" placeholder="Precio de Costo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSalePrice" placeholder="Precio de Venta..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTermObservation" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTermBarcode" placeholder="Código de Barra..."></th>
           </tr>
         </thead>
         <tbody>
@@ -69,10 +53,10 @@
                                               | filter: filterDescription:'description' 
                                               | filter: filterMake:'description':'make'
                                               | filter: filterCategory:'description':'category' 
+                                              | filter: filterCostPrice:'costPrice'
                                               | filter: filterSalePrice:'salePrice'
                                               | filter: filterTermObservation:'observation' 
-                                              | filter: filterTermBarcode:'barcode' 
-                                              | filter: filterType:'type'
+                                              | filter: filterTermBarcode:'barcode'
                                               | orderBy: orderTerm: propertyTerm
                                               | paginate: { itemsPerPage: itemsPerPage, 
                                                                             currentPage: p, 
@@ -95,10 +79,10 @@
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
             <td *ngIf="!article.category"></td>
+            <td>{{article.costPrice | currency:'USD':'1.2-2'}}</td>
             <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
             <td>{{article.observation}}</td>
             <td>{{article.barcode}}</td>
-            <td>{{article.type}}</td>
           </tr>
           <tr align="center" *ngIf="areArticlesEmpty">
             <td colspan="10">No se encontraron productos</td>

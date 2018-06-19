@@ -37,7 +37,7 @@ export class VATConditionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "vat-conditions", { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'vat-conditions/sort="description":1', { headers: headers }).map(res => res.json());
 	}
 
 	saveVATCondition(vatCondition: VATCondition) {

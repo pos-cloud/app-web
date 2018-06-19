@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -57,7 +57,8 @@ export class RegisterComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'email': {
-      'required': 'Este campo es requerido.'
+      'required': 'Este campo es requerido.',
+      'pattern': 'El email ingresado no es válido'
     },
     'phone': {
       'required': 'Este campo es requerido.'
@@ -114,7 +115,8 @@ export class RegisterComponent implements OnInit {
         ]
       ],
       'email': ['', [
-          Validators.required
+          Validators.required,
+          Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$")
         ]
       ],
       'phone': ['', [
@@ -231,7 +233,7 @@ export class RegisterComponent implements OnInit {
         if(!result.user) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
-          this.login(result.user);
+          this.showMessage("Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.", "success", false);
         }
         this.loading = false;
       },

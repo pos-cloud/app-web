@@ -64,7 +64,7 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterPendingEndDate" placeholder="Fecha..."></th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterPendingEndDate" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingCompany" placeholder="Cliente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingAddress" placeholder="Dirección..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingPhones" placeholder="Teléfono..."></th>
@@ -132,8 +132,8 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th><input type="text" class="form-control" [(ngModel)]="filterSendNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterSendStartDate" placeholder="Pedido..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterSendEndDate" placeholder="Enviado..."></th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterSendStartDate" placeholder="Pedido..."></th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterSendEndDate" placeholder="Enviado..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterSendCompany" placeholder="Cliente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterSendAddress" placeholder="Dirección..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterSendPhones" placeholder="Teléfono..."></th>
@@ -208,8 +208,8 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredNumber" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredStartDate" placeholder="Pedido..."></th
-              ><th><input type="text" class="form-control" [(ngModel)]="filterDeliveredEndDate" placeholder="Entregado..."></th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterDeliveredStartDate" placeholder="Pedido..."></th
+              ><th><input type="date" class="form-control" [(ngModel)]="filterDeliveredEndDate" placeholder="Entregado..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredCompany" placeholder="Cliente..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredAddress" placeholder="Dirección..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredPhones" placeholder="Teléfono..."></th>
@@ -302,24 +302,12 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th></th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
-            </th>
-            <th *ngIf="transactionMovement === 'Venta'">
-              <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente...">
-            </th>
-            <th *ngIf="transactionMovement === 'Compra'">
-              <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
-            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+            <th *ngIf="transactionMovement === 'Venta'"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
+            <th *ngIf="transactionMovement === 'Compra'"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>

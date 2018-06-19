@@ -180,12 +180,14 @@ export class ListArticlesComponent implements OnInit {
     movementOfArticle.salePrice = articleSelected.salePrice;
     let tax: Taxes = new Taxes();
     let taxes: Taxes[] = new Array();
-    for (let taxAux of articleSelected.taxes) {
-      tax.percentage = this.roundNumber.transform(taxAux.percentage);
-      tax.tax = taxAux.tax;
-      tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-      tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-      taxes.push(tax);
+    if (articleSelected.taxes) {
+      for (let taxAux of articleSelected.taxes) {
+        tax.percentage = this.roundNumber.transform(taxAux.percentage);
+        tax.tax = taxAux.tax;
+        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+        tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+        taxes.push(tax);
+      }
     }
     movementOfArticle.taxes = taxes;
     movementOfArticle.make = articleSelected.make;

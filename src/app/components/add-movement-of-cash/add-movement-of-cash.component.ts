@@ -168,12 +168,12 @@ export class AddMovementOfCashComponent implements OnInit {
       ],
       'paymentMethod': [this.movementOfCash.type, [
           Validators.required,
-          this.validatePaymentMethod(this.transaction)
+          this.validatePaymentMethod()
         ]
       ],
       'amountPaid': [this.movementOfCash.amountPaid, [
           Validators.required,
-          this.validateAmountPaid(this.transaction)
+          this.validateAmountPaid()
         ]
       ],
       'cashChange': [this.paymentChange, [
@@ -204,7 +204,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
       const control = form.get(field);
       if (control && control.dirty && (field === 'paymentMethod' || field === 'amountPaid')) {
-        if (!this.validateAmountPaidByPaymentMethod(this.transaction)) {
+        if (!this.validateAmountPaidByPaymentMethod()) {
           const messages = this.validationMessages[field];
           for (const key in control.errors) {
             this.formErrors[field] += messages[key] + ' ';
@@ -243,7 +243,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.setValueForm();
   }
 
-  public validateAmountPaid(transaction) {
+  public validateAmountPaid() {
     return function (input: FormControl) {
       let payValid = false;
       let nameMethod;
@@ -263,7 +263,7 @@ export class AddMovementOfCashComponent implements OnInit {
     };
   }
 
-  public validateAmountPaidByPaymentMethod(transaction) {
+  public validateAmountPaidByPaymentMethod() {
     
     let payValid = true;
     let amountPaid = this.movementOfCashForm.value.amountPaid;
@@ -278,7 +278,7 @@ export class AddMovementOfCashComponent implements OnInit {
     return payValid;
   }
 
-  public validatePaymentMethod(transaction) {
+  public validatePaymentMethod() {
     return function (input: FormControl) {
       let payValid = true;
       let amountPaid;

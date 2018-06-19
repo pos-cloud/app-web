@@ -148,14 +148,14 @@ export class AddMovementOfArticleComponent implements OnInit {
     
     let isValid: boolean = true;
 
-    if(this.containsVariants) {
-      if(this.variantTypes.length > 0) {
-        for(let type of this.variantTypes) {
-          if(this.selectedVariants[type.name] === null) {
-            isValid = false;
-          }
+    if (this.containsVariants && this.variantTypes && this.variantTypes.length > 0) {
+      for(let type of this.variantTypes) {
+        if(this.selectedVariants[type.name] === null) {
+          isValid = false;
         }
       }
+    } else {
+      isValid = false;
     }
 
     return isValid;
@@ -306,12 +306,18 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public addMovementOfArticle(): void {
 
-    let isValidForm = this.movementOfArticleForm.valid;
-
     if(this.containsVariants) {
       if(!this.isValidSelectedVariants()) {
-        isValidForm = false;    
-        this.errVariant = "Debe seleccionar una variante";
+        if(!this.variants || this.variants.length === 0) {
+          if (Config.modules.stock &&
+            this.movementOfArticle.transaction.type.modifyStock) {
+            this.getArticleStock();
+          } else {
+            this.movementOfArticleExists();
+          }
+        } else {
+          this.errVariant = "Debe seleccionar una variante";
+        }
       } else {
         this.errVariant = undefined;
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
@@ -360,7 +366,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     let articleToReturn: Article;
     let articles: Article[] = new Array();
     
-    if(this.variants.length > 0) {
+    if (this.variants && this.variants.length > 0) {
       for(let variant of this.variants) {
         if(variant.value.description === this.selectedVariants[variant.type.name]) {
           articles.push(variant.articleChild);

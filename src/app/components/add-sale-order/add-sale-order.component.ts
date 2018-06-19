@@ -571,12 +571,14 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle.salePrice += movementOfArticle.article.salePrice;
         let tax: Taxes = new Taxes();
         let taxes: Taxes[] = new Array();
-        for (let taxAux of movementOfArticle.article.taxes) {
-          tax.percentage = this.roundNumber.transform(taxAux.percentage);
-          tax.tax = taxAux.tax;
-          tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-          tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-          taxes.push(tax);
+        if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
+          for (let taxAux of movementOfArticle.article.taxes) {
+            tax.percentage = this.roundNumber.transform(taxAux.percentage);
+            tax.tax = taxAux.tax;
+            tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+            taxes.push(tax);
+          }
         }
         movementOfArticle.taxes = taxes;
         this.updateMovementOfArticle(movementOfArticle);

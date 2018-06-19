@@ -24,8 +24,8 @@
               <th (click)="orderBy('employee','name')">Empleado</th>
             </tr>
             <tr *ngIf="areFiltersVisible"><th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterStartDate" placeholder="Apertura..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Cierre..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Apertura..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Cierre..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
             </tr>

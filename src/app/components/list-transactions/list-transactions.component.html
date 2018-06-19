@@ -1,5 +1,5 @@
-<!-- SECCION RESTO -->
-<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas' && (modules | async)?.sale.resto">
+<!-- SECCION VENTAS -->
+<section class="container-fluid" *ngIf="userType=='admin' && listType==='Ventas'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -30,7 +30,8 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('endDate')">Fecha</th>
+            <th (click)="orderBy('startDate')">Fecha Inicio</th>
+            <th (click)="orderBy('endDate')">Fecha Fin</th>
             <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('table','description')">Mesa</th>
             <th (click)="orderBy('employeeClosing','name')">Mozo</th>
@@ -44,51 +45,22 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterEmployee" placeholder="Mozo...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterTurn" placeholder="Turno...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterDiners" placeholder="Comensales...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterMadein" placeholder="Canal...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterDiscount" placeholder="Descuento...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
-              </th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha Inicio..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterEmployee" placeholder="Mozo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTurn" placeholder="Turno..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterDiners" placeholder="Comensales..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterMadein" placeholder="Canal..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterDiscount" placeholder="Descuento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -96,6 +68,7 @@
                                                         | filter: filterOrigin:'origin'  
                                                         | filter: filterLetter:'letter' 
                                                         | filter: filterNumber:'number'
+                                                        | filter: filterStartDate:'startDate' 
                                                         | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTable:'description':'table' 
@@ -126,8 +99,8 @@
             <td>{{transaction.origin}}</td>
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
-            <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td *ngIf="!transaction.endDate">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
             <td *ngIf="transaction.table">{{transaction.table.description}}</td>
@@ -223,8 +196,8 @@
   </div>
 </section>
 
-<!-- SECCION MOSTRADOR -->
-<section class="container-fluid" *ngIf="userType=='admin' && ((listType==='Ventas' && !(modules | async)?.sale.resto) || listType==='Compras')">
+<!-- SECCION COMPRAS -->
+<section class="container-fluid" *ngIf="userType=='admin' && listType==='Compras'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -233,7 +206,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
-        <button class="btn btn-primary" *ngIf="listType === 'Ventas'" (click)="exportCiti()">Exportar Régimen de Información</button>
+        <button class="btn btn-primary" (click)="exportCiti()">Exportar Régimen de Información</button>
         <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
           <span *ngIf="loading">Cargando</span>
@@ -255,9 +228,9 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('endDate')">Fecha</th>
-            <th (click)="orderBy('company','name')">Cliente</th>
-            <th (click)="orderBy('madein')">Canal</th>
+            <th (click)="orderBy('startDate')">Fecha Inicio</th>
+            <th (click)="orderBy('endDate')">Fecha Fin</th>
+            <th (click)="orderBy('company','name')">Proveedor</th>
             <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('discount')">Descuento</th>
@@ -265,39 +238,17 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterMadein" placeholder="Canal...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterDiscount" placeholder="Descuento...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
-              </th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha Inicio..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterDiscount" placeholder="Descuento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -305,9 +256,9 @@
                                                         | filter: filterOrigin:'origin'  
                                                         | filter: filterLetter:'letter' 
                                                         | filter: filterNumber:'number'
+                                                        | filter: filterStartDate:'startDate' 
                                                         | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
-                                                        | filter: filterMadein:'madein' 
                                                         | filter: filterState:'state' 
                                                         | filter: filterPaymentMethod:'name':'paymentMethod'
                                                         | filter: filterObservation:'observation'  
@@ -322,8 +273,8 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button *ngIf="transaction.type.requestArticles && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)"
-                title="Imprimir">
+              <button *ngIf="transaction.type.requestArticles && transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm"
+                click)="openModal('print', transaction)" title="Imprimir">
                 <i class="fa fa-print"></i>
               </button>
             </td>
@@ -332,11 +283,10 @@
             <td>{{transaction.origin}}</td>
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
-            <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td *ngIf="!transaction.endDate">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
-            <td>{{transaction.madein}}</td>
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
@@ -364,6 +314,18 @@
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <b>
+                {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
+              filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
+              | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
+              filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
+              filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'diners', '1.0-0') }}
+              </b>
+            </td>
             <td></td>
             <td></td>
             <td></td>
@@ -438,6 +400,7 @@
             </th>
             <th (click)="orderBy('type','name')">Tipo</th>
             <th (click)="orderBy('number')">Número</th>
+            <th (click)="orderBy('startDate')">Fecha de Carga</th>
             <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
@@ -445,38 +408,28 @@
           </tr>
           <tr *ngIf="areFiltersVisible">
             <th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación...">
-              </th>
-              <th>
-                <input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total...">
-              </th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha  de Carga..."></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type' 
-                                                        | filter: filterNumber:'number'
-                                                        | filter: filterEndDate:'endDate' 
-                                                        | filter: filterState:'state' 
-                                                        | filter: filterObservation:'observation'  
-                                                        | filter: filterTotalPrice:'totalPrice'
-                                                        | orderBy: orderTerm: propertyTerm
-                                                        | paginate: { itemsPerPage: itemsPerPage, 
-                                                                      currentPage: p, 
-                                                                      totalItems: totalItems
-                                                                    }">
+          <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
+                                                      | filter: filterNumber:'number'
+                                                      | filter: filterStartDate:'startDate' 
+                                                      | filter: filterEndDate:'endDate' 
+                                                      | filter: filterState:'state' 
+                                                      | filter: filterObservation:'observation'  
+                                                      | filter: filterTotalPrice:'totalPrice'
+                                                      | orderBy: orderTerm: propertyTerm
+                                                      | paginate: { itemsPerPage: itemsPerPage, 
+                                                                    currentPage: p, 
+                                                                    totalItems: totalItems
+                                                                  }">
             <td align="left" width="100">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
                 <i class="fa fa-eye"></i>
@@ -489,8 +442,8 @@
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
             <td>{{transaction.number}}</td>
-            <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td *ngIf="!transaction.endDate">{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
+            <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',

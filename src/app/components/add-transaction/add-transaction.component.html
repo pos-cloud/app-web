@@ -27,7 +27,7 @@
           </button>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.transactionMovement === 'Venta'">
+      <div class="row" *ngIf="transactionMovement === 'Venta'">
         <div class="form-group col-md-6">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"/>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.transactionMovement === 'Compra'">
+      <div class="row" *ngIf="transactionMovement === 'Compra'">
         <div class="form-group col-md-4">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" />

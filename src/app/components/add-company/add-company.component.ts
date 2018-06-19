@@ -295,8 +295,9 @@ export class AddCompanyComponent  implements OnInit {
           this.company = result.company;
           this.showMessage("La empresa se ha añadido con éxito.", "success", false);
           this.company = new Company ();
-          this.getLastCompany();
           this.buildForm();
+          this.getLastCompany();
+          this.identityTypeSelected = "CUIT";
         }
         this.loading = false;
       },

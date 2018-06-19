@@ -20,7 +20,6 @@
           <thead>
             <tr>
               <th><i class="fa fa-bars"></i></th>
-              <th (click)="orderBy('code')">Código </th>
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('fantasyName')">Nombre de Fantasía </th>
               <th (click)="orderBy('type')">Tipo </th>
@@ -32,7 +31,6 @@
             </tr>
             <tr *ngIf="areFiltersVisible">
               <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
@@ -44,8 +42,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let company of companies  | filter: filterCode:'code'
-                                                  | filter: filterName:'name' 
+            <tr *ngFor="let company of companies  | filter: filterName:'name' 
                                                   | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterType:'type'
                                                   | filter: filterIdentity:'CUIT'
@@ -64,7 +61,6 @@
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', company)" title="Modificar"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', company)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
-              <td>{{company.code}}</td>
               <td>{{company.name}}</td>
               <td>{{company.fantasyName}}</td>
               <td>{{company.type}}</td>
@@ -126,14 +122,12 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th (click)="orderBy('code')">Código </th>
                 <th (click)="orderBy('name')">Nombre </th>
                 <th (click)="orderBy('DNI')">DNI </th>
                 <th (click)="orderBy('address')">Dirección </th>
                 <th (click)="orderBy('phones')">Teléfonos </th>
               </tr>
               <tr>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Número..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
@@ -152,7 +146,6 @@
                                                                   totalItems: totalItems
                                                                 }"
                   (click)="selectCompany(company)">
-                <td>{{company.code}}</td>
                 <td>{{company.name}}</td>
                 <td>{{company.DNI}}</td>
                 <td>{{company.address}}</td>
