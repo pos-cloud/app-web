@@ -222,7 +222,7 @@ export class SelectEmployeeComponent implements OnInit {
             case "change-employee":
               this.activeModal.close({ employee: this.employeeSelected, turn: turn });
               break;
-            case "charge":
+            case "open-table":
               this.activeModal.close({ employee: this.employeeSelected });
               break;
           }
@@ -301,9 +301,9 @@ export class SelectEmployeeComponent implements OnInit {
               this.activeModal.close({ employee: this.employeeSelected, turn: turn });
               break;
             case "open-turn":
-              this.activeModal.close({ turn: turn });
+              this.activeModal.close({ turn: turn, diners: this.selectEmployeeForm.value.chair });
               break;
-            case "charge":
+            case "open-table":
               this.activeModal.close({ employee: this.employeeSelected });
               break;
           }
@@ -339,7 +339,7 @@ export class SelectEmployeeComponent implements OnInit {
             this.activeModal.close({ employee: this.employeeSelected });
           }
           break;
-        case "charge":
+        case "open-table":
           this.getOpenTurn();
           break;
         case "change-employee":
@@ -354,7 +354,8 @@ export class SelectEmployeeComponent implements OnInit {
   public addChair(): void {
     this.selectEmployeeForm.setValue({
       'employee': this.selectEmployeeForm.value.employee,
-      'chair': this.selectEmployeeForm.value.chair + 1
+      'chair': this.selectEmployeeForm.value.chair + 1,
+      'password': this.selectEmployeeForm.value.password
     });
   }
 
@@ -362,12 +363,14 @@ export class SelectEmployeeComponent implements OnInit {
     if (this.selectEmployeeForm.value.chair > 1) {
       this.selectEmployeeForm.setValue({
         'employee': this.selectEmployeeForm.value.employee,
-        'chair': this.selectEmployeeForm.value.chair - 1
+        'chair': this.selectEmployeeForm.value.chair - 1,
+        'password': this.selectEmployeeForm.value.password
       });
     } else {
       this.selectEmployeeForm.setValue({
         'employee': this.selectEmployeeForm.value.employee,
-        'chair': 1
+        'chair': 1,
+        'password': this.selectEmployeeForm.value.password
       });
     }
   }
@@ -402,7 +405,7 @@ export class SelectEmployeeComponent implements OnInit {
                 this.activeModal.close({ employee: this.employeeSelected });
               }
               break;
-            case "charge":
+            case "open-table":
               this.getOpenTurn();
               break;
             case "change-employee":

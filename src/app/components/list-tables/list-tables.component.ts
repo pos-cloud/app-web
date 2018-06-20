@@ -178,7 +178,7 @@ export class ListTablesComponent implements OnInit {
                   modalRef.componentInstance.table = this.tableSelected;
                   modalRef.componentInstance.requireLogin = false;
                   modalRef.componentInstance.typeEmployee = "Mozo";
-                  modalRef.componentInstance.op = "charge";
+                  modalRef.componentInstance.op = "open-table";
                   modalRef.result.then((result) => {
                     if (result.employee) {
                       this.tableSelected.employee = result.employee;
@@ -187,7 +187,7 @@ export class ListTablesComponent implements OnInit {
                   }, (reason) => {
                   });
                 } else {
-                  this.getDefectOrder('resto');
+                  this.getDefectOrder();
                 }
         } else {
           this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, "info", true);
@@ -209,7 +209,7 @@ export class ListTablesComponent implements OnInit {
         } else {
           this.hideMessage();
           this.loading = false;
-          this.getDefectOrder('resto');
+          this.getDefectOrder();
         }
       },
       error => {
@@ -219,7 +219,7 @@ export class ListTablesComponent implements OnInit {
     );
   }
   
-  public getDefectOrder(posType: string): void {
+  public getDefectOrder(): void {
 
     this.loading = true;
 

@@ -382,15 +382,15 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.extraLarge)
       this.doc.setFontType('bold')
       if (this.config[0].companyName) {
-        this.doc.text(this.config[0].companyName, 10, 20)
+        this.centerText(5, 5, 105, 0, 20, this.config[0].companyName);
       }
       this.doc.setFontSize(this.fontSizes.normal)
       this.doc.setFontType('normal')
       if (this.config[0].companyAddress) {
-        this.doc.text(this.config[0].companyAddress, 35, 30)
+        this.centerText(5, 5, 105, 0, 30, this.config[0].companyAddress);
       }
       if (this.config[0].companyPhone) {
-        this.doc.text("(" + this.config[0].companyPhone + ")", 35, 35)
+        this.centerText(5, 5, 105, 0, 35, "(" + this.config[0].companyPhone + ")");
       }
     }
     this.doc.setFontSize(this.fontSizes.normal)
@@ -447,6 +447,19 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal')
   }
 
+  public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
+
+    var pageCenter = pdfInMM / 2;
+
+    var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+    var dim = this.doc.getTextDimensions(text);
+    var lineHeight = dim.h;
+    for (var i = 0; i < lines.length; i++) {
+      let lineTop = (lineHeight / 2) * i;
+      this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
+    }
+  }
+
   public toPrintCurrentAccount(): void {
 
     this.loading = true;
@@ -483,9 +496,9 @@ export class PrintComponent implements OnInit {
           }
           if (transaction.type.labelPrint && 
               transaction.type.labelPrint !== "") {
-            this.doc.text(transaction.type.labelPrint, 55, row)
+            this.centerText(5, 5, 105, 0, row, transaction.type.labelPrint);
           } else {
-            this.doc.text(transaction.type.name, 55, row)
+            this.centerText(5, 5, 105, 0, row, transaction.type.name);
           }
           this.doc.text(this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 10), 115, row)
           this.doc.setFontType('bold')
@@ -519,11 +532,16 @@ export class PrintComponent implements OnInit {
     this.getClient();
 
     // Dibujar la linea cortada para la letra
-    this.doc.line(100, 13, 100, 50) //vertical letra
+    this.doc.line(105, 13, 105, 50) //vertical letra
 
     // Numeración de la transacción
     this.doc.setFontSize(this.fontSizes.extraLarge)
-    this.doc.text(this.transaction.type.name, 140, 10)
+    if (this.transaction.type.labelPrint &&
+      this.transaction.type.labelPrint !== "") {
+      this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+    } else {
+      this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+    }
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.setFontType('bold')
     this.doc.text("Comp. Nº:", 110, 20)
@@ -542,8 +560,8 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.extraLarge)
     this.doc.setFontType('bold')
     this.doc.setDrawColor("Black")
-    this.doc.rect(95, 3, 10, 10)
-    this.doc.text(this.transaction.letter, 98, 10)
+    this.doc.rect(100, 3, 10, 10)
+    this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
     this.doc.setFontType('normal')
 
     // Encabezado de la tabla de Detalle de Artículos
@@ -674,7 +692,7 @@ export class PrintComponent implements OnInit {
   public getGreeting() {
 
     this.doc.setFontStyle("italic")
-    this.doc.setFontSize(this.fontSizes.large)
+    this.doc.setFontSize(this.fontSizes.normal)
     if (this.config[0] && this.config[0].footerInvoice) {
       this.doc.text(this.config[0].footerInvoice, 5, 280)
     } else {

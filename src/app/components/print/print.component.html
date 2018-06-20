@@ -1,6 +1,6 @@
 <iframe [src]="pdfURL" class="full-screen" type='application/pdf' *ngIf="pdfURL"></iframe>
 <div class="center-content">
-  <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+  <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''" *ngIf="alertMessage!=''">
     {{alertMessage}}
   </ngb-alert>
 <!--<section class="center-content" #contentTicket>

@@ -427,6 +427,9 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
           this.verifyPermissions("save");
         } else {
+          if (!this.containsVariants) {
+            this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+          }
           if(this.movementOfArticle._id && this.movementOfArticle._id !== "") {
             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
           } else {

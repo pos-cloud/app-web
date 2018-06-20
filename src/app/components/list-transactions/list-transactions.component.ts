@@ -1,23 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { Transaction } from './../../models/transaction';
+import { TransactionMovement } from './../../models/transaction-type';
 import { Config } from './../../app.config';
 
 import { TransactionService } from './../../services/transaction.service';
-import { TransactionTypeService } from './../../services/transaction-type.service';
 
-import { AddSaleOrderComponent } from './../../components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
 
 //Pipes
-import { DecimalPipe, CurrencyPipe } from '@angular/common';
 import { PrintComponent } from 'app/components/print/print.component';
 
 @Component({

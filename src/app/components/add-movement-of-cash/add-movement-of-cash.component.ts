@@ -331,7 +331,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;
-          this.activeModal.close(this.movementOfCash);
+          this.activeModal.close({ movementOfCash: this.movementOfCash});
         }
         this.loading = false;
       },
@@ -353,7 +353,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.loading = false;
         } else {
           this.movementOfCash = result.movementOfCash;
-          this.activeModal.close(this.movementOfCash);
+          this.activeModal.close({ movementOfCash: this.movementOfCash});
         }
         this.loading = false;
       },

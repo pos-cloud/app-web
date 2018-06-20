@@ -42,7 +42,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transactions-by-movement/'+transactionMovement, { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/sort="endDate":-1', { headers: headers }).map(res => res.json());
 	}
 
 	getOpenTransactionsByMovement(transactionMovement: TransactionMovement) {
@@ -51,7 +51,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/where="state":"' + TransactionState.Open + '"', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/where="state":"' + TransactionState.Open + '"&sort="startDate":-1', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByCompany(id: string) {
@@ -60,7 +60,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"&sort="endDate":-1', { headers: headers }).map(res => res.json());
 	}
 
 	saveTransaction(transaction: Transaction) {

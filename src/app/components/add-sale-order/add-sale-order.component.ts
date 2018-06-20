@@ -376,7 +376,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
           if (closed) {
-            this.back();
+            this.backFinal();
           }
         }
         this.loading = false;
@@ -398,6 +398,7 @@ export class AddSaleOrderComponent implements OnInit {
   public close() {
 
     this.typeOfOperationToPrint = 'item';
+    
     for (let movementOfArticle of this.movementsOfArticles) {
       if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
         this.barArticlesToPrint.push(movementOfArticle);
@@ -422,7 +423,7 @@ export class AddSaleOrderComponent implements OnInit {
       if (this.posType === "resto") {
         this.changeStateOfTable(TableState.Busy, true);
       } else {
-        this.back();
+        this.backFinal();
       }
     }
   }
@@ -439,7 +440,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.table = result.table;
           if (closed) {
-            this.back();
+            this.backFinal();
           }
         }
         this.loading = false;
@@ -677,11 +678,12 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = result.CAEExpirationDate;
-          this.transaction.endDate = moment().format('DD/MM/YYYY HH:mm:ss');
-          this.transaction.state = TransactionState.Closed;
-          this.updateTransaction(false);
-          this.openModal("printers");
-          this.hideMessage();
+          if (Config.modules.stock &&
+            this.transaction.type.modifyStock) {
+            this.updateRealStock();
+          } else {
+            this.finish();
+          }
         }
         this.loading = false;
       },
@@ -715,7 +717,7 @@ export class AddSaleOrderComponent implements OnInit {
               this.table.employee = null;
               this.changeStateOfTable(TableState.Available, true);
             } else if (this.posType === "mostrador") {
-              this.back();
+              this.backFinal();
             }
           }
         }, (reason) => {
@@ -740,6 +742,7 @@ export class AddSaleOrderComponent implements OnInit {
         });
         break;
       case 'charge':
+
         this.typeOfOperationToPrint = "charge";
         
         if(this.isValidCharge()) {
@@ -747,71 +750,33 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
           modalRef.componentInstance.transaction = this.transaction;
           modalRef.result.then((result) => {
-            if (typeof result == 'object') {
-              if (result.amountPaid > this.transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
+
+            let movementOfCash = result.movementOfCash;
+            
+            if (movementOfCash) {
+
+              if (movementOfCash.amountPaid > this.transaction.totalPrice && movementOfCash.type.name === "Tarjeta de Crédito") {
                 let movementOfArticle = new MovementOfArticle();
                 movementOfArticle.code = "00000";
                 movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                movementOfArticle.salePrice = result.amountPaid - this.transaction.totalPrice;
+                movementOfArticle.salePrice = movementOfCash.amountPaid - this.transaction.totalPrice;
                 movementOfArticle.transaction = this.transaction;
-                this.transaction.totalPrice = result.amountPaid;
+                this.transaction.totalPrice = movementOfCash.amountPaid;
                 this.getTaxVAT(movementOfArticle);
               }
 
               if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                if (this.transaction.type.electronics && !this.transaction.CAE) {
-                  this.validateElectronicTransaction();
-                } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                  this.finishTransaction();
-                } else {
-                  if (this.transaction.type.printable &&
-                    this.transaction.type.printable) {
-                    if (this.transaction.type.defectPrinter) {
-                      this.printerSelected = this.transaction.type.defectPrinter;
-                      this.assignTransactionNumber();
-                      this.distributeImpressions(this.transaction.type.defectPrinter);
-                    } else {
-                      this.openModal('printers');
-                    }
-                  } else {
-                    this.assignTransactionNumber();
-                    this.loading = false;
-                  }
-                }
+                this.transaction.origin = this.transaction.type.fixedOrigin;
+              }
+
+              this.assignLetter();
+
+              if (this.transaction.type.electronics && !this.transaction.CAE) {
+                this.validateElectronicTransaction();
+              } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                this.finish(); //SE FINALIZA POR ERROR EN LA FE
               } else {
-                if (this.transaction.type.electronics) {
-                  this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
-                  this.loading = false;
-                } else {
-                  if (this.transaction.type.printable) {
-                    if (this.transaction.type.defectPrinter) {
-                      this.printerSelected = this.transaction.type.defectPrinter;
-                      this.distributeImpressions(this.transaction.type.defectPrinter);
-                    } else {
-                      this.openModal('printers');
-                    }
-                  } else {
-                    if (this.typeOfOperationToPrint === "charge") {
-                      if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                        this.assignOriginAndLetter(this.transaction.type.fixedOrigin);
-                      } else {
-                        let origin = 0;
-                        this.assignOriginAndLetter(origin);
-                      }
-                      this.assignTransactionNumber();
-                      this.loading = false;
-                    } else if (this.typeOfOperationToPrint === "bill") {
-                      this.changeStateOfTable(TableState.Pending, true);
-                    } else {
-                      if (this.posType === "resto") {
-                        this.changeStateOfTable(TableState.Busy, true);
-                      } else {
-                        this.back();
-                      }
-                    }
-                  }
-                }
+                this.assignTransactionNumber();
               }
             }
           }, (reason) => {
@@ -830,42 +795,15 @@ export class AddSaleOrderComponent implements OnInit {
         } else if (this.countPrinters() === 1) {
           this.distributeImpressions(this.printersAux[0]);
         } else {
-          if (this.typeOfOperationToPrint === "charge") {
-            if (!this.transaction.type.electronics) {
-              this.assignTransactionNumber();
-              this.loading = false;
-            } else {
-              this.finishTransaction();
-            }
-          } else if (this.typeOfOperationToPrint === "bill") {
-            this.changeStateOfTable(TableState.Pending, true);
-          } else {
-            if (this.posType === "resto") {
-              this.changeStateOfTable(TableState.Busy, true);
-            } else {
-              this.back();
-            }
-          }
+          this.backFinal();
         }
         break;
       case 'errorMessage':
         modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
           if (result !== "cancel" && result !== "") {
-            if (this.typeOfOperationToPrint === "charge") {
-              this.assignOriginAndLetter(this.printerSelected.origin);
-              this.assignTransactionNumber();
-            } else if (this.typeOfOperationToPrint === "bill") {
-              this.changeStateOfTable(TableState.Pending, true);
-            } else {
-              if (this.posType === 'resto') {
-                this.changeStateOfTable(TableState.Busy, true);
-              } else {
-                this.back();
-              }
-            }
+            this.backFinal();
           }
         }, (reason) => {
-
         });
         break;
       case 'change-employee':
@@ -892,16 +830,42 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
         }, (reason) => {
-          if(this.typeOfOperationToPrint === "charge") {
-            this.finishTransaction();
-          } else if (this.typeOfOperationToPrint === "bill") {
-            this.changeStateOfTable(TableState.Pending, true);
-          }
-          this.hideMessage();
+          this.backFinal();
         });
         break;
       default: ;
     };
+  }
+
+  public finish(): void {
+
+    this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    this.transaction.expirationDate = this.transaction.endDate;
+    this.transaction.state = TransactionState.Closed;
+    this.updateTransaction(false);
+    
+    if (this.transaction.type.printable &&
+      this.transaction.type.printable) {
+
+      if (this.posType === "resto") {
+        this.table.employee = null;
+        this.changeStateOfTable(TableState.Available, false);
+      }
+
+      if (this.transaction.type.defectPrinter) {
+        this.printerSelected = this.transaction.type.defectPrinter;
+        this.distributeImpressions(this.transaction.type.defectPrinter);
+      } else {
+        this.openModal('printers');
+      }
+    } else {
+      if (this.posType === "resto") {
+        this.table.employee = null;
+        this.changeStateOfTable(TableState.Available, true);
+      } else {
+        this.backFinal();
+      }
+    }
   }
 
   public getTaxVAT(movementOfArticle: MovementOfArticle): void {
@@ -968,6 +932,23 @@ export class AddSaleOrderComponent implements OnInit {
       this.loading = false;
     }
 
+    if (isValidCharge &&
+        this.transaction.type.fixedOrigin &&
+        this.transaction.type.fixedOrigin !== 0 &&
+        this.transaction.type.electronics) {
+      isValidCharge = false;
+      this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
+      this.loading = false;
+    }
+
+    if(isValidCharge &&
+      this.transaction.type.electronics &&
+      !Config.modules.electronicTransactions) {
+      isValidCharge = false;
+      this.showMessage("No tiene habilitado el módulo de factura electrónica.", "info", true);
+      this.loading = false;
+    }
+
     return isValidCharge;
   }
 
@@ -1007,8 +988,6 @@ export class AddSaleOrderComponent implements OnInit {
       case 'charge':
         if(printer.type === PrinterType.PDF) {
           this.openModal("print");
-        } else {
-         
         }
         break;
       default:
@@ -1017,44 +996,39 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public assignOriginAndLetter(origin: number) {
+  public assignLetter() {
     
-    this.transaction.origin = origin;
-    console.log("assignOriginAndLetter");
-    console.log(this.transaction.company);
     if (this.transaction.company &&
         this.transaction.company.vatCondition) {
       this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
     } else {
-      this.transaction.letter = "X";
+      this.transaction.letter = "B";
     }
-
+    
     this.loading = true;
   }
 
   public assignTransactionNumber() {
-
-    if(this.transaction.type.electronics) {
-      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
-        result => {
-          if (!result.transactions) {
-            this.transaction.number = 1;
-            this.finishTransaction();
-          } else {
-            this.transaction.number = result.transactions[0].number + 1;
-            this.finishTransaction();
-          }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, "danger", false);
-          this.loading = false;
+    
+    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+      result => {
+        if (!result.transactions) {
+          this.transaction.number = 1;
+        } else {
+          this.transaction.number = result.transactions[0].number + 1;
         }
-      );
-    } else {
-      this.finishTransaction();
-      this.loading = false;
-    }
+        if (Config.modules.stock &&
+          this.transaction.type.modifyStock) {
+          this.updateRealStock();
+        } else {
+          this.finish();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
@@ -1089,35 +1063,6 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public finishTransaction() {
-
-    this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    this.transaction.expirationDate = this.transaction.endDate;
-    this.transaction.state = TransactionState.Closed;
-    if (this.posType === "resto") {
-      this.updateTransaction(false);
-      this.table.employee = null;
-      this.changeStateOfTable(TableState.Available, true);
-    } else {
-      this.updateTransaction(true);
-    }
-  }
-
-  public back(): void {
-
-    if(this.typeOfOperationToPrint === "charge") {
-      if( Config.modules.stock &&
-          this.transaction.type.modifyStock && 
-          this.amountModifyStock < this.movementsOfArticles.length) {
-        this.updateRealStock();
-      } else {
-        this.backFinal();
-      }
-    } else {
-      this.backFinal();
-    }
-  }
-
   public updateRealStock(): void {
     
     if(this.movementsOfArticles.length > 0) {
@@ -1139,8 +1084,8 @@ export class AddSaleOrderComponent implements OnInit {
               if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
             } else {
               this.amountModifyStock++;
-              if(this.amountModifyStock === this.movementsOfArticles.length) {
-                this.finishTransaction();
+              if (this.amountModifyStock === this.movementsOfArticles.length) {
+                this.finish();
               } else {
                 this.updateRealStock();
               }
@@ -1155,7 +1100,7 @@ export class AddSaleOrderComponent implements OnInit {
       } else {
         this.amountModifyStock++;
         if (this.amountModifyStock === this.movementsOfArticles.length) {
-          this.finishTransaction();
+          this.finish();
         } else {
           this.updateRealStock();
         }
