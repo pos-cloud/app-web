@@ -7,6 +7,7 @@ export class Table {
 	public description: string;
 	public room: Room = null;
 	public chair: number = 2;
+	public diners: number;
 	public state: TableState = TableState.Available;
 	public employee: Employee = null;
 

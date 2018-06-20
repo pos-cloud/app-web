@@ -109,7 +109,7 @@ export class ListTablesComponent implements OnInit {
       this.amountOfDiners += table.chair;
       if( table.state === TableState.Busy || 
           table.state === TableState.Pending) {
-            this.amountOfDinersNow += table.chair;
+            this.amountOfDinersNow += table.diners;
       }
     }
   }
@@ -182,6 +182,7 @@ export class ListTablesComponent implements OnInit {
                   modalRef.result.then((result) => {
                     if (result.employee) {
                       this.tableSelected.employee = result.employee;
+                      this.tableSelected.diners = result.diners;
                       this.assignEmployee();
                     }
                   }, (reason) => {

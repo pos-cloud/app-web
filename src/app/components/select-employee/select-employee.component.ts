@@ -223,7 +223,7 @@ export class SelectEmployeeComponent implements OnInit {
               this.activeModal.close({ employee: this.employeeSelected, turn: turn });
               break;
             case "open-table":
-              this.activeModal.close({ employee: this.employeeSelected });
+              this.activeModal.close({ employee: this.employeeSelected, diners: this.selectEmployeeForm.value.chair  });
               break;
           }
         }
@@ -301,10 +301,10 @@ export class SelectEmployeeComponent implements OnInit {
               this.activeModal.close({ employee: this.employeeSelected, turn: turn });
               break;
             case "open-turn":
-              this.activeModal.close({ turn: turn, diners: this.selectEmployeeForm.value.chair });
+              this.activeModal.close({ turn: turn });
               break;
             case "open-table":
-              this.activeModal.close({ employee: this.employeeSelected });
+              this.activeModal.close({ employee: this.employeeSelected, diners: this.selectEmployeeForm.value.chair });
               break;
           }
         }

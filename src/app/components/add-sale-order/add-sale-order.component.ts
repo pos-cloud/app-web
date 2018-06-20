@@ -282,7 +282,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.hideMessage();
           this.table = result.table;
           this.transaction.table = this.table;
-          this.transaction.diners = this.table.chair;
+          this.transaction.diners = this.table.diners;
           this.transaction.employeeOpening = this.table.employee;
           this.transaction.employeeClosing = this.table.employee;
           this.getOpenTurn(this.table.employee);
