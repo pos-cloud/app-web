@@ -998,11 +998,17 @@ export class AddSaleOrderComponent implements OnInit {
 
   public assignLetter() {
     
-    if (this.transaction.company &&
-        this.transaction.company.vatCondition) {
-      this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+    if(Config.companyVatCondition.description === "Responsable Inscripto") {
+      if (this.transaction.company &&
+          this.transaction.company.vatCondition) {
+        this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+      } else {
+        this.transaction.letter = "B";
+      }
+    } else if (Config.companyVatCondition.description === "Monotributista") {
+        this.transaction.letter = "C";
     } else {
-      this.transaction.letter = "B";
+      this.transaction.letter = "X";
     }
     
     this.loading = true;

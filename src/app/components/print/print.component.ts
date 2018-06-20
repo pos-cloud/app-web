@@ -368,15 +368,35 @@ export class PrintComponent implements OnInit {
     // Detalle Emisor
     if (this.config[0]) {
       this.doc.setFontSize(this.fontSizes.normal)
-      if (this.config[0].companyCUIT) {
-        this.doc.setFontType('bold')
-        this.doc.text("CUIT:", 110, 30)
-        this.doc.setFontType('normal')
-        this.doc.text(this.config[0].companyCUIT, 125, 30)
-      }
-      // this.doc.text("Ingresos Brutos:",110,35)
-      // this.doc.text("Fecha Inicio de Actividad:",110,40)
 
+      this.doc.setFontType('bold')
+      this.doc.text("Condición de IVA:", 110, 30)
+      this.doc.setFontType('normal')
+      if (this.config[0].companyVatCondition) {
+        this.doc.text(this.config[0].companyVatCondition.description, 145, 30)
+      }
+
+      this.doc.setFontType('bold')
+      this.doc.text("CUIT:", 110, 35)
+      if (this.config[0].companyCUIT) {
+        this.doc.setFontType('normal')
+        this.doc.text(this.config[0].companyCUIT, 122, 35)
+      }
+
+      this.doc.setFontType('bold')
+      this.doc.text("Ingresos Brutos:", 110, 40)
+      if (this.config[0].companyGrossIncome) {
+        this.doc.setFontType('normal')
+        this.doc.text(this.config[0].companyGrossIncome, 140, 40)
+      }
+
+      this.doc.setFontType('bold')
+      this.doc.text("Inicio de Actividades:", 110, 45)
+      if (this.config[0].companyStartOfActivity) {
+        this.doc.setFontType('normal')
+        this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45)
+      }
+      
       this.doc.setFontSize(this.fontSizes.extraLarge)
       this.doc.setFontType('bold')
       this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -602,30 +622,31 @@ export class PrintComponent implements OnInit {
     let subtotal = this.transaction.totalPrice;
     subtotal -= this.roundNumber.transform(this.transaction.discountAmount);
     subtotal -= this.roundNumber.transform(this.transaction.exempt);
+    
     if (this.transaction.company &&
         this.transaction.company.vatCondition &&
         this.transaction.company.vatCondition.discriminate &&
-        this.transaction.taxes.length > 0) {
+        this.transaction.taxes.length > 0 &&
+        Config.companyVatCondition.description === "Responsable Inscripto") {
 
-          this.doc.setFontType('bold')
-          for(let tax of this.transaction.taxes) {
-            this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals)
-            this.doc.setFontType('normal')
-            this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 180, rowTotals)
-            subtotal -= this.roundNumber.transform(tax.taxAmount);
-            rowTotals += 8;
-          }
-      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
-    } else {
-      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
+      this.doc.setFontType('bold')
+      for(let tax of this.transaction.taxes) {
+        this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals)
+        this.doc.setFontType('normal')
+        this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 180, rowTotals)
+        subtotal -= this.roundNumber.transform(tax.taxAmount);
+        rowTotals += 8;
+      }
+      
+      if(this.transaction.exempt && this.transaction.exempt > 0) {
+        this.doc.text("Exento:", 147, rowTotals)
+        this.doc.setFontType('normal')
+        this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals)
+        rowTotals += 8;
+      }
     }
 
-    if(this.transaction.exempt && this.transaction.exempt > 0) {
-      this.doc.text("Exento:", 147, rowTotals)
-      this.doc.setFontType('normal')
-      this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals)
-      rowTotals += 8;
-    }
+    this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
     this.doc.setFontType('bold')
     this.doc.text("Descuento:", 147, rowTotals)
     this.doc.setFontType('normal')
