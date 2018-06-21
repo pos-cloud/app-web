@@ -36,9 +36,6 @@
         <div class="form-group col-md-12">
           <label for="labelPrint">¿Como saldrá el nombre del comprobante en la impresión?</label>
           <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" />
-          <div *ngIf="formErrors.labelPrint" class="alert alert-danger">
-            {{ formErrors.labelPrint }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -49,9 +46,6 @@
             <option value="No" selected>No</option>
             <option value="Cobra">Cobra</option>
           </select>
-          <div *ngIf="formErrors.currentAccount" class="alert alert-danger">
-            {{ formErrors.currentAccount }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -61,9 +55,6 @@
             <option value="Entrada" selected>Entrada</option>
             <option value="Salida">Salida</option>
           </select>
-          <div *ngIf="formErrors.movement" class="alert alert-danger">
-            {{ formErrors.movement }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -73,9 +64,6 @@
             <option value="true">Si</option>
             <option value="false" selected>No</option>
           </select>
-          <div *ngIf="formErrors.requestArticles" class="alert alert-danger">
-            {{ formErrors.requestArticles }}
-          </div>
         </div>
       </div>
       <div class="row" *ngIf="transactionTypeForm.value.requestArticles">
@@ -85,9 +73,6 @@
             <option value="true">Si</option>
             <option value="false" selected>No</option>
           </select>
-          <div *ngIf="formErrors.modifyStock" class="alert alert-danger">
-            {{ formErrors.modifyStock }}
-          </div>
         </div>
       </div>
       <div class="row" *ngIf="transactionTypeForm.value.modifyStock">
@@ -97,9 +82,6 @@
             <option value="Entrada" selected>Entrada</option>
             <option value="Salida">Salida</option>
           </select>
-          <div *ngIf="formErrors.stockMovement" class="alert alert-danger">
-            {{ formErrors.stockMovement }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -115,9 +97,6 @@
         <div class="form-group col-md-12">
           <label for="fixedOrigin">¿El documento siempre va a tener el mismo punto de venta?, ¿Cuál?</label>
           <input type="number" class="form-control" formControlName="fixedOrigin" fixedOrigin="fixedOrigin" id="fixedOrigin"/>
-          <div *ngIf="formErrors.fixedOrigin" class="alert alert-danger">
-            {{ formErrors.fixedOrigin }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -133,9 +112,6 @@
             <option value="true">Si</option>
             <option value="false" selected>No</option>
           </select>
-          <div *ngIf="formErrors.electronics" class="alert alert-danger">
-            {{ formErrors.electronics }}
-          </div>
         </div>
       </div>
       <div class="row" *ngIf="transactionTypeForm.value.electronics">
@@ -176,9 +152,6 @@
             <option value="true">Si</option>
             <option value="false" selected>No</option>
           </select>
-          <div *ngIf="formErrors.requestTaxes" class="alert alert-danger">
-            {{ formErrors.requestTaxes }}
-          </div>
         </div>
       </div>
       <div class="row">

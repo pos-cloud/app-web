@@ -37,9 +37,6 @@
         <div class="form-group col-md-12">
           <label for="labelPrint">¿Como saldrá el nombre del comprobante en la impresión?</label>
           <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" [readonly]="readonly"/>
-          <div *ngIf="formErrors.labelPrint" class="alert alert-danger">
-            {{ formErrors.labelPrint }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -50,9 +47,6 @@
             <option value="No" [disabled]="readonly">No</option>
             <option value="Cobra" [disabled]="readonly">Cobra</option>
           </select>
-          <div *ngIf="formErrors.currentAccount" class="alert alert-danger">
-            {{ formErrors.currentAccount }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -62,9 +56,6 @@
             <option value="Entrada" [disabled]="readonly">Entrada</option>
             <option value="Salida" [disabled]="readonly">Salida</option>
           </select>
-          <div *ngIf="formErrors.movement" class="alert alert-danger">
-            {{ formErrors.movement }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -74,9 +65,6 @@
             <option value="true" [disabled]="readonly">Si</option>
             <option value="false" [disabled]="readonly">No</option>
           </select>
-          <div *ngIf="formErrors.requestArticles" class="alert alert-danger">
-            {{ formErrors.requestArticles }}
-          </div>
         </div>
       </div>
       <div class="row" *ngIf="transactionTypeForm.value.requestArticles">
@@ -86,9 +74,6 @@
             <option value="true" [disabled]="readonly">Si</option>
             <option value="false" [disabled]="readonly">No</option>
           </select>
-          <div *ngIf="formErrors.modifyStock" class="alert alert-danger">
-            {{ formErrors.modifyStock }}
-          </div>
         </div>
       </div>
       <div class="row" *ngIf="transactionTypeForm.value.modifyStock">
@@ -98,9 +83,6 @@
             <option value="Entrada" [disabled]="readonly">Entrada</option>
             <option value="Salida" [disabled]="readonly">Salida</option>
           </select>
-          <div *ngIf="formErrors.stockMovement" class="alert alert-danger">
-            {{ formErrors.stockMovement }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -116,9 +98,6 @@
         <div class="form-group col-md-12">
           <label for="fixedOrigin">¿El documento siempre va a tener el mismo punto de venta?, ¿Cuál?</label>
           <input type="number" class="form-control" formControlName="fixedOrigin" fixedOrigin="fixedOrigin" id="fixedOrigin" [readonly]="readonly"/>
-          <div *ngIf="formErrors.fixedOrigin" class="alert alert-danger">
-            {{ formErrors.fixedOrigin }}
-          </div>
         </div>
       </div>
       <div class="row">
@@ -134,9 +113,6 @@
             <option value="true" [disabled]="readonly">Si</option>
             <option value="false" [disabled]="readonly">No</option>
           </select>
-          <div *ngIf="formErrors.electronics" class="alert alert-danger">
-            {{ formErrors.electronics }}
-          </div>
         </div>
       </div>
       <div class="row" *ngIf="transactionTypeForm.value.electronics">
@@ -177,9 +153,6 @@
             <option value="true" [selected]="transactionType.requestTaxes === true">Si</option>
             <option value="false" [selected]="transactionType.requestTaxes === false">No</option>
           </select>
-          <div *ngIf="formErrors.requestTaxes" class="alert alert-danger">
-            {{ formErrors.requestTaxes }}
-          </div>
         </div>
       </div>
       <div class="row">
