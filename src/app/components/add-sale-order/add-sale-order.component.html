@@ -63,11 +63,8 @@
                   <br> {{movementOfArticle.notes}}
                 </strong>
               </td>
-              <td>{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
-              <td align=" left " width="20 ">
-                <!-- <button type="button " class="btn btn-danger btn-sm " (click)="deleteMovementOfArticle(movementOfArticle._id) -->
-                <!-- "><i class="fa fa-trash-o "></i></button> -->
-              </td>
+              <td *ngIf="this.transactionMovement === 'Venta'">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="this.transactionMovement !== 'Venta'">{{movementOfArticle.costPrice | currency:'USD':'1.2-2'}}</td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
