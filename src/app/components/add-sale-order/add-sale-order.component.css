@@ -12,6 +12,7 @@
 }
 
 .img-container {
+      /* background-color: #CEE3F6; */
       height:71vh;
 }
 
@@ -88,4 +89,10 @@
 .filterArticle {
       margin-bottom: 10px;
       margin-right: 10px;
+}
+
+.number-amount {
+      height: 20px;
+      position: absolute;
+      right: 0px; 
 }

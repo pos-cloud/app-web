@@ -34,7 +34,6 @@
 }
 
 .iarticle {
-      color: white;
       width: 120px;
       height: 120px;
       margin: 4px;
@@ -51,14 +50,9 @@
 }
 
 .image-title {
-      background: #025aa5;
-      font-size: 20px;
-      margin-top: 20px;
-      position: absolute;
-      left: 0px; 
-      bottom: 0px;
+      color: black;
+      font-size: 17px;
       width: 100%;
-      opacity: 0.8;
 }
 
 .my-pagination /deep/ .ngx-pagination {
@@ -71,4 +65,10 @@
 
 .filters {
       background-color: #F8F8F8;
+}
+
+.number-price {
+      height: 20px;
+      position: absolute;
+      right: 0px; 
 }

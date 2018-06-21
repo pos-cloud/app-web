@@ -83,6 +83,7 @@ export class AddSaleOrderComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public amountModifyStock = 0; //Saber cuando termina de actualizar el stock
   public areMovementsOfArticlesEmpty: boolean = true;
+  public apiURL = Config.apiURL;
 
   constructor(
     public _fb: FormBuilder,

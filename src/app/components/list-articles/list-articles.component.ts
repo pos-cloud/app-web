@@ -38,6 +38,7 @@ export class ListArticlesComponent implements OnInit {
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategorySelected: Category;
   @Input() filterArticle: string;
+  @Input() transactionMovement: string;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public totalItems = 0;

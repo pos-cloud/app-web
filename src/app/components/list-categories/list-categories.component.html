@@ -10,7 +10,6 @@
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Rubro</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar Rubros</button> -->
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
@@ -84,7 +83,7 @@
           height="120" width="120">
         <img *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined" [src]="apiURL + 'get-image-category/'+category.picture"
           height="120" width="120">
-         <div class="image-title">{{category.description}}</div> 
+         <div class="image-title">{{ category.description | slice:0:19 }}</div> 
       </div>
     </div>
     <div class="center-content" *ngIf="areCategoriesEmpty">

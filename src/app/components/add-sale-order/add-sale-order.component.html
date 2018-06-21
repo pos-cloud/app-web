@@ -49,22 +49,27 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Cant</th>
+              <th>Cantidad</th>
               <th>Description</th>
               <th>Subtotal</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let movementOfArticle of movementsOfArticles" (click)="openModal('movement_of_article', movementOfArticle)">
-              <td>{{movementOfArticle.amount}}</td>
+              <td>
+                <span class="badge badge-info">
+                  <b>{{ movementOfArticle.amount}}</b>
+                </span>
+                <img *ngIf="movementOfArticle.article.picture == 'default.jpg' || movementOfArticle.article.picture == undefined" src="./../../../assets/img/default.jpg" height="50" width="50">
+                <img *ngIf="movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined" [src]="apiURL + 'get-image-article/'+movementOfArticle. article.picture" height="50" width="50">
+              </td>
               <td>{{movementOfArticle.description}}
                 <strong *ngIf="movementOfArticle.notes">
                   <br> {{movementOfArticle.notes}}
                 </strong>
               </td>
-              <td *ngIf="this.transactionMovement === 'Venta'">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
-              <td *ngIf="this.transactionMovement !== 'Venta'">{{movementOfArticle.costPrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="transactionMovement === 'Venta'">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="transactionMovement !== 'Venta'">{{movementOfArticle.costPrice | currency:'USD':'1.2-2'}}</td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
@@ -150,8 +155,7 @@
       </div>
       <div [ngClass]="{'row table-responsive img-container':areArticlesVisible}">
         <div class="col-md-12">
-          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible]="areArticlesVisible" [filterArticle]="filterArticle"
-            [filterCategorySelected]="categorySelected"></app-list-articles>
+          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible]="areArticlesVisible" [filterArticle]="filterArticle" [transactionMovement]="transactionMovement" [filterCategorySelected]="categorySelected"></app-list-articles>
         </div>
       </div>
       <div [ngClass]="{'row table-responsive img-container':areCategoriesVisible}">
