@@ -12,6 +12,7 @@ import { Company } from './../../models/company';
 import { Config } from './../../app.config';
 import { TransactionType } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
+import { Article } from './../../models/article';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +27,7 @@ import { MovementOfArticleService } from './../../services/movement-of-article.s
 import { ConfigService } from './../../services/config.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { ArticleStockService } from './../../services/article-stock.service';
+import { ArticleService } from './../../services/article.service';
 
 //Pipes
 import { DeprecatedDecimalPipe } from '@angular/common';
@@ -48,6 +50,7 @@ export class PrintComponent implements OnInit {
   @Input() typePrint;
   @Input() balance;
   @Input() articleStock : ArticleStock;
+  @Input() article: Article;
   public loading: boolean;
   public alertMessage: string = "";
   public shiftClosingTransaction;
@@ -81,6 +84,7 @@ export class PrintComponent implements OnInit {
     public _movementOfArticle: MovementOfArticleService,
     public _configService: ConfigService,
     public _articleStockService: ArticleStockService,
+    public _articleService: ArticleService,
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
@@ -133,8 +137,10 @@ export class PrintComponent implements OnInit {
             this.getMovementOfArticle();
           } else if (this.typePrint === "current-account") {
             this.toPrintCurrentAccount();
-          } else if (this.typePrint === "barcode") {
-            this.getBarcode64('code128?value='+this.articleStock.article.code,'barcode');
+          } else if (this.typePrint === "articleStock") {
+            this.getBarcode64('code128?value='+this.articleStock.article.code,'articleStock');
+          } else if (this.typePrint === "article") {
+            this.getBarcode64('code128?value='+this.article.code,'article');
           }
         }
         this.loading = false;
@@ -683,31 +689,52 @@ export class PrintComponent implements OnInit {
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
-  public toPrintBarcode(): void {
+  public toPrintBarcode(origen: string): void {
 
-    this.doc = new jsPDF('l','mm', [this.config[0].heightLabel,this.config[0].widthLabel]);
+    if (origen === 'articleStock') {
 
-    this.doc.text(this.articleStock.article.description, 40, 10)
-      
-    let imgdata = 'data:image/png;base64,' + this.barcode64;
+      this.doc = new jsPDF('l','mm', [this.config[0].heightLabel,this.config[0].widthLabel]);
 
-    this.doc.addImage(imgdata, 'PNG', 10, 15, 80, 10);
-    
-    for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
-      
-      
-      this.doc.addPage();
-      
-      this.doc.text(this.articleStock.article.description, 40, 10)
-      
+      this.doc.text(this.articleStock.article.description, 10,10)
+      this.doc.text("$",42,15)
+      this.doc.text(this.articleStock.article.salePrice.toString(), 45, 15)
+        
       let imgdata = 'data:image/png;base64,' + this.barcode64;
+  
+      this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+      
+      for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
+        
+        
+        this.doc.addPage();
+        
+        this.doc.text(this.articleStock.article.description, 10,10)
+        this.doc.text("$",42,15)
+        this.doc.text(this.articleStock.article.salePrice.toString(), 45, 15)
+        
+        let imgdata = 'data:image/png;base64,' + this.barcode64;
+  
+        this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+  
+      }
+  
+      
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
 
-      this.doc.addImage(imgdata, 'PNG', 10, 15, 80, 10);
+    }  else {
 
+        this.doc = new jsPDF('l','mm', [this.config[0].heightLabel,this.config[0].widthLabel]);
+
+        this.doc.text(this.article.description, 10,10)
+        this.doc.text("$",42,15)
+        this.doc.text(this.article.salePrice.toString(), 45, 15)
+        
+        let imgdata = 'data:image/png;base64,' + this.barcode64;
+  
+        this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+
+        this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     }
-
-    
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
   public getGreeting() {
@@ -746,8 +773,6 @@ export class PrintComponent implements OnInit {
     xhr.send();
   }
 
-
-
   public padString(n, length) {
     var n = n.toString();
     while (n.length < length)
@@ -761,13 +786,15 @@ export class PrintComponent implements OnInit {
       result => {
         this.barcode64 = result.bc64;
         switch (op) {
+          case 'article':
+            this.toPrintBarcode('article');
+          case 'articleStock':
+            this.toPrintBarcode('articleStock');
+            break;
           case 'invoice':
             this.toPrintInvoice();
             break;
-          case 'barcode':
-            this.toPrintBarcode();
-            break;
-        
+
           default:
             break;
         } 

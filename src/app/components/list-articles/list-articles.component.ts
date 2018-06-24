@@ -14,6 +14,7 @@ import { ArticleService } from './../../services/article.service';
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
 import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
 import { ImportComponent } from './../../components/import/import.component';
+import { PrintComponent } from 'app/components/print/print.component';
 
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 
@@ -111,6 +112,11 @@ export class ListArticlesComponent implements OnInit {
 
     let modalRef;
     switch (op) {
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.article = article;
+        modalRef.componentInstance.typePrint = 'article';
+        break;
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
         modalRef.componentInstance.article = article;

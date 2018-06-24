@@ -117,7 +117,7 @@ export class ListArticleStocksComponent implements OnInit {
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.articleStock = articleStock;
-        modalRef.componentInstance.typePrint = 'barcode';
+        modalRef.componentInstance.typePrint = 'articleStock';
         break;
       default: 
         break;
