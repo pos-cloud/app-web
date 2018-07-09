@@ -1,15 +1,10 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Table, TableState } from './../../models/table';
-import { Room } from './../../models/room';
-import { Employee } from './../../models/employee';
-import { Turn } from './../../models/turn';
 
-import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
 import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';

@@ -129,6 +129,7 @@ import { AddTaxComponent } from './components/add-tax/add-tax.component';
 import { UpdateTaxComponent } from './components/update-tax/update-tax.component';
 import { DeleteTaxComponent } from './components/delete-tax/delete-tax.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
+import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
 
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -241,7 +242,8 @@ import { FocusDirective } from './directives/focus.directive';
     AddTaxComponent,
     UpdateTaxComponent,
     DeleteTaxComponent,
-    ListTaxesComponent
+    ListTaxesComponent,
+    ApplyDiscountComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -259,7 +261,8 @@ import { FocusDirective } from './directives/focus.directive';
     AddMovementOfArticleComponent,
     AddTaxComponent,
     UpdateTaxComponent,
-    DeleteTaxComponent
+    DeleteTaxComponent,
+    ApplyDiscountComponent
   ],
   imports: [
     BrowserModule,

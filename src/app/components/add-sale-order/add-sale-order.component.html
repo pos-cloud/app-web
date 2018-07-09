@@ -51,7 +51,7 @@
             <tr>
               <th>Cantidad</th>
               <th>Description</th>
-              <th>Subtotal</th>
+              <th>Monto</th>
             </tr>
           </thead>
           <tbody>
@@ -81,25 +81,14 @@
         <table class="table table-hover">
           <tbody>
             <tr>
-              <td align="right">
-                <h5>
-                  <b>Subtotal</b>
-                </h5>
-              </td>
-              <td align="right">
-                <h5>
-                  <b>{{(transaction.totalPrice+transaction.discountAmount) | currency:'USD':'1.2-2'}}</b>
-                </h5>
-              </td>
-            </tr>
-            <!-- <tr>
+            <tr *ngIf="transactionMovement !== 'Stock'">
               <td align="right">
                 <strong>Descuento</strong>
               </td>
               <td align="right">
                 <strong>({{transaction.discountAmount | currency:'USD':'1.2-2'}})</strong>
               </td>
-            </tr> -->
+            </tr>
             <tr>
               <td align="right">
                 <h3>
@@ -122,11 +111,14 @@
         </div>
       </div>
       <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
-        <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('add_client')">
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('add_client')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Proveedor</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cliente</span>
         </div>
-        <div class="col-md-6 btn-action btn-large center-content" (click)="openModal('cancel')">
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
+          Descuento
+        </div>
+        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel')">
           Anular
         </div>
       </div>

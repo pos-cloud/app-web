@@ -1,0 +1,67 @@
+<section>
+  <div class="modal-header">
+    <h4 class="modal-title">Descuento</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="discountForm" #formDiscount="ngForm" (ngSubmit)="applyDiscount()" autocomplete="off">
+    <div class="modal-body container-fluid">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="amount" class="control-label">Monto de la transacción:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" readonly/>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="percentageToApply" class="control-label">Porcentaje de descuento:</label>
+          <div class="input-group">
+            <span class="input-group-addon">%</span>
+            <input type="number" class="form-control" formControlName="percentageToApply" name="percentageToApply" step="0.01" (blur)="updateDiscounts('percentageToApply')"
+              autofocus/>
+          </div>
+          <div *ngIf="formErrors.percentageToApply" class="alert alert-danger">
+            {{ formErrors.percentageToApply }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="amountToApply" class="control-label">Monto de descuento:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="amountToApply" name="amountToApply" min="0" step="0.01" (blur)="updateDiscounts('amountToApply')"
+            />
+          </div>
+          <div *ngIf="formErrors.amountToApply" class="alert alert-danger">
+            {{ formErrors.amountToApply }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="totalAmount" class="control-label">Monto de la transacción con descuento:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="totalAmount" name="totalAmount" step="0.01" readonly/>
+          </div>
+          <div *ngIf="formErrors.totalAmount" class="alert alert-danger">
+            {{ formErrors.totalAmount }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!discountForm.valid || loading">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Aceptar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

@@ -58,18 +58,18 @@
                                                                             currentPage: p, 
                                                                             totalItems: totalItems
                                                                           }">
-            <td align="left" width="130">
-              <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article )">
-                    <i class="fa fa-print"></i>
-              </button>
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)">
+            <td align="left" width="174">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
-              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)">
+              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)" title="Editar">
                 <i class="fa fa-pencil"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)">
+              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar">
                 <i class="fa fa-trash-o"></i>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article )" title="Imprimir Etiqueta">
+                    <i class="fa fa-print"></i>
               </button>
             </td>
             <td>{{article.code}}</td>
@@ -111,8 +111,7 @@
 </section>
 
 <!--POS-->
-<section class="container-fluid" *ngIf="userType && userType==='pos'">
-  <!--<input type="search" class="form-control" [(ngModel)]= "filterDescription" placeholder="Buscar artículo.." (onfocus)="showArticles()">-->
+<section class="container-fluid" *ngIf="userType==='pos'">
   <div class="row" *ngIf="areArticlesVisible">
     <div *ngFor="let article of articles  | filter: filterArticle | filter: filterCategorySelected.description:'description':'category'">
       <div class="iarticle" (click)="addItem(article)">

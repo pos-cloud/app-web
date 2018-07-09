@@ -626,15 +626,14 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal')
     let rowTotals = 254;
     let subtotal = this.transaction.totalPrice;
-    subtotal -= this.roundNumber.transform(this.transaction.discountAmount);
+    subtotal += this.roundNumber.transform(this.transaction.discountAmount);
     subtotal -= this.roundNumber.transform(this.transaction.exempt);
-    
+
     if (this.transaction.company &&
         this.transaction.company.vatCondition &&
         this.transaction.company.vatCondition.discriminate &&
         this.transaction.taxes.length > 0 &&
         Config.companyVatCondition.description === "Responsable Inscripto") {
-
       this.doc.setFontType('bold')
       for(let tax of this.transaction.taxes) {
         this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals)

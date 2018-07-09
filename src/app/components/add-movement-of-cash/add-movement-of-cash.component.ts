@@ -64,8 +64,7 @@ export class AddMovementOfCashComponent implements OnInit {
     public _movementOfCashService: MovementOfCashService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-    private cdref: ChangeDetectorRef
+    public alertConfig: NgbAlertConfig
   ) {
     this.movementOfCash = new MovementOfCash();
     this.movementOfCash.type = new PaymentMethod();

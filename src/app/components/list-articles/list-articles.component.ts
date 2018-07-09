@@ -30,7 +30,7 @@ export class ListArticlesComponent implements OnInit {
   public articles: Article[] = new Array();
   public areArticlesEmpty: boolean = true;
   public alertMessage: string = "";
-  public userType: string;
+  public userType: string = "";
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -38,7 +38,7 @@ export class ListArticlesComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategorySelected: Category;
-  @Input() filterArticle: string;
+  @Input() filterArticle: string = "";
   @Input() transactionMovement: string;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
