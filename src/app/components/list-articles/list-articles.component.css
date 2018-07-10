@@ -35,14 +35,12 @@
 
 .iarticle {
       width: 120px;
-      height: 120px;
+      height: 160px;
       margin: 4px;
       float: left;
       text-align: center;
       cursor: pointer;
       position: relative;
-      width: "120px";
-      height: "120px";
 }
 
 .iarticle:hover {
