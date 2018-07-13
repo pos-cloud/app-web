@@ -714,6 +714,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = result.CAEExpirationDate;
+          this.transaction.state = TransactionState.Closed;
           if (Config.modules.stock &&
             this.transaction.type.modifyStock) {
             this.updateRealStock();
@@ -1002,8 +1003,8 @@ export class AddSaleOrderComponent implements OnInit {
     if (isValidCharge &&
         this.transaction.type.electronics &&
         this.transaction.company &&
-        ((!this.transaction.company.CUIT || (this.transaction.company.CUIT && this.transaction.company.CUIT !== "")) ||
-        (!this.transaction.company.DNI || (this.transaction.company.DNI && this.transaction.company.DNI !== "")))) {
+        ((!this.transaction.company.CUIT || (this.transaction.company.CUIT && this.transaction.company.CUIT === "")) &&
+        (!this.transaction.company.DNI || (this.transaction.company.DNI && this.transaction.company.DNI === "")))) {
       isValidCharge = false;
       this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
       this.loading = false;
@@ -1011,7 +1012,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (isValidCharge &&
         this.transaction.type.fixedOrigin &&
-        this.transaction.type.fixedOrigin !== 0 &&
+        this.transaction.type.fixedOrigin === 0 &&
         this.transaction.type.electronics) {
       isValidCharge = false;
       this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
@@ -1020,7 +1021,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     if(isValidCharge &&
       this.transaction.type.electronics &&
-      !Config.modules.electronicTransactions) {
+      !Config.modules.sale.electronicTransactions) {
       isValidCharge = false;
       this.showMessage("No tiene habilitado el módulo de factura electrónica.", "info", true);
       this.loading = false;

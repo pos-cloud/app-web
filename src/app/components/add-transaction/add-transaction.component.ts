@@ -1,10 +1,10 @@
 //Paquetes de Angular
-import { Component, OnInit, EventEmitter, Input, transition } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -243,9 +243,8 @@ export class AddTransactionComponent implements OnInit {
   public updateTaxes(): void {
 
     let transactionTaxes: Taxes[] = new Array();
-    this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice;
-
-    if (this.taxes && this.taxes.length > 0) {
+    
+    if (this.taxes && this.taxes.length > 0 && this.transactionForm.value.basePrice !== 0) {
       let transactionTax: Taxes = new Taxes();
       for (let taxesAux of this.taxes) {
         transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
