@@ -206,32 +206,30 @@ export class ListArticlesComponent implements OnInit {
 
   public filterItem(articles: Article[]) {
     
-    if (articles && articles.length > 0) {
+    if (articles && articles.length > 0 && this.articles.length >= 2) {
       let article = articles[0];
-      if( articles && 
-          articles.length === 1 && 
-          this.articles.length >= 2 &&
+      if( articles.length === 1 &&
           ( article.barcode === this.filterArticle ||
-            article.description === this.filterArticle ||
-            article.posDescription === this.filterArticle ||
+            article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
+            article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
             article.code === this.filterArticle)) {
-        let movementOfArticle = new MovementOfArticle();
-        movementOfArticle.article = article;
-        movementOfArticle.code = article.code;
-        movementOfArticle.description = article.description;
-        movementOfArticle.observation = article.observation;
-        movementOfArticle.basePrice = article.basePrice;
-        movementOfArticle.costPrice = article.costPrice;
-        movementOfArticle.markupPercentage = article.markupPercentage;
-        movementOfArticle.markupPrice = article.markupPrice;
-        movementOfArticle.salePrice = article.salePrice;
-        movementOfArticle.make = article.make;
-        movementOfArticle.category = article.category;
-        movementOfArticle.barcode = article.barcode;
-        movementOfArticle.amount = 1;
-        this.eventAddItem.emit(movementOfArticle);
+              let movementOfArticle = new MovementOfArticle();
+              movementOfArticle.article = article;
+              movementOfArticle.code = article.code;
+              movementOfArticle.description = article.description;
+              movementOfArticle.observation = article.observation;
+              movementOfArticle.basePrice = article.basePrice;
+              movementOfArticle.costPrice = article.costPrice;
+              movementOfArticle.markupPercentage = article.markupPercentage;
+              movementOfArticle.markupPrice = article.markupPrice;
+              movementOfArticle.salePrice = article.salePrice;
+              movementOfArticle.make = article.make;
+              movementOfArticle.category = article.category;
+              movementOfArticle.barcode = article.barcode;
+              movementOfArticle.amount = 1;
+              this.filterArticle = "";
+              this.eventAddItem.emit(movementOfArticle);
       }
-      this.filterArticle = "";
     }
   }
 

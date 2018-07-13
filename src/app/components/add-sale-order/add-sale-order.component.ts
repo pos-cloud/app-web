@@ -476,6 +476,11 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addItem(itemData: MovementOfArticle): void {
     
+
+    if(this.filterArticle && this.filterArticle !== "") {
+      this.filterArticle = "";
+    }
+
     if(!itemData.article.containsVariants) {
 
       let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);

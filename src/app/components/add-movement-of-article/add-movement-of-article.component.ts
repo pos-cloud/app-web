@@ -25,6 +25,7 @@ import { ArticleStockService } from '../../services/article-stock.service';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TransactionMovement } from '../../models/transaction-type';
 import { version } from 'punycode';
+import { Taxes } from '../../models/taxes';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -441,6 +442,20 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
           this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.markupPrice);
           this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
+
+          let tax: Taxes = new Taxes();
+          let taxes: Taxes[] = new Array();
+          if (this.movementOfArticle.taxes) {
+            for (let taxAux of this.movementOfArticle.taxes) {
+              tax.percentage = this.roundNumber.transform(taxAux.percentage);
+              tax.tax = taxAux.tax;
+              tax.taxBase = this.roundNumber.transform(this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+              tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+              taxes.push(tax);
+            }
+          }
+          this.movementOfArticle.taxes = taxes;
+
           this.verifyPermissions("update");
         }
         this.loading = false;
