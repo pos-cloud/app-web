@@ -234,9 +234,7 @@ export class PrintComponent implements OnInit {
           this.hideMessage();
           this.movementsOfArticles = result.movementsOfArticles;
           
-          if (this.transaction.CAE &&
-              this.transaction.CAEExpirationDate) {
-          
+          if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
             this.calculateBarcode();
           } else {
             this.toPrintInvoice();
@@ -261,11 +259,22 @@ export class PrintComponent implements OnInit {
           codeInvoice = this.transaction.type.codes[y].code;
         }
       }
-    }
+      }
 
-    let date = this.transaction.CAEExpirationDate.split(' ');
+      console.log(codeInvoice)
 
-    let digit = ((this.config[0].companyCUIT).replace('-', '')).replace('-', '') + codeInvoice + this.transaction.origin + this.transaction.CAE + this.convertDate(date[0]);
+    //let date = this.transaction.CAEExpirationDate.split('T');
+    
+    let date = (this.transaction.CAEExpirationDate.split('T')[0].replace('-','')).replace('-','');
+
+
+  
+    let digit = ((this.config[0].companyCUIT).replace('-', '')).replace('-', '') + 
+                  codeInvoice + 
+                  this.transaction.origin + 
+                  this.transaction.CAE + date;
+
+    console.log(digit);
 
     let uno = 0;
     let dos = 0;
@@ -291,7 +300,7 @@ export class PrintComponent implements OnInit {
       + codeInvoice
       + this.transaction.origin
       + this.transaction.CAE
-      + this.convertDate(date[0])
+      + date 
       + checkDigit,'invoice');
   }
 
@@ -299,7 +308,7 @@ export class PrintComponent implements OnInit {
 
     var convertDate = string.split(' ')
    
-    var convertDate2 = convertDate[0].split('/');
+    var convertDate2 = convertDate[0].split('-');
     
     var convertDate = convertDate2.reverse();
 
@@ -672,10 +681,10 @@ export class PrintComponent implements OnInit {
       this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold')
       this.doc.text("CAE:", 10, 272)
-      this.doc.text("Fecha Vto:", 10, 280)
+      this.doc.text("Fecha Vto:", 10, 275)
       this.doc.setFontType('normal')
       this.doc.text(this.transaction.CAE, 20, 272)
-      this.doc.text(this.transaction.CAEExpirationDate, 30, 280)
+      this.doc.text(this.transaction.CAEExpirationDate, 32, 275)
       
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
@@ -741,9 +750,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle("italic")
     this.doc.setFontSize(this.fontSizes.normal)
     if (this.config[0] && this.config[0].footerInvoice) {
-      this.doc.text(this.config[0].footerInvoice, 5, 280)
+      this.doc.text(this.config[0].footerInvoice, 9, 280)
     } else {
-      this.doc.text("Gracias por su visita!", 5, 280)
+      this.doc.text("Gracias por su visita!", 9, 280)
     }
     this.doc.setFontStyle("normal")
   }
