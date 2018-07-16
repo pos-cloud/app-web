@@ -720,7 +720,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
-          this.transaction.CAEExpirationDate = moment(new Date(result.CAEExpirationDate)).format("YYYY-MM-DDTHH:mm:ssZ");
+          // this.transaction.CAEExpirationDate = moment(new Date(result.CAEExpirationDate)).format("YYYY-MM-DDTHH:mm:ssZ");
           this.transaction.state = TransactionState.Closed;
           if (Config.modules.stock &&
             this.transaction.type.modifyStock) {
