@@ -61,9 +61,12 @@ import { RegisterComponent } from './components/register/register.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 import { ListVariantTypesComponent } from './components/list-variant-types/list-variant-types.component';
 import { ListVariantValuesComponent } from './components/list-variant-values/list-variant-values.component';
+import { AddPaymentMethodComponent } from './components/add-payment-method/add-payment-method.component';
+import { UpdatePaymentMethodComponent } from './components/update-payment-method/update-payment-method.component';
+import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
+import { DeletePaymentMethodComponent } from './components/delete-payment-method/delete-payment-method.component';
 
 import { AuthGuard } from './guards/auth.guard';
-import { ArticleStock } from './models/article-stock';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 
@@ -108,6 +111,10 @@ const _routes: Routes = [
   { path: 'admin/agregar-usuario', component: AddUserComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/editar-usuario', component: UpdateUserComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-usuario', component: DeleteUserComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/metodos-de-pago', component: ListPaymentMethodsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/agregar-metodo-de-pago', component: AddPaymentMethodComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/editar-metodo-de-pago', component: UpdatePaymentMethodComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/eliminar-metodo-de-pago', component: DeletePaymentMethodComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/clientes', component: ListCompaniesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/proveedores', component: ListCompaniesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-empresa', component: AddCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },

@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="!readonly">Editar Método de Pago {{paymentMethod.name}}</h4>
+  <h4 class="modal-title" *ngIf="readonly">Método de Pago  {{paymentMethod.name}}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content"  *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="paymentMethodForm" #formUpdatePaymentMethod="ngForm" (ngSubmit)="updatePaymentMethod()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-8">
+          <label for="name" class="control-label">Nombre:</label>
+          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
+          <div *ngIf="formErrors.name" class="alert alert-danger">
+            {{ formErrors.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" *ngIf="!readonly">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!paymentMethodForm.valid || loading || readonly">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar Cambios</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

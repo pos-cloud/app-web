@@ -130,6 +130,10 @@ import { UpdateTaxComponent } from './components/update-tax/update-tax.component
 import { DeleteTaxComponent } from './components/delete-tax/delete-tax.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
+import { AddPaymentMethodComponent } from './components/add-payment-method/add-payment-method.component';
+import { UpdatePaymentMethodComponent } from './components/update-payment-method/update-payment-method.component';
+import { DeletePaymentMethodComponent } from './components/delete-payment-method/delete-payment-method.component';
+import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
 
 
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -243,7 +247,11 @@ import { FocusDirective } from './directives/focus.directive';
     UpdateTaxComponent,
     DeleteTaxComponent,
     ListTaxesComponent,
-    ApplyDiscountComponent
+    ApplyDiscountComponent,
+    AddPaymentMethodComponent,
+    UpdatePaymentMethodComponent,
+    DeletePaymentMethodComponent,
+    ListPaymentMethodsComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -262,7 +270,11 @@ import { FocusDirective } from './directives/focus.directive';
     AddTaxComponent,
     UpdateTaxComponent,
     DeleteTaxComponent,
-    ApplyDiscountComponent
+    ApplyDiscountComponent,
+    AddPaymentMethodComponent,
+    UpdatePaymentMethodComponent,
+    DeletePaymentMethodComponent,
+    ListPaymentMethodsComponent
   ],
   imports: [
     BrowserModule,

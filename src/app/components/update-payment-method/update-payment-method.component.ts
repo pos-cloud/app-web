@@ -1,0 +1,137 @@
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { PaymentMethod } from './../../models/payment-method';
+
+import { PaymentMethodService } from './../../services/payment-method.service';
+
+@Component({
+  selector: 'app-update-payment-method',
+  templateUrl: './update-payment-method.component.html',
+  styleUrls: ['./update-payment-method.component.css'],
+  providers: [NgbAlertConfig]
+})
+
+export class UpdatePaymentMethodComponent implements OnInit {
+
+  @Input() paymentMethod: PaymentMethod;
+  @Input() readonly: boolean;
+  public paymentMethodForm: FormGroup;
+  public alertMessage: string = "";
+  public userType: string;
+  public loading: boolean = false;
+  public focusEvent = new EventEmitter<boolean>();
+
+  public formErrors = {
+    'name': ''
+  };
+
+  public validationMessages = {
+    'name': {
+      'required': 'Este campo es requerido.'
+    }
+  };
+
+  constructor(
+    public _paymentMethodService: PaymentMethodService,
+    public _fb: FormBuilder,
+    public _router: Router,
+    public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig
+  ) { }
+
+  ngOnInit(): void {
+
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.buildForm();
+    this.paymentMethodForm.setValue({
+      '_id': this.paymentMethod._id,
+      'name': this.paymentMethod.name
+    });
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+
+  public buildForm(): void {
+
+    this.paymentMethodForm = this._fb.group({
+      '_id': [this.paymentMethod._id, [
+        ]
+      ],
+      'name': [this.paymentMethod.name, [
+          Validators.required
+        ]
+      ],
+    });
+
+    this.paymentMethodForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged();
+  }
+
+  public onValueChanged(data?: any): void {
+
+    if (!this.paymentMethodForm) { return; }
+    const form = this.paymentMethodForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
+  public updatePaymentMethod(): void {
+    if (!this.readonly) {
+      this.loading = true;
+      this.paymentMethod = this.paymentMethodForm.value;
+      this.saveChanges();
+    }
+  }
+
+  public saveChanges(): void {
+
+    this.loading = true;
+
+    this._paymentMethodService.updatePaymentMethod(this.paymentMethod).subscribe(
+      result => {
+        if (!result.paymentMethod) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.paymentMethod = result.paymentMethod;
+          this.showMessage("El método de pago se ha actualizado con éxito.", "success", false);
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage(): void {
+    this.alertMessage = "";
+  }
+}
