@@ -5,12 +5,9 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { Employee } from './../../models/employee';
-import { Turn, TurnState } from './../../models/turn';
 import { Room } from './../../models/room';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement } from './../../models/transaction-type';
-import { PaymentMethod } from './../../models/payment-method';
+import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -171,7 +168,7 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionService.getOpenTransactionsByMovement(transactionMovement).subscribe(
+    this._transactionService.getOpenTransactionsByMovement(transactionMovement, this.posType).subscribe(
       result => {
         if (!result.transactions) {
           this.loading = false;
@@ -292,7 +289,7 @@ export class PointOfSaleComponent implements OnInit {
             this.updateTransaction(transaction);
           }
         }, (reason) => {
-          this.getOpenTransactions();
+          this.getOpenTransactionsByMovement(this.transactionMovement);
         });
         break;
       case 'view-transaction':

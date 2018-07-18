@@ -3,7 +3,9 @@ import { Component, OnInit, Input, EventEmitter, ChangeDetectorRef } from '@angu
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 //Paquetes de terceros
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 //Modelos
 import { PaymentMethod } from './../../models/payment-method';
@@ -27,11 +29,10 @@ export class AddMovementOfCashComponent implements OnInit {
   public paymentMethods: PaymentMethod[];
   public movementOfCashForm: FormGroup;
   public paymentChange: string = '0.00';
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public op: string;
-  public surchargeAmount: number = 0;
   public amountToCharge: number = 0;
 
   public formErrors = {
@@ -39,7 +40,7 @@ export class AddMovementOfCashComponent implements OnInit {
     'amountPaid': '',
     'cashChange': '',
     'observation': '',
-    'surchargeAmount': ''
+    'surcharge': ''
   };
 
   public validationMessages = {
@@ -55,8 +56,13 @@ export class AddMovementOfCashComponent implements OnInit {
     },
     'observation': {
     }, 
-    'surchargeAmount': {
+    'surcharge': {
     },
+    'CUIT': {
+      'minlength': 'El CUIT debe contener 13 díguitos.',
+      'maxlength': 'El CUIT debe contener 13 díguitos.',
+      'pattern': ' Ingrese el CUIT con formato con guiones'
+    }
   };
 
   constructor(
@@ -80,6 +86,67 @@ export class AddMovementOfCashComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public buildForm(): void {
+    
+    this.movementOfCashForm = this._fb.group({
+      'amountToCharge': [parseFloat(this.amountToCharge.toFixed(2)), [
+          Validators.required
+        ]
+      ],
+      'paymentMethod': [this.movementOfCash.type, [
+          Validators.required,
+          this.validatePaymentMethod()
+        ]
+      ],
+      'amountPaid': [this.movementOfCash.amountPaid, [
+          Validators.required,
+          this.validateAmountPaid()
+        ]
+      ],
+      'cashChange': [this.paymentChange, [
+        ]
+      ],
+      'observation': [this.movementOfCash.observation, [
+        ]
+      ],
+      'discount': [this.movementOfCash.type.discount, [
+        ]
+      ],
+      'surcharge': [this.movementOfCash.type.surcharge, [
+        ]
+      ],
+      'expirationDate': [moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'), [
+        ]
+      ],
+      'receiver': [this.movementOfCash.receiver, [
+        ]
+      ],
+      'number': [this.movementOfCash.number, [
+        ]
+      ],
+      'bank': [this.movementOfCash.bank, [
+        ]
+      ],
+      'titular': [this.movementOfCash.titular, [
+        ]
+      ],
+      'CUIT': [this.movementOfCash.CUIT, [
+          Validators.maxLength(13),
+          Validators.minLength(13),
+          Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
+        ]
+      ],
+      'deliveredBy': [this.movementOfCash.deliveredBy, [
+        ]
+      ]
+    });
+
+    this.movementOfCashForm.valueChanges
+      .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged();
   }
 
   public getMovementOfCashesByTransaction(): void {
@@ -123,6 +190,16 @@ export class AddMovementOfCashComponent implements OnInit {
             for(let i=0; i < this.paymentMethods.length; i++) {
               if(this.paymentMethods[i].name === "Cuenta Corriente") {
                 this.movementOfCash.type = this.paymentMethods[i];
+                if (this.paymentMethods[i].discount) {
+                  this.movementOfCash.discount = this.paymentMethods[i].discount;
+                } else {
+                  this.movementOfCash.discount = 0;
+                }
+                if (this.paymentMethods[i].surcharge) {
+                  this.movementOfCash.surcharge = this.paymentMethods[i].surcharge;
+                } else {
+                  this.movementOfCash.surcharge = 0;
+                }
               }
             }
             if(this.movementOfCash.type.name !== "Cuenta Corriente") {
@@ -130,6 +207,16 @@ export class AddMovementOfCashComponent implements OnInit {
             }
           } else {
             this.movementOfCash.type = this.paymentMethods[0];
+            if (this.paymentMethods[0] && this.paymentMethods[0].discount) {
+              this.movementOfCash.discount = this.paymentMethods[0].discount;
+            } else {
+              this.movementOfCash.discount = 0;
+            }
+            if (this.paymentMethods[0] && this.paymentMethods[0].surcharge) {
+              this.movementOfCash.surcharge = this.paymentMethods[0].surcharge;
+            } else {
+              this.movementOfCash.surcharge = 0;
+            }
           }
           this.setValueForm();
         }
@@ -147,49 +234,41 @@ export class AddMovementOfCashComponent implements OnInit {
     if(!this.movementOfCash.observation) this.movementOfCash.observation = "";
     this.movementOfCash.amountPaid = parseFloat(this.movementOfCash.amountPaid.toFixed(2));
     this.movementOfCash.cashChange = parseFloat(this.movementOfCash.cashChange.toFixed(2));
+    if (!this.movementOfCash.discount) {
+      this.movementOfCash.discount = 0.00;
+    } else {
+      this.movementOfCash.discount = parseFloat(this.movementOfCash.discount.toFixed(2));
+    }
+    if (!this.movementOfCash.surcharge) {
+      this.movementOfCash.surcharge = 0.00;
+    } else {
+      this.movementOfCash.surcharge = parseFloat(this.movementOfCash.surcharge.toFixed(2));
+    }
+    if (!this.movementOfCash.receiver) this.movementOfCash.receiver = '';
+    if (!this.movementOfCash.number) this.movementOfCash.number = '';
+    if (!this.movementOfCash.bank) this.movementOfCash.bank = '';
+    if (!this.movementOfCash.titular) this.movementOfCash.titular = '';
+    if (!this.movementOfCash.CUIT) this.movementOfCash.CUIT = '';
+    if (!this.movementOfCash.deliveredBy) this.movementOfCash.deliveredBy = '';
 
-    this.movementOfCashForm.setValue({
+    let values = {
       'amountToCharge': parseFloat(this.amountToCharge.toFixed(2)),
       'paymentMethod': this.movementOfCash.type,
       'amountPaid': this.movementOfCash.amountPaid,
       'cashChange': this.movementOfCash.cashChange,
       'observation': this.movementOfCash.observation,
-      'surchargeAmount': this.surchargeAmount,
-    });
-  }
-
-  public buildForm(): void {
+      'discount': this.movementOfCash.discount,
+      'surcharge': this.movementOfCash.surcharge,
+      'expirationDate': this.movementOfCash.expirationDate,
+      'receiver': this.movementOfCash.receiver,
+      'number': this.movementOfCash.number,
+      'bank': this.movementOfCash.bank,
+      'titular': this.movementOfCash.titular,
+      'CUIT': this.movementOfCash.CUIT,
+      'deliveredBy': this.movementOfCash.deliveredBy
+    };
     
-    this.movementOfCashForm = this._fb.group({
-      'amountToCharge': [parseFloat(this.amountToCharge.toFixed(2)), [
-          Validators.required
-        ]
-      ],
-      'paymentMethod': [this.movementOfCash.type, [
-          Validators.required,
-          this.validatePaymentMethod()
-        ]
-      ],
-      'amountPaid': [this.movementOfCash.amountPaid, [
-          Validators.required,
-          this.validateAmountPaid()
-        ]
-      ],
-      'cashChange': [this.paymentChange, [
-        ]
-      ],
-      'observation': [this.movementOfCash.observation, [
-        ]
-      ],
-      'surchargeAmount': [this.surchargeAmount, [
-        ]
-      ],
-    });
-
-    this.movementOfCashForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
-    this.onValueChanged();
+    this.movementOfCashForm.setValue(values);
   }
 
   public onValueChanged(data?: any): void {
@@ -228,15 +307,21 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public updateAmounts() {
 
-    if (this.movementOfCashForm.value.surchargeAmount < 0 || 
-          (this.movementOfCashForm.value.surchargeAmount >= 0 &&
-          this.movementOfCashForm.value.paymentMethod.name !== "Tarjeta de Crédito")) {
-      this.movementOfCashForm.value.surchargeAmount = 0;
+    if (this.movementOfCashForm.value.paymentMethod.discount) {
+      this.movementOfCash.discount = this.movementOfCashForm.value.paymentMethod.discount;
+      this.amountToCharge = this.transaction.totalPrice - (this.transaction.totalPrice * this.movementOfCash.discount / 100);
+    } else {
+      this.movementOfCash.discount = 0.00;
     }
 
-    this.surchargeAmount = this.movementOfCashForm.value.surchargeAmount;
-    this.amountToCharge = this.transaction.totalPrice + (this.transaction.totalPrice * this.surchargeAmount / 100);
-    this.movementOfCashForm.value.amountToCharge = this.amountToCharge;
+    if (this.movementOfCashForm.value.paymentMethod.surcharge) {
+      this.movementOfCash.surcharge = this.movementOfCashForm.value.paymentMethod.surcharge;
+      this.amountToCharge = this.transaction.totalPrice + (this.transaction.totalPrice * this.movementOfCash.surcharge / 100);
+    } else {
+      this.movementOfCash.surcharge = 0.00;
+    }
+
+    this.movementOfCash.amountCharge = this.amountToCharge;
     this.movementOfCash.amountPaid = this.amountToCharge;
 
     this.setValueForm();
@@ -300,13 +385,25 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public addMovementOfCash(): void {
-    this.movementOfCash.state = MovementOfCashState.Closed;
+    
     this.movementOfCash.amountCharge = this.movementOfCashForm.value.amountToCharge;
     this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountPaid;
     this.movementOfCash.transaction = this.transaction;
     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     this.movementOfCash.cashChange = this.movementOfCashForm.value.cashChange;
     this.movementOfCash.observation = this.movementOfCashForm.value.observation;
+    
+    if(this.movementOfCash.type.checkDetail) {
+      this.movementOfCash.state = MovementOfCashState.InPortafolio;
+      this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+      this.movementOfCash.number = this.movementOfCashForm.value.number;
+      this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+      this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+      this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+      this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
+    } else {
+      this.movementOfCash.state = MovementOfCashState.Closed;
+    }
     
     if(this.op === "add") {
       this.saveMovementOfCash();

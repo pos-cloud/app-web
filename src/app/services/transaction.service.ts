@@ -45,13 +45,13 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/sort="endDate":-1', { headers: headers }).map(res => res.json());
 	}
 
-	getOpenTransactionsByMovement(transactionMovement: TransactionMovement) {
+	getOpenTransactionsByMovement(transactionMovement: TransactionMovement, posType: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/where="state":"' + TransactionState.Open + '"&sort="startDate":-1', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + posType + '"}]&sort="startDate":-1', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByCompany(id: string) {
@@ -60,7 +60,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"&sort="endDate":-1', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '"{"$or":[{"state":"' + TransactionState.Pending + '"},{"state": "' + TransactionState.Open + '"}]&sort="endDate":-1', { headers: headers }).map(res => res.json());
 	}
 
 	saveTransaction(transaction: Transaction) {
@@ -114,8 +114,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 
-			'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + posType + '"}]', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + posType + '"}]', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByEmployee(employeeId: string, date: string) {

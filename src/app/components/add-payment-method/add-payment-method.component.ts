@@ -60,7 +60,21 @@ export class AddPaymentMethodComponent implements OnInit {
       'name': [this.paymentMethod.name, [
           Validators.required
         ]
-      ],
+      ],'discount': [this.paymentMethod.discount, [
+        ]
+      ],'surcharge': [this.paymentMethod.surcharge, [
+        ]
+      ],'isCurrentAccount': [this.paymentMethod.isCurrentAccount, [
+        ]
+      ],'acceptReturned': [this.paymentMethod.acceptReturned, [
+        ]
+      ],'inputAndOuput': [this.paymentMethod.inputAndOuput, [
+        ]
+      ],'checkDetail': [this.paymentMethod.checkDetail, [
+        ]
+      ],'cardDetail': [this.paymentMethod.cardDetail, [
+        ]
+      ]
     });
 
     this.paymentMethodForm.valueChanges

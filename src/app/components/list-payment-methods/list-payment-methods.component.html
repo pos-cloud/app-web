@@ -22,14 +22,35 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Nombre </th>
+              <th (click)="orderBy('discount')">Descuento </th>
+              <th (click)="orderBy('surcharge')">Recargo </th>
+              <th (click)="orderBy('isCurrentAccount')">Cuenta Corriente </th>
+              <th (click)="orderBy('acceptReturned')">Acepta vuelto </th>
+              <th (click)="orderBy('inputAndOuput')">Entrada/Salida </th>
+              <th (click)="orderBy('checkDetail')">Detalle de cheque </th>
+              <th (click)="orderBy('cardDetail')">Detalle de tarjeta </th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDiscount" placeholder="Descuento..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterSurcharge" placeholder="Recargo..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterIsCurrentAccount" placeholder="Cuenta Corriente..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterAcceptReturned" placeholder="Acepta vuelto..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterInputAndOuput" placeholder="Entrada/Salida..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCheckDetail" placeholder="Detalle de cheque..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCardDetail" placeholder="Detalle de tarjeta..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let paymentMethod of paymentMethods | filter: filterDescription:'name' 
+            <tr *ngFor="let paymentMethod of paymentMethods | filter: filterName:'name' 
+                                                            | filter: filterDiscount:'discount'
+                                                            | filter: filterSurcharge:'surcharge'
+                                                            | filter: filterIsCurrentAccount:'isCurrentAccount'
+                                                            | filter: filterAcceptReturned:'acceptReturned'
+                                                            | filter: filterInputAndOuput:'inputAndOuput'
+                                                            | filter: filterCheckDetail:'checkDetail'
+                                                            | filter: filterCardDetail:'cardDetail'
                                                             | orderBy: orderTerm: propertyTerm
                                                             | paginate: { itemsPerPage: itemsPerPage, 
                                                                           currentPage: p, 
@@ -41,6 +62,13 @@
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', paymentMethod)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td class="flat">{{paymentMethod.name}}</td>
+              <td class="flat">{{paymentMethod.discount}}</td>
+              <td class="flat">{{paymentMethod.surcharge}}</td>
+              <td class="flat">{{paymentMethod.isCurrentAccount}}</td>
+              <td class="flat">{{paymentMethod.acceptReturned}}</td>
+              <td class="flat">{{paymentMethod.inputAndOuput}}</td>
+              <td class="flat">{{paymentMethod.checkDetail}}</td>
+              <td class="flat">{{paymentMethod.cardDetail}}</td>
             </tr>
             <tr align="center" *ngIf="areMakesEmpty">
               <td colspan="2">No se encontraron métodos de pagos</td>
