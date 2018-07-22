@@ -775,7 +775,7 @@ export class AddSaleOrderComponent implements OnInit {
             if (this.posType === "resto") {
               this.table.employee = null;
               this.changeStateOfTable(TableState.Available, true);
-            } else if (this.posType === "mostrador") {
+            } else {
               this.backFinal();
             }
           }
@@ -1202,6 +1202,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public backFinal(): void {
+    
     if (this.posType === "resto") {
       this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
     } else if (this.posType === "mostrador") {
