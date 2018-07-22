@@ -13,6 +13,7 @@
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
+        <button class="btn btn-primary" (click)="openModal('import', null)">Importar Clientes</button>
       </div>
     </div>
       <div class="card-block table-responsive">
@@ -78,7 +79,7 @@
               <td>{{company.emails}}</td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty">
-              <td colspan="10">No se encontraron empresas</td>
+              <td colspan="11">No se encontraron empresas</td>
             </tr>
           </tbody>
         </table>

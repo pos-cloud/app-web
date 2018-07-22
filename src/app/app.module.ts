@@ -151,6 +151,7 @@ import { RoundNumberPipe } from './pipes/round-number.pipe';
 
 //directives
 import { FocusDirective } from './directives/focus.directive';
+import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
 
 @NgModule({
   declarations: [
@@ -251,7 +252,8 @@ import { FocusDirective } from './directives/focus.directive';
     AddPaymentMethodComponent,
     UpdatePaymentMethodComponent,
     DeletePaymentMethodComponent,
-    ListPaymentMethodsComponent
+    ListPaymentMethodsComponent,
+    DeleteMovementOfCashComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -274,7 +276,8 @@ import { FocusDirective } from './directives/focus.directive';
     AddPaymentMethodComponent,
     UpdatePaymentMethodComponent,
     DeletePaymentMethodComponent,
-    ListPaymentMethodsComponent
+    ListPaymentMethodsComponent,
+    DeleteMovementOfCashComponent
   ],
   imports: [
     BrowserModule,

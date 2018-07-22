@@ -12,6 +12,7 @@ import { AddCompanyComponent } from './../../components/add-company/add-company.
 import { UpdateCompanyComponent } from './../../components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './../../components/delete-company/delete-company.component';
 import { SendMailComponent } from './../../components/send-mail/send-mail.component';
+import { ImportComponent } from '../import/import.component';
 
 @Component({
   selector: 'app-list-companies',
@@ -144,6 +145,31 @@ export class ListCompaniesComponent implements OnInit {
           }, (reason) => {
             
           });
+        break;
+      case 'import':
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        let model: any = new Company();
+        model.model = "company";
+        model.primaryKey = "code";
+        model.code = "";
+        model.name = "";
+        model.fantasyName = "";
+        model.type = CompanyType.Client;
+        model.vatCondition = null;
+        model.CUIT = "";
+        model.DNI = "";
+        model.address = "";
+        model.city = "";
+        model.phones = "";
+        model.emails = "";
+        modalRef.componentInstance.model = model;
+        modalRef.result.then((result) => {
+          if (result === 'import_close') {
+            this.getCompaniesByType();
+          }
+        }, (reason) => {
+
+        });
         break;
       default : ;
     }

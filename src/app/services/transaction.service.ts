@@ -60,7 +60,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '"{"$or":[{"state":"' + TransactionState.Pending + '"},{"state": "' + TransactionState.Open + '"}]&sort="endDate":-1', { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"&sort="endDate":-1', { headers: headers }).map(res => res.json());
 	}
 
 	saveTransaction(transaction: Transaction) {
