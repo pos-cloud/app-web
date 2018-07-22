@@ -145,8 +145,8 @@
                                                       | filter: filterSendEndDate:'endDate'  
                                                       | filter: filterSendCompany:'name':'company'
                                                       | filter: filterSendAddress:'address':'company'
-                                                      | filter: filterSendPhones:'phones':'name':'employeeOpening'
-                                                      | filter: filterSendEmployeeOpening:'totalPrice'
+                                                      | filter: filterSendPhones:'phones':'company'
+                                                      | filter: filterSendEmployeeOpening:'name':'employeeOpening'
                                                       | filter: filterSendTotalPrice:'totalPrice'
                                                       | filter: 'Enviado':'state'
                                                       | orderBy: orderTerm: propertyTerm">
@@ -222,6 +222,7 @@
                                                       | filter: filterDeliveredCompany:'name':'company'
                                                       | filter: filterDeliveredAddress:'address':'company'
                                                       | filter: filterDeliveredPhones:'phones':'company'
+                                                      | filter: filterDeliveredEmployeeOpening:'name':'employeeOpening'
                                                       | filter: filterDeliveredTotalPrice:'totalPrice'
                                                       | filter: 'Entregado':'state'
                                                       | orderBy: orderTerm: propertyTerm">

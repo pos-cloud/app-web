@@ -70,7 +70,8 @@
               <td>{{company.name}}</td>
               <td>{{company.fantasyName}}</td>
               <td>{{company.type}}</td>
-              <td>{{company.vatCondition.description}}</td>
+              <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
+              <td *ngIf="!company.vatCondition">Consumidor Final</td>
               <td>{{company.DNI}}</td>
               <td>{{company.CUIT}}</td>
               <td>{{company.address}}</td>
