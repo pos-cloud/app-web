@@ -228,12 +228,21 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let modalRef;
     switch(op) {
-      case 'delete' :
+      case 'delete':
           modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg' });
           modalRef.componentInstance.movementOfCash = movement;
           modalRef.result.then((result) => {
             if(result === 'delete_close') {
-              this.getMovementOfCashesByTransaction();
+              if(this.transaction.type.requestArticles) {
+                this.getMovementOfArticle(movement);
+              } else {
+                if (movement.discount && movement.discount !== 0) {
+                  this.transaction.totalPrice += movement.amountPaid * movement.discount / 100;
+                } else if (movement.surcharge && movement.surcharge !== 0) {
+                  this.transaction.totalPrice -= movement.amountPaid * movement.surcharge / 100;
+                }
+                this.updateTransaction();
+              }
             }
           }, (reason) => {
             
@@ -242,6 +251,55 @@ export class AddMovementOfCashComponent implements OnInit {
       default : ;
     }
   };
+
+  public getMovementOfArticle(movementOfCash: MovementOfCash): void {
+
+    this.loading = true;
+
+    let salePrice = 0;
+    if (movementOfCash.discount && movementOfCash.discount !== 0) {
+      salePrice = movementOfCash.amountPaid * movementOfCash.discount / 100;
+    } else if (movementOfCash.surcharge && movementOfCash.surcharge !== 0) {
+      salePrice = movementOfCash.amountPaid * movementOfCash.surcharge / 100;
+    }
+
+    this._movementOfArticleService.getMovementsOfArticles('where="transaction":"' + this.transaction._id + '","salePrice":' + salePrice + '').subscribe(
+      result => {
+        if (!result.movementsOfArticles) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loading = false;
+        } else {
+          this.deleteMovementOfArticle(result.movementsOfArticles[0]);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public deleteMovementOfArticle(movementOfArticle: MovementOfArticle): void {
+
+    this.loading = true;
+
+    this._movementOfArticleService.deleteMovementOfArticle(movementOfArticle._id).subscribe(
+      result => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.transaction.totalPrice -= movementOfArticle.salePrice;
+          this.updateTransaction();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
 
   public getPaymentMethods(): void {
 

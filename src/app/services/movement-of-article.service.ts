@@ -31,13 +31,17 @@ export class MovementOfArticleService {
     return this._http.get(Config.apiURL + "movement-of-article/"+id, { headers: headers }).map (res => res.json());
 	}
 
-  getMovementsOfArticles () {
+  getMovementsOfArticles (query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    return this._http.get(Config.apiURL + "movements-of-articles", { headers: headers }).map (res => res.json());
+    if(query) {
+      return this._http.get(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map (res => res.json());
+    } else {
+      return this._http.get(Config.apiURL + "movements-of-articles", { headers: headers }).map(res => res.json());
+    }
   }
   
   movementOfArticleExists(movementOfArticle: MovementOfArticle) {
