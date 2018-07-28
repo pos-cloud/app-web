@@ -1,5 +1,6 @@
-import { ConfigService } from './services/config.service';
 import { VATCondition } from './models/vat-condition';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 export class Config {
 
@@ -20,7 +21,7 @@ export class Config {
     static companyAddress: string;
     static companyPhone: string;
     static companyVatCondition: VATCondition;
-    static companyStartOfActivity: string;
+    static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     static companyGrossIncome: string;
     static heightLabel: number;
     static widthLabel: number;
