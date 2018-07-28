@@ -259,22 +259,15 @@ export class PrintComponent implements OnInit {
           codeInvoice = this.transaction.type.codes[y].code;
         }
       }
-      }
-
-      console.log(codeInvoice)
-
+    }
     //let date = this.transaction.CAEExpirationDate.split('T');
     
     let date = (this.transaction.CAEExpirationDate.split('T')[0].replace('-','')).replace('-','');
 
-
-  
     let digit = ((this.config[0].companyCUIT).replace('-', '')).replace('-', '') + 
                   codeInvoice + 
                   this.transaction.origin + 
                   this.transaction.CAE + date;
-
-    console.log(digit);
 
     let uno = 0;
     let dos = 0;
@@ -660,7 +653,9 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
+    if(subtotal) {
+      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247)
+    }
     this.doc.setFontType('bold')
     this.doc.text("Descuento:", 147, rowTotals)
     this.doc.setFontType('normal')

@@ -1,9 +1,9 @@
 //Paquetes Angular
-import { Component, OnInit, Input, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 //Paquetes de terceros
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -15,32 +15,48 @@ import { Transaction } from './../../models/transaction';
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
+import { DeleteMovementOfCashComponent } from '../delete-movement-of-cash/delete-movement-of-cash.component';
+import { TransactionService } from '../../services/transaction.service';
+import { MovementOfArticle } from '../../models/movement-of-article';
+import { TaxService } from '../../services/tax.service';
+
+//PIPES
+import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { Taxes } from '../../models/taxes';
+import { MovementOfArticleService } from '../../services/movement-of-article.service';
 
 @Component({
   selector: 'app-add-movement-of-cash',
   templateUrl: './add-movement-of-cash.component.html',
-  styleUrls: ['./add-movement-of-cash.component.css']
+  styleUrls: ['./add-movement-of-cash.component.css'],
+  providers: [NgbAlertConfig, RoundNumberPipe]
 })
 
 export class AddMovementOfCashComponent implements OnInit {
 
   @Input() transaction: Transaction;
   public movementOfCash: MovementOfCash;
+  public movementsOfCashes: MovementOfCash[];
   public paymentMethods: PaymentMethod[];
   public movementOfCashForm: FormGroup;
   public paymentChange: string = '0.00';
   public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public op: string;
-  public amountToCharge: number = 0;
+  public transactionAmount: number = 0.00;
+  public amountToPay: number = 0.00;
+  public amountPaid: number = 0.00;
+  public amountDiscount: number = 0.00;
+  public roundNumber = new RoundNumberPipe();
 
   public formErrors = {
     'paymentMethod': '',
+    'amountToPay': '',
     'amountPaid': '',
-    'cashChange': '',
+    'paymentChange': '',
     'observation': '',
-    'surcharge': ''
+    'surcharge': '',
+    'CUIT': ''
   };
 
   public validationMessages = {
@@ -48,11 +64,13 @@ export class AddMovementOfCashComponent implements OnInit {
       'required': 'Este campo es requerido.',
       'payValid': 'El monto ingresado es incorrecto para este medio de pago.'
     },
+    'amountToPay': {
+    },
     'amountPaid': {
       'required': 'Este campo es requerido.',
       'payValid': 'El monto ingresado es incorrecto.'
     },
-    'cashChange': {
+    'paymentChange': {
     },
     'observation': {
     }, 
@@ -68,9 +86,13 @@ export class AddMovementOfCashComponent implements OnInit {
   constructor(
     public _paymentMethodService: PaymentMethodService,
     public _movementOfCashService: MovementOfCashService,
+    public _transactionService: TransactionService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _modalService: NgbModal,
+    private _taxService: TaxService,
+    public _movementOfArticleService: MovementOfArticleService
   ) {
     this.movementOfCash = new MovementOfCash();
     this.movementOfCash.type = new PaymentMethod();
@@ -78,10 +100,9 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getMovementOfCashesByTransaction();
-    this.getPaymentMethods();
-    this.amountToCharge = this.transaction.totalPrice;
+    this.transactionAmount = this.transaction.totalPrice;
     this.buildForm();
+    this.getPaymentMethods();
   }
 
   ngAfterViewInit() {
@@ -89,23 +110,25 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public buildForm(): void {
-    
+
     this.movementOfCashForm = this._fb.group({
-      'amountToCharge': [parseFloat(this.amountToCharge.toFixed(2)), [
+      'transactionAmount': [parseFloat(this.transactionAmount.toFixed(2)), [
           Validators.required
         ]
       ],
       'paymentMethod': [this.movementOfCash.type, [
-          Validators.required,
-          this.validatePaymentMethod()
         ]
       ],
-      'amountPaid': [this.movementOfCash.amountPaid, [
-          Validators.required,
-          this.validateAmountPaid()
+      'amountToPay': [this.amountToPay, [
         ]
       ],
-      'cashChange': [this.paymentChange, [
+      'amountPaid': [this.amountPaid, [
+        ]
+      ],
+      'amountDiscount': [this.amountDiscount, [
+        ]
+      ],
+      'paymentChange': [this.paymentChange, [
         ]
       ],
       'observation': [this.movementOfCash.observation, [
@@ -152,21 +175,29 @@ export class AddMovementOfCashComponent implements OnInit {
   public getMovementOfCashesByTransaction(): void {
 
     this.loading = true;
-
+    
     this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfCashes) {
-          this.movementOfCash.amountPaid = this.amountToCharge;
-          this.movementOfCash.amountCharge = this.amountToCharge;
-          this.paymentChange = (this.movementOfCash.amountPaid - this.amountToCharge).toFixed(2);
-          this.op = "add";
+          this.movementsOfCashes = new Array();
+          this.amountToPay = this.transactionAmount;
+          this.movementOfCash.amountPaid = this.transactionAmount;
+          this.paymentChange = (this.amountPaid - this.transactionAmount).toFixed(2);
+          if (parseFloat(this.paymentChange) < 0) {
+            this.paymentChange = '0.00';
+          }
+          this.amountPaid = 0;
+          this.updateAmounts();
+          this.loading = false;
         } else {
-          this.movementOfCash = result.movementsOfCashes[0];
-          this.op = "update";
+          this.movementsOfCashes = result.movementsOfCashes;
+          if (this.isChargedFinished()) {
+            this.activeModal.close({ movementsOfCashes: this.movementsOfCashes });
+          } else {
+            this.updateAmounts();
+          }
+          this.loading = false;
         }
-        this.paymentChange = (this.movementOfCash.amountPaid - this.amountToCharge).toFixed(2);
-        this.setValueForm();
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
@@ -174,6 +205,43 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     );
   }
+
+  public isChargedFinished(): boolean {
+
+    let chargedFinished: boolean = false;
+    let amountPaid = 0;
+
+    if (this.movementsOfCashes.length > 0) {
+      for(let movement of this.movementsOfCashes) {
+        amountPaid += movement.amountPaid;
+      }
+    }
+
+    if(amountPaid >= this.transactionAmount) {
+      chargedFinished = true;
+    }
+    
+    return chargedFinished;
+  }
+
+  public openModal(op: string, movement: MovementOfCash): void {
+
+    let modalRef;
+    switch(op) {
+      case 'delete' :
+          modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg' });
+          modalRef.componentInstance.movementOfCash = movement;
+          modalRef.result.then((result) => {
+            if(result === 'delete_close') {
+              this.getMovementOfCashesByTransaction();
+            }
+          }, (reason) => {
+            
+          });
+        break;
+      default : ;
+    }
+  };
 
   public getPaymentMethods(): void {
 
@@ -183,7 +251,7 @@ export class AddMovementOfCashComponent implements OnInit {
       result => {
         if (!result.paymentMethods){
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {  
+        } else {
           this.paymentMethods = result.paymentMethods;
           if(this.transaction.type.name === "Saldo Inicial (+)" || 
             this.transaction.type.name === "Saldo Inicial (-)") {
@@ -218,7 +286,7 @@ export class AddMovementOfCashComponent implements OnInit {
               this.movementOfCash.surcharge = 0;
             }
           }
-          this.setValueForm();
+          this.getMovementOfCashesByTransaction();
         }
         this.loading = false;
       },
@@ -232,33 +300,29 @@ export class AddMovementOfCashComponent implements OnInit {
   public setValueForm(): void {
 
     if(!this.movementOfCash.observation) this.movementOfCash.observation = "";
-    this.movementOfCash.amountPaid = parseFloat(this.movementOfCash.amountPaid.toFixed(2));
-    this.movementOfCash.cashChange = parseFloat(this.movementOfCash.cashChange.toFixed(2));
-    if (!this.movementOfCash.discount) {
-      this.movementOfCash.discount = 0.00;
-    } else {
-      this.movementOfCash.discount = parseFloat(this.movementOfCash.discount.toFixed(2));
-    }
-    if (!this.movementOfCash.surcharge) {
-      this.movementOfCash.surcharge = 0.00;
-    } else {
-      this.movementOfCash.surcharge = parseFloat(this.movementOfCash.surcharge.toFixed(2));
-    }
+    if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
+    if (!this.movementOfCash.discount) this.movementOfCash.discount = 0.00;
+    if (!this.movementOfCash.surcharge) this.movementOfCash.surcharge = 0.00;
     if (!this.movementOfCash.receiver) this.movementOfCash.receiver = '';
     if (!this.movementOfCash.number) this.movementOfCash.number = '';
     if (!this.movementOfCash.bank) this.movementOfCash.bank = '';
     if (!this.movementOfCash.titular) this.movementOfCash.titular = '';
     if (!this.movementOfCash.CUIT) this.movementOfCash.CUIT = '';
     if (!this.movementOfCash.deliveredBy) this.movementOfCash.deliveredBy = '';
-
+    if (!this.amountToPay) this.amountToPay = 0.00;
+    if (!this.amountPaid) this.amountPaid = 0.00;
+    if (!this.amountDiscount) this.amountDiscount = 0.00;
+    
     let values = {
-      'amountToCharge': parseFloat(this.amountToCharge.toFixed(2)),
+      'transactionAmount': parseFloat(this.transactionAmount.toFixed(2)),
       'paymentMethod': this.movementOfCash.type,
-      'amountPaid': this.movementOfCash.amountPaid,
-      'cashChange': this.movementOfCash.cashChange,
+      'amountToPay': parseFloat(this.amountToPay.toFixed(2)),
+      'amountPaid': parseFloat(this.amountPaid.toFixed(2)),
+      'amountDiscount': parseFloat(this.amountDiscount.toFixed(2)),
+      'paymentChange': this.paymentChange,
       'observation': this.movementOfCash.observation,
-      'discount': this.movementOfCash.discount,
-      'surcharge': this.movementOfCash.surcharge,
+      'discount': parseFloat(this.movementOfCash.discount.toFixed(2)),
+      'surcharge': parseFloat(this.movementOfCash.surcharge.toFixed(2)),
       'expirationDate': this.movementOfCash.expirationDate,
       'receiver': this.movementOfCash.receiver,
       'number': this.movementOfCash.number,
@@ -281,14 +345,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.formErrors[field] = '';
 
       const control = form.get(field);
-      if (control && control.dirty && (field === 'paymentMethod' || field === 'amountPaid')) {
-        if (!this.validateAmountPaidByPaymentMethod()) {
-          const messages = this.validationMessages[field];
-          for (const key in control.errors) {
-            this.formErrors[field] += messages[key] + ' ';
-          }
-        }
-      } else if (control && control.dirty && !control.valid) {
+      if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
           this.formErrors[field] += messages[key] + ' ';
@@ -296,119 +353,123 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
     
-    if (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.amountToCharge < 0) {
+    this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
+    if (parseFloat(this.paymentChange) < 0) {
       this.paymentChange = '0.00';
-    } else {
-      this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.amountToCharge).toFixed(2);
     }
 
     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
   }
 
-  public updateAmounts() {
+  public updateAmounts(op?: string): void {
 
-    if (this.movementOfCashForm.value.paymentMethod.discount) {
+    if (op === 'amountToPay') {
+      this.amountToPay = this.movementOfCashForm.value.amountToPay;
+      if (this.amountToPay < 0) {
+        this.amountToPay = 0;
+      }
+    } else {
+      this.amountPaid = 0;
+      if (this.movementsOfCashes.length > 0) {
+        for (let movement of this.movementsOfCashes) {
+          this.amountPaid += movement.amountPaid;
+        }
+      }
+    }
+
+    if (op !== 'amountToPay') {
+      this.amountToPay = this.transactionAmount - this.amountPaid;
+    }
+
+    this.movementOfCash.discount = 0.00;
+    this.movementOfCash.surcharge = 0.00;
+
+    if (this.movementOfCashForm.value.paymentMethod.discount &&
+        this.movementOfCashForm.value.paymentMethod.discount !== 0) {
       this.movementOfCash.discount = this.movementOfCashForm.value.paymentMethod.discount;
-      this.amountToCharge = this.transaction.totalPrice - (this.transaction.totalPrice * this.movementOfCash.discount / 100);
-    } else {
-      this.movementOfCash.discount = 0.00;
-    }
-
-    if (this.movementOfCashForm.value.paymentMethod.surcharge) {
+      this.transactionAmount = this.transaction.totalPrice - (this.amountToPay * this.movementOfCash.discount / 100);
+    } else if (this.movementOfCashForm.value.paymentMethod.surcharge &&
+              this.movementOfCashForm.value.paymentMethod.surcharge !== 0) {
       this.movementOfCash.surcharge = this.movementOfCashForm.value.paymentMethod.surcharge;
-      this.amountToCharge = this.transaction.totalPrice + (this.transaction.totalPrice * this.movementOfCash.surcharge / 100);
+      this.transactionAmount = this.transaction.totalPrice + (this.amountToPay * this.movementOfCash.surcharge / 100);
     } else {
-      this.movementOfCash.surcharge = 0.00;
+      this.transactionAmount = this.transaction.totalPrice;
+    }
+    
+    if (op !== 'amountToPay') {
+      this.amountToPay = this.transactionAmount - this.amountPaid;
     }
 
-    this.movementOfCash.amountCharge = this.amountToCharge;
-    this.movementOfCash.amountPaid = this.amountToCharge;
-
+    this.paymentChange = (this.amountPaid + this.amountToPay - this.transactionAmount).toFixed(2);
+    if (parseFloat(this.paymentChange) < 0) {
+      this.paymentChange = '0.00';
+    }
+    
+    this.amountDiscount = this.transactionAmount - this.transaction.totalPrice;
+    
     this.setValueForm();
   }
 
-  public validateAmountPaid() {
-    return function (input: FormControl) {
-      let payValid = false;
-      let nameMethod;
-      let amountToCharge;
-      if (input.parent && input.parent.controls && input.parent.controls['paymentMethod'].value.name) {
-        nameMethod = input.parent.controls['paymentMethod'].value.name;
-        amountToCharge = input.parent.controls['amountToCharge'].value;
-        if (amountToCharge <= input.value) {
-          if (amountToCharge < input.value && nameMethod !== 'Efectivo') {
-            payValid = false;
-          } else {
-            payValid = true;
-          }
-        }
-      }
-      return payValid ? null : { payValid: true };
-    };
-  }
+  public areValidAmounts(): boolean {
 
-  public validateAmountPaidByPaymentMethod() {
-    
-    let payValid = true;
-    let amountPaid = this.movementOfCashForm.value.amountPaid;
-    let nameMethod = this.movementOfCashForm.value.paymentMethod.name;
-      if (this.amountToCharge <= amountPaid) {
-        if (this.amountToCharge < amountPaid && nameMethod !== 'Efectivo') {
-          payValid = false;
-        } else {
-          payValid = true;
-        }
+    let areValid: boolean = true;
+
+    if(this.amountToPay <= 0) {
+      areValid = false;
+      this.showMessage("El monto ingresado no puede ser 0 o menor.", "info", true); 
     }
-    return payValid;
-  }
+    
+    if ((parseFloat((this.amountPaid + this.amountToPay).toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2))) &&
+        !this.movementOfCash.type.acceptReturned) {
+      areValid = false;
+      this.showMessage("El medio de pago " + this.movementOfCash.type.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.", "info", true);
+    }
 
-  public validatePaymentMethod() {
-    return function (input: FormControl) {
-      let payValid = true;
-      let amountPaid;
-      let amountToCharge;
-      if (input.parent && input.parent.controls && input.parent.controls['amountPaid'].value) {
-        amountPaid = input.parent.controls['amountPaid'].value;
-        amountToCharge = input.parent.controls['amountToCharge'].value;
-        if (amountToCharge <= amountPaid) {
-          if (amountToCharge < amountPaid && input.value.name !== 'Efectivo') {
-            payValid = false;
-          } else {
-            payValid = true;
-          }
-        } else {
-          payValid = true;
-        }
-      }
-      return payValid ? null : { payValid: true };
-    };
+    if( this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
+      this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) &&
+      !this.movementOfCash.type.acceptReturned) {
+      areValid = false;
+      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', "info", true); 
+    }
+
+    if (this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
+      this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) &&
+      !this.movementOfCash.type.acceptReturned) {
+      areValid = false;
+      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) + '.', "info", true);
+    }
+
+    return areValid;
   }
 
   public addMovementOfCash(): void {
-    
-    this.movementOfCash.amountCharge = this.movementOfCashForm.value.amountToCharge;
-    this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountPaid;
-    this.movementOfCash.transaction = this.transaction;
-    this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
-    this.movementOfCash.cashChange = this.movementOfCashForm.value.cashChange;
-    this.movementOfCash.observation = this.movementOfCashForm.value.observation;
-    
-    if(this.movementOfCash.type.checkDetail) {
-      this.movementOfCash.state = MovementOfCashState.InPortafolio;
-      this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
-      this.movementOfCash.number = this.movementOfCashForm.value.number;
-      this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-      this.movementOfCash.titular = this.movementOfCashForm.value.titular;
-      this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
-      this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
-    } else {
-      this.movementOfCash.state = MovementOfCashState.Closed;
-    }
-    
-    if(this.op === "add") {
+
+    if (this.areValidAmounts()) {
+      this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountToPay;
+      this.movementOfCash.transaction = this.transaction;
+      this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+      this.movementOfCash.observation = this.movementOfCashForm.value.observation;
+      
+      if(this.movementOfCash.type.checkDetail) {
+        this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+        this.movementOfCash.number = this.movementOfCashForm.value.number;
+        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+        this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+        this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+        this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
+        // this.movementOfCash.state = MovementOfCashState.InPortafolio;
+        this.movementOfCash.state = MovementOfCashState.Closed;
+      } else {
+        this.movementOfCash.receiver = "";
+        this.movementOfCash.number = "";
+        this.movementOfCash.bank = "";
+        this.movementOfCash.titular = "";
+        this.movementOfCash.CUIT = "";
+        this.movementOfCash.deliveredBy = "";
+        this.movementOfCash.state = MovementOfCashState.Closed;
+      }
+      
       this.saveMovementOfCash();
-    } else if (this.op === "update"){
-      this.updateMovementOfCash();
     }
   }
 
@@ -426,8 +487,83 @@ export class AddMovementOfCashComponent implements OnInit {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
-          this.movementOfCash = result.movementOfCash;
-          this.activeModal.close({ movementOfCash: this.movementOfCash});
+          this.movementOfCash.number = "";
+          if(this.transactionAmount !== this.transaction.totalPrice) {
+            this.transaction.totalPrice = this.transactionAmount;
+            if(this.transaction.type.requestArticles) {
+              this.addMovementOfArticle();
+            } else {
+              this.updateTransaction();
+            }
+          } else {
+            this.getMovementOfCashesByTransaction();
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public addMovementOfArticle(): void {
+    
+    let movementOfArticle = new MovementOfArticle();
+
+    if (this.movementOfCash.type.surcharge && this.movementOfCash.type.surcharge > 0) {
+      movementOfArticle.description = "Recargo por pago con " + this.movementOfCash.type.name;
+      movementOfArticle.salePrice = this.movementOfCash.amountPaid * this.movementOfCash.type.surcharge / 100;
+    } else if (this.movementOfCash.type.discount && this.movementOfCash.type.discount > 0) {
+      movementOfArticle.description = "Descuento por pago con " + this.movementOfCash.type.name;
+      movementOfArticle.salePrice = - this.movementOfCash.amountPaid * this.movementOfCash.type.discount / 100;
+    }
+    movementOfArticle.transaction = this.transaction;
+    this.getTaxVAT(movementOfArticle);
+  }
+
+  public getTaxVAT(movementOfArticle: MovementOfArticle): void {
+
+    this.loading = true;
+
+    let taxes: Taxes[] = new Array();
+    let tax: Taxes = new Taxes();
+    tax.percentage = 21.00;
+    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+    tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+
+    this._taxService.getTaxes('where="name":"IVA"').subscribe(
+      result => {
+        if (!result.taxes) {
+          this.loading = false;
+          this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", "info", true);
+        } else {
+          this.hideMessage();
+          tax.tax = result.taxes[0];
+          taxes.push(tax);
+          movementOfArticle.taxes = taxes;
+          this.saveMovementOfArticle(movementOfArticle);
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
+
+    this.loading = true;
+    
+    this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
+      result => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          this.hideMessage();
+          movementOfArticle = result.movementOfArticle;
+          this.updateTransaction();
         }
         this.loading = false;
       },
@@ -438,18 +574,16 @@ export class AddMovementOfCashComponent implements OnInit {
     );
   }
 
-  public updateMovementOfCash(): void {
+  public updateTransaction(closed: boolean = false): void {
 
     this.loading = true;
 
-    this._movementOfCashService.updateMovementOfCash(this.movementOfCash).subscribe(
+    this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
-        if (!result.movementOfCash) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          this.loading = false;
+        if (!result.transaction) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
-          this.movementOfCash = result.movementOfCash;
-          this.activeModal.close({ movementOfCash: this.movementOfCash});
+          this.getMovementOfCashesByTransaction();
         }
         this.loading = false;
       },

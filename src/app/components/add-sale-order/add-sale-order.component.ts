@@ -12,7 +12,7 @@ import 'moment/locale/es';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionMovement, StockMovement } from './../../models/transaction-type';
 import { Taxes } from './../../models/taxes';
-import { ArticlePrintIn } from './../../models/article';
+import { ArticlePrintIn, Article } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
@@ -810,20 +810,9 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef.componentInstance.transaction = this.transaction;
           modalRef.result.then((result) => {
 
-            let movementOfCash = result.movementOfCash;
+            let movementsOfCashes = result.movementsOfCashes;
             
-            if (movementOfCash) {
-
-              if (movementOfCash.amountPaid > this.transaction.totalPrice && movementOfCash.type.name === "Tarjeta de Crédito") {
-                let movementOfArticle = new MovementOfArticle();
-                movementOfArticle.code = "00000";
-                movementOfArticle.description = "Recargo con Tarjeta de Crédito";
-                movementOfArticle.salePrice = movementOfCash.amountPaid - this.transaction.totalPrice;
-                movementOfArticle.transaction = this.transaction;
-                this.transaction.totalPrice = movementOfCash.amountPaid;
-                this.getTaxVAT(movementOfArticle);
-              }
-
+            if (movementsOfCashes) {
               if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                 this.transaction.origin = this.transaction.type.fixedOrigin;
               }

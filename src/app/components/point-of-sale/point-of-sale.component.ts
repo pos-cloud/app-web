@@ -287,6 +287,8 @@ export class PointOfSaleComponent implements OnInit {
             }
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
+          } else {
+            this.getOpenTransactionsByMovement(this.transactionMovement);
           }
         }, (reason) => {
           this.getOpenTransactionsByMovement(this.transactionMovement);

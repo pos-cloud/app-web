@@ -14,19 +14,19 @@
       <div class="modal-body">
         <div class="row">
           <div class="form-group col-md-12">
-            <label for="amountToCharge" class="control-label">Importe de venta:</label>
+            <label for="transactionAmount" class="control-label">Importe de la transacción:</label>
             <div class="input-group">
               <span class="input-group-addon">$</span>
-              <input type="number" class="form-control" formControlName="amountToCharge" name="amountToCharge" min="0" step="0.01" readonly/>
+              <input type="number" class="form-control" formControlName="transactionAmount" name="transactionAmount" readonly/>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-12">
             <label for="paymentMethod" class="control-label">Medio de pago:</label>
-            <select class="form-control" formControlName="paymentMethod" name="paymentMethod"  (change)="updateAmounts()">
+            <select class="form-control" formControlName="paymentMethod" name="paymentMethod"  (change)="updateAmounts('paymentMethod')">
                 <option *ngFor="let paymentMethod of paymentMethods"
-                        [selected]="paymentMethod._id === movementOfCash.type._id"
+                        [selected]="this.movementOfCash.type && this.movementOfCash.type._id === paymentMethod._id"
                         [ngValue]="paymentMethod"
                         [disabled]="(!transaction.company && paymentMethod.name === 'Cuenta Corriente') ||
                                     (transaction.type.name === 'Cobro' && paymentMethod.name === 'Cuenta Corriente') ||
@@ -38,31 +38,75 @@
                 {{ formErrors.paymentMethod }}
               </div>
           </div>
-          <div class="form-group col-md-3">
+        </div>
+        <div class="row" *ngIf="movementOfCash.type && (
+                                ( movementOfCash.type.discount &&
+                                  movementOfCash.type.discount > 0) ||
+                                ( movementOfCash.type.surcharge &&
+                                  movementOfCash.type.surcharge > 0))">
+          <div class="form-group col-md-4">
             <label for="discount" class="control-label">Descuento:</label>
             <div class="input-group">
               <span class="input-group-addon">%</span>
-              <input type="number" class="form-control" formControlName="discount" name="discount" min="0" step="0.01" [(ngModel)]="discount" readonly/>
+              <input type="number" class="form-control" formControlName="discount" name="discount" min="0" step="0.01" readonly/>
             </div>
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-4">
             <label for="surcharge" class="control-label">Recargo:</label>
             <div class="input-group">
               <span class="input-group-addon">%</span>
-              <input type="number" class="form-control" formControlName="surcharge" name="surcharge" min="0" step="0.01" [(ngModel)]="surcharge" readonly/>
+              <input type="number" class="form-control" formControlName="surcharge" name="surcharge" min="0" step="0.01" readonly/>
+            </div>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="amountDiscount" class="control-label">Descuento/Recargo:</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input type="number" class="form-control" min="0" step="0.01" formControlName="amountDiscount" name="amountDiscount" readonly/>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="amountToPay" class="control-label">Importe a pagar:</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input type="number" class="form-control" formControlName="amountToPay" name="amountToPay" min="0" step="0.01" [focus]="focusEvent" (change)="updateAmounts('amountToPay')"/>
+            </div>
+            <div *ngIf="formErrors.amountToPay" class="alert alert-danger">
+              {{ formErrors.amountToPay }}
+            </div>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="amountPaid" class="control-label">Importe abonado:</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input type="number" class="form-control" formControlName="amountPaid" name="amountPaid" min="0" step="0.01" readonly/>
+            </div>
+            <div *ngIf="formErrors.amountPaid" class="alert alert-danger">
+              {{ formErrors.amountPaid }}
             </div>
           </div>
         </div>
         <div class="row">
           <div class="form-group col-md-12">
-            <label for="amountPaid" class="control-label">Importe de pago:</label>
+            <label for="paymentChange" class="control-label">Su vuelto es:</label>
             <div class="input-group">
               <span class="input-group-addon">$</span>
-              <input type="number" class="form-control" formControlName="amountPaid" name="amountPaid" min="0" step="0.01" [focus]="focusEvent"/>
+              <input type="number" class="form-control"  name="paymentChange" formControlName="paymentChange" min="0" step="0.01" [(ngModel)]="paymentChange" readonly/>
             </div>
-            <div *ngIf="formErrors.amountPaid" class="alert alert-danger">
-              {{ formErrors.amountPaid }}
-            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <label for="observation" class="control-label">Observación:</label>
+            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2">
+            </textarea>
+          </div>
+        </div>
+        <div class="row" *ngIf="movementOfCashForm.value.paymentMethod && movementOfCashForm.value.paymentMethod.checkDetail">
+          <div class="form-group col-md-12">
+            <b>Datos del cheque:</b>
           </div>
         </div>
         <div class="row" *ngIf="movementOfCashForm.value.paymentMethod && movementOfCashForm.value.paymentMethod.checkDetail">
@@ -99,26 +143,36 @@
           <div class="form-group col-md-6">
             <label for="CUIT" class="control-label">CUIT:</label>
             <input type="text" class="form-control" name="CUIT" formControlName="CUIT"/>
-          </div>
-          <div *ngIf="formErrors.CUIT" class="alert alert-danger">
-            {{ formErrors.CUIT }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <label for="cashChange" class="control-label">Su vuelto es:</label>
-            <div class="input-group">
-              <span class="input-group-addon">$</span>
-              <input type="number" class="form-control"  name="cashChange" formControlName="cashChange" min="0" step="0.01" [(ngModel)]="paymentChange" readonly/>
+            <div *ngIf="formErrors.CUIT" class="alert alert-danger">
+              {{ formErrors.CUIT }}
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <label for="observation" class="control-label">Observación:</label>
-            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2">
-            </textarea>
-          </div>
+        <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th width="130">
+                  <i class="fa fa-bars"></i>
+                </th>
+                <th>Método</th>
+                <th>Monto</th>
+                <th>Comprobante</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let movement of movementsOfCashes">
+                <td align="left" width="130">
+                  <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="openModal('delete', movement)">
+                    <i class="fa fa-trash-o"></i>
+                  </button>
+                </td>
+                <td class="flat" width="430">{{ movement.type.name }}</td>
+                <td class="flat" width="430">{{ movement.amountPaid }}</td>
+                <td class="flat" width="430">{{ movement.number }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     <div class="modal-footer">

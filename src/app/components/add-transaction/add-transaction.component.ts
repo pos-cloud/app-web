@@ -10,7 +10,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { TransactionMovement } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 import { Taxes } from '../../models/taxes';
 
@@ -42,7 +42,7 @@ export class AddTransactionComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
   public datePipe = new DateFormatPipe();
-  public letters: string[] = ["A", "B", "C", "E", "M", "R", "X"];
+  public letters: string[] = ["A", "B", "C", "E", "M", "R", "T","X"];
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: string;
 
@@ -122,7 +122,7 @@ export class AddTransactionComponent implements OnInit {
   public setValuesForm(): void {
     
     if (!this.transaction.origin) this.transaction.origin = 0;
-    if (!this.transaction.letter) this.transaction.letter = "A";     
+    if (!this.transaction.letter) this.transaction.letter = "X";     
     if(!this.transaction.number) this.transaction.number = 1;     
     if(!this.transaction.observation) this.transaction.observation = ""; 
 

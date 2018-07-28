@@ -26,7 +26,7 @@ export class Article {
     public allowSale: Boolean = true;
     public allowSaleWithoutStock: Boolean = false;
     public printed: boolean;
-    public picture: string;
+    public picture: string = 'default.jpg';
 
     constructor() {}
 }
