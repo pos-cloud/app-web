@@ -425,34 +425,24 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
+    
     if (op !== 'amountToPay') {
-      this.amountToPay = this.transactionAmount - this.amountPaid;
+      this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
     }
 
-    this.movementOfCash.discount = 0.00;
-    this.movementOfCash.surcharge = 0.00;
+    this.movementOfCash.discount = this.movementOfCash.type.discount;
+    this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
 
-    if (this.movementOfCashForm.value.paymentMethod.discount &&
-        this.movementOfCashForm.value.paymentMethod.discount !== 0) {
-      this.movementOfCash.discount = this.movementOfCashForm.value.paymentMethod.discount;
+    if (this.movementOfCash.discount &&
+        this.movementOfCash.discount !== 0) {
       this.transactionAmount = this.transaction.totalPrice - (this.amountToPay * this.movementOfCash.discount / 100);
-    } else if (this.movementOfCashForm.value.paymentMethod.surcharge &&
-              this.movementOfCashForm.value.paymentMethod.surcharge !== 0) {
-      this.movementOfCash.surcharge = this.movementOfCashForm.value.paymentMethod.surcharge;
+    } else if (this.movementOfCash.surcharge &&
+              this.movementOfCash.surcharge !== 0) {
       this.transactionAmount = this.transaction.totalPrice + (this.amountToPay * this.movementOfCash.surcharge / 100);
     } else {
       this.transactionAmount = this.transaction.totalPrice;
-      this.movementOfCash.discount = this.movementOfCash.type.discount;
-      this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
-      if (this.movementOfCash.discount &&
-        this.movementOfCash.discount !== 0) {
-        this.transactionAmount = this.transaction.totalPrice - (this.amountToPay * this.movementOfCash.discount / 100);
-      } else if (this.movementOfCash.surcharge &&
-                this.movementOfCash.surcharge !== 0) {
-                this.transactionAmount = this.transaction.totalPrice + (this.amountToPay * this.movementOfCash.surcharge / 100);
-      }
     }
-    
+
     if (op !== 'amountToPay') {
       this.amountToPay = this.transactionAmount - this.amountPaid;
     }

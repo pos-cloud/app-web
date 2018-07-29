@@ -368,7 +368,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(closed: boolean = false): void {
-
+    
     this.loading = true;
     
     this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -1072,10 +1072,10 @@ export class AddSaleOrderComponent implements OnInit {
 
   public assignLetter() {
 
-    if(this.transaction.type.fixedLetter && this.transaction.type.fixedLetter === "") {
+    if(this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
-      if(Config.companyVatCondition && Config.companyVatCondition.description === "Responsable Inscripto") {
+      if (Config.companyVatCondition && Config.companyVatCondition.description === "Responsable Inscripto") {
         if (this.transaction.company &&
             this.transaction.company.vatCondition) {
           this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
@@ -1083,7 +1083,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.letter = "B";
         }
       } else if (Config.companyVatCondition &&  Config.companyVatCondition.description === "Monotributista") {
-          this.transaction.letter = "C";
+        this.transaction.letter = "C";
       } else {
         this.transaction.letter = "X";
       }
