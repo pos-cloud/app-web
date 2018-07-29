@@ -30,14 +30,14 @@
       <div class="row" *ngIf="transactionMovement === 'Venta'">
         <div class="form-group col-md-6">
           <label for="date" class="control-label">Fecha:</label>
-          <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"/>
+          <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" [readonly]="readonly"/>
           <div *ngIf="formErrors.date" class="alert alert-danger">
             {{ formErrors.date }}
           </div>
         </div>
         <div class="form-group col-md-6">
           <label for="origin" class="control-label">Punto de venta:</label>
-          <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent"/>
+          <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.origin" class="alert alert-danger">
             {{ formErrors.origin }}
           </div>
@@ -46,14 +46,14 @@
       <div class="row" *ngIf="transactionMovement === 'Compra'">
         <div class="form-group col-md-4">
           <label for="date" class="control-label">Fecha:</label>
-          <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" />
+          <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"[readonly]="readonly" />
           <div *ngIf="formErrors.date" class="alert alert-danger">
             {{ formErrors.date }}
           </div>
         </div>
         <div class="form-group col-md-2">
           <label for="origin" class="control-label">POS:</label>
-          <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent" />
+          <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.origin" class="alert alert-danger">
             {{ formErrors.origin }} 
           </div>
@@ -61,7 +61,12 @@
         <div class="form-group col-md-2">
           <label for="letter" class="control-label">Letra:</label>
           <select class="form-control" formControlName="letter">
-            <option *ngFor="let letter of letters" [selected]="!transaction.letter && transaction.company.vatCondition.transactionLetter === letter || transaction.letter === letter" [value]="letter" [disabled]="readonly">{{ letter }}</option>
+            <option *ngFor="let letter of letters" 
+                    [selected]="!transaction.letter && transaction.company.vatCondition.transactionLetter === letter || transaction.letter === letter" 
+                    [value]="letter" 
+                    [disabled]="readonly">
+                    {{ letter }}
+            </option>
           </select>
           <div *ngIf="formErrors.letter" class="alert alert-danger">
             {{ formErrors.letter }}
@@ -69,7 +74,7 @@
         </div>
         <div class="form-group col-md-4">
           <label for="number" class="control-label">Número:</label>
-          <input type="number" class="form-control" formControlName="number" name="number" min="1"/>
+          <input type="number" class="form-control" formControlName="number" name="number" min="1" [readonly]="readonly"/>
           <div *ngIf="formErrors.number" class="alert alert-danger">
             {{ formErrors.number }}
           </div>
@@ -80,7 +85,7 @@
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="basePrice" name="basePrice" min="0" step="0.01" (blur)="updatePrices('basePrice')"/>
+            <input type="number" class="form-control" formControlName="basePrice" name="basePrice" min="0" step="0.01" (blur)="updatePrices('basePrice')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.basePrice" class="alert alert-danger">
             {{ formErrors.basePrice }}
@@ -90,7 +95,7 @@
           <label for="exempt" class="control-label">Importe Exento:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="exempt" name="exempt" min="0" step="0.01" (blur)="updatePrices('exempt')"/>
+            <input type="number" class="form-control" formControlName="exempt" name="exempt" min="0" step="0.01" (blur)="updatePrices('exempt')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.exempt" class="alert alert-danger">
             {{ formErrors.exempt }}
@@ -103,7 +108,7 @@
           <label for="totalPrice" class="control-label">Importe Total:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" (blur)="updatePrices('totalPrice')"/>
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
             {{ formErrors.totalPrice }}

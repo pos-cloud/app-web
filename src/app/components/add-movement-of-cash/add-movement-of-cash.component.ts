@@ -333,16 +333,6 @@ export class AddMovementOfCashComponent implements OnInit {
             }
           } else {
             this.movementOfCash.type = this.paymentMethods[0];
-            if (this.paymentMethods[0] && this.paymentMethods[0].discount) {
-              this.movementOfCash.discount = this.paymentMethods[0].discount;
-            } else {
-              this.movementOfCash.discount = 0;
-            }
-            if (this.paymentMethods[0] && this.paymentMethods[0].surcharge) {
-              this.movementOfCash.surcharge = this.paymentMethods[0].surcharge;
-            } else {
-              this.movementOfCash.surcharge = 0;
-            }
           }
           this.getMovementOfCashesByTransaction();
         }
@@ -452,6 +442,15 @@ export class AddMovementOfCashComponent implements OnInit {
       this.transactionAmount = this.transaction.totalPrice + (this.amountToPay * this.movementOfCash.surcharge / 100);
     } else {
       this.transactionAmount = this.transaction.totalPrice;
+      this.movementOfCash.discount = this.movementOfCash.type.discount;
+      this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
+      if (this.movementOfCash.discount &&
+        this.movementOfCash.discount !== 0) {
+        this.transactionAmount = this.transaction.totalPrice - (this.amountToPay * this.movementOfCash.discount / 100);
+      } else if (this.movementOfCash.surcharge &&
+                this.movementOfCash.surcharge !== 0) {
+                this.transactionAmount = this.transaction.totalPrice + (this.amountToPay * this.movementOfCash.surcharge / 100);
+      }
     }
     
     if (op !== 'amountToPay') {

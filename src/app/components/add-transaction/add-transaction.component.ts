@@ -45,6 +45,7 @@ export class AddTransactionComponent implements OnInit {
   public letters: string[] = ["A", "B", "C", "E", "M", "R", "T","X"];
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: string;
+  public readonly: boolean = false;
 
   public formErrors = {
     'date': '',
@@ -103,15 +104,20 @@ export class AddTransactionComponent implements OnInit {
     this.posType = pathLocation[2];
 
     this.transactionMovement = this.transaction.type.transactionMovement.toString();
+
+    if (!this.transaction._id || this.transaction._id === "") {
+      this.readonly = false;
+      if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+        this.transaction.origin = this.transaction.type.fixedOrigin;
+      }
+  
+      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+        this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+      }
+    } else {
+      this.readonly = true;
+    }
     
-    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-      this.transaction.origin = this.transaction.type.fixedOrigin;
-    }
-
-    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
-      this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
-    }
-
     this.buildForm();
   }
 
@@ -234,8 +240,11 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.exempt = this.transactionForm.value.exempt;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.origin = this.transactionForm.value.origin;
-    this.transaction.number = this.transactionForm.value.number;
-    this.transaction.letter = this.transactionForm.value.letter;
+    if(this.transactionMovement && (this.transactionMovement !== TransactionMovement.Sale.toString())) {
+      this.transaction.letter = this.transactionForm.value.letter;
+      this.transaction.number = this.transactionForm.value.number;
+    }
+    
     this.transaction.observation = this.transactionForm.value.observation;
     this.setValuesForm();
   }
@@ -261,25 +270,28 @@ export class AddTransactionComponent implements OnInit {
 
   public addTransaction(): void {
     
-    this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
-    this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
-    this.transaction.expirationDate = this.transaction.endDate;
-    this.transaction.origin = this.transactionForm.value.origin;
-    
-    if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
-        this.transaction.letter = this.transaction.type.fixedLetter;
-      } else {
-        this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
-      }
-    } else {
-      this.transaction.letter = this.transactionForm.value.letter;
-    }
-
-    this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.observation = this.transactionForm.value.observation;
-
-    this.getLastTransactionByType();
+    
+    if(!this.readonly) {
+      
+      this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
+      this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
+      this.transaction.expirationDate = this.transaction.endDate;
+      this.transaction.origin = this.transactionForm.value.origin;
+      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+        this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+      } else {
+        if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+        } else {
+          this.transaction.letter = this.transactionForm.value.letter;
+        }
+      }
+      this.transaction.totalPrice = this.transactionForm.value.totalPrice;
+      this.getLastTransactionByType();
+    } else {
+      this.updateTransaction();
+    }
   }
 
   public getLastTransactionByType(): void {
@@ -290,21 +302,10 @@ export class AddTransactionComponent implements OnInit {
       result => {
         if (!result.transactions) {
           this.transaction.number = 1;
-          if(this.transaction.state === TransactionState.Open) {
-            this.transaction.state = TransactionState.Pending;
-            this.saveTransaction();
-          } else {
-            this.updateTransaction();
-          }
         } else {
           this.transaction.number = result.transactions[0].number + 1;
-          if(this.transaction.state === TransactionState.Open) {
-            this.transaction.state = TransactionState.Pending;
-            this.saveTransaction();
-          } else {
-            this.updateTransaction();
-          }
         }
+        this.saveTransaction();
         this.loading = false;
       },
       error => {
@@ -321,7 +322,7 @@ export class AddTransactionComponent implements OnInit {
       this.posType = "mostrador";
     }
     this.transaction.madein = this.posType;
-    
+
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
