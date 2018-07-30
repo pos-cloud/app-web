@@ -1,5 +1,7 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -70,6 +72,7 @@ export class ConfigBackupComponent implements OnInit {
     'companyVatCondition': {
     },
     'companyStartOfActivity': {
+      'dateValid': 'Fecha inválida'
     },
     'companyGrossIncome': {
     },
@@ -127,7 +130,8 @@ export class ConfigBackupComponent implements OnInit {
       'companyVatCondition': [this.config['companyVatCondition'], [
         ]
       ],
-      'companyStartOfActivity': [this.dateFormat.transform(this.config['companyStartOfActivity'], 'DD/MM/YYYY'), [
+      'companyStartOfActivity': ['', [
+          this.validateDate()
         ]
       ],
       'companyGrossIncome': [this.config['companyGrossIncome'], [
@@ -293,6 +297,22 @@ export class ConfigBackupComponent implements OnInit {
     }
   }
 
+  public validateDate() {
+    return function (input: FormControl) {
+      let dateValid = false;
+      let date;
+      if (input.parent && input.parent.controls && input.parent.controls['companyStartOfActivity'].value) {
+        date = input.parent.controls['companyStartOfActivity'].value;
+        if (moment(date, 'DD/MM/YYYY').isValid()) {
+          dateValid = true;
+        } else {
+          dateValid = false;
+        }
+      }
+      return dateValid ? null : { dateValid: true };
+    };
+  }
+
   public getVatConditions(): void {
 
     this.loadingCompany = true;
@@ -326,6 +346,7 @@ export class ConfigBackupComponent implements OnInit {
 
   public addConfigCompany() {
     this.config = this.configFormCompany.value;
+    this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
     this.updateConfigCompany();
   }
 
@@ -472,14 +493,14 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['companyName']) this.config['companyName'] = "";
     if (!this.config['companyCUIT']) this.config['companyCUIT'] = "";
     if (!this.config['companyVatCondition']) this.config['companyVatCondition'] = this.vatConditions[0];
-    if (!this.config['companyStartOfActivity']) this.config['companyStartOfActivity'] = "";
+    if (!this.config['companyStartOfActivity']) this.config['companyStartOfActivity'] = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = "";
     if (!this.config['companyAddress']) this.config['companyAddress'] = "";
     if (!this.config['companyPhone']) this.config['companyPhone'] = "";
     if (!this.config['footerInvoice']) this.config['footerInvoice'] = "";
     if (!this.config['heightLabel']) this.config['heightLabel'] = "";
     if (!this.config['widthLabel']) this.config['widthLabel'] = "";
-
+    
     this.configFormCompany.setValue({
       '_id': this.config['_id'],
       'companyName': this.config['companyName'],
@@ -487,7 +508,7 @@ export class ConfigBackupComponent implements OnInit {
       'companyAddress': this.config['companyAddress'],
       'companyPhone': this.config['companyPhone'],
       'companyVatCondition': this.config['companyVatCondition'],
-      'companyStartOfActivity': this.dateFormat.transform(this.config['companyStartOfActivity'], 'DD/MM/YYYY'),
+      'companyStartOfActivity': moment(this.config['companyStartOfActivity'], 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY'),
       'companyGrossIncome': this.config['companyGrossIncome'],
       'footerInvoice': this.config['footerInvoice']
     });

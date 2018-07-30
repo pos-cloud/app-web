@@ -11,7 +11,7 @@
       <form [formGroup]="" #formAddConfig="ngForm" (ngSubmit)="downloadlicense()" autocomplete="off">
         <div class= "row">
           <div class="form-group col-md-3">
-            <b>Vence {{ config.expirationLicense | dateFormat:'DD/MM/YYYY hh:mm:ss' }}</b>
+            <b>Vence {{ config.expirationLicense | dateFormat:'DD/MM/YYYY' }}</b>
           </div>
           <div class= "form-group col-md-9">
             <!-- <button type="submit" class="btn btn-primary" [disabled]="loading" >
@@ -70,8 +70,10 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Fecha de inicio de actividades</span>
-              <input type="text" class="form-control" formControlName="companyStartOfActivity" name="companyStartOfActivity" id="companyStartOfActivity"
-                aria-describedby="basic-addon1">
+              <input type="text" class="form-control" formControlName="companyStartOfActivity" placeholder="DD/MM/AAAA" name="companyStartOfActivity" id="companyStartOfActivity" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyStartOfActivity" class="alert alert-danger">
+              {{ formErrors.companyStartOfActivity }}
             </div>
           </div>
         </div>
