@@ -492,7 +492,13 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['emailPassword']) this.config['emailPassword'] = "";
     if (!this.config['companyName']) this.config['companyName'] = "";
     if (!this.config['companyCUIT']) this.config['companyCUIT'] = "";
-    if (!this.config['companyVatCondition']) this.config['companyVatCondition'] = this.vatConditions[0];
+    if (!this.config['companyVatCondition']) {
+      if(this.vatConditions.length > 0) {
+        this.config['companyVatCondition'] = this.vatConditions[0];
+      } else {
+        this.config['companyVatCondition'] = null;
+      }
+    }
     if (!this.config['companyStartOfActivity']) this.config['companyStartOfActivity'] = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = "";
     if (!this.config['companyAddress']) this.config['companyAddress'] = "";

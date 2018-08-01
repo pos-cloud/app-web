@@ -40,7 +40,7 @@ export class PointOfSaleComponent implements OnInit {
   public transactionMovement: TransactionMovement;
   public userType: string;
   public propertyTerm: string;
-  public orderTerm: string[] = ['number'];
+  public orderTerm: string[] = ['startDate'];
   public posType: string;
   public existsCashBoxOpen: boolean = false;
   public alertMessage: string = "";
