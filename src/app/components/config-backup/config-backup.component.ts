@@ -102,7 +102,6 @@ export class ConfigBackupComponent implements OnInit {
     this.userType = pathLocation[1];
     this.config = new Config();
     this.getVatConditions();
-    this.getConfig();
     this.buildFormCompany();
     // this.buildFormBackup();
     this.buildFormEmail();
@@ -324,6 +323,7 @@ export class ConfigBackupComponent implements OnInit {
           this.loadingCompany = false;
         } else {
           this.vatConditions = result.vatConditions;
+          this.getConfig();
         }
         this.loadingCompany = false;
       },
@@ -368,6 +368,7 @@ export class ConfigBackupComponent implements OnInit {
         } else {
           this.config = result.configs[0];
           this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingBackup = false;
@@ -391,6 +392,7 @@ export class ConfigBackupComponent implements OnInit {
         } else {
           this.config = result.configs[0];
           this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingEmail = false;
@@ -414,6 +416,7 @@ export class ConfigBackupComponent implements OnInit {
         } else {
           this.config = result.configs[0];
           this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingCompany = false;
@@ -437,6 +440,7 @@ export class ConfigBackupComponent implements OnInit {
         } else {
           this.config = result.configs[0];
           this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingLabel = false;
@@ -493,7 +497,7 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['companyName']) this.config['companyName'] = "";
     if (!this.config['companyCUIT']) this.config['companyCUIT'] = "";
     if (!this.config['companyVatCondition']) {
-      if(this.vatConditions.length > 0) {
+      if(this.vatConditions && this.vatConditions.length > 0) {
         this.config['companyVatCondition'] = this.vatConditions[0];
       } else {
         this.config['companyVatCondition'] = null;
@@ -537,6 +541,13 @@ export class ConfigBackupComponent implements OnInit {
       'heightLabel': this.config['heightLabel'],
       'widthLabel': this.config['widthLabel'],
     });
+  }
+
+  public setConfigurationSettings(config) {
+    if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
+    if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
+    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
+      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
