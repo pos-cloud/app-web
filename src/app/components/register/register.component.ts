@@ -4,10 +4,8 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { User, UserState } from './../../models/user';
+import { UserState } from './../../models/user';
 import { Employee } from './../../models/employee';
-import { EmployeeType } from './../../models/employee-type';
-import { Company } from '../../models/company';
 
 import { UserService } from './../../services/user.service';
 import { EmployeeService } from './../../services/employee.service';
@@ -37,13 +35,7 @@ export class RegisterComponent implements OnInit {
     'companyName': '',
     'category': '',
     'email': '',
-    'phone': '',
-    'counter': '',
-    'resto': '',
-    'delivery': '',
-    'electronicTransactions': '',
-    'purchase': '',
-    'stock': ''
+    'phone': ''
   };
 
   public validationMessages = {
@@ -62,18 +54,6 @@ export class RegisterComponent implements OnInit {
     },
     'phone': {
       'required': 'Este campo es requerido.'
-    },
-    'counter': {
-    },
-    'resto': {
-    },
-    'delivery': {
-    },
-    'electronicTransactions': {
-    },
-    'purchase': {
-    },
-    'stock': {
     }
   };
 
@@ -133,6 +113,9 @@ export class RegisterComponent implements OnInit {
         ]
       ],
       'electronicTransactions': [false, [
+        ]
+      ],
+      'currentAccount': [true, [
         ]
       ],
       'purchase': [false, [
@@ -220,6 +203,7 @@ export class RegisterComponent implements OnInit {
       'resto': this.registerForm.value.resto,
       'delivery': this.registerForm.value.delivery,
       'electronicTransactions': this.registerForm.value.electronicTransactions,
+      'currentAccount': this.registerForm.value.currentAccount,
       'purchase': this.registerForm.value.purchase,
       'stock': this.registerForm.value.stock,
     });
@@ -227,63 +211,40 @@ export class RegisterComponent implements OnInit {
 
   public register(): void {
 
-    this.loading = true;
-    this._userService.register(this.registerForm.value).subscribe(
-      result => {
-        if(!result.user) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {
-          this.showMessage("Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.", "success", false);
+    if (this.isDBNameValid(this.registerForm.value.companyName)) {
+
+      this.loading = true;
+      
+      this._userService.register(this.registerForm.value).subscribe(
+        result => {
+          if(!result.user) {
+            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          } else {
+            this.showMessage("Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.", "success", false);
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.showMessage("No se aceptan los siguientes caractéres en el nombre de negocio: '.', '&', '@'", "info", true);
+    }
   }
 
-  public login(user): void {
+  public isDBNameValid(dbName: string): boolean {
 
-    this.showMessage("Comprobando usuario...", "info", false);
-    this.loading = true;
-    
-    localStorage.setItem('database', this.registerForm.value.companyName.replace(/ /g, '_').toLocaleLowerCase());
+    let isValid: boolean = false;
 
-    //Obtener el token del usuario
-    this._userService.login(user).subscribe(
-      result => {
-        if (!result.user) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          this.loading = false;
-        } else {
-          this.showMessage("Ingresando...", "success", false);
-          user = result.user;
-          let userStorage = new User();
-          userStorage._id = user._id;
-          userStorage.name = user.name;
-          if (user.employee) {
-            userStorage.employee = new Employee();
-            userStorage.employee._id = user.employee._id;
-            userStorage.employee.name = user.employee.name;
-            userStorage.employee.type = new EmployeeType();
-            userStorage.employee.type._id = user.employee.type._id;
-            userStorage.employee.type.description = user.employee.type.description;
-          }
-          sessionStorage.setItem('user', JSON.stringify(userStorage));
-          sessionStorage.setItem('session_token', user.token);
-          this._router.navigate(['/']);
-          location.reload();
+    if (dbName.indexOf('.') === -1 &&
+        dbName.indexOf('&') === -1 &&
+        dbName.indexOf('@') === -1) {
+      isValid = true;
+    }
 
-          this.loading = false;
-        }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    )
+    return isValid;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

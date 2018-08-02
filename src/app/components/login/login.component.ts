@@ -114,8 +114,52 @@ export class LoginComponent implements OnInit {
 
   public login(): void {
     
-    this.loadDatabase();
+    this.isDatabaseValid();
+  }
+
+  public isDatabaseValid(): void {
     
+    let isValid: boolean = true;
+
+    if (this.database || this.loginForm.value.name.indexOf('@') !== -1) {
+      if (this.loginForm.value.name.indexOf('@') !== -1 &&
+          this.loginForm.value.name.split("@")[1] !== "") {
+        let dbName = this.loginForm.value.name.split("@")[1];
+            if (this.isDBNameValid(dbName)) {
+              localStorage.setItem('database', this.loginForm.value.name.split("@")[1].toLowerCase());
+            } else {
+              isValid = false;
+              this.showMessage("El usuario y/o contraseña son incorrectos", "info", true);  
+            }
+      } else if (!this.database) {
+        isValid = false;
+        this.showMessage("El usuario y/o contraseña son incorrectos", "info", true);  
+      }
+    } else {
+      isValid = false;
+      this.showMessage("El usuario y/o contraseña son incorrectos", "info", true);
+    }
+
+    if(isValid) {
+      this.login2();
+    }
+  }
+
+  public isDBNameValid(dbName: string): boolean {
+
+    let isValid: boolean = false;
+
+    if( dbName.indexOf('.') === -1 &&
+        dbName.indexOf('&') === -1 &&
+        dbName.indexOf('@') === -1) {
+          isValid = true;
+    }
+
+    return isValid;
+  }
+
+  public login2() : void {
+
     if (this.database && this.loginForm.value.name.indexOf('@') === -1) {
       this.user.name = this.loginForm.value.name;
     } else {
@@ -130,7 +174,7 @@ export class LoginComponent implements OnInit {
     this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
         } else {
           this.showMessage("Ingresando...", "success", false);
@@ -153,7 +197,7 @@ export class LoginComponent implements OnInit {
         }
       },
       error => {
-        if(error.status === 0) {
+        if (error.status === 0) {
           this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", "danger", false);
         } else {
           this.showMessage(error._body, "danger", false);
@@ -161,13 +205,6 @@ export class LoginComponent implements OnInit {
         this.loading = false;
       }
     )
-  }
-
-  public loadDatabase(): void {
-
-    if (!this.database || (this.loginForm.value.name.indexOf('@') !== -1 && this.database !== this.loginForm.value.name.split("@")[1])) {
-      localStorage.setItem('database', this.loginForm.value.name.split("@")[1].toLowerCase());
-    }
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {
