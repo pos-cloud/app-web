@@ -11,6 +11,8 @@ import { UpdateArticleStockComponent } from './../../components/update-article-s
 import { ImportComponent } from './../../components/import/import.component';
 
 import { PrintComponent } from 'app/components/print/print.component';
+import { PrinterService } from '../../services/printer.service';
+import { PrinterPrintIn, Printer } from '../../models/printer';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -32,19 +34,43 @@ export class ListArticleStocksComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
   public itemsPerPage = 10;
   public totalItems = 0;
+  public printers: Printer[];
 
   constructor(
     public _articleStockService: ArticleStockService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _printerService: PrinterService
   ) { }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.getPrinters();
     this.getArticleStocks();
+  }
+
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.printers = new Array();
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getArticleStocks(): void {
@@ -117,7 +143,14 @@ export class ListArticleStocksComponent implements OnInit {
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.articleStock = articleStock;
-        modalRef.componentInstance.typePrint = 'articleStock';
+        modalRef.componentInstance.typePrint = 'label';
+        if (this.printers && this.printers.length > 0) {
+          for (let printer of this.printers) {
+            if (printer.printIn === PrinterPrintIn.Label) {
+              modalRef.componentInstance.printer = printer;
+            }
+          }
+        }
         break;
       default: 
         break;

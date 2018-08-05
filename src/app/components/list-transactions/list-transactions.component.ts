@@ -16,6 +16,8 @@ import { ExportCitiComponent } from './../../components/export-citi/export-citi.
 
 //Pipes
 import { PrintComponent } from 'app/components/print/print.component';
+import { PrinterService } from '../../services/printer.service';
+import { Printer, PrinterPrintIn } from '../../models/printer';
 
 @Component({
   selector: 'app-list-transactions',
@@ -38,13 +40,15 @@ export class ListTransactionsComponent implements OnInit {
   public itemsPerPage: number = 10;
   public totalItems = 0;
   public modules: Observable<{}>;
+  public printers: Printer[];
 
   constructor(
     public _transactionService: TransactionService,
     public _router: Router,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _printerService: PrinterService
   ) { }
 
   ngOnInit(): void {
@@ -53,6 +57,7 @@ export class ListTransactionsComponent implements OnInit {
     this.userType = pathLocation[1];
     this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     this.modules = Observable.of(Config.modules);
+    this.getPrinters();
     if (this.listType === "Compras") {
       this.getTransactionsByMovement(TransactionMovement.Purchase);
     } else if (this.listType === "Ventas") {
@@ -60,6 +65,27 @@ export class ListTransactionsComponent implements OnInit {
     } else if (this.listType === "Stock") {
       this.getTransactionsByMovement(TransactionMovement.Stock);
     }
+  }
+
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.printers = new Array();
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getTransactionsByMovement(transactionMovement: TransactionMovement): void {
@@ -120,6 +146,13 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.typePrint = 'invoice';
+        if(this.printers && this.printers.length > 0) {
+          for(let printer of this.printers) {
+            if(printer.printIn === PrinterPrintIn.Counter) {
+              modalRef.componentInstance.printer = printer;
+            }
+          }
+        }
         break;
       case 'cancel':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });

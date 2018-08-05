@@ -401,29 +401,30 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.typeOfOperationToPrint = 'item';
     
-    for (let movementOfArticle of this.movementsOfArticles) {
-      if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
-        this.barArticlesToPrint.push(movementOfArticle);
-      }
-
-      if (movementOfArticle.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
-        this.kitchenArticlesToPrint.push(movementOfArticle);
+    if(this.movementsOfArticles.length > 0) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
+          this.barArticlesToPrint.push(movementOfArticle);
+        }
+  
+        if (movementOfArticle.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+          this.kitchenArticlesToPrint.push(movementOfArticle);
+        }
       }
     }
 
     if (this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
-    }
-
-    if (this.kitchenArticlesToPrint.length !== 0 && this.barArticlesToPrint.length === 0) {
+    } else if (this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "kitchen";
       this.openModal('printers');
-    }
-
-    if (this.barArticlesToPrint.length === 0 && this.kitchenArticlesToPrint.length === 0) {
+    } else {
       if (this.posType === "resto") {
         this.changeStateOfTable(TableState.Busy, true);
+      } else if (this.posType === "delivery" && this.movementsOfArticles.length > 0) {
+        this.typeOfOperationToPrint = "kitchen";
+        this.openModal("printers");
       } else {
         this.backFinal();
       }
@@ -638,8 +639,8 @@ export class AddSaleOrderComponent implements OnInit {
     let transactionTaxes: Taxes[] = new Array();
     let transactionTaxesAUX: Taxes[] = new Array();
 
+    this.transaction.exempt = 0;
     for (let movementOfArticle of this.movementsOfArticles) {
-
       if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
 
         let transactionTax: Taxes = new Taxes();
@@ -709,14 +710,28 @@ export class AddSaleOrderComponent implements OnInit {
 
   public validateElectronicTransaction(): void {
     
-    
-    
     this.showMessage("Validando comprobante con AFIP...", "info", false);
 
     this._transactionService.validateElectronicTransaction(this.transaction).subscribe(
       result => {
-        if (result.status === 'err'){
-          this.showMessage(result.code + " - " + result.message, "danger", false);
+        if (result.status === 'err') {
+          let msn = "";
+          if(result.code && result.code !== "") {
+            msn += result.code + " - ";
+          }
+          if (result.message && result.message !== "") {
+            msn += result.message + ". ";
+          }
+          if (result.observationMessage && result.observationMessage !== "") {
+            msn += result.observationMessage + ". ";
+          }
+          if (result.observationMessage2 && result.observationMessage2 !== "") {
+            msn += result.observationMessage2 + ". ";
+          }
+          if(msn === "") {
+            msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+          }
+          this.showMessage(msn, "info", true);
         } else {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
@@ -732,7 +747,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage("Ha ocurrido un error en el servidor: " + error, "danger", false);
+        this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", "danger", false);
         this.loading = false;
       }
     )
@@ -832,6 +847,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
         break;
       case 'printers':
+      
         if (this.countPrinters() > 1) {
           modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
             if (result !== "cancel" && result !== "") {
@@ -875,6 +891,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transaction = this.transaction;
         modalRef.componentInstance.company = this.transaction.company;
+        modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
         }, (reason) => {
@@ -892,8 +909,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.state = TransactionState.Closed;
     this.updateTransaction(false);
     
-    if (this.transaction.type.printable &&
-      this.transaction.type.printable) {
+    if (this.transaction.type.printable) {
 
       if (this.posType === "resto") {
         this.table.employee = null;
@@ -1064,6 +1080,16 @@ export class AddSaleOrderComponent implements OnInit {
           this.openModal("print");
         }
         break;
+      case 'kitchen': 
+        if (printer.type === PrinterType.PDF) {
+          this.openModal("print");
+        }
+        break;
+      case 'bar':
+        if (printer.type === PrinterType.PDF) {
+          this.openModal("print");
+        }
+        break;
       default:
         this.showMessage("No se reconoce la operación de impresión.", "danger", false);
         break;
@@ -1071,7 +1097,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public assignLetter() {
-
+    
     if(this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {

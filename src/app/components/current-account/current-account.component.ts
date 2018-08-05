@@ -47,7 +47,6 @@ export class CurrentAccountComponent implements OnInit {
   public balance: number = 0;
   public itemsPerPage = 10;
   public totalItems = 0;
-  public printers: Printer[];
 
   constructor(
     public _transactionService: TransactionService,
@@ -66,30 +65,7 @@ export class CurrentAccountComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.printers = new Array();
     this.openModal('company');
-    this.getPrinters();
-  }
-
-  public getPrinters(): void {
-
-    this.loading = true;
-
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.printers = undefined;
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public getTransactionsByCompany(): void {
@@ -280,13 +256,6 @@ export class CurrentAccountComponent implements OnInit {
           modalRef.componentInstance.company = this.companySelected;
           modalRef.componentInstance.typePrint = 'current-account';
           modalRef.componentInstance.balance = this.balance;
-          if(this.printers.length > 0) {
-            for(let printer of this.printers) {
-              if(printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
-              }
-            }
-          }
         } else {
           this.showMessage("Debe seleccionar una empresa","info", true);
         }

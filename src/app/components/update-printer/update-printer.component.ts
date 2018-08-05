@@ -20,13 +20,13 @@ export class UpdatePrinterComponent implements OnInit {
   @Input() printer: Printer;
   @Input() readonly: boolean;
   public types: PrinterType[] = [PrinterType.PDF];
-  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar];
+  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label];
   public printerForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public pageSizes: string[] = ["A4", "Roll Paper", "Personalizado"];
+  public pageSizes: string[] = ["A4", "Roll Paper", "Etiqueta", "Personalizado"];
 
   public formErrors = {
     'name': '',
@@ -90,7 +90,7 @@ export class UpdatePrinterComponent implements OnInit {
           Validators.required
         ]
       ],
-      'pageSize': [this.printer.pageSize, [
+      'pageSize': ["", [
         ]
       ]
     });
@@ -129,6 +129,10 @@ export class UpdatePrinterComponent implements OnInit {
       case "Roll Paper":
         this.printer.pageWidth = 80;
         this.printer.pageHigh = 297;
+        break;
+      case "Etiqueta":
+        this.printer.pageWidth = 29;
+        this.printer.pageHigh = 62;
         break;
       case "Personalizado":
         this.printer.pageWidth = 0;

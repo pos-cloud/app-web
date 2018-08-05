@@ -175,7 +175,7 @@ export class TransactionService {
 		let headers = new Headers();
 		headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
-		let body= 'transaction='+JSON.stringify(transaction)+'&'+'config='+'{"companyCUIT":"'+Config.companyCUIT+'"}';
+		let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyCUIT":"' + Config.companyCUIT + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + this._userService.getDatabase() + '"}';
 		
 		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
 	}

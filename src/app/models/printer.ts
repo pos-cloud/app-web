@@ -15,6 +15,7 @@ export class Printer {
 export enum PrinterPrintIn {
     Bar = <any>"Bar",
     Kitchen = <any>"Cocina",
+    Label = <any>"Etiqueta",
     Counter = <any>"Mostrador"
 }
 

@@ -1,3 +1,4 @@
+
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -17,6 +18,8 @@ import { ImportComponent } from './../../components/import/import.component';
 import { PrintComponent } from 'app/components/print/print.component';
 
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { Printer, PrinterPrintIn } from '../../models/printer';
+import { PrinterService } from '../../services/printer.service';
 
 @Component({
   selector: 'app-list-articles',
@@ -44,12 +47,14 @@ export class ListArticlesComponent implements OnInit {
   public itemsPerPage = 10;
   public totalItems = 0;
   public roundNumber = new RoundNumberPipe();
+  public printers: Printer[];
 
   constructor(
     public _articleService: ArticleService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _printerService: PrinterService
   ) {
     if (this.filterCategorySelected === undefined) {
       this.filterCategorySelected = new Category();
@@ -65,7 +70,29 @@ export class ListArticlesComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.getPrinters();
     this.getFinalArticles();
+  }
+
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.printers = new Array();
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getFinalArticles(): void {
@@ -112,11 +139,6 @@ export class ListArticlesComponent implements OnInit {
 
     let modalRef;
     switch (op) {
-      case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.article = article;
-        modalRef.componentInstance.typePrint = 'article';
-        break;
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
         modalRef.componentInstance.article = article;
@@ -168,6 +190,18 @@ export class ListArticlesComponent implements OnInit {
         }, (reason) => {
 
         });
+        break;
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.article = article;
+        modalRef.componentInstance.typePrint = 'label';
+        if (this.printers && this.printers.length > 0) {
+          for (let printer of this.printers) {
+            if (printer.printIn === PrinterPrintIn.Label) {
+              modalRef.componentInstance.printer = printer;
+            }
+          }
+        }
         break;
       default: ;
     }
