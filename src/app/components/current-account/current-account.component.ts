@@ -7,8 +7,8 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, CurrentAcount, Movements, TransactionMovement } from './../../models/transaction-type';
-import { Company, CompanyType } from './../../models/company';
+import { CurrentAcount, Movements } from './../../models/transaction-type';
+import { Company } from './../../models/company';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
 //Services
@@ -22,6 +22,8 @@ import { AddTransactionComponent } from './../add-transaction/add-transaction.co
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { PrintComponent } from 'app/components/print/print.component';
+import { PrinterService } from '../../services/printer.service';
+import { Printer, PrinterPrintIn } from '../../models/printer';
 
 @Component({
   selector: 'app-current-account',
@@ -45,6 +47,7 @@ export class CurrentAccountComponent implements OnInit {
   public balance: number = 0;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public printers: Printer[];
 
   constructor(
     public _transactionService: TransactionService,
@@ -53,7 +56,8 @@ export class CurrentAccountComponent implements OnInit {
     public _companyService: CompanyService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _printerService: PrinterService
   ) {
     this.movementsOfCashes = new Array();
   }
@@ -62,7 +66,30 @@ export class CurrentAccountComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.printers = new Array();
     this.openModal('company');
+    this.getPrinters();
+  }
+
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.printers = undefined;
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getTransactionsByCompany(): void {
@@ -253,6 +280,13 @@ export class CurrentAccountComponent implements OnInit {
           modalRef.componentInstance.company = this.companySelected;
           modalRef.componentInstance.typePrint = 'current-account';
           modalRef.componentInstance.balance = this.balance;
+          if(this.printers.length > 0) {
+            for(let printer of this.printers) {
+              if(printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
+            }
+          }
         } else {
           this.showMessage("Debe seleccionar una empresa","info", true);
         }
