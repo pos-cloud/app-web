@@ -12,24 +12,31 @@ export class OrderByPipe implements PipeTransform {
 
         //Si la variable es indefinida la seteamos en blanco
         if(a === undefined || a === null) {
-            a="";
+            if(b && !isNaN(b)) {
+                a = 0;
+            } else {
+                a = "";
+            }
         }
         if (b === undefined || b === null) {
-            b="";
+            if (a && !isNaN(a)) {
+                b = 0;
+            } else {
+                b = "";
+            }
         }
 
         if((isNaN(parseFloat(a)) || !isFinite(a)) || (isNaN(parseFloat(b)) || !isFinite(b))){
-        //Si no es un número convertimos en minúscula para comparar correctamente
-        if(a.toLowerCase() < b.toLowerCase()) return -1;
-        if(a.toLowerCase() > b.toLowerCase()) return 1;
-    }
-    else{
-        //Parsear las cadenas como números para comparar correctamente
-        if(parseFloat(a) < parseFloat(b)) return -1;
-        if(parseFloat(a) > parseFloat(b)) return 1;
-    }
+            //Si no es un número convertimos en minúscula para comparar correctamente
+            if(a.toLowerCase() < b.toLowerCase()) return -1;
+            if(a.toLowerCase() > b.toLowerCase()) return 1;
+        } else{
+            //Parsear las cadenas como números para comparar correctamente
+            if(parseFloat(a) < parseFloat(b)) return -1;
+            if(parseFloat(a) > parseFloat(b)) return 1;
+        }
 
-    return 0; //equal each other
+        return 0; //equal each other
     }
 
     //input = Array a comparar
