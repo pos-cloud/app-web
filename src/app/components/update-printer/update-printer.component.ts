@@ -30,7 +30,6 @@ export class UpdatePrinterComponent implements OnInit {
 
   public formErrors = {
     'name': '',
-    'connectionURL': '',
     'type': '',
     'printIn': ''
   };
@@ -38,8 +37,6 @@ export class UpdatePrinterComponent implements OnInit {
   public validationMessages = {
     'name': {
       'required': 'Este campo es requerido.'
-    },
-    'connectionURL': {
     },
     'type': {
       'required': 'Este campo es requerido.'
@@ -91,6 +88,9 @@ export class UpdatePrinterComponent implements OnInit {
       ],
       'printIn': [this.printer.printIn, [
           Validators.required
+        ]
+      ],
+      'pageSize': [this.printer.pageSize, [
         ]
       ]
     });
@@ -158,7 +158,8 @@ export class UpdatePrinterComponent implements OnInit {
       'type': this.printer.type,
       'pageWidth': this.printer.pageWidth,
       'pageHigh': this.printer.pageHigh,
-      'printIn': this.printer.printIn
+      'printIn': this.printer.printIn,
+      'pageSize': this.printerForm.value.pageSize
     });
   }
 
