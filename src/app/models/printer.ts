@@ -5,6 +5,8 @@ export class Printer {
     public origin: number = 0;
     public connectionURL: string;
     public type: PrinterType = PrinterType.PDF;
+    public pageWidth: number;
+    public pageHigh: number;
     public printIn: PrinterPrintIn = PrinterPrintIn.Counter;
 
     constructor() { }

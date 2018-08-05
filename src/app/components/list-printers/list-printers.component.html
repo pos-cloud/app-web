@@ -21,25 +21,25 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Name</th>
-              <th (click)="orderBy('origin')">Punto de venta</th>
-              <th (click)="orderBy('connectionURL')">URL de conexión</th>
               <th (click)="orderBy('type')">Tipo</th>
+              <th (click)="orderBy('pageWidth')">Ancho de Página</th>
+              <th (click)="orderBy('pageHigh')">Alto de Página</th>
               <th (click)="orderBy('printIn')">Imprime en</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Punto de venta..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterConnectionURL" placeholder="URL de conexión..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterPrintIn" placeholder="Imprime en..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterPageWidth" placeholder="Ancho de Página..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterPageHigh" placeholder="Alto de Página..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterPrintIn" placeholder="Imprime en..."></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let printer of printers | filter: filterName:'name' 
-                                                | filter: filterOrigin:'origin'
-                                                | filter: filterConnectionURL:'connectionURL' 
                                                 | filter: filterType:'type'
+                                                | filter: filterPageWidth:'pageWidth'
+                                                | filter: filterPageHigh:'pageHigh'
                                                 | filter: filterPrintIn:'printIn'
                                                 | orderBy: orderTerm: propertyTerm
                                                 | paginate: { itemsPerPage: itemsPerPage, 
@@ -52,9 +52,9 @@
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', printer)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td class="flat">{{printer.name}}</td>
-              <td class="flat">{{printer.origin}}</td>
-              <td class="flat">{{printer.connectionURL}}</td>
               <td class="flat">{{printer.type}}</td>
+              <td class="flat">{{printer.pageWidth}}</td>
+              <td class="flat">{{printer.pageHigh}}</td>
               <td class="flat">{{printer.printIn}}</td>
             </tr>
             <tr align="center" *ngIf="arePrintersEmpty">

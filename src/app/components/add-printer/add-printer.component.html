@@ -13,39 +13,48 @@
   <form [formGroup]="printerForm" #formAddPrinter="ngForm" (ngSubmit)="addPrinter()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="name" class="control-label">Nombre:</label>
           <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" />
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-4">
-          <label for="origin" class="control-label">Punto de venta:</label>
-          <input type="number" class="form-control" formControlName="origin" name="origin" id="origin" />
-        </div>
-        <div class="form-group col-md-4">
-          <label for="type" class="control-label">Tipo</label>
+        <div class="form-group col-md-6">
+          <label for="type" class="control-label">Tipo:</label>
           <select class="form-control" formControlName="type">
             <option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
           </select>
         </div>
+      </div>
+      <div class="row">
         <div class="form-group col-md-4">
-          <label for="printIn" class="control-label">Imprime en</label>
-          <select class="form-control" formControlName="printIn">
-            <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{printIn}}</option>
+          <label for="pageSize" class="control-label">Tipo:</label>
+          <select class="form-control" formControlName="pageSize" (change)="updatePageSize()">
+            <option *ngFor="let pageSize of pageSizes" [ngValue]="pageSize">{{pageSize}}</option>
           </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="pageWidth" class="control-label">Ancho de página:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="pageWidth" name="pageWidth" id="pageWidth" aria-describedby="basic-addon1"/>
+            <span class="input-group-addon" id="basic-addon1">mm</span>
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="pageHigh" class="control-label">Alto de página:</label>
+          <div class="input-group">
+            <input type="number" class="form-control" formControlName="pageHigh" name="pageHigh" id="pageHigh" aria-describedby="basic-addon1"/>
+            <span class="input-group-addon" id="basic-addon1">mm</span>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="connectionURL" class="control-label">URL de conexión:</label>
-          <input type="text" class="form-control" formControlName="connectionURL" name="connectionURL" id="connectionURL" />
-          <div *ngIf="formErrors.connectionURL" class="alert alert-danger">
-            {{ formErrors.connectionURL }}
-          </div>
+          <label for="printIn" class="control-label">Imprime en</label>
+          <select class="form-control" formControlName="printIn">
+            <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{printIn}}</option>
+          </select>
         </div>
       </div>
     </div>

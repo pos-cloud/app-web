@@ -19,12 +19,13 @@ export class AddPrinterComponent implements OnInit {
 
   public printer: Printer;
   public types: PrinterType[] = [PrinterType.PDF];
-  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter];
+  public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar];
   public printerForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public pageSizes: string[] = ["A4", "Roll Paper", "Personalizado"];
 
   public formErrors = {
     'name': '',
@@ -60,6 +61,7 @@ export class AddPrinterComponent implements OnInit {
     this.userType = pathLocation[1];
     this.printer = new Printer();
     this.buildForm();
+    this.updatePageSize();
   }
 
   ngAfterViewInit() {
@@ -73,17 +75,20 @@ export class AddPrinterComponent implements OnInit {
           Validators.required
         ] 
       ],
-      'origin': [this.printer.origin, [
-        ]
-      ],
-      'connectionURL': [this.printer.connectionURL, [
-        ]
-      ],
       'type': [this.printer.type, [
           Validators.required
         ]
       ],
+      'pageWidth': [this.printer.pageWidth, [
+        ]
+      ],
+      'pageHigh': [this.printer.pageHigh, [
+        ]
+      ],
       'printIn': [this.printer.printIn, [
+        ]
+      ],
+      'pageSize': [this.pageSizes[0], [
         ]
       ]
     });
@@ -111,6 +116,48 @@ export class AddPrinterComponent implements OnInit {
         }
       }
     }
+  }
+
+  public updatePageSize(): void {
+    
+    switch (this.printerForm.value.pageSize) {
+      case "A4":
+        this.printer.pageWidth = 210;
+        this.printer.pageHigh = 297;
+        break;
+      case "Roll Paper":
+        this.printer.pageWidth = 80;
+        this.printer.pageHigh = 297; 
+        break;
+      case "Personalizado":
+        this.printer.pageWidth = 0;
+        this.printer.pageHigh = 0;
+        break;
+    }
+
+    this.printer.name = this.printerForm.value.name;
+    this.printer.type = this.printerForm.value.type;
+    this.printer.printIn = this.printerForm.value.printIn;
+
+    this.setValueForm();
+  }
+
+  public setValueForm(): void {
+
+    if (!this.printer.name) this.printer.name = "";
+    if (!this.printer.type) this.printer.type = PrinterType.PDF;
+    if (!this.printer.pageWidth) this.printer.pageWidth = 0;
+    if (!this.printer.pageHigh) this.printer.pageHigh = 0;
+    if (!this.printer.printIn) this.printer.printIn = PrinterPrintIn.Counter;
+
+    this.printerForm.setValue({
+      'name': this.printer.name,
+      'type': this.printer.type,
+      'pageWidth': this.printer.pageWidth,
+      'pageHigh': this.printer.pageHigh,
+      'printIn': this.printer.printIn,
+      'pageSize': this.printerForm.value.pageSize
+    });
   }
 
   public addPrinter(): void {
