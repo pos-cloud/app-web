@@ -35,7 +35,7 @@
       <div class="row" *ngIf="table">
         <div class="form-group col-md-8">
           <div class="input-group">
-            <input type="number" class="form-control" formControlName="chair" name="chair" id="chair"/>
+            <input type="number" class="form-control" formControlName="chair" name="chair" id="chair" [focus]="focusEvent"/>
           </div>
         </div>
         <div class="col-md-4" align="right">

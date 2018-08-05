@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -9,7 +9,7 @@ import { Employee } from './../../models/employee';
 import { User } from '../../models/user';
 import { Table } from './../../models/table';
 import { Turn, TurnState } from './../../models/turn';
-import { Transaction, TransactionState } from './../../models/transaction';
+import { TransactionState } from './../../models/transaction';
 
 import { EmployeeService } from './../../services/employee.service';
 import { EmployeeTypeService } from './../../services/employee-type.service';
@@ -19,7 +19,6 @@ import { UserService } from './../../services/user.service';
 import { TransactionService } from './../../services/transaction.service';
 
 import { PrintComponent } from './../../components/print/print.component';
-import { TransferState } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-select-employee',
@@ -38,6 +37,7 @@ export class SelectEmployeeComponent implements OnInit {
   @Input() op: string;
   @Input() typeEmployee: string;
   @Input() table: Table;
+  public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
     'employee': '',
@@ -73,6 +73,10 @@ export class SelectEmployeeComponent implements OnInit {
     
     this.buildForm();
     this.setValuesForm();
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   public buildForm(): void {
