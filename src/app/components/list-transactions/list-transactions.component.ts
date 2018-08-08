@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Transaction } from './../../models/transaction';
-import { TransactionMovement } from './../../models/transaction-type';
+import { TransactionMovement, Movements } from './../../models/transaction-type';
 import { Config } from './../../app.config';
 
 import { TransactionService } from './../../services/transaction.service';
@@ -18,6 +18,8 @@ import { ExportCitiComponent } from './../../components/export-citi/export-citi.
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
+import { CurrencyPipe } from '../../../../node_modules/@angular/common';
+import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-list-transactions',
@@ -41,6 +43,7 @@ export class ListTransactionsComponent implements OnInit {
   public totalItems = 0;
   public modules: Observable<{}>;
   public printers: Printer[];
+  public roundNumber = new RoundNumberPipe();
 
   constructor(
     public _transactionService: TransactionService,
@@ -175,24 +178,23 @@ export class ListTransactionsComponent implements OnInit {
     }
   };
 
-  // public calculateTotal(transactions: Transaction[], col, format): string {
+  public calculateTotal(transactions: Transaction[], col, format): string {
 
-  //   let currencyPipe = new CurrencyPipe('ARS');
-  //   let total = 0;
-  //   if (transactions) {
-  //     for(let transaction of transactions) {
-  //       if (transaction[col]) {
-  //         if (transaction.type.movement === Movements.Outflows) {
-  //           total -= transaction[col];
-  //         } else {
-  //           total += transaction[col];
-  //         }
-  //       }
-  //     }
-  //   }
+    let total = 0;
+    if (transactions) {
+      for(let transaction of transactions) {
+        if (transaction[col]) {
+          if (transaction.type.movement === Movements.Outflows) {
+            total -= transaction[col];
+          } else {
+            total += transaction[col];
+          }
+        }
+      }
+    }
 
-  //   return currencyPipe.transform(total, format, 'symbol', "2");
-  // }
+    return this.roundNumber.transform(total);
+  }
 
   public exportCiti(): void {
 

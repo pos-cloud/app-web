@@ -125,10 +125,11 @@
             <td colspan="16">No se encontraron transacciones</td>
           </tr>
         </tbody>
-        <!-- <tfoot>
+        <tfoot>
             <td>
               <strong>Totales</strong>
             </td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -168,7 +169,7 @@
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'totalPrice', '1.2-2') }}
               </b>
             </td>
-          </tfoot> -->
+          </tfoot>
       </table>
     </div>
     <div class="card-footer bg-primary">
@@ -296,7 +297,7 @@
             <td colspan="16">No se encontraron transacciones</td>
           </tr>
         </tbody>
-        <!-- <tfoot>
+        <tfoot>
             <td>
               <strong>Totales</strong>
             </td>
@@ -306,18 +307,6 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <b>
-                {{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
-              filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
-              | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
-              filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
-              filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'diners', '1.0-0') }}
-              </b>
-            </td>
             <td></td>
             <td></td>
             <td></td>
@@ -339,7 +328,7 @@
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'totalPrice', '1.2-2') }}
               </b>
             </td>
-          </tfoot> -->
+          </tfoot>
       </table>
     </div>
     <div class="card-footer bg-primary">
@@ -448,7 +437,7 @@
             <td colspan="16">No se encontraron transacciones</td>
           </tr>
         </tbody>
-        <!-- <tfoot>
+        <tfoot>
             <td>
               <strong>Totales</strong>
             </td>
@@ -458,18 +447,6 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <b>
-                ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
-              filterEndDate:'endDate' | filter: filterCompany:'name':'company' | filter: filterTable:'description':'table' | filter: filterEmployee:'name':'employeeClosing'
-              | filter: filterTurn:'startDate':'turnOpening' | filter: filterDiners:'diners' | filter: filterMadein:'madein' | filter:
-              filterState:'state' | filter: filterPaymentMethod:'name':'paymentMethod' | filter: filterObservation:'observation' | filter:
-              filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'discount', '1.2-2') }}
-              </b>
-            </td>
             <td>
               <b>
                 ${{ calculateTotal(transactions | filter: filterType:'name':'type' | filter: filterOrigin:'origin' | filter: filterLetter:'letter' | filter: filterNumber:'number' | filter:
@@ -479,7 +456,7 @@
               filterDiscount:'discount' | filter: filterTotalPrice:'totalPrice', 'totalPrice', '1.2-2') }}
               </b>
             </td>
-          </tfoot> -->
+          </tfoot>
       </table>
     </div>
     <div class="card-footer bg-primary">
