@@ -18,6 +18,8 @@ export class Company {
     public city: string;
     public phones: string;
     public emails: String;
+    public gender: GenderType;
+    public birthday: string = moment().format('DD/MM/YYYY');
 
     constructor() {}
 }
@@ -25,4 +27,9 @@ export class Company {
 export enum CompanyType {
     Client = <any> "Cliente",
     Provider = <any> "Proveedor",
+}
+
+export enum GenderType {
+    Male = <any> "Hombre",
+    Femela = <any> "Mujer"
 }

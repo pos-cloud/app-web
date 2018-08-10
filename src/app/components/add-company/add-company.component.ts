@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Company, CompanyType } from './../../models/company';
+import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
 
 import { CompanyService } from './../../services/company.service';
@@ -27,6 +27,7 @@ export class AddCompanyComponent  implements OnInit {
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
+  public genders: any[] = [GenderType.Male, GenderType.Femela, ""];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -43,7 +44,9 @@ export class AddCompanyComponent  implements OnInit {
     'address': '',
     'city': '',
     'phones': '',
-    'emails': ''
+    'emails': '',
+    'gender':'',
+    'birthday':''
 
   };
 
@@ -82,6 +85,11 @@ export class AddCompanyComponent  implements OnInit {
     'phones': {
     },
     'emails': {
+    },
+    'birthday': {
+      'pattern': 'El formato debe ser DD/MM/AAAA'
+    },
+    'gender': {
     }
   };
 
@@ -172,7 +180,11 @@ export class AddCompanyComponent  implements OnInit {
       ],
       'emails': [this.company.emails, [
         ]
-      ]
+      ],
+      'birthday': [this.company.birthday, [
+        Validators.pattern('^[0-9]{2}/[0-9]{2}/[0-9]{4}$')
+      ]],
+      'gender' : [this.company.gender,[]]
     });
 
     this.companyForm.valueChanges
@@ -216,6 +228,9 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.city) this.company.city = "";
     if (!this.company.phones) this.company.phones = "";
     if (!this.company.emails) this.company.emails = "";
+    if (!this.company.birthday) this.company.birthday = "";
+    if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
+    if (!this.company.gender) this.company.gender = null;
 
     let vatCondition: VATCondition = null;
     
@@ -241,7 +256,9 @@ export class AddCompanyComponent  implements OnInit {
       'address': this.company.address,
       'city': this.company.city,
       'phones': this.company.phones,
-      'emails': this.company.emails
+      'emails': this.company.emails,
+      'gender': this.company.gender,
+      'birthday' : this.company.birthday
     });
   }
 

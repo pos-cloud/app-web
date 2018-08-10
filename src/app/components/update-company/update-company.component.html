@@ -125,6 +125,26 @@
 					</div>
 				</div>
 			</div>
+			<div class = "row">
+				<div class="form-group col-md-8">
+					<label for="gender" class="control-label">Género:</label>
+					<select class="form-control" formControlName="gender">
+						<option *ngFor="let gender of genders" [ngValue]="gender">{{gender}}</option>
+					</select>
+					<div *ngIf="formErrors.gender" class="alert alert-danger">
+						{{ formErrors.gender }}
+					</div>
+				</div>
+				<div class="form-group col-md-4">
+					<label for="birthday" class="control-label">Cumpleaños:</label>
+					<div class="input-group">
+						<input type="text" class="form-control" formControlName="birthday" name="birthday" id="birthday"/>
+					</div>
+					<div *ngIf="formErrors.birthday" class="alert alert-danger">
+						{{ formErrors.birthday }}
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="modal-footer" *ngIf="!readonly">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

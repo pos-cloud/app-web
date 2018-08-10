@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Company, CompanyType } from './../../models/company';
+import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
 
 import { CompanyService } from './../../services/company.service';
@@ -30,6 +30,7 @@ export class UpdateCompanyComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public genders: any[] = [GenderType.Male, GenderType.Femela,""];
 
   public formErrors = {
     'code': 1,
@@ -42,8 +43,9 @@ export class UpdateCompanyComponent implements OnInit {
     'address': '',
     'city': '',
     'phones': '',
-    'emails': ''
-
+    'emails': '',
+    'gender':'',
+    'birthday':''
   };
 
   public validationMessages = {
@@ -78,6 +80,11 @@ export class UpdateCompanyComponent implements OnInit {
     'phones': {
     },
     'emails': {
+    },
+    'birthday': {
+      'pattern': 'El formato debe ser DD/MM/AAAA'
+    },
+    'gender': {
     }
   };
 
@@ -173,7 +180,11 @@ export class UpdateCompanyComponent implements OnInit {
       ],
       'emails': [this.company.emails, [
         ]
-      ]
+      ],
+      'birthday': [this.company.birthday, [
+        Validators.pattern('^[0-9]{2}/[0-9]{2}/[0-9]{4}$')
+      ]],
+      'gender' : [this.company.gender,[]]
     });
 
     this.companyForm.valueChanges
@@ -196,6 +207,8 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.company.city) this.company.city = "";
     if (!this.company.phones) this.company.phones = "";
     if (!this.company.emails) this.company.emails = "";
+    if (!this.company.birthday) this.company.birthday = "";
+    if (!this.company.gender) this.company.gender = null;
     
     if (this.company.DNI && this.company.DNI !== "") {
       this.identityTypeSelected = "DNI";
@@ -226,7 +239,9 @@ export class UpdateCompanyComponent implements OnInit {
       'address': this.company.address,
       'city': this.company.city,
       'phones': this.company.phones,
-      'emails': this.company.emails
+      'emails': this.company.emails,
+      'gender': this.company.gender,
+      'birthday' : this.company.birthday
     });
   }
 
