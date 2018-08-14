@@ -31,13 +31,17 @@ export class ArticleService {
 		return this._http.get(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
 	}
 
-  	getArticles () {
+  	getArticles (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "articles", { headers: headers }).map (res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + "articles/" + query, { headers: headers }).map(res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "articles", { headers: headers }).map (res => res.json());
+		}
 	}
 
 	getFinalArticles() {
