@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { Article } from './../../models/article';
+import { Article, ArticleType } from './../../models/article';
 import { Category } from './../../models/category';
 import { Config } from './../../app.config';
 import { MovementOfArticle } from '../../models/movement-of-article';
@@ -45,9 +45,9 @@ export class ListArticlesComponent implements OnInit {
   @Input() transactionMovement: string;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
-  public totalItems = 0;
   public roundNumber = new RoundNumberPipe();
   public printers: Printer[];
+  public totals: string[];
 
   constructor(
     public _articleService: ArticleService,
@@ -70,6 +70,7 @@ export class ListArticlesComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.totals = new Array();
     this.getPrinters();
     this.getFinalArticles();
   }
@@ -95,11 +96,19 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
-  public getFinalArticles(): void {
+  public getFinalArticles(field?: string): void {
 
     this.loading = true;
 
-    this._articleService.getFinalArticles().subscribe(
+    let query = 'where="type":"' + ArticleType.Final;
+    
+    if(field) {
+      query += "&" + field + ":"  + + this.filters[field];
+    }
+
+    query += '"&statistics=true';
+
+    this._articleService.getArticles(query).subscribe(
       result => {
         if (!result.articles) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
@@ -109,8 +118,13 @@ export class ListArticlesComponent implements OnInit {
         } else {
           this.hideMessage();
           this.loading = false;
+          this.totals["count"] = result.count;
+          this.totals["basePrice"] = result.basePrice;
+          this.totals["costPrice"] = result.costPrice;
+          this.totals["markupPercentage"] = result.markupPercentage;
+          this.totals["markupPrice"] = result.markupPrice;
+          this.totals["salePrice"] = result.salePrice;
           this.articles = result.articles;
-          this.totalItems = this.articles.length;
           this.areArticlesEmpty = false;
         }
       },

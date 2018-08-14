@@ -27,7 +27,7 @@
             <th (click)="orderBy('description')">Descripción</th>
             <th (click)="orderBy('make','description')">Marca</th>
             <th (click)="orderBy('category','description')">Rubro</th>
-            <th (click)="orderBy('salePrice')">Precio de Costo</th>
+            <th (click)="orderBy('costPrice')">Precio de Costo</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
             <th (click)="orderBy('observation')">Observation</th>
             <th (click)="orderBy('barcode')">Código de Barra</th>
@@ -84,9 +84,20 @@
             <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="areArticlesEmpty">
-            <td colspan="10">No se encontraron productos</td>
+            <td colspan="8">No se encontraron productos</td>
           </tr>
         </tbody>
+        <tfoot>
+          <td><b>TOTALES</b></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><b>$ {{totals.costPrice}}</b></td>
+          <td><b>$ {{totals.salePrice}}</b></td>
+          <td></td>
+          <td></td>
+        </tfoot>
       </table>
     </div>
     <div class="card-footer bg-primary">
