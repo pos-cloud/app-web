@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement } from './../../models/transaction-type';
-import { Room } from './../../models/room';
 import { Printer } from './../../models/printer';
 
 import { TransactionTypeService } from './../../services/transaction-type.service';
@@ -121,6 +120,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'requestArticles': [this.transactionType.requestArticles, [
         ]
       ],
+      'modifyArticle': [this.transactionType.modifyArticle, [
+        ]
+      ],
       'requestTaxes': [this.transactionType.requestTaxes, [
         ]
       ],
@@ -196,6 +198,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (this.transactionType.modifyStock === undefined) this.transactionType.modifyStock = false;
     if (!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Outflows;
     if (this.transactionType.requestArticles === undefined) this.transactionType.requestArticles = false;
+    if (this.transactionType.modifyArticle === undefined) this.transactionType.modifyArticle = false;
     if (this.transactionType.requestTaxes === undefined) this.transactionType.requestTaxes = false;
     if (this.transactionType.defectOrders === undefined) this.transactionType.defectOrders = false;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
@@ -216,6 +219,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'modifyStock': this.transactionType.modifyStock,
       'stockMovement': this.transactionType.stockMovement,
       'requestArticles': this.transactionType.requestArticles,
+      'modifyArticle': this.transactionType.modifyArticle,
       'requestTaxes': this.transactionType.requestTaxes,
       'defectOrders': this.transactionType.defectOrders,
       'fixedOrigin': this.transactionType.fixedOrigin,

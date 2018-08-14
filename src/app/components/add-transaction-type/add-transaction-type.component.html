@@ -66,6 +66,15 @@
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="modifyArticle" class="control-label">¿Se puede modificar el artículo?</label>
+          <select class="form-control" formControlName="modifyArticle">
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
+          </select>
+        </div>
+      </div>
       <div class="row" *ngIf="transactionTypeForm.value.requestArticles">
         <div class="form-group col-md-12">
           <label for="modifyStock" class="control-label">¿La transacción afecta stock?</label>
