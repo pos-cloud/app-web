@@ -603,11 +603,7 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles[i].description) {
           this.doc.text(this.movementsOfArticles[i].description, 25, row)
         }
-        if (this.movementsOfArticles[i].article) {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].article.salePrice), 155, row)
-        } else {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 155, row)
-        }
+        this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row)
         this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row)
 
         row += 8;

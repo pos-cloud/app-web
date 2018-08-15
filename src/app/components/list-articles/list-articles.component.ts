@@ -101,10 +101,6 @@ export class ListArticlesComponent implements OnInit {
     this.loading = true;
 
     let query = 'where="type":"' + ArticleType.Final;
-    
-    if(field) {
-      query += "&" + field + ":"  + + this.filters[field];
-    }
 
     query += '"&statistics=true';
 

@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 
 //Terceros
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { padNumber } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 //Models
 import { Article, ArticlePrintIn, ArticleType } from './../../models/article';
