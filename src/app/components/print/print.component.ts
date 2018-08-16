@@ -32,7 +32,6 @@ import { ArticleService } from './../../services/article.service';
 import { DeprecatedDecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
-import { THIS_EXPR } from '../../../../node_modules/@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-print',
@@ -144,6 +143,8 @@ export class PrintComponent implements OnInit {
               code = this.article.code;
             }
             this.getBarcode64('code128?value=' + code, this.typePrint);
+          } else if (this.typePrint === "kitchen") {
+            this.toPrintKitchen();
           }
         }
         this.loading = false;
@@ -471,14 +472,16 @@ export class PrintComponent implements OnInit {
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
-    var pageCenter = pdfInMM / 2;
-
-    var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
-    var dim = this.doc.getTextDimensions(text);
-    var lineHeight = dim.h;
-    for (var i = 0; i < lines.length; i++) {
-      let lineTop = (lineHeight / 2) * i;
-      this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
+    if(text) {
+      var pageCenter = pdfInMM / 2;
+      
+      var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
+      var dim = this.doc.getTextDimensions(text);
+      var lineHeight = dim.h;
+      for (var i = 0; i < lines.length; i++) {
+        let lineTop = (lineHeight / 2) * i;
+        this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
+      }
     }
   }
 

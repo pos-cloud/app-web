@@ -31,7 +31,7 @@
       </div>
       <div class="row">
         <div class="form-group col-md-4">
-          <label for="pageSize" class="control-label">Tipo:</label>
+          <label for="pageSize" class="control-label">Tamaño:</label>
           <select class="form-control" formControlName="pageSize" (change)="updatePageSize()">
             <option *ngFor="let pageSize of pageSizes" [selected]="pageSize === 'Personalizado'" [ngValue]="pageSize">{{pageSize}}</option>
           </select>
