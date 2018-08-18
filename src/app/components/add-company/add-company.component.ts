@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Pipe, PipeTransform } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -6,9 +6,12 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
+import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
 @Component({
   selector: 'app-add-company',
@@ -23,11 +26,12 @@ export class AddCompanyComponent  implements OnInit {
   @Input() companyType: CompanyType;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
+  public datePipe = new DateFormatPipe();
   public identityTypes: string[] = ["CUIT","DNI"];
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
-  public genders: any[] = [GenderType.Male, GenderType.Femela, ""];
+  public genders: any[] = [GenderType.Male, GenderType.Female, ""];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -87,7 +91,7 @@ export class AddCompanyComponent  implements OnInit {
     'emails': {
     },
     'birthday': {
-      'pattern': 'El formato debe ser DD/MM/AAAA'
+      'pattern': ' Ingrese en formato AAAA-MM-DD'
     },
     'gender': {
     }
@@ -181,8 +185,8 @@ export class AddCompanyComponent  implements OnInit {
       'emails': [this.company.emails, [
         ]
       ],
-      'birthday': [this.company.birthday, [
-        Validators.pattern('^[0-9]{2}/[0-9]{2}/[0-9]{4}$')
+      'birthday': [ this.company.birthday.substring(0,10), [
+        Validators.pattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
       ]],
       'gender' : [this.company.gender,[]]
     });
@@ -228,7 +232,7 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.city) this.company.city = "";
     if (!this.company.phones) this.company.phones = "";
     if (!this.company.emails) this.company.emails = "";
-    if (!this.company.birthday) this.company.birthday = "";
+    if (!this.company.birthday) this.company.birthday = null;
     if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
     if (!this.company.gender) this.company.gender = null;
 
@@ -258,7 +262,7 @@ export class AddCompanyComponent  implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday' : this.company.birthday
+      'birthday' : this.company.birthday.substring(0,10)
     });
   }
 
@@ -318,6 +322,7 @@ export class AddCompanyComponent  implements OnInit {
       this.companyForm.value.CUIT = "";
     }
     this.company = this.companyForm.value;
+    console.log(this.company);
     this.saveCompany();
   }
 

@@ -6,6 +6,9 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
+import { DateFormatPipe } from '../../pipes/date-format.pipe';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
@@ -27,13 +30,15 @@ export class UpdateCompanyComponent implements OnInit {
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
+  public datePipe = new DateFormatPipe();
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public genders: any[] = [GenderType.Male, GenderType.Femela,""];
+  public genders: any[] = [GenderType.Male, GenderType.Female,""];
+  public dateFormat: DateFormatPipe = new DateFormatPipe();
 
   public formErrors = {
-    'code': 1,
+    'code': '',
     'name': '',
     'fantasyName': '',
     'type': '',
@@ -82,7 +87,7 @@ export class UpdateCompanyComponent implements OnInit {
     'emails': {
     },
     'birthday': {
-      'pattern': 'El formato debe ser DD/MM/AAAA'
+      'pattern': ' Ingrese en formato AAAA-MM-DD'
     },
     'gender': {
     }
@@ -181,8 +186,8 @@ export class UpdateCompanyComponent implements OnInit {
       'emails': [this.company.emails, [
         ]
       ],
-      'birthday': [this.company.birthday, [
-        Validators.pattern('^[0-9]{2}/[0-9]{2}/[0-9]{4}$')
+      'birthday': [ this.company.birthday.substring(0,10), [
+        Validators.pattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
       ]],
       'gender' : [this.company.gender,[]]
     });
@@ -194,7 +199,7 @@ export class UpdateCompanyComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
+    console.log(this.company.birthday);
     if (!this.company._id) this.company._id = "";
     if (!this.company.code) this.company.code = 1;
     if (!this.company.name) this.company.name = "";
@@ -207,7 +212,7 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.company.city) this.company.city = "";
     if (!this.company.phones) this.company.phones = "";
     if (!this.company.emails) this.company.emails = "";
-    if (!this.company.birthday) this.company.birthday = "";
+    if (!this.company.birthday) this.company.birthday = null;
     if (!this.company.gender) this.company.gender = null;
     
     if (this.company.DNI && this.company.DNI !== "") {
@@ -241,7 +246,7 @@ export class UpdateCompanyComponent implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday' : this.company.birthday
+      'birthday' : this.company.birthday.substring(0,10)//moment(this.company.birthday,'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ')
     });
   }
 
