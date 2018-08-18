@@ -1,10 +1,7 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
-//Modelos
-import { Transaction } from './../../models/transaction';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //PIPES
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
@@ -83,15 +80,15 @@ export class ApplyDiscountComponent implements OnInit {
           Validators.required
         ]
       ],
-      'amountToApply': [this.roundNumber.transform(this.amountToApply,3), [
+      'amountToApply': [this.roundNumber.transform(this.amountToApply, 3), [
           Validators.required
         ]
       ],
-      'percentageToApply': [this.roundNumber.transform(this.percentageToApply,3), [
+      'percentageToApply': [this.roundNumber.transform(this.percentageToApply, 3), [
           Validators.required
         ]
       ],
-      'totalAmount': [this.roundNumber.transform((this.amount - this.amountToApply),2), [
+      'totalAmount': [this.roundNumber.transform(this.amount - this.amountToApply), [
           Validators.required
         ]
       ]
@@ -122,15 +119,15 @@ export class ApplyDiscountComponent implements OnInit {
   }
 
   public updateDiscounts(op: string): void {
-
+    
     if (op === 'percentageToApply') {
       this.amountToApply = this.roundNumber.transform((this.amount * this.discountForm.value.percentageToApply / 100), 3);
-      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply);
+      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 3);
     } else if (op === 'amountToApply') {
-      this.percentageToApply = this.roundNumber.transform((this.discountForm.value.amountToApply * 100 / this.amount));
+      this.percentageToApply = this.roundNumber.transform((this.discountForm.value.amountToApply * 100 / this.amount), 3);
       this.amountToApply = this.roundNumber.transform(this.discountForm.value.amountToApply, 3);
     }
-    
+
     this.setValueForm();
   }
 
@@ -140,27 +137,31 @@ export class ApplyDiscountComponent implements OnInit {
     if (!this.amountToApply) this.amountToApply = 0;
     if (!this.percentageToApply) this.percentageToApply = 0;
 
-    this.discountForm.setValue({
+    let discount = {
       'amount': this.roundNumber.transform(this.amount),
-      'amountToApply': this.roundNumber.transform(this.amountToApply),
-      'percentageToApply': this.roundNumber.transform(this.percentageToApply),
+      'amountToApply': this.roundNumber.transform(this.amountToApply, 3),
+      'percentageToApply': this.roundNumber.transform(this.percentageToApply, 3),
       'totalAmount': this.roundNumber.transform(this.amount - this.amountToApply)
-    });
+    };
+
+    this.discountForm.setValue(discount);
   }
 
   public applyDiscount(): void {
 
-    if (this.percentageToApply === 0) {
-      this.amountToApply = this.roundNumber.transform((this.amount * this.discountForm.value.percentageToApply / 100), 3);
-      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply);
-    } else if (this.amountToApply === 0) {
-      this.amountToApply = this.roundNumber.transform((this.amount * this.discountForm.value.percentageToApply / 100), 3);
-      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply);
+    if (this.discountForm.value.percentageToApply === 0 &&
+        this.discountForm.value.amountToApply !== 0) {
+      this.amountToApply = this.discountForm.value.amountToApply;
+      this.percentageToApply = this.roundNumber.transform(this.amountToApply * 100 / this.amount, 3);
+    } else if ( this.discountForm.value.percentageToApply !== 0 &&
+                this.discountForm.value.amountToApply === 0) {
+      this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 3);
+      this.amountToApply = this.roundNumber.transform((this.amount * this.percentageToApply / 100), 3);
     }
 
     let discount = {
-      'amountToApply': this.roundNumber.transform(this.amountToApply),
-      'percentageToApply': this.roundNumber.transform(this.percentageToApply),
+      'amountToApply': this.roundNumber.transform(this.amountToApply, 3),
+      'percentageToApply': this.roundNumber.transform(this.percentageToApply, 3),
       'totalAmount': this.roundNumber.transform(this.amount - this.amountToApply)
     };
 
