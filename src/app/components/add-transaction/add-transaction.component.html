@@ -85,7 +85,7 @@
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="basePrice" name="basePrice" min="0" step="0.01" (blur)="updatePrices('basePrice')" [readonly]="readonly"/>
+            <input type="number" class="form-control" formControlName="basePrice" name="basePrice" min="0" step="1" (blur)="updatePrices('basePrice')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.basePrice" class="alert alert-danger">
             {{ formErrors.basePrice }}
@@ -95,7 +95,7 @@
           <label for="exempt" class="control-label">Importe Exento:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="exempt" name="exempt" min="0" step="0.01" (blur)="updatePrices('exempt')" [readonly]="readonly"/>
+            <input type="number" class="form-control" formControlName="exempt" name="exempt" min="0" step="1" (blur)="updatePrices('exempt')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.exempt" class="alert alert-danger">
             {{ formErrors.exempt }}
@@ -108,7 +108,7 @@
           <label for="totalPrice" class="control-label">Importe Total:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="0.01" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
+            <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
             {{ formErrors.totalPrice }}

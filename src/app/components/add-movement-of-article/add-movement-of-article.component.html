@@ -72,7 +72,7 @@
           <label for="salePrice" class="control-label">Precio de Venta Unitario:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
+            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="1" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
           </div>
           <div *ngIf="formErrors.salePrice" class="alert alert-danger">
             {{ formErrors.salePrice }}

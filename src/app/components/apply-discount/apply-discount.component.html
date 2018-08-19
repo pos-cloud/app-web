@@ -12,7 +12,7 @@
           <label for="amount" class="control-label">Monto de la transacción:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="0.01" readonly/>
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="1" readonly/>
           </div>
         </div>
       </div>
@@ -21,7 +21,7 @@
           <label for="percentageToApply" class="control-label">Porcentaje de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="percentageToApply" name="percentageToApply" step="0.01" (change)="updateDiscounts('percentageToApply')"
+            <input type="number" class="form-control" formControlName="percentageToApply" name="percentageToApply" step="1" (change)="updateDiscounts('percentageToApply')"
               autofocus/>
           </div>
           <div *ngIf="formErrors.percentageToApply" class="alert alert-danger">
@@ -34,7 +34,7 @@
           <label for="amountToApply" class="control-label">Monto de descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="amountToApply" name="amountToApply" min="0" step="0.01" (change)="updateDiscounts('amountToApply')"
+            <input type="number" class="form-control" formControlName="amountToApply" name="amountToApply" min="0" step="1" (change)="updateDiscounts('amountToApply')"
             />
           </div>
           <div *ngIf="formErrors.amountToApply" class="alert alert-danger">
@@ -47,7 +47,7 @@
           <label for="totalAmount" class="control-label">Monto de la transacción con descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="totalAmount" name="totalAmount" step="0.01" readonly/>
+            <input type="number" class="form-control" formControlName="totalAmount" name="totalAmount" step="1" readonly/>
           </div>
           <div *ngIf="formErrors.totalAmount" class="alert alert-danger">
             {{ formErrors.totalAmount }}
