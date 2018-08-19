@@ -176,7 +176,7 @@ export class UpdateUserComponent implements OnInit {
     this._employeeService.getEmployee(this.userForm.value.employee).subscribe(
         result => {
           if(!result.employee) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+            this.showMessage(result.message, "info", true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -186,14 +186,14 @@ export class UpdateUserComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage("Debe seleccionar un empleado activo al usuario.", "info", true); 
           this.loading = false;
         }
       );
    }
 
   public saveChanges(): void {
-    
+
     this._userService.updateUser(this.user).subscribe(
     result => {
         if (!result.user) {

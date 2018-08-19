@@ -51,7 +51,7 @@
         <thead>
           <tr>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('date')">Pedido</th>
+            <th (click)="orderBy('startDate')">Pedido</th>
             <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('company','address')">Dirección</th>
             <th (click)="orderBy('company','phones')">Teléfono</th>
@@ -60,7 +60,7 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingNumber" placeholder="Número..."></th>
-            <th><input type="date" class="form-control" [(ngModel)]="filterPendingEndDate" placeholder="Fecha..."></th>
+            <th><input type="date" class="form-control" [(ngModel)]="filterPendingStartDate" placeholder="Fecha Pedido..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingCompany" placeholder="Cliente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingAddress" placeholder="Dirección..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPendingPhones" placeholder="Teléfono..."></th>
@@ -70,7 +70,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let transaction of transactions | filter: filterPendingNumber:'number' 
-                                                      | filter: filterPendingEndDate:'date'  
+                                                      | filter: filterPendingStartDate:'startDate'  
                                                       | filter: filterPendingCompany:'name':'company'
                                                       | filter: filterPendingAddress:'address':'company'
                                                       | filter: filterPendingPhones:'phones':'company'
