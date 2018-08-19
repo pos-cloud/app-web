@@ -67,12 +67,12 @@
       <div *ngIf="errVariant" class="row alert alert-danger">
         {{ errVariant }}
       </div>
-      <div class="row" *ngIf="false">
+      <div class="row">
         <div class="form-group col-md-12">
-          <label for="salePrice" class="control-label">Precio de Venta:</label>
+          <label for="salePrice" class="control-label">Precio de Venta Unitario:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" />
+            <input type="number" class="form-control" formControlName="salePrice" name="salePrice" id="salePrice" step="0.01" [readOnly]="!movementOfArticle.transaction.type.modifyArticle"/>
           </div>
           <div *ngIf="formErrors.salePrice" class="alert alert-danger">
             {{ formErrors.salePrice }}

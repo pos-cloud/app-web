@@ -322,7 +322,6 @@ export class AddCompanyComponent  implements OnInit {
       this.companyForm.value.CUIT = "";
     }
     this.company = this.companyForm.value;
-    console.log(this.company);
     this.saveCompany();
   }
 

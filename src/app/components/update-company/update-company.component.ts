@@ -199,7 +199,7 @@ export class UpdateCompanyComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    console.log(this.company.birthday);
+    
     if (!this.company._id) this.company._id = "";
     if (!this.company.code) this.company.code = 1;
     if (!this.company.name) this.company.name = "";
