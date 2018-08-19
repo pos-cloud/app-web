@@ -157,6 +157,9 @@ export class ApplyDiscountComponent implements OnInit {
                 this.discountForm.value.amountToApply === 0) {
       this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 3);
       this.amountToApply = this.roundNumber.transform((this.amount * this.percentageToApply / 100), 3);
+    } else {
+      this.amountToApply = 0;
+      this.percentageToApply = 0;
     }
 
     let discount = {

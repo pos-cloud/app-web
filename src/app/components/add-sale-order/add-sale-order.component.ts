@@ -693,14 +693,15 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updatePrices(discountPercent?: number): void {
-
+    
     this.transaction.totalPrice = 0;
     this.transaction.discountAmount = 0;
 
-    if(discountPercent) {
+    if(discountPercent !== undefined) {
       this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 3);
     } else if (!this.transaction.discountPercent) {
       this.transaction.discountPercent = 0;
+      this.transaction.discountAmount = 0;
     }
 
     if(this.movementsOfArticles && this.movementsOfArticles.length > 0) {
@@ -708,7 +709,6 @@ export class AddSaleOrderComponent implements OnInit {
       for (let movementOfArticle of this.movementsOfArticles) {
 
         let unitSalePrice = (movementOfArticle.salePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount;
-
         movementOfArticle.transactionDiscountAmount = this.roundNumber.transform(unitSalePrice * this.transaction.discountPercent / 100);
         movementOfArticle.salePrice = this.roundNumber.transform((unitSalePrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
         movementOfArticle.markupPrice = this.roundNumber.transform((movementOfArticle.salePrice - movementOfArticle.costPrice), 3);
