@@ -19,13 +19,9 @@ export class FilterPipe implements PipeTransform {
         if (term === undefined || !(term) || !value) {
             this.result = value;
         } else {
-            // this.terms = term.split(';');
-            // if (this.terms.length == 1){    //nos permite hacer busqueda por varios campos en un solo inpu seguido de ';'
-            //      this.valueAux = value;
-            // }
 
             this.valueAux = value;
-
+            
             this.result = this.valueAux.filter(item => {
 
                 for (let key in item) {
@@ -40,6 +36,8 @@ export class FilterPipe implements PipeTransform {
                                 !this.strArg.toLowerCase().includes('=')) {
                                 if (this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
                                     return true;
+                                } else {
+                                    return false;
                                 }
                             } else {
                                 if (!isNaN(item[key][property])) {
@@ -54,10 +52,14 @@ export class FilterPipe implements PipeTransform {
                                         this.strArg.toLowerCase().includes('=')
                                         && item[key][property] === 0) {
                                         return true;
+                                    } else {
+                                        return false;
                                     }
                                 } else {
                                     if (this.strArg.toLowerCase().includes('=') && (!item[key][property] || item[key][property] === "")) {
                                         return true;
+                                    } else {
+                                        return false;
                                     }
                                 }
                             }
@@ -69,15 +71,25 @@ export class FilterPipe implements PipeTransform {
                             // Cambio de formato de fecha
                             // item[key] = this.dateFormat.transform(item[key], 'DD/MM/YYYY HH:mm:ss');
                             
-                            this.strVal = "" + item[key];
                             this.strArg = term;
-
+                            this.strVal = "" + item[key];
                             if (!this.strArg.toLowerCase().includes('>') &&
                                 !this.strArg.toLowerCase().includes('<') &&
                                 !this.strArg.toLowerCase().includes('=')) {
-                                if (this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
-                                    return true;
-                                }
+                                    if(property.toLowerCase().includes("date".toLowerCase())) {
+                                        let dateVal = this.dateFormat.transform(this.strVal, 'YYYY-MM-DD hh:mm:ss');
+                                        if (dateVal.toString().includes(this.strArg.toString())) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    } else {
+                                        if (this.strVal.toLowerCase().includes(this.strArg.toLowerCase())) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    }
                             } else {
                                 if (!isNaN(item[key])) {
                                     if (this.strArg.toLowerCase().includes('>') && item[key] > term.split('>')[1] ||
@@ -91,10 +103,14 @@ export class FilterPipe implements PipeTransform {
                                         this.strArg.toLowerCase().includes('=')
                                         && item[key] === 0) {
                                         return true;
+                                    } else {
+                                        return false;
                                     }
                                 } else {
                                     if (this.strArg.toLowerCase().includes('=') && (!item[key] || item[key] === "")) {
                                         return true;
+                                    } else {
+                                        return false;
                                     }
                                 }
                             }
@@ -124,10 +140,14 @@ export class FilterPipe implements PipeTransform {
                                         this.strArg.toLowerCase().includes('=')
                                         && item[key] === 0) {
                                         return true;
+                                    } else {
+                                        return false;
                                     }
                                 } else {
                                     if (this.strArg.toLowerCase().includes('=') && (!item[key] || item[key] === "")) {
                                         return true;
+                                    } else {
+                                        return false;
                                     }
                                 }
                             }
