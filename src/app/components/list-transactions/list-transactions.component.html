@@ -26,8 +26,7 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('startDate')">Fecha Inicio</th>
-            <th (click)="orderBy('endDate')">Fecha Fin</th>
+            <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('table','description')">Mesa</th>
             <th (click)="orderBy('employeeClosing','name')">Mozo</th>
@@ -45,7 +44,6 @@
               <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha Inicio..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa..."></th>
@@ -64,7 +62,6 @@
                                                         | filter: filterOrigin:'origin'  
                                                         | filter: filterLetter:'letter' 
                                                         | filter: filterNumber:'number'
-                                                        | filter: filterStartDate:'startDate' 
                                                         | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterTable:'description':'table' 
@@ -95,7 +92,6 @@
             <td>{{transaction.origin}}</td>
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
-            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
@@ -145,7 +141,6 @@
                                                 | filter: filterOrigin:'origin'  
                                                 | filter: filterLetter:'letter' 
                                                 | filter: filterNumber:'number'
-                                                | filter: filterStartDate:'startDate' 
                                                 | filter: filterEndDate:'endDate' 
                                                 | filter: filterCompany:'name':'company'
                                                 | filter: filterTable:'description':'table' 
@@ -170,7 +165,6 @@
                                                 | filter: filterOrigin:'origin'  
                                                 | filter: filterLetter:'letter' 
                                                 | filter: filterNumber:'number'
-                                                | filter: filterStartDate:'startDate' 
                                                 | filter: filterEndDate:'endDate' 
                                                 | filter: filterCompany:'name':'company'
                                                 | filter: filterTable:'description':'table' 
@@ -192,7 +186,6 @@
                                                 | filter: filterOrigin:'origin'  
                                                 | filter: filterLetter:'letter' 
                                                 | filter: filterNumber:'number'
-                                                | filter: filterStartDate:'startDate' 
                                                 | filter: filterEndDate:'endDate' 
                                                 | filter: filterCompany:'name':'company'
                                                 | filter: filterTable:'description':'table' 
@@ -260,7 +253,6 @@
             <th (click)="orderBy('origin')">Origen</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('startDate')">Fecha Inicio</th>
             <th (click)="orderBy('endDate')">Fecha Fin</th>
             <th (click)="orderBy('company','name')">Proveedor</th>
             <th (click)="orderBy('state')">Estado</th>
@@ -274,7 +266,6 @@
               <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha Inicio..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
@@ -288,7 +279,6 @@
                                                         | filter: filterOrigin:'origin'  
                                                         | filter: filterLetter:'letter' 
                                                         | filter: filterNumber:'number'
-                                                        | filter: filterStartDate:'startDate' 
                                                         | filter: filterEndDate:'endDate' 
                                                         | filter: filterCompany:'name':'company'
                                                         | filter: filterState:'state' 
@@ -315,7 +305,6 @@
             <td>{{transaction.origin}}</td>
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
-            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
@@ -416,7 +405,6 @@
             </th>
             <th (click)="orderBy('type','name')">Tipo</th>
             <th (click)="orderBy('number')">Número</th>
-            <th (click)="orderBy('startDate')">Fecha de Carga</th>
             <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
@@ -426,7 +414,6 @@
             <th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha  de Carga..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
@@ -436,7 +423,6 @@
         <tbody>
           <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
                                                       | filter: filterNumber:'number'
-                                                      | filter: filterStartDate:'startDate' 
                                                       | filter: filterEndDate:'endDate' 
                                                       | filter: filterState:'state' 
                                                       | filter: filterObservation:'observation'  
@@ -458,7 +444,6 @@
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
             <td>{{transaction.number}}</td>
-            <td>{{transaction.startDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td>
               <h6>
@@ -516,12 +501,5 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!--POS-->
-<section class="row" *ngIf="userType=='pos'">
-  <div class="table" *ngFor="let transaction of transactions | orderBy:[orderTerm]" (click)="addTransaction(transaction.code)">
-    <p>{{transaction.code}}</p>
   </div>
 </section>

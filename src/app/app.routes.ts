@@ -69,12 +69,14 @@ import { DeletePaymentMethodComponent } from './components/delete-payment-method
 import { AuthGuard } from './guards/auth.guard';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'admin/statistics', component: StatisticsComponent },
   { path: 'admin/productos', component: ListArticlesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-producto', component: AddArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-producto', component: DeleteArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },

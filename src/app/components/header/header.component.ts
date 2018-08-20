@@ -11,7 +11,6 @@ import { Config } from './../../app.config';
 import { UserService } from './../../services/user.service';
 
 import { LoginComponent } from './../../components/login/login.component';
-import { RegisterComponent } from '../register/register.component';
 
 @Component({
   selector: 'app-header',
@@ -96,9 +95,14 @@ export class HeaderComponent implements OnInit {
         this._router.navigate(['/']);
         modalRef = this._modalService.open(LoginComponent);
         modalRef.result.then((result) => {
-          if (typeof result == 'object') {
+          if (result.user) {
+            let user: User = result.user;
             this.validateIdentity();
-            this._router.navigate(['/']);
+            if(user.employee.type.description === "Administrador") {
+              this._router.navigate(['admin/statistics']);
+            } else {
+              this._router.navigate(['/']);
+            }
             location.reload();
           }
         }, (reason) => {
@@ -108,6 +112,14 @@ export class HeaderComponent implements OnInit {
         this._router.navigate(['register']);
       default:
         break;
+    }
+  }
+
+  public goToHome(): void {
+    if (this.identity.employee.type.description === "Administrador") {
+      this._router.navigate(['admin/statistics']);
+    } else {
+      this._router.navigate(['/']);
     }
   }
 

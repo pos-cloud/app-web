@@ -192,7 +192,7 @@ export class LoginComponent implements OnInit {
           }
           sessionStorage.setItem('user', JSON.stringify(userStorage));
           sessionStorage.setItem('session_token', this.user.token);
-          this.activeModal.close(this.user);
+          this.activeModal.close({ user: this.user });
           this.loading = false;
         }
       },

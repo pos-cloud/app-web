@@ -67,7 +67,7 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-
+    
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
@@ -83,6 +83,8 @@ export class PointOfSaleComponent implements OnInit {
       }
       this.getTransactionTypesByMovement();
       this.getOpenTransactionsByMovement(this.transactionMovement);
+    } else {
+      this._router.navigate(['/']);
     }
   }
 

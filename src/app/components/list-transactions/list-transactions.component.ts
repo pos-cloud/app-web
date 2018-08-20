@@ -18,7 +18,6 @@ import { ExportCitiComponent } from './../../components/export-citi/export-citi.
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
-import { CurrencyPipe } from '../../../../node_modules/@angular/common';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 
 @Component({

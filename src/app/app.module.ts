@@ -9,6 +9,7 @@ import { MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatFormField
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination';//https://www.npmjs.com/package/ngx-pagination
 import { ChartsModule } from 'ng2-charts/ng2-charts';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 //rutas
 import { RoutingModule } from './app.routes';
@@ -152,6 +153,7 @@ import { RoundNumberPipe } from './pipes/round-number.pipe';
 //directives
 import { FocusDirective } from './directives/focus.directive';
 import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
 
 @NgModule({
   declarations: [
@@ -253,7 +255,8 @@ import { DeleteMovementOfCashComponent } from './components/delete-movement-of-c
     UpdatePaymentMethodComponent,
     DeletePaymentMethodComponent,
     ListPaymentMethodsComponent,
-    DeleteMovementOfCashComponent
+    DeleteMovementOfCashComponent,
+    StatisticsComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -293,7 +296,8 @@ import { DeleteMovementOfCashComponent } from './components/delete-movement-of-c
     MatCheckboxModule,
     MatAutocompleteModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    NgxChartsModule
   ],
   providers: [
     NgbActiveModal,

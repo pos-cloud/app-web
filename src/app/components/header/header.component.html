@@ -1,4 +1,4 @@
-<nav  class="navbar navbar-toggleable-md bg-faded" 
+<nav class="navbar navbar-toggleable-md bg-faded"
       *ngIf="!hideMenu">
   <button class="navbar-toggler navbar-toggler-right" 
           type="button" 
@@ -9,12 +9,12 @@
           aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" [routerLink]="['inicio']">
+  <a class="navbar-brand" (click)="goToHome()">
       POS Cloud
   </a>
-<!-- MENU VENDEDOR -->
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto" *ngIf="modules">
+      <!-- MENU VENDEDOR -->
       <li class="nav-item navbar-inverse" 
           *ngIf=" identity &&
                   identity.employee &&
@@ -49,7 +49,7 @@
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
-<!-- MENU ADMINISTRADOR -->
+      <!-- MENU ADMINISTRADOR -->
       <li class="nav-item" 
           ngbDropdown 
           *ngIf="(identity &&

@@ -45,6 +45,15 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/sort="endDate":-1', { headers: headers }).map(res => res.json());
 	}
 
+	getTotalTransactionsBetweenDates(query: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'total-transactions/' + query, { headers: headers }).map(res => res.json());
+	}
+
 	getOpenTransactionsByMovement(transactionMovement: TransactionMovement, posType: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

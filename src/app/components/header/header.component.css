@@ -2,8 +2,20 @@
       cursor: pointer;
 }
 
-.navbar .active {
-      border-bottom: 5px solid #0275d8;
+.nav-link:active {
+      border: 1px solid #000;
+}
+
+.nav-link:hover {
+      border: 1px solid #000;
+}
+
+.nav-link:visited {
+      border: 1px solid #000;
+}
+
+.nav-link:focus {
+      border: 1px solid #000;
 }
 
 .navbar {
@@ -17,12 +29,12 @@
 }
 
 .nav-link {
-    color: black;
+    color: #000;
 }
 
 .active-primary {
-      color: #0275D8;
-      border-bottom: 5px solid #0275D8;
+      color: #000;
+      border: 1px solid #000;
 }
 
 .navbar-brand {

@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Make } from './../../models/make';
 
@@ -15,7 +15,7 @@ import { MakeService } from './../../services/make.service';
   providers: [NgbAlertConfig]
 })
 
-export class AddMakeComponent  implements OnInit {
+export class AddMakeComponent implements OnInit {
 
   public make: Make;
   public makeForm: FormGroup;

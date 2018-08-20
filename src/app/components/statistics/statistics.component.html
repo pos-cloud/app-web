@@ -1,0 +1,96 @@
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2 offset-md-1">
+        <label for="startDate" class="control-label">
+          <b>Fecha Desde:</b>
+        </label>
+        <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
+      </div>
+      <div class="col-md-2">
+        <label for="startTime" class="control-label">
+          <b>Hora Desde:</b>
+        </label>
+        <input type="time" class="form-control" name="startTime" [(ngModel)]="startTime" />
+      </div>
+      <div class="col-md-2">
+        <label for="endDate" class="control-label">
+          <b>Fecha Hasta:</b>
+        </label>
+        <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
+      </div>
+      <div class="col-md-2">
+        <label for="endTime" class="control-label">
+          <b>Hora Hasta:</b>
+        </label>
+        <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
+      </div>
+      <div class="col-md-2" (click)="loadStatistics()">
+        <label for="refresh" class="control-label"> </label>
+        <span class="form-control btn-action center-content">
+          <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+      </div>
+    </div>
+    <br>
+    <br>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card card-stats card-success">
+          <div class="card-body ">
+            <div class="row">
+              <div class="col-5">
+                <div class="icon-big text-center">
+                  <i class="fa fa-bar-chart"></i>
+                </div>
+              </div>
+              <div class="col-7 d-flex align-items-center">
+                <div class="numbers">
+                  <p class="card-category">Ventas</p>
+                  <h4 class="card-title">{{ totalSales | currency:'USD':'1.2-2' }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-stats card-info">
+          <div class="card-body ">
+            <div class="row">
+              <div class="col-5">
+                <div class="icon-big text-center">
+                  <i class="fa fa-money"></i>
+                </div>
+              </div>
+              <div class="col-7 d-flex align-items-center">
+                <div class="numbers">
+                  <p class="card-category">Cobranzas</p>
+                  <h4 class="card-title">{{ totalCollections| currency:'USD':'1.2-2' }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-stats card-danger">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-5">
+                <div class="icon-big text-center">
+                  <i class="fa fa-undo"></i>
+                </div>
+              </div>
+              <div class="col-7 d-flex align-items-center">
+                <div class="numbers">
+                  <p class="card-category">Devoluciones</p>
+                  <h4 class="card-title">{{ totalReturns| currency:'USD':'1.2-2' }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
