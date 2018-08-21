@@ -31,6 +31,7 @@
               <th (click)="orderBy('city')">Ciudad</th>
               <th (click)="orderBy('phones')">Teléfonos</th>
               <th (click)="orderBy('emails')">Emails</th>
+              <th (click)="orderBy('birthday')">Cumpleaños</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
@@ -44,6 +45,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterBirthday" placeholder="Cumpleaños..." ></th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +59,7 @@
                                                   | filter: filterCity:'city' 
                                                   | filter: filterPhones:'phones' 
                                                   | filter: filterEmails:'emails'
+                                                  | filter: filterBirthday:'birthday'
                                                   | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage, 
                                                                 currentPage: p, 
@@ -78,9 +81,10 @@
               <td>{{company.city}}</td>
               <td>{{company.phones}}</td>
               <td>{{company.emails}}</td>
+              <td>{{company.birthday | dateFormat:'DD/MM/YYYY'}}</td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty">
-              <td colspan="11">No se encontraron empresas</td>
+              <td colspan="12">No se encontraron empresas</td>
             </tr>
           </tbody>
         </table>
