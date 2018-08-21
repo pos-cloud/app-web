@@ -302,7 +302,7 @@ export class ConfigBackupComponent implements OnInit {
       let date;
       if (input.parent && input.parent.controls && input.parent.controls['companyStartOfActivity'].value) {
         date = input.parent.controls['companyStartOfActivity'].value;
-        if (moment(date, 'DD/MM/YYYY').isValid()) {
+        if (moment(date, 'DD/MM/YYYY', true).isValid()) {
           dateValid = true;
         } else {
           dateValid = false;

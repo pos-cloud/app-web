@@ -19,7 +19,7 @@ export class Company {
     public phones: string;
     public emails: String;
     public gender: GenderType;
-    public birthday: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    public birthday: string;
 
     constructor() {}
 }

@@ -7,7 +7,7 @@ import 'moment/locale/es';
     name: 'dateFormat'
 })
 export class DateFormatPipe implements PipeTransform {
-	transform(value:any, format:string, formatDefecto?:string):any {
+	transform(value:any, format:string = 'YYYY-MM-DDTHH:mm:ssZ', formatDefecto?:string):any {
 		if (value) {
 			if(!formatDefecto) {
 				// Cambio de formato de fecha

@@ -1,5 +1,5 @@
-import { Component, OnInit, EventEmitter, Input, Pipe, PipeTransform } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,12 +26,12 @@ export class AddCompanyComponent  implements OnInit {
   @Input() companyType: CompanyType;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
-  public datePipe = new DateFormatPipe();
+  public dateFormat = new DateFormatPipe();
   public identityTypes: string[] = ["CUIT","DNI"];
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
-  public genders: any[] = [GenderType.Male, GenderType.Female, ""];
+  public genders: any[] = ["", GenderType.Male, GenderType.Female];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -91,7 +91,7 @@ export class AddCompanyComponent  implements OnInit {
     'emails': {
     },
     'birthday': {
-      'pattern': ' Ingrese en formato AAAA-MM-DD'
+      'dateValid': ' Ingrese en formato DD/MM/AAAA'
     },
     'gender': {
     }
@@ -185,10 +185,12 @@ export class AddCompanyComponent  implements OnInit {
       'emails': [this.company.emails, [
         ]
       ],
-      'birthday': [ this.company.birthday.substring(0,10), [
-        Validators.pattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
-      ]],
-      'gender' : [this.company.gender,[]]
+      'birthday': [ '', [
+        ]
+      ],
+      'gender' : [this.company.gender,[
+        ]
+      ]
     });
 
     this.companyForm.valueChanges
@@ -232,7 +234,11 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.city) this.company.city = "";
     if (!this.company.phones) this.company.phones = "";
     if (!this.company.emails) this.company.emails = "";
-    if (!this.company.birthday) this.company.birthday = null;
+    if (!this.company.birthday) {
+      this.company.birthday = null;
+    } else {
+      this.company.birthday = moment(this.company.birthday, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
+    }
     if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
     if (!this.company.gender) this.company.gender = null;
 
@@ -262,7 +268,7 @@ export class AddCompanyComponent  implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday' : this.company.birthday.substring(0,10)
+      'birthday' : this.company.birthday
     });
   }
 
@@ -322,7 +328,14 @@ export class AddCompanyComponent  implements OnInit {
       this.companyForm.value.CUIT = "";
     }
     this.company = this.companyForm.value;
-    this.saveCompany();
+    if (!this.company.birthday) {
+      this.saveCompany();
+    } else if (moment(this.company.birthday, 'DD/MM/YYYY', true).isValid()) {
+      this.company.birthday = moment(this.company.birthday, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
+      this.saveCompany();
+    } else {
+      this.formErrors.birthday = "La fecha es inválida";
+    }
   }
 
   public saveCompany(): void {

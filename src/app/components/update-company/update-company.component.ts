@@ -1,14 +1,13 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
-import { DateFormatPipe } from '../../pipes/date-format.pipe';
-import * as moment from 'moment';
-import 'moment/locale/es';
 
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
@@ -30,12 +29,10 @@ export class UpdateCompanyComponent implements OnInit {
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = "";
-  public datePipe = new DateFormatPipe();
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public genders: any[] = [GenderType.Male, GenderType.Female,""];
-  public dateFormat: DateFormatPipe = new DateFormatPipe();
 
   public formErrors = {
     'code': '',
@@ -87,7 +84,6 @@ export class UpdateCompanyComponent implements OnInit {
     'emails': {
     },
     'birthday': {
-      'pattern': ' Ingrese en formato AAAA-MM-DD'
     },
     'gender': {
     }
@@ -186,8 +182,7 @@ export class UpdateCompanyComponent implements OnInit {
       'emails': [this.company.emails, [
         ]
       ],
-      'birthday': [ this.company.birthday.substring(0,10), [
-        Validators.pattern('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      'birthday': ['', [
       ]],
       'gender' : [this.company.gender,[]]
     });
@@ -212,7 +207,11 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.company.city) this.company.city = "";
     if (!this.company.phones) this.company.phones = "";
     if (!this.company.emails) this.company.emails = "";
-    if (!this.company.birthday) this.company.birthday = null;
+    if (!this.company.birthday) {
+      this.company.birthday = null;
+    } else if (moment(this.company.birthday, 'YYYY-MM-DDTHH:mm:ss.000Z', true).isValid()) {
+      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY');
+    }
     if (!this.company.gender) this.company.gender = null;
     
     if (this.company.DNI && this.company.DNI !== "") {
@@ -246,7 +245,7 @@ export class UpdateCompanyComponent implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday' : this.company.birthday.substring(0,10)//moment(this.company.birthday,'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ')
+      'birthday': this.company.birthday
     });
   }
 
@@ -303,7 +302,14 @@ export class UpdateCompanyComponent implements OnInit {
         this.companyForm.value.CUIT = "";
       }
       this.company = this.companyForm.value;
-      this.saveChanges();
+      if (!this.company.birthday) {
+        this.saveChanges();
+      } else if (moment(this.company.birthday, 'DD/MM/YYYY', true).isValid()) {
+        this.company.birthday = moment(this.company.birthday, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
+        this.saveChanges();
+      } else {
+        this.formErrors.birthday = "La fecha es inválida";
+      }
     }
   }
 
