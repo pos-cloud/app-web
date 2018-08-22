@@ -98,11 +98,6 @@ export class HeaderComponent implements OnInit {
           if (result.user) {
             let user: User = result.user;
             this.validateIdentity();
-            if(user.employee.type.description === "Administrador") {
-              this._router.navigate(['admin/statistics']);
-            } else {
-              this._router.navigate(['/']);
-            }
             location.reload();
           }
         }, (reason) => {
@@ -117,7 +112,7 @@ export class HeaderComponent implements OnInit {
 
   public goToHome(): void {
     if (this.identity.employee.type.description === "Administrador") {
-      this._router.navigate(['admin/statistics']);
+      this._router.navigate(['/']);
     } else {
       this._router.navigate(['/']);
     }
