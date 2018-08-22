@@ -1,22 +1,26 @@
 <!--ADMIN-->
-<div class="card-block table-responsive">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Método de pago </th>
-        <th>Cantidad </th>
-        <th>Monto total </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of items">
-        <td class="flat">{{ item.type.name }}</td>
-        <td class="flat">{{ item.count }}</td>
-        <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
-      </tr>
-      <tr align="center" *ngIf="arePaymentMethodsEmpty">
-        <td colspan="3">No se encontraron métodos de pago</td>
-      </tr>
-    </tbody>
-  </table>
+<div class="card card-outline-primary">
+  <div class="card-header bg-primary">Ventas por método de pago
+  </div>
+  <div class="card-block table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Método de pago </th>
+          <th>Cantidad </th>
+          <th>Monto total </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td class="flat">{{ item.type.name }}</td>
+          <td class="flat">{{ item.count }}</td>
+          <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+        </tr>
+        <tr align="center" *ngIf="arePaymentMethodsEmpty">
+          <td colspan="3">No se encontraron métodos de pago</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
