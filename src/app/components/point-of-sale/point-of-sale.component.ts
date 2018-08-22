@@ -283,10 +283,11 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
-          if (typeof result == 'object') {
-            if (result.amountPaid > transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
-              transaction.totalPrice = result.amountPaid;
+          if (result.movementsOfCashes) {
+            if(this.posType === "resto" || this.posType === "delivery") {
+              transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             }
+            transaction.expirationDate = transaction.endDate;
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
           } else {
