@@ -169,7 +169,7 @@ export class PointOfSaleComponent implements OnInit {
   public getOpenTransactionsByMovement(transactionMovement: TransactionMovement): void {
 
     this.loading = true;
-
+    
     this._transactionService.getOpenTransactionsByMovement(transactionMovement, this.posType).subscribe(
       result => {
         if (!result.transactions) {
@@ -290,10 +290,18 @@ export class PointOfSaleComponent implements OnInit {
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
           } else {
-            this.getOpenTransactionsByMovement(this.transactionMovement);
+            if (this.posType === "delivery") {
+              this.getOpenTransactions();
+            } else {
+              this.getOpenTransactionsByMovement(this.transactionMovement);
+            }
           }
         }, (reason) => {
-          this.getOpenTransactionsByMovement(this.transactionMovement);
+          if (this.posType === "delivery") {
+            this.getOpenTransactions();
+          } else {
+            this.getOpenTransactionsByMovement(this.transactionMovement);
+          }
         });
         break;
       case 'view-transaction':
