@@ -1,0 +1,22 @@
+<!--ADMIN-->
+<div class="card-block table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th (click)="orderBy('description')">Descripción </th>
+        <th (click)="orderBy('description')">Cantidad </th>
+        <th (click)="orderBy('description')">Monto total </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <td class="flat">{{ item.article.description }}</td>
+        <td class="flat">{{ item.count }}</td>
+        <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+      </tr>
+      <tr align="center" *ngIf="areArticlesEmpty">
+        <td colspan="3">No se encontraron artículos</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

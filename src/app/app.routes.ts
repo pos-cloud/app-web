@@ -71,13 +71,15 @@ import { ListArticleStocksComponent } from './components/list-article-stocks/lis
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
+import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'admin/statistics', component: StatisticsComponent },
+  { path: 'admin/statistics', component: StatisticsComponent, data: { roles: ['Administrador'] } },
+  { path: 'admin/mejores-productos-vendidos', component: ReportBestSellingArticleComponent, data: { roles: ['Administrador'] } },
   { path: 'admin/productos', component: ListArticlesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-producto', component: AddArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-producto', component: DeleteArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },

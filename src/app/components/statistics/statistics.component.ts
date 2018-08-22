@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -7,6 +7,7 @@ import 'moment/locale/es';
 import { CompanyService } from './../../services/company.service';
 import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
+import { ReportBestSellingArticleComponent } from '../report-best-selling-article/report-best-selling-article.component';
 
 @Component({
   selector: 'app-statistics',
@@ -26,6 +27,7 @@ export class StatisticsComponent implements OnInit {
   public totalCollections: number = 0;
   public totalReturns: number = 0;
   public showStatistics: boolean = false;
+  @ViewChild(ReportBestSellingArticleComponent) reportBestSellingArticle: ReportBestSellingArticleComponent;
 
   constructor(
     public _companyService: CompanyService,
@@ -57,6 +59,11 @@ export class StatisticsComponent implements OnInit {
     this.getTotalSales();
     this.getTotalCollections();
     this.getTotalReturns();
+    this.reportBestSellingArticle.startDate = this.startDate;
+    this.reportBestSellingArticle.startTime = this.startTime;
+    this.reportBestSellingArticle.endDate = this.endDate;
+    this.reportBestSellingArticle.endTime = this.endTime;
+    this.reportBestSellingArticle.getBestSellingArticle();
   }
 
   public getTotalSales(): void {
@@ -106,7 +113,7 @@ export class StatisticsComponent implements OnInit {
 
     this._transactionService.getTotalTransactionsBetweenDates(query).subscribe(
       result => {
-        if (!result) {
+        if (!result || result.length <= 0) {
           this.loading = false;
           switch (op) {
             case "Sales":

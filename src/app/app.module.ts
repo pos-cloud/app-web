@@ -159,6 +159,7 @@ import { AddDepositComponent } from './components/add-deposit/add-deposit.compon
 import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
 import { UpdateDepositComponent } from './components/update-deposit/update-deposit.component';
 import { DeleteDepositComponent } from './components/delete-deposit/delete-deposit.component';
+import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 
 @NgModule({
   declarations: [
@@ -265,7 +266,8 @@ import { DeleteDepositComponent } from './components/delete-deposit/delete-depos
     AddDepositComponent,
     ListDepositComponent,
     UpdateDepositComponent,
-    DeleteDepositComponent
+    DeleteDepositComponent,
+    ReportBestSellingArticleComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

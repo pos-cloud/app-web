@@ -65,7 +65,7 @@
               <div class="col-7 d-flex align-items-center">
                 <div class="numbers">
                   <p class="card-category">Cobranzas</p>
-                  <h4 class="card-title">{{ totalCollections| currency:'USD':'1.2-2' }}</h4>
+                  <h4 class="card-title" >{{ totalCollections | currency:'USD':'1.2-2' }}</h4>
                 </div>
               </div>
             </div>
@@ -84,12 +84,18 @@
               <div class="col-7 d-flex align-items-center">
                 <div class="numbers">
                   <p class="card-category">Devoluciones</p>
-                  <h4 class="card-title">{{ totalReturns| currency:'USD':'1.2-2' }}</h4>
+                  <h4 class="card-title">{{ totalReturns | currency:'USD':'1.2-2' }}</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <b>Productos mas vendidos</b>
+        <app-report-best-selling-article [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-best-selling-article>
       </div>
     </div>
   </div>

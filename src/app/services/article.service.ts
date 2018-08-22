@@ -125,4 +125,15 @@ export class ArticleService {
 			xhr.send(formData);
 		});
 	}
+
+	public getBestSellingArticle(query: string) {
+
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		
+		return this._http.get(Config.apiURL + "get-best-selling-article/" + query, { headers: headers }).map(res => res.json());
+	}
 }
