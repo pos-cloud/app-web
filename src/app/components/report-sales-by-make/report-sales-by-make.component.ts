@@ -68,12 +68,10 @@ export class ReportSalesByMakeComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.items = result;
-          console.log(this.items);
           this.areMakesEmpty = false;
         }
       },
       error => {
-        console.log(error);
         this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
