@@ -9,6 +9,8 @@ import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { ReportBestSellingArticleComponent } from '../report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByPaymentMethodComponent } from '../report-sales-by-payment-method/report-sales-by-payment-method.component';
+import { ReportSalesByClientComponent } from '../report-sales-by-client/report-sales-by-client.component';
+import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales-by-make.component';
 
 @Component({
   selector: 'app-statistics',
@@ -30,6 +32,8 @@ export class StatisticsComponent implements OnInit {
   public showStatistics: boolean = false;
   @ViewChild(ReportBestSellingArticleComponent) reportBestSellingArticle: ReportBestSellingArticleComponent;
   @ViewChild(ReportSalesByPaymentMethodComponent) reportSalesByPaymentMethod: ReportSalesByPaymentMethodComponent;
+  @ViewChild(ReportSalesByClientComponent) reportSalesByClient: ReportSalesByClientComponent;
+  @ViewChild(ReportSalesByMakeComponent) reportSalesByMake: ReportSalesByMakeComponent;
 
   constructor(
     public _companyService: CompanyService,
@@ -71,6 +75,16 @@ export class StatisticsComponent implements OnInit {
     this.reportSalesByPaymentMethod.endDate = this.endDate;
     this.reportSalesByPaymentMethod.endTime = this.endTime;
     this.reportSalesByPaymentMethod.getSalesByPaymentMethod();
+    this.reportSalesByClient.startDate = this.startDate;
+    this.reportSalesByClient.startTime = this.startTime;
+    this.reportSalesByClient.endDate = this.endDate;
+    this.reportSalesByClient.endTime = this.endTime;
+    this.reportSalesByClient.getSalesByClient();
+    this.reportSalesByMake.startDate = this.startDate;
+    this.reportSalesByMake.startTime = this.startTime;
+    this.reportSalesByMake.endDate = this.endDate;
+    this.reportSalesByMake.endTime = this.endTime;
+    this.reportSalesByMake.getSalesByMake();
   }
   
   public getTotalSales(): void {

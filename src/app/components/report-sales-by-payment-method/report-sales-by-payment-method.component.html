@@ -7,7 +7,7 @@
       <thead>
         <tr>
           <th>Método de pago </th>
-          <th>Cantidad </th>
+          <th>Transacciones </th>
           <th>Monto total </th>
         </tr>
       </thead>
@@ -18,7 +18,7 @@
           <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
         </tr>
         <tr align="center" *ngIf="arePaymentMethodsEmpty">
-          <td colspan="3">No se encontraron métodos de pago</td>
+          <td colspan="3">No se encontraron ventas por métodos de pago</td>
         </tr>
       </tbody>
     </table>

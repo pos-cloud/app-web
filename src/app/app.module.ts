@@ -161,6 +161,8 @@ import { UpdateDepositComponent } from './components/update-deposit/update-depos
 import { DeleteDepositComponent } from './components/delete-deposit/delete-deposit.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
+import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
+import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 
 @NgModule({
   declarations: [
@@ -269,7 +271,9 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
     UpdateDepositComponent,
     DeleteDepositComponent,
     ReportBestSellingArticleComponent,
-    ReportSalesByPaymentMethodComponent
+    ReportSalesByPaymentMethodComponent,
+    ReportSalesByClientComponent,
+    ReportSalesByMakeComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

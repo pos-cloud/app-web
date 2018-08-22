@@ -86,4 +86,13 @@ export class CompanyService {
 		var query = '{"type":"' + type +'","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
 		return this._http.get(Config.apiURL + "quantity-of-companies-by-type/" + query, { headers: headers }).map(res => res.json());
 	}
+
+	getSalesByClient(query: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'sales-by-client/' + query, { headers: headers }).map(res => res.json());
+	}
 }

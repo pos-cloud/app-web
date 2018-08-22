@@ -1,0 +1,37 @@
+.card {
+      margin-top: 50px;
+}
+
+.card-header {
+      color: white;
+}
+
+.btn {
+      cursor: pointer;
+}
+
+.card-block {
+      padding: 0px;
+}
+
+ .center-content {
+      margin-top: 30px;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-justify-content: center;
+      justify-content: center;
+}
+
+.my-pagination /deep/ .ngx-pagination {
+    color: white;
+}
+
+::placeholder {
+      color: #D8D8D8;
+}
+
+.filters {
+      background-color: #F8F8F8;
+}

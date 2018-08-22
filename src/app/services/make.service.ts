@@ -8,62 +8,71 @@ import { UserService } from './user.service';
 @Injectable()
 export class MakeService {
 
-  constructor(
-    public _http: Http,
-	public _userService: UserService
-  ) { }
+	constructor(
+		public _http: Http,
+		public _userService: UserService
+	) { }
 
-  getLastMake () {
+	getLastMake () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'makes/sort="description":-1&limit=1', { headers: headers }).map (res => res.json());
-  }
+	}
 
-  getMake (id) {
+	getMake (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
-  }
+	}
 
-  getMakes () {
+	getMakes () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + "makes", { headers: headers }).map (res => res.json());
-  }
+	}
 
-  saveMake (make : Make) {
+	saveMake (make : Make) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "make",make, { headers: headers }).map (res => res.json());
-  }
+	}
   
-  deleteMake (id: string) {
+	deleteMake (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
-  }
+	}
 
-  updateMake (make: Make){
+	updateMake (make: Make){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "make/"+make._id, make, { headers: headers }).map (res => res.json());
-  }
+	}
+
+	getSalesByMake(query: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + "sales-by-make/" + query, { headers: headers }).map(res => res.json());
+	}
 }

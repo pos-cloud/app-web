@@ -1,24 +1,25 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { PaymentMethodService } from './../../services/payment-method.service';
+import { MakeService } from './../../services/make.service';
 
 @Component({
-  selector: 'app-report-sales-by-payment-method',
-  templateUrl: './report-sales-by-payment-method.component.html',
-  styleUrls: ['./report-sales-by-payment-method.component.css'],
+  selector: 'app-report-sales-by-make',
+  templateUrl: './report-sales-by-make.component.html',
+  styleUrls: ['./report-sales-by-make.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class ReportSalesByPaymentMethodComponent implements OnInit {
+export class ReportSalesByMakeComponent implements OnInit {
 
   public items: any[] = new Array();
-  public arePaymentMethodsEmpty: boolean = true;
+  public areMakesEmpty: boolean = true;
   public alertMessage: string = "";
+  public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Input() startDate: string;
@@ -27,7 +28,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   @Input() endTime: string;
 
   constructor(
-    public _paymentMethodService: PaymentMethodService,
+    public _makeService: MakeService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -40,35 +41,39 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getSalesByPaymentMethod();
+    this.getSalesByMake();
   }
 
-  public getSalesByPaymentMethod(): void {
+  public getSalesByMake(): void {
 
     this.loading = true;
 
     let query = {
       type: "Venta",
       movement: "Entrada",
+      currentAccount: "Si",
+      modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
     }
 
-    this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
+    this._makeService.getSalesByMake(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.items = null;
-          this.arePaymentMethodsEmpty = true;
+          this.areMakesEmpty = true;
         } else {
           this.hideMessage();
           this.loading = false;
           this.items = result;
-          this.arePaymentMethodsEmpty = false;
+          console.log(this.items);
+          this.areMakesEmpty = false;
         }
       },
       error => {
+        console.log(error);
         this.showMessage(error._body, "danger", false);
         this.loading = false;
       }

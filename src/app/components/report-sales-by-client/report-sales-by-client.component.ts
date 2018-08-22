@@ -1,24 +1,25 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { PaymentMethodService } from './../../services/payment-method.service';
+import { CompanyService } from './../../services/company.service';
 
 @Component({
-  selector: 'app-report-sales-by-payment-method',
-  templateUrl: './report-sales-by-payment-method.component.html',
-  styleUrls: ['./report-sales-by-payment-method.component.css'],
+  selector: 'app-report-sales-by-client',
+  templateUrl: './report-sales-by-client.component.html',
+  styleUrls: ['./report-sales-by-client.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class ReportSalesByPaymentMethodComponent implements OnInit {
+export class ReportSalesByClientComponent implements OnInit {
 
   public items: any[] = new Array();
-  public arePaymentMethodsEmpty: boolean = true;
+  public areCompaniesEmpty: boolean = true;
   public alertMessage: string = "";
+  public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Input() startDate: string;
@@ -27,7 +28,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   @Input() endTime: string;
 
   constructor(
-    public _paymentMethodService: PaymentMethodService,
+    public _companyService: CompanyService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -40,32 +41,34 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getSalesByPaymentMethod();
+    this.getSalesByClient();
   }
 
-  public getSalesByPaymentMethod(): void {
+  public getSalesByClient(): void {
 
     this.loading = true;
 
     let query = {
       type: "Venta",
       movement: "Entrada",
+      currentAccount: "Si",
+      modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
     }
 
-    this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
+    this._companyService.getSalesByClient(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.items = null;
-          this.arePaymentMethodsEmpty = true;
+          this.areCompaniesEmpty = true;
         } else {
           this.hideMessage();
           this.loading = false;
           this.items = result;
-          this.arePaymentMethodsEmpty = false;
+          this.areCompaniesEmpty = false;
         }
       },
       error => {

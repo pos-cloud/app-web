@@ -14,10 +14,9 @@
 
  */
 
- /* .content {
-   background-color: #222326;
-   height: 100vh;
- } */
+ .content {
+   padding-bottom: 50px;
+ }
 
 .container-fluid {
   padding-top: 50px;
