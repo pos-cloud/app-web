@@ -43,6 +43,7 @@ import { VariantTypeService } from './services/variant-type.service';
 import { VariantService } from './services/variant.service';
 import { TaxService } from './services/tax.service';
 import { VariantValueService } from './services/variant-value.service';
+import { DepositService } from "./services/deposit.service";
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -154,6 +155,10 @@ import { RoundNumberPipe } from './pipes/round-number.pipe';
 import { FocusDirective } from './directives/focus.directive';
 import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
+import { AddDepositComponent } from './components/add-deposit/add-deposit.component';
+import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
+import { UpdateDepositComponent } from './components/update-deposit/update-deposit.component';
+import { DeleteDepositComponent } from './components/delete-deposit/delete-deposit.component';
 
 @NgModule({
   declarations: [
@@ -256,7 +261,11 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     DeletePaymentMethodComponent,
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
-    StatisticsComponent
+    StatisticsComponent,
+    AddDepositComponent,
+    ListDepositComponent,
+    UpdateDepositComponent,
+    DeleteDepositComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -280,7 +289,10 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     UpdatePaymentMethodComponent,
     DeletePaymentMethodComponent,
     ListPaymentMethodsComponent,
-    DeleteMovementOfCashComponent
+    DeleteMovementOfCashComponent,
+    AddDepositComponent,
+    UpdateDepositComponent,
+    DeleteDepositComponent
   ],
   imports: [
     BrowserModule,
@@ -330,7 +342,8 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
     VariantTypeService,
     VariantService,
     VariantValueService,
-    TaxService
+    TaxService,
+    DepositService
   ],
   bootstrap: [AppComponent]
 })

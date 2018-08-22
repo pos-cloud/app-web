@@ -70,6 +70,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
+import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -141,6 +142,7 @@ const _routes: Routes = [
   { path: 'admin/export-citi', component: ExportCitiComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/stock-de-articulos', component: ListArticleStocksComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/impuestos', component: ListTaxesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/depositos', component: ListDepositComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },
