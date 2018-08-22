@@ -65,6 +65,7 @@ export class StatisticsComponent implements OnInit {
       type: "Venta",
       movement: "Entrada",
       currentAccount: "Si",
+      modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
     }
@@ -91,6 +92,7 @@ export class StatisticsComponent implements OnInit {
       type: "Venta",
       movement: "Salida",
       currentAccount: "Si",
+      modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
     }
