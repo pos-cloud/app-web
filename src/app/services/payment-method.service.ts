@@ -66,4 +66,13 @@ export class PaymentMethodService {
 		});
 		return this._http.put(Config.apiURL + "payment-method/"+paymentMethod._id, paymentMethod, { headers: headers }).map (res => res.json());
   }
+
+	getSalesByPaymentMethod(query: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + "sales-by-payment-method/" + query, { headers: headers }).map(res => res.json());
+	}
 }

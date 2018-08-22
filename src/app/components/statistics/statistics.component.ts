@@ -8,6 +8,7 @@ import { CompanyService } from './../../services/company.service';
 import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { ReportBestSellingArticleComponent } from '../report-best-selling-article/report-best-selling-article.component';
+import { ReportSalesByPaymentMethodComponent } from '../report-sales-by-payment-method/report-sales-by-payment-method.component';
 
 @Component({
   selector: 'app-statistics',
@@ -28,6 +29,7 @@ export class StatisticsComponent implements OnInit {
   public totalReturns: number = 0;
   public showStatistics: boolean = false;
   @ViewChild(ReportBestSellingArticleComponent) reportBestSellingArticle: ReportBestSellingArticleComponent;
+  @ViewChild(ReportSalesByPaymentMethodComponent) reportSalesByPaymentMethod: ReportSalesByPaymentMethodComponent;
 
   constructor(
     public _companyService: CompanyService,
@@ -64,8 +66,13 @@ export class StatisticsComponent implements OnInit {
     this.reportBestSellingArticle.endDate = this.endDate;
     this.reportBestSellingArticle.endTime = this.endTime;
     this.reportBestSellingArticle.getBestSellingArticle();
+    this.reportSalesByPaymentMethod.startDate = this.startDate;
+    this.reportSalesByPaymentMethod.startTime = this.startTime;
+    this.reportSalesByPaymentMethod.endDate = this.endDate;
+    this.reportSalesByPaymentMethod.endTime = this.endTime;
+    this.reportSalesByPaymentMethod.getSalesByPaymentMethod();
   }
-
+  
   public getTotalSales(): void {
 
     let query = {

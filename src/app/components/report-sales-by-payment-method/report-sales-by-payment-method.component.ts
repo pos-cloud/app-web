@@ -1,25 +1,24 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { ArticleService } from './../../services/article.service';
+import { PaymentMethodService } from './../../services/payment-method.service';
 
 @Component({
-  selector: 'app-report-best-selling-article',
-  templateUrl: './report-best-selling-article.component.html',
-  styleUrls: ['./report-best-selling-article.component.css'],
+  selector: 'app-report-sales-by-payment-method',
+  templateUrl: './report-sales-by-payment-method.component.html',
+  styleUrls: ['./report-sales-by-payment-method.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class ReportBestSellingArticleComponent implements OnInit {
+export class ReportSalesByPaymentMethodComponent implements OnInit {
 
   public items: any[] = new Array();
-  public areArticlesEmpty: boolean = true;
+  public arePaymentMethodsEmpty: boolean = true;
   public alertMessage: string = "";
-  public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Input() startDate: string;
@@ -28,7 +27,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
   @Input() endTime: string;
 
   constructor(
-    public _articleService: ArticleService,
+    public _paymentMethodService: PaymentMethodService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -41,37 +40,37 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getBestSellingArticle();
+    this.getSalesByPaymentMethod();
   }
 
-  public getBestSellingArticle(): void {
-    
+  public getSalesByPaymentMethod(): void {
+
     this.loading = true;
 
     let query = {
       type: "Venta",
       movement: "Entrada",
-      currentAccount: "Si",
-      modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
     }
 
-    this._articleService.getBestSellingArticle(JSON.stringify(query)).subscribe(
+    this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
       result => {
+        console.log(result);
         if (!result || result.length <= 0) {
           if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
           this.loading = false;
           this.items = null;
-          this.areArticlesEmpty = true;
+          this.arePaymentMethodsEmpty = true;
         } else {
           this.hideMessage();
           this.loading = false;
           this.items = result;
-          this.areArticlesEmpty = false;
+          this.arePaymentMethodsEmpty = false;
         }
       },
       error => {
+        console.log(error);
         this.showMessage(error._body, "danger", false);
         this.loading = false;
       }

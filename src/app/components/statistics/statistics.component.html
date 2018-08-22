@@ -93,9 +93,13 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-6">
         <b>Productos mas vendidos</b>
         <app-report-best-selling-article [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-best-selling-article>
+      </div>
+      <div class="col-md-6">
+        <b>Ventas por método de pago</b>
+        <app-report-sales-by-payment-method [startDate]="startDate" [startTime]="startTime" [endDate]="endDate" [endTime]="endTime"></app-report-sales-by-payment-method>
       </div>
     </div>
   </div>
