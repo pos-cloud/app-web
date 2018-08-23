@@ -148,20 +148,21 @@ export class ApplyDiscountComponent implements OnInit {
   }
 
   public applyDiscount(): void {
-
+    
     if (this.discountForm.value.percentageToApply === 0 &&
-        this.discountForm.value.amountToApply !== 0) {
+      this.discountForm.value.amountToApply !== 0) {
       this.amountToApply = this.discountForm.value.amountToApply;
       this.percentageToApply = this.roundNumber.transform(this.amountToApply * 100 / this.amount, 3);
     } else if ( this.discountForm.value.percentageToApply !== 0 &&
                 this.discountForm.value.amountToApply === 0) {
       this.percentageToApply = this.roundNumber.transform(this.discountForm.value.percentageToApply, 3);
       this.amountToApply = this.roundNumber.transform((this.amount * this.percentageToApply / 100), 3);
-    } else {
+    } else if ( this.discountForm.value.percentageToApply === 0 &&
+                this.discountForm.value.amountToApply === 0) {
       this.amountToApply = 0;
       this.percentageToApply = 0;
     }
-
+    
     let discount = {
       'amountToApply': this.roundNumber.transform(this.amountToApply, 3),
       'percentageToApply': this.roundNumber.transform(this.percentageToApply, 3),
