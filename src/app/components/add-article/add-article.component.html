@@ -151,11 +151,22 @@
 						</div>
 					</ng-template>
 				</ngb-tab>
-				<!-- <ngb-tab title="Stock">
+				<ngb-tab title="Stock">
 					<ng-template ngbTabContent>
-						<app-add-article-stock [article]="article" (eventAddStock)="addStock($event)"></app-add-article-stock>
+						<!--<app-add-article-stock [article]="article" (eventAddStock)="addStock($event)"></app-add-article-stock>-->
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label for="deposit" class="control-label">Deposito:</label>
+								<select class="form-control" formControlName="deposit">
+									<option *ngFor="let deposit of deposits" [selected]="article.deposit && deposit._id===article.deposit._id" [value]="deposit._id" [disabled]="readonly">{{deposit.name}}</option>
+								</select>
+								<div *ngIf="formErrors.deposit" class="alert alert-danger">
+									{{ formErrors.deposit }}
+								</div>
+							</div>
+						</div>
 					</ng-template>
-				</ngb-tab> -->
+				</ngb-tab>
 				<ngb-tab title="Observaciones">
 					<ng-template ngbTabContent>
 						<div class="row">

@@ -1,6 +1,7 @@
 import { Make } from './make';
 import { Category } from './category';
 import { Taxes } from './taxes';
+import { Deposit } from './deposit';
 
 export class Article {
 
@@ -19,6 +20,7 @@ export class Article {
     public markupPrice: number = 0.00;
     public salePrice: number = 0.00;
     public make: Make;
+    public deposit: Deposit;
     public category: Category;
     public barcode: string;
     public printIn: ArticlePrintIn = ArticlePrintIn.Counter;

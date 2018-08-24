@@ -15,6 +15,7 @@ import { Variant } from '../../models/variant';
 import { Config } from './../../app.config';
 import { VariantType } from '../../models/variant-type';
 import { Taxes } from '../../models/taxes';
+import { Deposit } from '../../models/deposit';
 
 //Services
 import { ArticleService } from './../../services/article.service';
@@ -22,6 +23,7 @@ import { ArticleStockService } from './../../services/article-stock.service';
 import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
 import { VariantService } from './../../services/variant.service';
+import { DepositService } from './../../services/deposit.service';
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
@@ -42,6 +44,7 @@ export class AddArticleComponent implements OnInit {
   public articleStock: ArticleStock;
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
+  public deposits: Deposit[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
   public articlesWithVariants: Article[] = new Array();
@@ -77,13 +80,14 @@ export class AddArticleComponent implements OnInit {
     'markupPercentage': '',
     'markupPrice': '',
     'salePrice': '',
-    'category': ''
+    'category': '',
+    'deposit' : ''
   };
 
   public validationMessages = {
     'code': {
       'required': 'Este campo es requerido.',
-      'maxlength': 'No puede exceder los 5 carácteres.'
+      'maxlength': 'No puede exceder los 10 carácteres.'
     },
     'make': {
       'required': 'Este campo es requerido.'
@@ -111,6 +115,9 @@ export class AddArticleComponent implements OnInit {
     },
     'category': {
       'required': 'Este campo es requerido.'
+    },
+    'deposit': {
+      'required': 'Este campo es requerido'
     }
   };
 
@@ -118,6 +125,7 @@ export class AddArticleComponent implements OnInit {
     public _articleService: ArticleService,
     public _articleStockService: ArticleStockService,
     public _variantService: VariantService,
+    public _depositService: DepositService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _fb: FormBuilder,
@@ -158,7 +166,7 @@ export class AddArticleComponent implements OnInit {
       ],
       'code': [this.article.code, [
         Validators.required,
-        Validators.maxLength(5)
+        Validators.maxLength(10)
       ]
       ],
       'make': [this.article.make, [
@@ -194,6 +202,9 @@ export class AddArticleComponent implements OnInit {
       ],
       'category': [this.article.category, [
         Validators.required
+      ]
+      ],
+      'deposit' : [this.article.deposit, [
       ]
       ],
       'observation': [this.article.observation, [
@@ -338,10 +349,30 @@ export class AddArticleComponent implements OnInit {
     this._makeService.getMakes().subscribe(
       result => {
         if (!result.makes) {
-          this.getCategories();
+          this.getDeposits();
         } else {
           this.hideMessage();
           this.makes = result.makes;
+          this.getDeposits();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getDeposits(): void {
+    this.loading = true;
+
+    this._depositService.getDeposits().subscribe(
+      result => {
+        if (!result.deposits) {
+          this.getCategories();
+        } else {
+          this.hideMessage();
+          this.deposits = result.deposits;
           this.getCategories();
         }
       },
@@ -475,6 +506,17 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
+    let deposit;
+    if (!this.article.deposit) {
+      deposit = null;
+    } else {
+      if (this.article.deposit._id) {
+        deposit = this.article.deposit._id;
+      } else {
+        deposit = this.article.deposit;
+      }
+    }
+
     if (!this.article.description) this.article.description = "";
     if (!this.article.posDescription) this.article.posDescription = "";
     if (!this.article.basePrice) this.article.basePrice = 0.00;
@@ -505,6 +547,7 @@ export class AddArticleComponent implements OnInit {
       '_id': this.article._id,
       'code': this.article.code,
       'make': make,
+      'deposit' : deposit,
       'description': this.article.description,
       'posDescription': this.article.posDescription,
       'basePrice': this.article.basePrice,
