@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-  <p>¿Está seguro de anular la transacción?</p>
+  <p>¿Está seguro de anular la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
