@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Transaction, TransactionState } from './../../models/transaction';
+import { Transaction } from './../../models/transaction';
 import { TransactionMovement } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 import { Taxes } from '../../models/taxes';

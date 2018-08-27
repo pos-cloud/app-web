@@ -21,7 +21,7 @@ import { PrinterService } from './../../services/printer.service';
 export class AddTransactionTypeComponent implements OnInit {
 
   public transactionType: TransactionType;
-  public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock];
+  public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
   public transactionTypeForm: FormGroup;
   public alertMessage: string = "";
   public userType: string;
@@ -153,6 +153,12 @@ export class AddTransactionTypeComponent implements OnInit {
       'tax': [this.transactionType.tax, [
         ]
       ],
+      'cashOpening': [this.transactionType.cashOpening, [
+        ]
+      ],
+      'cashClosing': [this.transactionType.cashClosing, [
+        ]
+      ],
       'allowAPP': [this.transactionType.allowAPP, [
         ]
       ]
@@ -220,6 +226,8 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
     if (this.transactionType.tax === undefined) this.transactionType.tax = false;
     if (this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
+    if (this.transactionType.cashOpening === undefined) this.transactionType.cashOpening = false;
+    if (this.transactionType.cashClosing === undefined) this.transactionType.cashClosing = false;
 
     this.transactionTypeForm.setValue({
       'transactionMovement': this.transactionType.transactionMovement,
@@ -242,6 +250,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'printable': this.transactionType.printable,
       'defectPrinter': this.transactionType.defectPrinter,
       'tax': this.transactionType.tax,
+      'cashOpening': this.transactionType.cashOpening,
+      'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP
     });
   }

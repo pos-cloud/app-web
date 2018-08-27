@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //PIPES
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
@@ -10,7 +10,7 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
   selector: 'app-apply-discount',
   templateUrl: './apply-discount.component.html',
   styleUrls: ['./apply-discount.component.css'],
-  providers: [RoundNumberPipe]
+  providers: [NgbAlertConfig, RoundNumberPipe]
 })
 export class ApplyDiscountComponent implements OnInit {
 
@@ -48,6 +48,7 @@ export class ApplyDiscountComponent implements OnInit {
   constructor(
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
   ) { }
 
   ngOnInit() {
@@ -172,5 +173,15 @@ export class ApplyDiscountComponent implements OnInit {
     this.activeModal.close({
       'discount': discount
     });
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage(): void {
+    this.alertMessage = "";
   }
 }

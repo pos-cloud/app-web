@@ -21,6 +21,8 @@ export class TransactionType {
 	public printable: boolean = false;
 	public defectPrinter: Printer;
 	public tax: boolean = false;
+	public cashOpening: boolean = false;
+	public cashClosing: boolean = false;
 	public allowAPP: boolean = false;
 
 	constructor() { }
@@ -50,5 +52,6 @@ export class CodeAFIP {
 export enum TransactionMovement {
 	Sale = <any>"Venta",
 	Purchase = <any>"Compra",
-	Stock = <any>"Stock"
+	Stock = <any>"Stock",
+	Money = <any>"Fondos"
 }

@@ -104,7 +104,7 @@
                     <tbody>
                       <tr *ngFor="let movementOfCash of movementsOfCashes">
                         <td>{{movementOfCash.type.name}}</td>
-                        <td>{{movementOfCash.amountCharge | currency:'USD':'1.2-2'}}</td>
+                        <td>{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
                         <td>{{movementOfCash.observation}}</td>
                       </tr>
                       <tr align="center " *ngIf="areMovementsOfCashEmpty ">

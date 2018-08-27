@@ -172,6 +172,70 @@ export class AddMovementOfCashComponent implements OnInit {
     this.onValueChanged();
   }
 
+  public setValueForm(): void {
+
+    if (!this.movementOfCash.observation) this.movementOfCash.observation = "";
+    if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
+    if (!this.movementOfCash.discount) this.movementOfCash.discount = 0.00;
+    if (!this.movementOfCash.surcharge) this.movementOfCash.surcharge = 0.00;
+    if (!this.movementOfCash.receiver) this.movementOfCash.receiver = '';
+    if (!this.movementOfCash.number) this.movementOfCash.number = '';
+    if (!this.movementOfCash.bank) this.movementOfCash.bank = '';
+    if (!this.movementOfCash.titular) this.movementOfCash.titular = '';
+    if (!this.movementOfCash.CUIT) this.movementOfCash.CUIT = '';
+    if (!this.movementOfCash.deliveredBy) this.movementOfCash.deliveredBy = '';
+    if (!this.amountToPay) this.amountToPay = 0.00;
+    if (!this.amountPaid) this.amountPaid = 0.00;
+    if (!this.amountDiscount) this.amountDiscount = 0.00;
+
+    let values = {
+      'transactionAmount': parseFloat(this.transactionAmount.toFixed(2)),
+      'paymentMethod': this.movementOfCash.type,
+      'amountToPay': parseFloat(this.amountToPay.toFixed(2)),
+      'amountPaid': parseFloat(this.amountPaid.toFixed(2)),
+      'amountDiscount': parseFloat(this.amountDiscount.toFixed(2)),
+      'paymentChange': this.paymentChange,
+      'observation': this.movementOfCash.observation,
+      'discount': parseFloat(this.movementOfCash.discount.toFixed(2)),
+      'surcharge': parseFloat(this.movementOfCash.surcharge.toFixed(2)),
+      'expirationDate': this.movementOfCash.expirationDate,
+      'receiver': this.movementOfCash.receiver,
+      'number': this.movementOfCash.number,
+      'bank': this.movementOfCash.bank,
+      'titular': this.movementOfCash.titular,
+      'CUIT': this.movementOfCash.CUIT,
+      'deliveredBy': this.movementOfCash.deliveredBy
+    };
+
+    this.movementOfCashForm.setValue(values);
+  }
+
+  public onValueChanged(data?: any): void {
+
+    if (!this.movementOfCashForm) { return; }
+    const form = this.movementOfCashForm;
+
+    for (const field in this.formErrors) {
+
+      this.formErrors[field] = '';
+
+      const control = form.get(field);
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+
+    this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
+    if (parseFloat(this.paymentChange) < 0) {
+      this.paymentChange = '0.00';
+    }
+
+    this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+  }
+
   public getMovementOfCashesByTransaction(): void {
 
     this.loading = true;
@@ -343,70 +407,6 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  public setValueForm(): void {
-
-    if(!this.movementOfCash.observation) this.movementOfCash.observation = "";
-    if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
-    if (!this.movementOfCash.discount) this.movementOfCash.discount = 0.00;
-    if (!this.movementOfCash.surcharge) this.movementOfCash.surcharge = 0.00;
-    if (!this.movementOfCash.receiver) this.movementOfCash.receiver = '';
-    if (!this.movementOfCash.number) this.movementOfCash.number = '';
-    if (!this.movementOfCash.bank) this.movementOfCash.bank = '';
-    if (!this.movementOfCash.titular) this.movementOfCash.titular = '';
-    if (!this.movementOfCash.CUIT) this.movementOfCash.CUIT = '';
-    if (!this.movementOfCash.deliveredBy) this.movementOfCash.deliveredBy = '';
-    if (!this.amountToPay) this.amountToPay = 0.00;
-    if (!this.amountPaid) this.amountPaid = 0.00;
-    if (!this.amountDiscount) this.amountDiscount = 0.00;
-    
-    let values = {
-      'transactionAmount': parseFloat(this.transactionAmount.toFixed(2)),
-      'paymentMethod': this.movementOfCash.type,
-      'amountToPay': parseFloat(this.amountToPay.toFixed(2)),
-      'amountPaid': parseFloat(this.amountPaid.toFixed(2)),
-      'amountDiscount': parseFloat(this.amountDiscount.toFixed(2)),
-      'paymentChange': this.paymentChange,
-      'observation': this.movementOfCash.observation,
-      'discount': parseFloat(this.movementOfCash.discount.toFixed(2)),
-      'surcharge': parseFloat(this.movementOfCash.surcharge.toFixed(2)),
-      'expirationDate': this.movementOfCash.expirationDate,
-      'receiver': this.movementOfCash.receiver,
-      'number': this.movementOfCash.number,
-      'bank': this.movementOfCash.bank,
-      'titular': this.movementOfCash.titular,
-      'CUIT': this.movementOfCash.CUIT,
-      'deliveredBy': this.movementOfCash.deliveredBy
-    };
-    
-    this.movementOfCashForm.setValue(values);
-  }
-
-  public onValueChanged(data?: any): void {
-
-    if (!this.movementOfCashForm) { return; }
-    const form = this.movementOfCashForm;
-
-    for (const field in this.formErrors) {
-
-      this.formErrors[field] = '';
-
-      const control = form.get(field);
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
-    
-    this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
-    if (parseFloat(this.paymentChange) < 0) {
-      this.paymentChange = '0.00';
-    }
-
-    this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
   }
 
   public updateAmounts(op?: string): void {

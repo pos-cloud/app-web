@@ -60,6 +60,24 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="cashOpening" class="control-label">¿Se utiliza para apertura de caja?</label>
+          <select class="form-control" formControlName="cashOpening">
+            <option value="true" [disabled]="readonly">Si</option>
+            <option value="false" [disabled]="readonly">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="cashClosing" class="control-label">¿Se utiliza para cierre de caja?</label>
+          <select class="form-control" formControlName="cashClosing">
+            <option value="true" [disabled]="readonly">Si</option>
+            <option value="false" [disabled]="readonly">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="requestArticles" class="control-label">¿Se intercambia artículos en la transacción?</label>
           <select class="form-control" formControlName="requestArticles">
             <option value="true" [disabled]="readonly">Si</option>

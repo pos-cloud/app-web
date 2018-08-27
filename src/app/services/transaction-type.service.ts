@@ -31,13 +31,18 @@ export class TransactionTypeService {
 		return this._http.get(Config.apiURL + "transaction-type/" + id, {headers: headers}).map(res => res.json());
 	}
 
-	getTransactionTypes() {
+	getTransactionTypes(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "transaction-types", {headers: headers}).map(res => res.json());
+		
+		if(query) {
+			return this._http.get(Config.apiURL + "transaction-types/" + query, {headers: headers}).map(res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "transaction-types", { headers: headers }).map(res => res.json());
+		}
 	}
 
 	getTransactionTypesByMovement(transactionMovement: TransactionMovement) {
