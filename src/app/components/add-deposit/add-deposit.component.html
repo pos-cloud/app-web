@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Deposito</h4>
+  <h4 class="modal-title">Agregar Depósito</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -13,22 +13,16 @@
   <form [formGroup]="depositForm" #formAddDeposit="ngForm" (ngSubmit)="addDeposit()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="name" class="control-label">Nombre:</label>
-          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"
-          />
+          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="capacity" class="control-label">Capacidad:</label>
           <input type="number" class="form-control" formControlName="capacity" capacity="capacity" id="capacity" />
-          <div *ngIf="formErrors.capacity" class="alert alert-danger">
-            {{ formErrors.capacity }}
-          </div>
         </div>
       </div>
     </div>

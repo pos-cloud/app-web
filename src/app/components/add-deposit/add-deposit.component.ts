@@ -33,7 +33,6 @@ export class AddDepositComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'capacity' : {
-      'required': 'Este campo es requerido'
     }
   };
 
@@ -66,7 +65,6 @@ export class AddDepositComponent implements OnInit {
         ]
       ],
       'capacity' : [this.deposit.capacity, [
-        Validators.required
       ]
     ]
     });
@@ -113,7 +111,7 @@ export class AddDepositComponent implements OnInit {
           this.loading = false;
         } else {
           this.deposit = result.deposit;
-          this.showMessage("El deposito se ha añadido con éxito.", "success", true);
+          this.showMessage("El depósito se ha añadido con éxito.", "success", true);
           this.deposit = new Deposit();
           this.buildForm();
         }

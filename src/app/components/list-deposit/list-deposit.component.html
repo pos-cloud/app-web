@@ -6,9 +6,9 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Depositos
+    <div class="card-header bg-primary">Listado de Depósitos
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Deposito</i></button>
+        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Depósito</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -55,7 +55,7 @@
             <td class="flat">{{deposit.capacity}}</td>
           </tr>
           <tr align="center" *ngIf="areDepositsEmpty">
-            <td colspan="2">No se encontraron depositos</td>
+            <td colspan="3">No se encontraron depósitos</td>
           </tr>
         </tbody>
       </table>

@@ -34,7 +34,6 @@ export class UpdateDepositComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'capacity' : {
-      'required': 'Este campo es requerido.'
     }
   };
 
@@ -66,15 +65,15 @@ export class UpdateDepositComponent implements OnInit {
 
     this.depositForm = this._fb.group({
       '_id': [this.deposit._id, [
-      ]
+        ]
       ],
       'name': [this.deposit.name, [
         Validators.required
-      ]
+        ]
       ],
       'capacity' : [this.deposit.capacity,[
-        
-      ]]
+        ]
+      ]
     });
 
     this.depositForm.valueChanges
