@@ -339,7 +339,7 @@ export class PrintComponent implements OnInit {
   }
 
   public toPrintCashBox(close): void {
-    console.log(close);
+    
     this.loading = true;
     this.showMessage("Imprimiendo, Espere un momento...", "info", false);
     let decimalPipe = new DeprecatedDecimalPipe('es-AR');
@@ -383,7 +383,6 @@ export class PrintComponent implements OnInit {
             if (amountOrdersCanceled == 0) {
               amountOrdersCanceled = c.amountOrdersCanceled;
             }
-            console.log(c.invoicedAmount);
             if (invoicedAmount == 0) {
               invoicedAmount = c.invoicedAmount;
             }

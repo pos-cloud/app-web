@@ -413,7 +413,6 @@ export class CashBoxComponent implements OnInit {
 
     this._transactionService.getOpenTransactionsByCashBox(this.cashBox._id).subscribe(
       result => {
-        console.log(result);
         if (!result.transactions) {
           if(close) {
             this.updateCashBox(true);
@@ -426,7 +425,6 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        console.log(error);
         this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
