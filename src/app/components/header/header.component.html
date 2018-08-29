@@ -205,13 +205,12 @@
                     [routerLink]="['admin','turnos']" 
                     [routerLinkActive]="['active']">
               Turnos
-            </button><div *ngIf="modules && modules.sale && modules.sale.delivery">
-            <button class="dropdown-item" 
-                    [routerLink]="['admin','cajas']" 
-                    [routerLinkActive]="['active']">
-              Cajas
             </button>
           </div>
+          <div *ngIf="modules && modules.money">
+            <button class="dropdown-item" [routerLink]="['admin','cajas']" [routerLinkActive]="['active']">
+              Cajas
+            </button>
           </div>
         </div>
       </li>
@@ -286,8 +285,7 @@
               Inventario
             </button>
           </div>
-          <!-- <div *ngIf="modules && modules.money"> -->
-          <div>
+          <div *ngIf="modules && modules.money">
             <button class="dropdown-item" 
                     [routerLink]="['admin','fondos']" 
                     [routerLinkActive]="['active']">
