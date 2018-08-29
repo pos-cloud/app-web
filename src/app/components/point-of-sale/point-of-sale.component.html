@@ -36,9 +36,16 @@
 
 <!-- POS DELIVERY -->
 <section class="container-fluid" *ngIf="posType=='delivery'">
+  <div class="row center-content margin-top" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
   <div class="card card-outline-primary list-delivery">
     <div class="card-header bg-primary">Pendientes
       <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('open-cash-box')"><i class="fa fa-plus"> Abrir Caja</i></button>
+        <button class="btn btn-primary" (click)="openModal('cash-box')"><i class="fa fa-plus"> Cerrar Caja</i></button>
         <button class="btn btn-primary" (click)="addSaleOrder('delivery')"><i class="fa fa-plus"> Nuevo Pedido</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">

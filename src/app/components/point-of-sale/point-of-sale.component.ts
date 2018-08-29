@@ -22,6 +22,7 @@ import { SelectEmployeeComponent } from './../select-employee/select-employee.co
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { CompanyType } from '../../models/company';
+import { CashBoxComponent } from '../cash-box/cash-box.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -95,7 +96,6 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
       result => {
         if (!result.transactionTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.transactionTypes = result.transactionTypes;
         }
@@ -148,7 +148,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionService.getOpenTransaction(this.posType).subscribe(
       result => {
         if (!result.transactions) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.hideMessage();
           this.transactions = null;
           this.areTransactionsEmpty = true;
         } else {
@@ -344,6 +344,32 @@ export class PointOfSaleComponent implements OnInit {
           }
         }, (reason) => {
 
+        });
+        break;
+      case 'open-cash-box':
+        modalRef = this._modalService.open(CashBoxComponent, { size: 'lg' });
+        modalRef.componentInstance.op = "open";
+        modalRef.result.then((result) => {
+          if (result && result.cashBox) {
+            this.showMessage("La caja se ha abierto correctamente", "success", true);
+          } else {
+            this.hideMessage();
+          }
+        }, (reason) => {
+          this.hideMessage();
+        });
+        break;
+      case 'cash-box':
+        modalRef = this._modalService.open(CashBoxComponent, { size: 'lg' });
+        modalRef.componentInstance.op = "close";
+        modalRef.result.then((result) => {
+          if (result && result.cashBox) {
+            this.showMessage("La caja se ha cerrado correctamente", "success", true);
+          } else {
+            this.hideMessage();
+          }
+        }, (reason) => {
+          this.hideMessage();
         });
         break;
       case 'select-employee':

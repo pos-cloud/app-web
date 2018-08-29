@@ -34,6 +34,7 @@ import { UserService } from './../../services/user.service';
 import { PrintService } from './../../services/print.service';
 import { ArticleStockService } from '../../services/article-stock.service';
 import { TaxService } from '../../services/tax.service';
+import { CashBoxService } from '../../services/cash-box.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
@@ -102,7 +103,8 @@ export class AddSaleOrderComponent implements OnInit {
     public _printerService: PrinterService,
     public _userService: UserService,
     private cdref: ChangeDetectorRef,
-    private _taxService: TaxService
+    private _taxService: TaxService,
+    private _cashBoxService: CashBoxService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -119,7 +121,6 @@ export class AddSaleOrderComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     let op = pathLocation[3];
-    this.getPrinters();
     
     if (this.posType === "resto") {
       this.table = new Table();
@@ -133,12 +134,14 @@ export class AddSaleOrderComponent implements OnInit {
     } else {
       if (op === "agregar-transaccion") {
         let transactionTypeID = pathLocation[4];
+        this.getOpenCashBox();
         this.getTransactionType(transactionTypeID);
       } else if(op = "editar-transaccion") {
         let transactionId = pathLocation[4];
         this.getTransaction(transactionId);
       }
     }
+    this.getPrinters();
   }
 
   ngAfterViewInit() {
@@ -261,6 +264,9 @@ export class AddSaleOrderComponent implements OnInit {
           this.hideMessage();
           this.transaction = result.transaction;
           this.transactionMovement = "" + this.transaction.type.transactionMovement;
+          if (!this.transaction.cashBox) {
+            this.getOpenCashBox();
+          }
           this.getMovementsOfTransaction();
         }
         this.loading = false;
@@ -332,6 +338,25 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.turnOpening = result.turns[0];
           this.transaction.turnClosing = result.turns[0];
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getOpenCashBox(): void {
+
+    this.loading = true;
+
+    this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
+      result => {
+        if (!result.cashBoxes) {
+        } else {
+          this.transaction.cashBox = result.cashBoxes[0];
         }
         this.loading = false;
       },

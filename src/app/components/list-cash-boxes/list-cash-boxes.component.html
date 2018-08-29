@@ -7,7 +7,6 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Cajas
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Caja</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -19,54 +18,49 @@
           <thead>
             <tr>
               <th><i class="fa fa-bars"></i></th>
-              <th (click)="orderBy('code')"> # <i class="fa fa-fw fa-sort"></i></th>
               <th (click)="orderBy('openingDate')">Fecha Apertura</th>
               <th (click)="orderBy('closingDate')">Fecha Cierre</th>
-              <th (click)="orderBy('openingCash')">Importe Apertura</th>
-              <th (click)="orderBy('closingCash')">Importe Cierre</th>
-              <th (click)="orderBy('invoicedCash')">Facturado</th>
-              <th (click)="orderBy('difference')">Diferencia</th>
               <th (click)="orderBy('state')">Estado</th>
+              <th (click)="orderBy('employee','name')">Empleado</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="#..."></th>
-                <th><input type="date" class="form-control" [(ngModel)]= "filterOpeningDate" placeholder="Fecha Apertura..." ></th>
-                <th><input type="date" class="form-control" [(ngModel)]= "filterClosingDate" placeholder="Fecha Cierre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterOpeningCash" placeholder="Importe Apertura..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterClosingCash" placeholder="Importe Cierre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterInvoicedCash" placeholder="Facturado..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterDifference" placeholder="Diferencia..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
+              <th></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterOpeningDate" placeholder="Fecha Apertura..." ></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterClosingDate" placeholder="Fecha Cierre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let cashBox of cashBoxes  | filter: filterCode:'code' 
-                                                  | filter: filterOpeningDate:'openingDate'
-                                                  | filter: filterClosingDate:'closingDate' 
-                                                  | filter: filterOpeningCash:'openingCash'
-                                                  | filter: filterClosingCash:'closingCash'
-                                                  | filter: filterInvoicedCash:'invoicedCash'
-                                                  | filter: filterDifference:'difference' 
+            <tr *ngFor="let cashBox of cashBoxes  | filter: filterOpeningDate:'openingDate'
+                                                  | filter: filterClosingDate:'closingDate'
                                                   | filter: filterState:'state'
+                                                  | filter: filterState:'name':'employee'
                                                   | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage, 
                                                                 currentPage: p, 
                                                                 totalItems: totalItems
                                                               }">
-              <td align="left" width="90">
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', cashBox)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <td align="left" width="100">
+                <button *ngIf="cashBox.state === 'Cerrada'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', cashBox)" title="Imprimir">
+                    <i class="fa fa-print"></i>
+                </button>
               </td>
-              <td>{{cashBox.code}}</td>
               <td>{{cashBox.openingDate | dateFormat:'DD/MM/YYYY' }}</td>
               <td>{{cashBox.closingDate | dateFormat:'DD/MM/YYYY' }}</td>
-              <td>{{cashBox.openingCash | currency:'USD':'1.2-2'}}</td>
-              <td>{{cashBox.closingCash | currency:'USD':'1.2-2'}}</td>
-              <td>{{cashBox.invoicedCash | currency:'USD':'1.2-2'}}</td>
-              <td>{{cashBox.difference | currency:'USD':'1.2-2'}}</td>
-              <td><h6><span class="badge badge-default">{{cashBox.state}}</span></h6></td>
+              <td>
+                <h6>
+                  <span class="badge" [ngClass]="{'badge-success':cashBox.state==='Cerrada', 
+                                                  'badge-warning':cashBox.state==='Abierta'}">
+                    {{cashBox.state}}
+                  </span>
+                </h6>
+              </td>
+              <td *ngIf="cashBox.employee">{{cashBox.employee.name}}</td>
+              <td *ngIf="!cashBox.employee"></td>
             </tr>
             <tr align="center" *ngIf="areCashBoxesEmpty">
-              <td colspan="9">No se encontraron cajas</td>
+              <td colspan="4">No se encontraron cajas</td>
             </tr>
           </tbody>
         </table>

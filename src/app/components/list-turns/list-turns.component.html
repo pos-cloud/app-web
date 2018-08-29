@@ -41,9 +41,8 @@
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="100">
-                <button *ngIf="turn.state === 'Cerrado'" 
-                        type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', turn)" title="Imprimir">
-                        <i class="fa fa-print"></i>
+                <button *ngIf="turn.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', turn)" title="Imprimir">
+                  <i class="fa fa-print"></i>
                 </button>
               </td>
               <td>{{turn.startDate }}</td>

@@ -1,0 +1,81 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="op === 'open'">Apertura de caja</h4>
+  <h4 class="modal-title" *ngIf="op === 'close'">Cierre de caja</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="cashBoxForm" #formAddMovementOfCash="ngForm" autocomplete="off" (ngSubmit)="addMovementOfCash()">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="paymentMethod" class="control-label">Medio de pago:</label>
+          <select class="form-control" formControlName="paymentMethod" name="paymentMethod">
+            <option *ngFor="let paymentMethod of paymentMethods" [ngValue]="paymentMethod">
+              {{paymentMethod.name}}
+            </option>
+          </select>
+          <div *ngIf="formErrors.paymentMethod" class="alert alert-danger">
+            {{ formErrors.paymentMethod }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="amount" class="control-label">Monto:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="amount" name="amount" min="0" step="1" [focus]="focusEvent" />
+          </div>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
+          </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="value" class="control-label">Acción</label>
+          <button type="submit" class="btn btn-success">Confirmar</button>
+        </div>
+      </div>
+      <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th width="130">
+                <i class="fa fa-bars"></i>
+              </th>
+              <th>Método</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let movement of movementsOfCashes">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="openModal('delete', movement)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+              <td class="flat" width="430">{{ movement.type.name }}</td>
+              <td class="flat" width="430">{{ movement.amountPaid }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button"  *ngIf="op==='open'" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="openCashBox()">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading && op==='open'">Aceptar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+      <button type="button" *ngIf="op==='close'" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="closeCashBox()">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Aceptar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

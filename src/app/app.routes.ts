@@ -65,6 +65,7 @@ import { AddPaymentMethodComponent } from './components/add-payment-method/add-p
 import { UpdatePaymentMethodComponent } from './components/update-payment-method/update-payment-method.component';
 import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
 import { DeletePaymentMethodComponent } from './components/delete-payment-method/delete-payment-method.component';
+import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
 
 import { AuthGuard } from './guards/auth.guard';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
@@ -80,6 +81,7 @@ const _routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'admin/statistics', component: StatisticsComponent, data: { roles: ['Administrador'] } },
   { path: 'admin/mejores-productos-vendidos', component: ReportBestSellingArticleComponent, data: { roles: ['Administrador'] } },
+  { path: 'admin/cajas', component: ListCashBoxesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/productos', component: ListArticlesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-producto', component: AddArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-producto', component: DeleteArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
@@ -98,6 +100,7 @@ const _routes: Routes = [
   { path: 'admin/ventas', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/compras', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/stock', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/fondos', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/agregar-transaccion', component: AddTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/eliminar-transaccion', component: DeleteTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/salones', component: ListRoomsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },

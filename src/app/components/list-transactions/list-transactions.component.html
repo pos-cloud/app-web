@@ -381,7 +381,7 @@
 </section>
 
 <!-- SECCION STOCK -->
-<section class="container-fluid" *ngIf="userType=='admin' && (((modules | async)?.stock) && listType==='Stock')">
+<section class="container-fluid" *ngIf="userType=='admin' && ((((modules | async)?.stock) && listType==='Stock') || listType==='Fondos')">
   <div class="center-content" *ngIf="alertMessage !== '' && !areTransactionsEmptys">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -458,14 +458,13 @@
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">
-            <td colspan="16">No se encontraron transacciones</td>
+            <td colspan="7">No se encontraron transacciones</td>
           </tr>
         </tbody>
         <tfoot>
             <td>
               <strong>Totales</strong>
             </td>
-            <td></td>
             <td></td>
             <td></td>
             <td></td>

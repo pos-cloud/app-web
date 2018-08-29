@@ -66,6 +66,8 @@ export class ListTransactionsComponent implements OnInit {
       this.getTransactionsByMovement(TransactionMovement.Sale);
     } else if (this.listType === "Stock") {
       this.getTransactionsByMovement(TransactionMovement.Stock);
+    } else if (this.listType === "Fondos") {
+      this.getTransactionsByMovement(TransactionMovement.Money);
     }
   }
 

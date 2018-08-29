@@ -32,6 +32,8 @@ import { ArticleService } from './../../services/article.service';
 import { DeprecatedDecimalPipe } from '@angular/common';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { CashBox } from '../../models/cash-box';
+import { CashBoxService } from '../../services/cash-box.service';
 
 @Component({
   selector: 'app-print',
@@ -46,6 +48,7 @@ export class PrintComponent implements OnInit {
   @Input() transactions: Transaction[];
   @Input() movementsOfArticles: MovementOfArticle[];
   @Input() turn: Turn;
+  @Input() cashBox: CashBox;
   @Input() typePrint;
   @Input() balance;
   @Input() articleStock : ArticleStock;
@@ -74,6 +77,7 @@ export class PrintComponent implements OnInit {
 
   constructor(
     public _turnService: TurnService,
+    public _cashBoxService: CashBoxService,
     public _transactionTypeService: TransactionTypeService,
     public _printService: PrintService,
     public _printerService: PrinterService,
@@ -98,7 +102,12 @@ export class PrintComponent implements OnInit {
       this.printer.type = PrinterType.PDF;
       this.printer.pageWidth = 210;
       this.printer.pageHigh = 297;
-    } 
+    }
+
+    if (this.typePrint === "cash-box") {
+      this.printer.pageWidth = 80;
+      this.printer.pageHigh = 297;
+    }
     
     if (!this.printer.pageWidth || this.printer.pageWidth === 0) {
       this.printer.pageWidth = 210;
@@ -135,6 +144,8 @@ export class PrintComponent implements OnInit {
             this.getMovementOfArticle();
           } else if (this.typePrint === "current-account") {
             this.toPrintCurrentAccount();
+          } else if (this.typePrint === "cash-box") {
+            this.getClosingCashBox();
           } else if (this.typePrint === "label") {
             let code 
             if(this.articleStock) {
@@ -146,6 +157,26 @@ export class PrintComponent implements OnInit {
           } else if (this.typePrint === "kitchen") {
             this.toPrintKitchen();
           }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getClosingCashBox(): void {
+
+    this.loading = true;
+
+    this._cashBoxService.getClosingCashBox(this.cashBox._id).subscribe(
+      result => {
+        if (!result || result.length <= 0) {
+          this.toPrintCashBox(undefined);
+        } else {
+          this.toPrintCashBox(result);
         }
         this.loading = false;
       },
@@ -305,6 +336,94 @@ export class PrintComponent implements OnInit {
       + this.transaction.CAE
       + date 
       + checkDigit,'invoice');
+  }
+
+  public toPrintCashBox(close): void {
+    console.log(close);
+    this.loading = true;
+    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
+    let decimalPipe = new DeprecatedDecimalPipe('es-AR');
+
+    //Cabecera del ticket
+    var margin = 5;
+    var row = 10;
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(this.fontSizes.large);
+    this.centerText(margin, margin, 80, 0, row, this.config[0].companyName);
+    this.doc.setFontType('normal');
+    this.doc.setFontSize(this.fontSizes.normal);
+
+    // Detalle de la caja
+    row += 5;
+    if (this.cashBox.employee) { this.doc.text('Cajero: ' + this.cashBox.employee.name, margin, row) };
+    if (this.cashBox.openingDate) { this.doc.text('Apertura: ' + this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'), margin, row += 5) };
+    if (this.cashBox.closingDate) { this.doc.text('Cierre: ' + this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'), margin, row += 5) };
+    
+    let openingAmount = 0;
+    let closingAmount = 0;
+    let invoicedAmount = 0;
+    let amountOrders = 0;
+    let amountOrdersCanceled = 0;
+    let invoicedAmountCanceled = 0;
+
+    if(close && close.length > 0) {
+
+      for(let c of close) {
+        switch (c._id.type) {
+          case "Apertura":
+            openingAmount = c.openingAmount;
+            break;
+          case "Cierre":
+            closingAmount = c.closingAmount;
+            break;
+          case "Ticket":
+            if (amountOrders == 0) {
+              amountOrders = c.amountOrders;
+            }
+            if (amountOrdersCanceled == 0) {
+              amountOrdersCanceled = c.amountOrdersCanceled;
+            }
+            console.log(c.invoicedAmount);
+            if (invoicedAmount == 0) {
+              invoicedAmount = c.invoicedAmount;
+            }
+            if (invoicedAmountCanceled == 0) {
+              invoicedAmountCanceled = c.invoicedAmountCanceled;
+            }
+            break;
+        }
+      }
+
+      this.doc.text('Facturado: $' + decimalPipe.transform(invoicedAmount, '1.2-2'), margin, row += 5);
+      this.doc.text('Tickets: ' + amountOrders, margin, row += 5);
+      this.doc.text('Tickets Anulados: ' + amountOrdersCanceled, margin, row += 5);
+      
+      this.doc.text('Detalle de Cierre:', margin, row += 5);
+      margin = 10;
+      this.doc.text('Monto Apertura:', margin, row += 5);
+      this.doc.text("$" + decimalPipe.transform(openingAmount, '1.2-2'), 50, row);
+      this.doc.text('Total en caja:', margin, row += 5);
+      this.doc.text("$" + decimalPipe.transform(openingAmount + invoicedAmount, '1.2-2'), 50, row);
+      this.doc.text('Monto Cierre:', margin, row += 5);
+      this.doc.text("$" + decimalPipe.transform(closingAmount, '1.2-2'), 50, row);
+      this.doc.text('Diferencia de caja:', margin, row += 5);
+      this.doc.text("$" + decimalPipe.transform(closingAmount - (openingAmount + invoicedAmount), '1.2-2'), 50, row);
+      // this.doc.text('Detalle de Medios de Pago', margin, row += 5);
+      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.cash !== 0) { this.doc.text('Efectivo: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.cash, '1.2-2'), 30, row += 5) };
+      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.currentAccount !== 0) { this.doc.text('Cuenta Corriente: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.currentAccount, '1.2-2'), 30, row += 5) };
+      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.creditCard !== 0) { this.doc.text('Tarjeta de Crédito: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.creditCard, '1.2-2'), 30, row += 5) };
+      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.debitCard !== 0) { this.doc.text('Tarjeta de Débito: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.debitCard, '1.2-2'), 30, row += 5) };
+      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.thirdPartyCheck !== 0) { this.doc.text('Cheque de Terceros: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.thirdPartyCheck, '1.2-2'), 30, row += 5) };
+    } else {
+      this.doc.text('Facturado: $' + decimalPipe.transform(0, '1.2-2'), margin, row += 5);
+      this.doc.text('Tickets: ' + 0, margin, row += 5);
+      this.doc.text('Tickets Anulados: ' + 0, margin, row += 5);
+    }
+
+    this.getFooter();
+
+    // Abrir PDF a imprimir
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
   public toPrintTurn(): void {

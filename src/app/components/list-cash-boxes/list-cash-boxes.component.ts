@@ -6,8 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
 
-import { AddCashBoxComponent } from './../../components/add-cash-box/add-cash-box.component';
-import { DeleteCashBoxComponent } from './../../components/delete-cash-box/delete-cash-box.component';
+import { PrintComponent } from './../../components/print/print.component';
 
 @Component({
   selector: 'app-list-cash-boxes',
@@ -56,7 +55,6 @@ export class ListCashBoxesComponent implements OnInit {
         result => {
 					if(!result.cashBoxes) {
             if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
-            this.loading = false;
 					  this.cashBoxes = null;
             this.areCashBoxesEmpty = true;
 					} else {
@@ -65,6 +63,7 @@ export class ListCashBoxesComponent implements OnInit {
             this.totalItems = this.cashBoxes.length;
             this.areCashBoxesEmpty = false;
           }
+          this.loading = false;
 				},
 				error => {
           this.showMessage(error._body, "danger", false);
@@ -87,29 +86,21 @@ export class ListCashBoxesComponent implements OnInit {
     this.getCashBoxes();
   }
   
-  public openModal(op: string, cashBox:CashBox): void {
+  public openModal(op: string, cashBox: CashBox): void {
 
     let modalRef;
-    switch(op) {
-      case 'add' :
-        modalRef = this._modalService.open(AddCashBoxComponent, { size: 'lg' }).result.then((result) => {
-          this.getCashBoxes();
+    switch (op) {
+      case 'print':
+        let modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.cashBox = cashBox;
+        modalRef.componentInstance.typePrint = 'cash-box';
+        modalRef.result.then((result) => {
+
         }, (reason) => {
-          this.getCashBoxes();
+
         });
         break;
-      case 'delete' :
-          modalRef = this._modalService.open(DeleteCashBoxComponent, { size: 'lg' })
-          modalRef.componentInstance.cashBox = cashBox;
-          modalRef.result.then((result) => {
-            if(result === 'delete_close') {
-              this.getCashBoxes();
-            }
-          }, (reason) => {
-            
-          });
-        break;
-      default : ;
+      default: ;
     }
   };
 

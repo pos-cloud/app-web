@@ -5,6 +5,7 @@ import { Transaction, TransactionState } from './../models/transaction';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
+import { CashBox } from '../models/cash-box';
 
 @Injectable()
 export class TransactionService {
@@ -61,6 +62,15 @@ export class TransactionService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + posType + '"}]&sort="startDate":-1', { headers: headers }).map(res => res.json());
+	}
+
+	getOpenTransactionsByCashBox(cashBoxId: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + cashBoxId + '"}]', { headers: headers }).map(res => res.json());
 	}
 
 	getTransactionsByCompany(id: string) {

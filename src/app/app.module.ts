@@ -65,7 +65,6 @@ import { UpdateTableComponent } from './components/update-table/update-table.com
 import { DeleteTableComponent } from './components/delete-table/delete-table.component';
 import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
 import { DeleteCashBoxComponent } from './components/delete-cash-box/delete-cash-box.component';
-import { AddCashBoxComponent } from './components/add-cash-box/add-cash-box.component';
 import { ListTransactionsComponent } from './components/list-transactions/list-transactions.component';
 import { AddSaleOrderComponent } from './components/add-sale-order/add-sale-order.component';
 import { DeleteTransactionComponent } from './components/delete-transaction/delete-transaction.component';
@@ -163,6 +162,7 @@ import { ReportBestSellingArticleComponent } from './components/report-best-sell
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
+import { CashBoxComponent } from './components/cash-box/cash-box.component';
 
 @NgModule({
   declarations: [
@@ -182,7 +182,6 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
     DeleteTableComponent,
     ListCashBoxesComponent,
     DeleteCashBoxComponent,
-    AddCashBoxComponent,
     ListTransactionsComponent,
     AddSaleOrderComponent,
     DeleteTransactionComponent,
@@ -273,7 +272,8 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
     ReportBestSellingArticleComponent,
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
-    ReportSalesByMakeComponent
+    ReportSalesByMakeComponent,
+    CashBoxComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -300,7 +300,8 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
     DeleteMovementOfCashComponent,
     AddDepositComponent,
     UpdateDepositComponent,
-    DeleteDepositComponent
+    DeleteDepositComponent,
+    CashBoxComponent
   ],
   imports: [
     BrowserModule,
