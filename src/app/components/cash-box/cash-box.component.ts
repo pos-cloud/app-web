@@ -344,7 +344,7 @@ export class CashBoxComponent implements OnInit {
     );
   }
 
-  public addMovementOfCash(transaction): void {
+  public addMovementOfCash(): void {
 
     this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
