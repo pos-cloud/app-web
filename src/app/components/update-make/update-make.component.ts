@@ -50,7 +50,8 @@ export class UpdateMakeComponent implements OnInit {
     this.buildForm();
     this.makeForm.setValue({
       '_id':this.make._id,
-      'description': this.make.description
+      'description': this.make.description,
+      'visibleSale': this.make.visibleSale 
     });
   }
 
@@ -68,6 +69,8 @@ export class UpdateMakeComponent implements OnInit {
           Validators.required
         ]
       ],
+      'visibleSale' : [this.make.visibleSale, [
+      ]]
     });
 
     this.makeForm.valueChanges

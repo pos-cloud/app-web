@@ -70,3 +70,9 @@
       position: absolute;
       right: 0px; 
 }
+
+#make {
+      font-family:Arial;
+      font-weight: bold;
+      font-size: 2mm;
+}
