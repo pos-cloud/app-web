@@ -139,7 +139,7 @@
           height="120" width="120">
         <div *ngIf="article.posDescription" class="image-title">{{article.posDescription}}</div>
         <div *ngIf="!article.posDescription" class="image-title">{{article.description | slice:0:19 }}</div>
-        <div id="make" *ngIf="article.make.visibleSale === true && article.make" class="image-title">{{article.make.description}}</div>
+        <div id="make" *ngIf="article.make != undefined && article.make.visibleSale == true" class="image-title">{{article.make.description}}</div>
       </div>
     </div>
     <div class="center-content" *ngIf="areArticlesEmpty">

@@ -13,24 +13,34 @@
   </div>
   <form [formGroup]="makeForm" #formUpdateMake="ngForm" (ngSubmit)="updateMake()" autocomplete="off">
     <div class="modal-body">
-      <div class="row">
-        <div class="form-group col-md-8">
-          <label for="description" class="control-label">Descripción:</label>
-          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent" [readonly]="readonly"/>
-          <div *ngIf="formErrors.description" class="alert alert-danger">
-            {{ formErrors.description }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="visibleSale" class="control-label">Pos?</label>
-          <select class="form-control" formControlName="visibleSale">
-            <option value="true" >Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
+      <ngb-tabset>
+          <ngb-tab title="Datos principales">
+            <ng-template ngbTabContent>
+              <div class="row">
+                <div class="form-group col-md-12">
+                <label for="description" class="control-label">Descripción:</label>
+                <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
+                <div *ngIf="formErrors.description" class="alert alert-danger">
+                  {{ formErrors.description }}
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+            <ngb-tab title="Configuracion">
+                <ng-template ngbTabContent>
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                      <label for="visibleSale" class="control-label">La marca es visible en la venta?</label>
+                      <select class="form-control" formControlName="visibleSale">
+                        <option value="true" >Si</option>
+                        <option value="false" selected>No</option>
+                      </select>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-tab>
+      </ngb-tabset>
     </div>
     <div class="modal-footer" *ngIf="!readonly">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
