@@ -9,8 +9,6 @@ import { Category } from './../../models/category';
 import { Config } from './../../app.config';
 import { MovementOfArticle } from '../../models/movement-of-article';
 import { Taxes } from './../../models/taxes';
-import { Make } from './../../models/make';
-import { MakeService } from './../../services/make.service';
 
 import { ArticleService } from './../../services/article.service';
 
@@ -37,7 +35,6 @@ export class ListArticlesComponent implements OnInit {
   public alertMessage: string = "";
   public userType: string = "";
   public orderTerm: string[] = ['code'];
-  public makes: Make[] = new Array();
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -54,7 +51,6 @@ export class ListArticlesComponent implements OnInit {
 
   constructor(
     public _articleService: ArticleService,
-    public _makeService: MakeService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
@@ -76,27 +72,7 @@ export class ListArticlesComponent implements OnInit {
     this.userType = pathLocation[1];
     this.totals = new Array();
     this.getPrinters();
-    this.getMakes();
     this.getFinalArticles();
-  }
-
-  public getMakes(): void {
-
-    this.loading = true;
-
-    this._makeService.getMakes().subscribe(
-      result => {
-        if (!result.makes) {
-        } else {
-          this.hideMessage();
-          this.makes = result.makes;
-        }
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
   }
 
   public getPrinters(): void {
