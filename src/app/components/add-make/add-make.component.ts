@@ -61,6 +61,8 @@ export class AddMakeComponent implements OnInit {
           Validators.required
         ]
       ],
+      'visibleSale' : [this.make.visibleSale, [
+      ]]
     });
 
     this.makeForm.valueChanges
