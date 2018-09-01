@@ -18,6 +18,7 @@ export class TransactionType {
 	public codes: CodeAFIP[];
 	public fixedOrigin: number = 1;
 	public fixedLetter: string;
+	public resetNumber: boolean = false;
 	public printable: boolean = false;
 	public defectPrinter: Printer;
 	public tax: boolean = false;

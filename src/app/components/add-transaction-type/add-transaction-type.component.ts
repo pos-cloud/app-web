@@ -132,6 +132,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'fixedLetter': [this.transactionType.fixedLetter, [
         ]
       ], 
+      'resetNumber': [this.transactionType.resetNumber, [
+        ]
+      ], 
       'electronics': [this.transactionType.electronics, [
         ]
       ],
@@ -221,6 +224,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.defectOrders === undefined) this.transactionType.defectOrders = false;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
     if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = "";
+    if (this.transactionType.resetNumber === undefined) this.transactionType.resetNumber = false;
     if (this.transactionType.electronics === undefined) this.transactionType.electronics = false;
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
     if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
@@ -243,6 +247,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'defectOrders': this.transactionType.defectOrders,
       'fixedOrigin': this.transactionType.fixedOrigin,
       'fixedLetter': this.transactionType.fixedLetter,
+      'resetNumber': this.transactionType.resetNumber,
       'electronics': this.transactionType.electronics,
       'codeA': this.getCode(this.transactionType, "A"),
       'codeB': this.getCode(this.transactionType, "B"),
