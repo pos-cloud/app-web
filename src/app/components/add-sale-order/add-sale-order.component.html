@@ -138,6 +138,7 @@
         <div class="col-md-11">
           <nav class="breadcrumb">
             <span class="breadcrumb-item" [ngClass]="{'active':'areCategoriesVisible'}" (click)="showCategories()">Rubros</span>
+            <span class="breadcrumb-item active" *ngIf="areArticlesVisible">{{ categorySelected.description }}</span>
             <span class="breadcrumb-item active" *ngIf="areArticlesVisible">Productos</span>
           </nav>
         </div>
