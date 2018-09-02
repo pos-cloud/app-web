@@ -170,6 +170,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
       ],
       'requestPaymentMethods': [this.transactionType.requestPaymentMethods, [
         ]
+      ],
+      'showPrices': [this.transactionType.showPrices, [
+        ]
       ]
     });
 
@@ -224,6 +227,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (this.transactionType.cashOpening === undefined) this.transactionType.cashOpening = false;
     if (this.transactionType.cashClosing === undefined) this.transactionType.cashClosing = false;
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
+    if (this.transactionType.showPrices === undefined) this.transactionType.showPrices = true;
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -251,7 +255,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'tax': this.transactionType.tax,
       'cashOpening': this.transactionType.cashOpening,
       'cashClosing': this.transactionType.cashClosing,
-      'allowAPP': this.transactionType.allowAPP
+      'allowAPP': this.transactionType.allowAPP,
+      'showPrices': this.transactionType.showPrices
     });
   }
 

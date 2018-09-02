@@ -20,6 +20,7 @@ export class TransactionType {
 	public fixedOrigin: number = 1;
 	public fixedLetter: string;
 	public resetNumber: boolean = false;
+	public showPrices: boolean = true;
 	public printable: boolean = false;
 	public defectPrinter: Printer;
 	public tax: boolean = false;

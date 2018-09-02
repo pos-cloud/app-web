@@ -51,7 +51,7 @@
             <tr>
               <th>Cantidad</th>
               <th>Description</th>
-              <th>Monto</th>
+              <th *ngIf="transaction.type.showPrices">Monto</th>
             </tr>
           </thead>
           <tbody>
@@ -68,8 +68,8 @@
                   <br> {{movementOfArticle.notes}}
                 </strong>
               </td>
-              <td *ngIf="transactionMovement === 'Venta'">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
-              <td *ngIf="transactionMovement !== 'Venta'">{{movementOfArticle.costPrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="transactionMovement === 'Venta' && transaction.type.showPrices">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="transactionMovement !== 'Venta' && transaction.type.showPrices">{{movementOfArticle.costPrice | currency:'USD':'1.2-2'}}</td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
@@ -77,7 +77,7 @@
           </tbody>
         </table>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="transaction.type.showPrices">
         <table class="table table-hover">
           <tbody>
             <tr>
@@ -148,7 +148,7 @@
       </div>
       <div [ngClass]="{'row table-responsive img-container':areArticlesVisible}">
         <div class="col-md-12">
-          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible]="areArticlesVisible" [filterArticle]="filterArticle" [transactionMovement]="transactionMovement" [filterCategorySelected]="categorySelected"></app-list-articles>
+          <app-list-articles (eventAddItem)="addItem($event)" [areArticlesVisible]="areArticlesVisible" [filterArticle]="filterArticle" [transaction]="transaction" [filterCategorySelected]="categorySelected"></app-list-articles>
         </div>
       </div>
       <div [ngClass]="{'row table-responsive img-container':areCategoriesVisible}">

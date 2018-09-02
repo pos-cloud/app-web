@@ -9,6 +9,7 @@ import { Category } from './../../models/category';
 import { Config } from './../../app.config';
 import { MovementOfArticle } from '../../models/movement-of-article';
 import { Taxes } from './../../models/taxes';
+import { Transaction } from './../../models/transaction';
 
 import { ArticleService } from './../../services/article.service';
 
@@ -42,7 +43,7 @@ export class ListArticlesComponent implements OnInit {
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategorySelected: Category;
   @Input() filterArticle: string = "";
-  @Input() transactionMovement: string;
+  @Input() transaction: Transaction;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();

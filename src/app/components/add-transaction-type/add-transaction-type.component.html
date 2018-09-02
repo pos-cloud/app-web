@@ -93,6 +93,15 @@
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="showPrices" class="control-label">¿Se puede ver el precio de venta?</label>
+          <select class="form-control" formControlName="showPrices">
+            <option value="true" selected>Si</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
       <div class="row" *ngIf="transactionTypeForm.value.requestArticles">
         <div class="form-group col-md-12">
           <label for="modifyStock" class="control-label">¿La transacción afecta stock?</label>
