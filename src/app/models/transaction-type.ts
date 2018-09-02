@@ -13,6 +13,7 @@ export class TransactionType {
 	public requestArticles: boolean = false;
 	public modifyArticle: boolean = false;
 	public requestTaxes: boolean = false;
+	public requestPaymentMethods: boolean = true;
 	public defectOrders: boolean = false;
 	public electronics: boolean = false;
 	public codes: CodeAFIP[];

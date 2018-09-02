@@ -880,29 +880,35 @@ export class AddSaleOrderComponent implements OnInit {
         
         if(this.isValidCharge()) {
 
-          modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-          modalRef.componentInstance.transaction = this.transaction;
-          modalRef.result.then((result) => {
+          if(this.transaction.type.requestPaymentMethods) {
 
-            let movementsOfCashes = result.movementsOfCashes;
-            
-            if (movementsOfCashes) {
-              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                this.transaction.origin = this.transaction.type.fixedOrigin;
+            modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+            modalRef.componentInstance.transaction = this.transaction;
+            modalRef.result.then((result) => {
+  
+              let movementsOfCashes = result.movementsOfCashes;
+              
+              if (movementsOfCashes) {
+                if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                  this.transaction.origin = this.transaction.type.fixedOrigin;
+                }
+  
+                this.assignLetter();
+  
+                if (this.transaction.type.electronics && !this.transaction.CAE) {
+                  this.validateElectronicTransaction();
+                } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                  this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                } else {
+                  this.assignTransactionNumber();
+                }
               }
-
-              this.assignLetter();
-
-              if (this.transaction.type.electronics && !this.transaction.CAE) {
-                this.validateElectronicTransaction();
-              } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                this.finish(); //SE FINALIZA POR ERROR EN LA FE
-              } else {
-                this.assignTransactionNumber();
-              }
-            }
-          }, (reason) => {
-          });
+            }, (reason) => {
+            });
+          } else {
+            this.assignLetter();
+            this.assignTransactionNumber();
+          }
         }
         break;
       case 'printers':

@@ -210,8 +210,8 @@ export class CurrentAccountComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then(
           (result) => {
-            if (typeof (result) === "object") {
-              this.openModal('movement-of-cash', result);
+            if (result.transaction) {
+              this.openModal('movement-of-cash', result.transaction);
             }
           }, (reason) => {
 

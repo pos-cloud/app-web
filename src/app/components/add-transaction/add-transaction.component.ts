@@ -282,7 +282,14 @@ export class AddTransactionComponent implements OnInit {
         this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
       } else {
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+          if( this.transaction.company && 
+              this.transaction.company.vatCondition && 
+              this.transaction.company.vatCondition.transactionLetter &&
+              this.transaction.company.vatCondition.transactionLetter !== "") {
+            this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+          } else {
+            this.transaction.letter = "X";
+          }
         } else {
           this.transaction.letter = this.transactionForm.value.letter;
         }
@@ -330,7 +337,7 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha añadido con éxito.", "success", true);
-          this.activeModal.close(this.transaction);
+          this.activeModal.close({ transaction: this.transaction });
         }
         this.loading = false;
       },
@@ -352,7 +359,7 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction = result.transaction;
           this.showMessage("La transacción se ha actualizado con éxito.", "success", true);
-          this.activeModal.close(this.transaction);
+          this.activeModal.close({ transaction: this.transaction });
         }
         this.loading = false;
       },
