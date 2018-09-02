@@ -44,6 +44,7 @@ import { VariantService } from './services/variant.service';
 import { TaxService } from './services/tax.service';
 import { VariantValueService } from './services/variant-value.service';
 import { DepositService } from "./services/deposit.service";
+import { LocationService } from "./services/location.service";
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -163,6 +164,10 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { CashBoxComponent } from './components/cash-box/cash-box.component';
+import { AddLocationComponent } from './components/add-location/add-location.component';
+import { UpdateLocationComponent } from './components/update-location/update-location.component';
+import { DeleteLocationComponent } from './components/delete-location/delete-location.component';
+import { ListLocationComponent } from './components/list-location/list-location.component';
 
 @NgModule({
   declarations: [
@@ -273,7 +278,11 @@ import { CashBoxComponent } from './components/cash-box/cash-box.component';
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
-    CashBoxComponent
+    CashBoxComponent,
+    AddLocationComponent,
+    UpdateLocationComponent,
+    DeleteLocationComponent,
+    ListLocationComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -301,7 +310,10 @@ import { CashBoxComponent } from './components/cash-box/cash-box.component';
     AddDepositComponent,
     UpdateDepositComponent,
     DeleteDepositComponent,
-    CashBoxComponent
+    CashBoxComponent,
+    AddLocationComponent,
+    UpdateLocationComponent,
+    DeleteLocationComponent
   ],
   imports: [
     BrowserModule,
@@ -352,7 +364,8 @@ import { CashBoxComponent } from './components/cash-box/cash-box.component';
     VariantService,
     VariantValueService,
     TaxService,
-    DepositService
+    DepositService,
+    LocationService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,57 @@
+<div class="modal-header">
+  <h4 class="modal-title">Agregar Ubicacion</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="locationForm" #formAddLocation="ngForm" (ngSubmit)="updateLocation()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="description" class="control-label">Nombre:</label>
+          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.description" class="alert alert-danger">
+            {{ formErrors.description }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <label for="positionX" class="control-label">Posición X:</label>
+          <input type="text" class="form-control" formControlName="positionX" name="positionX" id="positionX" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.positionX" class="alert alert-danger">
+            {{ formErrors.positionX }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="positionY" class="control-label">Posición Y:</label>
+          <input type="text" class="form-control" formControlName="positionY" name="positionY" id="positionY" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.positionY" class="alert alert-danger">
+            {{ formErrors.positionY }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="positionZ" class="control-label">Posición Z:</label>
+          <input type="text" class="form-control" formControlName="positionZ" name="positionZ" id="positionZ" [focus]="focusEvent"/>
+          <div *ngIf="formErrors.positionZ" class="alert alert-danger">
+            {{ formErrors.positionZ }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!locationForm.valid || loading">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

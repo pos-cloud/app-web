@@ -165,6 +165,17 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label for="location" class="control-label">Ubicacion:</label>
+								<select class="form-control" formControlName="location">
+									<option *ngFor="let location of locations" [selected]="article.location && location._id===article.location._id" [value]="location._id" [disabled]="readonly">{{location.description}}-{{location.positionX}}-{{location.positionY}}-{{location.positionZ}}</option>
+								</select>
+								<div *ngIf="formErrors.location" class="alert alert-danger">
+									{{ formErrors.location }}
+								</div>
+							</div>
+						</div>
 					</ng-template>
 				</ngb-tab>
 				<ngb-tab title="Observaciones">

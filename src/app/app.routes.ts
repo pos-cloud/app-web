@@ -72,6 +72,7 @@ import { ListArticleStocksComponent } from './components/list-article-stocks/lis
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
+import { ListLocationComponent } from './components/list-location/list-location.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 
 const _routes: Routes = [
@@ -148,6 +149,7 @@ const _routes: Routes = [
   { path: 'admin/stock-de-articulos', component: ListArticleStocksComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/impuestos', component: ListTaxesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'admin/depositos', component: ListDepositComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  { path: 'admin/ubicaciones', component: ListLocationComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },
