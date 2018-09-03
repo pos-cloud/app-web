@@ -710,7 +710,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Cant", 5, 77);
     this.doc.text("Detalle", 25, 77);
-    if(this.transaction.type.showPrices) {
+    if(this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Precio", 155, 77);
       this.doc.text("Total", 185, 77);
       this.doc.setFontType('normal');
@@ -727,7 +727,7 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles[i].description) {
           this.doc.text(this.movementsOfArticles[i].description, 25, row);
         }
-        if(this.transaction.type.showPrices) {
+        if(this.transaction.type && this.transaction.type.showPrices) {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row);
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
         }
@@ -736,7 +736,7 @@ export class PrintComponent implements OnInit {
       }
     }
     
-    if(this.transaction.type.showPrices) {
+    if(this.transaction.type && this.transaction.type.showPrices) {
 
       let rowTotals = 247;
       this.doc.setFontType('bold');
