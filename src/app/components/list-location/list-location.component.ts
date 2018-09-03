@@ -52,7 +52,6 @@ export class ListLocationComponent implements OnInit {
     this._locationService.getLocations().subscribe(
         result => {
           if(!result.locations) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
             this.loading = false;
             this.locations = null;
             this.areLocationsEmpty = true;
