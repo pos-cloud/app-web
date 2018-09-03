@@ -279,7 +279,7 @@ export class AddArticleComponent implements OnInit {
         let code = "00001";
         let category: Category = new Category();
         if (result.articles) {
-          if (result.articles[0] !== undefined) {
+          if (result.articles[0]) {
             if (!isNaN(parseInt(result.articles[0].code))) {
               code = (parseInt(result.articles[0].code) + 1) + "";
             } else {
@@ -287,7 +287,7 @@ export class AddArticleComponent implements OnInit {
             }
           }
         }
-        if (this.categories[0] !== undefined) {
+        if (this.categories[0]) {
           category = this.categories[0];
         }
 
@@ -521,7 +521,7 @@ export class AddArticleComponent implements OnInit {
   public setValuesForm(): void {
 
     if (!this.article._id) this.article._id = "";
-    if (!this.article.code) this.article.code = "000001";
+    if (!this.article.code) this.article.code = "00001";
     
     let make;
     if (!this.article.make) {
@@ -570,8 +570,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowPurchase === undefined) this.article.allowPurchase = true;
     if (!this.article.allowSale === undefined) this.article.allowSale = true;
     if (!this.article.allowSaleWithoutStock === undefined) this.article.allowSaleWithoutStock = false;
-
-    this.articleForm.setValue({
+    let values = {
       '_id': this.article._id,
       'code': this.article.code,
       'make': make,
@@ -591,7 +590,9 @@ export class AddArticleComponent implements OnInit {
       'allowSale': this.article.allowSale,
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
       'location': this.article.location
-    });
+    };
+
+    this.articleForm.setValue(values);
   }
 
   public addArticle(): void {

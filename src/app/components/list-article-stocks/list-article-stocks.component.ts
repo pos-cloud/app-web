@@ -85,7 +85,6 @@ export class ListArticleStocksComponent implements OnInit {
           this.articleStocks = null;
           this.areArticleStocksEmpty = true;
         } else {
-          console.log(this.articleStocks);
           this.hideMessage();
           this.loading = false;
           this.articleStocks = result.articleStocks;

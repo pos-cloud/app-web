@@ -104,7 +104,7 @@ export class AddTransactionComponent implements OnInit {
     this.posType = pathLocation[2];
 
     this.transactionMovement = this.transaction.type.transactionMovement.toString();
-    console.log(this.transaction.type.requestArticles);
+
     if (!this.transaction._id || this.transaction._id === "") {
       this.readonly = false;
       if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
