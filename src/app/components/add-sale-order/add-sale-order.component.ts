@@ -598,18 +598,19 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
         movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
 
-        if (movementOfArticle.article.salePrice !== (movementOfArticle.salePrice / (movementOfArticle.amount - 1))) {
+        if ((movementOfArticle.article.salePrice !== (movementOfArticle.salePrice / (movementOfArticle.amount - 1))) ||
+            (movementOfArticle.article.costPrice !== (movementOfArticle.salePrice / (movementOfArticle.amount - 1)))) {
 
-          let salePrice = (movementOfArticle.salePrice / (movementOfArticle.amount - 1)) + movementOfArticle.transactionDiscountAmount;
-          movementOfArticle.transactionDiscountAmount = (salePrice * this.transaction.discountPercent / 100);
-          movementOfArticle.salePrice = this.roundNumber.transform((salePrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
+          let unitPrice = (movementOfArticle.salePrice / (movementOfArticle.amount - 1)) + movementOfArticle.transactionDiscountAmount;
+          movementOfArticle.transactionDiscountAmount = (unitPrice * this.transaction.discountPercent / 100);
+          movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
           movementOfArticle.markupPrice = this.roundNumber.transform(((movementOfArticle.salePrice / movementOfArticle.amount) - movementOfArticle.article.costPrice) * movementOfArticle.amount);
           movementOfArticle.markupPrice = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100) * movementOfArticle.amount);
         } else {
-          let salePrice = (movementOfArticle.salePrice / (movementOfArticle.amount - 1) + movementOfArticle.transactionDiscountAmount);
-          movementOfArticle.transactionDiscountAmount = (salePrice * this.transaction.discountPercent / 100);
+          let unitPrice = (movementOfArticle.salePrice / (movementOfArticle.amount - 1) + movementOfArticle.transactionDiscountAmount);
+          movementOfArticle.transactionDiscountAmount = (unitPrice * this.transaction.discountPercent / 100);
           movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.article.markupPrice * movementOfArticle.amount);
-          movementOfArticle.salePrice = this.roundNumber.transform((salePrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
+          movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
         }
         let tax: Taxes = new Taxes();
         let taxes: Taxes[] = new Array();

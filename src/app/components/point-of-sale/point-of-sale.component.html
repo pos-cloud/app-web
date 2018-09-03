@@ -305,8 +305,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
             <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-            <th *ngIf="transactionMovement === 'Venta'"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
-            <th *ngIf="transactionMovement === 'Compra'"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
         </thead>

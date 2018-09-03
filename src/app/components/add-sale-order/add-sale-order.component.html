@@ -68,8 +68,7 @@
                   <br> {{movementOfArticle.notes}}
                 </strong>
               </td>
-              <td *ngIf="transactionMovement === 'Venta' && transaction.type && transaction.type.showPrices">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
-              <td *ngIf="transactionMovement !== 'Venta' && transaction.type && transaction.type.showPrices">{{movementOfArticle.costPrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="transaction.type && transaction.type.showPrices">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>

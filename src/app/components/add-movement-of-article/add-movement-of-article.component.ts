@@ -49,12 +49,12 @@ export class AddMovementOfArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe;
   public errVariant: string;
   public config: Config;
-  public salePrice;
+  public unitPrice;
 
   public formErrors = {
     'description': '',
     'amount': '',
-    'salePrice': ''
+    'unitPrice': ''
   };
 
   public validationMessages = {
@@ -64,7 +64,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     'amount': {
       'required': 'Este campo es requerido.'
     },
-    'salePrice': {
+    'unitPrice': {
       'required': 'Este campo es requerido.'
     }
   };
@@ -87,7 +87,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.containsVariants = this.movementOfArticle.article.containsVariants;
-    this.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice / this.movementOfArticle.amount);
+    this.unitPrice = this.roundNumber.transform(this.movementOfArticle.salePrice / this.movementOfArticle.amount);
     if(this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
     }
@@ -115,7 +115,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       'notes': [this.movementOfArticle.notes, [
         ]
       ],
-      'salePrice': [this.salePrice, [
+      'unitPrice': [this.unitPrice, [
         ]
       ]
     });
@@ -301,7 +301,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       'description': this.movementOfArticle.description,
       'amount': this.movementOfArticle.amount,
       'notes': this.movementOfArticle.notes,
-      'salePrice': this.salePrice
+      'unitPrice': this.unitPrice
     };
 
     this.movementOfArticleForm.setValue(values);
@@ -309,7 +309,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public addMovementOfArticle(): void {
 
-    this.movementOfArticle.article.salePrice = this.movementOfArticleForm.value.salePrice;
+    this.movementOfArticle.article.salePrice = this.movementOfArticleForm.value.unitPrice;
 
     if(this.containsVariants) {
       if(!this.isValidSelectedVariants()) {
@@ -427,7 +427,13 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
           this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice);
           this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
-          this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice);
+          if( this.movementOfArticle.transaction &&
+              this.movementOfArticle.transaction.type &&  
+              this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice);
+          } else {
+                this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
+          }
           this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.salePrice - this.movementOfArticle.costPrice);
           this.movementOfArticle.markupPercentage = this.roundNumber.transform(this.movementOfArticle.markupPrice / this.movementOfArticle.costPrice * 100);
           this.verifyPermissions("save");
@@ -444,7 +450,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.amount += result.movementsOfArticles[0].amount;
           }
 
-          let unitSalePrice = this.movementOfArticleForm.value.salePrice + this.movementOfArticle.transactionDiscountAmount;
+          let unitSalePrice = this.movementOfArticleForm.value.unitPrice + this.movementOfArticle.transactionDiscountAmount;
           this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.article.basePrice * this.movementOfArticle.amount);
           this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.article.costPrice * this.movementOfArticle.amount);
           this.movementOfArticle.transactionDiscountAmount = this.roundNumber.transform(unitSalePrice * this.movementOfArticle.transaction.discountPercent / 100);

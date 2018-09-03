@@ -21,6 +21,7 @@ import { PrintComponent } from 'app/components/print/print.component';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
+import { TransactionMovement } from '../../models/transaction-type';
 
 @Component({
   selector: 'app-list-articles',
@@ -227,9 +228,17 @@ export class ListArticlesComponent implements OnInit {
     movementOfArticle.observation = articleSelected.observation;
     movementOfArticle.basePrice = articleSelected.basePrice;
     movementOfArticle.costPrice = articleSelected.costPrice;
-    movementOfArticle.markupPercentage = articleSelected.markupPercentage;
-    movementOfArticle.markupPrice = articleSelected.markupPrice;
-    movementOfArticle.salePrice = articleSelected.salePrice;
+    if(this.transaction &&
+      this.transaction.type &&
+      this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+        movementOfArticle.markupPercentage = articleSelected.markupPercentage;
+        movementOfArticle.markupPrice = articleSelected.markupPrice;
+        movementOfArticle.salePrice = articleSelected.salePrice;
+    } else {
+      movementOfArticle.markupPercentage = 0;
+      movementOfArticle.markupPrice = 0;
+      movementOfArticle.salePrice = articleSelected.costPrice;
+    }
     let tax: Taxes = new Taxes();
     let taxes: Taxes[] = new Array();
     if (articleSelected.taxes) {
@@ -265,9 +274,29 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.observation = article.observation;
               movementOfArticle.basePrice = article.basePrice;
               movementOfArticle.costPrice = article.costPrice;
-              movementOfArticle.markupPercentage = article.markupPercentage;
-              movementOfArticle.markupPrice = article.markupPrice;
-              movementOfArticle.salePrice = article.salePrice;
+              if(this.transaction &&
+                this.transaction.type &&
+                this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                  movementOfArticle.markupPercentage = article.markupPercentage;
+                  movementOfArticle.markupPrice = article.markupPrice;
+                  movementOfArticle.salePrice = article.salePrice;
+              } else {
+                movementOfArticle.markupPercentage = 0;
+                movementOfArticle.markupPrice = 0;
+                movementOfArticle.salePrice = article.costPrice;
+              }
+              let tax: Taxes = new Taxes();
+              let taxes: Taxes[] = new Array();
+              if (article.taxes) {
+                for (let taxAux of article.taxes) {
+                  tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                  tax.tax = taxAux.tax;
+                  tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+                  tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+                  taxes.push(tax);
+                }
+              }
+              movementOfArticle.taxes = taxes;
               movementOfArticle.make = article.make;
               movementOfArticle.category = article.category;
               movementOfArticle.barcode = article.barcode;
