@@ -16,6 +16,7 @@ import { Config } from './../../app.config';
 import { VariantType } from '../../models/variant-type';
 import { Taxes } from '../../models/taxes';
 import { Deposit } from '../../models/deposit';
+import { Location } from '../../models/location';
 
 //Services
 import { ArticleService } from './../../services/article.service';
@@ -24,6 +25,7 @@ import { MakeService } from './../../services/make.service';
 import { CategoryService } from './../../services/category.service';
 import { VariantService } from './../../services/variant.service';
 import { DepositService } from './../../services/deposit.service';
+import { LocationService} from './../../services/location.service';
 
 //Pipes
 import { DecimalPipe } from '@angular/common';
@@ -45,6 +47,7 @@ export class AddArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public deposits: Deposit[] = new Array();
+  public locations: Location[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
   public articlesWithVariants: Article[] = new Array();
@@ -81,7 +84,8 @@ export class AddArticleComponent implements OnInit {
     'markupPrice': '',
     'salePrice': '',
     'category': '',
-    'deposit' : ''
+    'deposit' : '',
+    'location': ''
   };
 
   public validationMessages = {
@@ -126,6 +130,7 @@ export class AddArticleComponent implements OnInit {
     public _articleStockService: ArticleStockService,
     public _variantService: VariantService,
     public _depositService: DepositService,
+    public _locationService: LocationService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _fb: FormBuilder,
@@ -205,6 +210,9 @@ export class AddArticleComponent implements OnInit {
       ]
       ],
       'deposit' : [this.article.deposit, [
+      ]
+      ],
+      'location' : [this.article.location, [
       ]
       ],
       'observation': [this.article.observation, [
@@ -363,17 +371,37 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
+  public getLocations(): void {
+    this.loading = true;
+
+    this._locationService.getLocations().subscribe(
+      result => {
+        if (!result.locations) {
+          this.getCategories();
+        } else {
+          this.hideMessage();
+          this.locations = result.locations;
+          this.getCategories();
+        }
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
+  }
+
   public getDeposits(): void {
     this.loading = true;
 
     this._depositService.getDeposits().subscribe(
       result => {
         if (!result.deposits) {
-          this.getCategories();
+          this.getLocations();
         } else {
           this.hideMessage();
           this.deposits = result.deposits;
-          this.getCategories();
+          this.getLocations();
         }
       },
       error => {
@@ -561,7 +589,8 @@ export class AddArticleComponent implements OnInit {
       'printIn': this.article.printIn,
       'allowPurchase': this.article.allowPurchase,
       'allowSale': this.article.allowSale,
-      'allowSaleWithoutStock': this.article.allowSaleWithoutStock
+      'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
+      'location': this.article.location
     });
   }
 
