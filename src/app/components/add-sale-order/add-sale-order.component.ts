@@ -867,8 +867,8 @@ export class AddSaleOrderComponent implements OnInit {
           modalRef.componentInstance.type = CompanyType.Client;
         }
         modalRef.result.then((result) => {
-          if (result) {
-            this.transaction.company = result;
+          if (result.company) {
+            this.transaction.company = result.company;
             this.updateTransaction(false);
           }
         }, (reason) => {

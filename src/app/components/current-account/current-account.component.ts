@@ -241,8 +241,8 @@ export class CurrentAccountComponent implements OnInit {
         modalRef.componentInstance.userType = 'pos';
         modalRef.result.then(
           (result) => {
-            if (typeof (result) === "object") {
-              this.companySelected = result;
+            if (result.company) {
+              this.companySelected = result.company;
               this.getTransactionsByCompany();
             }
           }, (reason) => {

@@ -230,8 +230,13 @@ export class PointOfSaleComponent implements OnInit {
   }
   
   public addTransaction(type: TransactionType): void {
-    if(type.requestArticles) {
-      this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+
+    if(type.transactionMovement !== TransactionMovement.Purchase) {
+      if(type.requestArticles) {
+        this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+      } else {
+        this.openModal('company', type);
+      }
     } else {
       this.openModal('company', type);
     }
@@ -251,11 +256,11 @@ export class PointOfSaleComponent implements OnInit {
         }
         modalRef.result.then(
           (result) => {
-            if (typeof (result) === "object") {
+            if (result.company) {
               if(!transaction) {
                 transaction = new Transaction();
               }
-              transaction.company = result;
+              transaction.company = result.company;
               this.openModal('transaction', typeTransaction, transaction);
             }
           }, (reason) => {
@@ -271,8 +276,10 @@ export class PointOfSaleComponent implements OnInit {
           (result) => {
             transaction = result.transaction;
             if (transaction) {
-              if(transaction.type.requestPaymentMethods) {
-                this.openModal('movement-of-cash', typeTransaction, result);
+              if(transaction.type && transaction.type.requestArticles) {
+                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
+              } else if(transaction.type.requestPaymentMethods) {
+                this.openModal('movement-of-cash', typeTransaction, transaction);
               } else {
                 if(this.posType === "resto" || this.posType === "delivery") {
                   transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -403,11 +410,15 @@ export class PointOfSaleComponent implements OnInit {
 
   public openTransaction(transaction: Transaction): void {
     
-    if(transaction.type.requestArticles) {
-      this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
+    if(transaction.type && transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      if(transaction.type.requestArticles) {
+        this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
+      } else {
+        this.openModal('transaction', transaction.type, transaction);
+      }
     } else {
       this.openModal('transaction', transaction.type, transaction);
-    }   
+    }
   }
 
   public updateTransaction(transaction: Transaction): void {

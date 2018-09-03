@@ -202,7 +202,7 @@ export class ListCompaniesComponent implements OnInit {
   }
   
   public selectCompany(companySelected: Company): void {
-    this.activeModal.close(companySelected);
+    this.activeModal.close({ company: companySelected });
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {

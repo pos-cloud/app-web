@@ -13,9 +13,10 @@
           <b *ngIf="posType==='resto'">Mozo:</b>
           {{transaction.employeeClosing.name}}
         </div>
-        <div class="col-md-2" *ngIf="transactionMovement && transactionMovement ==='Venta'">
-          <b>Cliente: </b>
-          <span *ngIf="!transaction.company">Consumidor final</span>
+        <div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'">
+          <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
+          <b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
+          <span *ngIf="!transaction.company && transactionMovement === 'Venta'">Consumidor final</span>
           <span *ngIf="transaction.company">{{transaction.company.name}}</span>
         </div>
         <div class="col-md-2" *ngIf="posType==='resto'">
