@@ -1169,9 +1169,9 @@ export class PrintComponent implements OnInit {
         
         this.doc.addPage();
         
-        //this.doc.text(this.articleStock.article.description, 10,10);
+        this.doc.text(this.articleStock.article.description, 10,10);
         //this.doc.text("$",42,15);
-        this.doc.text(this.articleStock.article.salePrice.toString(), 45, 15);
+        //this.doc.text(this.articleStock.article.salePrice.toString(), 45, 15);
         
         let imgdata = 'data:image/png;base64,' + this.barcode64;
   
