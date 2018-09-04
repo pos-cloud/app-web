@@ -895,7 +895,6 @@ export class AddSaleOrderComponent implements OnInit {
                 }
   
                 this.assignLetter();
-  
                 if (this.transaction.type.electronics && !this.transaction.CAE) {
                   this.validateElectronicTransaction();
                 } else if (this.transaction.type.electronics && this.transaction.CAE) {
@@ -908,7 +907,13 @@ export class AddSaleOrderComponent implements OnInit {
             });
           } else {
             this.assignLetter();
-            this.assignTransactionNumber();
+            if (this.transaction.type.electronics && !this.transaction.CAE) {
+              this.validateElectronicTransaction();
+            } else if (this.transaction.type.electronics && this.transaction.CAE) {
+              this.finish(); //SE FINALIZA POR ERROR EN LA FE
+            } else {
+              this.assignTransactionNumber();
+            }
           }
         }
         break;
