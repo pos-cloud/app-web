@@ -28,7 +28,10 @@ export class FilterPipe implements PipeTransform {
                     if (subobject !== undefined) {
                         if (key === subobject) {  //rechaza buscar por _id, y verifica si cual es la propiedad del objeto
 
-                            this.strVal = "" + item[key][property];
+                            this.strVal = "";
+                            if(item[key]) {
+                                this.strVal += item[key][property];
+                            }
                             // this.strArg = ""+this.terms[this.terms.length-1];
                             this.strArg = term;
                             if (!this.strArg.toLowerCase().includes('>') &&
@@ -40,7 +43,7 @@ export class FilterPipe implements PipeTransform {
                                     return false;
                                 }
                             } else {
-                                if (!isNaN(item[key][property])) {
+                                if (item[key] && !isNaN(item[key][property])) {
                                     if (this.strArg.toLowerCase().includes('>') && item[key][property] > term.split('>')[1] ||
                                         this.strArg.toLowerCase().includes('>=') && item[key][property] >= term.split('>=')[1]) {
                                         return true;
@@ -56,7 +59,7 @@ export class FilterPipe implements PipeTransform {
                                         return false;
                                     }
                                 } else {
-                                    if (this.strArg.toLowerCase().includes('=') && (!item[key][property] || item[key][property] === "")) {
+                                    if (item[key] && this.strArg.toLowerCase().includes('=') && (!item[key][property] || item[key][property] === "")) {
                                         return true;
                                     } else {
                                         return false;

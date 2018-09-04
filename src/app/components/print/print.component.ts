@@ -801,7 +801,7 @@ export class PrintComponent implements OnInit {
       this.doc.text("Fecha Vto:", 10, 275);
       this.doc.setFontType('normal');
       this.doc.text(this.transaction.CAE, 20, 272);
-      this.doc.text(this.transaction.CAEExpirationDate, 32, 275);
+      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 275);
       
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
