@@ -84,8 +84,8 @@ export class AddArticleComponent implements OnInit {
     'markupPrice': '',
     'salePrice': '',
     'category': '',
-    'deposit' : '',
-    'location': ''
+    'deposit' : ''
+    //'location': ''
   };
 
   public validationMessages = {
@@ -212,9 +212,9 @@ export class AddArticleComponent implements OnInit {
       'deposit' : [this.article.deposit, [
       ]
       ],
-      'location' : [this.article.location, [
-      ]
-      ],
+      //'location' : [this.article.location, [
+     // ]
+     // ],
       'observation': [this.article.observation, [
       ]
       ],
@@ -588,8 +588,8 @@ export class AddArticleComponent implements OnInit {
       'printIn': this.article.printIn,
       'allowPurchase': this.article.allowPurchase,
       'allowSale': this.article.allowSale,
-      'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
-      'location': this.article.location
+      'allowSaleWithoutStock': this.article.allowSaleWithoutStock
+     // 'location': this.article.location
     };
 
     this.articleForm.setValue(values);
