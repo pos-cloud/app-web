@@ -46,8 +46,8 @@
                     <i class="fa fa-print"></i>
                 </button>
               </td>
-              <td>{{cashBox.openingDate | dateFormat:'DD/MM/YYYY' }}</td>
-              <td>{{cashBox.closingDate | dateFormat:'DD/MM/YYYY' }}</td>
+              <td>{{cashBox.openingDate | dateFormat:'DD/MM/YYYY HH:mm' }}</td>
+              <td>{{cashBox.closingDate | dateFormat:'DD/MM/YYYY HH:mm' }}</td>
               <td>
                 <h6>
                   <span class="badge" [ngClass]="{'badge-success':cashBox.state==='Cerrada', 
