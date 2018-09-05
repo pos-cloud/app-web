@@ -727,6 +727,11 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles[i].description) {
           this.doc.text(this.movementsOfArticles[i].description, 25, row);
         }
+        if (this.movementsOfArticles[i].notes) {
+          this.doc.setFontStyle("italic");
+          this.doc.text(this.movementsOfArticles[i].notes, 25, row + 5);
+          this.doc.setFontStyle("normal");
+        }
         if(this.transaction.type && this.transaction.type.showPrices) {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row);
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);

@@ -14,7 +14,8 @@
     <div class="modal-body">
       <div class="row">
         <div class="form-group col-md-12">
-          <label for="company" class="control-label">Cliente:</label>
+          <label for="company" class="control-label" *ngIf="transaction.type && transaction.type.transactionMovement === 'Venta'">Cliente:</label>
+          <label for="company" class="control-label" *ngIf="transaction.type && transaction.type.transactionMovement === 'Compra'">Proveedor:</label>
         </div>
       </div>
       <div class="row">
