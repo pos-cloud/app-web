@@ -273,7 +273,7 @@ export class PrintComponent implements OnInit {
             this.calculateBarcode();
           } else {
             if(this.printer.pageWidth < 150) {
-              this.toPrintDelivery();
+              this.toPrintRoll();
             } else if (this.printer.pageHigh > 150) {
               this.toPrintInvoice();
             } else {
@@ -950,50 +950,58 @@ export class PrintComponent implements OnInit {
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
-  public toPrintDelivery() {
+  public toPrintRoll() {
 
     //Cabecera del ticket
     var margin = 5;
     var row = 5;
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.large);
-    this.centerText(margin, margin, 80, 0, row, this.config[0].companyName);
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
     this.doc.setFontType('normal');
     this.doc.setFontSize(this.fontSizes.normal);
     row +=5;
-    this.centerText(margin, margin, 80, 0, row, this.config[0].companyAddress);
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyAddress);
     row += 5;
-    this.centerText(margin, margin, 80, 0, row, "tel: " + this.config[0].companyPhone);
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "tel: " + this.config[0].companyPhone);
     
     row += 8;
     this.doc.setFontType('bold');
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
-    this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), 40, row);
+    this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/2) - 1 , row);
 
-    if(this.transaction.company) {
+    if(this.transaction.madein == 'delivery') {
       row += 5;
       this.doc.setFontType('bold');
       this.doc.text("Entregar a: " + this.transaction.company.address, margin, row);
       this.doc.setFontType('normal');
     }
 
-    if (this.transaction.employeeOpening) {
+    if (this.transaction.madein == 'resto') {
       row += 5;
       this.doc.setFontType('bold');
-      this.doc.text("Entregado por: " + this.transaction.employeeOpening.name, margin, row);
+      if (this.transaction.employeeOpening) {
+        this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
+      }
+      this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
+      this.doc.setFontType('normal');
+    } else if (this.transaction.employeeOpening) {
+      row += 5;
+      this.doc.setFontType('bold');
+      this.doc.text("Empleado: " + this.transaction.employeeOpening.name, margin, row);
       this.doc.setFontType('normal');
     }
 
     //Cabecera de la tala de artículos
     row += 3;
-    this.doc.line(0, row, 80, row);
+    this.doc.line(0, row, this.printer.pageWidth, row);
     row += 5;
     this.doc.text("Cant.", margin, row);
-    this.doc.text("Desc.", 30, row);
-    this.doc.text("Monto", 60, row);
+    this.doc.text("Desc.", this.printer.pageWidth/3, row);
+    this.doc.text("Monto", this.printer.pageWidth/1.5, row);
     row += 3;
-    this.doc.line(0, row, 80, row);
+    this.doc.line(0, row, this.printer.pageWidth, row);
 
     //Cuerpo de la tabla de artículos
     row +5;
@@ -1003,11 +1011,11 @@ export class PrintComponent implements OnInit {
         row += 5;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
         if (movementOfArticle.article) {
-          this.doc.text(movementOfArticle.article.posDescription, 20, row);
+          this.doc.text(movementOfArticle.article.posDescription, this.printer.pageWidth/3.5, row);
         } else {
-          this.doc.text(movementOfArticle.description, 20, row);
+          this.doc.text(movementOfArticle.description, this.printer.pageWidth/3.5, row);
         }
-        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), 60, row);
+        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.5, row);
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
@@ -1026,132 +1034,25 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle('bold');
     this.doc.setFontSize(this.fontSizes.normal);
     row += 5;
-    this.centerText(margin, margin, 80, 0, row, "TOTAL");
-    this.doc.text("$ " + this.transaction.totalPrice, 60, row);
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "TOTAL");
+    this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.5, row);
     this.doc.setFontSize(this.fontSizes.normal);
     if (this.config[0].footerInvoice) {
       this.doc.setFontStyle("italic");
       row += 10;
-      this.centerText(margin, margin, 80, 0, row, this.config[0].footerInvoice);
+      this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].footerInvoice);
     }
 
     //Pie del ticket
     this.doc.setFontStyle("normal");
     this.doc.setFontSize(this.fontSizes.small);
     row += 5;
-    this.centerText(margin, margin, 80, 0, row, "Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.");
+    this.doc.text("Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.",margin,row);
     this.doc.setTextColor(0, 0, 0);
 
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
-
-  public ticketResto() {
-
-    //Cabecera del ticket
-    var margin = 5;
-    var row = 5;
-    this.doc.setFontType('bold');
-    this.doc.setFontSize(this.fontSizes.large);
-    this.centerText(margin, margin, 80, 0, row, this.config[0].companyName);
-    this.doc.setFontType('normal');
-    this.doc.setFontSize(this.fontSizes.normal);
-    row += 5;
-    this.centerText(margin, margin, 80, 0, row, this.config[0].companyAddress);
-    row += 5;
-    this.centerText(margin, margin, 80, 0, row, "tel: " + this.config[0].companyPhone);
-
-    row += 8;
-    this.doc.setFontType('bold');
-    this.doc.text("Cliente: ", margin, row);
-    this.doc.setFontType('normal');
-    if (this.transaction.company) {
-      this.doc.text(this.transaction.company.name, margin + 15, row);
-    } else {
-      this.doc.text("Consumidor Final", margin + 15, row);
-    }
-
-    row += 5;
-    this.doc.setFontType('bold');
-    this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
-    this.doc.setFontType('normal');
-    this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), 40, row);
-
-
-    if (this.transaction.table) {
-      row += 5;
-      this.doc.setFontType('bold');
-      if (this.transaction.employeeOpening) {
-        this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
-      }
-      this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
-      this.doc.setFontType('normal');
-    } else if (this.transaction.employeeOpening) {
-      row += 5;
-      this.doc.setFontType('bold');
-      this.doc.text("Empleado: " + this.transaction.employeeOpening.name, margin, row);
-      this.doc.setFontType('normal');
-    }
-
-    //Cabecera de la tala de artículos
-    row += 3;
-    this.doc.line(0, row, 80, row);
-    row += 5;
-    this.doc.text("Cant.", margin, row);
-    this.doc.text("Desc.", 30, row);
-    this.doc.text("Monto", 60, row);
-    row += 3;
-    this.doc.line(0, row, 80, row);
-
-    //Cuerpo de la tabla de artículos
-    row + 5;
-    this.doc.setFontSize(this.fontSizes.normal);
-    if (this.movementsOfArticles.length > 0) {
-      for (let movementOfArticle of this.movementsOfArticles) {
-        row += 5;
-        this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
-        if (movementOfArticle.article) {
-          this.doc.text(movementOfArticle.article.posDescription, 20, row);
-        } else {
-          this.doc.text(movementOfArticle.description, 20, row);
-        }
-        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), 60, row);
-
-        if (movementOfArticle.notes && movementOfArticle.notes !== "") {
-          row += 5;
-          this.doc.setFontStyle("italic");
-          this.doc.setTextColor(90, 90, 90);
-          this.doc.text(movementOfArticle.notes, 20, row);
-          this.doc.setFontStyle("normal");
-          this.doc.setTextColor(0, 0, 0);
-        }
-      }
-    }
-
-    //Pie de la tabla de artículos
-    row += 5;
-    this.doc.line(0, row, 240, row);
-    this.doc.setFontStyle('bold');
-    this.doc.setFontSize(this.fontSizes.normal);
-    row += 5;
-    this.centerText(margin, margin, 80, 0, row, "TOTAL");
-    this.doc.text("$ " + this.transaction.totalPrice, 60, row);
-    this.doc.setFontSize(this.fontSizes.normal);
-    if (this.config[0].footerInvoice) {
-      this.doc.setFontStyle("italic");
-      row += 10;
-      this.centerText(margin, margin, 80, 0, row, this.config[0].footerInvoice);
-    }
-
-    //Pie del ticket
-    this.doc.setFontStyle("normal");
-    this.doc.setFontSize(this.fontSizes.small);
-    row += 5;
-    this.centerText(margin, margin, 80, 0, row, "Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.");
-    this.doc.setTextColor(0, 0, 0);
-
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
-  }
-
+  
   public toPrintBarcode(): void {
 
     if (this.articleStock) {
