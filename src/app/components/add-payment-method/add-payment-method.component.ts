@@ -19,7 +19,7 @@ export class AddPaymentMethodComponent implements OnInit {
 
   public paymentMethod: PaymentMethod;
   public paymentMethodForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -115,18 +115,18 @@ export class AddPaymentMethodComponent implements OnInit {
     this._paymentMethodService.savePaymentMethod(this.paymentMethod).subscribe(
       result => {
         if (!result.paymentMethod) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.paymentMethod = result.paymentMethod;
-          this.showMessage("La marca se ha añadido con éxito.", "success", true);
+          this.showMessage("La marca se ha añadido con éxito.", 'success', true);
           this.paymentMethod = new PaymentMethod();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -139,6 +139,6 @@ export class AddPaymentMethodComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

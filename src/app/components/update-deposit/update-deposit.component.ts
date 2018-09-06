@@ -19,7 +19,7 @@ export class UpdateDepositComponent implements OnInit {
   @Input() deposit: Deposit;
   @Input() readonly: boolean;
   public depositForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -115,17 +115,17 @@ export class UpdateDepositComponent implements OnInit {
     this._depositService.updateDeposit(this.deposit).subscribe(
       result => {
         if (!result.deposit) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.deposit = result.deposit;
-          this.showMessage("El impuesto se ha actualizado con éxito.", "success", false);
+          this.showMessage("El impuesto se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -138,6 +138,6 @@ export class UpdateDepositComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

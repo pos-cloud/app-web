@@ -19,7 +19,7 @@ export class AddTaxComponent implements OnInit {
 
   public tax: Tax;
   public taxForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -101,18 +101,18 @@ export class AddTaxComponent implements OnInit {
     this._taxService.saveTax(this.tax).subscribe(
       result => {
         if (!result.tax) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.tax = result.tax;
-          this.showMessage("La marca se ha añadido con éxito.", "success", true);
+          this.showMessage("La marca se ha añadido con éxito.", 'success', true);
           this.tax = new Tax();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -125,6 +125,6 @@ export class AddTaxComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -20,7 +20,7 @@ export class UpdateMakeComponent implements OnInit {
   @Input() make: Make;
   @Input() readonly: boolean;
   public makeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -98,7 +98,7 @@ export class UpdateMakeComponent implements OnInit {
   }
 
   public updateMake (): void {
-    if(!this.readonly) {
+    if (!this.readonly) {
       this.loading = true;
       this.make = this.makeForm.value;
       this.saveChanges();
@@ -112,17 +112,17 @@ export class UpdateMakeComponent implements OnInit {
     this._makeService.updateMake(this.make).subscribe(
       result => {
         if (!result.make) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.make = result.make;
-          this.showMessage("La marca se ha actualizado con éxito.", "success", false);
+          this.showMessage("La marca se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -135,6 +135,6 @@ export class UpdateMakeComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

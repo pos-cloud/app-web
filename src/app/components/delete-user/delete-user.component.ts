@@ -16,7 +16,7 @@ import { UserService } from './../../services/user.service';
 export class DeleteUserComponent implements OnInit {
 
   @Input() user: User;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -49,7 +49,7 @@ export class DeleteUserComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -62,6 +62,6 @@ export class DeleteUserComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

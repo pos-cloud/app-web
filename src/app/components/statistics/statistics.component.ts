@@ -21,7 +21,7 @@ import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales
 export class StatisticsComponent implements OnInit {
 
   public loading: boolean = false;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public startDate: string;
   public startTime: string;
   public endDate: string;
@@ -165,7 +165,7 @@ export class StatisticsComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -178,6 +178,6 @@ export class StatisticsComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -37,7 +37,7 @@ export class EmployeeTypeService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		if(query) {
+		if (query) {
 			return this._http.get(Config.apiURL + "employee-types/" + query, { headers: headers }).map (res => res.json());
 		} else {
 			return this._http.get(Config.apiURL + "employee-types", { headers: headers }).map(res => res.json());

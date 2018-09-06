@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
@@ -66,13 +65,13 @@ import { UpdatePaymentMethodComponent } from './components/update-payment-method
 import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
 import { DeletePaymentMethodComponent } from './components/delete-payment-method/delete-payment-method.component';
 import { ListCashBoxesComponent } from './components/list-cash-boxes/list-cash-boxes.component';
-
 import { AuthGuard } from './guards/auth.guard';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
 import { ListLocationComponent } from './components/list-location/list-location.component';
+import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 
 const _routes: Routes = [
@@ -80,89 +79,464 @@ const _routes: Routes = [
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'admin/statistics', component: StatisticsComponent, data: { roles: ['Administrador'] } },
-  { path: 'admin/mejores-productos-vendidos', component: ReportBestSellingArticleComponent, data: { roles: ['Administrador'] } },
-  { path: 'admin/cajas', component: ListCashBoxesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/productos', component: ListArticlesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-producto', component: AddArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-producto', component: DeleteArticleComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/empleados', component: ListEmployeesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-empleado', component: AddEmployeeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-empleado', component: UpdateEmployeeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-empleado', component: DeleteEmployeeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/tipos-de-empleado', component: ListEmployeeTypesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-tipo-de-empleado', component: AddEmployeeTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-tipo-de-empleado', component: UpdateEmployeeTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-tipo-de-empleado', component: DeleteEmployeeTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/mesas', component: ListTablesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-mesa', component: AddTableComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-mesa', component: UpdateTableComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-mesa', component: DeleteTableComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/ventas', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/compras', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/stock', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/fondos', component: ListTransactionsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-transaccion', component: AddTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-transaccion', component: DeleteTransactionComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/salones', component: ListRoomsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-salon', component: AddRoomComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-salon', component: UpdateRoomComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-salon', component: DeleteRoomComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/marcas', component: ListMakesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-marca', component: AddMakeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-marca', component: UpdateMakeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-marca', component: DeleteMakeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/rubros', component: ListCategoriesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-rubro', component: AddCategoryComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-rubro', component: UpdateCategoryComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-rubro', component: DeleteCategoryComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/usuarios', component: ListUsersComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-usuario', component: AddUserComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-usuario', component: UpdateUserComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-usuario', component: DeleteUserComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/metodos-de-pago', component: ListPaymentMethodsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-metodo-de-pago', component: AddPaymentMethodComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-metodo-de-pago', component: UpdatePaymentMethodComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-metodo-de-pago', component: DeletePaymentMethodComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/clientes', component: ListCompaniesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/proveedores', component: ListCompaniesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-empresa', component: AddCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-empresa', component: UpdateCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-empresa', component: DeleteCompanyComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/turnos', component: ListTurnsComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/impresoras', component: ListPrintersComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-impresora', component: AddPrinterComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-impresora', component: UpdatePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-impresora', component: DeletePrinterComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/tipos-de-transacciones', component: ListTransactionTypesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/tipos-de-variantes', component: ListVariantTypesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/valores-de-variantes', component: ListVariantValuesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/agregar-tipo-transaccion', component: AddTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/editar-tipo-transaccion', component: UpdateTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/eliminar-tipo-transaccion', component: DeleteTransactionTypeComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/import', component: ImportComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/configuraciones', component: ConfigBackupComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/cuentas-corrientes/cliente', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/cuentas-corrientes/proveedor', component: CurrentAccountComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/send-mail', component: SendMailComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/export-citi', component: ExportCitiComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/stock-de-articulos', component: ListArticleStocksComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/impuestos', component: ListTaxesComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/depositos', component: ListDepositComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
-  { path: 'admin/ubicaciones', component: ListLocationComponent, canActivate: [AuthGuard], data: { roles: ['Administrador'] } },
+  {
+    path: 'admin/statistics',
+    component: StatisticsComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/mejores-productos-vendidos',
+    component: ReportBestSellingArticleComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/cajas',
+    component: ListCashBoxesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/productos',
+    component: ListArticlesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-producto',
+    component: AddArticleComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-producto',
+    component: DeleteArticleComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/empleados',
+    component: ListEmployeesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-empleado',
+    component: AddEmployeeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-empleado',
+    component: UpdateEmployeeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-empleado',
+    component: DeleteEmployeeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/tipos-de-empleado',
+    component: ListEmployeeTypesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-tipo-de-empleado',
+    component: AddEmployeeTypeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-tipo-de-empleado',
+    component: UpdateEmployeeTypeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-tipo-de-empleado',
+    component: DeleteEmployeeTypeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/mesas',
+    component: ListTablesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-mesa',
+    component: AddTableComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-mesa',
+    component: UpdateTableComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-mesa',
+    component: DeleteTableComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/ventas',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compras',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/stock',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/fondos',
+    component: ListTransactionsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-transaccion',
+    component: AddTransactionComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-transaccion',
+    component: DeleteTransactionComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/salones',
+    component: ListRoomsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-salon',
+    component: AddRoomComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-salon',
+    component: UpdateRoomComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-salon',
+    component: DeleteRoomComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/marcas',
+    component: ListMakesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-marca',
+    component: AddMakeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-marca',
+    component: UpdateMakeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-marca',
+    component: DeleteMakeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/rubros',
+    component: ListCategoriesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-rubro',
+    component: AddCategoryComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-rubro',
+    component: UpdateCategoryComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-rubro',
+    component: DeleteCategoryComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/usuarios',
+    component: ListUsersComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-usuario',
+    component: AddUserComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-usuario',
+    component: UpdateUserComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-usuario',
+    component: DeleteUserComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/metodos-de-pago',
+    component: ListPaymentMethodsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-metodo-de-pago',
+    component: AddPaymentMethodComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-metodo-de-pago',
+    component: UpdatePaymentMethodComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-metodo-de-pago',
+    component: DeletePaymentMethodComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/clientes',
+    component: ListCompaniesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/proveedores',
+    component: ListCompaniesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-empresa',
+    component: AddCompanyComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-empresa',
+    component: UpdateCompanyComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-empresa',
+    component: DeleteCompanyComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/turnos',
+    component: ListTurnsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/impresoras',
+    component: ListPrintersComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-impresora',
+    component: AddPrinterComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-impresora',
+    component: UpdatePrinterComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-impresora',
+    component: DeletePrinterComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/tipos-de-transacciones',
+    component: ListTransactionTypesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/tipos-de-variantes',
+    component: ListVariantTypesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/valores-de-variantes',
+    component: ListVariantValuesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/agregar-tipo-transaccion',
+    component: AddTransactionTypeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/editar-tipo-transaccion',
+    component: UpdateTransactionTypeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/eliminar-tipo-transaccion',
+    component: DeleteTransactionTypeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/import',
+    component: ImportComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/configuraciones',
+    component: ConfigBackupComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/cuentas-corrientes/cliente',
+    component: CurrentAccountComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/cuentas-corrientes/proveedor',
+    component: CurrentAccountComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/send-mail',
+    component: SendMailComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/export-citi',
+    component: ExportCitiComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/stock-de-articulos',
+    component: ListArticleStocksComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/impuestos',
+    component: ListTaxesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/depositos',
+    component: ListDepositComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/ubicaciones',
+    component: ListLocationComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/movimientos-cobros',
+    component: ListMovementOfCashesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/movimientos-pagos',
+    component: ListMovementOfCashesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
   { path: 'pos', component: PointOfSaleComponent },
   { path: 'pos/resto', component: PointOfSaleComponent },
   { path: 'pos/resto/salones/:id/mesas', component: PointOfSaleComponent },
-  { path: 'pos/resto/salones/:id/mesas/:id/agregar-transaccion/:type', component: AddSaleOrderComponent },
+  {
+    path: 'pos/resto/salones/:id/mesas/:id/agregar-transaccion/:type',
+    component: AddSaleOrderComponent
+  },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: 'pos/delivery', component: PointOfSaleComponent },
-  { path: 'pos/delivery/agregar-transaccion/:type', component: AddSaleOrderComponent },
-  { path: 'pos/delivery/editar-transaccion/:id', component: AddSaleOrderComponent },
+  {
+    path: 'pos/delivery/agregar-transaccion/:type',
+    component: AddSaleOrderComponent
+  },
+  {
+    path: 'pos/delivery/editar-transaccion/:id',
+    component: AddSaleOrderComponent
+  },
   { path: 'pos/mostrador/compra', component: PointOfSaleComponent },
   { path: 'pos/mostrador/venta', component: PointOfSaleComponent },
   { path: 'pos/mostrador/stock', component: PointOfSaleComponent },
-  { path: 'pos/mostrador/agregar-transaccion/:type', component: AddSaleOrderComponent },
-  { path: 'pos/mostrador/editar-transaccion/:id', component: AddSaleOrderComponent },
+  {
+    path: 'pos/mostrador/agregar-transaccion/:type',
+    component: AddSaleOrderComponent
+  },
+  {
+    path: 'pos/mostrador/editar-transaccion/:id',
+    component: AddSaleOrderComponent
+  },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 

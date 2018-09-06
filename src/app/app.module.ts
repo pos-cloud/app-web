@@ -5,16 +5,16 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 
-//paquetes de terceros
-import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';//https://ng-bootstrap.github.io/
-import { NgxPaginationModule } from 'ngx-pagination';//https://www.npmjs.com/package/ngx-pagination
+// paquetes de terceros
+import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
+import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
-//rutas
+// rutas
 import { RoutingModule } from './app.routes';
 
-//servicios
+// servicios
 import { ArticleService } from './services/article.service';
 import { EmployeeService } from './services/employee.service';
 import { EmployeeTypeService } from './services/employee-type.service';
@@ -22,7 +22,7 @@ import { TableService } from './services/table.service';
 import { CashBoxService } from './services/cash-box.service';
 import { TransactionService } from './services/transaction.service';
 import { TransactionTypeService } from './services/transaction-type.service';
-import { MovementOfArticleService } from "./services/movement-of-article.service";
+import { MovementOfArticleService } from './services/movement-of-article.service';
 import { UserService } from './services/user.service';
 import { RoomService } from './services/room.service';
 import { MakeService } from './services/make.service';
@@ -43,14 +43,14 @@ import { VariantTypeService } from './services/variant-type.service';
 import { VariantService } from './services/variant.service';
 import { TaxService } from './services/tax.service';
 import { VariantValueService } from './services/variant-value.service';
-import { DepositService } from "./services/deposit.service";
-import { LocationService } from "./services/location.service";
-import { CompanyNewsService } from "./services/company-news.service";
+import { DepositService } from './services/deposit.service';
+import { LocationService } from './services/location.service';
+import { CompanyNewsService } from './services/company-news.service';
 
-//guards
+// guards
 import { AuthGuard } from './guards/auth.guard';
 
-//componentes
+// componentes
 import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
 import { AppComponent } from './app.component';
@@ -145,14 +145,14 @@ import { ClockComponent } from './components/clock/clock.component';
 import { ImportComponent } from './components/import/import.component';
 import { RegisterComponent } from './components/register/register.component';
 
-//pipes
+// pipes
 import { FilterPipe } from './pipes/filter.pipe';
 import { OrderByPipe } from './pipes/order-by.pipe';
 import { DateFormatPipe } from './pipes/date-format.pipe';
 import { TotalPipe } from './pipes/total.pipe';
 import { RoundNumberPipe } from './pipes/round-number.pipe';
 
-//directives
+// directives
 import { FocusDirective } from './directives/focus.directive';
 import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
@@ -170,6 +170,7 @@ import { UpdateLocationComponent } from './components/update-location/update-loc
 import { DeleteLocationComponent } from './components/delete-location/delete-location.component';
 import { ListLocationComponent } from './components/list-location/list-location.component';
 import { CompanyNewsComponent } from './components/company-news/company-news.component';
+import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
 
 @NgModule({
   declarations: [
@@ -285,7 +286,8 @@ import { CompanyNewsComponent } from './components/company-news/company-news.com
     UpdateLocationComponent,
     DeleteLocationComponent,
     ListLocationComponent,
-    CompanyNewsComponent
+    CompanyNewsComponent,
+    ListMovementOfCashesComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -328,7 +330,7 @@ import { CompanyNewsComponent } from './components/company-news/company-news.com
     NgbModule.forRoot(),
     NgxPaginationModule,
     ChartsModule,
-    MatButtonModule, 
+    MatButtonModule,
     MatCheckboxModule,
     MatAutocompleteModule,
     MatFormFieldModule,

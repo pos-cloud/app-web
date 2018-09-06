@@ -1,0 +1,120 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areMovementOfCashesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Listado de Movimientos de Cobros
+      <div class="pull-right">
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>
+                <i class="fa fa-bars"></i>
+              </th>
+              <th (click)="orderBy('transaction','endDate')">Fecha </th>
+              <th (click)="orderBy('type','name')">Método </th>
+              <th (click)="orderBy('amountPaid')">Importe </th>
+              <th (click)="orderBy('discount')">Descuento </th>
+              <th (click)="orderBy('number')">Comprobante </th>
+              <th (click)="orderBy('expirationDate')">Vencimiento </th>
+              <th (click)="orderBy('state')">Estado </th>
+              <th (click)="orderBy('bank')">Banco </th>
+              <th (click)="orderBy('titular')">Titular </th>
+              <th (click)="orderBy('CUIT')">CUIT </th>
+              <th (click)="orderBy('deliveredBy')">Entregado Por </th>
+              <th (click)="orderBy('receiver')">Receptor </th>
+            </tr>
+            <tr *ngIf="areFiltersVisible" class="filters">
+              <th></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Fecha..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Método..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterAmountPaid" placeholder="Importe..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDiscount" placeholder="Descuento..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Comprobante..." ></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterExpirationDate" placeholder="Vencimiento..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterBank" placeholder="Banco..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterTitular" placeholder="Titular..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDeliveryBy" placeholder="Entregado por..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterReceiver" placeholder="Receptor..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let movementOfCash of movementsOfCashes | filter: filterEndDate:'endDate':'transaction'
+                                                                | filter: filterType:'name':'type'
+                                                                | filter: filterAmountPaid:'amountPaid'
+                                                                | filter: filterDiscount:'discount'
+                                                                | filter: filterNumber:'number'
+                                                                | filter: filterExpirationDate:'expirationDate'
+                                                                | filter: filterState:'state'
+                                                                | filter: filterBank:'bank'
+                                                                | filter: filterTitular:'titular'
+                                                                | filter: filterCUIT:'CUIT'
+                                                                | filter: filterDeliveryBy:'deliveredBy'
+                                                                | filter: filterReceiver:'receiver'
+                                                                | orderBy: orderTerm: propertyTerm
+                                                                | paginate: { itemsPerPage: itemsPerPage,
+                                                                              currentPage: p,
+                                                                              totalItems: totalItems
+                                                                            }">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
+              </td>
+              <td class="flat" *ngIf="movementOfCash.transaction">{{movementOfCash.transaction.endDate | dateFormat:'DD/MM/YYYY'}}</td>
+              <td class="flat" *ngIf="!movementOfCash.transaction"></td>
+              <td class="flat" *ngIf="movementOfCash.type">{{movementOfCash.type.name}}</td>
+              <td class="flat" *ngIf="!movementOfCash.type"></td>
+              <td class="flat" >{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
+              <td class="flat" >{{movementOfCash.discount | currency:'USD':'1.2-2'}}</td>
+              <td class="flat" >{{movementOfCash.number}}</td>
+              <td class="flat" >{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY'}}</td>
+              <td class="flat" >{{movementOfCash.state}}</td>
+              <td class="flat" >{{movementOfCash.bank}}</td>
+              <td class="flat" >{{movementOfCash.titular}}</td>
+              <td class="flat" >{{movementOfCash.CUIT}}</td>
+              <td class="flat" >{{movementOfCash.deliveredBy}}</td>
+              <td class="flat" >{{movementOfCash.receiver}}</td>
+            </tr>
+            <tr align="center" *ngIf="areMovementOfCashesEmpty">
+              <td colspan="2">No se encontraron movimientos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls
+              class="my-pagination"
+              (pageChange)="p=$event"
+              #api
+              previousLabel="Ant."
+              nextLabel="Sig."
+              autoHide="true">
+            </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 ítems</option>
+              <option [value]="10">Mostrar 10 ítems</option>
+              <option [value]="15">Mostrar 15 ítems</option>
+              <option [value]="20">Mostrar 20 ítems</option>
+              <option [value]="50">Mostrar 50 ítems</option>
+              <option [value]="100">Mostrar 100 ítems</option>
+            </select>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>

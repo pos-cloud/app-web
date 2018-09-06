@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Transaction, TransactionState } from './../../models/transaction';
+import { Transaction } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
@@ -18,12 +18,12 @@ import { MovementOfCashService } from './../../services/movement-of-cash.service
 export class ViewTransactionComponent implements OnInit {
 
   @Input() transaction: Transaction;
-  public alertMessage: string = "";
-  public loading: boolean = false;
+  public alertMessage = '';
+  public loading = false;
   public movementsOfArticles: MovementOfArticle[];
-  public areMovementsOfArticlesEmpty: boolean = true;
+  public areMovementsOfArticlesEmpty = true;
   public movementsOfCashes: MovementOfCash[];
-  public areMovementsOfCashesEmpty: boolean = true;
+  public areMovementsOfCashesEmpty = true;
 
   constructor(
     public _movementOfArticleService: MovementOfArticleService,
@@ -40,12 +40,12 @@ export class ViewTransactionComponent implements OnInit {
   }
 
   public getMovementsOfArticlesByTransaction(): void {
-    
+
     this.loading = true;
-    
+
     this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
         result => {
-					if(!result.movementsOfArticles) {
+					if (!result.movementsOfArticles) {
             this.areMovementsOfArticlesEmpty = true;
             this.movementsOfArticles = new Array();
 					} else {
@@ -55,19 +55,19 @@ export class ViewTransactionComponent implements OnInit {
           this.loading = false;
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
   }
 
   public getMovementsOfCashesByTransaction(): void {
-    
+
     this.loading = true;
-    
+
     this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
         result => {
-					if(!result.movementsOfCashes) {
+					if (!result.movementsOfCashes) {
             this.areMovementsOfCashesEmpty = true;
             this.movementsOfCashes = new Array();
 					} else {
@@ -77,19 +77,19 @@ export class ViewTransactionComponent implements OnInit {
           this.loading = false;
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;
   }
 
-  public hideMessage():void {
-    this.alertMessage = "";
+  public hideMessage(): void {
+    this.alertMessage = '';
   }
 }

@@ -18,7 +18,7 @@ export class AddDepositComponent implements OnInit {
 
   public deposit: Deposit;
   public depositForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -107,18 +107,18 @@ export class AddDepositComponent implements OnInit {
     this._depositService.saveDeposit(this.deposit).subscribe(
       result => {
         if (!result.deposit) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.deposit = result.deposit;
-          this.showMessage("El depósito se ha añadido con éxito.", "success", true);
+          this.showMessage("El depósito se ha añadido con éxito.", 'success', true);
           this.deposit = new Deposit();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -131,7 +131,7 @@ export class AddDepositComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 
 }

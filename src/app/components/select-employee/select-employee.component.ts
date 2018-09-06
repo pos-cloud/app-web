@@ -31,7 +31,7 @@ export class SelectEmployeeComponent implements OnInit {
   public employeeSelected: Employee;
   public turn: Turn;
   public employees: Employee[] = new Array();
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public loading: boolean = false;
   @Input() requireLogin: boolean;
   @Input() op: string;
@@ -126,7 +126,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._employeeTypeService.getEmployeeTypes(query).subscribe(
       result => {
         if (!result.employeeTypes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -135,7 +135,7 @@ export class SelectEmployeeComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -149,7 +149,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._employeeService.getEmployees(query).subscribe(
       result => {
         if (!result.employees) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -160,7 +160,7 @@ export class SelectEmployeeComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -191,12 +191,12 @@ export class SelectEmployeeComponent implements OnInit {
         if (!result.transactions) {
           this.closeTurn(turn);
         } else {
-          this.showMessage("No puede cerrar el turno del empleado si tiene pedidos pendientes", "info", true);
+          this.showMessage("No puede cerrar el turno del empleado si tiene pedidos pendientes", 'info', true);
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -210,14 +210,14 @@ export class SelectEmployeeComponent implements OnInit {
       result => {
         if (!result.turns) {
           if (this.op === "close-turn") {
-            this.showMessage("El empleado no tiene turnos abiertos", "info", true);
+            this.showMessage("El empleado no tiene turnos abiertos", 'info', true);
           } else {
             this.openTurn();
           }
         } else {
           switch(this.op) {
             case "open-turn":
-              this.showMessage("El empleado seleccionado ya tiene el turno abierto", "info", true);
+              this.showMessage("El empleado seleccionado ya tiene el turno abierto", 'info', true);
               break;
             case "close-turn":
               let turn = result.turns[0];
@@ -234,7 +234,7 @@ export class SelectEmployeeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -248,7 +248,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._turnService.updateTurn(turn).subscribe(
       result => {
         if (!result.turn) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           let modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.turn = result.turn;
@@ -262,7 +262,7 @@ export class SelectEmployeeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -275,14 +275,14 @@ export class SelectEmployeeComponent implements OnInit {
     this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
       result => {
         if (!result.users) {
-          this.showMessage("Tienes configurado para que pida autorización, pero no tiene creado un usuario el empleado.", "info", true);
+          this.showMessage("Tienes configurado para que pida autorización, pero no tiene creado un usuario el empleado.", 'info', true);
         } else {
           this.login(result.users[0]);
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -297,7 +297,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._turnService.saveTurn(turn).subscribe(
       result => {
         if (!result.turn) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           turn = result.turn;
           switch(this.op) {
@@ -315,7 +315,7 @@ export class SelectEmployeeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     )
@@ -389,7 +389,7 @@ export class SelectEmployeeComponent implements OnInit {
     this._userService.login(user).subscribe(
       result => {
         if (!result.user) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           user = result.user;
@@ -422,9 +422,9 @@ export class SelectEmployeeComponent implements OnInit {
       },
       error => {
         if (error.status === 0) {
-          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", "danger", false);
+          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
         } else {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
         }
         this.loading = false;
       }
@@ -438,6 +438,6 @@ export class SelectEmployeeComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -19,7 +19,7 @@ export class AddRoomComponent  implements OnInit {
 
   public room: Room;
   public roomForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -101,18 +101,18 @@ export class AddRoomComponent  implements OnInit {
     this._roomService.saveRoom(this.room).subscribe(
       result => {
         if (!result.room) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.room = result.room;
-          this.showMessage("El salón se ha añadido con éxito.", "success", false); 
+          this.showMessage("El salón se ha añadido con éxito.", 'success', false); 
           this.room = new Room ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -125,6 +125,6 @@ export class AddRoomComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

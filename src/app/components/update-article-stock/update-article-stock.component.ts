@@ -21,7 +21,7 @@ export class UpdateArticleStockComponent implements OnInit {
   @Input() articleStock: ArticleStock;
   @Input() article: Article;
   public articleStockForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -135,6 +135,6 @@ export class UpdateArticleStockComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

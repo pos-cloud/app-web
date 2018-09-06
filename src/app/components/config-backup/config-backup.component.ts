@@ -30,7 +30,7 @@ export class ConfigBackupComponent implements OnInit {
   public configFormCompany: FormGroup;
   public configFormLabel: FormGroup;
   public focusEvent = new EventEmitter<boolean>();
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public loadingCompany: boolean = false;
   public loadingEmail: boolean = false;
   public loadingLabel: boolean = false;
@@ -319,7 +319,7 @@ export class ConfigBackupComponent implements OnInit {
     this._vatCondition.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loadingCompany = false;
         } else {
           this.vatConditions = result.vatConditions;
@@ -328,7 +328,7 @@ export class ConfigBackupComponent implements OnInit {
         this.loadingCompany = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loadingCompany = false;
       }
     );
@@ -363,18 +363,18 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigBackup(this.config).subscribe(
       result => {
         if (!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loadingBackup = false;
         } else {
           this.config = result.configs[0];
-          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.showMessage("Los cambios fueron guardados con éxito.", 'success', false);
           this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingBackup = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loadingBackup = false;
       }
     )
@@ -387,18 +387,18 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigEmail(this.config).subscribe(
       result => {
         if (!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loadingEmail = false;
         } else {
           this.config = result.configs[0];
-          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.showMessage("Los cambios fueron guardados con éxito.", 'success', false);
           this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingEmail = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loadingEmail = false;
       }
     )
@@ -411,18 +411,18 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigCompany(this.config).subscribe(
       result => {
         if (!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loadingCompany = false;
         } else {
           this.config = result.configs[0];
-          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.showMessage("Los cambios fueron guardados con éxito.", 'success', false);
           this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingCompany = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loadingCompany = false;
       }
     )
@@ -435,18 +435,18 @@ export class ConfigBackupComponent implements OnInit {
     this._configService.updateConfigLabel(this.config).subscribe(
       result => {
         if (!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loadingLabel = false;
         } else {
           this.config = result.configs[0];
-          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.showMessage("Los cambios fueron guardados con éxito.", 'success', false);
           this.setConfigurationSettings(this.config);
           this.getConfig();
         }
         this.loadingLabel = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loadingLabel = false;
       }
     )
@@ -455,15 +455,15 @@ export class ConfigBackupComponent implements OnInit {
   public downloadlicense(): void {
     this._configService.getlicense().subscribe(
       result => {
-        if(!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+        if (!result.configs) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         } else {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         }
         this.loadingLicense = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loadingLicense = false;
       }
     )
@@ -473,8 +473,8 @@ export class ConfigBackupComponent implements OnInit {
     
     this._configService.getConfigApi().subscribe(
       result => {
-        if(!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+        if (!result.configs) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         } else {
           let config = result.configs[0];
           this.config = config;
@@ -482,34 +482,34 @@ export class ConfigBackupComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
       }
     )
   }
 
   public setValuesForm(): void {
     
-    if (!this.config['backupTime']) this.config['backupTime'] = "";
-    if (!this.config['pathBackup']) this.config['pathBackup'] = "";
-    if (!this.config['pathMongo']) this.config['pathMongo'] = "";
-    if (!this.config['emailAccount']) this.config['emailAccount'] = "";
-    if (!this.config['emailPassword']) this.config['emailPassword'] = "";
-    if (!this.config['companyName']) this.config['companyName'] = "";
-    if (!this.config['companyCUIT']) this.config['companyCUIT'] = "";
+    if (!this.config['backupTime']) this.config['backupTime'] = '';
+    if (!this.config['pathBackup']) this.config['pathBackup'] = '';
+    if (!this.config['pathMongo']) this.config['pathMongo'] = '';
+    if (!this.config['emailAccount']) this.config['emailAccount'] = '';
+    if (!this.config['emailPassword']) this.config['emailPassword'] = '';
+    if (!this.config['companyName']) this.config['companyName'] = '';
+    if (!this.config['companyCUIT']) this.config['companyCUIT'] = '';
     if (!this.config['companyVatCondition']) {
-      if(this.vatConditions && this.vatConditions.length > 0) {
+      if (this.vatConditions && this.vatConditions.length > 0) {
         this.config['companyVatCondition'] = this.vatConditions[0];
       } else {
         this.config['companyVatCondition'] = null;
       }
     }
     if (!this.config['companyStartOfActivity']) this.config['companyStartOfActivity'] = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = "";
-    if (!this.config['companyAddress']) this.config['companyAddress'] = "";
-    if (!this.config['companyPhone']) this.config['companyPhone'] = "";
-    if (!this.config['footerInvoice']) this.config['footerInvoice'] = "";
-    if (!this.config['heightLabel']) this.config['heightLabel'] = "";
-    if (!this.config['widthLabel']) this.config['widthLabel'] = "";
+    if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = '';
+    if (!this.config['companyAddress']) this.config['companyAddress'] = '';
+    if (!this.config['companyPhone']) this.config['companyPhone'] = '';
+    if (!this.config['footerInvoice']) this.config['footerInvoice'] = '';
+    if (!this.config['heightLabel']) this.config['heightLabel'] = '';
+    if (!this.config['widthLabel']) this.config['widthLabel'] = '';
     
     this.configFormCompany.setValue({
       '_id': this.config['_id'],
@@ -557,6 +557,6 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

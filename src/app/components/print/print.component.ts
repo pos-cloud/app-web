@@ -55,7 +55,7 @@ export class PrintComponent implements OnInit {
   @Input() article: Article;
   @Input() printer: Printer;
   public loading: boolean;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
   public shiftClosingMovementOfCash;
@@ -95,7 +95,7 @@ export class PrintComponent implements OnInit {
 
   ngOnInit() {
     
-    if(!this.printer) {
+    if (!this.printer) {
       this.printer = new Printer();
       this.printer.name = "PDF";
       this.printer.printIn = PrinterPrintIn.Counter;
@@ -113,12 +113,12 @@ export class PrintComponent implements OnInit {
       this.printer.pageWidth = 210;
     }
 
-    if(!this.printer.pageHigh || this.printer.pageHigh === 0) {
+    if (!this.printer.pageHigh || this.printer.pageHigh === 0) {
       this.printer.pageHigh = 297;
     }
 
     let orientation = "p";
-    if(this.typePrint === "label") {
+    if (this.typePrint === "label") {
       orientation = "l";
     }
     
@@ -133,7 +133,7 @@ export class PrintComponent implements OnInit {
     this._configService.getConfigApi().subscribe(
       result => {
         if (!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -148,9 +148,9 @@ export class PrintComponent implements OnInit {
             this.getClosingCashBox();
           } else if (this.typePrint === "label") {
             let code 
-            if(this.articleStock) {
+            if (this.articleStock) {
               code = this.articleStock.article.code;
-            } else if(this.article) {
+            } else if (this.article) {
               code = this.article.code;
             }
             this.getBarcode64('code128?value=' + code, this.typePrint);
@@ -161,7 +161,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -181,7 +181,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -194,7 +194,7 @@ export class PrintComponent implements OnInit {
     this._turnService.getShiftClosingByTransaccion(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.getShiftClosingByMovementOfArticle();
         } else {
           this.hideMessage();
@@ -204,7 +204,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -217,7 +217,7 @@ export class PrintComponent implements OnInit {
     this._turnService.getShiftClosingByMovementOfArticle(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.getShiftClosingByMovementOfCash();
         } else {
           this.hideMessage();
@@ -227,7 +227,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -240,7 +240,7 @@ export class PrintComponent implements OnInit {
     this._turnService.getShiftClosingByMovementOfCash(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.toPrintTurn();
         } else {
           this.hideMessage();
@@ -250,7 +250,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -263,7 +263,7 @@ export class PrintComponent implements OnInit {
     this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          this.showMessage("No se encontraron artículos en la transacción", "info", false);
+          this.showMessage("No se encontraron artículos en la transacción", 'info', false);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -272,7 +272,7 @@ export class PrintComponent implements OnInit {
           if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
             this.calculateBarcode();
           } else {
-            if(this.printer.pageWidth < 150) {
+            if (this.printer.pageWidth < 150) {
               this.toPrintRoll();
             } else if (this.printer.pageHigh > 150) {
               this.toPrintInvoice();
@@ -284,7 +284,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -341,7 +341,7 @@ export class PrintComponent implements OnInit {
   public toPrintCashBox(close): void {
     
     this.loading = true;
-    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
+    this.showMessage("Imprimiendo, Espere un momento...", 'info', false);
     let decimalPipe = new DeprecatedDecimalPipe('es-AR');
 
     //Cabecera del ticket
@@ -366,7 +366,7 @@ export class PrintComponent implements OnInit {
     let amountOrdersCanceled = 0;
     let invoicedAmountCanceled = 0;
 
-    if(close && close.length > 0) {
+    if (close && close.length > 0) {
 
       for(let c of close) {
         switch (c._id.type) {
@@ -428,7 +428,7 @@ export class PrintComponent implements OnInit {
   public toPrintTurn(): void {
     
     this.loading = true;
-    this.showMessage("Imprimiendo, Espere un momento...", "info", false);
+    this.showMessage("Imprimiendo, Espere un momento...", 'info', false);
     
     this.getHeader();
 
@@ -462,7 +462,7 @@ export class PrintComponent implements OnInit {
       this.doc.text('Detalle de Productos Anulados:', 15, row += 8)
       for (let i = 0; i < this.shiftClosingMovementOfArticle.deletedItems.length; i++) {
         let movementOfArticle = this.shiftClosingMovementOfArticle.deletedItems[i];
-        this.doc.text("" + movementOfArticle.amount + " " + movementOfArticle.description + " anulado en TK " + this.padString(movementOfArticle.transaction.origin, 4) + "-" + movementOfArticle.transaction.letter + "-" + this.padString(movementOfArticle.transaction.number, 10), 30, row += 8)
+        this.doc.text('' + movementOfArticle.amount + " " + movementOfArticle.description + " anulado en TK " + this.padString(movementOfArticle.transaction.origin, 4) + "-" + movementOfArticle.transaction.letter + "-" + this.padString(movementOfArticle.transaction.number, 10), 30, row += 8)
       }
     }
     if (this.shiftClosingMovementOfCash && this.shiftClosingTransaction) { this.doc.text('Detalle de Medios de Pago', 15, row += 8) };
@@ -590,7 +590,7 @@ export class PrintComponent implements OnInit {
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
 
-    if(text) {
+    if (text) {
       var pageCenter = pdfInMM / 2;
       
       var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
@@ -635,7 +635,7 @@ export class PrintComponent implements OnInit {
             this.doc.text(this.dateFormat.transform(transaction.startDate, 'DD/MM/YYYY'), 15, row)
           }
           if (transaction.type.labelPrint && 
-              transaction.type.labelPrint !== "") {
+              transaction.type.labelPrint !== '') {
             this.centerText(5, 5, 105, 0, row, transaction.type.labelPrint);
           } else {
             this.centerText(5, 5, 105, 0, row, transaction.type.name);
@@ -678,7 +678,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.extraLarge);
 
     if (this.transaction.type.labelPrint &&
-      this.transaction.type.labelPrint !== "") {
+      this.transaction.type.labelPrint !== '') {
       this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
     } else {
       this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
@@ -710,7 +710,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Cant", 5, 77);
     this.doc.text("Detalle", 25, 77);
-    if(this.transaction.type && this.transaction.type.showPrices) {
+    if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Precio", 155, 77);
       this.doc.text("Total", 185, 77);
       this.doc.setFontType('normal');
@@ -732,7 +732,7 @@ export class PrintComponent implements OnInit {
           this.doc.text(this.movementsOfArticles[i].notes, 25, row + 5);
           this.doc.setFontStyle("normal");
         }
-        if(this.transaction.type && this.transaction.type.showPrices) {
+        if (this.transaction.type && this.transaction.type.showPrices) {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row);
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
         }
@@ -741,7 +741,7 @@ export class PrintComponent implements OnInit {
       }
     }
     
-    if(this.transaction.type && this.transaction.type.showPrices) {
+    if (this.transaction.type && this.transaction.type.showPrices) {
 
       let rowTotals = 247;
       this.doc.setFontType('bold');
@@ -776,7 +776,7 @@ export class PrintComponent implements OnInit {
         subtotal = this.transaction.totalPrice;
       }
   
-      if(this.transaction.discountAmount) {
+      if (this.transaction.discountAmount) {
         subtotal += this.transaction.discountAmount;
       }
       this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247);
@@ -797,9 +797,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Observaciones:", 10, 246);
     this.doc.setFontType('normal');
-    this.doc.text("", 38, 250);
+    this.doc.text('', 38, 250);
 
-    if( this.transaction.CAE &&
+    if ( this.transaction.CAE &&
       this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
       this.doc.text("CAE:", 10, 272);
@@ -865,7 +865,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     if (this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        if(movementOfArticle.printed === 0) {
+        if (movementOfArticle.printed === 0) {
           row += 5;
           this.centerText(3, 5, 15, 0, row, movementOfArticle.amount.toString());
           if (movementOfArticle.article) {
@@ -874,7 +874,7 @@ export class PrintComponent implements OnInit {
             this.doc.text(movementOfArticle.description, 20, row);
           }
   
-          if (movementOfArticle.notes && movementOfArticle.notes !== "") {
+          if (movementOfArticle.notes && movementOfArticle.notes !== '') {
             row += 5;
             this.doc.setFontStyle("italic");
             this.doc.text(movementOfArticle.notes, 20, row);
@@ -942,7 +942,7 @@ export class PrintComponent implements OnInit {
             this.doc.text(movementOfArticle.description, 20, row);
           }
 
-          if (movementOfArticle.notes && movementOfArticle.notes !== "") {
+          if (movementOfArticle.notes && movementOfArticle.notes !== '') {
             row += 5;
             this.doc.setFontStyle("italic");
             this.doc.text(movementOfArticle.notes, 20, row);
@@ -976,7 +976,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
     this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/2) - 1 , row);
 
-    if(this.transaction.madein == 'delivery') {
+    if (this.transaction.madein == 'delivery') {
       row += 5;
       this.doc.setFontType('bold');
       this.doc.text("Entregar a: " + this.transaction.company.address, margin, row);
@@ -1022,7 +1022,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.5, row);
 
-        if(movementOfArticle.notes && movementOfArticle.notes !== "") {
+        if (movementOfArticle.notes && movementOfArticle.notes !== '') {
           row += 5;
           this.doc.setFontStyle("italic");
           this.doc.setTextColor(90, 90, 90);
@@ -1087,7 +1087,7 @@ export class PrintComponent implements OnInit {
       
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
 
-    }  else if(this.article) {
+    }  else if (this.article) {
         this.doc.text(this.article.description, 10,10);
         //this.doc.text("$",42,15);
         //this.doc.text(this.article.salePrice.toString(), 45, 15);
@@ -1173,6 +1173,6 @@ export class PrintComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

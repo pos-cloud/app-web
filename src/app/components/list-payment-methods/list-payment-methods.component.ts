@@ -22,7 +22,7 @@ export class ListPaymentMethodsComponent implements OnInit {
 
   public paymentMethods: PaymentMethod[] = new Array();
   public arePaymentMethodsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -53,7 +53,7 @@ export class ListPaymentMethodsComponent implements OnInit {
     this._paymentMethodService.getPaymentMethods().subscribe(
       result => {
         if (!result.paymentMethods) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.paymentMethods = null;
           this.arePaymentMethodsEmpty = true;
@@ -66,7 +66,7 @@ export class ListPaymentMethodsComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -154,6 +154,6 @@ export class ListPaymentMethodsComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

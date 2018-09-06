@@ -19,7 +19,7 @@ export class AddEmployeeTypeComponent  implements OnInit {
 
   public employeeType: EmployeeType;
   public employeeTypeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -102,18 +102,18 @@ export class AddEmployeeTypeComponent  implements OnInit {
     this._employeeTypeService.saveEmployeeType(this.employeeType).subscribe(
     result => {
         if (!result.employeeType) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.employeeType = result.employeeType;
-          this.showMessage("El tipo de empleado se ha añadido con éxito.", "success", false);
+          this.showMessage("El tipo de empleado se ha añadido con éxito.", 'success', false);
           this.employeeType = new EmployeeType();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -126,6 +126,6 @@ export class AddEmployeeTypeComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

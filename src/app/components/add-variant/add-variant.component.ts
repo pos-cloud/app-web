@@ -32,7 +32,7 @@ export class AddVariantComponent implements OnInit {
   public variantTypeSelected: VariantType;
   public variantValues: VariantValue[];
   public variantForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public user: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -70,13 +70,13 @@ export class AddVariantComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.user = pathLocation[1];
-    if (this.article && this.article._id && this.article._id !== "" &&
+    if (this.article && this.article._id && this.article._id !== '' &&
     this.variants.length === 0) {
       this.getVariantsByArticleParent();
     }
     if (!this.articlesWithVariants) this.articlesWithVariants = new Array();
     this.getVariantTypes();
-    if(!this.variant) {
+    if (!this.variant) {
       this.variant = new Variant();
       this.variant.articleParent = this.article;
     }
@@ -142,7 +142,7 @@ export class AddVariantComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -178,7 +178,7 @@ export class AddVariantComponent implements OnInit {
     this._variantTypeService.getVariantTypes().subscribe(
       result => {
         if (!result.variantTypes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantTypes = null;
         } else {
@@ -188,7 +188,7 @@ export class AddVariantComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -196,8 +196,8 @@ export class AddVariantComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if(!this.variant.type) this.variant.type = null;
-    if(!this.variant.value) this.variant.value = null;
+    if (!this.variant.type) this.variant.type = null;
+    if (!this.variant.value) this.variant.value = null;
     
     this.variantForm.setValue({
       'type': this.variant.type,
@@ -207,7 +207,7 @@ export class AddVariantComponent implements OnInit {
 
   public refreshValues(): void {
 
-    if(this.variantTypeSelected) {
+    if (this.variantTypeSelected) {
       this.variant.value = null;
       this.getVariantValuesByType(this.variantTypeSelected);
     } else {
@@ -224,7 +224,7 @@ export class AddVariantComponent implements OnInit {
     this._variantValueService.getVariantValuesByType(variantType).subscribe(
       result => {
         if (!result.variantValues) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantValues = null;
         } else {
@@ -234,7 +234,7 @@ export class AddVariantComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -255,7 +255,7 @@ export class AddVariantComponent implements OnInit {
       this.variant.articleParent = this.article;
 
       //Consultamos si ya fue creado algun artículo Child
-      if(this.articlesWithVariants.length === 0) {
+      if (this.articlesWithVariants.length === 0) {
         //Si no fue creado un articulo child lo creamos, le asigamos nombre de variante y almacenamos
         let article: Article = this.copyArticle(this.article);
         article.variantDescription = this.variant.value.description;
@@ -324,7 +324,7 @@ export class AddVariantComponent implements OnInit {
       this.setValueForm();
       this.buildForm();
     } else {
-      this.showMessage("La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", "info", true);
+      this.showMessage("La variante " + this.variant.type.name + " " + this.variant.value.description + " ya existe", 'info', true);
     }
   }
 
@@ -340,7 +340,7 @@ export class AddVariantComponent implements OnInit {
     article.code = articleToCopy.code;
     article.description = articleToCopy.description;
     article.posDescription = articleToCopy.posDescription;
-    article.variantDescription = "";
+    article.variantDescription = '';
     article.observation = articleToCopy.observation;
     article.basePrice = articleToCopy.basePrice;
     article.costPrice = articleToCopy.costPrice;
@@ -411,7 +411,7 @@ export class AddVariantComponent implements OnInit {
 
     let exists: boolean = false;
 
-    if(this.articlesWithVariants.length > 0) {
+    if (this.articlesWithVariants.length > 0) {
       for(let i = 0; i < this.articlesWithVariants.length; i++) {
         if (this.articlesWithVariants[i].variantDescription === variantDescription) {
           exists = true;
@@ -429,6 +429,6 @@ export class AddVariantComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

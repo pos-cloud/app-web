@@ -25,7 +25,7 @@ export class ListArticleStocksComponent implements OnInit {
 
   public articleStocks: ArticleStock[] = new Array();
   public areArticleStocksEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -67,7 +67,7 @@ export class ListArticleStocksComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -80,7 +80,7 @@ export class ListArticleStocksComponent implements OnInit {
     this._articleStockService.getArticleStocks().subscribe(
       result => {
         if (!result.articleStocks || result.articleStocks.length <= 0) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.articleStocks = null;
           this.areArticleStocksEmpty = true;
@@ -93,7 +93,7 @@ export class ListArticleStocksComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -168,6 +168,6 @@ export class ListArticleStocksComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

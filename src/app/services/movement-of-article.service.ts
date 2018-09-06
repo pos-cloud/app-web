@@ -37,7 +37,7 @@ export class MovementOfArticleService {
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    if(query) {
+    if (query) {
       return this._http.get(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map (res => res.json());
     } else {
       return this._http.get(Config.apiURL + "movements-of-articles", { headers: headers }).map(res => res.json());

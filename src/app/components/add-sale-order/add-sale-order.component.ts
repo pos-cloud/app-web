@@ -60,7 +60,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public transaction: Transaction;
   public transactionMovement: string;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public movementsOfArticles: MovementOfArticle[];
   public printers: Printer[];
   public printerSelected: Printer;
@@ -129,14 +129,14 @@ export class AddSaleOrderComponent implements OnInit {
       if (tableId) {
         this.getOpenTransactionByTable(tableId);
       } else {
-        this.showMessage("No se ha seleccionado ninguna mesa", "info", false);
+        this.showMessage("No se ha seleccionado ninguna mesa", 'info', false);
       }
     } else {
       if (op === "agregar-transaccion") {
         let transactionTypeID = pathLocation[4];
         this.getOpenCashBox();
         this.getTransactionType(transactionTypeID);
-      } else if(op = "editar-transaccion") {
+      } else if (op = "editar-transaccion") {
         let transactionId = pathLocation[4];
         this.getTransaction(transactionId);
       }
@@ -155,16 +155,16 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionTypeService.getTransactionType(transactionTypeID).subscribe(
       result => {
         if (!result.transactionType) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction.type = result.transactionType;
-          this.transactionMovement = ""+this.transaction.type.transactionMovement;
+          this.transactionMovement = ''+this.transaction.type.transactionMovement;
           this.getLastTransactionByType();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -188,14 +188,14 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
   public changeVisibilityArticle(): void {
-    if (this.filterArticle !== "" && this.filterArticle !== undefined) {
+    if (this.filterArticle !== '' && this.filterArticle !== undefined) {
       this.areArticlesVisible = true;
       this.areCategoriesVisible = false;
     } else {
@@ -220,7 +220,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -238,14 +238,14 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transactions[0];
-          this.transactionMovement = ""+this.transaction.type.transactionMovement;
+          this.transactionMovement = ''+this.transaction.type.transactionMovement;
           this.table = this.transaction.table;
           this.getMovementsOfTransaction();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -258,12 +258,12 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionService.getTransaction(transactionId).subscribe(
       result => {
         if (!result.transaction) {
-          this.showMessage(result.message, "danger", false);
+          this.showMessage(result.message, 'danger', false);
           this.loading = false;
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
-          this.transactionMovement = "" + this.transaction.type.transactionMovement;
+          this.transactionMovement = '' + this.transaction.type.transactionMovement;
           if (!this.transaction.cashBox) {
             this.getOpenCashBox();
           }
@@ -272,7 +272,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -285,7 +285,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.getTable(id).subscribe(
       result => {
         if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.table = result.table;
@@ -299,7 +299,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -312,16 +312,16 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionTypeService.getDefectOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction.type = result.transactionTypes[0];
-          this.transactionMovement = "" + this.transaction.type.transactionMovement;
+          this.transactionMovement = '' + this.transaction.type.transactionMovement;
           this.getLastTransactionByType();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -342,7 +342,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -361,7 +361,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -375,7 +375,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
@@ -386,7 +386,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -399,7 +399,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
           if (closed) {
@@ -409,7 +409,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -426,7 +426,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.typeOfOperationToPrint = 'item';
     
-    if(this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
           this.barArticlesToPrint.push(movementOfArticle);
@@ -464,7 +464,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.table = result.table;
           if (closed) {
@@ -474,7 +474,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -487,14 +487,14 @@ export class AddSaleOrderComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.table = result.table;
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -503,11 +503,11 @@ export class AddSaleOrderComponent implements OnInit {
   public addItem(itemData: MovementOfArticle): void {
     
 
-    if(this.filterArticle && this.filterArticle !== "") {
-      this.filterArticle = "";
+    if (this.filterArticle && this.filterArticle !== '') {
+      this.filterArticle = '';
     }
 
-    if(!itemData.article.containsVariants) {
+    if (!itemData.article.containsVariants) {
 
       let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
       
@@ -531,7 +531,7 @@ export class AddSaleOrderComponent implements OnInit {
     } else {
       let movementOfArticle: MovementOfArticle;
       movementOfArticle = itemData;
-      movementOfArticle._id = "";
+      movementOfArticle._id = '';
       movementOfArticle.transaction = this.transaction;
       movementOfArticle.printed = 0;
       movementOfArticle.amount = 1;
@@ -555,7 +555,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -568,13 +568,13 @@ export class AddSaleOrderComponent implements OnInit {
     if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       !movementOfArticle.article.allowSale) {
       allowed = false;
-      this.showMessage("El artículo no esta habilitado para la venta", "info", true);
+      this.showMessage("El artículo no esta habilitado para la venta", 'info', true);
     }
 
     if (this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
       !movementOfArticle.article.allowPurchase) {
       allowed = false;
-      this.showMessage("El artículo no esta habilitado para la compra", "info", true);
+      this.showMessage("El artículo no esta habilitado para la compra", 'info', true);
     }
 
     if (Config.modules.stock &&
@@ -583,12 +583,12 @@ export class AddSaleOrderComponent implements OnInit {
         !movementOfArticle.article.allowSaleWithoutStock &&
         (!articleStock || ((articleStock && movementOfArticle.amount + 1) > articleStock.realStock))) {
       allowed = false;
-      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", "info", true);
+      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", 'info', true);
     }
     
     if (allowed) {
       if (op === "save") {
-        movementOfArticle._id = "";
+        movementOfArticle._id = '';
         movementOfArticle.printed = 0;
         movementOfArticle.transaction = this.transaction;
         movementOfArticle.amount = 1;
@@ -651,23 +651,23 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          if(get) {
+          if (get) {
             this.getMovementsOfTransaction();
           }
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
 
   public cleanFilterArticle(): void {
-    this.filterArticle = "";
+    this.filterArticle = '';
     this.areArticlesVisible = false;
     this.areCategoriesVisible = true;
   }
@@ -683,7 +683,7 @@ export class AddSaleOrderComponent implements OnInit {
 
         let transactionTax: Taxes = new Taxes();
         for(let taxesAux of movementOfArticle.taxes) {
-          if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
             transactionTax.tax = taxesAux.tax;
             transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
@@ -701,7 +701,7 @@ export class AddSaleOrderComponent implements OnInit {
     for (let transactionTaxAux of transactionTaxesAUX) {
       let exists: boolean = false;
       for(let transactionTax of transactionTaxes) {
-        if(transactionTaxAux.tax._id === transactionTax.tax._id &&
+        if (transactionTaxAux.tax._id === transactionTax.tax._id &&
           transactionTaxAux.percentage === transactionTax.percentage) {
           transactionTax.taxAmount += transactionTaxAux.taxAmount;
           transactionTax.taxBase += transactionTaxAux.taxBase;
@@ -709,7 +709,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
 
-      if(!exists) {
+      if (!exists) {
         transactionTaxes.push(transactionTaxAux);
       }
     }
@@ -723,14 +723,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.totalPrice = 0;
     this.transaction.discountAmount = 0;
 
-    if(discountPercent !== undefined) {
+    if (discountPercent !== undefined) {
       this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 3);
     } else if (!this.transaction.discountPercent) {
       this.transaction.discountPercent = 0;
       this.transaction.discountAmount = 0;
     }
 
-    if(this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 
       for (let movementOfArticle of this.movementsOfArticles) {
 
@@ -766,28 +766,28 @@ export class AddSaleOrderComponent implements OnInit {
 
   public validateElectronicTransaction(): void {
     
-    this.showMessage("Validando comprobante con AFIP...", "info", false);
+    this.showMessage("Validando comprobante con AFIP...", 'info', false);
 
     this._transactionService.validateElectronicTransaction(this.transaction).subscribe(
       result => {
         if (result.status === 'err') {
-          let msn = "";
-          if(result.code && result.code !== "") {
+          let msn = '';
+          if (result.code && result.code !== '') {
             msn += result.code + " - ";
           }
-          if (result.message && result.message !== "") {
+          if (result.message && result.message !== '') {
             msn += result.message + ". ";
           }
-          if (result.observationMessage && result.observationMessage !== "") {
+          if (result.observationMessage && result.observationMessage !== '') {
             msn += result.observationMessage + ". ";
           }
-          if (result.observationMessage2 && result.observationMessage2 !== "") {
+          if (result.observationMessage2 && result.observationMessage2 !== '') {
             msn += result.observationMessage2 + ". ";
           }
-          if(msn === "") {
+          if (msn === '') {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
-          this.showMessage(msn, "info", true);
+          this.showMessage(msn, 'info', true);
         } else {
           this.transaction.number = result.number;
           this.transaction.CAE = result.CAE;
@@ -803,7 +803,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", "danger", false);
+        this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
         this.loading = false;
       }
     )
@@ -825,13 +825,13 @@ export class AddSaleOrderComponent implements OnInit {
         });
         break;
       case 'apply_discount':
-        if(this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+        if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
           modalRef = this._modalService.open(ApplyDiscountComponent, { size: 'lg' });
           modalRef.componentInstance.amount = this.transaction.totalPrice;
           modalRef.componentInstance.amountToApply = this.transaction.discountAmount;
           modalRef.componentInstance.percentageToApply = this.transaction.discountPercent;
           modalRef.result.then((result) => {
-            if(result.discount) {
+            if (result.discount) {
               this.updatePrices(
                 result.discount.percentageToApply
               );
@@ -839,7 +839,7 @@ export class AddSaleOrderComponent implements OnInit {
           }, (reason) => {
           });
         } else {
-          this.showMessage("No se ingresaron artículos a la transacción.", "info", true);
+          this.showMessage("No se ingresaron artículos a la transacción.", 'info', true);
         }
        break;
       case 'cancel':
@@ -879,9 +879,9 @@ export class AddSaleOrderComponent implements OnInit {
 
         this.typeOfOperationToPrint = "charge";
         
-        if(this.isValidCharge()) {
+        if (this.isValidCharge()) {
 
-          if(this.transaction.type.requestPaymentMethods) {
+          if (this.transaction.type.requestPaymentMethods) {
 
             modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
             modalRef.componentInstance.transaction = this.transaction;
@@ -921,7 +921,7 @@ export class AddSaleOrderComponent implements OnInit {
       
         if (this.countPrinters() > 1) {
           modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
-            if (result !== "cancel" && result !== "") {
+            if (result !== "cancel" && result !== '') {
               this.distributeImpressions(result);
             }
           }, (reason) => {
@@ -935,7 +935,7 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'errorMessage':
         modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
-          if (result !== "cancel" && result !== "") {
+          if (result !== "cancel" && result !== '') {
             this.backFinal();
           }
         }, (reason) => {
@@ -1017,7 +1017,7 @@ export class AddSaleOrderComponent implements OnInit {
       result => {
         if (!result.taxes) {
           this.loading = false;
-          this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", "info", true);
+          this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
         } else {
           this.hideMessage();
           tax.tax = result.taxes[0];
@@ -1027,7 +1027,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -1039,14 +1039,14 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (this.movementsOfArticles.length <= 0) {
       isValidCharge = false;
-      this.showMessage("No existen productos en la transacción.", "info", true);
+      this.showMessage("No existen productos en la transacción.", 'info', true);
     }
 
     if (isValidCharge &&
       this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
       !this.transaction.company) {
       isValidCharge = false;
-      this.showMessage("Debe seleccionar un proveedor para la transacción.", "info", true);
+      this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
     }
 
     if (isValidCharge &&
@@ -1054,16 +1054,16 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.totalPrice > 1000 &&
       !this.transaction.company) {
       isValidCharge = false;
-      this.showMessage("Debe indentificar al cliente para documentos electrónicos con monto mayor a $1.000,00.", "info", true);
+      this.showMessage("Debe indentificar al cliente para documentos electrónicos con monto mayor a $1.000,00.", 'info', true);
     }
 
     if (isValidCharge &&
         this.transaction.type.electronics &&
         this.transaction.company &&
-        ((!this.transaction.company.CUIT || (this.transaction.company.CUIT && this.transaction.company.CUIT === "")) &&
-        (!this.transaction.company.DNI || (this.transaction.company.DNI && this.transaction.company.DNI === "")))) {
+        ((!this.transaction.company.CUIT || (this.transaction.company.CUIT && this.transaction.company.CUIT === '')) &&
+        (!this.transaction.company.DNI || (this.transaction.company.DNI && this.transaction.company.DNI === '')))) {
       isValidCharge = false;
-      this.showMessage("El cliente ingresado no tiene CUIT/DNI.", "info", true);
+      this.showMessage("El cliente ingresado no tiene CUIT/DNI.", 'info', true);
       this.loading = false;
     }
 
@@ -1072,15 +1072,15 @@ export class AddSaleOrderComponent implements OnInit {
         this.transaction.type.fixedOrigin === 0 &&
         this.transaction.type.electronics) {
       isValidCharge = false;
-      this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", "info", true);
+      this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
       this.loading = false;
     }
 
-    if(isValidCharge &&
+    if (isValidCharge &&
       this.transaction.type.electronics &&
       !Config.modules.sale.electronicTransactions) {
       isValidCharge = false;
-      this.showMessage("No tiene habilitado el módulo de factura electrónica.", "info", true);
+      this.showMessage("No tiene habilitado el módulo de factura electrónica.", 'info', true);
       this.loading = false;
     }
 
@@ -1121,7 +1121,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     switch (this.typeOfOperationToPrint) {
       case 'charge':
-        if(printer.type === PrinterType.PDF) {
+        if (printer.type === PrinterType.PDF) {
           this.openModal("print");
         }
         break;
@@ -1136,14 +1136,14 @@ export class AddSaleOrderComponent implements OnInit {
         }
         break;
       default:
-        this.showMessage("No se reconoce la operación de impresión.", "danger", false);
+        this.showMessage("No se reconoce la operación de impresión.", 'danger', false);
         break;
     }
   }
 
   public assignLetter() {
     
-    if(this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
       if (Config.companyVatCondition && Config.companyVatCondition.description === "Responsable Inscripto") {
@@ -1180,7 +1180,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -1193,7 +1193,7 @@ export class AddSaleOrderComponent implements OnInit {
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           movementOfArticle = result.movementOfArticle;
@@ -1202,7 +1202,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -1213,20 +1213,20 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = 'bill';
       this.openModal('printers');
     } else {
-      this.showMessage("No existen productos en el pedido.", "info", true);
+      this.showMessage("No existen productos en el pedido.", 'info', true);
       this.loading = false;
     }
   }
 
   public updateRealStock(): void {
     
-    if(this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles.length > 0) {
 
       this.loading = true;
   
       let amountToModify;
       
-      if(this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.name === "Inventario") {
+      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.name === "Inventario") {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount;
       } else {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount * -1;
@@ -1236,7 +1236,7 @@ export class AddSaleOrderComponent implements OnInit {
         this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
           result => {
             if (!result.articleStock) {
-              if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             } else {
               this.amountModifyStock++;
               if (this.amountModifyStock === this.movementsOfArticles.length) {
@@ -1248,7 +1248,7 @@ export class AddSaleOrderComponent implements OnInit {
             this.loading = false;
           },
           error => {
-            this.showMessage(error._body, "danger", false);
+            this.showMessage(error._body, 'danger', false);
             this.loading = false;
           }
         );
@@ -1261,7 +1261,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     } else {
-      this.showMessage("No se encuentran artículos en la transacción", "info", true);
+      this.showMessage("No se encuentran artículos en la transacción", 'info', true);
     }
   }
 
@@ -1300,7 +1300,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -1319,6 +1319,6 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

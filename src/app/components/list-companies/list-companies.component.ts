@@ -26,7 +26,7 @@ export class ListCompaniesComponent implements OnInit {
   public companies: Company[];
   @Input() type: CompanyType;
   public areCompaniesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   @Input() userType: string;
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
@@ -69,8 +69,8 @@ export class ListCompaniesComponent implements OnInit {
 
     this._companyService.getCompaniesByType(this.type.toString()).subscribe(
         result => {
-					if(!result.companies) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+					if (!result.companies) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
 					  this.companies = null;
             this.areCompaniesEmpty = true;
@@ -83,7 +83,7 @@ export class ListCompaniesComponent implements OnInit {
           }
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
       );
@@ -114,7 +114,7 @@ export class ListCompaniesComponent implements OnInit {
         break;
       case 'add' :
         modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
-        if(this.type) {
+        if (this.type) {
           modalRef.componentInstance.companyType = this.type;
         }
         modalRef.result.then((result) => {
@@ -128,7 +128,7 @@ export class ListCompaniesComponent implements OnInit {
           modalRef.componentInstance.company = company;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getCompaniesByType();
             }
           }, (reason) => {
@@ -139,7 +139,7 @@ export class ListCompaniesComponent implements OnInit {
           modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg' });
           modalRef.componentInstance.company = company;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getCompaniesByType();
             }
           }, (reason) => {
@@ -151,17 +151,17 @@ export class ListCompaniesComponent implements OnInit {
         let model: any = new Company();
         model.model = "company";
         model.primaryKey = "code";
-        model.code = "";
-        model.name = "";
-        model.fantasyName = "";
+        model.code = '';
+        model.name = '';
+        model.fantasyName = '';
         model.type = CompanyType.Client;
         model.vatCondition = null;
-        model.CUIT = "";
-        model.DNI = "";
-        model.address = "";
-        model.city = "";
-        model.phones = "";
-        model.emails = "";
+        model.CUIT = '';
+        model.DNI = '';
+        model.address = '';
+        model.city = '';
+        model.phones = '';
+        model.emails = '';
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {
@@ -177,15 +177,15 @@ export class ListCompaniesComponent implements OnInit {
 
   public openMail(): void {
     
-    if(Config.emailAccount) {
-      if(this.companies.length !== 0) {
+    if (Config.emailAccount) {
+      if (this.companies.length !== 0) {
         let modalRef;
-        let emails = "";
+        let emails = '';
   
         modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
         for(let i=0; i < this.companies.length; i++){
           emails += this.companies[i].emails;
-          if((i-this.companies.length)<=-2){
+          if ((i-this.companies.length)<=-2){
             emails += ",";
           }
         }
@@ -194,10 +194,10 @@ export class ListCompaniesComponent implements OnInit {
         }, (reason) => {
         });
       } else {
-        this.showMessage("No se encontraron empresas.","info",true);
+        this.showMessage("No se encontraron empresas.",'info',true);
       }
     } else {
-      this.showMessage("Debe primero configurar la cuenta de correo.", "info", true);
+      this.showMessage("Debe primero configurar la cuenta de correo.", 'info', true);
     }
   }
   
@@ -212,6 +212,6 @@ export class ListCompaniesComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

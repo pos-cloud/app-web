@@ -22,7 +22,7 @@ export class ListMakesComponent implements OnInit {
 
   public makes: Make[] = new Array();
   public areMakesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -40,20 +40,20 @@ export class ListMakesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getMakes();
   }
 
-  public getMakes(): void {  
+  public getMakes(): void {
 
     this.loading = true;
-    
+
     this._makeService.getMakes().subscribe(
         result => {
-          if(!result.makes) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (!result.makes) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
             this.makes = null;
             this.areMakesEmpty = true;
@@ -66,7 +66,7 @@ export class ListMakesComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -75,9 +75,9 @@ export class ListMakesComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -85,7 +85,7 @@ export class ListMakesComponent implements OnInit {
   public refresh(): void {
     this.getMakes();
   }
-  
+
   public openModal(op: string, make:Make): void {
 
     let modalRef;
@@ -107,22 +107,22 @@ export class ListMakesComponent implements OnInit {
           modalRef.componentInstance.make = make;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getMakes();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
           modalRef = this._modalService.open(DeleteMakeComponent, { size: 'lg' })
           modalRef.componentInstance.make = make;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getMakes();
             }
           }, (reason) => {
-            
+
           });
           break;
       case 'import':
@@ -146,7 +146,7 @@ export class ListMakesComponent implements OnInit {
   public addItem(makeSelected) {
     this.eventAddItem.emit(makeSelected);
   }
-    
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
@@ -154,6 +154,6 @@ export class ListMakesComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

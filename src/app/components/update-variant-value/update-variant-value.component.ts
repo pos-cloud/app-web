@@ -20,7 +20,7 @@ export class UpdateVariantValueComponent implements OnInit {
   @Input() variantValue: VariantValue;
   @Input() readonly: boolean;
   public variantValueForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -109,17 +109,17 @@ export class UpdateVariantValueComponent implements OnInit {
     this._variantValueService.updateVariantValue(this.variantValue).subscribe(
       result => {
         if (!result.variantValue) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.variantValue = result.variantValue;
-          this.showMessage("El valor de variante se ha actualizado con éxito.", "success", false);
+          this.showMessage("El valor de variante se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -132,6 +132,6 @@ export class UpdateVariantValueComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

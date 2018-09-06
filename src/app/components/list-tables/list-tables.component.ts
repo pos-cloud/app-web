@@ -28,7 +28,7 @@ export class ListTablesComponent implements OnInit {
   public tableSelected: Table;
   public tables: Table[];
   public areTablesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -52,7 +52,7 @@ export class ListTablesComponent implements OnInit {
     public _modalService: NgbModal
   ) {
     if (this.filterRoom === undefined) {
-      this.filterRoom = "";
+      this.filterRoom = '';
     }
   }
 
@@ -71,7 +71,7 @@ export class ListTablesComponent implements OnInit {
     this._tableService.getTables().subscribe(
       result => {
         if (!result.tables) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.tables = null;
           this.areTablesEmpty = true;
@@ -86,9 +86,9 @@ export class ListTablesComponent implements OnInit {
       },
       error => {
         if (error.status === 0) {
-          this.showMessage("Error al conectar con el servidor. Corroborar que este encendido.", "danger", false);
+          this.showMessage("Error al conectar con el servidor. Corroborar que este encendido.", 'danger', false);
         } else {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       }
@@ -102,7 +102,7 @@ export class ListTablesComponent implements OnInit {
 
     for(let table of this.tables) {
       this.amountOfDiners += table.chair;
-      if( table.state === TableState.Busy || 
+      if ( table.state === TableState.Busy || 
           table.state === TableState.Pending) {
             this.amountOfDinersNow += table.diners;
       }
@@ -186,7 +186,7 @@ export class ListTablesComponent implements OnInit {
                   this.getDefectOrder();
                 }
         } else {
-          this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, "info", true);
+          this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);
         }
         break;
       default: ;
@@ -200,7 +200,7 @@ export class ListTablesComponent implements OnInit {
     this._tableService.updateTable(this.tableSelected).subscribe(
       result => {
         if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -209,7 +209,7 @@ export class ListTablesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -222,7 +222,7 @@ export class ListTablesComponent implements OnInit {
     this._transactionTypeService.getDefectOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + result.transactionTypes[0]._id]);
@@ -230,7 +230,7 @@ export class ListTablesComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -243,6 +243,6 @@ export class ListTablesComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

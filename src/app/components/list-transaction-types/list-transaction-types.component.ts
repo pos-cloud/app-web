@@ -21,7 +21,7 @@ export class ListTransactionTypesComponent implements OnInit {
 
   public transactionTypes: TransactionType[] = new Array();
   public areTransactionTypesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -52,7 +52,7 @@ export class ListTransactionTypesComponent implements OnInit {
     this._transactionTypeService.getTransactionTypes().subscribe(
       result => {
         if (!result.transactionTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.transactionTypes = null;
           this.areTransactionTypesEmpty = true;
@@ -65,7 +65,7 @@ export class ListTransactionTypesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -131,7 +131,7 @@ export class ListTransactionTypesComponent implements OnInit {
   public getCode(transactionType: TransactionType, letter: string): number {
     
     let code: number;
-    if(transactionType.codes) {
+    if (transactionType.codes) {
       let jsonString = JSON.stringify(transactionType.codes);
       let json = JSON.parse(jsonString);
       json.find(function (x) {
@@ -155,6 +155,6 @@ export class ListTransactionTypesComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

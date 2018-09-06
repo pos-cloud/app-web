@@ -24,7 +24,7 @@ export class AddArticleTaxComponent implements OnInit {
   public taxes: Tax[];
   @Input() articleTaxes: Taxes[] = new Array();
   public articleTaxForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -149,7 +149,7 @@ export class AddArticleTaxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -173,7 +173,7 @@ export class AddArticleTaxComponent implements OnInit {
         if (taxArticleAux.tax._id === this.articleTax.tax._id &&
           taxArticleAux.percentage === this.articleTax.percentage) {
           exists = true;
-          this.showMessage("El impuesto " + this.articleTax.tax.name + " con porcentaje " + this.articleTax.percentage + " ya existe", "info", true);
+          this.showMessage("El impuesto " + this.articleTax.tax.name + " con porcentaje " + this.articleTax.percentage + " ya existe", 'info', true);
         }
       }
     }
@@ -210,6 +210,6 @@ export class AddArticleTaxComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

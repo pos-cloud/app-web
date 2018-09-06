@@ -42,7 +42,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public selectedVariants;
   public areVariantsEmpty: boolean = true;
   public movementOfArticleForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -88,7 +88,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.userType = pathLocation[1];
     this.containsVariants = this.movementOfArticle.article.containsVariants;
     this.unitPrice = this.roundNumber.transform(this.movementOfArticle.salePrice / this.movementOfArticle.amount);
-    if(this.movementOfArticle.article && this.containsVariants) {
+    if (this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
     }
     this.buildForm();
@@ -151,7 +151,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     if (this.containsVariants && this.variantTypes && this.variantTypes.length > 0) {
       for(let type of this.variantTypes) {
-        if(this.selectedVariants[type.name] === null) {
+        if (this.selectedVariants[type.name] === null) {
           isValid = false;
         }
       }
@@ -181,7 +181,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -189,7 +189,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public initializeSelectedVariants(): void {
     
-    if(this.variantTypes && this.variantTypes.length > 0) {
+    if (this.variantTypes && this.variantTypes.length > 0) {
       for(let type of this.variantTypes) {
         let key = type.name;
         this.selectedVariants[key] = null;
@@ -205,7 +205,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       if (variant.type._id === variantType._id) {
         if (variantsToReturn.length > 0) {
           for(let variantAux of variantsToReturn) {
-            if(variant.value._id !== variantAux.value._id) {
+            if (variant.value._id !== variantAux.value._id) {
               variantsToReturn.push(variant);
             }
           }
@@ -233,7 +233,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           exists = true;
         }
       }
-      if(!exists) {
+      if (!exists) {
         uniqueArray.push(el);
       }
     }
@@ -288,10 +288,10 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.movementOfArticle._id) this.movementOfArticle._id = "";
-    if (!this.movementOfArticle.description) this.movementOfArticle.description = "";
+    if (!this.movementOfArticle._id) this.movementOfArticle._id = '';
+    if (!this.movementOfArticle.description) this.movementOfArticle.description = '';
     if (!this.movementOfArticle.amount) this.movementOfArticle.amount = 1;
-    if (!this.movementOfArticle.notes) this.movementOfArticle.notes = "";
+    if (!this.movementOfArticle.notes) this.movementOfArticle.notes = '';
     if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
 
     this.movementOfArticle.amount = this.roundNumber.transform(this.movementOfArticle.amount);
@@ -311,9 +311,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     this.movementOfArticle.article.salePrice = this.movementOfArticleForm.value.unitPrice;
 
-    if(this.containsVariants) {
-      if(!this.isValidSelectedVariants()) {
-        if(!this.variants || this.variants.length === 0) {
+    if (this.containsVariants) {
+      if (!this.isValidSelectedVariants()) {
+        if (!this.variants || this.variants.length === 0) {
           if (Config.modules.stock &&
             this.movementOfArticle.transaction.type.modifyStock) {
             this.getArticleStock();
@@ -360,7 +360,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -373,7 +373,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     
     if (this.variants && this.variants.length > 0) {
       for(let variant of this.variants) {
-        if(variant.value.description === this.selectedVariants[variant.type.name]) {
+        if (variant.value.description === this.selectedVariants[variant.type.name]) {
           articles.push(variant.articleChild);
         }
       }
@@ -383,11 +383,11 @@ export class AddMovementOfArticleComponent implements OnInit {
       for (let article of articles) {
         let count = 0;
         for (let articleAux of articles) {
-          if(article._id === articleAux._id) {
+          if (article._id === articleAux._id) {
             count++;
           }
         }
-        if(count == this.variantTypes.length) {
+        if (count == this.variantTypes.length) {
           articleToReturn = article;
         }
       }
@@ -427,7 +427,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
           this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.basePrice);
           this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.costPrice);
-          if( this.movementOfArticle.transaction &&
+          if ( this.movementOfArticle.transaction &&
               this.movementOfArticle.transaction.type &&  
               this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
                 this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.amount * this.movementOfArticle.article.salePrice);
@@ -443,7 +443,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           if (!this.containsVariants) {
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
           }
-          if(this.movementOfArticle._id && this.movementOfArticle._id !== "") {
+          if (this.movementOfArticle._id && this.movementOfArticle._id !== '') {
             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
           } else {
             this.movementOfArticle._id = result.movementsOfArticles[0]._id;
@@ -476,7 +476,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -489,7 +489,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
         !this.movementOfArticle.article.allowSale) {
       allowed = false;
-      this.showMessage("El artículo no esta habilitado para la venta", "info", true);
+      this.showMessage("El artículo no esta habilitado para la venta", 'info', true);
     }
 
     if (Config.modules.stock &&
@@ -498,11 +498,11 @@ export class AddMovementOfArticleComponent implements OnInit {
         !this.movementOfArticle.article.allowSaleWithoutStock &&
         (!this.articleStock || (this.articleStock && this.movementOfArticle.amount > this.articleStock.realStock))) {
       allowed = false;
-      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", "info", true);
+      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", 'info', true);
     }
 
     if (allowed) {
-      if(op === "update") {
+      if (op === "update") {
         this.updateMovementOfArticle();
       } else {
         this.saveMovementOfArticle();
@@ -512,7 +512,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public loadDescriptionOfVariants(): void {
     
-    this.movementOfArticle.notes = "";
+    this.movementOfArticle.notes = '';
     let variantsAux: Variant[] = this.getVariantsByArticleChild(this.movementOfArticle.article);
     for (let i = 0; i < variantsAux.length; i++) {
       this.movementOfArticle.notes += variantsAux[i].value.description;
@@ -534,14 +534,14 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.activeModal.close('save');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -554,14 +554,14 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._movementOfArticleService.deleteMovementOfArticle(this.movementOfArticleForm.value._id).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.activeModal.close('delete');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -574,14 +574,14 @@ export class AddMovementOfArticleComponent implements OnInit {
     this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.activeModal.close('update');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -594,6 +594,6 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

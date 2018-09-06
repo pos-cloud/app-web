@@ -38,7 +38,7 @@ export class CurrentAccountComponent implements OnInit {
   public companySelected: Company;
   public movementsOfCashes: MovementOfCash[];
   public areTransactionsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['-endDate'];
   public propertyTerm: string;
@@ -87,14 +87,14 @@ export class CurrentAccountComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
           this.transactions = new Array();
           this.balance = 0;
         }
       );
     } else {
-      this.showMessage("Debe seleccionar una empresa.", "info", true);
+      this.showMessage("Debe seleccionar una empresa.", 'info', true);
       this.loading = false;
     }
   }
@@ -117,12 +117,12 @@ export class CurrentAccountComponent implements OnInit {
           this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
     } else {
-      this.showMessage("Debe seleccionar una empresa.", "info", true);
+      this.showMessage("Debe seleccionar una empresa.", 'info', true);
       this.loading = false;
     }
   }
@@ -169,7 +169,7 @@ export class CurrentAccountComponent implements OnInit {
 
   public getPaymentMethodName(transaction): string {
 
-    let name: string = "";
+    let name: string = '';
 
     for (let movementOfCash of this.movementsOfCashes) {
       if (movementOfCash.transaction) {
@@ -197,7 +197,7 @@ export class CurrentAccountComponent implements OnInit {
     if (this.companySelected) {
       this.getTransactionsByCompany();
     } else {
-      this.showMessage("Debe seleccionar una empresa", "info", true);
+      this.showMessage("Debe seleccionar una empresa", 'info', true);
     }
   }
 
@@ -250,14 +250,14 @@ export class CurrentAccountComponent implements OnInit {
         );
         break;
       case 'print':
-        if(this.companySelected) {
+        if (this.companySelected) {
           modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.transactions = this.transactions;
           modalRef.componentInstance.company = this.companySelected;
           modalRef.componentInstance.typePrint = 'current-account';
           modalRef.componentInstance.balance = this.balance;
         } else {
-          this.showMessage("Debe seleccionar una empresa","info", true);
+          this.showMessage("Debe seleccionar una empresa",'info', true);
         }
         break;
       default: ;
@@ -268,7 +268,7 @@ export class CurrentAccountComponent implements OnInit {
     if (this.companySelected) {
       this.getTransactionTypeByName(type);
     } else {
-      this.showMessage("Debe seleccionar una empresa", "info", true);
+      this.showMessage("Debe seleccionar una empresa", 'info', true);
     }
   }
 
@@ -277,7 +277,7 @@ export class CurrentAccountComponent implements OnInit {
     this._transactionTypeService.getTransactionTypeByName(name).subscribe(
       result => {
         if (!result.transactionTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           let transaction = new Transaction();
           transaction.company = this.companySelected;
@@ -287,7 +287,7 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -300,7 +300,7 @@ export class CurrentAccountComponent implements OnInit {
     this._transactionService.updateTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.refresh();
@@ -308,7 +308,7 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -321,6 +321,6 @@ export class CurrentAccountComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

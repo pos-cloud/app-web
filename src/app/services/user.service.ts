@@ -95,7 +95,7 @@ export class UserService {
       'Authorization': this.getToken(),
 			'Database': this.getDatabase()
     });
-    return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, ""), { headers: headers }).map(res => res.json());
+    return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, ''), { headers: headers }).map(res => res.json());
   }
 
   checkPermission(employee: string) {
@@ -111,7 +111,7 @@ export class UserService {
     
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
     
-    if(identity !== undefined && identity !== null) {
+    if (identity !== undefined && identity !== null) {
       return identity;
     } else {
       return undefined;

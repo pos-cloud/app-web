@@ -30,7 +30,7 @@ export class TransactionService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		if(query) {
+		if (query) {
 			return this._http.get(Config.apiURL + "transactions/" + query, { headers: headers }).map (res => res.json());
 		} else {
 			return this._http.get(Config.apiURL + "transactions", { headers: headers }).map(res => res.json());

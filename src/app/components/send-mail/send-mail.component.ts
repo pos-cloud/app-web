@@ -18,7 +18,7 @@ import { CompanyService } from './../../services/company.service';
 export class SendMailComponent implements OnInit {
   
   public sendmailForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -60,8 +60,8 @@ export class SendMailComponent implements OnInit {
     this.buildForm();
     this.sendmailForm.setValue({
       'emails': this.emails,
-      'subject': "",
-      'body': ""
+      'subject': '',
+      'body': ''
     });
   }
 
@@ -70,8 +70,8 @@ export class SendMailComponent implements OnInit {
       'emails': [this.emails, [
         ]
       ],
-      'subject': "",
-      'body': ""
+      'subject': '',
+      'body': ''
     });
 
     this.sendmailForm.valueChanges
@@ -109,16 +109,16 @@ export class SendMailComponent implements OnInit {
     this._serviceMail.sendMail(this.modelToImport).subscribe(
     result => {
         if (!result) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
-          this.showMessage("El mail se envio correctamente.", "success", false);
+          this.showMessage("El mail se envio correctamente.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -131,6 +131,6 @@ export class SendMailComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -15,7 +15,7 @@ export class FocusDirective {
   ngOnInit() {
     this.focusEvent.subscribe(event => {
       this.inputType = this.element.nativeElement.type;
-      if(this.inputType != "text") {
+      if (this.inputType != "text") {
         this.element.nativeElement.type = "text";
       }
       this.setSelectionRange(this.element.nativeElement,0,999);
@@ -34,7 +34,7 @@ export class FocusDirective {
       range.moveStart('character', selectionStart);
       range.select();
     }
-    if(this.element.nativeElement.type != this.inputType) {
+    if (this.element.nativeElement.type != this.inputType) {
       this.element.nativeElement.type = this.inputType;
     }
   }

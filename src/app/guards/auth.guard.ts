@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     //     this.identity.employee && 
     //     this.identity.employee.type && 
     //     this.identity.employee.type.description === this.roles[0]) {
-    //       // if(this.token && this.token !== "") {
+    //       // if (this.token && this.token !== '') {
     //       //   this._userService.isValidToken(this.token).subscribe(
     //       //     result => {
     //       //       if (!result.user) {

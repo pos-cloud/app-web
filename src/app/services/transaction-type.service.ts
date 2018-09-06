@@ -38,7 +38,7 @@ export class TransactionTypeService {
 			'Database': this._userService.getDatabase()
 		});
 		
-		if(query) {
+		if (query) {
 			return this._http.get(Config.apiURL + "transaction-types/" + query, {headers: headers}).map(res => res.json());
 		} else {
 			return this._http.get(Config.apiURL + "transaction-types", { headers: headers }).map(res => res.json());

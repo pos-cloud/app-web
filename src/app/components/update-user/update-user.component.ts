@@ -23,7 +23,7 @@ export class UpdateUserComponent implements OnInit {
   @Input() user: User;
   @Input() readonly: boolean;
   public userForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
@@ -73,7 +73,7 @@ export class UpdateUserComponent implements OnInit {
   public loadData(user: User):void {
     
     let employeeId: string = undefined;
-    if(user.employee !== null) {
+    if (user.employee !== null) {
       employeeId = user.employee._id;
     }
     this.userForm.setValue({
@@ -141,8 +141,8 @@ export class UpdateUserComponent implements OnInit {
 
     this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.employees) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+					if (!result.employees) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
 					  this.employees = null;
 					} else {
@@ -152,18 +152,18 @@ export class UpdateUserComponent implements OnInit {
           }
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
       );
    }
 
   public updateUser (): void {
-    if(!this.readonly) {
+    if (!this.readonly) {
       this.loading = true;
       this.user = this.userForm.value;
       this.user.tokenExpiration = 1440;
-      if(this.userForm.value.employee) {
+      if (this.userForm.value.employee) {
         this.getEmployee();
       } else {
         this.saveChanges();
@@ -175,8 +175,8 @@ export class UpdateUserComponent implements OnInit {
     
     this._employeeService.getEmployee(this.userForm.value.employee).subscribe(
         result => {
-          if(!result.employee) {
-            this.showMessage(result.message, "info", true); 
+          if (!result.employee) {
+            this.showMessage(result.message, 'info', true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -186,7 +186,7 @@ export class UpdateUserComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage("Debe seleccionar un empleado activo al usuario.", "info", true); 
+          this.showMessage("Debe seleccionar un empleado activo al usuario.", 'info', true); 
           this.loading = false;
         }
       );
@@ -197,16 +197,16 @@ export class UpdateUserComponent implements OnInit {
     this._userService.updateUser(this.user).subscribe(
     result => {
         if (!result.user) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.user = result.user;
-          this.showMessage("El usuario se ha actualizado con éxito.", "success", false);
-          if(this._userService.getIdentity()._id === this.user._id){
+          this.showMessage("El usuario se ha actualizado con éxito.", 'success', false);
+          if (this._userService.getIdentity()._id === this.user._id){
             let userStorage = new User();
             userStorage._id = result.user._id;
             userStorage.name = result.user.name;
-            if(result.user.employee) {
+            if (result.user.employee) {
               userStorage.employee = new Employee();
               userStorage.employee._id = result.user.employee._id;
               userStorage.employee.name = result.user.employee.name;
@@ -221,7 +221,7 @@ export class UpdateUserComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -234,6 +234,6 @@ export class UpdateUserComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

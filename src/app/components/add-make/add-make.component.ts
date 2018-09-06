@@ -19,7 +19,7 @@ export class AddMakeComponent implements OnInit {
 
   public make: Make;
   public makeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -103,18 +103,18 @@ export class AddMakeComponent implements OnInit {
     this._makeService.saveMake(this.make).subscribe(
       result => {
         if (!result.make) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.make = result.make;
-          this.showMessage("La marca se ha añadido con éxito.", "success", true);
+          this.showMessage("La marca se ha añadido con éxito.", 'success', true);
           this.make = new Make ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -127,6 +127,6 @@ export class AddMakeComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

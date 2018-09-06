@@ -74,7 +74,7 @@ export class HeaderComponent implements OnInit {
         this.sessionCount();
       });
     } else {
-      if(this._userService.getDatabase()) {
+      if (this._userService.getDatabase()) {
         this.openModal("login");
       } else {
         this.openModal("register");

@@ -22,7 +22,7 @@ export class AddEmployeeComponent  implements OnInit {
   public employee: Employee;
   public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -76,7 +76,7 @@ export class AddEmployeeComponent  implements OnInit {
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
         if (!result.employeeTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.loading = false;
@@ -85,7 +85,7 @@ export class AddEmployeeComponent  implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -99,12 +99,12 @@ export class AddEmployeeComponent  implements OnInit {
         result => {
           let code = 1;
           let employeeType: EmployeeType = new EmployeeType();
-          if(result.employees){
-            if(result.employees[0] !== undefined) {
+          if (result.employees){
+            if (result.employees[0] !== undefined) {
               code = result.employees[0].code + 1;
             }
           }
-          if(this.employeeTypes[0] !== undefined) {
+          if (this.employeeTypes[0] !== undefined) {
             employeeType = this.employeeTypes[0];
           }
           
@@ -116,7 +116,7 @@ export class AddEmployeeComponent  implements OnInit {
           this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -179,11 +179,11 @@ export class AddEmployeeComponent  implements OnInit {
     this._employeeService.saveEmployee(this.employee).subscribe(
     result => {
         if (!result.employee) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.employee = result.employee;
-          this.showMessage("El empleado se ha añadido con éxito.", "success", false);
+          this.showMessage("El empleado se ha añadido con éxito.", 'success', false);
           this.employee = new Employee();
           this.buildForm();
           this.getEmployeeTypes();
@@ -191,7 +191,7 @@ export class AddEmployeeComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -204,6 +204,6 @@ export class AddEmployeeComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

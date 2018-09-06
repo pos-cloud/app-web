@@ -21,9 +21,9 @@ export class AddArticleStockComponent implements OnInit {
   public articleStock: ArticleStock;
   @Input() article: Article;
   public articleStockForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage = '';
   public userType: string;
-  public loading: boolean = false;
+  public loading = false;
   public focusEvent = new EventEmitter<boolean>();
   @Output() eventAddStock: EventEmitter<ArticleStock> = new EventEmitter<ArticleStock>();
 
@@ -51,7 +51,7 @@ export class AddArticleStockComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
+  ) {
   }
 
   ngOnInit(): void {
@@ -120,6 +120,6 @@ export class AddArticleStockComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

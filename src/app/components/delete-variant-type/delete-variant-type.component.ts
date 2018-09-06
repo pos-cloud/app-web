@@ -16,7 +16,7 @@ import { VariantTypeService } from './../../services/variant-type.service';
 export class DeleteVariantTypeComponent implements OnInit {
 
   @Input() variantType: VariantType;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -42,7 +42,7 @@ export class DeleteVariantTypeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -55,6 +55,6 @@ export class DeleteVariantTypeComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

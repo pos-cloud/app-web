@@ -21,7 +21,7 @@ export class ListEmployeeTypesComponent implements OnInit {
 
   public employeeTypes: EmployeeType[] = new Array();
   public areEmployeeTypesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
@@ -50,8 +50,8 @@ export class ListEmployeeTypesComponent implements OnInit {
     
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
-        if(!result.employeeTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+        if (!result.employeeTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
           this.employeeTypes = null;
           this.areEmployeeTypesEmpty = true;
@@ -64,7 +64,7 @@ export class ListEmployeeTypesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -99,7 +99,7 @@ export class ListEmployeeTypesComponent implements OnInit {
           modalRef = this._modalService.open(UpdateEmployeeTypeComponent, { size: 'lg' })
           modalRef.componentInstance.employeeType = employeeType;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getEmployeeTypes();
             }
           }, (reason) => {
@@ -110,7 +110,7 @@ export class ListEmployeeTypesComponent implements OnInit {
           modalRef = this._modalService.open(DeleteEmployeeTypeComponent, { size: 'lg' })
           modalRef.componentInstance.employeeType = employeeType;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getEmployeeTypes();
             }
           }, (reason) => {
@@ -128,6 +128,6 @@ export class ListEmployeeTypesComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

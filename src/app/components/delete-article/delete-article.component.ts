@@ -16,7 +16,7 @@ import { ArticleService } from './../../services/article.service';
 export class DeleteArticleComponent implements OnInit {
 
   @Input() article: Article;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -40,14 +40,14 @@ export class DeleteArticleComponent implements OnInit {
     this._articleService.deleteArticle(this.article._id).subscribe(
       result => {
         if (!result.article) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.activeModal.close('delete_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -60,6 +60,6 @@ export class DeleteArticleComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -19,7 +19,7 @@ export class AddVariantTypeComponent implements OnInit {
 
   public variantType: VariantType;
   public variantTypeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -101,18 +101,18 @@ export class AddVariantTypeComponent implements OnInit {
     this._variantTypeService.saveVariantType(this.variantType).subscribe(
       result => {
         if (!result.variantType) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.variantType = result.variantType;
-          this.showMessage("El tipo de variante se ha añadido con éxito.", "success", true);
+          this.showMessage("El tipo de variante se ha añadido con éxito.", 'success', true);
           this.variantType = new VariantType();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -125,6 +125,6 @@ export class AddVariantTypeComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

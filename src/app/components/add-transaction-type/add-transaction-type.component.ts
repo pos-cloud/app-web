@@ -23,7 +23,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public transactionType: TransactionType;
   public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
   public transactionTypeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -82,7 +82,7 @@ export class AddTransactionTypeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -218,8 +218,8 @@ export class AddTransactionTypeComponent implements OnInit {
 
     if (!this.transactionType.transactionMovement && this.transactionMovements.length > 0) this.transactionType.transactionMovement = TransactionMovement.Sale;
     if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = null;
-    if (!this.transactionType.name) this.transactionType.name = "";
-    if (!this.transactionType.labelPrint) this.transactionType.labelPrint = "";
+    if (!this.transactionType.name) this.transactionType.name = '';
+    if (!this.transactionType.labelPrint) this.transactionType.labelPrint = '';
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
     if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
     if (this.transactionType.modifyStock === undefined) this.transactionType.modifyStock = false;
@@ -229,7 +229,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.requestTaxes === undefined) this.transactionType.requestTaxes = false;
     if (this.transactionType.defectOrders === undefined) this.transactionType.defectOrders = false;
     if (!this.transactionType.fixedOrigin) this.transactionType.fixedOrigin = 0;
-    if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = "";
+    if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = '';
     if (this.transactionType.resetNumber === undefined) this.transactionType.resetNumber = false;
     if (this.transactionType.electronics === undefined) this.transactionType.electronics = false;
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
@@ -304,18 +304,18 @@ export class AddTransactionTypeComponent implements OnInit {
     this._transactionTypeService.saveTransactionType(this.transactionType).subscribe(
       result => {
         if (!result.transactionType) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.transactionType = result.transactionType;
-          this.showMessage("El tipo de transacción se ha añadido con éxito.", "success", false);
+          this.showMessage("El tipo de transacción se ha añadido con éxito.", 'success', false);
           this.transactionType = new TransactionType();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -328,6 +328,6 @@ export class AddTransactionTypeComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

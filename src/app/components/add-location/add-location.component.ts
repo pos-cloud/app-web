@@ -18,7 +18,7 @@ export class AddLocationComponent implements OnInit {
 
   public location: Location;
   public locationForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -119,18 +119,18 @@ export class AddLocationComponent implements OnInit {
     this._locationService.saveLocation(this.location).subscribe(
       result => {
         if (!result.location) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.location = result.location;
-          this.showMessage("El depósito se ha añadido con éxito.", "success", true);
+          this.showMessage("El depósito se ha añadido con éxito.", 'success', true);
           this.location = new Location();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -143,7 +143,7 @@ export class AddLocationComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 
 }

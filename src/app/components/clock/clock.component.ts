@@ -15,7 +15,7 @@ export class ClockComponent implements OnInit, OnDestroy {
   public difference: Number;
 
   constructor(public clockSubscription: ClockService) {
-    // if(this.startTime === undefined) {
+    // if (this.startTime === undefined) {
     //   this.startTime = new Date();
     //   console.log(this.startTime);
     // }

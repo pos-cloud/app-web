@@ -16,7 +16,7 @@ import { TransactionService } from './../../services/transaction.service';
 export class DeleteTransactionComponent implements OnInit {
 
   @Input() transaction: Transaction;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -46,7 +46,7 @@ export class DeleteTransactionComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -59,6 +59,6 @@ export class DeleteTransactionComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

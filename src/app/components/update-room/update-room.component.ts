@@ -20,7 +20,7 @@ export class UpdateRoomComponent implements OnInit {
   @Input() room: Room;
   @Input() readonly: boolean;
   public roomForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -95,7 +95,7 @@ export class UpdateRoomComponent implements OnInit {
   }
 
   public updateRoom (): void {
-    if(!this.readonly) {
+    if (!this.readonly) {
       this.loading = true;
       this.room = this.roomForm.value;
       this.saveChanges();
@@ -107,17 +107,17 @@ export class UpdateRoomComponent implements OnInit {
     this._roomService.updateRoom(this.room).subscribe(
       result => {
         if (!result.room) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.room = result.room;
-          this.showMessage("El salón se ha actualizado con éxito.", "success", false);
+          this.showMessage("El salón se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -130,6 +130,6 @@ export class UpdateRoomComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

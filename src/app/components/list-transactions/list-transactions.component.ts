@@ -31,7 +31,7 @@ export class ListTransactionsComponent implements OnInit {
 
   public transactions: Transaction[] = new Array();
   public areTransactionsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public listType: string;
   public orderTerm: string[] = ['-endDate'];
@@ -86,7 +86,7 @@ export class ListTransactionsComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -111,7 +111,7 @@ export class ListTransactionsComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -150,9 +150,9 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.typePrint = 'invoice';
-        if(this.printers && this.printers.length > 0) {
+        if (this.printers && this.printers.length > 0) {
           for(let printer of this.printers) {
-            if(printer.printIn === PrinterPrintIn.Counter) {
+            if (printer.printIn === PrinterPrintIn.Counter) {
               modalRef.componentInstance.printer = printer;
             }
           }
@@ -214,6 +214,6 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

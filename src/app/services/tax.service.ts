@@ -37,7 +37,7 @@ export class TaxService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		if(query) {
+		if (query) {
 			return this._http.get(Config.apiURL + 'taxes/' + query, { headers: headers }).map(res => res.json());
 		} else {
 			return this._http.get(Config.apiURL + "taxes", { headers: headers }).map(res => res.json());

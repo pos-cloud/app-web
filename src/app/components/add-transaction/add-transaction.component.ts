@@ -36,7 +36,7 @@ export class AddTransactionComponent implements OnInit {
   public companies: Company[];
   @Input() transaction: Transaction;
   public taxes: Taxes[] = new Array();
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -105,13 +105,13 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionMovement = this.transaction.type.transactionMovement.toString();
 
-    if (!this.transaction._id || this.transaction._id === "") {
+    if (!this.transaction._id || this.transaction._id === '') {
       this.readonly = false;
       if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
         this.transaction.origin = this.transaction.type.fixedOrigin;
       }
   
-      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
         this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
       }
     } else {
@@ -129,8 +129,8 @@ export class AddTransactionComponent implements OnInit {
     
     if (!this.transaction.origin) this.transaction.origin = 0;
     if (!this.transaction.letter) this.transaction.letter = "X";     
-    if(!this.transaction.number) this.transaction.number = 1;     
-    if(!this.transaction.observation) this.transaction.observation = ""; 
+    if (!this.transaction.number) this.transaction.number = 1;     
+    if (!this.transaction.observation) this.transaction.observation = ''; 
 
     this.transactionForm.setValue({
       'company': this.transaction.company.name,
@@ -240,7 +240,7 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.exempt = this.transactionForm.value.exempt;
     this.transaction.totalPrice = this.transactionForm.value.totalPrice;
     this.transaction.origin = this.transactionForm.value.origin;
-    if(this.transactionMovement && (this.transactionMovement !== TransactionMovement.Sale.toString())) {
+    if (this.transactionMovement && (this.transactionMovement !== TransactionMovement.Sale.toString())) {
       this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.number = this.transactionForm.value.number;
     }
@@ -272,20 +272,20 @@ export class AddTransactionComponent implements OnInit {
     
     this.transaction.observation = this.transactionForm.value.observation;
     
-    if(!this.readonly) {
+    if (!this.readonly) {
       
       this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
       this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
       this.transaction.expirationDate = this.transaction.endDate;
       this.transaction.origin = this.transactionForm.value.origin;
-      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== "") {
+      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
         this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
       } else {
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          if( this.transaction.company && 
+          if ( this.transaction.company && 
               this.transaction.company.vatCondition && 
               this.transaction.company.vatCondition.transactionLetter &&
-              this.transaction.company.vatCondition.transactionLetter !== "") {
+              this.transaction.company.vatCondition.transactionLetter !== '') {
             this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
           } else {
             this.transaction.letter = "X";
@@ -316,7 +316,7 @@ export class AddTransactionComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -325,7 +325,7 @@ export class AddTransactionComponent implements OnInit {
   public saveTransaction(): void {
 
     this.loading = true;
-    if(this.posType === "cuentas-corrientes") {
+    if (this.posType === "cuentas-corrientes") {
       this.posType = "mostrador";
     }
     this.transaction.madein = this.posType;
@@ -333,16 +333,16 @@ export class AddTransactionComponent implements OnInit {
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction = result.transaction;
-          this.showMessage("La transacción se ha añadido con éxito.", "success", true);
+          this.showMessage("La transacción se ha añadido con éxito.", 'success', true);
           this.activeModal.close({ transaction: this.transaction });
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -355,16 +355,16 @@ export class AddTransactionComponent implements OnInit {
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction = result.transaction;
-          this.showMessage("La transacción se ha actualizado con éxito.", "success", true);
+          this.showMessage("La transacción se ha actualizado con éxito.", 'success', true);
           this.activeModal.close({ transaction: this.transaction });
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -377,6 +377,6 @@ export class AddTransactionComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -22,7 +22,7 @@ export class ListTaxesComponent implements OnInit {
 
   public taxes: Tax[] = new Array();
   public areTaxesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -53,7 +53,7 @@ export class ListTaxesComponent implements OnInit {
     this._taxService.getTaxes().subscribe(
       result => {
         if (!result.taxes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.taxes = null;
           this.areTaxesEmpty = true;
@@ -66,7 +66,7 @@ export class ListTaxesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -154,6 +154,6 @@ export class ListTaxesComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -21,7 +21,7 @@ export class AddPrinterComponent implements OnInit {
   public types: PrinterType[] = [PrinterType.PDF];
   public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label];
   public printerForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -148,7 +148,7 @@ export class AddPrinterComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.printer.name) this.printer.name = "";
+    if (!this.printer.name) this.printer.name = '';
     if (!this.printer.type) this.printer.type = PrinterType.PDF;
     if (!this.printer.pageWidth) this.printer.pageWidth = 0;
     if (!this.printer.pageHigh) this.printer.pageHigh = 0;
@@ -177,17 +177,17 @@ export class AddPrinterComponent implements OnInit {
     this._printerService.savePrinter(this.printer).subscribe(
       result => {
         if (!result.printer) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.printer = result.printer;
-          this.showMessage("La impresora se ha añadido con éxito.", "success", false);
+          this.showMessage("La impresora se ha añadido con éxito.", 'success', false);
           this.printer = new Printer();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -200,6 +200,6 @@ export class AddPrinterComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

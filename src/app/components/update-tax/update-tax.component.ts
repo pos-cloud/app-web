@@ -20,7 +20,7 @@ export class UpdateTaxComponent implements OnInit {
   @Input() tax: Tax;
   @Input() readonly: boolean;
   public taxForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -109,17 +109,17 @@ export class UpdateTaxComponent implements OnInit {
     this._taxService.updateTax(this.tax).subscribe(
       result => {
         if (!result.tax) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.tax = result.tax;
-          this.showMessage("El impuesto se ha actualizado con éxito.", "success", false);
+          this.showMessage("El impuesto se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -132,6 +132,6 @@ export class UpdateTaxComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

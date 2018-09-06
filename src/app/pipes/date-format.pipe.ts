@@ -9,7 +9,7 @@ import 'moment/locale/es';
 export class DateFormatPipe implements PipeTransform {
 	transform(value:any, format:string = 'YYYY-MM-DDTHH:mm:ssZ', formatDefecto?:string):any {
 		if (value) {
-			if(!formatDefecto) {
+			if (!formatDefecto) {
 				// Cambio de formato de fecha
 				formatDefecto = 'YYYY-MM-DDTHH:mm:ssZ';
 				// formatDefecto = 'DD/MM/YYYY HH:mm:ss';

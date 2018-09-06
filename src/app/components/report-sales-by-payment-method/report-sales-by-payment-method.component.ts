@@ -18,7 +18,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
 
   public items: any[] = new Array();
   public arePaymentMethodsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Input() startDate: string;
@@ -57,7 +57,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.items = null;
           this.arePaymentMethodsEmpty = true;
@@ -69,7 +69,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -82,6 +82,6 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -22,7 +22,7 @@ export class ListVariantTypesComponent implements OnInit {
 
   public variantTypes: VariantType[] = new Array();
   public areVariantTypesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
@@ -53,7 +53,7 @@ export class ListVariantTypesComponent implements OnInit {
     this._variantTypeService.getVariantTypes().subscribe(
       result => {
         if (!result.variantTypes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantTypes = null;
           this.areVariantTypesEmpty = true;
@@ -66,7 +66,7 @@ export class ListVariantTypesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -140,6 +140,6 @@ export class ListVariantTypesComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

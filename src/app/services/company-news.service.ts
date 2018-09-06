@@ -37,7 +37,7 @@ export class CompanyNewsService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		if(query) {
+		if (query) {
 			return this._http.get(Config.apiURL + "news/"+query, { headers: headers }).map(res => res.json());
 		} else {
 			return this._http.get(Config.apiURL + "news", { headers: headers }).map(res => res.json());

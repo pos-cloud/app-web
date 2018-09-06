@@ -22,7 +22,7 @@ import { CompanyService } from './../../services/company.service';
 export class RegisterComponent implements OnInit {
 
   public registerForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
@@ -217,20 +217,20 @@ export class RegisterComponent implements OnInit {
       
       this._userService.register(this.registerForm.value).subscribe(
         result => {
-          if(!result.user) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (!result.user) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
-            this.showMessage("Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.", "success", false);
+            this.showMessage("Ha sido registrado correctamente, le enviamos a la casilla de correo los datos necesarios para ingresar POS Cloud.", 'success', false);
           }
           this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
     } else {
-      this.showMessage("No se aceptan los siguientes caractéres en el nombre de negocio: '.', '&', '@'", "info", true);
+      this.showMessage("No se aceptan los siguientes caractéres en el nombre de negocio: '.', '&', '@'", 'info', true);
     }
   }
 
@@ -254,6 +254,6 @@ export class RegisterComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

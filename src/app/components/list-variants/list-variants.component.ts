@@ -38,14 +38,14 @@ export class ListVariantsComponent implements OnInit {
   ) {
     this.variants = new Array();
     this.eventReturnVariants = new EventEmitter<Variant[]>();
-    this.alertMessage = "";
+    this.alertMessage = '';
     this.areVariantsEmpty = true;
 
-    if(!this.variantsLocals || (this.variantsLocals && this.variantsLocals.length > 0)) {
+    if (!this.variantsLocals || (this.variantsLocals && this.variantsLocals.length > 0)) {
       this.variantsLocals = new Array();
     }
 
-    if(!this.article) {
+    if (!this.article) {
       this.article = new Article();
     }
    }
@@ -55,7 +55,7 @@ export class ListVariantsComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.user = pathLocation[1];
     
-    if(this.article && this.article._id && this.article._id !== "") {
+    if (this.article && this.article._id && this.article._id !== '') {
       this.getVariantsByArticleParent();
     }
   }
@@ -84,7 +84,7 @@ export class ListVariantsComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -102,7 +102,7 @@ export class ListVariantsComponent implements OnInit {
             exists = true;
           }
         }
-        if(!exists) {
+        if (!exists) {
           variantsToReturn.push(variant);
         }
       } else {
@@ -115,7 +115,7 @@ export class ListVariantsComponent implements OnInit {
 
   public refresh(): void {
     
-    if (this.article && this.article._id && this.article._id !== "") {
+    if (this.article && this.article._id && this.article._id !== '') {
       this.getVariantsByArticleParent();
     } else {
       if (this.variantsLocals && this.variantsLocals.length > 0) {
@@ -137,7 +137,7 @@ export class ListVariantsComponent implements OnInit {
         modalRef.componentInstance.variant = variant;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            if (this.article && this.article._id && this.article._id !== "") {
+            if (this.article && this.article._id && this.article._id !== '') {
               this.getVariantsByArticleParent();
             }
           }
@@ -151,7 +151,7 @@ export class ListVariantsComponent implements OnInit {
 
   public addVariant(variant: Variant): void {
     
-    if(!this.variantExists(variant)) {
+    if (!this.variantExists(variant)) {
       this.variantsLocals.push(variant);
     }
     
@@ -162,23 +162,23 @@ export class ListVariantsComponent implements OnInit {
 
     var exists: boolean = false;
 
-    if(this.variantsLocals && this.variantsLocals.length > 0) {
+    if (this.variantsLocals && this.variantsLocals.length > 0) {
       for(var variantAux of this.variantsLocals) {
-        if( variantAux.type._id === variant.type._id &&
+        if ( variantAux.type._id === variant.type._id &&
             variantAux.value._id === variant.value._id) {
               exists = true;
-              this.showMessage("La variante " + variant.type.name + " " + variant.value.description + " ya existe", "info", true);
+              this.showMessage("La variante " + variant.type.name + " " + variant.value.description + " ya existe", 'info', true);
         }
       }
     }
 
-    if(!exists) {
+    if (!exists) {
       if (this.variants && this.variants.length > 0) {
         for (var variantAux of this.variants) {
           if (variantAux.type._id === variant.type._id &&
             variantAux.value._id === variant.value._id) {
             exists = true;
-            this.showMessage("La variante " + variant.type.name + " " + variant.value.description + " ya existe", "info", true);
+            this.showMessage("La variante " + variant.type.name + " " + variant.value.description + " ya existe", 'info', true);
           }
         }
       }
@@ -220,6 +220,6 @@ export class ListVariantsComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

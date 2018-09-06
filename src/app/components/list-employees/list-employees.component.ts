@@ -21,7 +21,7 @@ export class ListEmployeesComponent implements OnInit {
 
   public employees: Employee[] = new Array();
   public areEmployeesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
@@ -50,8 +50,8 @@ export class ListEmployeesComponent implements OnInit {
 
     this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.employees) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+					if (!result.employees) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
 					  this.employees = null;
             this.areEmployeesEmpty = true;
@@ -64,7 +64,7 @@ export class ListEmployeesComponent implements OnInit {
           }
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
       );
@@ -105,7 +105,7 @@ export class ListEmployeesComponent implements OnInit {
           modalRef.componentInstance.employee = employee;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getEmployees();
             }
           }, (reason) => {
@@ -116,7 +116,7 @@ export class ListEmployeesComponent implements OnInit {
           modalRef = this._modalService.open(DeleteEmployeeComponent, { size: 'lg' })
           modalRef.componentInstance.employee = employee;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getEmployees();
             }
           }, (reason) => {
@@ -134,6 +134,6 @@ export class ListEmployeesComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

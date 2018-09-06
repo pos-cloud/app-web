@@ -30,8 +30,8 @@ export class AddCompanyComponent  implements OnInit {
   public identityTypes: string[] = ["CUIT","DNI"];
   public identityTypeSelected: string;
   public companyForm: FormGroup;
-  public alertMessage: string = "";
-  public genders: any[] = ["", GenderType.Male, GenderType.Female];
+  public alertMessage: string = '';
+  public genders: any[] = ['', GenderType.Male, GenderType.Female];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -112,7 +112,7 @@ export class AddCompanyComponent  implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if( pathLocation[2] === "clientes" ||
+    if ( pathLocation[2] === "clientes" ||
       this.companyType && this.companyType === CompanyType.Client) {
       this.types.push(CompanyType.Client);
     } else if (pathLocation[2] === "proveedores" ||
@@ -222,18 +222,18 @@ export class AddCompanyComponent  implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.company._id) this.company._id = "";
+    if (!this.company._id) this.company._id = '';
     if (!this.company.code) this.company.code = 1;
-    if (!this.company.name) this.company.name = "";
-    if (!this.company.fantasyName) this.company.fantasyName = "";
+    if (!this.company.name) this.company.name = '';
+    if (!this.company.fantasyName) this.company.fantasyName = '';
     if (!this.company.type) CompanyType.Client;
-    if (!this.identityTypeSelected) this.company.DNI = "";
-    if (!this.company.CUIT) this.company.CUIT = "";
-    if (!this.company.DNI) this.company.DNI = "";
-    if (!this.company.address) this.company.address = "";
-    if (!this.company.city) this.company.city = "";
-    if (!this.company.phones) this.company.phones = "";
-    if (!this.company.emails) this.company.emails = "";
+    if (!this.identityTypeSelected) this.company.DNI = '';
+    if (!this.company.CUIT) this.company.CUIT = '';
+    if (!this.company.DNI) this.company.DNI = '';
+    if (!this.company.address) this.company.address = '';
+    if (!this.company.city) this.company.city = '';
+    if (!this.company.phones) this.company.phones = '';
+    if (!this.company.emails) this.company.emails = '';
     if (!this.company.birthday) {
       this.company.birthday = null;
     } else {
@@ -279,7 +279,7 @@ export class AddCompanyComponent  implements OnInit {
     this._vatCondition.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.vatConditions = result.vatConditions;
           this.company.vatCondition = this.vatConditions[0];
@@ -287,7 +287,7 @@ export class AddCompanyComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -300,8 +300,8 @@ export class AddCompanyComponent  implements OnInit {
     this._companyService.getLastCompany().subscribe(
         result => {
           let code = 1;
-          if(result.companies){
-            if(result.companies[0] !== undefined) {
+          if (result.companies){
+            if (result.companies[0] !== undefined) {
               code = result.companies[0].code + 1;
             }
           }
@@ -313,7 +313,7 @@ export class AddCompanyComponent  implements OnInit {
           this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -323,9 +323,9 @@ export class AddCompanyComponent  implements OnInit {
    public addCompany(): void {
     
     if (this.identityTypeSelected === "CUIT") {
-      this.companyForm.value.DNI = "";
+      this.companyForm.value.DNI = '';
     } else {
-      this.companyForm.value.CUIT = "";
+      this.companyForm.value.CUIT = '';
     }
     this.company = this.companyForm.value;
     if (!this.company.birthday) {
@@ -345,10 +345,10 @@ export class AddCompanyComponent  implements OnInit {
     this._companyService.saveCompany(this.company).subscribe(
     result => {
         if (!result.company) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
-          this.showMessage("La empresa se ha añadido con éxito.", "success", false);
+          this.showMessage("La empresa se ha añadido con éxito.", 'success', false);
           this.company = new Company ();
           this.buildForm();
           this.getLastCompany();
@@ -357,7 +357,7 @@ export class AddCompanyComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -370,6 +370,6 @@ export class AddCompanyComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

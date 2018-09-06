@@ -4,7 +4,7 @@ export class TransactionType {
 
 	public _id: string;
 	public transactionMovement: TransactionMovement;
-	public name: string = "";
+	public name: string = '';
 	public labelPrint: string;
 	public currentAccount: CurrentAcount = CurrentAcount.No;
 	public movement: Movements = Movements.Inflows;

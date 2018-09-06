@@ -20,7 +20,7 @@ export class UpdateLocationComponent implements OnInit {
   @Input() location: Location;
   @Input() readonly: boolean;
   public locationForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -119,7 +119,7 @@ export class UpdateLocationComponent implements OnInit {
   }
 
   public updateLocation (): void {
-    if(!this.readonly) {
+    if (!this.readonly) {
       this.loading = true;
       this.location = this.locationForm.value;
       this.saveChanges();
@@ -133,17 +133,17 @@ export class UpdateLocationComponent implements OnInit {
     this._locationService.updateLocation(this.location).subscribe(
       result => {
         if (!result.location) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.location = result.location;
-          this.showMessage("La marca se ha actualizado con éxito.", "success", false);
+          this.showMessage("La marca se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -156,7 +156,7 @@ export class UpdateLocationComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 
 }

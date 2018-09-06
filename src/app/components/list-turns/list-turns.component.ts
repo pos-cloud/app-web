@@ -19,7 +19,7 @@ export class ListTurnsComponent implements OnInit {
 
   public turns: Turn[] = new Array();
   public areTurnsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public posType: string;
   public orderTerm: string[] = ['-startDate'];
@@ -50,7 +50,7 @@ export class ListTurnsComponent implements OnInit {
     
     this._turnService.getTurns().subscribe(
       result => {
-        if(!result.turns) {
+        if (!result.turns) {
           this.loading = false;
           this.turns = null;
           this.areTurnsEmpty = true;
@@ -63,7 +63,7 @@ export class ListTurnsComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -112,6 +112,6 @@ export class ListTurnsComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

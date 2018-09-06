@@ -22,7 +22,7 @@ export class AddVariantValueComponent implements OnInit {
   public variantValue: VariantValue;
   public variantTypes: VariantType[];
   public variantValueForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -108,7 +108,7 @@ export class AddVariantValueComponent implements OnInit {
     this._variantTypeService.getVariantTypes().subscribe(
       result => {
         if (!result.variantTypes) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantTypes = null;
           this.setValueForm();
@@ -119,7 +119,7 @@ export class AddVariantValueComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -127,8 +127,8 @@ export class AddVariantValueComponent implements OnInit {
 
   public setValueForm(): void {
     
-    if(!this.variantValue.type) this.variantValue.type = null;
-    if(!this.variantValue.description) this.variantValue.description = "";
+    if (!this.variantValue.type) this.variantValue.type = null;
+    if (!this.variantValue.description) this.variantValue.description = '';
 
     this.variantValueForm.setValue({
       'type': this.variantValue.type,
@@ -149,11 +149,11 @@ export class AddVariantValueComponent implements OnInit {
     this._variantValueService.saveVariantValue(this.variantValue).subscribe(
       result => {
         if (!result.variantValue) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.variantValue = result.variantValue;
-          this.showMessage("El valor de variante se ha añadido con éxito.", "success", true);
+          this.showMessage("El valor de variante se ha añadido con éxito.", 'success', true);
           this.variantValue = new VariantValue();
           this.variantValue.type = this.variantValueForm.value.type;
           this.buildForm();
@@ -161,7 +161,7 @@ export class AddVariantValueComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -174,6 +174,6 @@ export class AddVariantValueComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

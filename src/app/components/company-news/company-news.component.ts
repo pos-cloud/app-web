@@ -22,7 +22,7 @@ export class CompanyNewsComponent implements OnInit {
   public companyNews: CompanyNews;
   public areCompaniesNewsEmpty: boolean = true;
   @Input() company: Company;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['-date'];
   public propertyTerm: string;
@@ -62,7 +62,7 @@ export class CompanyNewsComponent implements OnInit {
     this._companyNewsService.getCompaniesNews(query).subscribe(
       result => {
         if (!result.companiesNews) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.companiesNews = null;
           this.areCompaniesNewsEmpty = true;
@@ -75,7 +75,7 @@ export class CompanyNewsComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -97,14 +97,14 @@ export class CompanyNewsComponent implements OnInit {
 
   public addCompanyNews(): void {
 
-    if( this.companyNews.date &&
+    if ( this.companyNews.date &&
         this.companyNews.news &&
-        this.companyNews.news !== "") {
+        this.companyNews.news !== '') {
       this.companyNews.date = moment(this.companyNews.date, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
       this.companyNews.company = this.company;
       this.saveCompanyNews();
     } else {
-      this.showMessage("Debe completar la novedad", "info", true);
+      this.showMessage("Debe completar la novedad", 'info', true);
     }
   }
 
@@ -115,7 +115,7 @@ export class CompanyNewsComponent implements OnInit {
     this._companyNewsService.saveCompanyNews(this.companyNews).subscribe(
       result => {
         if (!result.companyNews) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.companyNews = result.companyNews;
@@ -127,7 +127,7 @@ export class CompanyNewsComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -140,7 +140,7 @@ export class CompanyNewsComponent implements OnInit {
     this._companyNewsService.deleteCompanyNews(companyNews._id).subscribe(
       result => {
         if (!result.companyNews) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.getCompaniesNews();
@@ -148,7 +148,7 @@ export class CompanyNewsComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -161,6 +161,6 @@ export class CompanyNewsComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

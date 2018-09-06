@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
     public _router: Router,
     private _route: ActivatedRoute
     ) { 
-      this.alertMessage = "";
+      this.alertMessage = '';
       this.database = this._userService.getDatabase();
     }
 
@@ -123,24 +123,24 @@ export class LoginComponent implements OnInit {
 
     if (this.database || this.loginForm.value.name.indexOf('@') !== -1) {
       if (this.loginForm.value.name.indexOf('@') !== -1 &&
-          this.loginForm.value.name.split("@")[1] !== "") {
+          this.loginForm.value.name.split("@")[1] !== '') {
         let dbName = this.loginForm.value.name.split("@")[1];
             if (this.isDBNameValid(dbName)) {
               localStorage.setItem('database', this.loginForm.value.name.split("@")[1].toLowerCase());
             } else {
               isValid = false;
-              this.showMessage("El usuario y/o contraseña son incorrectos", "info", true);  
+              this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);  
             }
       } else if (!this.database) {
         isValid = false;
-        this.showMessage("El usuario y/o contraseña son incorrectos", "info", true);  
+        this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);  
       }
     } else {
       isValid = false;
-      this.showMessage("El usuario y/o contraseña son incorrectos", "info", true);
+      this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
     }
 
-    if(isValid) {
+    if (isValid) {
       this.login2();
     }
   }
@@ -149,7 +149,7 @@ export class LoginComponent implements OnInit {
 
     let isValid: boolean = false;
 
-    if( dbName.indexOf('.') === -1 &&
+    if ( dbName.indexOf('.') === -1 &&
         dbName.indexOf('&') === -1 &&
         dbName.indexOf('@') === -1) {
           isValid = true;
@@ -167,17 +167,17 @@ export class LoginComponent implements OnInit {
     }
     this.user.password = this.loginForm.value.password;
 
-    this.showMessage("Comprobando usuario...", "info", false);
+    this.showMessage("Comprobando usuario...", 'info', false);
     this.loading = true;
 
     //Obtener el token del usuario
     this._userService.login(this.user).subscribe(
       result => {
         if (!result.user) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.showMessage("Ingresando...", "success", false);
+          this.showMessage("Ingresando...", 'success', false);
           this.user = result.user;
           let userStorage = new User();
           userStorage._id = this.user._id;
@@ -198,9 +198,9 @@ export class LoginComponent implements OnInit {
       },
       error => {
         if (error.status === 0) {
-          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", "danger", false);
+          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
         } else {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
         }
         this.loading = false;
       }
@@ -214,6 +214,6 @@ export class LoginComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

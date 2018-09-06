@@ -21,7 +21,7 @@ export class ListRoomsComponent implements OnInit {
 
   public rooms: Room[] = new Array();
   public areRoomsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -51,8 +51,8 @@ export class ListRoomsComponent implements OnInit {
     
     this._roomService.getRooms().subscribe(
         result => {
-          if(!result.rooms) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (!result.rooms) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
             this.rooms = null;
             this.areRoomsEmpty = true;
@@ -65,7 +65,7 @@ export class ListRoomsComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -106,7 +106,7 @@ export class ListRoomsComponent implements OnInit {
           modalRef.componentInstance.room = room;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getRooms();
             }
           }, (reason) => {
@@ -117,7 +117,7 @@ export class ListRoomsComponent implements OnInit {
           modalRef = this._modalService.open(DeleteRoomComponent, { size: 'lg' })
           modalRef.componentInstance.room = room;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getRooms();
             }
           }, (reason) => {
@@ -139,6 +139,6 @@ export class ListRoomsComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

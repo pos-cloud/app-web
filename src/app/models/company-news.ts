@@ -7,7 +7,7 @@ export class CompanyNews {
 
 	public _id: string;
 	public date: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-	public news: string = "";
+	public news: string = '';
 	public state: CompanyNewsState = CompanyNewsState.Pending;
 	public company: Company;
 

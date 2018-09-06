@@ -78,7 +78,7 @@ export class Config {
     }
 
     public static updateApiURL() {
-        if(Config.apiPort !== 0) {
+        if (Config.apiPort !== 0) {
             Config.apiURL = "http://" + Config.apiHost + ":" + Config.apiPort + "/api/";
         } else {
             Config.apiURL = "http://" + Config.apiHost + "/api/";

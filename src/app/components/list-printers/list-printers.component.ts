@@ -21,7 +21,7 @@ export class ListPrintersComponent implements OnInit {
 
   public printers: Printer[] = new Array();
   public arePrintersEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -51,8 +51,8 @@ export class ListPrintersComponent implements OnInit {
     
     this._printerService.getPrinters().subscribe(
         result => {
-          if(!result.printers) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (!result.printers) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
             this.printers = null;
             this.arePrintersEmpty = true;
@@ -65,7 +65,7 @@ export class ListPrintersComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -106,7 +106,7 @@ export class ListPrintersComponent implements OnInit {
           modalRef.componentInstance.printer = printer;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getPrinters();
             }
           }, (reason) => {
@@ -117,7 +117,7 @@ export class ListPrintersComponent implements OnInit {
           modalRef = this._modalService.open(DeletePrinterComponent, { size: 'lg' });
           modalRef.componentInstance.printer = printer;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getPrinters();
             }
           }, (reason) => {
@@ -139,6 +139,6 @@ export class ListPrintersComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

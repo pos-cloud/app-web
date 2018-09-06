@@ -16,7 +16,7 @@ import { EmployeeTypeService } from './../../services/employee-type.service';
 export class DeleteEmployeeTypeComponent implements OnInit {
 
   @Input() employeeType: EmployeeType;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -43,7 +43,7 @@ export class DeleteEmployeeTypeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -56,6 +56,6 @@ export class DeleteEmployeeTypeComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

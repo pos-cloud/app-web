@@ -21,7 +21,7 @@ export class AddUserComponent  implements OnInit {
 
   public user: User;
   public userForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
@@ -124,8 +124,8 @@ export class AddUserComponent  implements OnInit {
     
     this._employeeService.getEmployees().subscribe(
         result => {
-					if(!result.employees) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+					if (!result.employees) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
 					  this.employees = null;
 					} else {
@@ -135,7 +135,7 @@ export class AddUserComponent  implements OnInit {
           this.loading = false;
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
       );
@@ -156,17 +156,17 @@ export class AddUserComponent  implements OnInit {
     this._userService.saveUser(this.user).subscribe(
     result => {
         if (!result.user) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         } else {
           this.user = result.user;
-          this.showMessage("El usuario se ha añadido con éxito.", "success", false);
+          this.showMessage("El usuario se ha añadido con éxito.", 'success', false);
           this.user = new User ();
           this.buildForm();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -179,6 +179,6 @@ export class AddUserComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

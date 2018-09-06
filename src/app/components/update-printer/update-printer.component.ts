@@ -22,7 +22,7 @@ export class UpdatePrinterComponent implements OnInit {
   public types: PrinterType[] = [PrinterType.PDF];
   public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label];
   public printerForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -90,7 +90,7 @@ export class UpdatePrinterComponent implements OnInit {
           Validators.required
         ]
       ],
-      'pageSize': ["", [
+      'pageSize': ['', [
         ]
       ]
     });
@@ -149,8 +149,8 @@ export class UpdatePrinterComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.printer._id) this.printer._id = "";
-    if (!this.printer.name) this.printer.name = "";
+    if (!this.printer._id) this.printer._id = '';
+    if (!this.printer.name) this.printer.name = '';
     if (!this.printer.type) this.printer.type = PrinterType.PDF;
     if (!this.printer.pageWidth) this.printer.pageWidth = 0;
     if (!this.printer.pageHigh) this.printer.pageHigh = 0;
@@ -182,17 +182,17 @@ export class UpdatePrinterComponent implements OnInit {
     this._printerService.updatePrinter(this.printer).subscribe(
       result => {
         if (!result.printer) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.printer = result.printer;
-          this.showMessage("La impresora se ha actualizado con éxito.", "success", false);
+          this.showMessage("La impresora se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -205,6 +205,6 @@ export class UpdatePrinterComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

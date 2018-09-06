@@ -24,7 +24,7 @@ export class ListCategoriesComponent implements OnInit {
 
   public categories: Category[] = new Array();
   public areCategoriesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -62,9 +62,9 @@ export class ListCategoriesComponent implements OnInit {
 
     this._categoryService.getCategories().subscribe(
       result => {
-        if(!result.categories) {
-          if(this.userType !== "pos") {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        if (!result.categories) {
+          if (this.userType !== "pos") {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           }
           this.loading = false;
           this.categories = null;
@@ -78,7 +78,7 @@ export class ListCategoriesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -118,7 +118,7 @@ export class ListCategoriesComponent implements OnInit {
           modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' });
           modalRef.componentInstance.category = category;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getCategories();
             }
           }, (reason) => {
@@ -130,7 +130,7 @@ export class ListCategoriesComponent implements OnInit {
           modalRef.componentInstance.category = category;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getCategories();
             }
           }, (reason) => {
@@ -170,6 +170,6 @@ export class ListCategoriesComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

@@ -34,8 +34,8 @@ export class ListArticlesComponent implements OnInit {
 
   public articles: Article[] = new Array();
   public areArticlesEmpty: boolean = true;
-  public alertMessage: string = "";
-  public userType: string = "";
+  public alertMessage: string = '';
+  public userType: string = '';
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -43,7 +43,7 @@ export class ListArticlesComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = true;
   @Input() filterCategorySelected: Category;
-  @Input() filterArticle: string = "";
+  @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
@@ -60,11 +60,11 @@ export class ListArticlesComponent implements OnInit {
   ) {
     if (this.filterCategorySelected === undefined) {
       this.filterCategorySelected = new Category();
-      this.filterCategorySelected.description = "";
+      this.filterCategorySelected.description = '';
     }
 
     if (this.filterArticle === undefined) {
-      this.filterArticle = "";
+      this.filterArticle = '';
     }
   }
 
@@ -92,7 +92,7 @@ export class ListArticlesComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -109,7 +109,7 @@ export class ListArticlesComponent implements OnInit {
     this._articleService.getArticles(query).subscribe(
       result => {
         if (!result.articles) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.articles = null;
           this.areArticlesEmpty = true;
@@ -127,7 +127,7 @@ export class ListArticlesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -228,7 +228,7 @@ export class ListArticlesComponent implements OnInit {
     movementOfArticle.observation = articleSelected.observation;
     movementOfArticle.basePrice = articleSelected.basePrice;
     movementOfArticle.costPrice = articleSelected.costPrice;
-    if(this.transaction &&
+    if (this.transaction &&
       this.transaction.type &&
       this.transaction.type.transactionMovement === TransactionMovement.Sale) {
         movementOfArticle.markupPercentage = articleSelected.markupPercentage;
@@ -262,7 +262,7 @@ export class ListArticlesComponent implements OnInit {
     
     if (articles && articles.length > 0 && this.articles.length >= 2) {
       let article = articles[0];
-      if( articles.length === 1 &&
+      if ( articles.length === 1 &&
           ( article.barcode === this.filterArticle ||
             article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
             article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
@@ -274,7 +274,7 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.observation = article.observation;
               movementOfArticle.basePrice = article.basePrice;
               movementOfArticle.costPrice = article.costPrice;
-              if(this.transaction &&
+              if (this.transaction &&
                 this.transaction.type &&
                 this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                   movementOfArticle.markupPercentage = article.markupPercentage;
@@ -301,7 +301,7 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.category = article.category;
               movementOfArticle.barcode = article.barcode;
               movementOfArticle.amount = 1;
-              this.filterArticle = "";
+              this.filterArticle = '';
               this.eventAddItem.emit(movementOfArticle);
       }
     }
@@ -314,6 +314,6 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

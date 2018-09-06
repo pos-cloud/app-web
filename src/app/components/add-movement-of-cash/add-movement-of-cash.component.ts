@@ -174,7 +174,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.movementOfCash.observation) this.movementOfCash.observation = "";
+    if (!this.movementOfCash.observation) this.movementOfCash.observation = '';
     if (!this.movementOfCash.amountPaid) this.movementOfCash.amountPaid = 0.00;
     if (!this.movementOfCash.discount) this.movementOfCash.discount = 0.00;
     if (!this.movementOfCash.surcharge) this.movementOfCash.surcharge = 0.00;
@@ -264,7 +264,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -281,7 +281,7 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    if(amountPaid >= this.transactionAmount) {
+    if (amountPaid >= this.transactionAmount) {
       chargedFinished = true;
     }
     
@@ -296,8 +296,8 @@ export class AddMovementOfCashComponent implements OnInit {
           modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg' });
           modalRef.componentInstance.movementOfCash = movement;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
-              if(this.transaction.type.requestArticles) {
+            if (result === 'delete_close') {
+              if (this.transaction.type.requestArticles) {
                 this.getMovementOfArticle(movement);
               } else {
                 if (movement.discount && movement.discount !== 0) {
@@ -330,7 +330,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfArticleService.getMovementsOfArticles('where="transaction":"' + this.transaction._id + '","salePrice":' + salePrice + '').subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.deleteMovementOfArticle(result.movementsOfArticles[0]);
@@ -338,7 +338,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -351,7 +351,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfArticleService.deleteMovementOfArticle(movementOfArticle._id).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction.totalPrice -= movementOfArticle.salePrice;
           this.updateTransaction();
@@ -359,7 +359,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -372,13 +372,13 @@ export class AddMovementOfCashComponent implements OnInit {
     this._paymentMethodService.getPaymentMethods().subscribe(
       result => {
         if (!result.paymentMethods){
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.paymentMethods = result.paymentMethods;
-          if(this.transaction.type.name === "Saldo Inicial (+)" || 
+          if (this.transaction.type.name === "Saldo Inicial (+)" || 
             this.transaction.type.name === "Saldo Inicial (-)") {
             for(let i=0; i < this.paymentMethods.length; i++) {
-              if(this.paymentMethods[i].name === "Cuenta Corriente") {
+              if (this.paymentMethods[i].name === "Cuenta Corriente") {
                 this.movementOfCash.type = this.paymentMethods[i];
                 if (this.paymentMethods[i].discount) {
                   this.movementOfCash.discount = this.paymentMethods[i].discount;
@@ -392,8 +392,8 @@ export class AddMovementOfCashComponent implements OnInit {
                 }
               }
             }
-            if(this.movementOfCash.type.name !== "Cuenta Corriente") {
-              this.showMessage("No existe el medio de pago 'Cuenta Corriente', debe agregarlo.","danger",false);
+            if (this.movementOfCash.type.name !== "Cuenta Corriente") {
+              this.showMessage("No existe el medio de pago 'Cuenta Corriente', debe agregarlo.",'danger',false);
             }
           } else {
             this.movementOfCash.type = this.paymentMethods[0];
@@ -403,7 +403,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -461,29 +461,29 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let areValid: boolean = true;
 
-    if(this.amountToPay <= 0) {
+    if (this.amountToPay <= 0) {
       areValid = false;
-      this.showMessage("El monto ingresado no puede ser 0 o menor.", "info", true); 
+      this.showMessage("El monto ingresado no puede ser 0 o menor.", 'info', true); 
     }
     
     if ((parseFloat((this.amountPaid + this.amountToPay).toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2))) &&
         !this.movementOfCash.type.acceptReturned) {
       areValid = false;
-      this.showMessage("El medio de pago " + this.movementOfCash.type.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.", "info", true);
+      this.showMessage("El medio de pago " + this.movementOfCash.type.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.", 'info', true);
     }
 
-    if( this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
+    if ( this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
       this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) &&
       !this.movementOfCash.type.acceptReturned) {
       areValid = false;
-      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', "info", true); 
+      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true); 
     }
 
     if (this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
       this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) &&
       !this.movementOfCash.type.acceptReturned) {
       areValid = false;
-      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) + '.', "info", true);
+      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true);
     }
 
     return areValid;
@@ -497,7 +497,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
       this.movementOfCash.observation = this.movementOfCashForm.value.observation;
       
-      if(this.movementOfCash.type.checkDetail) {
+      if (this.movementOfCash.type.checkDetail) {
         this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
         this.movementOfCash.number = this.movementOfCashForm.value.number;
         this.movementOfCash.bank = this.movementOfCashForm.value.bank;
@@ -507,12 +507,12 @@ export class AddMovementOfCashComponent implements OnInit {
         // this.movementOfCash.state = MovementOfCashState.InPortafolio;
         this.movementOfCash.state = MovementOfCashState.Closed;
       } else {
-        this.movementOfCash.receiver = "";
-        this.movementOfCash.number = "";
-        this.movementOfCash.bank = "";
-        this.movementOfCash.titular = "";
-        this.movementOfCash.CUIT = "";
-        this.movementOfCash.deliveredBy = "";
+        this.movementOfCash.receiver = '';
+        this.movementOfCash.number = '';
+        this.movementOfCash.bank = '';
+        this.movementOfCash.titular = '';
+        this.movementOfCash.CUIT = '';
+        this.movementOfCash.deliveredBy = '';
         this.movementOfCash.state = MovementOfCashState.Closed;
       }
       
@@ -531,13 +531,13 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
       result => {
         if (!result.movementOfCash) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.movementOfCash.number = "";
-          if(this.transactionAmount !== this.transaction.totalPrice) {
+          this.movementOfCash.number = '';
+          if (this.transactionAmount !== this.transaction.totalPrice) {
             this.transaction.totalPrice = this.transactionAmount;
-            if(this.transaction.type.requestArticles) {
+            if (this.transaction.type.requestArticles) {
               this.addMovementOfArticle();
             } else {
               this.updateTransaction();
@@ -548,7 +548,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -583,7 +583,7 @@ export class AddMovementOfCashComponent implements OnInit {
       result => {
         if (!result.taxes) {
           this.loading = false;
-          this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", "info", true);
+          this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
         } else {
           this.hideMessage();
           tax.tax = result.taxes[0];
@@ -593,7 +593,7 @@ export class AddMovementOfCashComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -606,7 +606,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           movementOfArticle = result.movementOfArticle;
@@ -615,7 +615,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -628,14 +628,14 @@ export class AddMovementOfCashComponent implements OnInit {
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.getMovementOfCashesByTransaction();
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -648,6 +648,6 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

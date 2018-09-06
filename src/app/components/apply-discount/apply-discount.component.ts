@@ -18,7 +18,7 @@ export class ApplyDiscountComponent implements OnInit {
   @Input() amountToApply: number = 0;
   @Input() percentageToApply: number = 0;
   public discountForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public loading: boolean = false;
   public roundNumber = new RoundNumberPipe();
   public focusEvent = new EventEmitter<boolean>();
@@ -55,7 +55,7 @@ export class ApplyDiscountComponent implements OnInit {
     
     this.amount += this.amountToApply;
     
-    if( this.amountToApply && 
+    if ( this.amountToApply && 
         this.amountToApply !== 0 &&
         this.percentageToApply &&
         this.percentageToApply === 0) {
@@ -182,6 +182,6 @@ export class ApplyDiscountComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

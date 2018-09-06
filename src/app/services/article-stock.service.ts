@@ -10,9 +10,9 @@ import { UserService } from './user.service';
 export class ArticleStockService {
 
 	constructor(
-		public _http: Http,
-		public _userService: UserService
-	) { }
+    public _http: Http,
+    public _userService: UserService
+  ) { }
 
 	getLastArticleStock() {
 		let headers = new Headers({

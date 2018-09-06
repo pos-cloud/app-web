@@ -19,7 +19,7 @@ export class ListCashBoxesComponent implements OnInit {
 
   public cashBoxes: CashBox[] = new Array();
   public areCashBoxesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['code'];
   public propertyTerm: string;
@@ -53,8 +53,8 @@ export class ListCashBoxesComponent implements OnInit {
 
     this._cashBoxService.getCashBoxes().subscribe(
         result => {
-					if(!result.cashBoxes) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+					if (!result.cashBoxes) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
 					  this.cashBoxes = null;
             this.areCashBoxesEmpty = true;
 					} else {
@@ -66,7 +66,7 @@ export class ListCashBoxesComponent implements OnInit {
           this.loading = false;
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
       );
@@ -111,6 +111,6 @@ export class ListCashBoxesComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

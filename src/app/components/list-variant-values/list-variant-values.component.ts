@@ -22,7 +22,7 @@ export class ListVariantValuesComponent implements OnInit {
 
   public variantValues: VariantValue[] = new Array();
   public areVariantValuesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userValue: string;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
@@ -53,7 +53,7 @@ export class ListVariantValuesComponent implements OnInit {
     this._variantValueService.getVariantValues().subscribe(
       result => {
         if (!result.variantValues) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantValues = null;
           this.areVariantValuesEmpty = true;
@@ -66,7 +66,7 @@ export class ListVariantValuesComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -140,6 +140,6 @@ export class ListVariantValuesComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

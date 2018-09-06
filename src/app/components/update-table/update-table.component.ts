@@ -22,7 +22,7 @@ export class UpdateTableComponent implements OnInit {
   @Input() readonly: boolean;
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -128,8 +128,8 @@ export class UpdateTableComponent implements OnInit {
 
     this._roomService.getRooms().subscribe(
         result => {
-          if(!result.rooms) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (!result.rooms) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -138,7 +138,7 @@ export class UpdateTableComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -146,14 +146,14 @@ export class UpdateTableComponent implements OnInit {
 
   public updateTable(): void {
 
-    if(this.table.state !== TableState.Pending && this.table.state !== TableState.Busy) {
-      if(!this.readonly) {
+    if (this.table.state !== TableState.Pending && this.table.state !== TableState.Busy) {
+      if (!this.readonly) {
         this.loading = true;
         this.table = this.tableForm.value;
         this.getRoom();
       }
     } else {
-      this.showMessage("No se puede modificar una mesa en estado " + this.table.state, "info", true);
+      this.showMessage("No se puede modificar una mesa en estado " + this.table.state, 'info', true);
     }
   }
 
@@ -163,8 +163,8 @@ export class UpdateTableComponent implements OnInit {
     
     this._roomService.getRoom(this.tableForm.value.room).subscribe(
         result => {
-          if(!result.room) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (!result.room) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
           } else {
             this.hideMessage();
@@ -174,7 +174,7 @@ export class UpdateTableComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -187,17 +187,17 @@ export class UpdateTableComponent implements OnInit {
     this._tableService.updateTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.table = result.table;
-          this.showMessage("El artículo se ha actualizado con éxito.", "success", false);
+          this.showMessage("El artículo se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -210,6 +210,6 @@ export class UpdateTableComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

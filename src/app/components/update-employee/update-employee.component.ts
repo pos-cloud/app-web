@@ -23,7 +23,7 @@ export class UpdateEmployeeComponent implements OnInit {
   @Input() readonly: boolean;
   public employeeTypes: EmployeeType[];
   public employeeForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -80,8 +80,8 @@ export class UpdateEmployeeComponent implements OnInit {
 
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
-        if(!result.employeeTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+        if (!result.employeeTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
           this.employeeTypes = null;
         } else {
@@ -91,7 +91,7 @@ export class UpdateEmployeeComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -143,7 +143,7 @@ export class UpdateEmployeeComponent implements OnInit {
   }
 
   public updateEmployee (): void {
-    if(!this.readonly) {
+    if (!this.readonly) {
       this.loading = true;
       this.employee = this.employeeForm.value;
       this.saveChanges();
@@ -157,17 +157,17 @@ export class UpdateEmployeeComponent implements OnInit {
     this._employeeService.updateEmployee(this.employee).subscribe(
     result => {
         if (!result.employee) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.employee = result.employee;
-          this.showMessage("El empleado se ha actualizado con éxito.", "success", false);
+          this.showMessage("El empleado se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -180,6 +180,6 @@ export class UpdateEmployeeComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

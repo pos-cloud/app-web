@@ -16,7 +16,7 @@ import { MakeService } from './../../services/make.service';
 export class DeleteMakeComponent implements OnInit {
 
   @Input() make: Make;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -42,7 +42,7 @@ export class DeleteMakeComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -55,6 +55,6 @@ export class DeleteMakeComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

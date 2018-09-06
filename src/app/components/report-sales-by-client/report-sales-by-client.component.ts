@@ -18,7 +18,7 @@ export class ReportSalesByClientComponent implements OnInit {
 
   public items: any[] = new Array();
   public areCompaniesEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -60,7 +60,7 @@ export class ReportSalesByClientComponent implements OnInit {
     this._companyService.getSalesByClient(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.items = null;
           this.areCompaniesEmpty = true;
@@ -72,7 +72,7 @@ export class ReportSalesByClientComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -85,6 +85,6 @@ export class ReportSalesByClientComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

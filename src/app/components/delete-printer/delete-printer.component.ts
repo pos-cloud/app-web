@@ -16,7 +16,7 @@ import { PrinterService } from './../../services/printer.service';
 export class DeletePrinterComponent implements OnInit {
 
   @Input() printer: Printer;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
 
@@ -42,7 +42,7 @@ export class DeletePrinterComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -55,6 +55,6 @@ export class DeletePrinterComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

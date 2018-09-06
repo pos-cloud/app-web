@@ -41,7 +41,7 @@ export class CashBoxComponent implements OnInit {
   public loading: boolean = false;
   public posType: string;
   public userType: string;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public movementsOfCashes: MovementOfCash[];
   public focusEvent = new EventEmitter<boolean>();
   public op: string; // valores posibles open - close
@@ -152,15 +152,15 @@ export class CashBoxComponent implements OnInit {
     this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
       result => {
         if (!result.cashBoxes) {
-          if(this.op === "open") {
+          if (this.op === "open") {
             this.cashBox.employee = this._userService.getIdentity().employee;
           } else if (this.op === "close") {
-            this.showMessage("No se encuentran cajas abiertas.", "info", true);
+            this.showMessage("No se encuentran cajas abiertas.", 'info', true);
           }
         } else {
           this.cashBox = result.cashBoxes[0];
           if (this.op === "open") {
-            this.showMessage("La caja ya se encuentra abierta.", "info", true);
+            this.showMessage("La caja ya se encuentra abierta.", 'info', true);
           } else if (this.op === "close") {
             this.getTransactionTypeCashClosing();
           }
@@ -168,7 +168,7 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -181,7 +181,7 @@ export class CashBoxComponent implements OnInit {
     this._cashBoxService.saveCashBox(this.cashBox).subscribe(
       result => {
         if (!result.cashBox) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.cashBox = result.cashBox;
@@ -195,7 +195,7 @@ export class CashBoxComponent implements OnInit {
       },
       error => {
         error => {
-          this.showMessage(error._body, "danger", true);
+          this.showMessage(error._body, 'danger', true);
           this.loading = false;
         }
       }
@@ -211,7 +211,7 @@ export class CashBoxComponent implements OnInit {
     this._transactionTypeService.getTransactionTypes(query).subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage("Debe configurar un tipo de transacción como apertura de caja", "info", true);
+          this.showMessage("Debe configurar un tipo de transacción como apertura de caja", 'info', true);
         } else {
           this.hideMessage();
           let transactionType = result.transactionTypes[0];
@@ -231,7 +231,7 @@ export class CashBoxComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -239,10 +239,10 @@ export class CashBoxComponent implements OnInit {
 
   public openCashBox(): void {
     
-    if(!this.cashBox || !this.cashBox._id) {
+    if (!this.cashBox || !this.cashBox._id) {
       this.saveCashBox();
     } else {
-      if(this.transaction._id) {
+      if (this.transaction._id) {
         this.activeModal.close({ cashBox: this.cashBox });
       } else {
         this.activeModal.close();
@@ -253,7 +253,7 @@ export class CashBoxComponent implements OnInit {
   public closeCashBox(): void {
 
     if (this.cashBox && this.cashBox._id) {
-      if(this.cashBox.state === CashBoxState.Closed) {
+      if (this.cashBox.state === CashBoxState.Closed) {
         this.openModal("print");
       } else {
         this.getOpenTransactionsByCashBox(true);
@@ -272,10 +272,10 @@ export class CashBoxComponent implements OnInit {
     this._cashBoxService.updateCashBox(this.cashBox).subscribe(
       result => {
         if (!result.cashBox) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.cashBox = result.cashBox;
-          if(close) {
+          if (close) {
             this.openModal("print");
           } else {
             this.getMovementOfCashesByTransaction();
@@ -286,7 +286,7 @@ export class CashBoxComponent implements OnInit {
       },
       error => {
         error => {
-          this.showMessage(error._body, "danger", true);
+          this.showMessage(error._body, 'danger', true);
           this.loading = false;
         }
       }
@@ -330,7 +330,7 @@ export class CashBoxComponent implements OnInit {
     this._paymentMethodService.getPaymentMethods().subscribe(
       result => {
         if (!result.paymentMethods) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.paymentMethods = result.paymentMethods;
           this.setValueForm();
@@ -338,7 +338,7 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -350,9 +350,9 @@ export class CashBoxComponent implements OnInit {
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
     this.movementOfCash.state = MovementOfCashState.Closed;
     
-    if(this.cashBox && this.cashBox._id) {
-      if(this.op === "open" && (!this.transaction || !this.transaction._id)) {
-        this.showMessage("La caja ya se encuentra abierta.", "info", true);
+    if (this.cashBox && this.cashBox._id) {
+      if (this.op === "open" && (!this.transaction || !this.transaction._id)) {
+        this.showMessage("La caja ya se encuentra abierta.", 'info', true);
       } else if (this.op === "close") {
         if (!this.transaction || !this.transaction._id) {
           this.getLastTransactionByType();
@@ -363,10 +363,10 @@ export class CashBoxComponent implements OnInit {
         this.saveMovementOfCash();
       }
     } else {
-      if(this.op === "open") {
+      if (this.op === "open") {
         this.saveCashBox();
       } else if (this.op === "close") {
-        this.showMessage("No se encuentran cajas abiertas.", "info", true);
+        this.showMessage("No se encuentran cajas abiertas.", 'info', true);
       }
     }
   }
@@ -380,7 +380,7 @@ export class CashBoxComponent implements OnInit {
     this._transactionTypeService.getTransactionTypes(query).subscribe(
       result => {
         if (!result.transactionTypes) {
-          this.showMessage("Debe configurar un tipo de transacción como cierre de caja", "info", true);
+          this.showMessage("Debe configurar un tipo de transacción como cierre de caja", 'info', true);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -401,7 +401,7 @@ export class CashBoxComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -414,18 +414,18 @@ export class CashBoxComponent implements OnInit {
     this._transactionService.getOpenTransactionsByCashBox(this.cashBox._id).subscribe(
       result => {
         if (!result.transactions) {
-          if(close) {
+          if (close) {
             this.updateCashBox(true);
           } else {
             this.getTransactionsByTypeAndCashBox();
           }
         } else {
-          this.showMessage("No puede cerrar la caja con transacciones abiertas.", "info", true);
+          this.showMessage("No puede cerrar la caja con transacciones abiertas.", 'info', true);
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -447,7 +447,7 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -468,7 +468,7 @@ export class CashBoxComponent implements OnInit {
         this.addTransaction();
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -487,7 +487,7 @@ export class CashBoxComponent implements OnInit {
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
@@ -496,7 +496,7 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -511,9 +511,9 @@ export class CashBoxComponent implements OnInit {
     this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
       result => {
         if (!result.movementOfCash) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          if(this.op === "close") {
+          if (this.op === "close") {
             this.updateCashBox();
           } else {
             this.getMovementOfCashesByTransaction();
@@ -522,7 +522,7 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -548,7 +548,7 @@ export class CashBoxComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -561,14 +561,14 @@ export class CashBoxComponent implements OnInit {
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction = result.transaction;
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -581,6 +581,6 @@ export class CashBoxComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

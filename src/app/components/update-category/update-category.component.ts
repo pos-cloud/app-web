@@ -22,7 +22,7 @@ export class UpdateCategoryComponent implements OnInit {
   @Input() category: Category;
   @Input() readonly: boolean;
   public categoryForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -103,7 +103,7 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
   public updateCategory (): void {
-    if(!this.readonly) {
+    if (!this.readonly) {
       this.loading = true;
       this.category = this.categoryForm.value;
       this.saveChanges();
@@ -117,7 +117,7 @@ export class UpdateCategoryComponent implements OnInit {
     this._categoryService.updateCategory(this.category).subscribe(
       result => {
         if (!result.category) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.category = result.category;
@@ -127,22 +127,22 @@ export class UpdateCategoryComponent implements OnInit {
                 (result) => {
                   this.resultUpload = result;
                   this.category.picture = this.resultUpload.filename;
-                  this.showMessage("El rubro se ha actualizado con éxito.", "success", false);
+                  this.showMessage("El rubro se ha actualizado con éxito.", 'success', false);
                   this.activeModal.close('save_close');
                 },
                 (error) => {
-                  this.showMessage(error, "danger", false);
+                  this.showMessage(error, 'danger', false);
                 }
               );
           } else {
-            this.showMessage("El rubro se ha actualizado con éxito.", "success", false);
+            this.showMessage("El rubro se ha actualizado con éxito.", 'success', false);
             this.activeModal.close('save_close');
           }
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -160,6 +160,6 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

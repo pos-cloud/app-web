@@ -21,7 +21,7 @@ export class ListLocationComponent implements OnInit {
 
   public locations: Location[] = new Array();
   public areLocationsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -51,7 +51,7 @@ export class ListLocationComponent implements OnInit {
     
     this._locationService.getLocations().subscribe(
         result => {
-          if(!result.locations) {
+          if (!result.locations) {
             this.loading = false;
             this.locations = null;
             this.areLocationsEmpty = true;
@@ -64,7 +64,7 @@ export class ListLocationComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -105,7 +105,7 @@ export class ListLocationComponent implements OnInit {
           modalRef.componentInstance.location = location;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getLocations();
             }
           }, (reason) => {
@@ -116,7 +116,7 @@ export class ListLocationComponent implements OnInit {
           modalRef = this._modalService.open(DeleteLocationComponent, { size: 'lg' })
           modalRef.componentInstance.location = location;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getLocations();
             }
           }, (reason) => {
@@ -138,7 +138,7 @@ export class ListLocationComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 
 }

@@ -22,7 +22,7 @@ export class ListDepositComponent implements OnInit {
 
   public deposits: Deposit[] = new Array();
   public areDepositsEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
@@ -53,7 +53,7 @@ export class ListDepositComponent implements OnInit {
     this._depositService.getDeposits().subscribe(
       result => {
         if (!result.deposits) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.deposits = null;
           this.areDepositsEmpty = true;
@@ -66,7 +66,7 @@ export class ListDepositComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -139,7 +139,7 @@ export class ListDepositComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 
 }

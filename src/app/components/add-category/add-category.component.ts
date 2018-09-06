@@ -21,7 +21,7 @@ export class AddCategoryComponent  implements OnInit {
 
   public category: Category;
   public categoryForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -105,27 +105,27 @@ export class AddCategoryComponent  implements OnInit {
     this._categoryService.saveCategory(this.category).subscribe(
       result => {
         if (!result.category) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.category = result.category;
-          if(this.filesToUpload) {
+          if (this.filesToUpload) {
             this._categoryService.makeFileRequest(this.category._id, this.filesToUpload)
                 .then(
                   (result)=>{
                     this.resultUpload = result;
                     this.category.picture = this.resultUpload.filename;
-                    this.showMessage("El rubro se ha añadido con éxito.", "success", false);
+                    this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
                     this.category = new Category();
                     this.filesToUpload = null;
                     this.buildForm();
                   },
                   (error) =>{
-                    this.showMessage(error, "danger", false);
+                    this.showMessage(error, 'danger', false);
                   }
                 );
           } else {
-            this.showMessage("El rubro se ha añadido con éxito.", "success", false);
+            this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
             this.category = new Category();
             this.filesToUpload = null;
             this.buildForm();
@@ -134,7 +134,7 @@ export class AddCategoryComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false); 
+        this.showMessage(error._body, 'danger', false); 
         this.loading = false;
       }
     );
@@ -152,6 +152,6 @@ export class AddCategoryComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

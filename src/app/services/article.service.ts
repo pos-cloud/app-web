@@ -37,7 +37,7 @@ export class ArticleService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		if(query) {
+		if (query) {
 			return this._http.get(Config.apiURL + "articles/" + query, { headers: headers }).map(res => res.json());
 		} else {
 			return this._http.get(Config.apiURL + "articles", { headers: headers }).map (res => res.json());
@@ -95,7 +95,7 @@ export class ArticleService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.post(Config.apiURL + "upload-image/"+id,"", { headers: headers }).map (res => res.json());
+		return this._http.post(Config.apiURL + "upload-image/"+id,'', { headers: headers }).map (res => res.json());
 	}
 	
 	public makeFileRequest(idArticle: String, files: Array<File>) {

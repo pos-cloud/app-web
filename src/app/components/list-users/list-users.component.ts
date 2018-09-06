@@ -21,7 +21,7 @@ export class ListUsersComponent implements OnInit {
 
   public users: User[] = new Array();
   public areUsersEmpty: boolean = true;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
@@ -48,10 +48,10 @@ export class ListUsersComponent implements OnInit {
 
     this.loading = true;
 
-    this._userService.getUsers("","list").subscribe(
+    this._userService.getUsers('',"list").subscribe(
         result => {
-					if(!result.users) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+					if (!result.users) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
 					  this.users = null;
             this.areUsersEmpty = true;
@@ -64,7 +64,7 @@ export class ListUsersComponent implements OnInit {
           }
 				},
 				error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
 				}
       );
@@ -105,7 +105,7 @@ export class ListUsersComponent implements OnInit {
           modalRef.componentInstance.user = user;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if(result === 'save_close') {
+            if (result === 'save_close') {
               this.getUsers();
             }
           }, (reason) => {
@@ -116,7 +116,7 @@ export class ListUsersComponent implements OnInit {
           modalRef = this._modalService.open(DeleteUserComponent, { size: 'lg' })
           modalRef.componentInstance.user = user;
           modalRef.result.then((result) => {
-            if(result === 'delete_close') {
+            if (result === 'delete_close') {
               this.getUsers();
             }
           }, (reason) => {
@@ -134,6 +134,6 @@ export class ListUsersComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

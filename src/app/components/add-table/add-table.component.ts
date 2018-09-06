@@ -23,7 +23,7 @@ export class AddTableComponent  implements OnInit {
   public states: TableState[] = [TableState.Available, TableState.Disabled, TableState.Reserved];
   public rooms: Room[] = new Array();
   public tableForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -126,13 +126,13 @@ export class AddTableComponent  implements OnInit {
     this._roomService.getRooms().subscribe(
         result => {
           let room: Room  = new Room();
-          if(!result.rooms) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (!result.rooms) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
           } else {
             this.loading = false;
             this.rooms = result.rooms;
-            if(this.rooms[0] !== undefined) {
+            if (this.rooms[0] !== undefined) {
               room = this.rooms[0];
             }
           }
@@ -145,7 +145,7 @@ export class AddTableComponent  implements OnInit {
           this.loading = false;
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -164,11 +164,11 @@ export class AddTableComponent  implements OnInit {
     this._tableService.saveTable(this.table).subscribe(
       result => {
         if (!result.table) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
           this.table = result.table;
-          this.showMessage("La mesa se ha añadido con éxito.", "success", false);
+          this.showMessage("La mesa se ha añadido con éxito.", 'success', false);
           this.table = new Table ();
           this.buildForm();
           this.getRooms();
@@ -176,7 +176,7 @@ export class AddTableComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -189,6 +189,6 @@ export class AddTableComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

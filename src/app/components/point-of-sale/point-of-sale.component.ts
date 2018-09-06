@@ -44,7 +44,7 @@ export class PointOfSaleComponent implements OnInit {
   public orderTerm: string[] = ['startDate'];
   public posType: string;
   public existsCashBoxOpen: boolean = false;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage = 10;
@@ -102,7 +102,7 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -114,19 +114,19 @@ export class PointOfSaleComponent implements OnInit {
     
     this._roomService.getRooms().subscribe(
         result => {
-          if(!result.rooms) {
-            if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (!result.rooms) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
           } else {
             this.hideMessage();
             this.loading = false;
             this.rooms = result.rooms;
             
-            if(this.roomSelected._id === undefined){
+            if (this.roomSelected._id === undefined){
               this.roomSelected = this.rooms[0];
             } else {
               for(let room of this.rooms) {
-                if(this.roomSelected._id === room._id){
+                if (this.roomSelected._id === room._id){
                   this.roomSelected = room;
                 }
               }
@@ -135,7 +135,7 @@ export class PointOfSaleComponent implements OnInit {
           }
         },
         error => {
-          this.showMessage(error._body, "danger", false);
+          this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
@@ -160,7 +160,7 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -185,7 +185,7 @@ export class PointOfSaleComponent implements OnInit {
         }
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -214,7 +214,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionTypeService.getDefectOrder().subscribe(
       result => {
         if (!result.transactionTypes) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.transactionTypes = null;
         } else {
           this._router.navigate(['/pos/' + posType + '/agregar-transaccion/' + result.transactionTypes[0]._id]);
@@ -223,7 +223,7 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -231,8 +231,8 @@ export class PointOfSaleComponent implements OnInit {
   
   public addTransaction(type: TransactionType): void {
 
-    if(type.transactionMovement !== TransactionMovement.Purchase) {
-      if(type.requestArticles) {
+    if (type.transactionMovement !== TransactionMovement.Purchase) {
+      if (type.requestArticles) {
         this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
       } else {
         this.openModal('company', type);
@@ -257,7 +257,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.result.then(
           (result) => {
             if (result.company) {
-              if(!transaction) {
+              if (!transaction) {
                 transaction = new Transaction();
               }
               transaction.company = result.company;
@@ -276,12 +276,12 @@ export class PointOfSaleComponent implements OnInit {
           (result) => {
             transaction = result.transaction;
             if (transaction) {
-              if(transaction.type && transaction.type.requestArticles) {
+              if (transaction.type && transaction.type.requestArticles) {
                 this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
-              } else if(transaction.type.requestPaymentMethods) {
+              } else if (transaction.type.requestPaymentMethods) {
                 this.openModal('movement-of-cash', typeTransaction, transaction);
               } else {
-                if(this.posType === "resto" || this.posType === "delivery") {
+                if (this.posType === "resto" || this.posType === "delivery") {
                   transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
                 }
                 transaction.expirationDate = transaction.endDate;
@@ -301,7 +301,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result.movementsOfCashes) {
-            if(this.posType === "resto" || this.posType === "delivery") {
+            if (this.posType === "resto" || this.posType === "delivery") {
               transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
             }
             transaction.expirationDate = transaction.endDate;
@@ -344,7 +344,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.op = 'open-turn';
         modalRef.result.then((result) => {
           if (result.turn) {
-            this.showMessage("El turno se ha abierto correctamente", "success", true);
+            this.showMessage("El turno se ha abierto correctamente", 'success', true);
           }
         }, (reason) => {
 
@@ -357,7 +357,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.op = 'close-turn';
         modalRef.result.then((result) => {
           if (result.turn) {
-            this.showMessage("El turno se ha cerrado correctamente", "success", true);
+            this.showMessage("El turno se ha cerrado correctamente", 'success', true);
           }
         }, (reason) => {
 
@@ -368,7 +368,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.op = "open";
         modalRef.result.then((result) => {
           if (result && result.cashBox) {
-            this.showMessage("La caja se ha abierto correctamente", "success", true);
+            this.showMessage("La caja se ha abierto correctamente", 'success', true);
           } else {
             this.hideMessage();
           }
@@ -381,7 +381,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.op = "close";
         modalRef.result.then((result) => {
           if (result && result.cashBox) {
-            this.showMessage("La caja se ha cerrado correctamente", "success", true);
+            this.showMessage("La caja se ha cerrado correctamente", 'success', true);
           } else {
             this.hideMessage();
           }
@@ -410,8 +410,8 @@ export class PointOfSaleComponent implements OnInit {
 
   public openTransaction(transaction: Transaction): void {
     
-    if(transaction.type && transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-      if(transaction.type.requestArticles) {
+    if (transaction.type && transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      if (transaction.type.requestArticles) {
         this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
       } else {
         this.openModal('transaction', transaction.type, transaction);
@@ -428,7 +428,7 @@ export class PointOfSaleComponent implements OnInit {
     this._transactionService.updateTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.refresh();
@@ -436,7 +436,7 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -479,6 +479,6 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

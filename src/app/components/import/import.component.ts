@@ -21,7 +21,7 @@ export class ImportComponent  implements OnInit {
   public properties: Array<String>; //Donde guardaremos las propiedades del objeto a importar
   public newProperties: Array<String>; //Donde guardaremos las propiedades del objeto a importar modificando las propiedades delas relaciones
   public importForm: FormGroup;
-  public alertMessage: string = "";
+  public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -126,16 +126,16 @@ export class ImportComponent  implements OnInit {
     this._importService.import(this.modelToImport).subscribe(
       result => {
         if (result.message !== 'ok') {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
         } else {
-          this.showMessage("Se ha importado con éxito.", "success", false);
+          this.showMessage("Se ha importado con éxito.", 'success', false);
           // this.activeModal.close("import_close");
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, "danger", false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
@@ -148,6 +148,6 @@ export class ImportComponent  implements OnInit {
   }
 
   public hideMessage():void {
-    this.alertMessage = "";
+    this.alertMessage = '';
   }
 }

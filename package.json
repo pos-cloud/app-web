@@ -37,7 +37,6 @@
     "@swimlane/ngx-dnd": "3.1.0",
     "@types/prismjs": "1.9.0",
     "ajv": "^6.0.0",
-    "angular-calendar": "0.23.6",
     "angular-in-memory-web-api": "0.5.3",
     "bootstrap": "4.0.0-alpha.6",
     "chart.js": "^2.7.2",

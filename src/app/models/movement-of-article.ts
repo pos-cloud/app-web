@@ -8,7 +8,7 @@ export class MovementOfArticle {
 
     public _id: string;
     public code: string = "1";
-    public description: string = "";
+    public description: string = '';
     public observation: string;
     public basePrice: number = 0.00;
     public taxes: Taxes[];
