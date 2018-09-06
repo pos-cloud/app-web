@@ -48,7 +48,6 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     this._movementOfCashService.getMovementsOfCashes().subscribe(
         result => {
-          console.log(result);
           if (!result.movementsOfCashes) {
             if (result.message && result.message !== '') {
               this.showMessage(result.message, 'info', true);

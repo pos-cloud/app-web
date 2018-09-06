@@ -73,7 +73,7 @@ export class AddMovementOfCashComponent implements OnInit {
     'paymentChange': {
     },
     'observation': {
-    }, 
+    },
     'surcharge': {
     },
     'CUIT': {
@@ -188,7 +188,7 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.amountPaid) this.amountPaid = 0.00;
     if (!this.amountDiscount) this.amountDiscount = 0.00;
 
-    let values = {
+    const values = {
       'transactionAmount': parseFloat(this.transactionAmount.toFixed(2)),
       'paymentMethod': this.movementOfCash.type,
       'amountToPay': parseFloat(this.amountToPay.toFixed(2)),
@@ -198,7 +198,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'observation': this.movementOfCash.observation,
       'discount': parseFloat(this.movementOfCash.discount.toFixed(2)),
       'surcharge': parseFloat(this.movementOfCash.surcharge.toFixed(2)),
-      'expirationDate': this.movementOfCash.expirationDate,
+      'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
       'receiver': this.movementOfCash.receiver,
       'number': this.movementOfCash.number,
       'bank': this.movementOfCash.bank,
@@ -234,12 +234,13 @@ export class AddMovementOfCashComponent implements OnInit {
     }
 
     this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+    this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
   }
 
   public getMovementOfCashesByTransaction(): void {
 
     this.loading = true;
-    
+
     this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfCashes) {
@@ -284,7 +285,7 @@ export class AddMovementOfCashComponent implements OnInit {
     if (amountPaid >= this.transactionAmount) {
       chargedFinished = true;
     }
-    
+
     return chargedFinished;
   }
 
@@ -309,7 +310,7 @@ export class AddMovementOfCashComponent implements OnInit {
               }
             }
           }, (reason) => {
-            
+
           });
         break;
       default : ;
@@ -375,7 +376,7 @@ export class AddMovementOfCashComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.paymentMethods = result.paymentMethods;
-          if (this.transaction.type.name === "Saldo Inicial (+)" || 
+          if (this.transaction.type.name === "Saldo Inicial (+)" ||
             this.transaction.type.name === "Saldo Inicial (-)") {
             for(let i=0; i < this.paymentMethods.length; i++) {
               if (this.paymentMethods[i].name === "Cuenta Corriente") {
@@ -425,7 +426,7 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    
+
     if (op !== 'amountToPay') {
       this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
     }
@@ -451,9 +452,9 @@ export class AddMovementOfCashComponent implements OnInit {
     if (parseFloat(this.paymentChange) < 0) {
       this.paymentChange = '0.00';
     }
-    
+
     this.amountDiscount = this.transactionAmount - this.transaction.totalPrice;
-    
+
     this.setValueForm();
   }
 
@@ -463,9 +464,9 @@ export class AddMovementOfCashComponent implements OnInit {
 
     if (this.amountToPay <= 0) {
       areValid = false;
-      this.showMessage("El monto ingresado no puede ser 0 o menor.", 'info', true); 
+      this.showMessage("El monto ingresado no puede ser 0 o menor.", 'info', true);
     }
-    
+
     if ((parseFloat((this.amountPaid + this.amountToPay).toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2))) &&
         !this.movementOfCash.type.acceptReturned) {
       areValid = false;
@@ -476,7 +477,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) &&
       !this.movementOfCash.type.acceptReturned) {
       areValid = false;
-      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true); 
+      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true);
     }
 
     if (this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
@@ -496,7 +497,8 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.transaction = this.transaction;
       this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
       this.movementOfCash.observation = this.movementOfCashForm.value.observation;
-      
+      this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+
       if (this.movementOfCash.type.checkDetail) {
         this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
         this.movementOfCash.number = this.movementOfCashForm.value.number;
@@ -515,7 +517,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.movementOfCash.deliveredBy = '';
         this.movementOfCash.state = MovementOfCashState.Closed;
       }
-      
+
       this.saveMovementOfCash();
     }
   }
@@ -527,7 +529,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public saveMovementOfCash(): void {
 
     this.loading = true;
-    
+
     this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
       result => {
         if (!result.movementOfCash) {
@@ -555,11 +557,11 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public addMovementOfArticle(): void {
-    
+
     let movementOfArticle = new MovementOfArticle();
 
     if (this.movementOfCash.type.surcharge && this.movementOfCash.type.surcharge > 0) {
-      movementOfArticle.description = "Recargo por pago con " + this.movementOfCash.type.name;
+      movementOfArticle.description = 'Recargo por pago con ' + this.movementOfCash.type.name;
       movementOfArticle.salePrice = this.movementOfCash.amountPaid * this.movementOfCash.type.surcharge / 100;
     } else if (this.movementOfCash.type.discount && this.movementOfCash.type.discount > 0) {
       movementOfArticle.description = "Descuento por pago con " + this.movementOfCash.type.name;
@@ -602,7 +604,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
-    
+
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
