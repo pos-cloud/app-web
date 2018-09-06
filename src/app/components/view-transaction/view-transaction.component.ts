@@ -8,6 +8,7 @@ import { MovementOfCash } from './../../models/movement-of-cash';
 
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
+import { TransactionService } from '../../services/transaction.service';
 
 @Component({
   selector: 'app-view-transaction',
@@ -16,8 +17,8 @@ import { MovementOfCashService } from './../../services/movement-of-cash.service
   providers: [NgbAlertConfig]
 })
 export class ViewTransactionComponent implements OnInit {
-
-  @Input() transaction: Transaction;
+  @Input()
+  transaction: Transaction;
   public alertMessage = '';
   public loading = false;
   public movementsOfArticles: MovementOfArticle[];
@@ -26,35 +27,60 @@ export class ViewTransactionComponent implements OnInit {
   public areMovementsOfCashesEmpty = true;
 
   constructor(
+    public _transactionService: TransactionService,
     public _movementOfArticleService: MovementOfArticleService,
     public _movementOfCashService: MovementOfCashService,
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.movementsOfArticles = new Array();
     this.movementsOfCashes = new Array();
-    this.getMovementsOfArticlesByTransaction();
-    this.getMovementsOfCashesByTransaction();
+    this.getTransaction(this.transaction._id);
   }
 
-  public getMovementsOfArticlesByTransaction(): void {
+  public getTransaction(transactionId): void {
 
     this.loading = true;
 
-    this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
+    this._transactionService.getTransaction(transactionId).subscribe(
+      result => {
+        if (!result.transaction) {
+          this.showMessage(result.message, 'danger', false);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.transaction = result.transaction;
+          this.getMovementsOfArticlesByTransaction();
+          this.getMovementsOfCashesByTransaction();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getMovementsOfArticlesByTransaction(): void {
+    this.loading = true;
+
+    this._movementOfArticleService
+      .getMovementsOfTransaction(this.transaction._id)
+      .subscribe(
         result => {
-					if (!result.movementsOfArticles) {
+          if (!result.movementsOfArticles) {
             this.areMovementsOfArticlesEmpty = true;
             this.movementsOfArticles = new Array();
-					} else {
+          } else {
             this.areMovementsOfArticlesEmpty = false;
             this.movementsOfArticles = result.movementsOfArticles;
           }
           this.loading = false;
-				},
-				error => {
+        },
+        error => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
@@ -62,28 +88,33 @@ export class ViewTransactionComponent implements OnInit {
   }
 
   public getMovementsOfCashesByTransaction(): void {
-
     this.loading = true;
 
-    this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
+    this._movementOfCashService
+      .getMovementOfCashesByTransaction(this.transaction._id)
+      .subscribe(
         result => {
-					if (!result.movementsOfCashes) {
+          if (!result.movementsOfCashes) {
             this.areMovementsOfCashesEmpty = true;
             this.movementsOfCashes = new Array();
-					} else {
+          } else {
             this.areMovementsOfCashesEmpty = false;
             this.movementsOfCashes = result.movementsOfCashes;
           }
           this.loading = false;
-				},
-				error => {
+        },
+        error => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
+  public showMessage(
+    message: string,
+    type: string,
+    dismissible: boolean
+  ): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
     this.alertConfig.dismissible = dismissible;

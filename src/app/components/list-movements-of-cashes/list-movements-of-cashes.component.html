@@ -28,6 +28,7 @@
               <th (click)="orderBy('number')">Comprobante </th>
               <th (click)="orderBy('expirationDate')">Vencimiento </th>
               <th (click)="orderBy('state')">Estado </th>
+              <th (click)="orderBy('observation')">Observación </th>
               <th (click)="orderBy('bank')">Banco </th>
               <th (click)="orderBy('titular')">Titular </th>
               <th (click)="orderBy('CUIT')">CUIT </th>
@@ -43,6 +44,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Comprobante..." ></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterExpirationDate" placeholder="Vencimiento..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterObservation" placeholder="Observación..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterBank" placeholder="Banco..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterTitular" placeholder="Titular..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
@@ -58,6 +60,7 @@
                                                                 | filter: filterNumber:'number'
                                                                 | filter: filterExpirationDate:'expirationDate'
                                                                 | filter: filterState:'state'
+                                                                | filter: filterObservation:'observation'
                                                                 | filter: filterBank:'bank'
                                                                 | filter: filterTitular:'titular'
                                                                 | filter: filterCUIT:'CUIT'
@@ -79,7 +82,16 @@
               <td class="flat" >{{movementOfCash.discount | currency:'USD':'1.2-2'}}</td>
               <td class="flat" >{{movementOfCash.number}}</td>
               <td class="flat" >{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY'}}</td>
-              <td class="flat" >{{movementOfCash.state}}</td>
+              <td>
+                <h6>
+                  <span class="badge" [ngClass]="{'badge-danger':movementOfCash.state==='Anulado',
+                                                  'badge-success':movementOfCash.state==='Cerrado',
+                                                  'badge-warning':movementOfCash.state==='Pendiente'}">
+                    {{movementOfCash.state}}
+                  </span>
+                </h6>
+              </td>
+              <td class="flat" >{{movementOfCash.observation}}</td>
               <td class="flat" >{{movementOfCash.bank}}</td>
               <td class="flat" >{{movementOfCash.titular}}</td>
               <td class="flat" >{{movementOfCash.CUIT}}</td>
@@ -87,7 +99,7 @@
               <td class="flat" >{{movementOfCash.receiver}}</td>
             </tr>
             <tr align="center" *ngIf="areMovementOfCashesEmpty">
-              <td colspan="2">No se encontraron movimientos</td>
+              <td colspan="14">No se encontraron movimientos</td>
             </tr>
           </tbody>
         </table>

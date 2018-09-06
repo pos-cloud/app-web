@@ -498,13 +498,7 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/movimientos-cobros',
-    component: ListMovementOfCashesComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/movimientos-pagos',
+    path: 'admin/movimientos-de-medios',
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }

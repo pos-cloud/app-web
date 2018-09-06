@@ -5,11 +5,11 @@ import 'moment/locale/es';
 export class Config {
 
     public _id: string;
-    static apiHost: string = "localhost";
+    static apiHost: string = 'localhost';
     static apiURL: string;
-    static apiURLFE: string = "libs/fe/index.php";
-    static apiPort: number = 3000;
-    static accessType: string = "Cloud";
+    static apiURLFE: string = 'libs/fe/index.php';
+    static apiPort = 3000;
+    static accessType = "Cloud";
     static modules;
     static pathMongo: string;
     static pathBackup: string;
@@ -27,7 +27,7 @@ export class Config {
     static widthLabel: number;
     static footerInvoice: string;
 
-    constructor() { 
+    constructor() {
         Config.updateApiURL();
     }
 
@@ -40,7 +40,7 @@ export class Config {
         this.apiPort = apiPort;
         Config.updateApiURL();
     }
-    
+
     public static setAccessType(accessType: string): void {
         Config.accessType = accessType;
     }
@@ -60,7 +60,7 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition, 
+    public static setConfigCompany( companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,
                                     companyStartOfActivity, companyGrossIncome, footerInvoice): void {
         Config.companyName = companyName;
         Config.companyCUIT = companyCUIT;
@@ -79,9 +79,9 @@ export class Config {
 
     public static updateApiURL() {
         if (Config.apiPort !== 0) {
-            Config.apiURL = "http://" + Config.apiHost + ":" + Config.apiPort + "/api/";
+            Config.apiURL = 'http://' + Config.apiHost + ':' + Config.apiPort + '/api/';
         } else {
-            Config.apiURL = "http://" + Config.apiHost + "/api/";
+            Config.apiURL = 'http://' + Config.apiHost + '/api/';
         }
     }
 }
