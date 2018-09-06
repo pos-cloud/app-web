@@ -1,0 +1,58 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesNewsEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th (click)="orderBy('date')">Fecha </th>
+          <th (click)="orderBy('news')">Novedad </th>
+          <th>
+            <span (click)="areFiltersVisible = !areFiltersVisible">
+              <i class="btn btn-primary btn-sm fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
+            </span>
+          </th>
+        </tr>
+        <tr *ngIf="areFiltersVisible" class="filters">
+          <th><input type="date" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
+          <th><input type="text" class="form-control" [(ngModel)]="filterNews" placeholder="Filtrar Novedad..."></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="flat"><input type="date" class="form-control" placeholder="Fecha" [(ngModel)]="companyNews.date" [focus]="focusEvent"></td>
+          <td class="flat"><textarea class="form-control" placeholder="Novedad" [(ngModel)]="companyNews.news"></textarea></td>
+          <td align="left" width="50"><button type="button" class="btn btn-success btn-sm" (click)="addCompanyNews()" title="Agregar"><i class="fa fa-plus"></i></button></td>
+        </tr>
+        <tr *ngFor="let companyNews of companiesNews  | filter: filterDate:'date' 
+                                                      | filter: filterNews:'news'
+                                                      | orderBy: orderTerm: propertyTerm
+                                                      | paginate: { itemsPerPage: itemsPerPage, 
+                                                        currentPage: p, 
+                                                        totalItems: totalItems
+                                                    }">
+          <td class="flat">{{companyNews.date | dateFormat:'DD/MM/YYYY HH:mm:ss' }}</td>
+          <td class="flat"><pre>{{companyNews.news}}</pre></td>
+          <td align="left" width="50"><button type="button" class="btn btn-danger btn-sm" (click)="deleteCompanyNews(companyNews)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <pagination-controls 
+          class="my-pagination"
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Ant." 
+          nextLabel="Sig." 
+          autoHide="true">
+        </pagination-controls>
+      </div>
+    </div>
+  </div>
+</section>

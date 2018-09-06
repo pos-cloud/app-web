@@ -45,6 +45,7 @@ import { TaxService } from './services/tax.service';
 import { VariantValueService } from './services/variant-value.service';
 import { DepositService } from "./services/deposit.service";
 import { LocationService } from "./services/location.service";
+import { CompanyNewsService } from "./services/company-news.service";
 
 //guards
 import { AuthGuard } from './guards/auth.guard';
@@ -168,6 +169,7 @@ import { AddLocationComponent } from './components/add-location/add-location.com
 import { UpdateLocationComponent } from './components/update-location/update-location.component';
 import { DeleteLocationComponent } from './components/delete-location/delete-location.component';
 import { ListLocationComponent } from './components/list-location/list-location.component';
+import { CompanyNewsComponent } from './components/company-news/company-news.component';
 
 @NgModule({
   declarations: [
@@ -282,7 +284,8 @@ import { ListLocationComponent } from './components/list-location/list-location.
     AddLocationComponent,
     UpdateLocationComponent,
     DeleteLocationComponent,
-    ListLocationComponent
+    ListLocationComponent,
+    CompanyNewsComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -365,7 +368,8 @@ import { ListLocationComponent } from './components/list-location/list-location.
     VariantValueService,
     TaxService,
     DepositService,
-    LocationService
+    LocationService,
+    CompanyNewsService
   ],
   bootstrap: [AppComponent]
 })
