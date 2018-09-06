@@ -975,11 +975,25 @@ export class PrintComponent implements OnInit {
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
     this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/2) - 1 , row);
-
-    if (this.transaction.madein == 'delivery') {
+    
+    
+    if(this.transaction.company) {
+      if(this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
+        row += 5;
+        this.doc.setFontType('bold');
+        this.doc.text("Cliente : " + this.transaction.company.name, margin, row);
+        this.doc.setFontType('normal');
+      }
+      if(this.transaction.madein == 'delivery') {
+        row += 5;
+        this.doc.setFontType('bold');
+        this.doc.text("Entregar a: " + this.transaction.company.address, margin, row);
+        this.doc.setFontType('normal');
+      }
+    } else {
       row += 5;
       this.doc.setFontType('bold');
-      this.doc.text("Entregar a: " + this.transaction.company.address, margin, row);
+      this.doc.text("Cliente:Cons. Final", margin, row);
       this.doc.setFontType('normal');
     }
 
@@ -989,8 +1003,10 @@ export class PrintComponent implements OnInit {
       if (this.transaction.employeeOpening) {
         this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
       }
+      if (this.transaction.table){
       this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
       this.doc.setFontType('normal');
+      }
     } else if (this.transaction.employeeOpening) {
       row += 5;
       this.doc.setFontType('bold');
@@ -1022,7 +1038,7 @@ export class PrintComponent implements OnInit {
         }
         this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.5, row);
 
-        if (movementOfArticle.notes && movementOfArticle.notes !== '') {
+        if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
           this.doc.setFontStyle("italic");
           this.doc.setTextColor(90, 90, 90);

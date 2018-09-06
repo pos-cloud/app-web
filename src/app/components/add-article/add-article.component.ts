@@ -259,7 +259,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   public padString(n, length) {
-    let n = n.toString();
+    var n = n.toString();
     while (n.length < length) {
       n = '0' + n;
     }
