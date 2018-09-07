@@ -975,7 +975,7 @@ export class PrintComponent implements OnInit {
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
     this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/2) - 1 , row);
-    
+    this.doc.setFontType('normal');
     
     if(this.transaction.company) {
       if(this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
@@ -991,10 +991,12 @@ export class PrintComponent implements OnInit {
         this.doc.setFontType('normal');
       }
     } else {
-      row += 5;
-      this.doc.setFontType('bold');
-      this.doc.text("Cliente:Cons. Final", margin, row);
-      this.doc.setFontType('normal');
+      if(this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
+        row += 5;
+        this.doc.setFontType('bold');
+        this.doc.text("Cliente : " + "Consumidor Final", margin, row);
+        this.doc.setFontType('normal');
+      }
     }
 
     if (this.transaction.madein == 'resto') {
@@ -1004,9 +1006,9 @@ export class PrintComponent implements OnInit {
         this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
       }
       if (this.transaction.table){
-      this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
-      this.doc.setFontType('normal');
+        this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
       }
+      this.doc.setFontType('normal');
     } else if (this.transaction.employeeOpening) {
       row += 5;
       this.doc.setFontType('bold');
@@ -1026,7 +1028,6 @@ export class PrintComponent implements OnInit {
 
     //Cuerpo de la tabla de artículos
     row +5;
-    this.doc.setFontSize(this.fontSizes.normal);
     if (this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         row += 5;
@@ -1053,22 +1054,22 @@ export class PrintComponent implements OnInit {
     row += 5;
     this.doc.line(0, row, 240, row);
     this.doc.setFontStyle('bold');
-    this.doc.setFontSize(this.fontSizes.normal);
     row += 5;
     this.centerText(margin, margin, this.printer.pageWidth, 0, row, "TOTAL");
     this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.5, row);
-    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontStyle("normal");
+    
     if (this.config[0].footerInvoice) {
       this.doc.setFontStyle("italic");
       row += 10;
       this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].footerInvoice);
+      this.doc.setFontStyle("normal");
     }
 
     //Pie del ticket
-    this.doc.setFontStyle("normal");
     this.doc.setFontSize(this.fontSizes.small);
     row += 5;
-    this.doc.text("Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.",margin,row);
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.");
     this.doc.setTextColor(0, 0, 0);
 
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
