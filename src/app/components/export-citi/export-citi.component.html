@@ -42,9 +42,8 @@
 				</button>
 		</div>
 		<div class ="modal-footer" *ngIf="toggleButton">
-			<!-- <a href="http://localhost:3000/api/downloadComp">Descargar Comprobantes</a> -->
-				<button type="button" class="btn btn-success"><a href="localhost:3000/api/download-file/comp201806.txt">Descargar Comprobantes</a></button>
-				<button type="button" class="btn btn-success"><a href="localhost:3000/api/download-file/ali201806.txt">Descargar Alícuotas</a></button>
+				<button type="button" class="btn btn-success"><a [attr.href]="'http://localhost:3000/api/download-file/' + this.compURL">Descargar Comprobantes</a></button>
+				<button type="button" class="btn btn-success"><a [attr.href]="'http://localhost:3000/api/download-file/' + this.aliURL">Descargar Alícuotas</a></button>
 		</div>
   </form>
 

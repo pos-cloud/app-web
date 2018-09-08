@@ -8,6 +8,7 @@ import 'moment/locale/es';
 
 import { TransactionService } from './../../services/transaction.service';
 import { UserService } from '../../services/user.service';
+import { ConfigService } from '../../services/config.service';
 
 import { Config } from './../../app.config';
 
@@ -19,7 +20,7 @@ import { Config } from './../../app.config';
 export class ExportCitiComponent implements OnInit {
 
   public exportCitiForm: FormGroup;
-  public alertMessage: string = '';
+  public alertMessage: string = "";
   public loading: boolean = false;
   public months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
   public years = ["2018", "2019", "2020", "2021", "2022"];
@@ -48,6 +49,7 @@ export class ExportCitiComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
+    public _configService: ConfigService,
     public _userService: UserService
   ) { }
 
@@ -100,17 +102,17 @@ export class ExportCitiComponent implements OnInit {
     this._transactionService.exportCiti(this.VATPeriod).subscribe(
       result => {
         if (result.message !== "OK") {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
         } else {
-          this.showMessage("Los archivos se generaron correctamente.", 'success', false);
-          this.compURL = Config.apiURL + "download-file/" + this._userService.getDatabase() + "\\comp" + this.VATPeriod + ".txt";
-          this.aliURL = Config.apiURL + "download-file/" + this._userService.getDatabase() + "\\ali" + this.VATPeriod + ".txt";
+          this.showMessage("Los archivos se generaron correctamente.", "success", false);
+          this.compURL = '-' + this._userService.getDatabase()+ '-CITI-ventas-' + 'comp' + this.VATPeriod + ".txt";
+          this.aliURL = '-' + this._userService.getDatabase()+ '-CITI-ventas-' + 'ali' + this.VATPeriod + ".txt";
           this.toggleButton = true;
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -123,6 +125,6 @@ export class ExportCitiComponent implements OnInit {
   }
 
   public hideMessage(): void {
-    this.alertMessage = '';
+    this.alertMessage = "";
   }
 }

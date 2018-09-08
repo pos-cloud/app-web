@@ -83,4 +83,13 @@ export class ConfigService {
 		});
 		return this._http.put(Config.apiURL + "config-label/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
+
+	generateCRS (config: Config){
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.post(Config.apiURL + "generate-crs", config, {headers: headers}).map(res => res.json());
+	}
 }
