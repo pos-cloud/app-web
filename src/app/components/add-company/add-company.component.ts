@@ -50,7 +50,8 @@ export class AddCompanyComponent  implements OnInit {
     'phones': '',
     'emails': '',
     'gender':'',
-    'birthday':''
+    'birthday':'',
+    'observation':''
 
   };
 
@@ -94,7 +95,8 @@ export class AddCompanyComponent  implements OnInit {
       'dateValid': ' Ingrese en formato DD/MM/AAAA'
     },
     'gender': {
-    }
+    },
+    'observation':{}
   };
 
   constructor(
@@ -190,7 +192,8 @@ export class AddCompanyComponent  implements OnInit {
       ],
       'gender' : [this.company.gender,[
         ]
-      ]
+      ],
+      'observation': [this.company.observation,[]]
     });
 
     this.companyForm.valueChanges
@@ -253,6 +256,8 @@ export class AddCompanyComponent  implements OnInit {
     } else {
       vatCondition = this.company.vatCondition;
     }
+
+    if(!this.company.observation) this.company.observation = '';
     
     this.companyForm.setValue({
       'code': this.company.code,
@@ -268,7 +273,8 @@ export class AddCompanyComponent  implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday' : this.company.birthday
+      'birthday' : this.company.birthday,
+      'observation' : this.company.observation
     });
   }
 

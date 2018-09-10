@@ -47,7 +47,8 @@ export class UpdateCompanyComponent implements OnInit {
     'phones': '',
     'emails': '',
     'gender':'',
-    'birthday':''
+    'birthday':'',
+    'observation' : ''
   };
 
   public validationMessages = {
@@ -86,7 +87,8 @@ export class UpdateCompanyComponent implements OnInit {
     'birthday': {
     },
     'gender': {
-    }
+    },
+    'observation': {}
   };
 
   constructor(
@@ -184,7 +186,8 @@ export class UpdateCompanyComponent implements OnInit {
       ],
       'birthday': ['', [
       ]],
-      'gender' : [this.company.gender,[]]
+      'gender' : [this.company.gender,[]],
+      'observation' : [this.company.observation,[]]
     });
 
     this.companyForm.valueChanges
@@ -229,6 +232,8 @@ export class UpdateCompanyComponent implements OnInit {
     } else {
       vatConditionID = this.company.vatCondition._id;
     }
+
+    if(!this.company.observation) this.company.observation = '';
     
     this.companyForm.setValue({
       '_id': this.company._id,
@@ -245,7 +250,8 @@ export class UpdateCompanyComponent implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday': this.company.birthday
+      'birthday': this.company.birthday,
+      'observation' : this.company.observation
     });
   }
 

@@ -17,9 +17,10 @@ export class Company {
     public address: string;
     public city: string;
     public phones: string;
-    public emails: String;
+    public emails: string;
     public gender: GenderType;
     public birthday: string;
+    public observation: string;
 
     constructor() {}
 }

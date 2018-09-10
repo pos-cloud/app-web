@@ -140,6 +140,15 @@
 					</div>
 				</div>
 			</div>
+			<div class = "row">
+				<div class="form-group col-md-12">
+					<label for="observation" class="control-label">Observación:</label>
+					<input type="text" class="form-control" formControlName="observation" name="observation" id="observation"/>
+					<div *ngIf="formErrors.observation" class="alert alert-danger">
+						{{ formErrors.observation }}
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
