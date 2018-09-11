@@ -1072,7 +1072,7 @@ export class PrintComponent implements OnInit {
     //Pie del ticket
     this.doc.setFontSize(this.fontSizes.small);
     row += 5;
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.");
+    this.centerText(0, margin, this.printer.pageWidth, 0, row, "Generado en POSCLOUD.com.ar, tu Punto de Venta en la NUBE.");
     this.doc.setTextColor(0, 0, 0);
 
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
