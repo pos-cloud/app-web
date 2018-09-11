@@ -263,7 +263,7 @@ export class PrintComponent implements OnInit {
     this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          this.showMessage("No se encontraron artículos en la transacción", 'info', false);
+          this.showMessage("No se encontraron productos en la transacción", 'info', false);
           this.loading = false;
         } else {
           this.hideMessage();
@@ -705,7 +705,7 @@ export class PrintComponent implements OnInit {
     this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
     this.doc.setFontType('normal');
 
-    // Encabezado de la tabla de Detalle de Artículos
+    // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Cant", 5, 77);
@@ -716,7 +716,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
     }
 
-    // Detalle de artículos
+    // Detalle de productos
     var row = 85;
     
     if (this.movementsOfArticles.length > 0) {
@@ -851,7 +851,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
     }
 
-    //Cabecera de la tala de artículos
+    //Cabecera de la tala de productos
     row += 3;
     this.doc.line(0, row, 80, row);
     row += 5;
@@ -860,7 +860,7 @@ export class PrintComponent implements OnInit {
     row += 3;
     this.doc.line(0, row, 80, row);
 
-    //Cuerpo de la tabla de artículos
+    //Cuerpo de la tabla de productos
     row + 5;
     this.doc.setFontSize(this.fontSizes.normal);
     if (this.movementsOfArticles.length > 0) {
@@ -919,7 +919,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
     }
 
-    //Cabecera de la tala de artículos
+    //Cabecera de la tala de productos
     row += 3;
     this.doc.line(0, row, 80, row);
     row += 5;
@@ -928,7 +928,7 @@ export class PrintComponent implements OnInit {
     row += 3;
     this.doc.line(0, row, 80, row);
 
-    //Cuerpo de la tabla de artículos
+    //Cuerpo de la tabla de productos
     row + 5;
     this.doc.setFontSize(this.fontSizes.normal);
     if (this.movementsOfArticles.length > 0) {
@@ -1016,7 +1016,7 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
     }
 
-    //Cabecera de la tala de artículos
+    //Cabecera de la tala de productos
     row += 3;
     this.doc.line(0, row, this.printer.pageWidth, row);
     row += 5;
@@ -1026,7 +1026,7 @@ export class PrintComponent implements OnInit {
     row += 3;
     this.doc.line(0, row, this.printer.pageWidth, row);
 
-    //Cuerpo de la tabla de artículos
+    //Cuerpo de la tabla de productos
     row +5;
     if (this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
@@ -1050,7 +1050,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    //Pie de la tabla de artículos
+    //Pie de la tabla de productos
     row += 5;
     this.doc.line(0, row, 240, row);
     this.doc.setFontStyle('bold');

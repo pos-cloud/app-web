@@ -158,7 +158,7 @@ import { FocusDirective } from './directives/focus.directive';
 import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
 import { AddDepositComponent } from './components/add-deposit/add-deposit.component';
-import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
+import { ListDepositsComponent } from './components/list-deposits/list-deposits.component';
 import { UpdateDepositComponent } from './components/update-deposit/update-deposit.component';
 import { DeleteDepositComponent } from './components/delete-deposit/delete-deposit.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
@@ -169,7 +169,7 @@ import { CashBoxComponent } from './components/cash-box/cash-box.component';
 import { AddLocationComponent } from './components/add-location/add-location.component';
 import { UpdateLocationComponent } from './components/update-location/update-location.component';
 import { DeleteLocationComponent } from './components/delete-location/delete-location.component';
-import { ListLocationComponent } from './components/list-location/list-location.component';
+import { ListLocationsComponent } from './components/list-locations/list-locations.component';
 import { CompanyNewsComponent } from './components/company-news/company-news.component';
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
 import { AddArticleFieldComponent } from './components/add-article-field/add-article-field.component';
@@ -280,7 +280,7 @@ import { AddArticleFieldsComponent } from './components/add-article-fields/add-a
     DeleteMovementOfCashComponent,
     StatisticsComponent,
     AddDepositComponent,
-    ListDepositComponent,
+    ListDepositsComponent,
     UpdateDepositComponent,
     DeleteDepositComponent,
     ReportBestSellingArticleComponent,
@@ -291,7 +291,7 @@ import { AddArticleFieldsComponent } from './components/add-article-fields/add-a
     AddLocationComponent,
     UpdateLocationComponent,
     DeleteLocationComponent,
-    ListLocationComponent,
+    ListLocationsComponent,
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
     AddArticleFieldComponent,

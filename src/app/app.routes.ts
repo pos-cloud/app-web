@@ -69,8 +69,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
-import { ListDepositComponent } from './components/list-deposit/list-deposit.component';
-import { ListLocationComponent } from './components/list-location/list-location.component';
+import { ListDepositsComponent } from './components/list-deposits/list-deposits.component';
+import { ListLocationsComponent } from './components/list-locations/list-locations.component';
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
@@ -488,13 +488,13 @@ const _routes: Routes = [
   },
   {
     path: 'admin/depositos',
-    component: ListDepositComponent,
+    component: ListDepositsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
   {
     path: 'admin/ubicaciones',
-    component: ListLocationComponent,
+    component: ListLocationsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

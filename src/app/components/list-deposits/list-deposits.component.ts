@@ -13,12 +13,12 @@ import { DeleteDepositComponent } from './../../components/delete-deposit/delete
 
 
 @Component({
-  selector: 'app-list-deposit',
-  templateUrl: './list-deposit.component.html',
-  styleUrls: ['./list-deposit.component.css'],
+  selector: 'app-list-deposits',
+  templateUrl: './list-deposits.component.html',
+  styleUrls: ['./list-deposits.component.css'],
   providers: [NgbAlertConfig]
 })
-export class ListDepositComponent implements OnInit {
+export class ListDepositsComponent implements OnInit {
 
   public deposits: Deposit[] = new Array();
   public areDepositsEmpty: boolean = true;

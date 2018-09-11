@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Ubicacion</h4>
+  <h4 class="modal-title">Agregar Ubicación</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -24,21 +24,21 @@
       <div class="row">
         <div class="form-group col-md-4">
           <label for="positionX" class="control-label">Posición X:</label>
-          <input type="text" class="form-control" formControlName="positionX" name="positionX" id="positionX" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="positionX" name="positionX" id="positionX"/>
           <div *ngIf="formErrors.positionX" class="alert alert-danger">
             {{ formErrors.positionX }}
           </div>
         </div>
         <div class="form-group col-md-4">
           <label for="positionY" class="control-label">Posición Y:</label>
-          <input type="text" class="form-control" formControlName="positionY" name="positionY" id="positionY" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="positionY" name="positionY" id="positionY"/>
           <div *ngIf="formErrors.positionY" class="alert alert-danger">
             {{ formErrors.positionY }}
           </div>
         </div>
         <div class="form-group col-md-4">
           <label for="positionZ" class="control-label">Posición Z:</label>
-          <input type="text" class="form-control" formControlName="positionZ" name="positionZ" id="positionZ" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="positionZ" name="positionZ" id="positionZ"/>
           <div *ngIf="formErrors.positionZ" class="alert alert-danger">
             {{ formErrors.positionZ }}
           </div>

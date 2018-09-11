@@ -9,15 +9,14 @@ import { LocationService } from './../../services/location.service';
 import { AddLocationComponent } from './../../components/add-location/add-location.component';
 import { UpdateLocationComponent } from './../../components/update-location/update-location.component';
 import { DeleteLocationComponent } from './../../components/delete-location/delete-location.component';
-import { ImportComponent } from './../../components/import/import.component';
 
 @Component({
-  selector: 'app-list-location',
-  templateUrl: './list-location.component.html',
-  styleUrls: ['./list-location.component.css'],
+  selector: 'app-list-locations',
+  templateUrl: './list-locations.component.html',
+  styleUrls: ['./list-locations.component.css'],
   providers: [NgbAlertConfig]
 })
-export class ListLocationComponent implements OnInit {
+export class ListLocationsComponent implements OnInit {
 
   public locations: Location[] = new Array();
   public areLocationsEmpty: boolean = true;

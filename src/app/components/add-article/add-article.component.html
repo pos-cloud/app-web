@@ -154,7 +154,7 @@
 					<ng-template ngbTabContent>
 						<!--<app-add-article-stock [article]="article" (eventAddStock)="addStock($event)"></app-add-article-stock>-->
 						<div class="row">
-							<div class="form-group col-md-12">
+							<div class="form-group col-md-6">
 								<label for="deposit" class="control-label">Depósito:</label>
 								<select class="form-control" formControlName="deposit">
 									<option *ngFor="let deposit of deposits" [selected]="article.deposit && deposit._id===article.deposit._id" [value]="deposit._id" [disabled]="readonly">{{deposit.name}}</option>
@@ -163,10 +163,8 @@
 									{{ formErrors.deposit }}
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="form-group col-md-12">
-								<label for="location" class="control-label">Ubicacion:</label>
+							<div class="form-group col-md-6">
+								<label for="location" class="control-label">Ubicación:</label>
 								<select class="form-control" formControlName="location">
 									<option *ngFor="let location of locations" [selected]="article.location && location._id===article.location._id" [value]="location._id" [disabled]="readonly">{{location.description}}-{{location.positionX}}-{{location.positionY}}-{{location.positionZ}}</option>
 								</select>

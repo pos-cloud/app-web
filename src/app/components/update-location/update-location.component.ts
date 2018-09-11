@@ -81,16 +81,13 @@ export class UpdateLocationComponent implements OnInit {
         ]
       ],
       'positionX': [this.location.positionX, [
-          Validators.required
         ]
       ],
       'positionY': [this.location.positionY, [
-        Validators.required
         ]
       ],
-    'positionZ': [this.location.positionZ, [
-      Validators.required
-      ]
+      'positionZ': [this.location.positionZ, [
+        ]
       ],    
     });
 
