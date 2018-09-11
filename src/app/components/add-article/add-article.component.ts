@@ -30,6 +30,8 @@ import { LocationService} from './../../services/location.service';
 // Pipes
 import { DecimalPipe } from '@angular/common';
 import { SlicePipe } from '@angular/common';
+import { ArticleFields } from '../../models/article-fields';
+import { ArticleFieldType } from '../../models/article-field';
 
 @Component({
   selector: 'app-add-article',
@@ -54,7 +56,8 @@ export class AddArticleComponent implements OnInit {
   public variantsStored = new Array();
   public raffledVariants: Variant[] = Array();
   public taxes: Taxes[] = new Array();
-  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter];
+  public otherFields: ArticleFields[] = new Array();
+  public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Counter, ArticlePrintIn.Kitchen];
   public alertMessage = '';
   public userType: string;
   public loading = false;
@@ -121,6 +124,7 @@ export class AddArticleComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'deposit': {
+      'required': 'Este campo es requerido'
     },
     'location': {
     }
@@ -152,9 +156,11 @@ export class AddArticleComponent implements OnInit {
     this.getMakes();
     if (this.operation === 'update') {
       this.taxes = this.article.taxes;
+      this.otherFields = this.article.otherFields;
       this.setValuesForm();
     } else if (this.operation === 'view') {
       this.taxes = this.article.taxes;
+      this.otherFields = this.article.otherFields;
       this.readonly = true;
       this.setValuesForm();
     }
@@ -168,71 +174,71 @@ export class AddArticleComponent implements OnInit {
 
     this.articleForm = this._fb.group({
       '_id': [this.article._id, [
-      ]
+        ]
       ],
       'code': [this.article.code, [
         Validators.required,
         Validators.maxLength(10)
-      ]
+        ]
       ],
       'make': [this.article.make, [
-      ]
+        ]
       ],
       'description': [this.article.description, [
         Validators.required
-      ]
+        ]
       ],
       'posDescription': [this.article.posDescription, [
         Validators.maxLength(20)
-      ]
+        ]
       ],
       'basePrice': [this.article.basePrice, [
         Validators.required
-      ]
+        ]
       ],
       'costPrice': [this.article.costPrice, [
         Validators.required
-      ]
+        ]
       ],
       'markupPercentage': [this.article.markupPercentage, [
         Validators.required
-      ]
+        ]
       ],
       'markupPrice': [this.article.markupPrice, [
         Validators.required
-      ]
+        ]
       ],
       'salePrice': [this.article.salePrice, [
         Validators.required
-      ]
+        ]
       ],
       'category': [this.article.category, [
         Validators.required
-      ]
+        ]
       ],
       'deposit' : [this.article.deposit, [
-      ]
+        ]
       ],
-     'location' : [this.article.location, [
-      ]
+      'location' : [this.article.location, [
+        ]
       ],
       'observation': [this.article.observation, [
-      ]
+        ]
       ],
       'barcode': [this.article.barcode, [
-      ]
+        ]
       ],
       'printIn': [this.article.printIn, [
-      ]
+        ]
       ],
       'allowPurchase': [this.article.allowPurchase, [
-      ]
+        ]
       ],
       'allowSale': [this.article.allowSale, [
-      ]
+        ]
       ],
       'allowSaleWithoutStock': [this.article.allowSaleWithoutStock, [
-      ]
+        ]
       ]
     });
 
@@ -438,7 +444,7 @@ export class AddArticleComponent implements OnInit {
   }
 
   public updatePrices(op): void {
-
+    
     switch (op) {
       case 'basePrice':
         if (this.taxes.length > 0) {
@@ -464,6 +470,25 @@ export class AddArticleComponent implements OnInit {
             articleTax.taxBase = this.articleForm.value.basePrice;
             articleTax.taxAmount = this.articleForm.value.basePrice * articleTax.percentage / 100;
             this.articleForm.value.costPrice += (articleTax.taxAmount);
+          }
+          this.articleForm.value.costPrice += this.articleForm.value.basePrice;
+        } else {
+          this.articleForm.value.costPrice = this.articleForm.value.basePrice;
+        }
+        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        }
+        break;
+      case 'otherFields':
+        if (this.otherFields.length > 0) {
+          this.articleForm.value.costPrice = 0;
+          for (const otherField of this.otherFields) {
+            if(otherField.type === ArticleFieldType.Percentage) {
+              this.articleForm.value.costPrice += this.articleForm.value.basePrice * parseInt(otherField.value) / 100;
+            } else  if(otherField.type === ArticleFieldType.Number) {
+              this.articleForm.value.costPrice += parseInt(otherField.value);
+            }
           }
           this.articleForm.value.costPrice += this.articleForm.value.basePrice;
         } else {
@@ -623,6 +648,7 @@ export class AddArticleComponent implements OnInit {
         this.article.containsVariants = false;
       }
       this.article.taxes = this.taxes;
+      this.article.otherFields = this.otherFields;
       if (this.operation === 'add') {
         this.saveArticle();
       } else if (this.operation === 'update') {
@@ -653,7 +679,7 @@ export class AddArticleComponent implements OnInit {
                     this.addVariants(this.article);
                   } else {
                     this.loading = false;
-                    this.showMessage('El artículo se ha añadido con éxito.', 'success', false);
+                    this.showMessage('El producto se ha añadido con éxito.', 'success', false);
                   }
                 },
                 (error) => {
@@ -666,7 +692,7 @@ export class AddArticleComponent implements OnInit {
               this.addVariants(this.article);
             } else {
               this.loading = false;
-              this.showMessage('El artículo se ha añadido con éxito.', 'success', false);
+              this.showMessage('El producto se ha añadido con éxito.', 'success', false);
             }
           }
         }
@@ -699,7 +725,7 @@ export class AddArticleComponent implements OnInit {
                     this.addVariants(this.article);
                   } else {
                     this.loading = false;
-                    this.showMessage('El artículo se ha actualizado con éxito.', 'success', false);
+                    this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
                   }
                 },
                 (error) => {
@@ -711,7 +737,7 @@ export class AddArticleComponent implements OnInit {
               this.addVariants(this.article);
             } else {
               this.loading = false;
-              this.showMessage('El artículo se ha actualizado con éxito.', 'success', false);
+              this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
             }
           }
         }
@@ -727,6 +753,7 @@ export class AddArticleComponent implements OnInit {
   public cleanForm() {
     this.article = new Article();
     this.taxes = new Array();
+    this.otherFields = new Array();
     this.filesToUpload = null;
     this.buildForm();
     this.variants = new Array();
@@ -770,6 +797,11 @@ export class AddArticleComponent implements OnInit {
   public addArticleTaxes(articleTaxes: Taxes[]): void {
     this.taxes = articleTaxes;
     this.updatePrices('taxes');
+  }
+
+  public addArticleFields(otherFields: ArticleFields[]): void {
+    this.otherFields = otherFields;
+    this.updatePrices('otherFields');
   }
 
   public addStock(articleStock: ArticleStock): void {
@@ -864,7 +896,7 @@ export class AddArticleComponent implements OnInit {
       this.saveArticleChild(articleParent, articleChild);
     } else {
       this.loading = false;
-      this.showMessage('El artículo se ha añadido con éxito.', 'success', false);
+      this.showMessage('El producto se ha añadido con éxito.', 'success', false);
     }
   }
 

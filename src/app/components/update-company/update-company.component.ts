@@ -210,10 +210,8 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
     if (!this.company.emails) this.company.emails = '';
-    if (!this.company.birthday) {
-      this.company.birthday = null;
-    } else if (moment(this.company.birthday, 'YYYY-MM-DDTHH:mm:ss.000Z', true).isValid()) {
-      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY');
+    if (this.company.birthday) {
+      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
     }
     if (!this.company.gender) this.company.gender = null;
     
@@ -232,10 +230,9 @@ export class UpdateCompanyComponent implements OnInit {
     } else {
       vatConditionID = this.company.vatCondition._id;
     }
-
     if(!this.company.observation) this.company.observation = '';
     
-    this.companyForm.setValue({
+    const values = {
       '_id': this.company._id,
       'code': this.company.code,
       'name': this.company.name,
@@ -252,7 +249,9 @@ export class UpdateCompanyComponent implements OnInit {
       'gender': this.company.gender,
       'birthday': this.company.birthday,
       'observation' : this.company.observation
-    });
+    };
+
+    this.companyForm.setValue(values);
   }
 
   public getVATConditions(): void {

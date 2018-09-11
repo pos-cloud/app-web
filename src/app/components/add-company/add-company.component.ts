@@ -187,7 +187,7 @@ export class AddCompanyComponent  implements OnInit {
       'emails': [this.company.emails, [
         ]
       ],
-      'birthday': [ '', [
+      'birthday': [null, [
         ]
       ],
       'gender' : [this.company.gender,[
@@ -237,10 +237,10 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
     if (!this.company.emails) this.company.emails = '';
-    if (!this.company.birthday) {
-      this.company.birthday = null;
+    if (this.company.birthday) {
+      this.company.birthday = moment(this.company.birthday).format('YYYY-MM-DD');
     } else {
-      this.company.birthday = moment(this.company.birthday, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
+      this.company.birthday = null;
     }
     if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
     if (!this.company.gender) this.company.gender = null;
@@ -256,7 +256,6 @@ export class AddCompanyComponent  implements OnInit {
     } else {
       vatCondition = this.company.vatCondition;
     }
-
     if(!this.company.observation) this.company.observation = '';
     
     this.companyForm.setValue({
@@ -334,14 +333,10 @@ export class AddCompanyComponent  implements OnInit {
       this.companyForm.value.CUIT = '';
     }
     this.company = this.companyForm.value;
-    if (!this.company.birthday) {
-      this.saveCompany();
-    } else if (moment(this.company.birthday, 'DD/MM/YYYY', true).isValid()) {
-      this.company.birthday = moment(this.company.birthday, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
-      this.saveCompany();
-    } else {
-      this.formErrors.birthday = "La fecha es inválida";
-    }
+    if (this.company.birthday) {
+      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+    } 
+    this.saveCompany();
   }
 
   public saveCompany(): void {

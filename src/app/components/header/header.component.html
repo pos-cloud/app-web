@@ -285,7 +285,7 @@
           </div>
           <div *ngIf="modules && modules.stock">
             <button class="dropdown-item"
-                    [routerLink]="['admin','stock-de-articulos']"
+                    [routerLink]="['admin','stock-de-productos']"
                     [routerLinkActive]="['active']">
               Inventario
             </button>
@@ -356,6 +356,11 @@
                   [routerLink]="['admin','impuestos']"
                   [routerLinkActive]="['active']">
             Impuestos
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','campos-de-productos']"
+                  [routerLinkActive]="['active']">
+            Campos de producto
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','metodos-de-pago']"

@@ -102,6 +102,7 @@
 								</div>
 							</div>
 						</div>
+						<app-add-article-fields (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"></app-add-article-fields>
 						<app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [articleTaxes]="taxes"></app-add-article-tax>
 						<div class="row">
 							<div class="form-group col-md-12">
@@ -116,7 +117,7 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="form-group col-md-6">
+							<div class="form-group col-md-4">
 								<label for="markupPercentage" class="control-label">Margen:</label>
 								<div class="input-group">
 									<span class="input-group-addon">%</span>
@@ -126,7 +127,7 @@
 									{{ formErrors.markupPercentage }}
 								</div>
 							</div>
-							<div class="form-group col-md-6">
+							<div class="form-group col-md-4">
 								<label for="markupPrice" class="control-label">Utilidad:</label>
 								<div class="input-group">
 									<span class="input-group-addon">$</span>
@@ -136,9 +137,7 @@
 									{{ formErrors.markupPrice }}
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="form-group col-md-12">
+							<div class="form-group col-md-4">
 								<label for="salePrice" class="control-label">Precio de Venta:</label>
 								<div class="input-group">
 									<span class="input-group-addon">$</span>
@@ -165,7 +164,6 @@
 								</div>
 							</div>
 						</div>
-						
 						<div class="row">
 							<div class="form-group col-md-12">
 								<label for="location" class="control-label">Ubicacion:</label>
@@ -177,7 +175,6 @@
 								</div>
 							</div>
 						</div>
-						
 					</ng-template>
 				</ngb-tab>
 				<ngb-tab title="Observaciones">
@@ -201,7 +198,7 @@
 					<ng-template ngbTabContent>
 						<div class="row">
 							<div class="form-group col-md-12">
-								<label for="allowPurchase" class="control-label">¿El artículo está habilitado para la compra?</label>
+								<label for="allowPurchase" class="control-label">¿El producto está habilitado para la compra?</label>
 								<select class="form-control" formControlName="allowPurchase">
 									<option [value]="true" [disabled]="readonly">Si</option>
 									<option [value]="false" [disabled]="readonly">No</option>
@@ -210,7 +207,7 @@
 						</div>
 						<div class="row">
 							<div class="form-group col-md-12">
-								<label for="allowSale" class="control-label">¿El artículo está habilitado para la venta?</label>
+								<label for="allowSale" class="control-label">¿El producto está habilitado para la venta?</label>
 								<select class="form-control" formControlName="allowSale">
 									<option [value]="true" [disabled]="readonly">Si</option>
 									<option [value]="false" [disabled]="readonly">No</option>
@@ -219,7 +216,7 @@
 						</div>
 						<div class="row">
 							<div class="form-group col-md-12">
-								<label for="allowSaleWithoutStock" class="control-label">¿Se puede vender el artículo sin stock disponible?</label>
+								<label for="allowSaleWithoutStock" class="control-label">¿Se puede vender el producto sin stock disponible?</label>
 								<select class="form-control" formControlName="allowSaleWithoutStock">
 									<option [value]="true" [disabled]="readonly">Si</option>
 									<option [value]="false" [disabled]="readonly">No</option>
