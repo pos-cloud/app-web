@@ -21,7 +21,7 @@ export class ListCashBoxesComponent implements OnInit {
   public areCashBoxesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['code'];
+  public orderTerm: string[] = ['-openingDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
