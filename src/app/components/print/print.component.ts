@@ -561,11 +561,11 @@ export class PrintComponent implements OnInit {
         this.doc.text("DNI:", 8, 60)
         this.doc.setFontType('normal')
         this.doc.text(this.company.DNI, 17, 60)
-      } else if (this.company.DNI) {
+      } else if (!this.company.DNI) {
         this.doc.setFontType('bold')
         this.doc.text("CUIT:", 8, 60)
         this.doc.setFontType('normal')
-        this.doc.text(this.company.CUIT, 17, 60)
+        this.doc.text(this.company.CUIT, 18, 60)
       }
       this.doc.setFontType('normal')
       this.doc.text(this.company.vatCondition.description, 40, 65)
