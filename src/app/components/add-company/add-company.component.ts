@@ -27,7 +27,7 @@ export class AddCompanyComponent  implements OnInit {
   public types: CompanyType[];
   public vatConditions: VATCondition[];
   public dateFormat = new DateFormatPipe();
-  public identityTypes: string[] = ["CUIT","DNI"];
+  public identityTypes: string[] = ["DNI","CUIT"];
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = '';
@@ -131,7 +131,6 @@ export class AddCompanyComponent  implements OnInit {
     this.buildForm();
     this.getVATConditions();
     this.getLastCompany();
-    this.identityTypeSelected = "CUIT";
   }
 
   ngAfterViewInit() {
@@ -288,6 +287,11 @@ export class AddCompanyComponent  implements OnInit {
         } else {
           this.vatConditions = result.vatConditions;
           this.company.vatCondition = this.vatConditions[0];
+          if(this.company.vatCondition && this.company.vatCondition.description === "Consumidor Final") {
+            this.identityTypeSelected = "DNI";
+          } else {
+            this.identityTypeSelected = "CUIT";
+          }
         }
         this.loading = false;
       },

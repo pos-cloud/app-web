@@ -120,11 +120,8 @@ export class ConfigBackupComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  
-
   public upload() {
       this.makeFileRequest("http://localhost:3000/api/upload", [], this.filesToUpload).then((result) => {
-          console.log(result);
       }, (error) => {
           console.error(error);
       });
@@ -168,7 +165,6 @@ export class ConfigBackupComponent implements OnInit {
           this.cert = true;
           this.showMessage("Los archivos se generaron correctamente.", "success", false);
           this.routeFile = '-' + this._userService.getDatabase()+ '-certificados-keys-poscloud.csr';
-          console.log (this.routeFile);
           this.hideMessage();
           
         }

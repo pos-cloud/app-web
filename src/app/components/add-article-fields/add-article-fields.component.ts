@@ -118,17 +118,15 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public changeValues(): void {
-    console.log("changeValues");
+
     this.field.articleField = this.articleFieldsForm.value.articleField;
     this.field.name = this.field.name;
     this.field.type = this.field.type;
     this.field.value = this.field.value;
-    console.log(this.field);
     this.setValueForm();
   }
 
   public setValueForm(): void {
-    console.log("setValueForm");
 
     const values = {
       'articleField': this.field.articleField,
@@ -136,8 +134,6 @@ export class AddArticleFieldsComponent implements OnInit {
       'type': this.field.articleField.type,
       'value' : this.field.articleField.value
     };
-
-    console.log(values);
 
     this.articleFieldsForm.setValue(values);
   }
@@ -164,7 +160,6 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public addArticleFields(): void {
-    console.log("addArticleFields");
     this.field = this.articleFieldsForm.value;
     this.fields.push(this.field);
     this.eventAddArticleFields.emit(this.fields);

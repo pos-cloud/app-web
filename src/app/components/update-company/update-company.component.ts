@@ -25,7 +25,7 @@ export class UpdateCompanyComponent implements OnInit {
   @Input() readonly: boolean;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
-  public identityTypes: string[] = ["CUIT", "DNI"];
+  public identityTypes: string[] = ["DNI", "CUIT"];
   public identityTypeSelected: string;
   public companyForm: FormGroup;
   public alertMessage: string = '';
@@ -116,15 +116,21 @@ export class UpdateCompanyComponent implements OnInit {
     }
 
     this.vatConditions = new Array();
+
+    if (this.company.CUIT && this.company.CUIT !== '') {
+      this.identityTypeSelected = "CUIT";
+    } else {
+      this.identityTypeSelected = "DNI";
+    }
     
+    if (this.company.birthday) {
+      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+    } else {
+      this.company.birthday = null;
+    }
+
     this.buildForm();
     this.getVATConditions();
-
-    if (this.company.DNI && this.company.DNI !== '') {
-      this.identityTypeSelected = "DNI";
-    } else {
-      this.identityTypeSelected = "CUIT";
-    }
 
     this.setValueForm();
   }
@@ -184,7 +190,7 @@ export class UpdateCompanyComponent implements OnInit {
       'emails': [this.company.emails, [
         ]
       ],
-      'birthday': ['', [
+      'birthday': [this.company.birthday, [
       ]],
       'gender' : [this.company.gender,[]],
       'observation' : [this.company.observation,[]]
@@ -210,15 +216,18 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
     if (!this.company.emails) this.company.emails = '';
-    if (this.company.birthday) {
-      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
-    }
     if (!this.company.gender) this.company.gender = null;
     
-    if (this.company.DNI && this.company.DNI !== '') {
-      this.identityTypeSelected = "DNI";
-    } else {
+    if (this.company.CUIT && this.company.CUIT !== '') {
       this.identityTypeSelected = "CUIT";
+    } else {
+      this.identityTypeSelected = "DNI";
+    }
+
+    if (this.company.birthday) {
+      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+    } else {
+      this.company.birthday = null;
     }
     
     let vatConditionID = '';
@@ -307,14 +316,10 @@ export class UpdateCompanyComponent implements OnInit {
         this.companyForm.value.CUIT = '';
       }
       this.company = this.companyForm.value;
-      if (!this.company.birthday) {
-        this.saveChanges();
-      } else if (moment(this.company.birthday, 'DD/MM/YYYY', true).isValid()) {
-        this.company.birthday = moment(this.company.birthday, 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
-        this.saveChanges();
-      } else {
-        this.formErrors.birthday = "La fecha es inválida";
+      if (this.company.birthday) {
+        this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
       }
+      this.saveChanges();
     }
   }
 
