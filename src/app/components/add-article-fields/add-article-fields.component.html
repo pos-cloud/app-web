@@ -1,0 +1,53 @@
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="articleFieldsForm" #formAddVariantValue="ngForm" (ngSubmit)="addArticleFields()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-5">
+          <label for="articleField" class="control-label">Campo</label>
+          <select class="form-control" formControlName="articleField" (change)="changeValues()">
+            <option *ngFor="let articleField of articleFields" [ngValue]="articleField">{{articleField.name}}</option>
+          </select>
+          <div *ngIf="formErrors.name" class="alert alert-danger">
+            {{ formErrors.name }}
+          </div>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="value" class="control-label" *ngIf="!articleFieldsForm.value.articleField">Valor:</label>
+          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.type === 'Número'">Monto:</label>
+          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.type === 'Alfabético'">Valor:</label>
+          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.type === 'Porcentaje'">Porcentaje:</label>
+          <div class="input-group">
+            <input value="number" class="form-control" formControlName="value" name="value" id="value" step="1" [readonly]="articleFieldsForm.value.articleField && !articleFieldsForm.value.articleField.modify"/>
+          </div>
+          <div *ngIf="formErrors.value" class="alert alert-danger">
+            {{ formErrors.value }}
+          </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="value" class="control-label">Acción</label>
+          <button type="submit" class="btn btn-success" [disabled]="!articleFieldsForm.valid || loading">Agregar</button>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-hover">
+          <tbody>
+            <tr *ngFor="let fieldAux of fields">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticlField(fieldAux)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+              <td class="flat">{{fieldAux.name}}</td>
+              <td class="flat">{{fieldAux.value}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</section>

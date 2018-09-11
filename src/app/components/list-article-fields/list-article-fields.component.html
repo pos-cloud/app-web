@@ -1,0 +1,88 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areArticleFieldsEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Listado de Campos de producto
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar campo de producto</i></button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+        <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar Campos de producto</button> -->
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+        </span>
+      </div>
+    </div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th><i class="fa fa-bars"></i></th>
+              <th (click)="orderBy('name')">Nombre </th>
+              <th (click)="orderBy('type')">Tipo </th>
+              <th (click)="orderBy('value')">Valor </th>
+              <th (click)="orderBy('modify')">Modifica </th>
+            </tr>
+            <tr *ngIf="areFiltersVisible" class="filters">
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Porcentaje..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterValue" placeholder="Valor..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterModify" placeholder="Modifica..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let articleField of articleFields | filter: filterName:'name' 
+                                                          | filter: filterType:'percentage' 
+                                                          | filter: filterValue:'value'
+                                                          | filter: filterModify:'modify'
+                                                          | orderBy: orderTerm: propertyTerm
+                                                          | paginate: { itemsPerPage: itemsPerPage, 
+                                                                        currentPage: p, 
+                                                                        totalItems: totalItems
+                                                                      }">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', articleField)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', articleField)" title="Modificar"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', articleField)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              </td>
+              <td class="flat">{{articleField.name}}</td>
+              <td class="flat">{{articleField.type}}</td>
+              <td class="flat">{{articleField.value}}</td>
+              <td class="flat">{{articleField.modify}}</td>
+            </tr>
+            <tr align="center" *ngIf="areArticleFieldsEmpty">
+              <td colspan="4">No se encontraron campos de producto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls 
+                      class="my-pagination"
+                      (pageChange)="p=$event" 
+                      #api 
+                      previousLabel="Ant." 
+                      nextLabel="Sig."
+                      autoHide="true">
+            </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 ítems</option>
+              <option [value]="10">Mostrar 10 ítems</option>
+              <option [value]="15">Mostrar 15 ítems</option>
+              <option [value]="20">Mostrar 20 ítems</option>
+              <option [value]="50">Mostrar 50 ítems</option>
+              <option [value]="100">Mostrar 100 ítems</option>
+            </select>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>

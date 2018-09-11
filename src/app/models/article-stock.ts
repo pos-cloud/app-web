@@ -7,6 +7,5 @@ export class ArticleStock {
 	public realStock: number = 0.00;
 	public minStock: number = 0.00;
 
-
 	constructor() { }
 }

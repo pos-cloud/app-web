@@ -568,13 +568,13 @@ export class AddSaleOrderComponent implements OnInit {
     if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       !movementOfArticle.article.allowSale) {
       allowed = false;
-      this.showMessage("El artículo no esta habilitado para la venta", 'info', true);
+      this.showMessage("El producto no esta habilitado para la venta", 'info', true);
     }
 
     if (this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
       !movementOfArticle.article.allowPurchase) {
       allowed = false;
-      this.showMessage("El artículo no esta habilitado para la compra", 'info', true);
+      this.showMessage("El producto no esta habilitado para la compra", 'info', true);
     }
 
     if (Config.modules.stock &&
@@ -839,7 +839,7 @@ export class AddSaleOrderComponent implements OnInit {
           }, (reason) => {
           });
         } else {
-          this.showMessage("No se ingresaron artículos a la transacción.", 'info', true);
+          this.showMessage("No se ingresaron productos a la transacción.", 'info', true);
         }
        break;
       case 'cancel':
@@ -1261,7 +1261,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       }
     } else {
-      this.showMessage("No se encuentran artículos en la transacción", 'info', true);
+      this.showMessage("No se encuentran productos en la transacción", 'info', true);
     }
   }
 

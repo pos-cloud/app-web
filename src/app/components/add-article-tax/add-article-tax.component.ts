@@ -6,10 +6,8 @@ import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng
 
 import { Taxes } from './../../models/taxes';
 import { Tax } from './../../models/tax';
-import { Article } from '../../models/article';
 
 import { TaxService } from './../../services/tax.service';
-import { AttrAst } from '@angular/compiler';
 
 @Component({
   selector: 'app-add-article-tax',

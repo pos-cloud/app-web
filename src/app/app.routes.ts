@@ -73,6 +73,7 @@ import { ListDepositComponent } from './components/list-deposit/list-deposit.com
 import { ListLocationComponent } from './components/list-location/list-location.component';
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
+import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -474,7 +475,7 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/stock-de-articulos',
+    path: 'admin/stock-de-productos',
     component: ListArticleStocksComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
@@ -494,6 +495,12 @@ const _routes: Routes = [
   {
     path: 'admin/ubicaciones',
     component: ListLocationComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/campos-de-productos',
+    component: ListArticleFieldsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

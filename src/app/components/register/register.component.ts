@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
-  public categories: string[] = ["Restaurante", "Delivery", "Bar", "Tienda de ropa", "Cafetería", "Kiosco", "Venta de artículos","Otro"];
+  public categories: string[] = ["Restaurante", "Delivery", "Bar", "Tienda de ropa", "Cafetería", "Kiosco", "Venta de productos","Otro"];
 
   public formErrors = {
     'employeeName': '',
@@ -178,7 +178,7 @@ export class RegisterComponent implements OnInit {
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = false;
         break;
-      case "Venta de artículos":
+      case "Venta de productos":
         this.registerForm.value.resto = false;
         this.registerForm.value.delivery = false;
         break;

@@ -254,9 +254,9 @@ export class AddVariantComponent implements OnInit {
 
       this.variant.articleParent = this.article;
 
-      //Consultamos si ya fue creado algun artículo Child
+      //Consultamos si ya fue creado algun producto Child
       if (this.articlesWithVariants.length === 0) {
-        //Si no fue creado un articulo child lo creamos, le asigamos nombre de variante y almacenamos
+        //Si no fue creado un producto child lo creamos, le asigamos nombre de variante y almacenamos
         let article: Article = this.copyArticle(this.article);
         article.variantDescription = this.variant.value.description;
         this.variant.articleChild = article;
@@ -268,9 +268,9 @@ export class AddVariantComponent implements OnInit {
         this.variantsByArticles[article.variantDescription].push(this.variant);
         this.lastVariant = this.variant;
       } else {
-        //Si fue creado algun artículo Child, consultamos si el tipo de variante existe
+        //Si fue creado algun producto Child, consultamos si el tipo de variante existe
         if (this.variantTypeExists(this.variant.type)) {
-          //Juntamos las variantes del primer artículo existente por su descripcion para poder unirlas al nuevo artículo Child
+          //Juntamos las variantes del primer producto existente por su descripcion para poder unirlas al nuevo producto Child
           //y solo cambiar la variante que nos hace falta
           this.variant.articleParent = this.lastVariant.articleParent;
           this.variant.articleChild = this.lastVariant.articleChild;
@@ -298,13 +298,13 @@ export class AddVariantComponent implements OnInit {
               this.variantsByArticles[article.variantDescription] = this.copyArray(variantsByArticlesAux);
             }
           }
-          //Almacenamos nuevo artículo, y almacenamos en ese artículos todas las variantes que le corresponden
+          //Almacenamos nuevo producto, y almacenamos en ese productos todas las variantes que le corresponden
         } else {
-          //Creamos una copia de variantes de articulos y lo vaciamos
+          //Creamos una copia de variantes de productos y lo vaciamos
           let variantsByArticlesAux = new Array();
           variantsByArticlesAux = this.copyArray(this.variantsByArticles);
           this.variantsByArticles = new Array();
-          //Si el tipo no existe recorremos todos los artículos y le agregamos la variante solicitada
+          //Si el tipo no existe recorremos todos los productos y le agregamos la variante solicitada
           for (let articleAux of this.articlesWithVariants) {
             //Guardamos las variantes en un arreglo provisorio para eliminar el elemento del arreglo
             let variantsByArticleAux = this.copyArray(variantsByArticlesAux[articleAux.variantDescription]);

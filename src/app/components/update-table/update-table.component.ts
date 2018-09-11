@@ -191,7 +191,7 @@ export class UpdateTableComponent implements OnInit {
           this.loading = false;
         } else {
           this.table = result.table;
-          this.showMessage("El artículo se ha actualizado con éxito.", 'success', false);
+          this.showMessage("El producto se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;

@@ -3,6 +3,7 @@ import { Category } from './category';
 import { Taxes } from './taxes';
 import { Deposit } from './deposit';
 import { Location } from './location';
+import { ArticleFields } from './article-fields';
 
 export class Article {
 
@@ -16,6 +17,7 @@ export class Article {
     public observation: string;
     public basePrice: number = 0.00;
     public taxes: Taxes[];
+    public otherFields: ArticleFields[];
     public costPrice: number = 0.00;
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;

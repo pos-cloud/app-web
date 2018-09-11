@@ -46,6 +46,7 @@ import { VariantValueService } from './services/variant-value.service';
 import { DepositService } from './services/deposit.service';
 import { LocationService } from './services/location.service';
 import { CompanyNewsService } from './services/company-news.service';
+import { ArticleFieldService } from './services/article-field.service';
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -171,6 +172,11 @@ import { DeleteLocationComponent } from './components/delete-location/delete-loc
 import { ListLocationComponent } from './components/list-location/list-location.component';
 import { CompanyNewsComponent } from './components/company-news/company-news.component';
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
+import { AddArticleFieldComponent } from './components/add-article-field/add-article-field.component';
+import { UpdateArticleFieldComponent } from './components/update-article-field/update-article-field.component';
+import { DeleteArticleFieldComponent } from './components/delete-article-field/delete-article-field.component';
+import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
+import { AddArticleFieldsComponent } from './components/add-article-fields/add-article-fields.component';
 
 @NgModule({
   declarations: [
@@ -287,7 +293,12 @@ import { ListMovementOfCashesComponent } from './components/list-movements-of-ca
     DeleteLocationComponent,
     ListLocationComponent,
     CompanyNewsComponent,
-    ListMovementOfCashesComponent
+    ListMovementOfCashesComponent,
+    AddArticleFieldComponent,
+    UpdateArticleFieldComponent,
+    DeleteArticleFieldComponent,
+    ListArticleFieldsComponent,
+    AddArticleFieldsComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -318,7 +329,10 @@ import { ListMovementOfCashesComponent } from './components/list-movements-of-ca
     CashBoxComponent,
     AddLocationComponent,
     UpdateLocationComponent,
-    DeleteLocationComponent
+    DeleteLocationComponent,
+    AddArticleFieldComponent,
+    UpdateArticleFieldComponent,
+    DeleteArticleFieldComponent
   ],
   imports: [
     BrowserModule,
@@ -371,7 +385,8 @@ import { ListMovementOfCashesComponent } from './components/list-movements-of-ca
     TaxService,
     DepositService,
     LocationService,
-    CompanyNewsService
+    CompanyNewsService,
+    ArticleFieldService
   ],
   bootstrap: [AppComponent]
 })
