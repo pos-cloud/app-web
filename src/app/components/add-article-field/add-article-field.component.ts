@@ -27,7 +27,8 @@ export class AddArticleFieldComponent  implements OnInit {
   public resultUpload;
 
   public formErrors = {
-    'name': ''
+    'name': '',
+    'value': ''
   };
 
   public validationMessages = {

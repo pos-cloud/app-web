@@ -27,7 +27,8 @@ export class UpdateArticleFieldComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
-    'name': ''
+    'name': '',
+    'value':''
   };
 
   public validationMessages = {
