@@ -371,10 +371,10 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <!-- <li class="nav-item"  *ngIf="accessType === 'Cloud'">
+      <li class="nav-item">
         <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
         <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
-      </li> -->
+      </li>
       <li class="nav-item">
         <a class="nav-link btn" *ngIf="identity" (click)="logout()">
           <i class="fa fa-sign-out"></i>Cerrar Sesión</a>
