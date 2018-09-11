@@ -84,7 +84,7 @@ export class AddArticleComponent implements OnInit {
     'markupPrice': '',
     'salePrice': '',
     'category': '',
-    'deposit' : ''
+    'deposit' : '',
     'location': ''
   };
 
