@@ -85,7 +85,7 @@ export class AddArticleComponent implements OnInit {
     'salePrice': '',
     'category': '',
     'deposit' : ''
-    // 'location': ''
+    'location': ''
   };
 
   public validationMessages = {
@@ -121,7 +121,8 @@ export class AddArticleComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'deposit': {
-      'required': 'Este campo es requerido'
+    },
+    'location': {
     }
   };
 
@@ -212,9 +213,9 @@ export class AddArticleComponent implements OnInit {
       'deposit' : [this.article.deposit, [
       ]
       ],
-      // 'location' : [this.article.location, [
-     // ]
-     // ],
+     'location' : [this.article.location, [
+      ]
+      ],
       'observation': [this.article.observation, [
       ]
       ],
@@ -546,6 +547,17 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
+    let location;
+    if (!this.article.location) {
+      location = null;
+    } else {
+      if (this.article.location._id) {
+        location = this.article.location._id;
+      } else {
+        location = this.article.location;
+      }
+    }
+
     if (!this.article.description) { this.article.description = ''; }
     if (!this.article.posDescription) { this.article.posDescription = ''; }
     if (!this.article.basePrice) { this.article.basePrice = 0.00; }
@@ -576,6 +588,7 @@ export class AddArticleComponent implements OnInit {
       'code': this.article.code,
       'make': make,
       'deposit' : deposit,
+      'location' : location,
       'description': this.article.description,
       'posDescription': this.article.posDescription,
       'basePrice': this.article.basePrice,
