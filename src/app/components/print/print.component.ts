@@ -752,25 +752,28 @@ export class PrintComponent implements OnInit {
       if (this.transaction.company &&
           this.transaction.company.vatCondition &&
           this.transaction.company.vatCondition.discriminate &&
-          this.transaction.taxes.length > 0 &&
           Config.companyVatCondition.description === "Responsable Inscripto") {
-          for (let tax of this.transaction.taxes) {
-            rowTotals += 8;
-            this.doc.setFontType('bold');
-            this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals);
-            this.doc.setFontType('normal');
-            this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 180, rowTotals);
-            subtotal += this.roundNumber.transform(tax.taxBase);
-          }
-        
-          rowTotals += 8;
-          if (this.transaction.exempt && this.transaction.exempt > 0) {
-            this.doc.setFontType('bold');
-            this.doc.text("Exento:", 147, rowTotals);
-            this.doc.setFontType('normal');
-            this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals);
-            rowTotals += 8;
-          }
+
+            if(this.transaction.taxes.length > 0) {
+              for (let tax of this.transaction.taxes) {
+                rowTotals += 8;
+                this.doc.setFontType('bold');
+                this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals);
+                this.doc.setFontType('normal');
+                this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 180, rowTotals);
+                subtotal += this.roundNumber.transform(tax.taxBase);
+              }
+            }
+
+            if (this.transaction.exempt && this.transaction.exempt > 0) {
+              rowTotals += 8;
+              this.doc.setFontType('bold');
+              this.doc.text("Exento:", 147, rowTotals);
+              this.doc.setFontType('normal');
+              this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals);
+              subtotal += this.transaction.exempt;
+              rowTotals += 8;
+            }
       } else {
         rowTotals += 8;
         subtotal = this.transaction.totalPrice;
