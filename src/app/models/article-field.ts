@@ -2,7 +2,7 @@ export class ArticleField {
 
 	public _id: string;
 	public name: string;
-	public type: ArticleFieldType = ArticleFieldType.Percentage;
+	public datatype: ArticleFieldType = ArticleFieldType.Percentage;
 	public value: string;
 	public modify: boolean = false;
 

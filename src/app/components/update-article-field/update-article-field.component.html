@@ -16,7 +16,7 @@
       <div class="row">
         <div class="form-group col-md-12">
           <label for="name" class="control-label">Nombre:</label>
-          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+          <input type="text" class="form-control" formControlName="name" name="name" id="name"/>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
           </div>
@@ -26,7 +26,7 @@
         <div class="form-group col-md-6">
           <label for="type" class="control-label">Tipo</label>
           <select class="form-control" formControlName="type">
-            <option *ngFor="let type of types" [selected]="articleField.type === type">{{ type }}</option>
+            <option *ngFor="let datatype of datatypes" [selected]="articleField.datatype === datatype">{{ datatype }}</option>
           </select>
         </div>
         <div class="form-group col-md-6">

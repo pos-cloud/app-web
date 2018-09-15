@@ -22,21 +22,21 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Nombre </th>
-              <th (click)="orderBy('type')">Tipo </th>
+              <th (click)="orderBy('datatype')">Tipo de dato </th>
               <th (click)="orderBy('value')">Valor </th>
               <th (click)="orderBy('modify')">Modifica </th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Porcentaje..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDatatype" placeholder="Tipo de dato..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterValue" placeholder="Valor..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterModify" placeholder="Modifica..." ></th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let articleField of articleFields | filter: filterName:'name' 
-                                                          | filter: filterType:'percentage' 
+                                                          | filter: filterDatatype:'datatype' 
                                                           | filter: filterValue:'value'
                                                           | filter: filterModify:'modify'
                                                           | orderBy: orderTerm: propertyTerm
@@ -50,12 +50,12 @@
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', articleField)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td class="flat">{{articleField.name}}</td>
-              <td class="flat">{{articleField.type}}</td>
+              <td class="flat">{{articleField.datatype}}</td>
               <td class="flat">{{articleField.value}}</td>
               <td class="flat">{{articleField.modify}}</td>
             </tr>
             <tr align="center" *ngIf="areArticleFieldsEmpty">
-              <td colspan="4">No se encontraron campos de producto</td>
+              <td colspan="5">No se encontraron campos de producto</td>
             </tr>
           </tbody>
         </table>

@@ -3,6 +3,7 @@ import { Transaction } from './transaction';
 import { Make } from './make';
 import { Category } from './category';
 import { Taxes } from './taxes';
+import { ArticleFields } from './article-fields';
 
 export class MovementOfArticle {
 
@@ -11,6 +12,7 @@ export class MovementOfArticle {
     public description: string = '';
     public observation: string;
     public basePrice: number = 0.00;
+    public otherFields: ArticleFields[];
     public taxes: Taxes[];
     public costPrice: number = 0.00;
     public markupPercentage: number = 0.00;

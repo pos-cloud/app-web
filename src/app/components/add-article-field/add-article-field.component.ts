@@ -20,7 +20,7 @@ export class AddArticleFieldComponent  implements OnInit {
   public articleField: ArticleField;
   public articleFieldForm: FormGroup;
   public alertMessage: string = '';
-  public types: ArticleFieldType[] = [ ArticleFieldType.Percentage, ArticleFieldType.Number, ArticleFieldType.String ];
+  public datatypes: ArticleFieldType[] = [ ArticleFieldType.Percentage, ArticleFieldType.Number, ArticleFieldType.String ];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -64,7 +64,7 @@ export class AddArticleFieldComponent  implements OnInit {
           Validators.required
         ]
       ],
-      'type': [this.articleField.type, [
+      'datatype': [this.articleField.datatype, [
         ]
       ],
       'value': [this.articleField.value, [

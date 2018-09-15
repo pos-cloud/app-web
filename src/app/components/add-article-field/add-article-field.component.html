@@ -23,9 +23,9 @@
       </div>
       <div class="row">
         <div class="form-group col-md-6">
-          <label for="type" class="control-label">Tipo</label>
+          <label for="type" class="control-label">Tipo de dato</label>
           <select class="form-control" formControlName="type">
-            <option *ngFor="let type of types" [selected]="articleField.type === type">{{ type }}</option>
+            <option *ngFor="let datatype of datatypes" [selected]="articleField.datatype === datatype">{{ datatype }}</option>
           </select>
         </div>
           <div class="form-group col-md-6">

@@ -1,4 +1,4 @@
-<section class="container-fluid">
+<section class="container-fluid" *ngIf="articleFields.length > 0">
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -17,10 +17,9 @@
           </div>
         </div>
         <div class="form-group col-md-5">
-          <label for="value" class="control-label" *ngIf="!articleFieldsForm.value.articleField">Valor:</label>
-          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.type === 'Número'">Monto:</label>
-          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.type === 'Alfabético'">Valor:</label>
-          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.type === 'Porcentaje'">Porcentaje:</label>
+          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.datatype === 'Número'">Monto:</label>
+          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.datatype === 'Alfabético'">Valor:</label>
+          <label for="value" class="control-label" *ngIf="articleFieldsForm.value.datatype === 'Porcentaje'">Porcentaje:</label>
           <div class="input-group">
             <input value="number" class="form-control" formControlName="value" name="value" id="value" step="1" [readonly]="articleFieldsForm.value.articleField && !articleFieldsForm.value.articleField.modify"/>
           </div>
@@ -44,6 +43,7 @@
               </td>
               <td class="flat">{{fieldAux.name}}</td>
               <td class="flat">{{fieldAux.value}}</td>
+              <td class="flat">{{fieldAux.amount | currency:'USD':'1.2-2'}}</td>
             </tr>
           </tbody>
         </table>

@@ -21,7 +21,7 @@ export class UpdateArticleFieldComponent implements OnInit {
   @Input() readonly: boolean;
   public articleFieldForm: FormGroup;
   public alertMessage: string = '';
-  public types: ArticleFieldType[] = [ ArticleFieldType.Percentage, ArticleFieldType.Number, ArticleFieldType.String ];
+  public datatypes: ArticleFieldType[] = [ ArticleFieldType.Percentage, ArticleFieldType.Number, ArticleFieldType.String ];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -67,7 +67,7 @@ export class UpdateArticleFieldComponent implements OnInit {
           Validators.required
         ]
       ],
-      'type' : [this.articleField.type, [
+      'datatype' : [this.articleField.datatype, [
         ]
       ],
       'value' : [this.articleField.value, [
@@ -106,13 +106,13 @@ export class UpdateArticleFieldComponent implements OnInit {
 
     if(!this.articleField._id) { this.articleField._id = '' }
     if(!this.articleField.name) { this.articleField.name = '' }
-    if(!this.articleField.type) { this.articleField.type = ArticleFieldType.Percentage }
+    if(!this.articleField.datatype) { this.articleField.datatype = ArticleFieldType.Percentage }
     if(this.articleField.modify === undefined) { this.articleField.modify = false }
     
     this.articleFieldForm.setValue({
       '_id':this.articleField._id,
       'name': this.articleField.name,
-      'type': this.articleField.type,
+      'datatype': this.articleField.datatype,
       'value': this.articleField.value,
       'modify': this.articleField.modify
     });

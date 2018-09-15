@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ArticleFields } from './../../models/article-fields';
-import { ArticleField } from './../../models/article-field';
+import { ArticleField, ArticleFieldType } from './../../models/article-field';
 
 import { ArticleFieldService } from './../../services/article-field.service';
 
@@ -31,7 +31,7 @@ export class AddArticleFieldsComponent implements OnInit {
   public formErrors = {
     'articleField': '',
     'name': '',
-    'type': '',
+    'datatype': '',
     'value': '',
   };
 
@@ -42,7 +42,7 @@ export class AddArticleFieldsComponent implements OnInit {
     'name': {
       'required': 'Este campo es requerido.'
     },
-    'type': {
+    'datatype': {
       'required': 'Este campo es requerido.'
     },
     'value': {
@@ -83,7 +83,7 @@ export class AddArticleFieldsComponent implements OnInit {
           Validators.required
         ]
       ],
-      'type': [this.field.type, [
+      'datatype': [this.field.datatype, [
           Validators.required
         ]
       ],
@@ -120,19 +120,25 @@ export class AddArticleFieldsComponent implements OnInit {
   public changeValues(): void {
 
     this.field.articleField = this.articleFieldsForm.value.articleField;
-    this.field.name = this.field.name;
-    this.field.type = this.field.type;
-    this.field.value = this.field.value;
+    this.field.name = this.field.articleField.name;
+    this.field.datatype = this.field.articleField.datatype;
+    this.field.value = this.field.articleField.value;
+
     this.setValueForm();
   }
 
   public setValueForm(): void {
 
+    if(!this.field.articleField) { null }
+    if(!this.field.name) { this.field.name = '' }
+    if(!this.field.datatype) { this.field.datatype = ArticleFieldType.Percentage }
+    if(!this.field.value) { this.field.value = '' }
+
     const values = {
       'articleField': this.field.articleField,
-      'name': this.field.articleField.name,
-      'type': this.field.articleField.type,
-      'value' : this.field.articleField.value
+      'name': this.field.name,
+      'datatype': this.field.datatype,
+      'value' : this.field.value
     };
 
     this.articleFieldsForm.setValue(values);
@@ -163,6 +169,7 @@ export class AddArticleFieldsComponent implements OnInit {
     this.field = this.articleFieldsForm.value;
     this.fields.push(this.field);
     this.eventAddArticleFields.emit(this.fields);
+    this.field = new ArticleFields();
   }
 
   public deleteArticlField(articleField: ArticleFields): void {

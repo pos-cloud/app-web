@@ -444,57 +444,95 @@ export class AddArticleComponent implements OnInit {
   }
 
   public updatePrices(op): void {
+
+    let taxedAmount = 0;
     
     switch (op) {
       case 'basePrice':
-        if (this.taxes.length > 0) {
-          this.articleForm.value.costPrice = 0;
-          for (const articleTax of this.taxes) {
-            articleTax.taxBase = this.articleForm.value.basePrice;
-            articleTax.taxAmount = this.articleForm.value.basePrice * articleTax.percentage / 100;
-            this.articleForm.value.costPrice += (articleTax.taxAmount);
-          }
-          this.articleForm.value.costPrice += this.articleForm.value.basePrice;
-        } else {
-          this.articleForm.value.costPrice = this.articleForm.value.basePrice;
-        }
-        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
-          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-        }
-        break;
-      case 'taxes':
-        if (this.taxes.length > 0) {
-          this.articleForm.value.costPrice = 0;
-          for (const articleTax of this.taxes) {
-            articleTax.taxBase = this.articleForm.value.basePrice;
-            articleTax.taxAmount = this.articleForm.value.basePrice * articleTax.percentage / 100;
-            this.articleForm.value.costPrice += (articleTax.taxAmount);
-          }
-          this.articleForm.value.costPrice += this.articleForm.value.basePrice;
-        } else {
-          this.articleForm.value.costPrice = this.articleForm.value.basePrice;
-        }
-        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
-          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
-        }
-        break;
-      case 'otherFields':
-        if (this.otherFields.length > 0) {
-          this.articleForm.value.costPrice = 0;
-          for (const otherField of this.otherFields) {
-            if(otherField.type === ArticleFieldType.Percentage) {
-              this.articleForm.value.costPrice += this.articleForm.value.basePrice * parseInt(otherField.value) / 100;
-            } else  if(otherField.type === ArticleFieldType.Number) {
-              this.articleForm.value.costPrice += parseInt(otherField.value);
+        this.articleForm.value.costPrice = 0;
+        taxedAmount = this.articleForm.value.basePrice;
+
+        if(this.otherFields.length > 0) {
+          for (const field of this.otherFields) {
+            if(field.datatype === ArticleFieldType.Percentage) {
+              taxedAmount += ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
+            } else if(field.datatype === ArticleFieldType.Number) {
+              taxedAmount += parseInt(field.value);
             }
           }
-          this.articleForm.value.costPrice += this.articleForm.value.basePrice;
-        } else {
-          this.articleForm.value.costPrice = this.articleForm.value.basePrice;
         }
-        if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
+
+        if (this.taxes.length > 0) {
+          for (const articleTax of this.taxes) {
+            articleTax.taxBase = taxedAmount;
+            articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
+            this.articleForm.value.costPrice += (articleTax.taxAmount);
+          }
+        }
+        this.articleForm.value.costPrice += taxedAmount;
+        
+        if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
+          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+        }
+        break;
+        case 'otherFields':
+          this.articleForm.value.costPrice = 0;
+          taxedAmount = this.articleForm.value.basePrice;
+
+          if(this.otherFields.length > 0) {
+            for (const field of this.otherFields) {
+              if(field.datatype === ArticleFieldType.Percentage) {
+                field.amount = ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
+                taxedAmount += field.amount;
+              } else if(field.datatype === ArticleFieldType.Number) {
+                field.amount = parseInt(field.value);
+                taxedAmount += field.amount;
+              }
+            }
+          }
+
+          if (this.taxes.length > 0) {
+            for (const articleTax of this.taxes) {
+              articleTax.taxBase = taxedAmount;
+              articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
+              this.articleForm.value.costPrice += (articleTax.taxAmount);
+            }
+          }
+          
+          this.articleForm.value.costPrice += taxedAmount;
+
+          if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
+            this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+            this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
+          }
+          break;
+      case 'taxes':
+        this.articleForm.value.costPrice = 0;
+        taxedAmount = this.articleForm.value.basePrice;
+
+        if(this.otherFields.length > 0) {
+          for (const field of this.otherFields) {
+            if(field.datatype === ArticleFieldType.Percentage) {
+              field.amount = ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
+              taxedAmount += field.amount;
+            } else if(field.datatype === ArticleFieldType.Number) {
+              field.amount = parseInt(field.value);
+              taxedAmount += field.amount;
+            }
+          }
+        }
+          
+        if (this.taxes.length > 0) {
+          for (const articleTax of this.taxes) {
+            articleTax.taxBase = taxedAmount;
+            articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
+            this.articleForm.value.costPrice += (articleTax.taxAmount);
+          }
+        }
+        
+        this.articleForm.value.costPrice += taxedAmount;
+        if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
           this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
           this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
@@ -608,6 +646,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowPurchase === undefined) { this.article.allowPurchase = true; }
     if (!this.article.allowSale === undefined) { this.article.allowSale = true; }
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
+    
     const values = {
       '_id': this.article._id,
       'code': this.article.code,
@@ -628,7 +667,6 @@ export class AddArticleComponent implements OnInit {
       'allowPurchase': this.article.allowPurchase,
       'allowSale': this.article.allowSale,
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock
-     // 'location': this.article.location
     };
 
     this.articleForm.setValue(values);
@@ -647,8 +685,8 @@ export class AddArticleComponent implements OnInit {
       } else {
         this.article.containsVariants = false;
       }
-      this.article.taxes = this.taxes;
       this.article.otherFields = this.otherFields;
+      this.article.taxes = this.taxes;
       if (this.operation === 'add') {
         this.saveArticle();
       } else if (this.operation === 'update') {
@@ -874,7 +912,6 @@ export class AddArticleComponent implements OnInit {
 
   public getDuplicateValues(value: any, array: Array<any>): number {
 
-    const duplicateArray = new Array();
     let cant = 0;
 
     for (let index = 0; index < array.length; index++) {
