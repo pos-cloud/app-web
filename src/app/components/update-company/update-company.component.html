@@ -157,6 +157,19 @@
 						</div>
 					</ng-template>
 				</ngb-tab>
+				<ngb-tab title="Configuracion">
+						<ng-template ngbTabContent>
+								<div class="row">
+										<div class="form-group col-md-12">
+										  <label for="allowCurrentAccount" class="control-label">Puede comprar en cta cte?</label>
+										  <select class="form-control" formControlName="allowCurrentAccount">
+											<option value="true" >Si</option>
+											<option value="false" selected>No</option>
+										  </select>
+										</div>
+									  </div>
+							</ng-template>
+						</ngb-tab>
 				<ngb-tab title="Novedades">
 					<ng-template ngbTabContent>
 						<app-company-news [company]="company"></app-company-news>

@@ -48,7 +48,8 @@ export class UpdateCompanyComponent implements OnInit {
     'emails': '',
     'gender':'',
     'birthday':'',
-    'observation' : ''
+    'observation' : '',
+    'allowCurrentAccount': ''
   };
 
   public validationMessages = {
@@ -88,7 +89,8 @@ export class UpdateCompanyComponent implements OnInit {
     },
     'gender': {
     },
-    'observation': {}
+    'observation': {},
+    'allowCurrentAccount': {}
   };
 
   constructor(
@@ -193,7 +195,8 @@ export class UpdateCompanyComponent implements OnInit {
       'birthday': [this.company.birthday, [
       ]],
       'gender' : [this.company.gender,[]],
-      'observation' : [this.company.observation,[]]
+      'observation' : [this.company.observation,[]],
+      'allowCurrentAccount': [this.company.allowCurrentAccount,[]]
     });
 
     this.companyForm.valueChanges
@@ -240,6 +243,7 @@ export class UpdateCompanyComponent implements OnInit {
       vatConditionID = this.company.vatCondition._id;
     }
     if(!this.company.observation) this.company.observation = '';
+    if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
     
     const values = {
       '_id': this.company._id,
@@ -257,7 +261,8 @@ export class UpdateCompanyComponent implements OnInit {
       'emails': this.company.emails,
       'gender': this.company.gender,
       'birthday': this.company.birthday,
-      'observation' : this.company.observation
+      'observation' : this.company.observation,
+      'allowCurrentAccount' : this.company.allowCurrentAccount
     };
 
     this.companyForm.setValue(values);

@@ -21,6 +21,7 @@ export class Company {
     public gender: GenderType;
     public birthday: string;
     public observation: string;
+    public allowCurrentAccount: boolean = false;
 
     constructor() {}
 }

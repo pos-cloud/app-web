@@ -51,7 +51,8 @@ export class AddCompanyComponent  implements OnInit {
     'emails': '',
     'gender':'',
     'birthday':'',
-    'observation':''
+    'observation':'',
+    'allowCurrentAccount':''
 
   };
 
@@ -96,7 +97,8 @@ export class AddCompanyComponent  implements OnInit {
     },
     'gender': {
     },
-    'observation':{}
+    'observation':{},
+    'allowCurrentAccount':{}
   };
 
   constructor(
@@ -192,7 +194,8 @@ export class AddCompanyComponent  implements OnInit {
       'gender' : [this.company.gender,[
         ]
       ],
-      'observation': [this.company.observation,[]]
+      'observation': [this.company.observation,[]],
+      'allowCurrentAccount': [this.company.observation,[]]
     });
 
     this.companyForm.valueChanges
@@ -256,6 +259,7 @@ export class AddCompanyComponent  implements OnInit {
       vatCondition = this.company.vatCondition;
     }
     if(!this.company.observation) this.company.observation = '';
+    if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
     
     this.companyForm.setValue({
       'code': this.company.code,
@@ -272,7 +276,8 @@ export class AddCompanyComponent  implements OnInit {
       'emails': this.company.emails,
       'gender': this.company.gender,
       'birthday' : this.company.birthday,
-      'observation' : this.company.observation
+      'observation' : this.company.observation,
+      'allowCurrentAccount' : this.company.allowCurrentAccount
     });
   }
 
