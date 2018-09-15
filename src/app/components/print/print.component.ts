@@ -726,6 +726,13 @@ export class PrintComponent implements OnInit {
         }
         if (this.movementsOfArticles[i].description) {
           this.doc.text(this.movementsOfArticles[i].description, 25, row);
+          if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === true) {
+            this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description + '-' + this.movementsOfArticles[i].make.description, 25, row);
+          } else if (this.movementsOfArticles[i].category.visibleInvoice === true) {
+            this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description, 25, row);
+          } else if (this.movementsOfArticles[i].make.visibleSale === true) {
+            this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].make.description, 25, row);
+          }
         }
         if (this.movementsOfArticles[i].notes) {
           this.doc.setFontStyle("italic");
