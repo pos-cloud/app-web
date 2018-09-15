@@ -103,6 +103,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.transactionAmount = this.transaction.totalPrice;
     this.buildForm();
     this.getPaymentMethods();
+    console.log(this.transaction);
   }
 
   ngAfterViewInit() {

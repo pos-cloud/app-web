@@ -29,6 +29,7 @@
                         [selected]="this.movementOfCash.type && this.movementOfCash.type._id === paymentMethod._id"
                         [ngValue]="paymentMethod"
                         [disabled]="(!transaction.company && paymentMethod.name === 'Cuenta Corriente') ||
+                                    (transaction.company && !transaction.company.allowCurrentAccount && paymentMethod.name === 'Cuenta Corriente') ||
                                     (transaction.type.name === 'Cobro' && paymentMethod.name === 'Cuenta Corriente') ||
                                     ((transaction.type.name === 'Saldo Inicial (+)' || transaction.type.name === 'Saldo Inicial (+)') && paymentMethod.name !== 'Cuenta Corriente')">
                       {{paymentMethod.name}}
