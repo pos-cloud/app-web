@@ -31,7 +31,8 @@ export class UpdateCategoryComponent implements OnInit {
   public apiURL = Config.apiURL;
 
   public formErrors = {
-    'description': ''
+    'description': '',
+    'visibleInvoice' : ''
   };
 
   public validationMessages = {
@@ -58,7 +59,8 @@ export class UpdateCategoryComponent implements OnInit {
     this.buildForm();
     this.categoryForm.setValue({
       '_id':this.category._id,
-      'description': this.category.description
+      'description': this.category.description,
+      'visibleInvoice' : this.category.visibleInvoice
     });
   }
 
@@ -76,6 +78,7 @@ export class UpdateCategoryComponent implements OnInit {
           Validators.required
         ]
       ],
+      'visibleInvoice' : [this.category.visibleInvoice,[]]
     });
 
     this.categoryForm.valueChanges

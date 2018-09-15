@@ -29,7 +29,8 @@ export class AddCategoryComponent  implements OnInit {
   public resultUpload;
 
   public formErrors = {
-    'description': ''
+    'description': '',
+    'visibleInvoice': ''
   };
 
   public validationMessages = {
@@ -65,6 +66,7 @@ export class AddCategoryComponent  implements OnInit {
           Validators.required
         ]
       ],
+      'visibleInvoice' : [this.category.visibleInvoice, []]
     });
 
     this.categoryForm.valueChanges
