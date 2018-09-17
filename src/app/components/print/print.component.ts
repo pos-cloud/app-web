@@ -729,13 +729,17 @@ export class PrintComponent implements OnInit {
         }
         if (this.movementsOfArticles[i].description) {
           this.doc.text(this.movementsOfArticles[i].description, 25, row);
-          if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === true) {
-            this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description + '-' + this.movementsOfArticles[i].make.description, 25, row);
-          } else if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === false) {
-            this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description, 25, row);
-          } else if (this.movementsOfArticles[i].make.visibleSale === true && this.movementsOfArticles[i].category.visibleInvoice === false) {
-            this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].make.description, 25, row);
+          console.log (this.movementsOfArticles[i].category);
+          if(this.movementsOfArticles[i].category && this.movementsOfArticles[i].category.visibleInvoice){
+            if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === true) {
+              this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description + '-' + this.movementsOfArticles[i].make.description, 25, row);
+            } else if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === false) {
+              this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description, 25, row);
+            } else if (this.movementsOfArticles[i].make.visibleSale === true && this.movementsOfArticles[i].category.visibleInvoice === false) {
+              this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].make.description, 25, row);
+            }
           }
+          
         }
         if (this.movementsOfArticles[i].notes) {
           this.doc.setFontStyle("italic");
