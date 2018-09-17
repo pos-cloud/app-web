@@ -135,8 +135,10 @@ export class ConfigBackupComponent implements OnInit {
       return new Promise((resolve, reject) => {
           var formData: any = new FormData();
           var xhr = new XMLHttpRequest();
-          for(var i = 0; i < files.length; i++) {
-              formData.append("poscloud", files[i], files[i].name);
+          if(files && files.length > 0) {
+            for(var i = 0; i < files.length; i++) {
+                formData.append("poscloud", files[i], files[i].name);
+            }
           }
           xhr.onreadystatechange = function () {
               if (xhr.readyState == 4) {

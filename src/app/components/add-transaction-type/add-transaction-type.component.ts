@@ -216,7 +216,7 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public setValueForm(): void {
 
-    if (!this.transactionType.transactionMovement && this.transactionMovements.length > 0) this.transactionType.transactionMovement = TransactionMovement.Sale;
+    if (!this.transactionType.transactionMovement && this.transactionMovements && this.transactionMovements.length > 0) this.transactionType.transactionMovement = TransactionMovement.Sale;
     if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = null;
     if (!this.transactionType.name) this.transactionType.name = '';
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = '';

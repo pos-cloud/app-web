@@ -308,7 +308,6 @@
             <td>{{transaction.number}}</td>
             <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td *ngIf="!transaction.diners"></td>
-            <td>{{transaction.madein}}</td>
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',

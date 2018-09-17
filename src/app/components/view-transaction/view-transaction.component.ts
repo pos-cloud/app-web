@@ -10,6 +10,8 @@ import { MovementOfArticleService } from './../../services/movement-of-article.s
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 import { TransactionService } from '../../services/transaction.service';
 
+import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+
 @Component({
   selector: 'app-view-transaction',
   templateUrl: './view-transaction.component.html',
@@ -17,14 +19,15 @@ import { TransactionService } from '../../services/transaction.service';
   providers: [NgbAlertConfig]
 })
 export class ViewTransactionComponent implements OnInit {
-  @Input()
-  transaction: Transaction;
+  
+  @Input() transaction: Transaction;
   public alertMessage = '';
   public loading = false;
   public movementsOfArticles: MovementOfArticle[];
   public areMovementsOfArticlesEmpty = true;
   public movementsOfCashes: MovementOfCash[];
   public areMovementsOfCashesEmpty = true;
+  public roundNumber = new RoundNumberPipe();
 
   constructor(
     public _transactionService: TransactionService,
@@ -52,6 +55,7 @@ export class ViewTransactionComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
+          this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
           this.getMovementsOfArticlesByTransaction();
           this.getMovementsOfCashesByTransaction();
         }

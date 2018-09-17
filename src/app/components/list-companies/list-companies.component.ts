@@ -178,15 +178,17 @@ export class ListCompaniesComponent implements OnInit {
   public openMail(): void {
     
     if (Config.emailAccount) {
-      if (this.companies.length !== 0) {
+      if (this.companies && this.companies.length !== 0) {
         let modalRef;
         let emails = '';
   
         modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
-        for(let i=0; i < this.companies.length; i++){
-          emails += this.companies[i].emails;
-          if ((i-this.companies.length)<=-2){
-            emails += ",";
+        if(this.companies && this.companies.length > 0) {
+          for(let i=0; i < this.companies.length; i++){
+            emails += this.companies[i].emails;
+            if ((i-this.companies.length)<=-2){
+              emails += ",";
+            }
           }
         }
         modalRef.componentInstance.emails = emails;

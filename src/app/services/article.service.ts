@@ -108,8 +108,10 @@ export class ArticleService {
 		return new Promise(function (resolve, reject) {
 			let formData: any = new FormData();
 
-			for (let i: number = 0; i < files.length; i++) {
-				formData.append('image', files[i], files[i].name);
+			if(files && files.length > 0) {
+				for (let i: number = 0; i < files.length; i++) {
+					formData.append('image', files[i], files[i].name);
+				}
 			}
 
 			xhr.onreadystatechange = function () {

@@ -98,7 +98,7 @@ export class AddTransactionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -116,6 +116,7 @@ export class AddTransactionComponent implements OnInit {
       }
     } else {
       this.readonly = true;
+      this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
     }
     
     this.buildForm();
@@ -273,29 +274,18 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.observation = this.transactionForm.value.observation;
     
     if (!this.readonly) {
-      
       this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
       this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
       this.transaction.expirationDate = this.transaction.endDate;
       this.transaction.origin = this.transactionForm.value.origin;
-      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
-        this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
-      } else {
-        if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          if ( this.transaction.company && 
-              this.transaction.company.vatCondition && 
-              this.transaction.company.vatCondition.transactionLetter &&
-              this.transaction.company.vatCondition.transactionLetter !== '') {
-            this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
-          } else {
-            this.transaction.letter = "X";
-          }
-        } else {
-          this.transaction.letter = this.transactionForm.value.letter;
-        }
-      }
+      this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-      this.getLastTransactionByType();
+      if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+        this.getLastTransactionByType();
+      } else {
+        this.transaction.number = this.transactionForm.value.number;
+        this.saveTransaction();
+      }
     } else {
       this.updateTransaction();
     }

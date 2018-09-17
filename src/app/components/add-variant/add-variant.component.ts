@@ -70,8 +70,11 @@ export class AddVariantComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.user = pathLocation[1];
-    if (this.article && this.article._id && this.article._id !== '' &&
-    this.variants.length === 0) {
+    if (this.article && 
+        this.article._id && 
+        this.article._id !== '' &&
+        this.variants &&
+        this.variants.length === 0) {
       this.getVariantsByArticleParent();
     }
     if (!this.articlesWithVariants) this.articlesWithVariants = new Array();
@@ -153,7 +156,7 @@ export class AddVariantComponent implements OnInit {
     let variantsToReturn: Variant[] = new Array();
 
     for (let variant of variants) {
-      if (variantsToReturn.length > 0) {
+      if (variantsToReturn && variantsToReturn.length > 0) {
         let exists: boolean = false;
         for (let variantAux of variantsToReturn) {
           if (variantAux.value._id === variant.value._id) {
@@ -255,7 +258,7 @@ export class AddVariantComponent implements OnInit {
       this.variant.articleParent = this.article;
 
       //Consultamos si ya fue creado algun producto Child
-      if (this.articlesWithVariants.length === 0) {
+      if (this.articlesWithVariants && this.articlesWithVariants.length === 0) {
         //Si no fue creado un producto child lo creamos, le asigamos nombre de variante y almacenamos
         let article: Article = this.copyArticle(this.article);
         article.variantDescription = this.variant.value.description;
@@ -276,26 +279,31 @@ export class AddVariantComponent implements OnInit {
           this.variant.articleChild = this.lastVariant.articleChild;
           let variantsByArticlesAux = new Array();
           let array = new Array();
-          for (let desc in this.variantsByArticles) {
-            let article: Article = this.copyArticle(this.variant.articleChild);
-            array = this.copyArray(this.variantsByArticles[desc]);
-            for (let i = 0; i < array.length; i++) {
-              if (array[i].type._id === this.variant.type._id) {
-                article.variantDescription += this.variant.value.description;
-                variantsByArticlesAux.push(this.variant);
-              } else {
-                article.variantDescription += array[i].value.description;
-                variantsByArticlesAux.push(array[i]);
+          if (this.variantsByArticles) {
+            for (let desc in this.variantsByArticles) {
+              let article: Article = this.copyArticle(this.variant.articleChild);
+              array = this.copyArray(this.variantsByArticles[desc]);
+              if (array && array.length > 0) {
+                for (let i = 0; i < array.length; i++) {
+                  if (array[i].type._id === this.variant.type._id) {
+                    article.variantDescription += this.variant.value.description;
+                    variantsByArticlesAux.push(this.variant);
+                  } else {
+                    article.variantDescription += array[i].value.description;
+                    variantsByArticlesAux.push(array[i]);
+                  }
+      
+                  if (i < (array.length - 1)) {
+                    article.variantDescription += " / ";
+                  }
+                }
               }
   
-              if (i < (array.length - 1)) {
-                article.variantDescription += " / ";
+              if (!this.setOfVariantsExists(article.variantDescription)) {
+                this.articlesWithVariants.push(article);
+                this.eventAddVariants.emit(this.articlesWithVariants);
+                this.variantsByArticles[article.variantDescription] = this.copyArray(variantsByArticlesAux);
               }
-            }
-            if (!this.setOfVariantsExists(article.variantDescription)) {
-              this.articlesWithVariants.push(article);
-              this.eventAddVariants.emit(this.articlesWithVariants);
-              this.variantsByArticles[article.variantDescription] = this.copyArray(variantsByArticlesAux);
             }
           }
           //Almacenamos nuevo producto, y almacenamos en ese productos todas las variantes que le corresponden
@@ -312,8 +320,10 @@ export class AddVariantComponent implements OnInit {
             articleAux.variantDescription += " / " + this.variant.value.description;
             //Creamos un nuevo elemento en el arreglo y agregamos la variante que se solicita
             this.variantsByArticles[articleAux.variantDescription] = new Array();
-            for (let i = 0; i < variantsByArticleAux.length; i++) {
-              this.variantsByArticles[articleAux.variantDescription].push(variantsByArticleAux[i]);
+            if(variantsByArticleAux && variantsByArticleAux.length > 0) {
+              for (let i = 0; i < variantsByArticleAux.length; i++) {
+                this.variantsByArticles[articleAux.variantDescription].push(variantsByArticleAux[i]);
+              }
             }
             this.variantsByArticles[articleAux.variantDescription].push(this.variant);
           }
@@ -411,7 +421,7 @@ export class AddVariantComponent implements OnInit {
 
     let exists: boolean = false;
 
-    if (this.articlesWithVariants.length > 0) {
+    if (this.articlesWithVariants && this.articlesWithVariants.length > 0) {
       for(let i = 0; i < this.articlesWithVariants.length; i++) {
         if (this.articlesWithVariants[i].variantDescription === variantDescription) {
           exists = true;

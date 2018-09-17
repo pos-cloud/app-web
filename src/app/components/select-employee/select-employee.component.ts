@@ -171,8 +171,8 @@ export class SelectEmployeeComponent implements OnInit {
     var chair = 0;
     var password = '';
 
-    if (!this.employeeSelected && this.employees.length > 0) this.employeeSelected = this.employees[0];
-    if (!this.employeeSelected && this.employees.length === 0) this.employeeSelected = null;
+    if (!this.employeeSelected && this.employees && this.employees.length > 0) this.employeeSelected = this.employees[0];
+    if (!this.employeeSelected && this.employees && this.employees.length === 0) this.employeeSelected = null;
     if (this.table && this.table.chair) chair = this.table.chair;
 
     this.selectEmployeeForm.setValue({

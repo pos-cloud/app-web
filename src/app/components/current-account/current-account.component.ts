@@ -132,7 +132,7 @@ export class CurrentAccountComponent implements OnInit {
     this.transactions = new Array();
     this.balance = 0;
 
-    if (transactions.length > 0) {
+    if (transactions && transactions.length > 0) {
       for (let transaction of transactions) {
         if (transaction.state === TransactionState.Closed &&
           transaction.company._id === this.companySelected._id &&

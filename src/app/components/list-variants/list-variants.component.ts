@@ -95,7 +95,7 @@ export class ListVariantsComponent implements OnInit {
     let variantsToReturn: Variant[] = new Array();
 
     for (let variant of variants) {
-      if (variantsToReturn.length > 0) {
+      if (variantsToReturn && variantsToReturn.length > 0) {
         let exists: boolean = false;
         for (let variantAux of variantsToReturn) {
           if (variantAux.value._id === variant.value._id) {

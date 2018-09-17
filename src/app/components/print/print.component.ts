@@ -294,7 +294,7 @@ export class PrintComponent implements OnInit {
 
     let codeInvoice = 0;
 
-    if (this.transaction.type.codes.length > 0) {
+    if (this.transaction.type.codes && this.transaction.type.codes.length > 0) {
       for (let y: number = 0; y < this.transaction.type.codes.length; y++) {
         if (this.transaction.letter == this.transaction.type.codes[y].letter) {
           codeInvoice = this.transaction.type.codes[y].code;
@@ -313,12 +313,13 @@ export class PrintComponent implements OnInit {
     let uno = 0;
     let dos = 0;
 
-    for (let z: number = 0; z < digit.length; z++) {
-
-      if (z % 2 == 1) {
-        uno = uno + parseInt(digit[z]);
-      } else {
-        dos = dos + parseInt(digit[z]);
+    if(digit && digit.length > 0) {
+      for (let z: number = 0; z < digit.length; z++) {
+        if (z % 2 == 1) {
+          uno = uno + parseInt(digit[z]);
+        } else {
+          dos = dos + parseInt(digit[z]);
+        }
       }
     }
 
@@ -451,7 +452,7 @@ export class PrintComponent implements OnInit {
     if (!this.shiftClosingTransaction) { this.doc.text('Tickets: 0', 15, row += 8) };
     if (this.shiftClosingTransaction) { this.doc.text('Tiques Anulados: ' + this.shiftClosingTransaction.amountOrdersCanceled, 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Tickets Anulados: 0', 15, row += 8) };
-    if (this.shiftClosingTransaction && this.shiftClosingTransaction.detailCanceled.length > 0) {
+    if (this.shiftClosingTransaction && this.shiftClosingTransaction.detailCanceled && this.shiftClosingTransaction.detailCanceled.length > 0) {
       this.doc.text('Detalle de Tickets Anulados:', 15, row += 8)
       for (let i = 0; i < this.shiftClosingTransaction.detailCanceled.length; i++) {
         let transaction = this.shiftClosingTransaction.detailCanceled[i];
@@ -596,9 +597,11 @@ export class PrintComponent implements OnInit {
       var lines = this.doc.splitTextToSize(text, (pdfInMM - lMargin - rMargin));
       var dim = this.doc.getTextDimensions(text);
       var lineHeight = dim.h;
-      for (var i = 0; i < lines.length; i++) {
-        let lineTop = (lineHeight / 2) * i;
-        this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
+      if(lines && lines.length > 0) {
+        for (var i = 0; i < lines.length; i++) {
+          let lineTop = (lineHeight / 2) * i;
+          this.doc.text(text, pageCenter + startPdf, height, lineTop, 'center')
+        }
       }
     }
   }
@@ -625,7 +628,7 @@ export class PrintComponent implements OnInit {
     var row = 85;
 
     this.doc.setFontSize(this.fontSizes.normal)
-    if (this.transactions.length > 0) {
+    if (this.transactions && this.transactions.length > 0) {
       let amount = 0;
       for (let transaction of this.transactions) {
         if (amount < 20) {
@@ -719,7 +722,7 @@ export class PrintComponent implements OnInit {
     // Detalle de productos
     var row = 85;
     
-    if (this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (var i = 0; i < this.movementsOfArticles.length; i++) {
         if (this.movementsOfArticles[i].amount) {
           this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
@@ -747,13 +750,16 @@ export class PrintComponent implements OnInit {
         row += 8;
       }
     }
-    
+   
     if (this.transaction.type && this.transaction.type.showPrices) {
-
+      
       let rowTotals = 247;
       this.doc.setFontType('bold');
       this.doc.text("Subtotal:", 147, rowTotals);
+      rowTotals +=8;
+      this.doc.text("Descuento:", 147, rowTotals);
       this.doc.setFontType('normal');
+      this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 180, rowTotals);
       let subtotal = 0;
       
       if (this.transaction.company &&
@@ -761,7 +767,7 @@ export class PrintComponent implements OnInit {
           this.transaction.company.vatCondition.discriminate &&
           Config.companyVatCondition.description === "Responsable Inscripto") {
 
-            if(this.transaction.taxes.length > 0) {
+            if(this.transaction.taxes && this.transaction.taxes.length > 0) {
               for (let tax of this.transaction.taxes) {
                 rowTotals += 8;
                 this.doc.setFontType('bold');
@@ -779,10 +785,8 @@ export class PrintComponent implements OnInit {
               this.doc.setFontType('normal');
               this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals);
               subtotal += this.transaction.exempt;
-              rowTotals += 8;
             }
       } else {
-        rowTotals += 8;
         subtotal = this.transaction.totalPrice;
       }
   
@@ -790,10 +794,6 @@ export class PrintComponent implements OnInit {
         subtotal += this.transaction.discountAmount;
       }
       this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247);
-      this.doc.setFontType('bold');
-      this.doc.text("Descuento:", 147, rowTotals);
-      this.doc.setFontType('normal');
-      this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 180, rowTotals);
       rowTotals += 8;
       this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
@@ -873,7 +873,7 @@ export class PrintComponent implements OnInit {
     //Cuerpo de la tabla de productos
     row + 5;
     this.doc.setFontSize(this.fontSizes.normal);
-    if (this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.printed === 0) {
           row += 5;
@@ -941,7 +941,7 @@ export class PrintComponent implements OnInit {
     //Cuerpo de la tabla de productos
     row + 5;
     this.doc.setFontSize(this.fontSizes.normal);
-    if (this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.printed === 0) {
           row += 5;
@@ -1038,7 +1038,7 @@ export class PrintComponent implements OnInit {
 
     //Cuerpo de la tabla de productos
     row +5;
-    if (this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         row += 5;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());

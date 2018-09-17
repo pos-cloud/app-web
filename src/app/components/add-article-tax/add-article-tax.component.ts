@@ -124,12 +124,14 @@ export class AddArticleTaxComponent implements OnInit {
     if (!this.articleTax.taxBase) this.articleTax.taxBase = 0;
     if (!this.articleTax.taxAmount) this.articleTax.taxAmount = 0;
 
-    this.articleTaxForm.setValue({
+    const values = {
       'tax': this.articleTax.tax,
       'percentage': this.articleTax.percentage,
       'taxBase': this.articleTax.taxBase,
       'taxAmount': this.articleTax.taxAmount
-    });
+    };
+
+    this.articleTaxForm.setValue(values);
   }
 
   public getTaxes(): void {
@@ -168,7 +170,7 @@ export class AddArticleTaxComponent implements OnInit {
 
     if (this.articleTaxes && this.articleTaxes.length > 0) {
       for (var taxArticleAux of this.articleTaxes) {
-        if (taxArticleAux.tax._id === this.articleTax.tax._id &&
+        if (taxArticleAux.tax.name === this.articleTax.tax.name &&
           taxArticleAux.percentage === this.articleTax.percentage) {
           exists = true;
           this.showMessage("El impuesto " + this.articleTax.tax.name + " con porcentaje " + this.articleTax.percentage + " ya existe", 'info', true);
@@ -186,7 +188,7 @@ export class AddArticleTaxComponent implements OnInit {
 
     if (this.articleTaxes && this.articleTaxes.length > 0) {
       for (var articleTaxAux of this.articleTaxes) {
-        if (articleTax.tax._id === articleTaxAux.tax._id &&
+        if (articleTax.tax.name === articleTaxAux.tax.name &&
             articleTax.percentage === articleTaxAux.percentage) {
           articleTaxToDelete = i;
         }

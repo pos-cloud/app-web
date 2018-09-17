@@ -103,7 +103,6 @@ export class AddMovementOfCashComponent implements OnInit {
     this.transactionAmount = this.transaction.totalPrice;
     this.buildForm();
     this.getPaymentMethods();
-    console.log(this.transaction);
   }
 
   ngAfterViewInit() {
@@ -277,13 +276,14 @@ export class AddMovementOfCashComponent implements OnInit {
     let chargedFinished: boolean = false;
     let amountPaid = 0;
 
-    if (this.movementsOfCashes.length > 0) {
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
       for(let movement of this.movementsOfCashes) {
         amountPaid += movement.amountPaid;
       }
     }
 
-    if (amountPaid >= this.transactionAmount) {
+    if (amountPaid >= this.transactionAmount ||
+        (amountPaid - this.transactionAmount) < 0.00) {
       chargedFinished = true;
     }
 
@@ -379,21 +379,23 @@ export class AddMovementOfCashComponent implements OnInit {
           this.paymentMethods = result.paymentMethods;
           if (this.transaction.type.name === "Saldo Inicial (+)" ||
             this.transaction.type.name === "Saldo Inicial (-)") {
-            for(let i=0; i < this.paymentMethods.length; i++) {
-              if (this.paymentMethods[i].name === "Cuenta Corriente") {
-                this.movementOfCash.type = this.paymentMethods[i];
-                if (this.paymentMethods[i].discount) {
-                  this.movementOfCash.discount = this.paymentMethods[i].discount;
-                } else {
-                  this.movementOfCash.discount = 0;
-                }
-                if (this.paymentMethods[i].surcharge) {
-                  this.movementOfCash.surcharge = this.paymentMethods[i].surcharge;
-                } else {
-                  this.movementOfCash.surcharge = 0;
+              if(this.paymentMethods && this.paymentMethods.length > 0) {
+                for(let i=0; i < this.paymentMethods.length; i++) {
+                  if (this.paymentMethods[i].name === "Cuenta Corriente") {
+                    this.movementOfCash.type = this.paymentMethods[i];
+                    if (this.paymentMethods[i].discount) {
+                      this.movementOfCash.discount = this.paymentMethods[i].discount;
+                    } else {
+                      this.movementOfCash.discount = 0;
+                    }
+                    if (this.paymentMethods[i].surcharge) {
+                      this.movementOfCash.surcharge = this.paymentMethods[i].surcharge;
+                    } else {
+                      this.movementOfCash.surcharge = 0;
+                    }
+                  }
                 }
               }
-            }
             if (this.movementOfCash.type.name !== "Cuenta Corriente") {
               this.showMessage("No existe el medio de pago 'Cuenta Corriente', debe agregarlo.",'danger',false);
             }
@@ -420,7 +422,7 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     } else {
       this.amountPaid = 0;
-      if (this.movementsOfCashes.length > 0) {
+      if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
         for (let movement of this.movementsOfCashes) {
           this.amountPaid += movement.amountPaid;
         }

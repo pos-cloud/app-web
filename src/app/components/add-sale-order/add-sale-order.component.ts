@@ -48,6 +48,8 @@ import { ApplyDiscountComponent } from '../apply-discount/apply-discount.compone
 //Pipes
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { ArticleFields } from '../../models/article-fields';
+import { ArticleFieldType } from '../../models/article-field';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -426,7 +428,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.typeOfOperationToPrint = 'item';
     
-    if (this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
           this.barArticlesToPrint.push(movementOfArticle);
@@ -438,16 +440,16 @@ export class AddSaleOrderComponent implements OnInit {
       }
     }
 
-    if (this.barArticlesToPrint.length !== 0) {
+    if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
-    } else if (this.kitchenArticlesToPrint.length !== 0) {
+    } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "kitchen";
       this.openModal('printers');
     } else {
       if (this.posType === "resto") {
         this.changeStateOfTable(TableState.Busy, true);
-      } else if (this.posType === "delivery" && this.movementsOfArticles.length > 0) {
+      } else if (this.posType === "delivery" && this.movementsOfArticles && this.movementsOfArticles.length > 0) {
         this.typeOfOperationToPrint = "kitchen";
         this.openModal("printers");
       } else {
@@ -593,40 +595,101 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle.transaction = this.transaction;
         movementOfArticle.amount = 1;
         this.saveMovementOfArticle(movementOfArticle);
-      } else if (op === "update") {
-        movementOfArticle.amount += 1;
-        movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
-        movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-
-        if ((movementOfArticle.article.salePrice !== (movementOfArticle.salePrice / (movementOfArticle.amount - 1))) ||
-            (movementOfArticle.article.costPrice !== (movementOfArticle.salePrice / (movementOfArticle.amount - 1)))) {
-
-          let unitPrice = (movementOfArticle.salePrice / (movementOfArticle.amount - 1)) + movementOfArticle.transactionDiscountAmount;
-          movementOfArticle.transactionDiscountAmount = (unitPrice * this.transaction.discountPercent / 100);
-          movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
-          movementOfArticle.markupPrice = this.roundNumber.transform(((movementOfArticle.salePrice / movementOfArticle.amount) - movementOfArticle.article.costPrice) * movementOfArticle.amount);
-          movementOfArticle.markupPrice = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100) * movementOfArticle.amount);
+      } else if (op === "update") {        
+        if(movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle, 1));
         } else {
-          let unitPrice = (movementOfArticle.salePrice / (movementOfArticle.amount - 1) + movementOfArticle.transactionDiscountAmount);
-          movementOfArticle.transactionDiscountAmount = (unitPrice * this.transaction.discountPercent / 100);
-          movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.article.markupPrice * movementOfArticle.amount);
-          movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
+          this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle, 1));
         }
-        let tax: Taxes = new Taxes();
-        let taxes: Taxes[] = new Array();
-        if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
-          for (let taxAux of movementOfArticle.article.taxes) {
-            tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            tax.tax = taxAux.tax;
-            tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-            taxes.push(tax);
-          }
-        }
-        movementOfArticle.taxes = taxes;
-        this.updateMovementOfArticle(movementOfArticle);
       }
     }
+  }
+
+  public recalculateCostPrice(movementOfArticle: MovementOfArticle, amount: number): MovementOfArticle {
+    
+    let unitPrice = this.roundNumber.transform((movementOfArticle.basePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount);
+
+    movementOfArticle.amount += amount;
+    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+    movementOfArticle.basePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
+    movementOfArticle.markupPrice = 0.00;
+    movementOfArticle.markupPercentage = 0.00;
+
+    let taxedAmount = movementOfArticle.basePrice;
+    movementOfArticle.costPrice = 0;
+
+    let fields: ArticleFields[] = new Array();
+    if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+      for (const field of movementOfArticle.otherFields) {
+        if(field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value)) / 100);
+          taxedAmount += field.amount;
+        } else if(field.datatype === ArticleFieldType.Number) {
+          field.amount = parseInt(field.value);
+          taxedAmount += field.amount;
+        }
+        fields.push(field);
+      }
+    }
+    movementOfArticle.otherFields = fields;
+
+    let taxes: Taxes[] = new Array();
+    if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
+      for (const articleTax of movementOfArticle.taxes) {
+        articleTax.taxBase = taxedAmount;
+        articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
+        taxes.push(articleTax);
+        movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
+      }
+    }
+    movementOfArticle.taxes = taxes;
+    movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
+    movementOfArticle.salePrice = movementOfArticle.costPrice;
+
+    return movementOfArticle;
+  }
+
+  public recalculateSalePrice(movementOfArticle: MovementOfArticle, amount: number): MovementOfArticle {
+
+    let unitPrice = (movementOfArticle.salePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount;
+
+    movementOfArticle.amount += amount;
+
+    movementOfArticle.basePrice = movementOfArticle.article.basePrice * movementOfArticle.amount;
+
+    let fields: ArticleFields[] = new Array();
+    if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+      for (const field of movementOfArticle.otherFields) {
+        if(field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value)) / 100);
+        } else if(field.datatype === ArticleFieldType.Number) {
+          field.amount = parseInt(field.value);
+        }
+        fields.push(field);
+      }
+    }
+    movementOfArticle.otherFields = fields;
+    
+    movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
+    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+    movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
+    movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
+    movementOfArticle.markupPercentage = this.roundNumber.transform(movementOfArticle.markupPrice / movementOfArticle.costPrice * 100);
+
+    let tax: Taxes = new Taxes();
+    let taxes: Taxes[] = new Array();
+    if (movementOfArticle.taxes) {
+      for (let taxAux of movementOfArticle.taxes) {
+        tax.percentage = this.roundNumber.transform(taxAux.percentage);
+        tax.tax = taxAux.tax;
+        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+        tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+        taxes.push(tax);
+      }
+    }
+    movementOfArticle.taxes = taxes;
+
+    return movementOfArticle;
   }
 
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
@@ -678,39 +741,43 @@ export class AddSaleOrderComponent implements OnInit {
     let transactionTaxesAUX: Taxes[] = new Array();
 
     this.transaction.exempt = 0;
-    for (let movementOfArticle of this.movementsOfArticles) {
-      if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
 
-        let transactionTax: Taxes = new Taxes();
-        for(let taxesAux of movementOfArticle.taxes) {
-          if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-            transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
-            transactionTax.tax = taxesAux.tax;
-            transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
-            transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount);
-          } else {
-            transactionTax = taxesAux;
+    if(this.movementsOfArticles) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
+          let transactionTax: Taxes = new Taxes();
+          for(let taxesAux of movementOfArticle.taxes) {
+            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
+              transactionTax.tax = taxesAux.tax;
+              transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
+              transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount);
+            } else {
+              transactionTax = taxesAux;
+            }
           }
+          transactionTaxesAUX.push(transactionTax);
+        } else {
+          this.transaction.exempt += movementOfArticle.salePrice;
         }
-        transactionTaxesAUX.push(transactionTax);
-      } else {
-        this.transaction.exempt += movementOfArticle.salePrice;
       }
     }
 
-    for (let transactionTaxAux of transactionTaxesAUX) {
-      let exists: boolean = false;
-      for(let transactionTax of transactionTaxes) {
-        if (transactionTaxAux.tax._id === transactionTax.tax._id &&
-          transactionTaxAux.percentage === transactionTax.percentage) {
-          transactionTax.taxAmount += transactionTaxAux.taxAmount;
-          transactionTax.taxBase += transactionTaxAux.taxBase;
-          exists = true;
+    if(transactionTaxesAUX) {
+      for (let transactionTaxAux of transactionTaxesAUX) {
+        let exists: boolean = false;
+        for(let transactionTax of transactionTaxes) {
+          if (transactionTaxAux.tax.name === transactionTax.tax.name &&
+            transactionTaxAux.percentage === transactionTax.percentage) {
+            transactionTax.taxAmount += transactionTaxAux.taxAmount;
+            transactionTax.taxBase += transactionTaxAux.taxBase;
+            exists = true;
+          }
         }
-      }
-
-      if (!exists) {
-        transactionTaxes.push(transactionTaxAux);
+  
+        if (!exists) {
+          transactionTaxes.push(transactionTaxAux);
+        }
       }
     }
 
@@ -731,27 +798,14 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-
       for (let movementOfArticle of this.movementsOfArticles) {
-
-        let unitSalePrice = (movementOfArticle.salePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount;
-        movementOfArticle.transactionDiscountAmount = this.roundNumber.transform(unitSalePrice * this.transaction.discountPercent / 100);
-        movementOfArticle.salePrice = this.roundNumber.transform((unitSalePrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
-        movementOfArticle.markupPrice = this.roundNumber.transform((movementOfArticle.salePrice - movementOfArticle.costPrice), 3);
-        movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.article.costPrice * 100) / movementOfArticle.amount);
-        let tax: Taxes = new Taxes();
-        let taxes: Taxes[] = new Array();
-        if (movementOfArticle.taxes) {
-          for (let taxAux of movementOfArticle.taxes) {
-            tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            tax.tax = taxAux.tax;
-            tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-            taxes.push(tax);
-          }
+        movementOfArticle.transaction.discountPercent = this.transaction.discountPercent;
+        if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          movementOfArticle = this.recalculateSalePrice(movementOfArticle, 0);
+        } else { 
+          movementOfArticle = this.recalculateCostPrice(movementOfArticle, 0);
         }
-        movementOfArticle.taxes = taxes;
-        this.transaction.totalPrice += movementOfArticle.salePrice;
+        this.transaction.totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
         this.transaction.discountAmount += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
         this.updateMovementOfArticle(movementOfArticle, false);
       }
@@ -1037,7 +1091,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     let isValidCharge = true;
 
-    if (this.movementsOfArticles.length <= 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length <= 0) {
       isValidCharge = false;
       this.showMessage("No existen productos en la transacción.", 'info', true);
     }
@@ -1209,7 +1263,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
   
   public setPrintBill(): void {
-    if (this.movementsOfArticles.length !== 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length !== 0) {
       this.typeOfOperationToPrint = 'bill';
       this.openModal('printers');
     } else {
@@ -1220,7 +1274,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public updateRealStock(): void {
     
-    if (this.movementsOfArticles.length > 0) {
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 
       this.loading = true;
   
@@ -1239,7 +1293,7 @@ export class AddSaleOrderComponent implements OnInit {
               if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             } else {
               this.amountModifyStock++;
-              if (this.amountModifyStock === this.movementsOfArticles.length) {
+              if (this.movementsOfArticles && this.amountModifyStock === this.movementsOfArticles.length) {
                 this.finish();
               } else {
                 this.updateRealStock();
@@ -1254,7 +1308,7 @@ export class AddSaleOrderComponent implements OnInit {
         );
       } else {
         this.amountModifyStock++;
-        if (this.amountModifyStock === this.movementsOfArticles.length) {
+        if (this.movementsOfArticles && this.amountModifyStock === this.movementsOfArticles.length) {
           this.finish();
         } else {
           this.updateRealStock();

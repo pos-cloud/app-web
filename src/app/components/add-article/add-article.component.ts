@@ -452,7 +452,7 @@ export class AddArticleComponent implements OnInit {
         this.articleForm.value.costPrice = 0;
         taxedAmount = this.articleForm.value.basePrice;
 
-        if(this.otherFields.length > 0) {
+        if(this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
             if(field.datatype === ArticleFieldType.Percentage) {
               taxedAmount += ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
@@ -462,7 +462,7 @@ export class AddArticleComponent implements OnInit {
           }
         }
 
-        if (this.taxes.length > 0) {
+        if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
             articleTax.taxBase = taxedAmount;
             articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
@@ -480,7 +480,7 @@ export class AddArticleComponent implements OnInit {
           this.articleForm.value.costPrice = 0;
           taxedAmount = this.articleForm.value.basePrice;
 
-          if(this.otherFields.length > 0) {
+          if(this.otherFields && this.otherFields.length > 0) {
             for (const field of this.otherFields) {
               if(field.datatype === ArticleFieldType.Percentage) {
                 field.amount = ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
@@ -492,7 +492,7 @@ export class AddArticleComponent implements OnInit {
             }
           }
 
-          if (this.taxes.length > 0) {
+          if (this.taxes && this.taxes.length > 0) {
             for (const articleTax of this.taxes) {
               articleTax.taxBase = taxedAmount;
               articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
@@ -511,7 +511,7 @@ export class AddArticleComponent implements OnInit {
         this.articleForm.value.costPrice = 0;
         taxedAmount = this.articleForm.value.basePrice;
 
-        if(this.otherFields.length > 0) {
+        if(this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
             if(field.datatype === ArticleFieldType.Percentage) {
               field.amount = ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
@@ -523,7 +523,7 @@ export class AddArticleComponent implements OnInit {
           }
         }
           
-        if (this.taxes.length > 0) {
+        if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
             articleTax.taxBase = taxedAmount;
             articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
@@ -814,8 +814,10 @@ export class AddArticleComponent implements OnInit {
       const formData: any = new FormData();
       const xhr: XMLHttpRequest = new XMLHttpRequest();
 
-      for (let i = 0; i < files.length; i++) {
-        formData.append('image', files[i], files[i].name);
+      if(files && files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+          formData.append('image', files[i], files[i].name);
+        }
       }
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -889,8 +891,10 @@ export class AddArticleComponent implements OnInit {
     this.uniqueVariantTypes = this.getUniqueValues(variantTypes);
     this.numberOfVariantsToStore = this.uniqueVariantTypes.length;
 
-    for (let i = 0; i < this.uniqueVariantTypes.length; i++) {
-      this.numberOfArticleChildToStore *= this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes);
+    if(this.uniqueVariantTypes && this.uniqueVariantTypes.length > 0) {
+      for (let i = 0; i < this.uniqueVariantTypes.length; i++) {
+        this.numberOfArticleChildToStore *= this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes);
+      }
     }
 
     this.numberOfGroupOfVariantsToStore = this.numberOfArticleChildToStore;
@@ -902,9 +906,11 @@ export class AddArticleComponent implements OnInit {
 
     const uniqueArray = new Array();
 
-    for (let index = 0; index < array.length; index++) {
-      const el = array[index];
-      if (uniqueArray.indexOf(el) === -1) { uniqueArray.push(el); }
+    if(array && array.length > 0) {
+      for (let index = 0; index < array.length; index++) {
+        const el = array[index];
+        if (uniqueArray.indexOf(el) === -1) { uniqueArray.push(el); }
+      }
     }
 
     return uniqueArray;
@@ -914,9 +920,11 @@ export class AddArticleComponent implements OnInit {
 
     let cant = 0;
 
-    for (let index = 0; index < array.length; index++) {
-      if (value._id === array[index]._id) {
-        cant++;
+    if(array && array.length > 0) {
+      for (let index = 0; index < array.length; index++) {
+        if (value._id === array[index]._id) {
+          cant++;
+        }
       }
     }
 
@@ -997,22 +1005,24 @@ export class AddArticleComponent implements OnInit {
     let exists = false;
     let equals = 0;
 
-    for (let i = 0; i < this.variantsStored.length; i++) {
-      if (!exists) {
-        for (let j = 0; j < this.raffledVariants.length; j++) {
-          for (let k = 0; k < this.variantsStored[i].length; k++) {
-            if (this.raffledVariants[j].type._id === this.variantsStored[i][k].type._id) {
-              if (this.raffledVariants[j].value._id === this.variantsStored[i][k].value._id) {
-                equals++;
+    if(this.variantsStored && this.variantsStored.length > 0) {
+      for (let i = 0; i < this.variantsStored.length; i++) {
+        if (!exists) {
+          for (let j = 0; j < this.raffledVariants.length; j++) {
+            for (let k = 0; k < this.variantsStored[i].length; k++) {
+              if (this.raffledVariants[j].type._id === this.variantsStored[i][k].type._id) {
+                if (this.raffledVariants[j].value._id === this.variantsStored[i][k].value._id) {
+                  equals++;
+                }
               }
             }
           }
         }
+        if (this.uniqueVariantTypes && equals === this.uniqueVariantTypes.length) {
+          exists = true;
+        }
+        equals = 0;
       }
-      if (equals === this.uniqueVariantTypes.length) {
-        exists = true;
-      }
-      equals = 0;
     }
     return exists;
   }
