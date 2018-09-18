@@ -32,6 +32,7 @@
               <th (click)="orderBy('phones')">Teléfonos</th>
               <th (click)="orderBy('emails')">Emails</th>
               <th (click)="orderBy('birthday')">Cumpleaños</th>
+              <th (click)="orderBy('allowCurrentAccount')">Cta. Cte.</th>
               <th (click)="orderBy('observation')">Observación</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
@@ -47,6 +48,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterBirthday" placeholder="Cumpleaños..." ></th>
+              <th><input type="date" class="form-control" [(ngModel)]= "filterAllowCurrentAccount" placeholder="Cta. Cte..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterObservation" placeholder="Observación..." ></th>
             </tr>
           </thead>
@@ -62,6 +64,7 @@
                                                   | filter: filterPhones:'phones' 
                                                   | filter: filterEmails:'emails'
                                                   | filter: filterBirthday:'birthday'
+                                                  | filter: filterAllowCurrentAccount:'allowCurrentAccount'
                                                   | filter: filterObservation:'observation'
                                                   | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage, 
@@ -85,6 +88,7 @@
               <td>{{company.phones}}</td>
               <td>{{company.emails}}</td>
               <td>{{company.birthday | dateFormat:'DD/MM/YYYY'}}</td>
+              <td>{{company.allowCurrentAccount}}</td>
               <td>{{company.observation}}</td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty">
