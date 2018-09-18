@@ -27,6 +27,7 @@
             <th (click)="orderBy('movement')">Movimiento de dinero</th>
             <th (click)="orderBy('requestArticles')">Intercambia productos</th>
             <th (click)="orderBy('modifyArticle')">Modifica producto</th>
+            <th (click)="orderBy('entryAmount')">Monto a editar</th>
             <th (click)="orderBy('modifyStock')">Modifica el stock</th>
             <th (click)="orderBy('stockMovement')">Movimiento de stock</th>
             <th (click)="orderBy('defectOrders')">Para pedidos</th>
@@ -51,6 +52,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterMovement" placeholder="Movimiento..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestArticles" placeholder="Intercambia productos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyArticle" placeholder="Modifica productos..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterEntryAmount" placeholder="Monto a editar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyStock" placeholder="Modifica el stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterStockMovement" placeholder="Movimiento de stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
@@ -75,6 +77,7 @@
                                                               | filter: filterMovement:'movement'
                                                               | filter: filterRequestArticles:'requestArticles'
                                                               | filter: filterModifyArticle:'modifyArticle'
+                                                              | filter: filterEntryAmount:'entryAmount'
                                                               | filter: filterModifyStock:'modifyStock'
                                                               | filter: filterStockMovement:'stockMovement'
                                                               | filter: filterDefectOrders:'defectOrders'
@@ -109,6 +112,7 @@
             <td class="flat">{{transactionType.movement}}</td>
             <td class="flat">{{transactionType.requestArticles}}</td>
             <td class="flat">{{transactionType.modifyArticle}}</td>
+            <td class="flat">{{transactionType.entryAmount}}</td>
             <td class="flat">{{transactionType.modifyStock}}</td>
             <td class="flat">{{transactionType.stockMovement}}</td>
             <td class="flat">{{transactionType.defectOrders}}</td>

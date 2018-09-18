@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount } from './../../models/transaction-type';
 import { Printer } from './../../models/printer';
 
 import { TransactionTypeService } from './../../services/transaction-type.service';
@@ -170,6 +170,9 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'showPrices': [this.transactionType.showPrices, [
         ]
+      ],
+      'entryAmount': [this.transactionType.entryAmount, [
+        ]
       ]
     });
 
@@ -240,6 +243,11 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.cashClosing === undefined) this.transactionType.cashClosing = false;
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
     if (this.transactionType.showPrices === undefined) this.transactionType.showPrices = true;
+    if(this.transactionType.transactionMovement === TransactionMovement.Sale) {
+      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+    } else {
+      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
+    }
 
     this.transactionTypeForm.setValue({
       'transactionMovement': this.transactionType.transactionMovement,
@@ -267,7 +275,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'cashOpening': this.transactionType.cashOpening,
       'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP,
-      'showPrices': this.transactionType.showPrices
+      'showPrices': this.transactionType.showPrices,
+      'entryAmount': this.transactionType.entryAmount
     });
   }
 
@@ -282,15 +291,15 @@ export class AddTransactionTypeComponent implements OnInit {
 
     let codes = new Array();
     let codeA = new CodeAFIP();
-    codeA.letter = "A";
+    codeA.letter = 'A';
     codeA.code = this.transactionTypeForm.value.codeA;
     codes.push(codeA);
     let codeB = new CodeAFIP();
-    codeB.letter = "B";
+    codeB.letter = 'B';
     codeB.code = this.transactionTypeForm.value.codeB;
     codes.push(codeB);
     let codeC = new CodeAFIP();
-    codeC.letter = "C";
+    codeC.letter = 'C';
     codeC.code = this.transactionTypeForm.value.codeC;
     codes.push(codeC);
     

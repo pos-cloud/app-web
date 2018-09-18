@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount } from './../../models/transaction-type';
 import { Printer } from './../../models/printer';
 
 import { TransactionTypeService } from './../../services/transaction-type.service';
@@ -173,6 +173,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
       ],
       'showPrices': [this.transactionType.showPrices, [
         ]
+      ],
+      'entryAmount': [this.transactionType.entryAmount, [
+        ]
       ]
     });
 
@@ -228,6 +231,11 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (this.transactionType.cashClosing === undefined) this.transactionType.cashClosing = false;
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
     if (this.transactionType.showPrices === undefined) this.transactionType.showPrices = true;
+    if(this.transactionType.transactionMovement === TransactionMovement.Sale) {
+      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+    } else {
+      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
+    }
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -256,7 +264,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'cashOpening': this.transactionType.cashOpening,
       'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP,
-      'showPrices': this.transactionType.showPrices
+      'showPrices': this.transactionType.showPrices,
+      'entryAmount': this.transactionType.entryAmount
     });
   }
 

@@ -95,6 +95,17 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="entryAmount" class="control-label">¿Monto a editar?</label>
+          <select class="form-control" formControlName="entryAmount">
+            <option value="Costo sin IVA">Costo sin IVA</option>
+            <option value="Conto con IVA">Conto con IVA</option>
+            <option value="Venta sin IVA">Venta sin IVA</option>
+            <option value="Venta con IVA">Venta con IVA</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="showPrices" class="control-label">¿Se puede ver el precio de venta?</label>
           <select class="form-control" formControlName="showPrices">
             <option value="true" selected>Si</option>

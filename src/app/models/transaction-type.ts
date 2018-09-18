@@ -12,6 +12,7 @@ export class TransactionType {
 	public stockMovement: StockMovement = StockMovement.Inflows;
 	public requestArticles: boolean = false;
 	public modifyArticle: boolean = false;
+	public entryAmount: EntryAmount;
 	public requestTaxes: boolean = false;
 	public requestPaymentMethods: boolean = true;
 	public defectOrders: boolean = false;
@@ -57,4 +58,11 @@ export enum TransactionMovement {
 	Purchase = <any>"Compra",
 	Stock = <any>"Stock",
 	Money = <any>"Fondos"
+}
+
+export enum EntryAmount {
+	CostWithoutVAT = <any>"Costo sin IVA",
+	CostWithVAT = <any>"Conto con IVA",
+	SaleWithoutVAT = <any>"Venta sin IVA",
+	SaleWithVAT = <any>"Venta con IVA"
 }
