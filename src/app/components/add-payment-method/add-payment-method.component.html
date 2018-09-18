@@ -25,11 +25,17 @@
       <div class="row">
         <div class="form-group col-md-6">
           <label for="discount" class="control-label">Descuento:</label>
-          <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" />
+          <div class="input-group">
+            <span class="input-group-addon">%</span>
+            <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" />
+          </div>
         </div>
         <div class="form-group col-md-6">
           <label for="surcharge" class="control-label">Recargo:</label>
-          <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge" />
+          <div class="input-group">
+            <span class="input-group-addon">%</span>
+            <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge" />
+          </div>
         </div>
       </div>
       <div class="row">
