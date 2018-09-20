@@ -107,7 +107,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
       ],
       'currentAccount': [this.transactionType.currentAccount, [
         ]
-      ], 
+      ],
       'movement': [this.transactionType.movement, [
         ]
       ],
@@ -131,10 +131,10 @@ export class UpdateTransactionTypeComponent implements OnInit {
       ],
       'fixedOrigin': [this.transactionType.fixedOrigin, [
         ]
-      ], 
+      ],
       'fixedLetter': [this.transactionType.fixedLetter, [
         ]
-      ], 
+      ],
       'resetNumber': [this.transactionType.resetNumber, [
         ]
       ],
@@ -175,6 +175,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
         ]
       ],
       'entryAmount': [this.transactionType.entryAmount, [
+        ]
+      ],
+      'allowDelete': [this.transactionType.allowDelete, [
         ]
       ]
     });
@@ -236,6 +239,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     } else {
       if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
+    if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -265,7 +269,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP,
       'showPrices': this.transactionType.showPrices,
-      'entryAmount': this.transactionType.entryAmount
+      'entryAmount': this.transactionType.entryAmount,
+      'allowDelete': this.transactionType.allowDelete
     });
   }
 

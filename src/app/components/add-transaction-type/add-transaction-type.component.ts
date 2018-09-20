@@ -51,7 +51,7 @@ export class AddTransactionTypeComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
-  ) { 
+  ) {
   }
 
   ngOnInit(): void {
@@ -104,7 +104,7 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'currentAccount': [this.transactionType.currentAccount, [
         ]
-      ], 
+      ],
       'movement': [this.transactionType.movement, [
         ]
       ],
@@ -128,13 +128,13 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'fixedOrigin': [this.transactionType.fixedOrigin, [
         ]
-      ], 
+      ],
       'fixedLetter': [this.transactionType.fixedLetter, [
         ]
-      ], 
+      ],
       'resetNumber': [this.transactionType.resetNumber, [
         ]
-      ], 
+      ],
       'electronics': [this.transactionType.electronics, [
         ]
       ],
@@ -172,6 +172,9 @@ export class AddTransactionTypeComponent implements OnInit {
         ]
       ],
       'entryAmount': [this.transactionType.entryAmount, [
+        ]
+      ],
+      'allowDelete': [this.transactionType.allowDelete, [
         ]
       ]
     });
@@ -248,6 +251,7 @@ export class AddTransactionTypeComponent implements OnInit {
     } else {
       if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
+    if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
 
     this.transactionTypeForm.setValue({
       'transactionMovement': this.transactionType.transactionMovement,
@@ -276,7 +280,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP,
       'showPrices': this.transactionType.showPrices,
-      'entryAmount': this.transactionType.entryAmount
+      'entryAmount': this.transactionType.entryAmount,
+      'allowDelete': this.transactionType.allowDelete
     });
   }
 
@@ -302,7 +307,7 @@ export class AddTransactionTypeComponent implements OnInit {
     codeC.letter = 'C';
     codeC.code = this.transactionTypeForm.value.codeC;
     codes.push(codeC);
-    
+
     return codes;
   }
 
