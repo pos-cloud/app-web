@@ -175,6 +175,24 @@ export class ListTransactionsComponent implements OnInit {
 
         });
         break;
+      case 'delete':
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.op = op;
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.result.then((result) => {
+          if (result === 'delete_close') {
+            if (this.listType === "Compras") {
+              this.getTransactionsByMovement(TransactionMovement.Purchase);
+            } else if (this.listType === "Ventas") {
+              this.getTransactionsByMovement(TransactionMovement.Sale);
+            } else if (this.listType === "Stock") {
+              this.getTransactionsByMovement(TransactionMovement.Stock);
+            }
+          }
+        }, (reason) => {
+
+        });
+        break;
       default: ;
     }
   };
@@ -205,8 +223,8 @@ export class ListTransactionsComponent implements OnInit {
     }, (reason) => {
 
     });
-  }  
-  
+  }
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

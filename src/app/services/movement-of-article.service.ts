@@ -43,7 +43,7 @@ export class MovementOfArticleService {
       return this._http.get(Config.apiURL + "movements-of-articles", { headers: headers }).map(res => res.json());
     }
   }
-  
+
   movementOfArticleExists(movementOfArticle: MovementOfArticle) {
     let headers = new Headers({
       'Content-Type': 'application/json',
@@ -69,6 +69,15 @@ export class MovementOfArticleService {
       'Database': this._userService.getDatabase()
     });
     return this._http.delete(Config.apiURL + "movement-of-article/"+id, { headers: headers }).map (res => res.json());
+  }
+
+  deleteMovementsOfArticles(query: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.delete(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map(res => res.json());
   }
 
   updateMovementOfArticle(movementOfArticle: MovementOfArticle) {

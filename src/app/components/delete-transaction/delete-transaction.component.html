@@ -1,5 +1,6 @@
 <div class="modal-header">
-	<h4 class="modal-title">Anular Transacción</h4>
+	<h4 class="modal-title" *ngIf="op === 'cancel'">Anular Transacción</h4>
+	<h4 class="modal-title" *ngIf="op === 'delete'">Eliminar Transacción</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -9,10 +10,12 @@
 		<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
 			{{alertMessage}}
 		</ngb-alert>
-	</div>
-  <p>¿Está seguro de anular la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
+  </div>
+  <p *ngIf="op === 'cancel'">¿Está seguro de anular la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
+  <p *ngIf="op === 'delete'">¿Está seguro de eliminar la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
-  <button type="submit" class="btn btn-primary" (click)="deleteTransaction()" [focus]="focusEvent">Anular</button>
+  <button type="button" class="btn btn-secondary" (click)="activeModal.close('close_click')">Cancelar</button>
+  <button type="submit" class="btn btn-primary" (click)="cancelTransaction()" [focus]="focusEvent" *ngIf="op === 'cancel'">Anular</button>
+  <button type="submit" class="btn btn-danger" (click)="deleteTransaction()" [focus]="focusEvent"*ngIf="op === 'delete'">Eliminar</button>
 </div>

@@ -27,7 +27,8 @@ export class TransactionType {
 	public tax: boolean = false;
 	public cashOpening: boolean = false;
 	public cashClosing: boolean = false;
-	public allowAPP: boolean = false;
+  public allowAPP: boolean = false;
+  public allowDelete: boolean = false;
 
 	constructor() { }
 }

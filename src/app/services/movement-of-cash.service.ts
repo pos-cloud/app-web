@@ -56,7 +56,16 @@ export class MovementOfCashService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "movement-of-cash/" + id, { headers: headers }).map(res => res.json());
-	}
+  }
+
+  deleteMovementsOfCashes(query: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.delete(Config.apiURL + "movements-of-cashes/" + query, { headers: headers }).map(res => res.json());
+  }
 
 	updateMovementOfCash(movementOfCash: MovementOfCash) {
 		let headers = new Headers({
