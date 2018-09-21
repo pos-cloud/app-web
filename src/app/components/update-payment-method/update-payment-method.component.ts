@@ -48,10 +48,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
-    this.paymentMethodForm.setValue({
-      '_id': this.paymentMethod._id,
-      'name': this.paymentMethod.name
-    });
+    this.setValueForm();
   }
 
   ngAfterViewInit() {
@@ -106,6 +103,31 @@ export class UpdatePaymentMethodComponent implements OnInit {
         }
       }
     }
+  }
+
+  public setValueForm(): void {
+
+    if (!this.paymentMethod._id) this.paymentMethod._id = '';
+    if (!this.paymentMethod.name) this.paymentMethod.name = '';
+    if (!this.paymentMethod.discount) this.paymentMethod.discount = 0.00;
+    if (!this.paymentMethod.surcharge) this.paymentMethod.surcharge = 0.00;
+    if (this.paymentMethod.isCurrentAccount === undefined) this.paymentMethod.isCurrentAccount = false;
+    if (this.paymentMethod.acceptReturned === undefined) this.paymentMethod.acceptReturned = false;
+    if (this.paymentMethod.inputAndOuput === undefined) this.paymentMethod.inputAndOuput = false;
+    if (this.paymentMethod.checkDetail === undefined) this.paymentMethod.checkDetail = false;
+    if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
+
+    this.paymentMethodForm.setValue({
+      '_id': this.paymentMethod._id,
+      'name': this.paymentMethod.name,
+      'discount': this.paymentMethod.discount,
+      'surcharge': this.paymentMethod.surcharge,
+      'isCurrentAccount': this.paymentMethod.isCurrentAccount,
+      'acceptReturned': this.paymentMethod.acceptReturned,
+      'inputAndOuput': this.paymentMethod.acceptReturned,
+      'checkDetail': this.paymentMethod.checkDetail,
+      'cardDetail': this.paymentMethod.cardDetail
+    });
   }
 
   public updatePaymentMethod(): void {
