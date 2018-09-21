@@ -123,7 +123,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     let op = pathLocation[3];
-    
+
     if (this.posType === "resto") {
       this.table = new Table();
       this.transaction.table = this.table;
@@ -151,9 +151,9 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getTransactionType(transactionTypeID: string): void {
-    
+
     this.loading = true;
-    
+
     this._transactionTypeService.getTransactionType(transactionTypeID).subscribe(
       result => {
         if (!result.transactionType) {
@@ -373,7 +373,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.loading = true;
     this.transaction.madein = this.posType;
-    
+
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -395,9 +395,9 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(closed: boolean = false): void {
-    
+
     this.loading = true;
-    
+
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -427,13 +427,13 @@ export class AddSaleOrderComponent implements OnInit {
   public close() {
 
     this.typeOfOperationToPrint = 'item';
-    
+
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
           this.barArticlesToPrint.push(movementOfArticle);
         }
-  
+
         if (movementOfArticle.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
           this.kitchenArticlesToPrint.push(movementOfArticle);
         }
@@ -503,7 +503,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public addItem(itemData: MovementOfArticle): void {
-    
+
 
     if (this.filterArticle && this.filterArticle !== '') {
       this.filterArticle = '';
@@ -512,7 +512,7 @@ export class AddSaleOrderComponent implements OnInit {
     if (!itemData.article.containsVariants) {
 
       let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
-      
+
       if (!movementOfArticle) {
         movementOfArticle = itemData;
         movementOfArticle.transaction = this.transaction;
@@ -542,7 +542,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getArticleStock(op: string, movementOfArticle: MovementOfArticle): void {
-    
+
     this.loading = true;
 
     this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
@@ -564,7 +564,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public verifyPermissions(op: string, movementOfArticle: MovementOfArticle, articleStock: ArticleStock): void {
-    
+
     let allowed = true;
 
     if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
@@ -587,7 +587,7 @@ export class AddSaleOrderComponent implements OnInit {
       allowed = false;
       this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", 'info', true);
     }
-    
+
     if (allowed) {
       if (op === "save") {
         movementOfArticle._id = '';
@@ -595,7 +595,7 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle.transaction = this.transaction;
         movementOfArticle.amount = 1;
         this.saveMovementOfArticle(movementOfArticle);
-      } else if (op === "update") {        
+      } else if (op === "update") {
         if(movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
           this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle, 1));
         } else {
@@ -606,7 +606,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public recalculateCostPrice(movementOfArticle: MovementOfArticle, amount: number): MovementOfArticle {
-    
+
     let unitPrice = this.roundNumber.transform((movementOfArticle.basePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount);
 
     movementOfArticle.amount += amount;
@@ -669,7 +669,7 @@ export class AddSaleOrderComponent implements OnInit {
       }
     }
     movementOfArticle.otherFields = fields;
-    
+
     movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
@@ -693,9 +693,9 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
-    
+
     let movementOfArticle: MovementOfArticle;
-    
+
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for(let movementOfArticleAux of this.movementsOfArticles) {
         if (movementOfArticleAux.article._id === articleId) {
@@ -774,7 +774,7 @@ export class AddSaleOrderComponent implements OnInit {
             exists = true;
           }
         }
-  
+
         if (!exists) {
           transactionTaxes.push(transactionTaxAux);
         }
@@ -786,7 +786,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updatePrices(discountPercent?: number): void {
-    
+
     this.transaction.totalPrice = 0;
     this.transaction.discountAmount = 0;
 
@@ -802,7 +802,7 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle.transaction.discountPercent = this.transaction.discountPercent;
         if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           movementOfArticle = this.recalculateSalePrice(movementOfArticle, 0);
-        } else { 
+        } else {
           movementOfArticle = this.recalculateCostPrice(movementOfArticle, 0);
         }
         this.transaction.totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
@@ -814,12 +814,12 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.discountPercent = 0;
       this.transaction.discountAmount = 0;
     }
-    
-    this.updateTaxes();  
+
+    this.updateTaxes();
   }
 
   public validateElectronicTransaction(): void {
-    
+
     this.showMessage("Validando comprobante con AFIP...", 'info', false);
 
     this._transactionService.validateElectronicTransaction(this.transaction).subscribe(
@@ -932,7 +932,7 @@ export class AddSaleOrderComponent implements OnInit {
       case 'charge':
 
         this.typeOfOperationToPrint = "charge";
-        
+
         if (this.isValidCharge()) {
 
           if (this.transaction.type.requestPaymentMethods) {
@@ -940,14 +940,14 @@ export class AddSaleOrderComponent implements OnInit {
             modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
             modalRef.componentInstance.transaction = this.transaction;
             modalRef.result.then((result) => {
-  
+
               let movementsOfCashes = result.movementsOfCashes;
-              
+
               if (movementsOfCashes) {
                 if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                   this.transaction.origin = this.transaction.type.fixedOrigin;
                 }
-  
+
                 this.assignLetter();
                 if (this.transaction.type.electronics && !this.transaction.CAE) {
                   this.validateElectronicTransaction();
@@ -972,7 +972,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
         break;
       case 'printers':
-      
+
         if (this.countPrinters() > 1) {
           modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
             if (result !== "cancel" && result !== '') {
@@ -1029,11 +1029,13 @@ export class AddSaleOrderComponent implements OnInit {
 
   public finish(): void {
 
-    this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    this.transaction.expirationDate = this.transaction.endDate;
+    if(this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      this.transaction.expirationDate = this.transaction.endDate;
+    }
     this.transaction.state = TransactionState.Closed;
     this.updateTransaction(false);
-    
+
     if (this.transaction.type.printable) {
 
       if (this.posType === "resto") {
@@ -1058,7 +1060,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getTaxVAT(movementOfArticle: MovementOfArticle): void {
-    
+
     this.loading = true;
 
     let taxes: Taxes[] = new Array();
@@ -1179,7 +1181,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.openModal("print");
         }
         break;
-      case 'kitchen': 
+      case 'kitchen':
         if (printer.type === PrinterType.PDF) {
           this.openModal("print");
         }
@@ -1196,7 +1198,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public assignLetter() {
-    
+
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
@@ -1213,12 +1215,12 @@ export class AddSaleOrderComponent implements OnInit {
         this.transaction.letter = "X";
       }
     }
-    
+
     this.loading = true;
   }
 
   public assignTransactionNumber() {
-    
+
     this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
       result => {
         if (!result.transactions) {
@@ -1261,7 +1263,7 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
-  
+
   public setPrintBill(): void {
     if (this.movementsOfArticles && this.movementsOfArticles.length !== 0) {
       this.typeOfOperationToPrint = 'bill';
@@ -1273,19 +1275,19 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateRealStock(): void {
-    
+
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 
       this.loading = true;
-  
+
       let amountToModify;
-      
+
       if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.name === "Inventario") {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount;
       } else {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount * -1;
       }
-      
+
       if (this.movementsOfArticles[this.amountModifyStock].article) {
         this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
           result => {
@@ -1320,7 +1322,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public backFinal(): void {
-    
+
     if (this.posType === "resto") {
       this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
     } else if (this.posType === "mostrador") {
@@ -1337,7 +1339,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public getMovementsOfTransaction(): void {
-    
+
     this.loading = true;
 
     this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(

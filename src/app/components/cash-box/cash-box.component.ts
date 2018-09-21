@@ -45,7 +45,7 @@ export class CashBoxComponent implements OnInit {
   public movementsOfCashes: MovementOfCash[];
   public focusEvent = new EventEmitter<boolean>();
   public op: string; // valores posibles open - close
-  
+
   constructor(
     public _fb: FormBuilder,
     public _router: Router,
@@ -58,7 +58,7 @@ export class CashBoxComponent implements OnInit {
     public _userService: UserService,
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService
-  ) { 
+  ) {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
     this.transaction = new Transaction();
@@ -133,7 +133,7 @@ export class CashBoxComponent implements OnInit {
 
     let paymentMethod = this.cashBoxForm.value.paymentMethod;
 
-    if (!paymentMethod && 
+    if (!paymentMethod &&
         this.paymentMethods &&
         this.paymentMethods.length > 0) paymentMethod = this.paymentMethods[0];
 
@@ -148,7 +148,7 @@ export class CashBoxComponent implements OnInit {
   public getOpenCashBox(): void {
 
     this.loading = true;
-    
+
     this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
       result => {
         if (!result.cashBoxes) {
@@ -238,7 +238,7 @@ export class CashBoxComponent implements OnInit {
   }
 
   public openCashBox(): void {
-    
+
     if (!this.cashBox || !this.cashBox._id) {
       this.saveCashBox();
     } else {
@@ -296,7 +296,7 @@ export class CashBoxComponent implements OnInit {
   public openModal(op: string, movement?: MovementOfCash): void {
 
     let modalRef;
-    
+
     switch (op) {
       case 'print':
         let modalRef = this._modalService.open(PrintComponent);
@@ -349,7 +349,7 @@ export class CashBoxComponent implements OnInit {
     this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
     this.movementOfCash.state = MovementOfCashState.Closed;
-    
+
     if (this.cashBox && this.cashBox._id) {
       if (this.op === "open" && (!this.transaction || !this.transaction._id)) {
         this.showMessage("La caja ya se encuentra abierta.", 'info', true);
