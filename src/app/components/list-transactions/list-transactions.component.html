@@ -80,9 +80,8 @@
                                                                       totalItems: totalItems
                                                                     }">
             <td align="left" width="150">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i
-                  class="fa fa-eye"></i></button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" *ngIf="transaction.type.allowDelete" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               <button *ngIf="transaction.type.requestArticles" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
@@ -292,11 +291,9 @@
                                                                       totalItems: totalItems
                                                                     }">
             <td align="left" width="150">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i
-                  class="fa fa-eye"></i></button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i
-                  class="fa fa-trash-o"></i></button>
-              <!-- <button *ngIf="transaction.type.requestArticles" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button> -->
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" *ngIf="transaction.type.allowDelete" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <button *ngIf="transaction.type.requestArticles" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
@@ -442,13 +439,9 @@
                                                                     totalItems: totalItems
                                                                   }">
             <td align="left" width="150">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver">
-                <i class="fa fa-eye"></i>
-              </button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar">
-                <i class="fa fa-trash-o"></i>
-              </button>
-              <!-- <button *ngIf="transaction.type.requestArticles" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button> -->
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
+              <!-- <button type="button" *ngIf="transaction.type.allowDelete" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button> -->
+              <button *ngIf="transaction.type.requestArticles" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
