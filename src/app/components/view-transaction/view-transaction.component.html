@@ -98,6 +98,8 @@
                       <tr>
                         <th>Método</th>
                         <th>Monto</th>
+                        <th>Comprobante</th>
+                        <th>Vencimiento</th>
                         <th>Observación</th>
                       </tr>
                     </thead>
@@ -105,6 +107,8 @@
                       <tr *ngFor="let movementOfCash of movementsOfCashes">
                         <td>{{movementOfCash.type.name}}</td>
                         <td>{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
+                        <td>{{movementOfCash.number}}</td>
+                        <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                         <td>{{movementOfCash.observation}}</td>
                       </tr>
                       <tr align="center " *ngIf="areMovementsOfCashEmpty ">

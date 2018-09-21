@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -248,7 +248,7 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.gender) this.company.gender = null;
 
     let vatCondition: VATCondition = null;
-    
+
     if (!this.company.vatCondition) {
       if (!this.vatConditions || this.vatConditions.length === 0) {
         vatCondition = null;
@@ -259,9 +259,15 @@ export class AddCompanyComponent  implements OnInit {
       vatCondition = this.company.vatCondition;
     }
     if(!this.company.observation) this.company.observation = '';
-    if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
-    
-    this.companyForm.setValue({
+    if(this.company.allowCurrentAccount === undefined) {
+      if(this.company.type === CompanyType.Client) {
+        this.company.allowCurrentAccount = false;
+      } else {
+        this.company.allowCurrentAccount = true;
+      }
+    }
+
+    const values = {
       'code': this.company.code,
       'name': this.company.name,
       'fantasyName': this.company.fantasyName,
@@ -275,10 +281,12 @@ export class AddCompanyComponent  implements OnInit {
       'phones': this.company.phones,
       'emails': this.company.emails,
       'gender': this.company.gender,
-      'birthday' : this.company.birthday,
-      'observation' : this.company.observation,
-      'allowCurrentAccount' : this.company.allowCurrentAccount
-    });
+      'birthday': this.company.birthday,
+      'observation': this.company.observation,
+      'allowCurrentAccount': this.company.allowCurrentAccount
+    };
+
+    this.companyForm.setValue(values);
   }
 
   public getVATConditions(): void {
@@ -307,10 +315,10 @@ export class AddCompanyComponent  implements OnInit {
     );
   }
 
-  public getLastCompany(): void {  
+  public getLastCompany(): void {
 
     this.loading = true;
-    
+
     this._companyService.getLastCompany().subscribe(
         result => {
           let code = 1;
@@ -319,7 +327,7 @@ export class AddCompanyComponent  implements OnInit {
               code = result.companies[0].code + 1;
             }
           }
-          
+
           this.company.code = code;
           this.company.vatCondition = this.vatConditions[0];
           this.identityTypeSelected = this.identityTypes[0];
@@ -333,9 +341,9 @@ export class AddCompanyComponent  implements OnInit {
       );
    }
 
-  
+
    public addCompany(): void {
-    
+
     if (this.identityTypeSelected === "CUIT") {
       this.companyForm.value.DNI = '';
     } else {
@@ -344,14 +352,14 @@ export class AddCompanyComponent  implements OnInit {
     this.company = this.companyForm.value;
     if (this.company.birthday) {
       this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
-    } 
+    }
     this.saveCompany();
   }
 
   public saveCompany(): void {
-    
+
     this.loading = true;
-    
+
     this._companyService.saveCompany(this.company).subscribe(
     result => {
         if (!result.company) {
@@ -372,7 +380,7 @@ export class AddCompanyComponent  implements OnInit {
       }
     );
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

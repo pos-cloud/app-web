@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 export class Company {
-    
+
     public _id: string;
     public code: number = 1;
     public name: string;
@@ -21,7 +21,7 @@ export class Company {
     public gender: GenderType;
     public birthday: string;
     public observation: string;
-    public allowCurrentAccount: boolean = false;
+    public allowCurrentAccount: boolean;
 
     constructor() {}
 }

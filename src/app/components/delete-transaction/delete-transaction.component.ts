@@ -7,6 +7,9 @@ import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionService } from './../../services/transaction.service';
 import { MovementOfArticleService } from '../../services/movement-of-article.service';
 
+import * as moment from 'moment';
+import 'moment/locale/es';
+
 @Component({
   selector: "app-delete-transaction",
   templateUrl: "./delete-transaction.component.html",
@@ -42,6 +45,10 @@ export class DeleteTransactionComponent implements OnInit {
 
     this.loading = true;
 
+    if(!this.transaction.endDate) {
+      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      this.transaction.expirationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    }
     this.transaction.state = TransactionState.Canceled;
 
     this._transactionService.updateTransaction(this.transaction).subscribe(

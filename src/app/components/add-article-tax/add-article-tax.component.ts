@@ -65,6 +65,9 @@ export class AddArticleTaxComponent implements OnInit {
     this.userValue = pathLocation[1];
     this.articleTax = new Taxes();
     this.taxes = new Array();
+    if(!this.articleTaxes) {
+      this.articleTaxes = new Array();
+    }
     this.getTaxes();
     this.buildForm();
   }
@@ -156,7 +159,7 @@ export class AddArticleTaxComponent implements OnInit {
   }
 
   public addArticleTax(): void {
-    
+
     this.articleTax = this.articleTaxForm.value;
     if (!this.taxExists()) {
       this.articleTaxes.push(this.articleTax);
