@@ -100,6 +100,7 @@
                         <th>Monto</th>
                         <th>Comprobante</th>
                         <th>Vencimiento</th>
+                        <th>Banco</th>
                         <th>Observación</th>
                       </tr>
                     </thead>
@@ -109,6 +110,7 @@
                         <td>{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
                         <td>{{movementOfCash.number}}</td>
                         <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
+                        <td>{{movementOfCash.bank}}</td>
                         <td>{{movementOfCash.observation}}</td>
                       </tr>
                       <tr align="center " *ngIf="areMovementsOfCashEmpty ">
