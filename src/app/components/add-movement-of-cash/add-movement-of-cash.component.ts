@@ -278,12 +278,11 @@ export class AddMovementOfCashComponent implements OnInit {
 
     if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
       for(let movement of this.movementsOfCashes) {
-        amountPaid += movement.amountPaid;
+        amountPaid += this.roundNumber.transform(movement.amountPaid);
       }
     }
 
-    if (amountPaid >= this.transactionAmount ||
-        (amountPaid - this.transactionAmount) < 0.00) {
+    if (this.roundNumber.transform(amountPaid) >= this.roundNumber.transform(this.transactionAmount)) {
       chargedFinished = true;
     }
 
