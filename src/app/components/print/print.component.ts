@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 //Modelos
 import { Transaction } from './../../models/transaction';
 import { MovementOfArticle } from './../../models/movement-of-article';
+import { MovementOfCash } from './../../models/movement-of-cash';
 import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
@@ -27,6 +28,7 @@ import { ConfigService } from './../../services/config.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { ArticleStockService } from './../../services/article-stock.service';
 import { ArticleService } from './../../services/article.service';
+import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 //Pipes
 import { DeprecatedDecimalPipe } from '@angular/common';
@@ -61,6 +63,7 @@ export class PrintComponent implements OnInit {
   public shiftClosingMovementOfCash;
   public companyName: string = Config.companyName;
   public movementsOfArticles2: MovementOfArticle[];
+  public movementsOfCashes: MovementOfCash[];
   public config: Config;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentTicket') contentTicket: ElementRef;
@@ -81,6 +84,7 @@ export class PrintComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _printService: PrintService,
     public _printerService: PrinterService,
+    public _movementOfCash: MovementOfCashService,
     public _transactionService: TransactionService,
     public _movementOfArticle: MovementOfArticleService,
     public _configService: ConfigService,
@@ -142,6 +146,8 @@ export class PrintComponent implements OnInit {
             this.getShiftClosingByTransaccion();
           } else if (this.typePrint === "invoice") {
             this.getMovementOfArticle();
+          } else if (this.typePrint === "cobro") {
+            this.getMovementOfCash();
           } else if (this.typePrint === "current-account") {
             this.toPrintCurrentAccount();
           } else if (this.typePrint === "cash-box") {
@@ -288,6 +294,159 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getMovementOfCash(): void {
+    this.loading = true;
+
+    this._movementOfCash.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
+      result => {
+        if (!result.movementsOfCashes) {
+          this.showMessage("No se encontraron movimientos en la transacción", 'info', false);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.movementsOfCashes = result.movementsOfCashes;
+         console.log(this.movementsOfCashes);
+         
+          if (this.printer.pageHigh > 150) {
+            this.toPrintPayment();
+          } else {
+            this.toPrintPayment();
+          }
+          
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public toPrintPayment(): void {
+      // Encabezado de la transacción
+      this.getHeader();
+      this.getClient();
+  
+      // Dibujar la linea cortada para la letra
+      this.doc.line(105, 13, 105, 50); //vertical letra
+  
+      // Numeración de la transacción
+      this.doc.setFontSize(this.fontSizes.extraLarge);
+  
+      if (this.transaction.type.labelPrint &&
+        this.transaction.type.labelPrint !== '') {
+        this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+      } else {
+        this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+      }
+      this.doc.setFontSize(this.fontSizes.normal);
+      this.doc.setFontType('bold');
+      this.doc.text("Comp. Nº:", 110, 20);
+      this.doc.setFontType('normal');
+      this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+      this.doc.setFontType('bold');
+      this.doc.text("Fecha:", 110, 25);
+      this.doc.setFontType('normal');
+      if (this.transaction.endDate) {
+        this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+      } else {
+        this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+      }
+  
+      // Letra de transacción
+      this.doc.setFontSize(this.fontSizes.extraLarge);
+      this.doc.setFontType('bold');
+      this.doc.setDrawColor("Black");
+      this.doc.rect(100, 3, 10, 10);
+      this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+      this.doc.setFontType('normal');
+  
+      // Encabezado de la tabla de Detalle de Productos
+      this.doc.setFontType('bold');
+      this.doc.setFontSize(this.fontSizes.normal);
+      this.doc.text("Detalle", 25, 77);
+      if (this.transaction.type && this.transaction.type.showPrices) {
+        this.doc.text("Total", 185, 77);
+        this.doc.setFontType('normal');
+      }
+  
+      // Detalle de productos
+      var row = 85;
+      
+      if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+
+       
+
+        for (var i = 0; i < this.movementsOfCashes.length; i++) {
+
+          console.log(this.movementsOfCashes[i]);
+          
+          if (this.movementsOfCashes[i].type.name) {
+            this.doc.text(this.movementsOfCashes[i].type.name, 25, row);
+            if (this.movementsOfCashes[i].number){
+              this.doc.text(this.movementsOfCashes[i].type.name+"-"+this.movementsOfCashes[i].number, 25, row);
+            }
+          }
+          if (this.movementsOfCashes[i].bank){
+            row +=4
+            this.doc.text("Banco:"+this.movementsOfCashes[i].bank, 27, row);
+          }
+          if(this.movementsOfCashes[i].titular){
+            row +=3
+            this.doc.text("Titular:"+this.movementsOfCashes[i].titular, 27, row);
+          }
+          if(this.movementsOfCashes[i].expirationDate){
+            row +=3
+            this.doc.text("Fecha:"+this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 27, row);
+          }
+
+          if (this.movementsOfCashes[i].amountPaid) {
+            this.doc.text((this.movementsOfCashes[i].amountPaid).toString(), 185, row);
+          }
+
+
+          if (this.movementsOfCashes[i].observation) {
+            this.doc.setFontStyle("italic");
+            this.doc.text(this.movementsOfCashes[i].observation, 25, row + 5);
+            this.doc.setFontStyle("normal");
+          }
+          /*if (this.transaction.type && this.transaction.type.showPrices) {
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+          }*/
+  
+          row += 8;
+        }
+      }
+     
+      if (this.transaction.type && this.transaction.type.showPrices) {
+        
+        let rowTotals = 247;
+        this.doc.setFontType('bold');
+        
+        
+        rowTotals += 8;
+        this.doc.setFontSize(this.fontSizes.extraLarge);
+        this.doc.setFontType('bold');
+        this.doc.setFontSize(this.fontSizes.large);
+        this.doc.text("Total:", 147, rowTotals);
+        this.doc.setFontType('normal');
+        this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, rowTotals);
+        this.doc.setFontSize(this.fontSizes.normal);
+      }
+  
+      this.doc.setFontType('bold');
+      this.doc.text("Observaciones:", 10, 246);
+      this.doc.setFontType('normal');
+      this.doc.text('', 38, 250);
+  
+      this.getGreeting();
+      this.getFooter();
+  
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
   public calculateBarcode(): void {
