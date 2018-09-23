@@ -158,12 +158,14 @@
               <tr>
                 <th (click)="orderBy('name')">Nombre </th>
                 <th (click)="orderBy('DNI')">DNI </th>
+                <th (click)="orderBy('CUIT')">CUIT </th>
                 <th (click)="orderBy('address')">Dirección </th>
                 <th (click)="orderBy('phones')">Teléfonos </th>
               </tr>
               <tr>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
               </tr>
@@ -173,6 +175,7 @@
                                                     | filter: filterCode:'code'
                                                     | filter: filterName:'name'
                                                     | filter: filterDNI:'DNI'
+                                                    | filter: filterCUIT:'CUIT'
                                                     | filter: filterAddress:'address'
                                                     | filter: filterPhones:'phones'
                                                     | paginate: { itemsPerPage: itemsPerPage, 
@@ -182,6 +185,7 @@
                   (click)="selectCompany(company)">
                 <td>{{company.name}}</td>
                 <td>{{company.DNI}}</td>
+                <td>{{company.CUIT}}</td>
                 <td>{{company.address}}</td>
                 <td>{{company.phones}}</td>
               </tr>
