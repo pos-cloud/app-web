@@ -514,16 +514,18 @@ export class AddMovementOfArticleComponent implements OnInit {
     }
     movementOfArticle.otherFields = fields;
 
-    let taxes: Taxes[] = new Array();
-    if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
-      for (const articleTax of movementOfArticle.taxes) {
-        articleTax.taxBase = taxedAmount;
-        articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
-        taxes.push(articleTax);
-        movementOfArticle.costPrice += (articleTax.taxAmount);
+    if(this.movementOfArticle.transaction.type.requestTaxes) {
+      let taxes: Taxes[] = new Array();
+      if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
+        for (const articleTax of movementOfArticle.taxes) {
+          articleTax.taxBase = taxedAmount;
+          articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
+          taxes.push(articleTax);
+          movementOfArticle.costPrice += (articleTax.taxAmount);
+        }
       }
+      movementOfArticle.taxes = taxes;
     }
-    movementOfArticle.taxes = taxes;
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
     movementOfArticle.salePrice = movementOfArticle.costPrice;
 
@@ -555,18 +557,20 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.salePrice - this.movementOfArticle.costPrice);
     this.movementOfArticle.markupPercentage = this.roundNumber.transform(this.movementOfArticle.markupPrice / this.movementOfArticle.costPrice * 100);
 
-    let tax: Taxes = new Taxes();
-    let taxes: Taxes[] = new Array();
-    if (this.movementOfArticle.taxes) {
-      for (let taxAux of this.movementOfArticle.taxes) {
-        tax.percentage = this.roundNumber.transform(taxAux.percentage);
-        tax.tax = taxAux.tax;
-        tax.taxBase = this.roundNumber.transform(this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-        tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-        taxes.push(tax);
+    if (this.movementOfArticle.transaction.type.requestTaxes) {
+      let tax: Taxes = new Taxes();
+      let taxes: Taxes[] = new Array();
+      if (this.movementOfArticle.taxes) {
+        for (let taxAux of this.movementOfArticle.taxes) {
+          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          tax.tax = taxAux.tax;
+          tax.taxBase = this.roundNumber.transform(this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+          tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+          taxes.push(tax);
+        }
       }
+      this.movementOfArticle.taxes = taxes;
     }
-    this.movementOfArticle.taxes = taxes;
 
     return movementOfArticle;
   }

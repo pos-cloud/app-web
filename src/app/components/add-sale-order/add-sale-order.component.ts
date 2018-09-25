@@ -633,16 +633,18 @@ export class AddSaleOrderComponent implements OnInit {
     }
     movementOfArticle.otherFields = fields;
 
-    let taxes: Taxes[] = new Array();
-    if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
-      for (const articleTax of movementOfArticle.taxes) {
-        articleTax.taxBase = taxedAmount;
-        articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
-        taxes.push(articleTax);
-        movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
+    if (this.transaction.type.requestTaxes) {
+      let taxes: Taxes[] = new Array();
+      if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
+        for (const articleTax of movementOfArticle.taxes) {
+          articleTax.taxBase = taxedAmount;
+          articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
+          taxes.push(articleTax);
+          movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
+        }
       }
+      movementOfArticle.taxes = taxes;
     }
-    movementOfArticle.taxes = taxes;
     movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
     movementOfArticle.salePrice = movementOfArticle.costPrice;
 
@@ -676,18 +678,20 @@ export class AddSaleOrderComponent implements OnInit {
     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
     movementOfArticle.markupPercentage = this.roundNumber.transform(movementOfArticle.markupPrice / movementOfArticle.costPrice * 100);
 
-    let tax: Taxes = new Taxes();
-    let taxes: Taxes[] = new Array();
-    if (movementOfArticle.taxes) {
-      for (let taxAux of movementOfArticle.taxes) {
-        tax.percentage = this.roundNumber.transform(taxAux.percentage);
-        tax.tax = taxAux.tax;
-        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-        tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-        taxes.push(tax);
+    if (this.transaction.type.requestTaxes) {
+      let tax: Taxes = new Taxes();
+      let taxes: Taxes[] = new Array();
+      if (movementOfArticle.taxes) {
+        for (let taxAux of movementOfArticle.taxes) {
+          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          tax.tax = taxAux.tax;
+          tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+          tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+          taxes.push(tax);
+        }
       }
+      movementOfArticle.taxes = taxes;
     }
-    movementOfArticle.taxes = taxes;
 
     return movementOfArticle;
   }
@@ -814,8 +818,13 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.discountPercent = 0;
       this.transaction.discountAmount = 0;
     }
-
-    this.updateTaxes();
+    if (this.transaction.type.requestTaxes) {
+      this.updateTaxes();
+    } else {
+      this.transaction.exempt = this.transaction.totalPrice;
+      console.log(this.transaction.exempt);
+      this.updateTransaction();
+    }
   }
 
   public validateElectronicTransaction(): void {

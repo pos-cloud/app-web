@@ -220,7 +220,7 @@ export class ListArticlesComponent implements OnInit {
   };
 
   public addItem(articleSelected: Article) {
-    
+
     let movementOfArticle = new MovementOfArticle();
     movementOfArticle.article = articleSelected;
     movementOfArticle.code = articleSelected.code;
@@ -235,22 +235,26 @@ export class ListArticlesComponent implements OnInit {
         movementOfArticle.markupPercentage = articleSelected.markupPercentage;
         movementOfArticle.markupPrice = articleSelected.markupPrice;
         movementOfArticle.salePrice = articleSelected.salePrice;
-        let tax: Taxes = new Taxes();
-        let taxes: Taxes[] = new Array();
-        if (articleSelected.taxes) {
-          for (let taxAux of articleSelected.taxes) {
-            tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            tax.tax = taxAux.tax;
-            tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-            taxes.push(tax);
+        if(this.transaction.type.requestTaxes) {
+          let tax: Taxes = new Taxes();
+          let taxes: Taxes[] = new Array();
+          if (articleSelected.taxes) {
+            for (let taxAux of articleSelected.taxes) {
+              tax.percentage = this.roundNumber.transform(taxAux.percentage);
+              tax.tax = taxAux.tax;
+              tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+              tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+              taxes.push(tax);
+            }
           }
+          movementOfArticle.taxes = taxes;
         }
-        movementOfArticle.taxes = taxes;
     } else {
       movementOfArticle.markupPercentage = 0;
       movementOfArticle.markupPrice = 0;
-      movementOfArticle.taxes = articleSelected.taxes;
+      if (this.transaction.type.requestTaxes) {
+        movementOfArticle.taxes = articleSelected.taxes;
+      }
       movementOfArticle.salePrice = articleSelected.costPrice;
     }
     movementOfArticle.make = articleSelected.make;
@@ -261,7 +265,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public filterItem(articles: Article[]) {
-    
+
     if (articles && articles.length > 0 && this.articles.length >= 2) {
       let article = articles[0];
       if ( articles.length === 1 &&
@@ -283,22 +287,26 @@ export class ListArticlesComponent implements OnInit {
                   movementOfArticle.markupPercentage = article.markupPercentage;
                   movementOfArticle.markupPrice = article.markupPrice;
                   movementOfArticle.salePrice = article.salePrice;
-                  let tax: Taxes = new Taxes();
-                  let taxes: Taxes[] = new Array();
-                  if (article.taxes) {
-                    for (let taxAux of article.taxes) {
-                      tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                      tax.tax = taxAux.tax;
-                      tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-                      tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
-                      taxes.push(tax);
+                  if (this.transaction.type.requestTaxes) {
+                    let tax: Taxes = new Taxes();
+                    let taxes: Taxes[] = new Array();
+                    if (article.taxes) {
+                      for (let taxAux of article.taxes) {
+                        tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                        tax.tax = taxAux.tax;
+                        tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+                        tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+                        taxes.push(tax);
+                      }
                     }
+                    movementOfArticle.taxes = taxes;
                   }
-                  movementOfArticle.taxes = taxes;
               } else {
                 movementOfArticle.markupPercentage = 0;
                 movementOfArticle.markupPrice = 0;
-                movementOfArticle.taxes = article.taxes;
+                if(this.transaction.type.requestTaxes) {
+                  movementOfArticle.taxes = article.taxes;
+                }
                 movementOfArticle.salePrice = article.costPrice;
               }
               movementOfArticle.make = article.make;

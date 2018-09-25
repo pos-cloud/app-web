@@ -56,15 +56,15 @@
           <label for="origin" class="control-label">Origen:</label>
           <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.origin" class="alert alert-danger">
-            {{ formErrors.origin }} 
+            {{ formErrors.origin }}
           </div>
         </div>
         <div class="form-group col-md-2">
           <label for="letter" class="control-label">Letra:</label>
           <select class="form-control" formControlName="letter">
-            <option *ngFor="let letter of letters" 
-                    [selected]="!transaction.letter && transaction.company.vatCondition.transactionLetter === letter || transaction.letter === letter" 
-                    [value]="letter" 
+            <option *ngFor="let letter of letters"
+                    [selected]="!transaction.letter && transaction.company.vatCondition.transactionLetter === letter || transaction.letter === letter"
+                    [value]="letter"
                     [disabled]="readonly">
                     {{ letter }}
             </option>
@@ -81,7 +81,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.requestTaxes">
+      <div class="row" *ngIf="transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
@@ -103,7 +103,10 @@
           </div>
         </div>
       </div>
-      <app-add-article-tax (eventAddArticleTax)="addTransactionTaxes($event)" [articleTaxes]="taxes" *ngIf="transaction.type.requestTaxes"></app-add-article-tax>
+      <app-add-article-tax  (eventAddArticleTax)="addTransactionTaxes($event)"
+                            [articleTaxes]="taxes"
+                            *ngIf="transaction.type && transaction.type.requestTaxes&& !transaction.type.requestArticles">
+      </app-add-article-tax>
       <div class="row" *ngIf="transaction.type && !transaction.type.requestArticles">
         <div class="form-group col-md-12">
           <label for="totalPrice" class="control-label">Importe Total:</label>
