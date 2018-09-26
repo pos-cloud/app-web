@@ -828,7 +828,7 @@ export class PrintComponent implements OnInit {
   }
 
   public toPrintInvoice(): void {
-
+    var transport =0;
     // Encabezado de la transacción
     this.getHeader();
     this.getClient();
@@ -888,7 +888,7 @@ export class PrintComponent implements OnInit {
         }
         if (this.movementsOfArticles[i].description) {
           this.doc.text(this.movementsOfArticles[i].description, 25, row);
-          console.log (this.movementsOfArticles[i].category);
+
           if(this.movementsOfArticles[i].category && this.movementsOfArticles[i].category.visibleInvoice){
             if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === true) {
               this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description + '-' + this.movementsOfArticles[i].make.description, 25, row);
@@ -910,7 +910,70 @@ export class PrintComponent implements OnInit {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
         }
 
+        transport = transport + this.movementsOfArticles[i].salePrice;
+
         row += 8;
+
+        if(i == 19){
+          this.doc.setFontType("bold");
+          this.doc.text("TRANSPORTE:".toString(),25,row);
+          this.doc.text(transport.toString(),185,row);
+          row=95;
+          this.doc.addPage();
+
+          this.doc.setFontType("bold");
+
+          this.doc.text("TRANSPORTE:".toString(),25,85);
+          this.doc.text(transport.toString(),185,85);
+          
+          this.getHeader();
+          this.getClient();
+      
+          // Dibujar la linea cortada para la letra
+          this.doc.line(105, 13, 105, 50); //vertical letra
+      
+          // Numeración de la transacción
+          this.doc.setFontSize(this.fontSizes.extraLarge);
+      
+          if (this.transaction.type.labelPrint &&
+            this.transaction.type.labelPrint !== '') {
+            this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+          } else {
+            this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+          }
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.setFontType('bold');
+          this.doc.text("Comp. Nº:", 110, 20);
+          this.doc.setFontType('normal');
+          this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+          this.doc.setFontType('bold');
+          this.doc.text("Fecha:", 110, 25);
+          this.doc.setFontType('normal');
+          if (this.transaction.endDate) {
+            this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+          } else {
+            this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+          }
+      
+          // Letra de transacción
+          this.doc.setFontSize(this.fontSizes.extraLarge);
+          this.doc.setFontType('bold');
+          this.doc.setDrawColor("Black");
+          this.doc.rect(100, 3, 10, 10);
+          this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+          this.doc.setFontType('normal');
+      
+          // Encabezado de la tabla de Detalle de Productos
+          this.doc.setFontType('bold');
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.text("Cant", 5, 77);
+          this.doc.text("Detalle", 25, 77);
+          if (this.transaction.type && this.transaction.type.showPrices) {
+            this.doc.text("Precio", 155, 77);
+            this.doc.text("Total", 185, 77);
+            this.doc.setFontType('normal');
+          }
+        }
       }
     }
    
