@@ -20,7 +20,7 @@ export class AddArticleFieldsComponent implements OnInit {
 
   public field: ArticleFields;
   public articleFields: ArticleField[];
-  @Input() fields: ArticleFields[] = new Array();
+  @Input() fields: ArticleFields[];
   public articleFieldsForm: FormGroup;
   public alertMessage: string = '';
   public userValue: string;
@@ -64,6 +64,9 @@ export class AddArticleFieldsComponent implements OnInit {
     this.userValue = pathLocation[1];
     this.field = new ArticleFields();
     this.articleFields = new Array();
+    if(!this.fields) {
+      this.fields = new Array();
+    }
     this.getArticleFields();
     this.buildForm();
   }
