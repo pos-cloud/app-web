@@ -1,0 +1,48 @@
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Resumen de cuenta
+      <div class="pull-right">  
+          <span (click)="areFiltersVisible = !areFiltersVisible">
+              <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+          </span>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+              <th >Nombre </th>
+              <th> Tipo </th>
+              <th> DNI</th>
+              <th> CUIT</th>
+              <th >Monto </th>
+          </tr>
+          <tr *ngIf="areFiltersVisible" class="filters">
+            <th><input type="text" class="form-control" [(ngModel)]= "filterNombre" placeholder="Nombre..." ></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filterTipo" placeholder="Tipo..." ></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filterMonto" placeholder="Monto..." ></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items | filter: filterNombre:'nombre':'_id'
+                                        | filter: filterTipo:'tipo':'_id'
+                                        | filter: filterDNI:'DNI':'_id'
+                                        | filter: filterCUIT:'CUIT':'_id'
+                                        | filter: filterMonto:'saldo'
+                                        ">
+            <td class="flat">{{ item._id.nombre }}</td>
+            <td class="flat">{{ item._id.tipo }}</td>
+            <td class="flat">{{ item._id.DNI }}</td>
+            <td class="flat">{{ item._id.CUIT }}</td>
+            <td class="flat">{{ item.saldo | currency:'USD':'1.2-2'  }}</td>
+          </tr>
+          <tr align="center" *ngIf="areItemsEmpty">
+            <td colspan="3">No se encontraron cuentas</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

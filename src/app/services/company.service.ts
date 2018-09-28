@@ -95,4 +95,13 @@ export class CompanyService {
 		});
 		return this._http.get(Config.apiURL + 'sales-by-client/' + query, { headers: headers }).map(res => res.json());
 	}
+
+	getSummaryOfAccounts(){
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + "summary-of-accounts/", { headers: headers }).map(res => res.json());
+	}
 }

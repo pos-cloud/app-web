@@ -74,6 +74,7 @@ import { ListLocationsComponent } from './components/list-locations/list-locatio
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
+import { ListSummaryOfAccountsComponent } from "./components/list-summary-of-accounts/list-summary-of-accounts.component";
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -207,6 +208,12 @@ const _routes: Routes = [
   {
     path: 'admin/fondos',
     component: ListTransactionsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/resumen-cuenta',
+    component: ListSummaryOfAccountsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
