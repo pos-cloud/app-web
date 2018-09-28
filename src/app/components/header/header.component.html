@@ -128,6 +128,7 @@
                   [routerLinkActive]="['active']">
             Rubros
           </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','depositos']"
                   [routerLinkActive]="['active']" >
@@ -159,6 +160,18 @@
                     Clientes
             </button>
           </div>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','cuentas-corrientes','cliente']"
+                  [routerLinkActive]="['active']"
+                  *ngIf= "modules &&
+                          modules.sale &&
+                          (modules.sale.resto ||
+                          modules.sale.counter ||
+                          modules.sale.delivery) &&
+                          modules.currentAccount">
+            Cuentas Corrientes Clientes
+          </button>
+          <div class="dropdown-divider"></div>
           <div *ngIf="modules &&
                       modules.sale &&
                       (modules.sale.resto ||
@@ -171,17 +184,6 @@
               Proveedores
             </button>
           </div>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','cuentas-corrientes','cliente']"
-                  [routerLinkActive]="['active']"
-                  *ngIf= "modules &&
-                          modules.sale &&
-                          (modules.sale.resto ||
-                          modules.sale.counter ||
-                          modules.sale.delivery) &&
-                          modules.currentAccount">
-            Cuentas Corrientes Clientes
-          </button>
           <button class="dropdown-item"
                   *ngIf=" modules &&
                           modules.purchase &&
@@ -268,6 +270,7 @@
               Ventas
             </button>
           </div>
+          <div class="dropdown-divider"></div>
           <div *ngIf="modules &&
                       modules.purchase">
             <button class="dropdown-item"
@@ -276,6 +279,7 @@
               Compras
             </button>
           </div>
+          <div class="dropdown-divider"></div>
           <div *ngIf="modules && modules.stock">
             <button class="dropdown-item"
                     [routerLink]="['admin','stock']"
@@ -290,6 +294,7 @@
               Inventario
             </button>
           </div>
+          <div class="dropdown-divider"></div>
           <div *ngIf="modules && modules.money">
             <button class="dropdown-item"
                     [routerLink]="['admin','fondos']"
