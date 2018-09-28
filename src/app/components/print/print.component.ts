@@ -887,9 +887,10 @@ export class PrintComponent implements OnInit {
           this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
         }
         if (this.movementsOfArticles[i].description) {
-          this.doc.text(this.movementsOfArticles[i].description, 25, row);
 
-          if(this.movementsOfArticles[i].category && this.movementsOfArticles[i].category.visibleInvoice){
+          if(this.movementsOfArticles[i].category && this.movementsOfArticles[i].category.visibleInvoice && this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale)
+          
+          {
             if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === true) {
               this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description + '-' + this.movementsOfArticles[i].make.description, 25, row);
             } else if (this.movementsOfArticles[i].category.visibleInvoice === true && this.movementsOfArticles[i].make.visibleSale === false) {
@@ -897,6 +898,14 @@ export class PrintComponent implements OnInit {
             } else if (this.movementsOfArticles[i].make.visibleSale === true && this.movementsOfArticles[i].category.visibleInvoice === false) {
               this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].make.description, 25, row);
             }
+          } else {
+
+            if (this.movementsOfArticles[i].category && this.movementsOfArticles[i].category.visibleInvoice && this.movementsOfArticles[i].category.visibleInvoice === true){
+              this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].category.description, 25, row);
+            }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale === true){
+              this.doc.text(this.movementsOfArticles[i].description + '-' + this.movementsOfArticles[i].make.description, 25, row);
+            } else 
+            this.doc.text(this.movementsOfArticles[i].description, 25, row);
           }
           
         }
