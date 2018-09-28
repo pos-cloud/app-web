@@ -6,7 +6,7 @@
           <b>Mesa:</b> {{transaction.table.description}}
         </div>
         <div class="col-md-2" *ngIf="posType==='mostrador' && transaction.type">
-          <b>{{transaction.type.name}}</b>
+          <b>{{transaction.type.name}} {{ transaction.number }}</b>
         </div>
         <div class="col-md-2" *ngIf="transaction.employeeClosing">
           <b *ngIf="posType!=='resto'">Empleado:</b>

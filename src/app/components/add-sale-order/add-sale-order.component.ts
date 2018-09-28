@@ -822,7 +822,6 @@ export class AddSaleOrderComponent implements OnInit {
       this.updateTaxes();
     } else {
       this.transaction.exempt = this.transaction.totalPrice;
-      console.log(this.transaction.exempt);
       this.updateTransaction();
     }
   }
@@ -953,29 +952,37 @@ export class AddSaleOrderComponent implements OnInit {
               let movementsOfCashes = result.movementsOfCashes;
 
               if (movementsOfCashes) {
-                if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                  this.transaction.origin = this.transaction.type.fixedOrigin;
-                }
+                if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                  if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                    this.transaction.origin = this.transaction.type.fixedOrigin;
+                  }
 
-                this.assignLetter();
-                if (this.transaction.type.electronics && !this.transaction.CAE) {
-                  this.validateElectronicTransaction();
-                } else if (this.transaction.type.electronics && this.transaction.CAE) {
-                  this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                  this.assignLetter();
+                  if (this.transaction.type.electronics && !this.transaction.CAE) {
+                    this.validateElectronicTransaction();
+                  } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                    this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                  } else {
+                    this.assignTransactionNumber();
+                  }
                 } else {
-                  this.assignTransactionNumber();
+                  this.finish();
                 }
               }
             }, (reason) => {
             });
           } else {
-            this.assignLetter();
-            if (this.transaction.type.electronics && !this.transaction.CAE) {
-              this.validateElectronicTransaction();
-            } else if (this.transaction.type.electronics && this.transaction.CAE) {
-              this.finish(); //SE FINALIZA POR ERROR EN LA FE
+            if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              this.assignLetter();
+              if (this.transaction.type.electronics && !this.transaction.CAE) {
+                this.validateElectronicTransaction();
+              } else if (this.transaction.type.electronics && this.transaction.CAE) {
+                this.finish(); //SE FINALIZA POR ERROR EN LA FE
+              } else {
+                this.assignTransactionNumber();
+              }
             } else {
-              this.assignTransactionNumber();
+              this.finish();
             }
           }
         }
