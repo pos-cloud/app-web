@@ -192,6 +192,18 @@
                   [routerLinkActive]="['active']">
             Cuentas Corrientes Proveedores
           </button>
+          <div class="dropdown-divider"></div>
+          <div *ngIf="modules &&
+                    modules.sale &&
+                  (modules.sale.resto ||
+                  modules.sale.counter ||
+                  modules.sale.delivery)">
+            <button class="dropdown-item"
+              [routerLink]="['admin','resumen-cuenta']"
+              [routerLinkActive]="['active']">
+                Resúmenes de Cuentas
+            </button>
+            </div>
         </div>
       </li>
       <li class="nav-item"
@@ -311,17 +323,6 @@
                     [routerLink]="['admin','movimientos-de-medios']"
                     [routerLinkActive]="['active']">
               Movimientos de medios
-            </button>
-          </div>
-          <div *ngIf="modules &&
-                    modules.sale &&
-                  (modules.sale.resto ||
-                  modules.sale.counter ||
-                  modules.sale.delivery)">
-            <button class="dropdown-item"
-              [routerLink]="['admin','resumen-cuenta']"
-              [routerLinkActive]="['active']">
-                Resumen de cuenta
             </button>
           </div>
         </div>
