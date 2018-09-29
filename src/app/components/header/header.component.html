@@ -159,18 +159,19 @@
                     [routerLinkActive]="['active']">
                     Clientes
             </button>
+            <div *ngIf="modules.currentAccount">
+              <button class="dropdown-item"
+                      [routerLink]="['admin','resumenes-de-cuentas','cliente']"
+                      [routerLinkActive]="['active']">
+                  Resúmenes de Cuentas
+              </button>
+              <button class="dropdown-item"
+                      [routerLink]="['admin','cuentas-corrientes','cliente']"
+                      [routerLinkActive]="['active']">
+                Cuentas Corrientes
+              </button>
+            </div>
           </div>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','cuentas-corrientes','cliente']"
-                  [routerLinkActive]="['active']"
-                  *ngIf= "modules &&
-                          modules.sale &&
-                          (modules.sale.resto ||
-                          modules.sale.counter ||
-                          modules.sale.delivery) &&
-                          modules.currentAccount">
-            Cuentas Corrientes Clientes
-          </button>
           <div *ngIf="modules && modules.purchase"class="dropdown-divider"></div>
           <div *ngIf="modules &&
                       modules.purchase">
@@ -179,24 +180,19 @@
                     [routerLinkActive]="['active']">
               Proveedores
             </button>
-          </div>
-          <button class="dropdown-item"
-                  *ngIf=" modules &&
-                          modules.purchase &&
-                          modules.currentAccount"
-                  [routerLink]="['admin','cuentas-corrientes','proveedor']"
-                  [routerLinkActive]="['active']">
-            Cuentas Corrientes Proveedores
-          </button>
-          <div *ngIf="modules && modules.currentAccount"class="dropdown-divider"></div>
-          <div *ngIf="modules &&
-                      modules.currentAccount">
-            <button class="dropdown-item"
-              [routerLink]="['admin','resumenes-de-cuentas']"
-              [routerLinkActive]="['active']">
-                Resúmenes de Cuentas
-            </button>
+            <div *ngIf="modules.currentAccount">
+              <button class="dropdown-item"
+                      [routerLink]="['admin','resumenes-de-cuentas','proveedor']"
+                      [routerLinkActive]="['active']">
+                  Resúmenes de Cuentas
+              </button>
+              <button class="dropdown-item"
+                      [routerLink]="['admin','cuentas-corrientes','proveedor']"
+                      [routerLinkActive]="['active']">
+                Cuentas Corrientes
+              </button>
             </div>
+          </div>
         </div>
       </li>
       <li class="nav-item"
@@ -299,23 +295,19 @@
               Inventario
             </button>
           </div>
-          <div *ngIf="modules && modules.money" class="dropdown-divider"></div>
+          <div class="dropdown-divider"></div>
+          <div>
+            <button class="dropdown-item"
+                    [routerLink]="['admin','movimientos-de-medios']"
+                    [routerLinkActive]="['active']">
+              Movimientos de medios
+            </button>
+          </div>
           <div *ngIf="modules && modules.money">
             <button class="dropdown-item"
                     [routerLink]="['admin','fondos']"
                     [routerLinkActive]="['active']">
               Fondos
-            </button>
-          </div>
-          <div *ngIf="modules &&
-                      modules.sale &&
-                      (modules.sale.resto ||
-                      modules.sale.counter ||
-                      modules.sale.delivery)">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','movimientos-de-medios']"
-                    [routerLinkActive]="['active']">
-              Movimientos de medios
             </button>
           </div>
         </div>

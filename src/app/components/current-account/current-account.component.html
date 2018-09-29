@@ -5,13 +5,8 @@
       <div class="pull-right">
         <button *ngIf="companySelected && companySelected.type === 'Cliente'" class="btn btn-primary" (click)="addTransaction('Cobro')">Cobrar</button>
         <button *ngIf="companySelected && companySelected.type === 'Proveedor'" class="btn btn-primary" (click)="addTransaction('Pago')">Pagar</button>
-        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-spinner fa-spin':loading}">
-          </i>
-          <span *ngIf="loading">Cargando</span>
-          <span *ngIf="!loading">Actualizar</span>
-        </button>
-        <button class="btn btn-primary" (click)="openModal('print')">Imprimir</button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+        <button class="btn btn-primary" (click)="openModal('print')"><i class="fa fa-print"></i> Imprimir</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
@@ -60,14 +55,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of transactions | filter: filterDate:'date' 
-                                                        | filter: filterType:'name':'type' 
-                                                        | filter: filterOrigin:'origin' 
-                                                        | filter: filterNumber:'number' 
-                                                        | filter: filterTotalPrice:'totalPrice' 
+            <tr *ngFor="let transaction of transactions | filter: filterDate:'date'
+                                                        | filter: filterType:'name':'type'
+                                                        | filter: filterOrigin:'origin'
+                                                        | filter: filterNumber:'number'
+                                                        | filter: filterTotalPrice:'totalPrice'
                                                         | orderBy: orderTerm: propertyTerm
-                                                        | paginate: { itemsPerPage: itemsPerPage, 
-                                                                      currentPage: p, 
+                                                        | paginate: { itemsPerPage: itemsPerPage,
+                                                                      currentPage: p,
                                                                       totalItems: totalItems
                                                                     }">
               <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>

@@ -212,7 +212,13 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/resumenes-de-cuentas',
+    path: 'admin/resumenes-de-cuentas/cliente',
+    component: ListSummaryOfAccountsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/resumenes-de-cuentas/proveedor',
     component: ListSummaryOfAccountsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
@@ -464,7 +470,19 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
+    path: 'admin/cuentas-corrientes/cliente/:id',
+    component: CurrentAccountComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
     path: 'admin/cuentas-corrientes/proveedor',
+    component: CurrentAccountComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/cuentas-corrientes/proveedor/:id',
     component: CurrentAccountComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }

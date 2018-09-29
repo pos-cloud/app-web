@@ -23,7 +23,6 @@ import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-moveme
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
-import { Printer, PrinterPrintIn } from '../../models/printer';
 
 @Component({
   selector: 'app-current-account',
@@ -65,7 +64,11 @@ export class CurrentAccountComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.openModal('company');
+    if (pathLocation[4]) {
+      this.getCompany(pathLocation[4]);
+    } else {
+      this.openModal('company');
+    }
   }
 
   public getTransactionsByCompany(): void {
@@ -97,6 +100,27 @@ export class CurrentAccountComponent implements OnInit {
       this.showMessage("Debe seleccionar una empresa.", 'info', true);
       this.loading = false;
     }
+  }
+
+  public getCompany(companyId: string): void {
+
+    this.loading = true;
+
+    this._companyService.getCompany(companyId).subscribe(
+      result => {
+        if (!result.company) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.companySelected = result.company;
+          this.getTransactionsByCompany();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getMovementOfCurrentAccountByCompany(transactions: Transaction[]): void {

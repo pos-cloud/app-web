@@ -1,23 +1,31 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areTablesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Resúmenes de Cuentas
       <div class="pull-right">
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-              <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+        </span>
       </div>
     </div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
           <tr>
-              <th (click)="orderBy('_id','name')">Nombre</th>
-              <th (click)="orderBy('_id','type')">Tipo</th>
-              <th (click)="orderBy('_id','DNI')">DNI</th>
-              <th (click)="orderBy('_id','CUIT')">CUIT</th>
-              <th (click)="orderBy('balance')">Saldo</th>
+            <th></th>
+            <th (click)="orderBy('_id','name')">Nombre</th>
+            <th (click)="orderBy('_id','type')">Tipo</th>
+            <th (click)="orderBy('_id','DNI')">DNI</th>
+            <th (click)="orderBy('_id','CUIT')">CUIT</th>
+            <th (click)="orderBy('balance')">Saldo</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
@@ -31,18 +39,50 @@
                                         | filter: filterDNI:'DNI':'_id'
                                         | filter: filterCUIT:'CUIT':'_id'
                                         | filter: filterBalance:'balance'
-                                        ">
+                                        | orderBy: orderTerm: propertyTerm
+                                        | paginate: { itemsPerPage: itemsPerPage,
+                                                      currentPage: p,
+                                                      totalItems: totalItems
+                                                    }"
+              [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">
+            <td align="left" width="130">
+              <button type="button" class="btn btn-success  btn-sm" (click)="viewDetailCureentAccount(item._id.company)" title="Ver"><i class="fa fa-eye"></i></button>
+            </td>
             <td class="flat">{{ item._id.name }}</td>
             <td class="flat">{{ item._id.type }}</td>
             <td class="flat">{{ item._id.DNI }}</td>
             <td class="flat">{{ item._id.CUIT }}</td>
-            <td class="flat">{{ item.balance | currency:'USD':'1.2-2'  }}</td>
+            <td class="flat" *ngIf="item.balance>=0">
+              <strong>{{item.balance | currency:'USD':'1.2-2'}}</strong>
+            </td>
+            <td class="flat" *ngIf="item.balance<0">
+              <strong>( {{item.balance*-1 | currency:'USD':'1.2-2'}} )</strong>
+            </td>
           </tr>
-          <tr align="center" *ngIf="areItemsEmpty">
-            <td colspan="3">No se encontraron cuentas</td>
+          <tr align="center" *ngIf="items.length === 0">
+            <td colspan="5">No se encontraron cuentas</td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+  <div class="card-footer bg-primary">
+    <div class="row">
+      <div class="col-md-10">
+        <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig."
+          autoHide="true">
+        </pagination-controls>
+      </div>
+      <div class="form-group col-md-2">
+        <select class="form-control" [(ngModel)]="itemsPerPage">
+          <option [value]="5">Mostrar 5 ítems</option>
+          <option [value]="10">Mostrar 10 ítems</option>
+          <option [value]="15">Mostrar 15 ítems</option>
+          <option [value]="20">Mostrar 20 ítems</option>
+          <option [value]="50">Mostrar 50 ítems</option>
+          <option [value]="100">Mostrar 100 ítems</option>
+        </select>
+      </div>
     </div>
   </div>
 </section>

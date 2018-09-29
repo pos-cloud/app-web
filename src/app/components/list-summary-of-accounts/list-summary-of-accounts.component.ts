@@ -1,16 +1,17 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { CompanyService } from './../../services/company.service';
-
+import { CompanyType } from '../../models/company';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
   templateUrl: './list-summary-of-accounts.component.html',
   styleUrls: ['./list-summary-of-accounts.component.css']
 })
+
 export class ListSummaryOfAccountsComponent implements OnInit {
 
   public alertMessage: string = '';
@@ -19,6 +20,11 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public items: any[] = new Array();
   public areItemsEmpty: boolean = false;
   public areFiltersVisible: boolean = false;
+  public orderTerm: string[] = ['-balance'];
+  public propertyTerm: string;
+  public itemsPerPage = 10;
+  public totalItems = 0;
+  public filterType: CompanyType;
 
   constructor(
     public _companyService: CompanyService,
@@ -27,36 +33,61 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     public alertConfig: NgbAlertConfig
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if (!this.filterType) {
+      if (pathLocation[3] === "cliente") {
+        this.filterType = CompanyType.Client;
+      } else if (pathLocation[3] === "proveedor") {
+        this.filterType = CompanyType.Provider;
+      }
+    }
     this.getSummary();
-
   }
 
-  public getSummary() : void {
-    
+  public getSummary(): void {
+
     this.loading = true;
-    
+
     this._companyService.getSummaryOfAccounts().subscribe(
         result => {
           if (!result) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
-            this.loading = false;
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.items = null;
-            this.areItemsEmpty = true;
+            this.totalItems = 0;
           } else {
             this.hideMessage();
-            this.loading = false;
             this.items = result;
-            this.areItemsEmpty = false;
+            this.totalItems = this.items.length;
           }
+          this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
         }
       );
+  }
+
+  public viewDetailCureentAccount(companyId: string): void {
+
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this._router.navigate(['/admin/cuentas-corrientes/' + pathLocation[3] + '/' + companyId]);
+  };
+
+  public refresh(): void {
+    this.getSummary();
+  }
+
+  public orderBy(term: string, property?: string): void {
+    if (this.orderTerm[0] === term) {
+      this.orderTerm[0] = "-" + term;
+    } else {
+      this.orderTerm[0] = term;
+    }
+    this.propertyTerm = property;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
