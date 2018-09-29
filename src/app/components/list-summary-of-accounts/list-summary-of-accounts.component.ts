@@ -20,7 +20,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public items: any[] = new Array();
   public areItemsEmpty: boolean = false;
   public areFiltersVisible: boolean = false;
-  public orderTerm: string[] = ['-balance'];
+  public orderTerm: string[] = ['balance'];
   public propertyTerm: string;
   public itemsPerPage = 10;
   public totalItems = 0;
@@ -39,8 +39,10 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     if (!this.filterType) {
       if (pathLocation[3] === "cliente") {
         this.filterType = CompanyType.Client;
+        this.orderTerm = ['balance'];
       } else if (pathLocation[3] === "proveedor") {
         this.filterType = CompanyType.Provider;
+        this.orderTerm = ['-balance'];
       }
     }
     this.getSummary();
