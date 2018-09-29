@@ -212,7 +212,7 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/resumen-cuenta',
+    path: 'admin/resumenes-de-cuentas',
     component: ListSummaryOfAccountsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
