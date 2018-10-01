@@ -374,6 +374,9 @@ export class AddSaleOrderComponent implements OnInit {
     this.loading = true;
     this.transaction.madein = this.posType;
 
+    this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
+    this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+
     this._transactionService.saveTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -397,6 +400,9 @@ export class AddSaleOrderComponent implements OnInit {
   public updateTransaction(closed: boolean = false): void {
 
     this.loading = true;
+
+    this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
+    this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
 
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
@@ -619,14 +625,17 @@ export class AddSaleOrderComponent implements OnInit {
     movementOfArticle.costPrice = 0;
 
     let fields: ArticleFields[] = new Array();
-    if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if(field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value)) / 100);
+        if (field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+        } else if (field.datatype === ArticleFieldType.Number) {
+          field.amount = parseFloat(field.value);
+        }
+        if (field.articleField.modifyVAT) {
           taxedAmount += field.amount;
-        } else if(field.datatype === ArticleFieldType.Number) {
-          field.amount = parseInt(field.value);
-          taxedAmount += field.amount;
+        } else {
+          movementOfArticle.costPrice += field.amount;
         }
         fields.push(field);
       }
@@ -638,9 +647,9 @@ export class AddSaleOrderComponent implements OnInit {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
         for (const articleTax of movementOfArticle.taxes) {
           articleTax.taxBase = taxedAmount;
-          articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
+          articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
           taxes.push(articleTax);
-          movementOfArticle.costPrice += this.roundNumber.transform(articleTax.taxAmount);
+          movementOfArticle.costPrice += articleTax.taxAmount;
         }
       }
       movementOfArticle.taxes = taxes;
@@ -653,19 +662,19 @@ export class AddSaleOrderComponent implements OnInit {
 
   public recalculateSalePrice(movementOfArticle: MovementOfArticle, amount: number): MovementOfArticle {
 
-    let unitPrice = (movementOfArticle.salePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount;
+    let unitPrice = this.roundNumber.transform(((movementOfArticle.salePrice / movementOfArticle.amount) + movementOfArticle.transactionDiscountAmount));
 
     movementOfArticle.amount += amount;
 
-    movementOfArticle.basePrice = movementOfArticle.article.basePrice * movementOfArticle.amount;
+    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
     let fields: ArticleFields[] = new Array();
     if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
         if(field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value)) / 100);
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
         } else if(field.datatype === ArticleFieldType.Number) {
-          field.amount = parseInt(field.value);
+          field.amount = parseFloat(field.value);
         }
         fields.push(field);
       }
@@ -676,7 +685,7 @@ export class AddSaleOrderComponent implements OnInit {
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.salePrice = this.roundNumber.transform((unitPrice - movementOfArticle.transactionDiscountAmount) * movementOfArticle.amount);
     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
-    movementOfArticle.markupPercentage = this.roundNumber.transform(movementOfArticle.markupPrice / movementOfArticle.costPrice * 100);
+    movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
 
     if (this.transaction.type.requestTaxes) {
       let tax: Taxes = new Taxes();
@@ -685,8 +694,8 @@ export class AddSaleOrderComponent implements OnInit {
         for (let taxAux of movementOfArticle.taxes) {
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-          tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+          tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
+          tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
           taxes.push(tax);
         }
       }
@@ -715,6 +724,10 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.loading = true;
 
+    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
+    movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
+    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
+
     this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
@@ -739,6 +752,56 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = true;
   }
 
+  public updateOthersFields(): void {
+
+    let transactionTaxes: Taxes[] = new Array();
+    let transactionTaxesAUX: Taxes[] = new Array();
+
+    this.transaction.exempt = 0;
+
+    if (this.movementsOfArticles) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
+          let transactionTax: Taxes = new Taxes();
+          for (let taxesAux of movementOfArticle.taxes) {
+            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              transactionTax.percentage = taxesAux.percentage;
+              transactionTax.tax = taxesAux.tax;
+              transactionTax.taxBase = taxesAux.taxBase;
+              transactionTax.taxAmount = taxesAux.taxAmount;
+            } else {
+              transactionTax = taxesAux;
+            }
+          }
+          transactionTaxesAUX.push(transactionTax);
+        } else {
+          this.transaction.exempt += movementOfArticle.salePrice;
+        }
+      }
+    }
+
+    if (transactionTaxesAUX) {
+      for (let transactionTaxAux of transactionTaxesAUX) {
+        let exists: boolean = false;
+        for (let transactionTax of transactionTaxes) {
+          if (transactionTaxAux.tax.name === transactionTax.tax.name &&
+            transactionTaxAux.percentage === transactionTax.percentage) {
+            transactionTax.taxAmount += transactionTaxAux.taxAmount;
+            transactionTax.taxBase += transactionTaxAux.taxBase;
+            exists = true;
+          }
+        }
+
+        if (!exists) {
+          transactionTaxes.push(transactionTaxAux);
+        }
+      }
+    }
+
+    this.transaction.taxes = transactionTaxes;
+    this.updateTransaction();
+  }
+
   public updateTaxes(): void {
 
     let transactionTaxes: Taxes[] = new Array();
@@ -752,10 +815,10 @@ export class AddSaleOrderComponent implements OnInit {
           let transactionTax: Taxes = new Taxes();
           for(let taxesAux of movementOfArticle.taxes) {
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              transactionTax.percentage = this.roundNumber.transform(taxesAux.percentage);
+              transactionTax.percentage = taxesAux.percentage;
               transactionTax.tax = taxesAux.tax;
-              transactionTax.taxBase = this.roundNumber.transform(taxesAux.taxBase);
-              transactionTax.taxAmount = this.roundNumber.transform(taxesAux.taxAmount);
+              transactionTax.taxBase = taxesAux.taxBase;
+              transactionTax.taxAmount = taxesAux.taxAmount;
             } else {
               transactionTax = taxesAux;
             }
@@ -1082,8 +1145,8 @@ export class AddSaleOrderComponent implements OnInit {
     let taxes: Taxes[] = new Array();
     let tax: Taxes = new Taxes();
     tax.percentage = 21.00;
-    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-    tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+    tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
+    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
 
     this._taxService.getTaxes('where="name":"IVA"').subscribe(
       result => {
@@ -1261,6 +1324,10 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
+
+    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
+    movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
+    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
 
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {

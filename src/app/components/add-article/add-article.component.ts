@@ -32,6 +32,7 @@ import { DecimalPipe } from '@angular/common';
 import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../models/article-fields';
 import { ArticleFieldType } from '../../models/article-field';
+import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-add-article',
@@ -75,6 +76,7 @@ export class AddArticleComponent implements OnInit {
   public numberOfArticleTaxToStore = 0;
   public uniqueVariantTypes: VariantType[] = new Array();
   public hasChanged = false;
+  public roundNumber: RoundNumberPipe = new RoundNumberPipe();
 
   public formErrors = {
     'code': '',
@@ -446,7 +448,7 @@ export class AddArticleComponent implements OnInit {
   public updatePrices(op): void {
 
     let taxedAmount = 0;
-    
+
     switch (op) {
       case 'basePrice':
         this.articleForm.value.costPrice = 0;
@@ -455,9 +457,14 @@ export class AddArticleComponent implements OnInit {
         if(this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
             if(field.datatype === ArticleFieldType.Percentage) {
-              taxedAmount += ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
+              field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
             } else if(field.datatype === ArticleFieldType.Number) {
-              taxedAmount += parseInt(field.value);
+              field.amount = parseFloat(field.value);
+            }
+            if (field.articleField.modifyVAT) {
+              taxedAmount += field.amount;
+            } else {
+              this.articleForm.value.costPrice += field.amount;
             }
           }
         }
@@ -465,14 +472,14 @@ export class AddArticleComponent implements OnInit {
         if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
             articleTax.taxBase = taxedAmount;
-            articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
+            articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
             this.articleForm.value.costPrice += (articleTax.taxAmount);
           }
         }
         this.articleForm.value.costPrice += taxedAmount;
-        
+
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.markupPrice = this.roundNumber.transform((this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100));
           this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
@@ -480,14 +487,17 @@ export class AddArticleComponent implements OnInit {
           this.articleForm.value.costPrice = 0;
           taxedAmount = this.articleForm.value.basePrice;
 
-          if(this.otherFields && this.otherFields.length > 0) {
+          if (this.otherFields && this.otherFields.length > 0) {
             for (const field of this.otherFields) {
-              if(field.datatype === ArticleFieldType.Percentage) {
-                field.amount = ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
+              if (field.datatype === ArticleFieldType.Percentage) {
+                field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
+              } else if (field.datatype === ArticleFieldType.Number) {
+                field.amount = parseFloat(field.value);
+              }
+              if (field.articleField.modifyVAT) {
                 taxedAmount += field.amount;
-              } else if(field.datatype === ArticleFieldType.Number) {
-                field.amount = parseInt(field.value);
-                taxedAmount += field.amount;
+              } else {
+                this.articleForm.value.costPrice += field.amount;
               }
             }
           }
@@ -495,15 +505,15 @@ export class AddArticleComponent implements OnInit {
           if (this.taxes && this.taxes.length > 0) {
             for (const articleTax of this.taxes) {
               articleTax.taxBase = taxedAmount;
-              articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
+              articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
               this.articleForm.value.costPrice += (articleTax.taxAmount);
             }
           }
-          
+
           this.articleForm.value.costPrice += taxedAmount;
 
           if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
-            this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+            this.articleForm.value.markupPrice = this.roundNumber.transform((this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100));
             this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
           }
           break;
@@ -511,41 +521,44 @@ export class AddArticleComponent implements OnInit {
         this.articleForm.value.costPrice = 0;
         taxedAmount = this.articleForm.value.basePrice;
 
-        if(this.otherFields && this.otherFields.length > 0) {
+        if (this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if(field.datatype === ArticleFieldType.Percentage) {
-              field.amount = ((this.articleForm.value.basePrice * parseInt(field.value)) / 100);
+            if (field.datatype === ArticleFieldType.Percentage) {
+              field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
+            } else if (field.datatype === ArticleFieldType.Number) {
+              field.amount = parseFloat(field.value);
+            }
+            if (field.articleField.modifyVAT) {
               taxedAmount += field.amount;
-            } else if(field.datatype === ArticleFieldType.Number) {
-              field.amount = parseInt(field.value);
-              taxedAmount += field.amount;
+            } else {
+              this.articleForm.value.costPrice += field.amount;
             }
           }
         }
-          
+
         if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
             articleTax.taxBase = taxedAmount;
-            articleTax.taxAmount = taxedAmount * articleTax.percentage / 100;
+            articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
             this.articleForm.value.costPrice += (articleTax.taxAmount);
           }
         }
-        
+
         this.articleForm.value.costPrice += taxedAmount;
         if (!(taxedAmount === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100);
           this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
       case 'markupPercentage':
         if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPrice = this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100;
+          this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.costPrice * this.articleForm.value.markupPercentage / 100);
           this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
       case 'markupPrice':
         if (!(this.articleForm.value.basePrice === 0 && this.articleForm.value.salePrice !== 0)) {
-          this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
+          this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100);
           this.articleForm.value.salePrice = this.articleForm.value.costPrice + this.articleForm.value.markupPrice;
         }
         break;
@@ -556,18 +569,18 @@ export class AddArticleComponent implements OnInit {
           this.articleForm.value.markupPrice = this.articleForm.value.salePrice;
         } else {
           this.articleForm.value.markupPrice = this.articleForm.value.salePrice - this.articleForm.value.costPrice;
-          this.articleForm.value.markupPercentage = this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100;
+          this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPrice / this.articleForm.value.costPrice * 100);
         }
         break;
       default:
         break;
     }
 
-    this.articleForm.value.basePrice = parseFloat(this.articleForm.value.basePrice.toFixed(2));
-    this.articleForm.value.costPrice = parseFloat(this.articleForm.value.costPrice.toFixed(2));
-    this.articleForm.value.markupPercentage = parseFloat(this.articleForm.value.markupPercentage.toFixed(2));
-    this.articleForm.value.markupPrice = parseFloat(this.articleForm.value.markupPrice.toFixed(3));
-    this.articleForm.value.salePrice = parseFloat(this.articleForm.value.salePrice.toFixed(2));
+    this.articleForm.value.basePrice = this.roundNumber.transform(this.articleForm.value.basePrice);
+    this.articleForm.value.costPrice = this.roundNumber.transform(this.articleForm.value.costPrice);
+    this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
+    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice,3);
+    this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
 
     this.article = this.articleForm.value;
     this.setValuesForm();
@@ -646,7 +659,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowPurchase === undefined) { this.article.allowPurchase = true; }
     if (!this.article.allowSale === undefined) { this.article.allowSale = true; }
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
-    
+
     const values = {
       '_id': this.article._id,
       'code': this.article.code,
@@ -893,7 +906,7 @@ export class AddArticleComponent implements OnInit {
 
     if(this.uniqueVariantTypes && this.uniqueVariantTypes.length > 0) {
       for (let i = 0; i < this.uniqueVariantTypes.length; i++) {
-        this.numberOfArticleChildToStore *= this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes);
+        this.numberOfArticleChildToStore = this.roundNumber.transform(this.numberOfArticleChildToStore * this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes));
       }
     }
 

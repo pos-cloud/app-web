@@ -72,6 +72,9 @@ export class AddArticleFieldComponent  implements OnInit {
       ],
       'modify': [this.articleField.modify, [
         ]
+      ]
+      'modifyVAT': [this.articleField.modifyVAT, [
+        ]
       ],
     });
 
@@ -107,13 +110,13 @@ export class AddArticleFieldComponent  implements OnInit {
   }
 
   public saveArticleField(): void {
-    
+
     this.loading = true;
-    
+
     this._articleFieldService.saveArticleField(this.articleField).subscribe(
       result => {
         if (!result.articleField) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.articleField = result.articleField;
@@ -124,12 +127,12 @@ export class AddArticleFieldComponent  implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, 'danger', false); 
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
     );
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

@@ -25,6 +25,7 @@
               <th (click)="orderBy('datatype')">Tipo de dato </th>
               <th (click)="orderBy('value')">Valor </th>
               <th (click)="orderBy('modify')">Modifica </th>
+              <th (click)="orderBy('modifyVAT')">Modifica IVA</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
@@ -32,16 +33,18 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterDatatype" placeholder="Tipo de dato..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterValue" placeholder="Valor..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterModify" placeholder="Modifica..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterModifyVAT" placeholder="Modifica IVA..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let articleField of articleFields | filter: filterName:'name' 
-                                                          | filter: filterDatatype:'datatype' 
+            <tr *ngFor="let articleField of articleFields | filter: filterName:'name'
+                                                          | filter: filterDatatype:'datatype'
                                                           | filter: filterValue:'value'
                                                           | filter: filterModify:'modify'
+                                                          | filter: filterModifyVAT:'modifyVAT'
                                                           | orderBy: orderTerm: propertyTerm
-                                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                                        currentPage: p, 
+                                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                                        currentPage: p,
                                                                         totalItems: totalItems
                                                                       }">
               <td align="left" width="130">
@@ -53,6 +56,7 @@
               <td class="flat">{{articleField.datatype}}</td>
               <td class="flat">{{articleField.value}}</td>
               <td class="flat">{{articleField.modify}}</td>
+              <td class="flat">{{articleField.modifyVAT}}</td>
             </tr>
             <tr align="center" *ngIf="areArticleFieldsEmpty">
               <td colspan="5">No se encontraron campos de producto</td>
@@ -63,11 +67,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

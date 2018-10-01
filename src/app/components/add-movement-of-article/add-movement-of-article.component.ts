@@ -503,11 +503,14 @@ export class AddMovementOfArticleComponent implements OnInit {
     if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
         if(field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value)) / 100);
-          taxedAmount += field.amount;
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
         } else if(field.datatype === ArticleFieldType.Number) {
-          field.amount = parseInt(field.value);
+          field.amount = parseFloat(field.value);
+        }
+        if (field.articleField.modifyVAT) {
           taxedAmount += field.amount;
+        } else {
+          movementOfArticle.costPrice += field.amount;
         }
         fields.push(field);
       }
@@ -519,7 +522,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
         for (const articleTax of movementOfArticle.taxes) {
           articleTax.taxBase = taxedAmount;
-          articleTax.taxAmount = this.roundNumber.transform(taxedAmount * articleTax.percentage / 100);
+          articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
           taxes.push(articleTax);
           movementOfArticle.costPrice += (articleTax.taxAmount);
         }
@@ -541,9 +544,9 @@ export class AddMovementOfArticleComponent implements OnInit {
     let fields: ArticleFields[] = new Array();
     if(movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if(field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value)) / 100);
-        } else if(field.datatype === ArticleFieldType.Number) {
+        if (field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseInt(field.value) / 100));
+        } else if (field.datatype === ArticleFieldType.Number) {
           field.amount = parseInt(field.value);
         }
         fields.push(field);
@@ -564,8 +567,8 @@ export class AddMovementOfArticleComponent implements OnInit {
         for (let taxAux of this.movementOfArticle.taxes) {
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          tax.taxBase = this.roundNumber.transform(this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-          tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+          tax.taxBase = this.roundNumber.transform((this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
+          tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
           taxes.push(tax);
         }
       }
@@ -627,6 +630,10 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     this.loading = true;
 
+    this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.basePrice);
+    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice);
+    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
+
     this._movementOfArticleService.saveMovementOfArticle(this.movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
@@ -666,6 +673,10 @@ export class AddMovementOfArticleComponent implements OnInit {
   public updateMovementOfArticle() {
 
     this.loading = true;
+
+    this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.basePrice);
+    this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice);
+    this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice);
 
     this._movementOfArticleService.updateMovementOfArticle(this.movementOfArticle).subscribe(
       result => {

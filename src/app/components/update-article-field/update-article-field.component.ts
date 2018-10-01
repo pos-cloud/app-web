@@ -75,6 +75,9 @@ export class UpdateArticleFieldComponent implements OnInit {
       ],
       'modify' : [this.articleField.modify, [
         ]
+      ],
+      'modifyVAT' : [this.articleField.modifyVAT, [
+        ]
       ]
     });
 
@@ -108,13 +111,15 @@ export class UpdateArticleFieldComponent implements OnInit {
     if(!this.articleField.name) { this.articleField.name = '' }
     if(!this.articleField.datatype) { this.articleField.datatype = ArticleFieldType.Percentage }
     if(this.articleField.modify === undefined) { this.articleField.modify = false }
-    
+    if(this.articleField.modifyVAT === undefined) { this.articleField.modifyVAT = false }
+
     this.articleFieldForm.setValue({
       '_id':this.articleField._id,
       'name': this.articleField.name,
       'datatype': this.articleField.datatype,
       'value': this.articleField.value,
-      'modify': this.articleField.modify
+      'modify': this.articleField.modify,
+      'modifyVAT': this.articleField.modifyVAT
     });
   }
 
@@ -127,13 +132,13 @@ export class UpdateArticleFieldComponent implements OnInit {
   }
 
   public saveChanges(): void {
-    
+
     this.loading = true;
-    
+
     this._articleFieldService.updateArticleField(this.articleField).subscribe(
       result => {
         if (!result.articleField) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.articleField = result.articleField;
@@ -148,7 +153,7 @@ export class UpdateArticleFieldComponent implements OnInit {
       }
     );
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

@@ -4,7 +4,8 @@ export class ArticleField {
 	public name: string;
 	public datatype: ArticleFieldType = ArticleFieldType.Percentage;
 	public value: string;
-	public modify: boolean = false;
+  public modify: boolean = false;
+  public modifyVAT: boolean = false;
 
 	constructor() { }
 }

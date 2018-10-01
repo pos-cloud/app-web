@@ -53,22 +53,22 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let company of companies  | filter: filterName:'name' 
+            <tr *ngFor="let company of companies  | filter: filterName:'name'
                                                   | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterType:'type'
                                                   | filter: filterVATCondition:'description':'vatCondition'
                                                   | filter: filterCUIT:'CUIT'
                                                   | filter: filterDNI:'DNI'
                                                   | filter: filterAddress:'address'
-                                                  | filter: filterCity:'city' 
-                                                  | filter: filterPhones:'phones' 
+                                                  | filter: filterCity:'city'
+                                                  | filter: filterPhones:'phones'
                                                   | filter: filterEmails:'emails'
                                                   | filter: filterBirthday:'birthday'
                                                   | filter: filterAllowCurrentAccount:'allowCurrentAccount'
                                                   | filter: filterObservation:'observation'
                                                   | orderBy: orderTerm: propertyTerm
-                                                  | paginate: { itemsPerPage: itemsPerPage, 
-                                                                currentPage: p, 
+                                                  | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: p,
                                                                 totalItems: totalItems
                                                               }">
               <td align="left" width="130">
@@ -115,11 +115,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>
@@ -157,6 +157,7 @@
             <thead>
               <tr>
                 <th (click)="orderBy('name')">Nombre </th>
+                <th (click)="orderBy('name')">Condición IVA </th>
                 <th (click)="orderBy('DNI')">DNI </th>
                 <th (click)="orderBy('CUIT')">CUIT </th>
                 <th (click)="orderBy('address')">Dirección </th>
@@ -164,6 +165,7 @@
               </tr>
               <tr>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                  <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
@@ -171,19 +173,22 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm  
+              <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
                                                     | filter: filterCode:'code'
                                                     | filter: filterName:'name'
+                                                    | filter: filterVATCondition:'description':'vatCondition'
                                                     | filter: filterDNI:'DNI'
                                                     | filter: filterCUIT:'CUIT'
                                                     | filter: filterAddress:'address'
                                                     | filter: filterPhones:'phones'
-                                                    | paginate: { itemsPerPage: itemsPerPage, 
-                                                                  currentPage: p, 
+                                                    | paginate: { itemsPerPage: itemsPerPage,
+                                                                  currentPage: p,
                                                                   totalItems: totalItems
                                                                 }"
                   (click)="selectCompany(company)">
                 <td>{{company.name}}</td>
+                <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
+                <td *ngIf="!company.vatCondition">Consumidor Final</td>
                 <td>{{company.DNI}}</td>
                 <td>{{company.CUIT}}</td>
                 <td>{{company.address}}</td>
@@ -198,11 +203,11 @@
         <div class="card-footer bg-primary">
           <div class="row">
             <div class="col-md-10">
-              <pagination-controls 
+              <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
               </pagination-controls>

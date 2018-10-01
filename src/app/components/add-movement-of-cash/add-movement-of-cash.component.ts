@@ -580,8 +580,8 @@ export class AddMovementOfCashComponent implements OnInit {
     let taxes: Taxes[] = new Array();
     let tax: Taxes = new Taxes();
     tax.percentage = 21.00;
-    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-    tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
+    tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
+    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
 
     this._taxService.getTaxes('where="name":"IVA"').subscribe(
       result => {
