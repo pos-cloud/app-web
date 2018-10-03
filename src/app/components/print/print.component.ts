@@ -254,22 +254,22 @@ export class PrintComponent implements OnInit {
 
       this.doc.setFontSize(8);
       this.doc.setFontType('normal');
-      this.doc.text(this.bookVAT[i].nombre.substr(0,25), 5, row);
-      if(this.bookVAT[i].dni != undefined) {
-        this.doc.text(this.bookVAT[i].dni.toString(), 50, row);
+      this.doc.text(this.bookVAT[i].nameCompany.substr(0,25), 5, row);
+      if(this.bookVAT[i].DNICompany != undefined) {
+        this.doc.text(this.bookVAT[i].DNICompany.toString(), 50, row);
       }
-      if (this.bookVAT[i].cuit != undefined) {
-        this.doc.text(this.bookVAT[i].cuit.toString(), 50, row);
+      if (this.bookVAT[i].CUITCompany != undefined) {
+        this.doc.text(this.bookVAT[i].CUITCompany.toString(), 50, row);
       }
-      this.doc.text(this.dateFormat.transform(this.bookVAT[i].fecha, 'DD/MM/YYYY'),80, row);
+      this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'),80, row);
 
       if (this.bookVAT[i].labelprint !== "") {
-         this.doc.text((this.bookVAT[i].labelprint).toString(), 96, row);
+         this.doc.text((this.bookVAT[i].labelPrint).toString(), 96, row);
       } else {
-        this.doc.text((this.bookVAT[i].typename).toString(), 96, row);
+        this.doc.text((this.bookVAT[i].typeName).toString(), 96, row);
       }
 
-      this.doc.text(this.padString((this.bookVAT[i].origen).toString(), 5)+"-"+this.bookVAT[i].serie+"-"+this.padString((this.bookVAT[i].numero).toString(), 8), 120, row);
+      this.doc.text(this.padString((this.bookVAT[i].origin).toString(), 5)+"-"+this.bookVAT[i].letter+"-"+this.padString((this.bookVAT[i].number).toString(), 8), 120, row);
 
       if (this.bookVAT[i].IVA_PORCENTAJE) {
         this.doc.text((this.bookVAT[i].IVA_PORCENTAJE).toString(), 180, row);
@@ -303,10 +303,18 @@ export class PrintComponent implements OnInit {
 
       row += 5;
 
-      gravado = gravado + this.bookVAT[i].GRAVADO;
-      total = total + this.bookVAT[i].TOTAL;
-      iva = iva + this.bookVAT[i].IVA;
-      exento = exento + this.bookVAT[i].EXENT_NOGRAV;
+      if (this.bookVAT[i].movement === "Entrada"){
+        gravado = gravado + this.bookVAT[i].GRAVADO;
+        total = total + this.bookVAT[i].TOTAL;
+        iva = iva + this.bookVAT[i].IVA;
+        exento = exento + this.bookVAT[i].EXENT_NOGRAV;
+      } else {
+        gravado = gravado - this.bookVAT[i].GRAVADO;
+        total = total - this.bookVAT[i].TOTAL;
+        iva = iva - this.bookVAT[i].IVA;
+        exento = exento - this.bookVAT[i].EXENT_NOGRAV;
+      }
+      
 
       if (row >= 190 ) {
 
