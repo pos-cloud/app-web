@@ -72,7 +72,7 @@ export class AddArticleFieldComponent  implements OnInit {
       ],
       'modify': [this.articleField.modify, [
         ]
-      ]
+      ],
       'modifyVAT': [this.articleField.modifyVAT, [
         ]
       ],
