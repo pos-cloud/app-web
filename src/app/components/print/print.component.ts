@@ -179,7 +179,6 @@ export class PrintComponent implements OnInit {
 
   public getVATBook() {
 
-    console.log (this.params);
     this._transactionService.getVATBook(this.params).subscribe(
       result => {
         if (!result) {
@@ -213,6 +212,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.setFontSize(10);
     this.doc.text("Nombre",5,5)
+    this.doc.text("Identificador",50,5)
     this.doc.text("Fecha",80,5)
     this.doc.text("Especie",95,5)
     this.doc.text("Comprobante",120,5)
@@ -228,19 +228,25 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
 
     for (var i = 0; i < this.bookVAT.length; i++) {
+
       this.doc.setFontSize(8);
       this.doc.setFontType('normal');
       this.doc.text(this.bookVAT[i].nombre.substr(0,25),5,row);
-      if(this.bookVAT[i].DNI) {
-        this.doc.text("DNI",50,5)
+      if(this.bookVAT[i].dni != undefined) {
         this.doc.text(this.bookVAT[i].dni.toString(),50,row);
-      } else {
-        this.doc.text("CUIT",50,5)
+      } 
+      if (this.bookVAT[i].cuit != undefined) {
         this.doc.text(this.bookVAT[i].cuit.toString(),50,row);
       }
       this.doc.text(this.dateFormat.transform(this.bookVAT[i].fecha, 'DD/MM/YYYY'),80,row);
       
-      this.doc.text(this.bookVAT[i].especie.toString(),95,row);
+      
+      if (this.bookVAT[i].labelprint !== "") {
+         this.doc.text((this.bookVAT[i].labelprint).toString(),96,row);
+      } else {
+        this.doc.text((this.bookVAT[i].typename).toString(),96,row);
+      }
+     
 
       this.doc.text(this.padString((this.bookVAT[i].origen).toString(),5)+"-"+this.bookVAT[i].serie+"-"+this.padString((this.bookVAT[i].numero).toString(),8),120,row)
       if(this.bookVAT[i].IVA_PORCENTAJE){
@@ -268,17 +274,17 @@ export class PrintComponent implements OnInit {
       iva = iva + this.bookVAT[i].IVA;
       exento = exento + this.bookVAT[i].EXENT_NOGRAV
 
-      if (i == 34) {
+      if (row == 210 ) {
         row=10;
         this.doc.addPage();
 
         this.doc.setFontType('bold');
         this.doc.setFontSize(10);
         this.doc.text("Nombre",5,5)
+        this.doc.text("Identificador",50,5)
         this.doc.text("Fecha",80,5)
         this.doc.text("Especie",95,5)
-        this.doc.text("Comprobante",120,5)
-    
+        this.doc.text("Comprobante",120,5)    
         this.doc.text("IVA%",160,5)
         this.doc.text("TOTAL",170,5)
         this.doc.text("GRAV",190,5)
