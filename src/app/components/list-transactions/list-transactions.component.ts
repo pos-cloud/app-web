@@ -14,6 +14,9 @@ import { DeleteTransactionComponent } from './../../components/delete-transactio
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
 
+import { ExportIvaComponent } from './../../components/export-iva/export-iva.component';
+
+
 //Pipes
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
@@ -213,6 +216,19 @@ export class ListTransactionsComponent implements OnInit {
 
     });
   }
+
+  public exportIVA(type : string): void {
+
+    let modalRef = this._modalService.open(ExportIvaComponent);
+    modalRef.componentInstance.type = type
+    modalRef.result.then((result) => {
+      if (result === 'export') {
+      }
+    }, (reason) => {
+
+    });
+  }
+  
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

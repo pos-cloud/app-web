@@ -178,6 +178,7 @@ import { DeleteArticleFieldComponent } from './components/delete-article-field/d
 import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
 import { AddArticleFieldsComponent } from './components/add-article-fields/add-article-fields.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
+import { ExportIvaComponent } from './components/export-iva/export-iva.component';
 
 @NgModule({
   declarations: [
@@ -300,7 +301,8 @@ import { ListSummaryOfAccountsComponent } from './components/list-summary-of-acc
     DeleteArticleFieldComponent,
     ListArticleFieldsComponent,
     AddArticleFieldsComponent,
-    ListSummaryOfAccountsComponent
+    ListSummaryOfAccountsComponent,
+    ExportIvaComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,

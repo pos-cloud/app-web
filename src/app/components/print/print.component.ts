@@ -53,6 +53,7 @@ export class PrintComponent implements OnInit {
   @Input() cashBox: CashBox;
   @Input() typePrint;
   @Input() balance;
+  @Input() params;
   @Input() articleStock : ArticleStock;
   @Input() article: Article;
   @Input() printer: Printer;
@@ -61,6 +62,7 @@ export class PrintComponent implements OnInit {
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
   public shiftClosingMovementOfCash;
+  public bookVAT;
   public companyName: string = Config.companyName;
   public movementsOfArticles2: MovementOfArticle[];
   public movementsOfCashes: MovementOfCash[];
@@ -162,6 +164,8 @@ export class PrintComponent implements OnInit {
             this.getBarcode64('code128?value=' + code, this.typePrint);
           } else if (this.typePrint === "kitchen") {
             this.toPrintKitchen();
+          } else if (this.typePrint === "IVA"){
+            this.getVATBook();
           }
         }
         this.loading = false;
@@ -172,6 +176,133 @@ export class PrintComponent implements OnInit {
       }
     );
   }
+
+  public getVATBook() {
+
+    console.log (this.params);
+    this._transactionService.getVATBook(this.params).subscribe(
+      result => {
+        if (!result) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.getShiftClosingByMovementOfArticle();
+          } else {
+            this.hideMessage();
+            this.bookVAT = result;
+            
+            this.toPrintVAT();
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+    );
+    
+  }
+
+  public toPrintVAT() {
+
+    this.doc = new jsPDF('l', 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
+    var row = 10;
+    var total = 0
+    var gravado = 0;
+    var iva = 0;
+    var exento = 0; 
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(10);
+    this.doc.text("Nombre",5,5)
+    this.doc.text("Fecha",80,5)
+    this.doc.text("Especie",95,5)
+    this.doc.text("Comprobante",120,5)
+
+    this.doc.text("TOTAL",160,5)
+    this.doc.text("IVA%",175,5)
+    this.doc.text("GRAV",190,5)
+    this.doc.text("EXENT",205,5)
+    this.doc.text("IVA",220,5)
+    this.doc.text("IVA_PERCEP",240,5)
+    this.doc.text("IIBB_PERCEP",270,5)
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    for (var i = 0; i < this.bookVAT.length; i++) {
+      this.doc.setFontSize(8);
+      this.doc.setFontType('normal');
+      this.doc.text(this.bookVAT[i].nombre.substr(0,25),5,row);
+      if(this.bookVAT[i].DNI) {
+        this.doc.text("DNI",50,5)
+        this.doc.text(this.bookVAT[i].dni.toString(),50,row);
+      } else {
+        this.doc.text("CUIT",50,5)
+        this.doc.text(this.bookVAT[i].cuit.toString(),50,row);
+      }
+      this.doc.text(this.dateFormat.transform(this.bookVAT[i].fecha, 'DD/MM/YYYY'),80,row);
+      
+      this.doc.text(this.bookVAT[i].especie.toString(),95,row);
+
+      this.doc.text(this.padString((this.bookVAT[i].origen).toString(),5)+"-"+this.bookVAT[i].serie+"-"+this.padString((this.bookVAT[i].numero).toString(),8),120,row)
+      if(this.bookVAT[i].IVA_PORCENTAJE){
+        this.doc.text((this.bookVAT[i].IVA_PORCENTAJE).toString(),180,row);
+      }
+      
+      this.doc.text((this.bookVAT[i].TOTAL).toString(),160,row)
+      if(this.bookVAT[i].GRAVADO){
+      this.doc.text((this.bookVAT[i].GRAVADO).toString(),190,row)
+      }
+      this.doc.text((this.bookVAT[i].EXENT_NOGRAV).toString(),205,row)
+      if(this.bookVAT[i].IVA){
+      this.doc.text((this.bookVAT[i].IVA).toString(),220,row)
+      }
+      this.doc.text((this.bookVAT[i].IVA_PERCEP).toString(),240,row)
+      
+      this.doc.text((this.bookVAT[i].IIBB_PERCEP).toString(),270,row)
+    
+      
+
+      row += 5;
+
+      gravado = gravado + this.bookVAT[i].GRAVADO;
+      total = total + this.bookVAT[i].TOTAL;
+      iva = iva + this.bookVAT[i].IVA;
+      exento = exento + this.bookVAT[i].EXENT_NOGRAV
+
+      if (i == 34) {
+        row=10;
+        this.doc.addPage();
+
+        this.doc.setFontType('bold');
+        this.doc.setFontSize(10);
+        this.doc.text("Nombre",5,5)
+        this.doc.text("Fecha",80,5)
+        this.doc.text("Especie",95,5)
+        this.doc.text("Comprobante",120,5)
+    
+        this.doc.text("IVA%",160,5)
+        this.doc.text("TOTAL",170,5)
+        this.doc.text("GRAV",190,5)
+        this.doc.text("EXENT",205,5)
+        this.doc.text("IVA",220,5)
+        this.doc.text("IVA_PERCEP",240,5)
+        this.doc.text("IIBB_PERCEP",270,5)
+        this.doc.setFontSize(8);
+        this.doc.setFontType('normal');
+
+      }
+    }
+
+    row +=5;
+    
+    this.doc.text((this.roundNumber.transform(total)).toString(),160,row)
+    this.doc.text((this.roundNumber.transform(gravado)).toString(),190,row)
+    this.doc.text((this.roundNumber.transform(exento)).toString(),205,row)
+    this.doc.text((this.roundNumber.transform(iva)).toString(),220,row)
+    
+
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+  }
+
 
   public getClosingCashBox(): void {
 

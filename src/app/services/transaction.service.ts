@@ -216,4 +216,13 @@ export class TransactionService {
 		});
 		return this._http.get(Config.apiURL + "download-file/" + fileName, { headers: headers }).map(res => res.json());
 	}
+
+	getVATBook (cond: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'libroIVA/'+cond, { headers: headers }).map (res => res.json());
+	}
 }

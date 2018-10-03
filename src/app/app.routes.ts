@@ -58,6 +58,7 @@ import { CurrentAccountComponent } from './components/current-account/current-ac
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
+import { ExportIvaComponent } from './components/export-iva/export-iva.component';
 import { ListVariantTypesComponent } from './components/list-variant-types/list-variant-types.component';
 import { ListVariantValuesComponent } from './components/list-variant-values/list-variant-values.component';
 import { AddPaymentMethodComponent } from './components/add-payment-method/add-payment-method.component';
@@ -496,6 +497,12 @@ const _routes: Routes = [
   {
     path: 'admin/export-citi',
     component: ExportCitiComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/export-iva',
+    component: ExportIvaComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
