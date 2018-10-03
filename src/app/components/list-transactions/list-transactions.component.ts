@@ -217,10 +217,10 @@ export class ListTransactionsComponent implements OnInit {
     });
   }
 
-  public exportIVA(type : string): void {
+  public exportIVA(): void {
 
     let modalRef = this._modalService.open(ExportIvaComponent);
-    modalRef.componentInstance.type = type
+    modalRef.componentInstance.type = this.listType;
     modalRef.result.then((result) => {
       if (result === 'export') {
       }
@@ -228,7 +228,7 @@ export class ListTransactionsComponent implements OnInit {
 
     });
   }
-  
+
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
