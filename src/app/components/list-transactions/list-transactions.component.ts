@@ -43,6 +43,7 @@ export class ListTransactionsComponent implements OnInit {
   public modules: Observable<{}>;
   public printers: Printer[];
   public roundNumber = new RoundNumberPipe();
+  public transactionMovement: TransactionMovement;
 
   constructor(
     public _transactionService: TransactionService,
@@ -61,14 +62,15 @@ export class ListTransactionsComponent implements OnInit {
     this.modules = Observable.of(Config.modules);
     this.getPrinters();
     if (this.listType === "Compras") {
-      this.getTransactionsByMovement(TransactionMovement.Purchase);
+      this.transactionMovement = TransactionMovement.Purchase;
     } else if (this.listType === "Ventas") {
-      this.getTransactionsByMovement(TransactionMovement.Sale);
+      this.transactionMovement = TransactionMovement.Sale;
     } else if (this.listType === "Stock") {
-      this.getTransactionsByMovement(TransactionMovement.Stock);
+      this.transactionMovement = TransactionMovement.Stock;
     } else if (this.listType === "Fondos") {
-      this.getTransactionsByMovement(TransactionMovement.Money);
+      this.transactionMovement = TransactionMovement.Money;
     }
+    this.getTransactionsByMovement();
   }
 
   public getPrinters(): void {
@@ -92,11 +94,11 @@ export class ListTransactionsComponent implements OnInit {
     );
   }
 
-  public getTransactionsByMovement(transactionMovement: TransactionMovement): void {
+  public getTransactionsByMovement(): void {
 
     this.loading = true;
 
-    this._transactionService.getTransactionsByMovement(transactionMovement).subscribe(
+    this._transactionService.getTransactionsByMovement(this.transactionMovement).subscribe(
       result => {
         if (!result.transactions) {
           this.loading = false;
@@ -128,13 +130,7 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   public refresh(): void {
-    if (this.listType === "Compras") {
-      this.getTransactionsByMovement(TransactionMovement.Purchase);
-    } else if (this.listType === "Ventas") {
-      this.getTransactionsByMovement(TransactionMovement.Sale);
-    } else if (this.listType === "Stock") {
-      this.getTransactionsByMovement(TransactionMovement.Stock);
-    }
+    this.getTransactionsByMovement();
   }
 
   public openModal(op: string, transaction: Transaction): void {
@@ -167,13 +163,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            if (this.listType === "Compras") {
-              this.getTransactionsByMovement(TransactionMovement.Purchase);
-            } else if (this.listType === "Ventas") {
-              this.getTransactionsByMovement(TransactionMovement.Sale);
-            } else if (this.listType === "Stock") {
-              this.getTransactionsByMovement(TransactionMovement.Stock);
-            }
+            this.getTransactionsByMovement();
           }
         }, (reason) => {
 
@@ -185,13 +175,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            if (this.listType === "Compras") {
-              this.getTransactionsByMovement(TransactionMovement.Purchase);
-            } else if (this.listType === "Ventas") {
-              this.getTransactionsByMovement(TransactionMovement.Sale);
-            } else if (this.listType === "Stock") {
-              this.getTransactionsByMovement(TransactionMovement.Stock);
-            }
+            this.getTransactionsByMovement();
           }
         }, (reason) => {
 
@@ -221,9 +205,10 @@ export class ListTransactionsComponent implements OnInit {
 
   public exportCiti(): void {
 
-    let modalRef = this._modalService.open(ExportCitiComponent).result.then((result) => {
-      if (result === 'export') {
-      }
+    let modalRef = this._modalService.open(ExportCitiComponent);
+    modalRef.componentInstance.transactionMovement = this.transactionMovement;
+    modalRef.result.then((result) => {
+
     }, (reason) => {
 
     });

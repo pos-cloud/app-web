@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
 
 import { Config } from './../../app.config';
+import { TransactionMovement } from '../../models/transaction-type';
 
 @Component({
   selector: 'app-export-citi',
@@ -28,6 +29,7 @@ export class ExportCitiComponent implements OnInit {
   public VATPeriod: string;
   public compURL: string;
   public aliURL: string;
+  @Input() transactionMovement: TransactionMovement = TransactionMovement.Sale;
 
   public formErrors = {
     'month': '',
@@ -54,7 +56,6 @@ export class ExportCitiComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    let pathLocation: string[] = this._router.url.split('/');
     this.buildForm();
   }
 
@@ -76,7 +77,7 @@ export class ExportCitiComponent implements OnInit {
   }
 
   public onValueChanged(data?: any): void {
-    
+
     if (!this.exportCitiForm) { return; }
     const form = this.exportCitiForm;
 
@@ -94,15 +95,15 @@ export class ExportCitiComponent implements OnInit {
   }
 
   public exportCiti(): void {
-    
+
     this.loading = true;
 
     this.VATPeriod = this.exportCitiForm.value.year + this.exportCitiForm.value.month;
 
-    this._transactionService.exportCiti(this.VATPeriod).subscribe(
+    this._transactionService.exportCiti(this.VATPeriod, this.transactionMovement).subscribe(
       result => {
         if (result.message !== "OK") {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.showMessage("Los archivos se generaron correctamente.", "success", false);
           this.compURL = '-' + this._userService.getDatabase()+ '-CITI-ventas-' + 'comp' + this.VATPeriod + ".txt";

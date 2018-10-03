@@ -5,7 +5,6 @@ import { Transaction, TransactionState } from './../models/transaction';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
-import { CashBox } from '../models/cash-box';
 
 @Injectable()
 export class TransactionService {
@@ -90,7 +89,7 @@ export class TransactionService {
 		});
 		return this._http.post(Config.apiURL + "transaction", transaction, { headers: headers }).map (res => res.json());
 	}
-    
+
 	deleteTransaction(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -153,7 +152,7 @@ export class TransactionService {
 		});
 		return this._http.get(Config.apiURL + 'transactions/sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
-  
+
 	getLastTransactionByOrigin(origin: number) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -171,7 +170,7 @@ export class TransactionService {
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
-	
+
 	getLastTransactionByTypeAndOrigin(type: TransactionType, origin: number, letter) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -195,18 +194,18 @@ export class TransactionService {
 		headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
 		let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyCUIT":"' + Config.companyCUIT + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + this._userService.getDatabase() + '"}';
-		
+
 		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
 	}
 
-	exportCiti(VATPeriod: string) {
+  exportCiti(VATPeriod: string, transactionMovement: TransactionMovement) {
 
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
-		});
-		return this._http.get(Config.apiURL + "export-citi/" + VATPeriod, { headers: headers }).map(res => res.json());
+    });
+    return this._http.get(Config.apiURL + 'export-citi/{ "VATPeriod": "' + VATPeriod + '", "transactionMovement": "' + transactionMovement + '"}', { headers: headers }).map(res => res.json());
 	}
 
 	downloadFile(fileName: string) {

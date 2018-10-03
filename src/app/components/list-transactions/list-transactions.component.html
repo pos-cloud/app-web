@@ -266,7 +266,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
             <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Proveedor..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDiscount" placeholder="Descuento..."></th>
@@ -301,7 +301,8 @@
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
             <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td *ngIf="!transaction.diners"></td>
+            <td *ngIf="transaction.company">{{transaction.company.name}}</td>
+            <td *ngIf="!transaction.company">SIN PROVEEDOR</td>
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',

@@ -564,10 +564,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
     if (this.movementOfCash.type.surcharge && this.movementOfCash.type.surcharge > 0) {
       movementOfArticle.description = 'Recargo por pago con ' + this.movementOfCash.type.name;
-      movementOfArticle.salePrice = this.movementOfCash.amountPaid * this.movementOfCash.type.surcharge / 100;
+      movementOfArticle.salePrice = this.roundNumber.transform((this.movementOfCash.amountPaid * this.movementOfCash.type.surcharge / 100));
     } else if (this.movementOfCash.type.discount && this.movementOfCash.type.discount > 0) {
       movementOfArticle.description = "Descuento por pago con " + this.movementOfCash.type.name;
-      movementOfArticle.salePrice = - this.movementOfCash.amountPaid * this.movementOfCash.type.discount / 100;
+      movementOfArticle.salePrice = - this.roundNumber.transform((this.movementOfCash.amountPaid * this.movementOfCash.type.discount / 100));
     }
     movementOfArticle.transaction = this.transaction;
     this.getTaxVAT(movementOfArticle);
