@@ -41,7 +41,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) {
-    this.startDate = moment('2017-01-01').format('YYYY-MM-DD');
+    this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
     this.endDate = moment().format('YYYY-MM-DD');
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');

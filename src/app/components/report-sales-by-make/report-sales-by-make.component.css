@@ -3,7 +3,7 @@
 }
 
 .card-large {
-  height:80vh;
+  height:75vh;
 }
 
 .card-header {
@@ -16,6 +16,10 @@
 
 .card-block {
   padding: 0px;
+}
+
+.container-filter {
+  margin-top: 20px;
 }
 
 .center-content {
@@ -38,4 +42,18 @@
 
 .filters {
   background-color: #F8F8F8;
+}
+
+.btn-action {
+      width: 100%;
+      border: 1px solid white;
+      padding: 10px;
+      cursor: pointer;
+      background: #0275d8;
+      color: white;
+      height: 50px;
+}
+
+.btn-action:hover {
+      background: #025aa5;
 }

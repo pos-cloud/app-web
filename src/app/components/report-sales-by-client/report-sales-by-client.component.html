@@ -32,11 +32,38 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
+  <div class="row container-filter">
+    <div class="col-md-2 offset-md-1">
+      <label for="startDate" class="control-label">
+        <b>Fecha Desde:</b>
+      </label>
+      <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
+    </div>
+    <div class="col-md-2">
+      <label for="startTime" class="control-label">
+        <b>Hora Desde:</b>
+      </label>
+      <input type="time" class="form-control" name="startTime" [(ngModel)]="startTime" />
+    </div>
+    <div class="col-md-2">
+      <label for="endDate" class="control-label">
+        <b>Fecha Hasta:</b>
+      </label>
+      <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
+    </div>
+    <div class="col-md-2">
+      <label for="endTime" class="control-label">
+        <b>Hora Hasta:</b>
+      </label>
+      <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
+    </div>
+    <div class="col-md-2" (click)="refresh()">
+      <span class="form-control btn-action center-content">
+        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+    </div>
+  </div>
   <div class="card card-outline-primary card-large">
     <div class="card-header bg-primary">Ventas por cliente
-      <div class="pull-right">
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-      </div>
     </div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
