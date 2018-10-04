@@ -9,7 +9,7 @@
   </div>
   <div class="row center-content">
     <div class="btn-group btn-lg" role="group" aria-label="Basic example">
-      <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id, 
+      <button type="button" [ngClass]="{'btn btn-primary':roomSelected._id===room._id,
                           'btn btn-secondary':roomSelected._id!==room._id}" *ngFor="let room of rooms" (click)="changeRoom(room)"  title="Cambiar de Salón">
         {{room.description}}
       </button>
@@ -76,8 +76,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | filter: filterPendingNumber:'number' 
-                                                      | filter: filterPendingStartDate:'startDate'  
+          <tr *ngFor="let transaction of transactions | filter: filterPendingNumber:'number'
+                                                      | filter: filterPendingStartDate:'startDate'
                                                       | filter: filterPendingCompany:'name':'company'
                                                       | filter: filterPendingAddress:'address':'company'
                                                       | filter: filterPendingPhones:'phones':'company'
@@ -147,9 +147,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | filter: filterSendNumber:'number' 
-                                                      | filter: filterSendStartDate:'startDate'  
-                                                      | filter: filterSendEndDate:'endDate'  
+          <tr *ngFor="let transaction of transactions | filter: filterSendNumber:'number'
+                                                      | filter: filterSendStartDate:'startDate'
+                                                      | filter: filterSendEndDate:'endDate'
                                                       | filter: filterSendCompany:'name':'company'
                                                       | filter: filterSendAddress:'address':'company'
                                                       | filter: filterSendPhones:'phones':'company'
@@ -223,9 +223,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | filter: filterDeliveredNumber:'number' 
-                                                      | filter: filterDeliveredStartDate:'startDate'  
-                                                      | filter: filterDeliveredEndDate:'endDate'  
+          <tr *ngFor="let transaction of transactions | filter: filterDeliveredNumber:'number'
+                                                      | filter: filterDeliveredStartDate:'startDate'
+                                                      | filter: filterDeliveredEndDate:'endDate'
                                                       | filter: filterDeliveredCompany:'name':'company'
                                                       | filter: filterDeliveredAddress:'address':'company'
                                                       | filter: filterDeliveredPhones:'phones':'company'
@@ -310,14 +310,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type' 
-                                                      | filter: filterStartDate:'startDate' 
-                                                      | filter: filterNumber:'number' 
+          <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
+                                                      | filter: filterStartDate:'startDate'
+                                                      | filter: filterNumber:'number'
                                                       | filter: filterCompany:'name':'company'
-                                                      | filter: filterTotalPrice:'totalPrice' 
+                                                      | filter: filterTotalPrice:'totalPrice'
                                                       | orderBy: orderTerm: propertyTerm
-                                                      | paginate: { itemsPerPage: itemsPerPage, 
-                                                                    currentPage: p, 
+                                                      | paginate: { itemsPerPage: itemsPerPage,
+                                                                    currentPage: p,
                                                                     totalItems: totalItems
                                                                   }">
             <td align="left" width="150">
@@ -346,11 +346,11 @@
     <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls 
+          <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>
@@ -369,3 +369,27 @@
     </div>
   </div>
 </section>
+
+<!--MODAL IMPRESORA-->
+<ng-template #contentPrinters let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Selecciona una impresora</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <ul class="list-group">
+            <li class="list-group-item center-content btn" *ngFor="let printer of printers" (click)="c(printer)">{{printer.name}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+  </div>
+</ng-template>

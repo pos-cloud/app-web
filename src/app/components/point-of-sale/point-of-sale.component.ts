@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { Room } from './../../models/room';
+import { Printer, PrinterPrintIn } from './../../models/printer';
 import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 
@@ -14,8 +15,10 @@ import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { PaymentMethodService } from './../../services/payment-method.service';
 import { TurnService } from './../../services/turn.service';
+import { PrinterService } from './../../services/printer.service';
 
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
+import { PrintComponent } from './../print/print.component';
 import { DeleteTransactionComponent } from './../delete-transaction/delete-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
@@ -49,6 +52,8 @@ export class PointOfSaleComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public printers: Printer[];
+  @ViewChild('contentPrinters') contentPrinters: ElementRef;
 
   constructor(
     public _turnService: TurnService,
@@ -56,6 +61,7 @@ export class PointOfSaleComponent implements OnInit {
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _paymentMethodService: PaymentMethodService,
+    public _printerService: PrinterService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -68,7 +74,9 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    
+
+    this.getPrinters();
+
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
@@ -89,8 +97,29 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.printers = undefined;
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
   public getTransactionTypesByMovement(): void {
-    
+
     this.loading = true;
 
     this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
@@ -108,20 +137,20 @@ export class PointOfSaleComponent implements OnInit {
     );
   }
 
-  public getRooms(): void {  
+  public getRooms(): void {
 
     this.loading = true;
-    
+
     this._roomService.getRooms().subscribe(
         result => {
           if (!result.rooms) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
           } else {
             this.hideMessage();
             this.loading = false;
             this.rooms = result.rooms;
-            
+
             if (this.roomSelected._id === undefined){
               this.roomSelected = this.rooms[0];
             } else {
@@ -142,7 +171,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public getOpenTransactions(): void {
-    
+
     this.loading = true;
 
     this._transactionService.getOpenTransaction(this.posType).subscribe(
@@ -169,7 +198,7 @@ export class PointOfSaleComponent implements OnInit {
   public getOpenTransactionsByMovement(transactionMovement: TransactionMovement): void {
 
     this.loading = true;
-    
+
     this._transactionService.getOpenTransactionsByMovement(transactionMovement, this.posType).subscribe(
       result => {
         if (!result.transactions) {
@@ -228,7 +257,7 @@ export class PointOfSaleComponent implements OnInit {
       }
     );
   }
-  
+
   public addTransaction(type: TransactionType): void {
 
     if (type.transactionMovement !== TransactionMovement.Purchase) {
@@ -242,7 +271,7 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public openModal(op: string, typeTransaction?: TransactionType, transaction: Transaction = undefined): void {
+  public openModal(op: string, typeTransaction?: TransactionType, transaction?: Transaction, printerSelected?: Printer): void {
 
     let modalRef;
 
@@ -307,6 +336,13 @@ export class PointOfSaleComponent implements OnInit {
             transaction.expirationDate = transaction.endDate;
             transaction.state = TransactionState.Closed;
             this.updateTransaction(transaction);
+            if (transaction.type.printable) {
+              if (transaction.type.defectPrinter) {
+                this.openModal("print", transaction.type, transaction, transaction.type.defectPrinter);
+              } else {
+                this.openModal("printers", transaction.type, transaction);
+              }
+            }
           } else {
             if (this.posType === "delivery") {
               this.getOpenTransactions();
@@ -321,6 +357,29 @@ export class PointOfSaleComponent implements OnInit {
             this.getOpenTransactionsByMovement(this.transactionMovement);
           }
         });
+        break;
+      case 'print':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.company = transaction.company;
+        modalRef.componentInstance.printer = printerSelected;
+        modalRef.componentInstance.typePrint = 'cobro';
+        modalRef.result.then((result) => {
+        }, (reason) => {
+        });
+        break;
+      case 'printers':
+        if (this.countPrinters() > 1) {
+          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
+            if (result !== "cancel" && result !== '') {
+              this.openModal("print", transaction.type, transaction, result);
+            }
+          }, (reason) => {
+
+          });
+        } else if (this.countPrinters() === 1) {
+          this.openModal("print", transaction.type, transaction, this.printers[0]);
+        }
         break;
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
@@ -408,8 +467,29 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
+  public countPrinters(): number {
+
+    let numberOfPrinters: number = 0;
+    let printersAux = new Array();
+
+    if (this.printers && this.printers.length > 0) {
+      for (let printer of this.printers) {
+        if (printer.printIn === PrinterPrintIn.Counter) {
+          printersAux.push(printer);
+          numberOfPrinters++;
+        }
+      }
+    } else {
+      numberOfPrinters = 0;
+    }
+
+    this.printers = printersAux;
+
+    return numberOfPrinters;
+  }
+
   public openTransaction(transaction: Transaction): void {
-    
+
     if (transaction.type && transaction.type.transactionMovement !== TransactionMovement.Purchase) {
       if (transaction.type.requestArticles) {
         this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
@@ -422,9 +502,9 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public updateTransaction(transaction: Transaction): void {
-    
+
     this.loading = true;
-    
+
     this._transactionService.updateTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -471,7 +551,7 @@ export class PointOfSaleComponent implements OnInit {
     }
     this.propertyTerm = property;
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
