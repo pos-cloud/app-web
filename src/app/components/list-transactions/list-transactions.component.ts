@@ -153,10 +153,14 @@ export class ListTransactionsComponent implements OnInit {
         } else {
           modalRef.componentInstance.typePrint = 'invoice';
         }
-        if (this.printers && this.printers.length > 0) {
-          for(let printer of this.printers) {
-            if (printer.printIn === PrinterPrintIn.Counter) {
-              modalRef.componentInstance.printer = printer;
+        if (transaction.type.defectPrinter) {
+          modalRef.componentInstance.printer = transaction.type.defectPrinter;
+        } else {
+          if (this.printers && this.printers.length > 0) {
+            for(let printer of this.printers) {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
             }
           }
         }
