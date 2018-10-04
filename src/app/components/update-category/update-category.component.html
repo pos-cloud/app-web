@@ -28,8 +28,7 @@
                     <div class="custom-file">
                       <label class="custom-file-label btn btn-action" for="customFileLang">Cambiar Imagen</label>
                       <input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)"/>
-                      <img *ngIf="category.picture == 'default.jpg' || category.picture == undefined" src="./../../../assets/img/default.jpg" height="120" width="120">
-                      <img *ngIf="category.picture !== 'default.jpg' && category.picture !== undefined" [src]="apiURL + 'get-image-category/'+category.picture" height="120" width="120">
+                      <img [src]="imageURL" height="120" width="120">
                     </div>
                   </div>
                 </div>
@@ -50,9 +49,6 @@
               </ngb-tab>
       </ngb-tabset>
     </div>
-
-
-
     <div class="modal-footer" *ngIf="!readonly">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!categoryForm.valid || loading || readonly" >

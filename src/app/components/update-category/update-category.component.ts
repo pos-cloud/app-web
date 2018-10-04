@@ -27,8 +27,8 @@ export class UpdateCategoryComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public filesToUpload: Array<File>;
-  public resultUpload;
-  public apiURL = Config.apiURL;
+  public imageURL: string;
+
 
   public formErrors = {
     'description': '',
@@ -47,7 +47,7 @@ export class UpdateCategoryComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
+  ) {
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
   }
@@ -56,6 +56,11 @@ export class UpdateCategoryComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if (this.category.picture && this.category.picture !== 'default.jpg') {
+      this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture;
+    } else {
+      this.imageURL = './../../../assets/img/default.jpg';
+    }
     this.buildForm();
     this.categoryForm.setValue({
       '_id':this.category._id,
@@ -78,7 +83,9 @@ export class UpdateCategoryComponent implements OnInit {
           Validators.required
         ]
       ],
-      'visibleInvoice' : [this.category.visibleInvoice,[]]
+      'visibleInvoice' : [this.category.visibleInvoice,[
+        ]
+      ]
     });
 
     this.categoryForm.valueChanges
@@ -114,13 +121,13 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
   public saveChanges(): void {
-    
+
     this.loading = true;
 
     this._categoryService.updateCategory(this.category).subscribe(
       result => {
         if (!result.category) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
           this.category = result.category;
@@ -128,8 +135,14 @@ export class UpdateCategoryComponent implements OnInit {
             this._categoryService.makeFileRequest(this.category._id, this.filesToUpload)
               .then(
                 (result) => {
-                  this.resultUpload = result;
-                  this.category.picture = this.resultUpload.filename;
+                  let resultUpload;
+                  resultUpload = result;
+                  this.category.picture = resultUpload.category.picture;
+                  if (this.category.picture && this.category.picture !== 'default.jpg') {
+                    this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture;
+                  } else {
+                    this.imageURL = './../../../assets/img/default.jpg';
+                  }
                   this.showMessage("El rubro se ha actualizado con éxito.", 'success', false);
                   this.activeModal.close('save_close');
                 },
@@ -152,10 +165,10 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
   public fileChangeEvent(fileInput: any){
-    
+
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
