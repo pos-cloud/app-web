@@ -10,7 +10,7 @@ import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
 import { Article } from './../../models/article';
 
@@ -674,7 +674,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
-      this.getCompanyPicture();
+      this.getCompanyPicture(10, 5, 80, 40);
     }
   }
 
@@ -930,7 +930,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal')
   }
 
-  public getCompanyPicture(): void {
+  public getCompanyPicture(lmargin, rmargin, width, height): void {
 
     this.loading = true;
     this._configService.getCompanyPicture(this.config[0]['companyPicture']).subscribe(
@@ -941,7 +941,8 @@ export class PrintComponent implements OnInit {
         } else {
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-          this.doc.addImage(imageURL, 'jpeg', 10, 5, 80, 40);
+          // this.doc.addImage(imageURL, 'jpeg', 10, 5, 80, 40);
+          this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
           this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
         }
         this.loading = false;
@@ -1321,7 +1322,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
-      this.getCompanyPicture();
+      this.getCompanyPicture(10, 5, 80, 40);
     }
   }
 
@@ -1466,21 +1467,28 @@ export class PrintComponent implements OnInit {
     //Cabecera del ticket
     var margin = 5;
     var row = 5;
-    this.doc.setFontType('bold');
-    this.doc.setFontSize(this.fontSizes.large);
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
-    this.doc.setFontType('normal');
-    this.doc.setFontSize(this.fontSizes.normal);
-    row +=5;
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyAddress);
-    row += 5;
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "tel: " + this.config[0].companyPhone);
 
-    row += 8;
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      this.doc.setFontType('bold');
+      this.doc.setFontSize(this.fontSizes.large);
+      this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
+      this.doc.setFontType('normal');
+      this.doc.setFontSize(this.fontSizes.normal);
+      row +=5;
+      this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyAddress);
+      row += 5;
+      this.centerText(margin, margin, this.printer.pageWidth, 0, row, "tel: " + this.config[0].companyPhone);
+      row += 8;
+    } else {
+      row += 30;
+      this.doc.setFontType('normal');
+      this.doc.setFontSize(this.fontSizes.normal);
+    }
+
     this.doc.setFontType('bold');
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
-    this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/2) - 1 , row);
+    this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/1.6), row);
     this.doc.setFontType('normal');
 
     if(this.transaction.company) {
@@ -1528,7 +1536,7 @@ export class PrintComponent implements OnInit {
     row += 5;
     this.doc.text("Cant.", margin, row);
     this.doc.text("Desc.", this.printer.pageWidth/3, row);
-    this.doc.text("Monto", this.printer.pageWidth/1.5, row);
+    this.doc.text("Monto", this.printer.pageWidth/1.3, row);
     row += 3;
     this.doc.line(0, row, this.printer.pageWidth, row);
 
@@ -1539,11 +1547,12 @@ export class PrintComponent implements OnInit {
         row += 5;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
         if (movementOfArticle.article) {
-          this.doc.text(movementOfArticle.article.posDescription, this.printer.pageWidth/3.5, row);
+          this.doc.text(movementOfArticle.article.posDescription.slice(0, 18), 13, row);
         } else {
-          this.doc.text(movementOfArticle.description, this.printer.pageWidth/3.5, row);
+          this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
         }
-        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.5, row);
+
+        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.3, row);
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
@@ -1562,7 +1571,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle('bold');
     row += 5;
     this.centerText(margin, margin, this.printer.pageWidth, 0, row, "TOTAL");
-    this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.5, row);
+    this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.4, row);
     this.doc.setFontStyle("normal");
 
     if (this.config[0].footerInvoice) {
@@ -1578,7 +1587,11 @@ export class PrintComponent implements OnInit {
     this.centerText(margin, margin, this.printer.pageWidth, 0, row, "Generado en POSCLOUD.com.ar");
     this.doc.setTextColor(0, 0, 0);
 
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    } else {
+      this.getCompanyPicture(3, 3, 52, 26);
+    }
   }
 
   public toPrintBarcode(): void {
