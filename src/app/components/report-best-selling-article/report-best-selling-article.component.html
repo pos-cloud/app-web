@@ -1,5 +1,5 @@
-<!--ADMIN-->
-<div class="card card-outline-primary">
+<!--ESTADISTICAS GENERALES-->
+<div class="card card-outline-primary" *ngIf="listType === 'statistics'">
   <div class="card-header bg-primary">Productos más vendidos
   </div>
   <div class="card-block table-responsive">
@@ -24,3 +24,42 @@
     </table>
   </div>
 </div>
+
+<!--REPORTE-->
+<section class="container-fluid" *ngIf="listType !== 'statistics'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary card-large">
+    <div class="card-header bg-primary">Productos más vendidos
+      <div class="pull-right">
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th (click)="orderBy('article.description')">Producto</th>
+            <th (click)="orderBy('count')">Ítems</th>
+            <th (click)="orderBy('total')">Monto Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items">
+            <td class="flat">{{ item.article.description }}</td>
+            <td class="flat">{{ item.count }}</td>
+            <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+          </tr>
+          <tr align="center" *ngIf="areArticlesEmpty">
+            <td colspan="3">No se encontraron ventas por productos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-primary">
+    </div>
+  </div>
+</section>

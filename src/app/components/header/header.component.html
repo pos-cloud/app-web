@@ -253,22 +253,40 @@
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-bar-chart"></i> Reportes</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','statistics']"
-                    [routerLinkActive]="['active']">
-              Estadísticas
-            </button>
-          </div>
           <div *ngIf="modules &&
                       modules.sale &&
                       (modules.sale.resto ||
                       modules.sale.counter ||
                       modules.sale.delivery)">
             <button class="dropdown-item"
+                    [routerLink]="['admin','statistics']"
+                    [routerLinkActive]="['active']">
+              Estadísticas Generales
+            </button>
+            <button class="dropdown-item"
                     [routerLink]="['admin','ventas']"
                     [routerLinkActive]="['active']">
               Ventas
+            </button>
+            <button class="dropdown-item"
+                    [routerLink]="['admin','productos-mas-vendidos']"
+                    [routerLinkActive]="['active']">
+              Productos más vendidos
+            </button>
+            <button class="dropdown-item"
+                    [routerLink]="['admin','ventas-por-metodo-de-pago']"
+                    [routerLinkActive]="['active']">
+              Ventas por medio de pago
+            </button>
+            <button class="dropdown-item"
+                    [routerLink]="['admin','marcas-mas-vendidas']"
+                    [routerLinkActive]="['active']">
+              Marcas más vendidas
+            </button>
+            <button class="dropdown-item"
+                    [routerLink]="['admin','ventas-por-cliente']"
+                    [routerLinkActive]="['active']">
+              Ventas por cliente
             </button>
           </div>
           <div *ngIf="modules && modules.purchase" class="dropdown-divider"></div>

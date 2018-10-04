@@ -69,24 +69,28 @@ export class StatisticsComponent implements OnInit {
     this.reportBestSellingArticle.startTime = this.startTime;
     this.reportBestSellingArticle.endDate = this.endDate;
     this.reportBestSellingArticle.endTime = this.endTime;
+    this.reportBestSellingArticle.limit = 5;
     this.reportBestSellingArticle.getBestSellingArticle();
     this.reportSalesByPaymentMethod.startDate = this.startDate;
     this.reportSalesByPaymentMethod.startTime = this.startTime;
     this.reportSalesByPaymentMethod.endDate = this.endDate;
     this.reportSalesByPaymentMethod.endTime = this.endTime;
+    this.reportSalesByPaymentMethod.limit = 5;
     this.reportSalesByPaymentMethod.getSalesByPaymentMethod();
     this.reportSalesByClient.startDate = this.startDate;
     this.reportSalesByClient.startTime = this.startTime;
     this.reportSalesByClient.endDate = this.endDate;
     this.reportSalesByClient.endTime = this.endTime;
+    this.reportSalesByClient.limit = 5;
     this.reportSalesByClient.getSalesByClient();
     this.reportSalesByMake.startDate = this.startDate;
     this.reportSalesByMake.startTime = this.startTime;
     this.reportSalesByMake.endDate = this.endDate;
     this.reportSalesByMake.endTime = this.endTime;
+    this.reportSalesByMake.limit = 5;
     this.reportSalesByMake.getSalesByMake();
   }
-  
+
   public getTotalSales(): void {
 
     let query = {

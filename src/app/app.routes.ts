@@ -76,6 +76,9 @@ import { ListMovementOfCashesComponent } from './components/list-movements-of-ca
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
 import { ListSummaryOfAccountsComponent } from "./components/list-summary-of-accounts/list-summary-of-accounts.component";
+import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
+import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
+import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -88,8 +91,23 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/mejores-productos-vendidos',
+    path: 'admin/productos-mas-vendidos',
     component: ReportBestSellingArticleComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/ventas-por-metodo-de-pago',
+    component: ReportSalesByPaymentMethodComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/marcas-mas-vendidas',
+    component: ReportSalesByMakeComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/ventas-por-cliente',
+    component: ReportSalesByClientComponent,
     data: { roles: ['Administrador'] }
   },
   {

@@ -26,6 +26,14 @@ export class ReportSalesByMakeComponent implements OnInit {
   @Input() startTime: string;
   @Input() endDate: string;
   @Input() endTime: string;
+  @Input() limit: number = 0;
+  public listType: string;
+  public itemsPerPage: string = "5";
+  public currentPage: number = 1;
+  public totalItems = 0;
+  public sort = {
+    "count": -1
+  };
 
   constructor(
     public _makeService: MakeService,
@@ -33,7 +41,7 @@ export class ReportSalesByMakeComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) {
-    this.startDate = moment().format('YYYY-MM-DD');
+    this.startDate = moment('2017-01-01').format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
     this.endDate = moment().format('YYYY-MM-DD');
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
@@ -41,6 +49,8 @@ export class ReportSalesByMakeComponent implements OnInit {
 
   ngOnInit(): void {
 
+    let pathLocation: string[] = this._router.url.split('/');
+    this.listType = pathLocation[2];
     this.getSalesByMake();
   }
 
@@ -55,6 +65,8 @@ export class ReportSalesByMakeComponent implements OnInit {
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
+      sort: this.sort,
+      limit: this.limit
     }
 
     this._makeService.getSalesByMake(JSON.stringify(query)).subscribe(
@@ -76,6 +88,21 @@ export class ReportSalesByMakeComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public orderBy(term: string): void {
+
+    if (this.sort[term]) {
+      this.sort[term] *= -1;
+    } else {
+      this.sort = JSON.parse('{"' + term + '": 1 }');
+    }
+
+    this.getSalesByMake();
+  }
+
+  public refresh(): void {
+    this.getSalesByMake();
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
