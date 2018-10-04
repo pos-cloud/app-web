@@ -254,13 +254,19 @@ export class PrintComponent implements OnInit {
 
       this.doc.setFontSize(8);
       this.doc.setFontType('normal');
-      this.doc.text(this.bookVAT[i].nameCompany.substr(0,25), 5, row);
+      if (this.bookVAT[i].nameCompany) {
+        this.doc.text(this.bookVAT[i].nameCompany.substr(0,25), 5, row);
+      } else {
+        this.doc.text("CONSUMIDOR FINAL".substr(0, 25), 5, row);
+      }
       if(this.bookVAT[i].DNICompany != undefined) {
         this.doc.text(this.bookVAT[i].DNICompany.toString(), 50, row);
-      }
-      if (this.bookVAT[i].CUITCompany != undefined) {
+      } else if (this.bookVAT[i].CUITCompany != undefined) {
         this.doc.text(this.bookVAT[i].CUITCompany.toString(), 50, row);
+      } else {
+        this.doc.text("00000000000", 50, row);
       }
+
       this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'),80, row);
 
       if (this.bookVAT[i].labelPrint && this.bookVAT[i].labelPrint !== "") {
