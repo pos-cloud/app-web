@@ -63,7 +63,6 @@ export class AddArticleComponent implements OnInit {
   public userType: string;
   public loading = false;
   public focusEvent = new EventEmitter<boolean>();
-  public resultUpload;
   public apiURL = Config.apiURL;
   public filesToUpload: Array<File>;
   public numberOfVariantsStored = 0;
@@ -77,6 +76,7 @@ export class AddArticleComponent implements OnInit {
   public uniqueVariantTypes: VariantType[] = new Array();
   public hasChanged = false;
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
+  public imageURL: string;
 
   public formErrors = {
     'code': '',
@@ -159,12 +159,24 @@ export class AddArticleComponent implements OnInit {
     if (this.operation === 'update') {
       this.taxes = this.article.taxes;
       this.otherFields = this.article.otherFields;
+      if (this.article.picture && this.article.picture !== 'default.jpg') {
+        this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+      } else {
+        this.imageURL = './../../../assets/img/default.jpg';
+      }
       this.setValuesForm();
     } else if (this.operation === 'view') {
       this.taxes = this.article.taxes;
       this.otherFields = this.article.otherFields;
       this.readonly = true;
+      if (this.article.picture && this.article.picture !== 'default.jpg') {
+        this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+      } else {
+        this.imageURL = './../../../assets/img/default.jpg';
+      }
       this.setValuesForm();
+    } else {
+      this.imageURL = './../../../assets/img/default.jpg';
     }
   }
 
@@ -724,8 +736,14 @@ export class AddArticleComponent implements OnInit {
             this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
               .then(
                 (result) => {
-                  this.resultUpload = result;
-                  this.article.picture = this.resultUpload.filename;
+                  let resultUpload;
+                  resultUpload = result;
+                  this.article.picture = resultUpload.article.picture;
+                  if (this.article.picture && this.article.picture !== 'default.jpg') {
+                    this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+                  } else {
+                    this.imageURL = './../../../assets/img/default.jpg';
+                  }
                   if (this.article.containsVariants) {
                     this.addVariants(this.article);
                   } else {
@@ -770,11 +788,19 @@ export class AddArticleComponent implements OnInit {
             this._articleService.makeFileRequest(this.article._id, this.filesToUpload)
               .then(
                 (result) => {
-                  this.resultUpload = result;
-                  this.article.picture = this.resultUpload.filename;
+                  let resultUpload;
+                  resultUpload = result;
+                  this.article.picture = resultUpload.article.picture;
+                  if (this.article.picture && this.article.picture !== 'default.jpg') {
+                    this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+                  } else {
+                    this.imageURL = './../../../assets/img/default.jpg';
+                  }
+                  // console.log(console.log(this.imageURL));
                   if (this.article.containsVariants) {
                     this.addVariants(this.article);
                   } else {
+                    this.filesToUpload = null;
                     this.loading = false;
                     this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
                   }
@@ -787,6 +813,7 @@ export class AddArticleComponent implements OnInit {
             if (this.article.containsVariants) {
               this.addVariants(this.article);
             } else {
+              this.filesToUpload = null;
               this.loading = false;
               this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
             }
