@@ -148,7 +148,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.company = transaction.company;
-        if(transaction.type.name === "Cobro"){
+        if(!transaction.type.requestArticles){
           modalRef.componentInstance.typePrint = 'cobro';
         } else {
           modalRef.componentInstance.typePrint = 'invoice';
