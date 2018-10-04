@@ -91,5 +91,53 @@ export class ConfigService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "generate-crs", config, {headers: headers}).map(res => res.json());
-	}
+  }
+
+  public makeFileRequest(config, files: Array<File>) {
+
+    let xhr: XMLHttpRequest = new XMLHttpRequest();
+    xhr.open('POST', Config.apiURL + 'upload-image-company/' + config._id, true);
+    xhr.setRequestHeader('Authorization', this._userService.getToken());
+    xhr.setRequestHeader('Database', this._userService.getDatabase());
+
+    return new Promise(function (resolve, reject) {
+      let formData: any = new FormData();
+
+      if (files && files.length > 0) {
+        for (let i: number = 0; i < files.length; i++) {
+          formData.append('image', files[i], files[i].name);
+        }
+      }
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            reject(xhr.response);
+          }
+        }
+      }
+
+      xhr.send(formData);
+    });
+  }
+
+  getCompanyPicture(picture: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.get(Config.apiURL + 'get-image-base64-company/' + picture, { headers: headers }).map(res => res.json());
+  }
+
+  deletePicture(id: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.delete(Config.apiURL + "delete-image-company/" + id, { headers: headers }).map(res => res.json());
+  }
 }

@@ -1,4 +1,4 @@
-<section class="container-fluid" *ngIf="userType=='admin'"> 
+<section class="container-fluid" *ngIf="userType=='admin'">
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -7,7 +7,7 @@
   <!--license-->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Licencia</div>
-    <div class= 'card-block'> 
+    <div class= 'card-block'>
       <form [formGroup]="" #formAddConfig="ngForm" (ngSubmit)="downloadlicense()" autocomplete="off">
         <div class= "row">
           <div class="form-group col-md-3">
@@ -30,6 +30,22 @@
     <div class="card-header bg-primary">Datos de la Empresa</div>
     <div class="card-block">
       <form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()" autocomplete="off">
+        <div class="row">
+          <div class="form-group col-md-2">
+            <img [src]="imageURL" height="150" width="300">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-3">
+            <div class="custom-file">
+              <label class="custom-file-label btn btn-action" for="customFileLang">Cambiar Imagen</label>
+              <input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)" />
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label class="btn btn-action" (click)="deletePicture()">Eliminar Imagen</label>
+          </div>
+        </div>
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
@@ -57,7 +73,7 @@
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Condición de IVA:</span>
               <select class="form-control" formControlName="companyVatCondition" name="companyVatCondition" id="companyVatCondition">
-                <option *ngFor="let vatCondition of vatConditions" 
+                <option *ngFor="let vatCondition of vatConditions"
                         [selected]="config.companyVatCondition && vatCondition._id === config.companyVatCondition._id"
                         [value]="vatCondition._id">
                   {{vatCondition.description}}
@@ -171,11 +187,11 @@
       </form>
     </div>
   </div>
-  
+
   <!-- Backup -->
   <!-- <div class="card card-outline-primary">
     <div class="card-header bg-primary">Respaldo</div>
-    <div class= 'card-block'> 
+    <div class= 'card-block'>
       <form [formGroup]="configFormBackup" #formAddConfig="ngForm" (ngSubmit)="addConfigBackup()" autocomplete="off">
         <div class="row">
           <div class="form-group col-md-12">

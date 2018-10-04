@@ -43,21 +43,15 @@ export class ConfigBackupComponent implements OnInit {
   public loadingBackup: boolean = false;
   public loadingLicense: boolean = false;
   public dateFormat: DateFormatPipe = new DateFormatPipe();
+  public resultUpload;
+  public imageURL;
 
   public formErrors = {
     'backupTime' : '',
     'emailAccount': '',
     'emailPassword': '',
     'companyName': '',
-    'companyCUIT': '',
-    'companyVatCondition': '',
     'companyStartOfActivity': '',
-    'companyGrossIncome': '',
-    'companyAddress': '',
-    'companyPhone': '',
-    'footerInvoice': '',
-    'heightLabel' : '',
-    'widthLabel' : ''
   };
 
   public validationMessages = {
@@ -73,25 +67,9 @@ export class ConfigBackupComponent implements OnInit {
     'companyName': {
       'required': 'Este campo es requerido'
     },
-    'companyCUIT': {
-    },
-    'companyVatCondition': {
-    },
     'companyStartOfActivity': {
       'dateValid': 'Fecha inválida'
     },
-    'companyGrossIncome': {
-    },
-    'companyAddress': {
-    },
-    'companyPhone': {
-    },
-    'footerInvoice': {
-    },
-    'heightLabel' : {
-    },
-    'widthLabel' : {
-    }
   };
 
   constructor(
@@ -101,17 +79,16 @@ export class ConfigBackupComponent implements OnInit {
     public _userService: UserService,
     public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig,
- 
+
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.config = new Config();
     this.getVatConditions();
     this.buildFormCompany();
-    // this.buildFormBackup();
     this.buildFormEmail();
     this.buildFormLabel();
   }
@@ -121,10 +98,10 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public upload() {
-      this.makeFileRequest("http://localhost:3000/api/upload", [], this.filesToUpload).then((result) => {
-      }, (error) => {
-          console.error(error);
-      });
+    this.makeFileRequest(Config.apiURL + "/upload", [], this.filesToUpload).then((result) => {
+    }, (error) => {
+        console.error(error);
+    });
   }
 
   public fileChangeEvent(fileInput: any){
@@ -168,7 +145,7 @@ export class ConfigBackupComponent implements OnInit {
           this.showMessage("Los archivos se generaron correctamente.", "success", false);
           this.routeFile = '-' + this._userService.getDatabase()+ '-certificados-keys-poscloud.csr';
           this.hideMessage();
-          
+
         }
         this.loading = false;
       },
@@ -181,10 +158,13 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public buildFormCompany() {
-    
+
     this.configFormCompany = this._fb.group({
       '_id': [this.config._id, [
           Validators.required
+        ]
+      ],
+      'companyPicture': [this.config['companyPicture'], [
         ]
       ],
       'companyName': [this.config['companyName'], [
@@ -210,7 +190,7 @@ export class ConfigBackupComponent implements OnInit {
       'companyPhone': [this.config['companyPhone'], [
         ]
       ],
-      'footerInvoice': [this.config['footerInvoice'], [ 
+      'footerInvoice': [this.config['footerInvoice'], [
         ]
       ]
     });
@@ -293,7 +273,7 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public onValueChangedBackup(data?: any): void {
-    
+
     if (!this.configFormBackup) { return; }
     const form = this.configFormBackup;
 
@@ -483,9 +463,28 @@ export class ConfigBackupComponent implements OnInit {
           this.loadingCompany = false;
         } else {
           this.config = result.configs[0];
-          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
-          this.setConfigurationSettings(this.config);
-          this.getConfig();
+          if (this.filesToUpload) {
+            this._configService.makeFileRequest(this.config, this.filesToUpload)
+              .then(
+                (result) => {
+                  this.resultUpload = result;
+                  this.config["companyPicture"] = this.resultUpload.filename;
+                  this.loading = false;
+                  this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+                  this.setConfigurationSettings(this.config);
+                  this.getConfig();
+                },
+                (error) => {
+                  this.loading = false;
+                  this.showMessage(error, 'danger', false);
+                }
+              );
+          } else {
+              this.loading = false;
+              this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+              this.setConfigurationSettings(this.config);
+              this.getConfig();
+          }
         }
         this.loadingCompany = false;
       },
@@ -520,13 +519,37 @@ export class ConfigBackupComponent implements OnInit {
     )
   }
 
+  public deletePicture(): void {
+
+    this.loadingCompany = true;
+
+    this._configService.deletePicture(this.config._id).subscribe(
+      result => {
+        if (!result.configs) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+          this.loadingCompany = false;
+        } else {
+          this.config = result.configs[0];
+          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
+          this.setConfigurationSettings(this.config);
+          this.getConfig();
+        }
+        this.loadingCompany = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loadingCompany = false;
+      }
+    )
+  }
+
   public downloadlicense(): void {
     this._configService.getlicense().subscribe(
       result => {
         if(!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         }
         this.loadingLicense = false;
       },
@@ -538,14 +561,19 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public getConfig(): void {
-    
+
     this._configService.getConfigApi().subscribe(
       result => {
         if(!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true); 
+          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           let config = result.configs[0];
           this.config = config;
+          if (config['companyPicture'] && config['companyPicture'] !== 'default.jpg') {
+            this.imageURL = Config.apiURL + 'get-image-company/' + config['companyPicture'];
+          } else {
+            this.imageURL = './../../../assets/img/default.jpg';
+          }
           this.setValuesForm();
         }
       },
@@ -556,14 +584,15 @@ export class ConfigBackupComponent implements OnInit {
   }
 
   public setValuesForm(): void {
-    
-    if (!this.config['backupTime']) this.config['backupTime'] = "";
-    if (!this.config['pathBackup']) this.config['pathBackup'] = "";
-    if (!this.config['pathMongo']) this.config['pathMongo'] = "";
-    if (!this.config['emailAccount']) this.config['emailAccount'] = "";
-    if (!this.config['emailPassword']) this.config['emailPassword'] = "";
-    if (!this.config['companyName']) this.config['companyName'] = "";
-    if (!this.config['companyCUIT']) this.config['companyCUIT'] = "";
+
+    if (!this.config['backupTime']) this.config['backupTime'] = '';
+    if (!this.config['pathBackup']) this.config['pathBackup'] = '';
+    if (!this.config['pathMongo']) this.config['pathMongo'] = '';
+    if (!this.config['emailAccount']) this.config['emailAccount'] = '';
+    if (!this.config['emailPassword']) this.config['emailPassword'] = '';
+    if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
+    if (!this.config['companyName']) this.config['companyName'] = '';
+    if (!this.config['companyCUIT']) this.config['companyCUIT'] = '';
     if (!this.config['companyVatCondition']) {
       if(this.vatConditions && this.vatConditions.length > 0) {
         this.config['companyVatCondition'] = this.vatConditions[0];
@@ -572,15 +601,16 @@ export class ConfigBackupComponent implements OnInit {
       }
     }
     if (!this.config['companyStartOfActivity']) this.config['companyStartOfActivity'] = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = "";
-    if (!this.config['companyAddress']) this.config['companyAddress'] = "";
-    if (!this.config['companyPhone']) this.config['companyPhone'] = "";
-    if (!this.config['footerInvoice']) this.config['footerInvoice'] = "";
-    if (!this.config['heightLabel']) this.config['heightLabel'] = "";
-    if (!this.config['widthLabel']) this.config['widthLabel'] = "";
-    
+    if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = '';
+    if (!this.config['companyAddress']) this.config['companyAddress'] = '';
+    if (!this.config['companyPhone']) this.config['companyPhone'] = '';
+    if (!this.config['footerInvoice']) this.config['footerInvoice'] = '';
+    if (!this.config['heightLabel']) this.config['heightLabel'] = '';
+    if (!this.config['widthLabel']) this.config['widthLabel'] = '';
+
     this.configFormCompany.setValue({
       '_id': this.config['_id'],
+      'companyPicture': this.config['companyPicture'],
       'companyName': this.config['companyName'],
       'companyCUIT': this.config['companyCUIT'],
       'companyAddress': this.config['companyAddress'],
@@ -590,13 +620,6 @@ export class ConfigBackupComponent implements OnInit {
       'companyGrossIncome': this.config['companyGrossIncome'],
       'footerInvoice': this.config['footerInvoice']
     });
-
-    // this.configFormBackup.setValue({
-    //   '_id': this.config['_id'],
-    //   'backupTime': this.config['backupTime'],
-    //   'pathBackup': this.config['pathBackup'],
-    //   'pathMongo': this.config['pathMongo'],
-    // });
 
     this.configFormEmail.setValue({
       '_id': this.config['_id'],
@@ -614,7 +637,7 @@ export class ConfigBackupComponent implements OnInit {
   public setConfigurationSettings(config) {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if (config.companyName) Config.setConfigCompany(config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
+    if (config.companyName) Config.setConfigCompany(config.companyPicture, config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
       config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice);
   }
 

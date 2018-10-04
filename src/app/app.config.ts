@@ -16,6 +16,7 @@ export class Config {
     static backupTime: string;
     static emailAccount: string;
     static emailPassword: string;
+    static companyPicture: string;
     static companyName: string;
     static companyCUIT: string;
     static companyAddress: string;
@@ -26,6 +27,7 @@ export class Config {
     static heightLabel: number;
     static widthLabel: number;
     static footerInvoice: string;
+    static expirationLicense: string;
 
     constructor() {
         Config.updateApiURL();
@@ -49,6 +51,10 @@ export class Config {
         Config.modules = modules;
     }
 
+    public static setExpirationLicense(expirationLicense: string): void {
+      Config.expirationLicense = expirationLicense;
+    }
+
     public static setConfigToBackup(pathBackup, pathMongo, backupTime): void {
         Config.pathBackup = pathBackup;
         Config.pathMongo = pathMongo;
@@ -60,8 +66,9 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,
+    public static setConfigCompany( companyPicture, companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,
                                     companyStartOfActivity, companyGrossIncome, footerInvoice): void {
+        Config.companyPicture = companyPicture;
         Config.companyName = companyName;
         Config.companyCUIT = companyCUIT;
         Config.companyAddress = companyAddress;
