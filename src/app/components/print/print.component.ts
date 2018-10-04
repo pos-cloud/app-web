@@ -263,7 +263,7 @@ export class PrintComponent implements OnInit {
       }
       this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'),80, row);
 
-      if (this.bookVAT[i].labelprint !== "") {
+      if (this.bookVAT[i].labelPrint && this.bookVAT[i].labelPrint !== "") {
          this.doc.text((this.bookVAT[i].labelPrint).toString(), 96, row);
       } else {
         this.doc.text((this.bookVAT[i].typeName).toString(), 96, row);
@@ -314,7 +314,7 @@ export class PrintComponent implements OnInit {
         iva = iva - this.bookVAT[i].IVA;
         exento = exento - this.bookVAT[i].EXENT_NOGRAV;
       }
-      
+
 
       if (row >= 190 ) {
 
