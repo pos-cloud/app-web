@@ -6,10 +6,11 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount } from './../../models/transaction-type';
 import { Printer } from './../../models/printer';
+import { EmployeeType } from './../../models/employee-type';
 
 import { TransactionTypeService } from './../../services/transaction-type.service';
-import { RoomService } from './../../services/room.service';
 import { PrinterService } from './../../services/printer.service';
+import { EmployeeTypeService } from './../../services/employee-type.service';
 
 @Component({
   selector: 'app-update-transaction-type',
@@ -29,6 +30,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public printers: Printer[];
+  public employeeTypes: EmployeeType[];
 
   public formErrors = {
     'transactionMovement': '',
@@ -46,7 +48,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
 
   constructor(
     public _transactionTypeService: TransactionTypeService,
-    public _roomService: RoomService,
+    public _employeeTypeService: EmployeeTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -58,6 +60,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getPrinters();
+    this.getEmployeeTypes();
     this.buildForm();
     this.setValueForm();
   }
@@ -79,6 +82,27 @@ export class UpdateTransactionTypeComponent implements OnInit {
           this.printers = result.printers;
         }
         this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getEmployeeTypes(): void {
+
+    this.loading = true;
+
+    this._employeeTypeService.getEmployeeTypes().subscribe(
+      result => {
+        if (!result.employeeTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.employeeTypes = result.employeeTypes;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -179,6 +203,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
       ],
       'allowDelete': [this.transactionType.allowDelete, [
         ]
+      ],
+      'requestEmployee': [this.transactionType.requestEmployee, [
+        ]
       ]
     });
 
@@ -240,6 +267,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
       if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
+    if (!this.transactionType.requestEmployee) this.transactionType.requestEmployee = null;
 
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
@@ -270,7 +298,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'allowAPP': this.transactionType.allowAPP,
       'showPrices': this.transactionType.showPrices,
       'entryAmount': this.transactionType.entryAmount,
-      'allowDelete': this.transactionType.allowDelete
+      'allowDelete': this.transactionType.allowDelete,
+      'requestEmployee': this.transactionType.requestEmployee
     });
   }
 

@@ -1,4 +1,5 @@
 import { Printer } from './printer';
+import { EmployeeType } from './employee-type';
 
 export class TransactionType {
 
@@ -12,7 +13,7 @@ export class TransactionType {
 	public stockMovement: StockMovement = StockMovement.Inflows;
 	public requestArticles: boolean = false;
 	public modifyArticle: boolean = false;
-	public entryAmount: EntryAmount;
+	public entryAmount: EntryAmount = EntryAmount.SaleWithVAT;
 	public requestTaxes: boolean = false;
 	public requestPaymentMethods: boolean = true;
 	public defectOrders: boolean = false;
@@ -29,6 +30,7 @@ export class TransactionType {
 	public cashClosing: boolean = false;
   public allowAPP: boolean = false;
   public allowDelete: boolean = false;
+  public requestEmployee: EmployeeType;
 
 	constructor() { }
 }

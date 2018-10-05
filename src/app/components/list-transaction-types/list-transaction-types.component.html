@@ -42,6 +42,7 @@
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
             <th (click)="orderBy('requestTaxes')">Pide impuestos</th>
             <th (click)="orderBy('tax')">Afecta Libro IVA</th>
+            <th (click)="orderBy('requestEmployee','description')">Pide Empleado</th>
             <th (click)="orderBy('allowAPP')">APP</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
@@ -68,7 +69,8 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestTaxes" placeholder="Pide impuestos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="Afechta Libro IVA..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="APP..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterRequestEmployee" placeholder="Pide Empleado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAllowAPP" placeholder="APP..."></th>
           </tr>
         </thead>
         <tbody>
@@ -91,6 +93,7 @@
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
                                                               | filter: filterRequestTaxes:'requestTaxes'
                                                               | filter: filterTax:'tax'
+                                                              | filter: filterRequestEmployee:'description':'requestEmployee'
                                                               | filter: filterAllowAPP:'allowAPP'
                                                               | orderBy: orderTerm: propertyTerm
                                                               | paginate: { itemsPerPage: itemsPerPage,
@@ -131,6 +134,8 @@
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
             <td class="flat">{{transactionType.requestTaxes}}</td>
             <td class="flat">{{transactionType.tax}}</td>
+            <td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.description}}</td>
+            <td class="flat" *ngIf="!transactionType.requestEmployee"></td>
             <td class="flat">{{transactionType.allowAPP}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionTypesEmpty">
