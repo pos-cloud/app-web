@@ -36,7 +36,7 @@ export class ListArticlesComponent implements OnInit {
   public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string = '';
-  public orderTerm: string[] = ['code'];
+  public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -147,7 +147,7 @@ export class ListArticlesComponent implements OnInit {
     this.getFinalArticles();
   }
 
-  public openModal(op: string, article: Article): void {
+  public openModal(op: string, article?: Article, typeOfOperationToPrint?: string): void {
 
     let modalRef;
     switch (op) {
@@ -205,12 +205,22 @@ export class ListArticlesComponent implements OnInit {
         break;
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.article = article;
-        modalRef.componentInstance.typePrint = 'label';
+        if(article) {
+          modalRef.componentInstance.article = article;
+        } else {
+          modalRef.componentInstance.articles = this.articles;
+        }
+        modalRef.componentInstance.typePrint = typeOfOperationToPrint;
         if (this.printers && this.printers.length > 0) {
           for (let printer of this.printers) {
-            if (printer.printIn === PrinterPrintIn.Label) {
-              modalRef.componentInstance.printer = printer;
+            if (typeOfOperationToPrint === 'label') {
+              if (printer.printIn === PrinterPrintIn.Label) {
+                modalRef.componentInstance.printer = printer;
+              }
+            } else {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
             }
           }
         }
@@ -234,6 +244,7 @@ export class ListArticlesComponent implements OnInit {
       this.transaction.type.transactionMovement === TransactionMovement.Sale) {
         movementOfArticle.markupPercentage = articleSelected.markupPercentage;
         movementOfArticle.markupPrice = articleSelected.markupPrice;
+        movementOfArticle.unitPrice = articleSelected.salePrice;
         movementOfArticle.salePrice = articleSelected.salePrice;
         if(this.transaction.type.requestTaxes) {
           let tax: Taxes = new Taxes();
@@ -255,6 +266,7 @@ export class ListArticlesComponent implements OnInit {
       if (this.transaction.type.requestTaxes) {
         movementOfArticle.taxes = articleSelected.taxes;
       }
+      movementOfArticle.unitPrice = articleSelected.basePrice;
       movementOfArticle.salePrice = articleSelected.costPrice;
     }
     movementOfArticle.make = articleSelected.make;
@@ -286,6 +298,7 @@ export class ListArticlesComponent implements OnInit {
                 this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                   movementOfArticle.markupPercentage = article.markupPercentage;
                   movementOfArticle.markupPrice = article.markupPrice;
+                  movementOfArticle.unitPrice = article.salePrice;
                   movementOfArticle.salePrice = article.salePrice;
                   if (this.transaction.type.requestTaxes) {
                     let tax: Taxes = new Taxes();
@@ -307,6 +320,7 @@ export class ListArticlesComponent implements OnInit {
                 if(this.transaction.type.requestTaxes) {
                   movementOfArticle.taxes = article.taxes;
                 }
+                movementOfArticle.unitPrice = article.basePrice;
                 movementOfArticle.salePrice = article.costPrice;
               }
               movementOfArticle.make = article.make;

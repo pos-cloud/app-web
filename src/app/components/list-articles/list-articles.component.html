@@ -10,7 +10,7 @@
       <div class="pull-right">
         <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Producto</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar Productos</button> -->
+        <button class="btn btn-primary" (click)="openModal('print', null, 'priceList')"><i class="fa fa-print"></i> Imprimir Lista</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
@@ -45,17 +45,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let article of articles | filter: filterCode:'code' 
-                                              | filter: filterDescription:'description' 
+          <tr *ngFor="let article of articles | filter: filterCode:'code'
+                                              | filter: filterDescription:'description'
                                               | filter: filterMake:'description':'make'
-                                              | filter: filterCategory:'description':'category' 
+                                              | filter: filterCategory:'description':'category'
                                               | filter: filterCostPrice:'costPrice'
                                               | filter: filterSalePrice:'salePrice'
-                                              | filter: filterTermObservation:'observation' 
+                                              | filter: filterTermObservation:'observation'
                                               | filter: filterTermBarcode:'barcode'
                                               | orderBy: orderTerm: propertyTerm
-                                              | paginate: { itemsPerPage: itemsPerPage, 
-                                                                            currentPage: p, 
+                                              | paginate: { itemsPerPage: itemsPerPage,
+                                                                            currentPage: p,
                                                                             totalItems: totalItems
                                                                           }">
             <td align="left" width="174">
@@ -68,7 +68,7 @@
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar">
                 <i class="fa fa-trash-o"></i>
               </button>
-              <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article )" title="Imprimir Etiqueta">
+              <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article, 'label')" title="Imprimir Etiqueta">
                     <i class="fa fa-print"></i>
               </button>
             </td>
@@ -103,12 +103,12 @@
     <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls 
+          <pagination-controls
             class="my-pagination"
-            (pageChange)="p=$event" 
-            #api 
-            previousLabel="Ant." 
-            nextLabel="Sig." 
+            (pageChange)="p=$event"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
             autoHide="true">
           </pagination-controls>
         </div>

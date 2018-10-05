@@ -56,6 +56,7 @@ export class PrintComponent implements OnInit {
   @Input() params;
   @Input() articleStock : ArticleStock;
   @Input() article: Article;
+  @Input() articles: Article[];
   @Input() printer: Printer;
   public loading: boolean;
   public alertMessage: string = '';
@@ -166,6 +167,8 @@ export class PrintComponent implements OnInit {
             this.toPrintKitchen();
           } else if (this.typePrint === "IVA"){
             this.getVATBook();
+          } else if (this.typePrint === "priceList") {
+            this.printPriceList();
           }
         }
         this.loading = false;
@@ -388,6 +391,112 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
     row += 3;
     this.doc.line(0, row, 400, row);
+
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+  }
+
+  public printPriceList(): void {
+
+    var row = 15;
+    var margin = 5;
+    this.doc.setFontType('bold');
+
+    this.doc.setFontSize(12);
+    if (this.companyName) {
+      this.doc.text(this.companyName, 5, row);
+    }
+
+    this.doc.setFontType('normal');
+    row += 5;
+    if (this.config && this.config[0] && this.config[0].companyCUIT) {
+      this.doc.text("CUIT Nº:", margin, row);
+      this.doc.text(this.config[0].companyCUIT, 25, row);
+    }
+
+    this.doc.setFontType('bold');
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    row += 5;
+
+    // Encabezado de la tabla de Detalle de Productos
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.text("Código", 5, row);
+    this.doc.text("Descripción", 25, row);
+    this.doc.text("Marca", 90, row);
+    this.doc.text("Rubro", 130, row);
+    this.doc.text("Precio", 185, row);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    row += 5;
+
+    // // Detalle de productos
+    if(this.articles && this.articles.length > 0) {
+      for(let article of this.articles) {
+        if(article.code) {
+          this.doc.text(article.code, 5, row);
+        }
+        if (article.description) {
+          this.doc.text(article.description, 25, row);
+        }
+        if (article.make) {
+          this.doc.text(article.make.description, 90, row);
+        }
+        if (article.category) {
+          this.doc.text(article.category.description, 130, row);
+        }
+        if (article.salePrice) {
+          this.doc.text("$" + article.salePrice.toString(), 185, row);
+        }
+        row += 5;
+
+        if (row >= (this.printer.pageHigh - 20)) {
+
+          this.doc.addPage();
+
+          var row = 15;
+          var margin = 5;
+          this.doc.setFontType('bold');
+
+          this.doc.setFontSize(12);
+          if (this.companyName) {
+            this.doc.text(this.companyName, 5, row);
+          }
+
+          this.doc.setFontType('normal');
+          row += 5;
+          if (this.config && this.config[0] && this.config[0].companyCUIT) {
+            this.doc.text("CUIT Nº:", margin, row);
+            this.doc.text(this.config[0].companyCUIT, 25, row);
+          }
+
+          this.doc.setFontType('bold');
+          this.centerText(margin, margin, this.printer.pageWidth, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+
+          // Encabezado de la tabla de Detalle de Productos
+          this.doc.setFontType('bold');
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.text("Código", 5, row);
+          this.doc.text("Descripción", 25, row);
+          this.doc.text("Marca", 90, row);
+          this.doc.text("Rubro", 130, row);
+          this.doc.text("Precio", 185, row);
+          this.doc.setFontType('normal');
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+        }
+      }
+    }
 
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
