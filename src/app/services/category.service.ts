@@ -48,7 +48,7 @@ export class CategoryService {
 		});
 		return this._http.post(Config.apiURL + "category",category, { headers: headers }).map (res => res.json());
 	}
-  
+
 	deleteCategory (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export class CategoryService {
 	}
 
 	public makeFileRequest(idCategory: String, files: Array<File>) {
-	  
+
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-image-category/' + idCategory, true);
 		xhr.setRequestHeader('Authorization', this._userService.getToken());
@@ -76,7 +76,7 @@ export class CategoryService {
 
 		return new Promise(function (resolve, reject) {
 			let formData: any = new FormData();
-			
+
 			if(files && files.length > 0) {
 				for (let i: number = 0; i < files.length; i++) {
 					formData.append('image', files[i], files[i].name);
@@ -92,8 +92,17 @@ export class CategoryService {
 					}
 				}
 			}
-			
+
 			xhr.send(formData);
 		});
-	}
+  }
+
+  getSalesByCategory(query: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.get(Config.apiURL + "sales-by-category/" + query, { headers: headers }).map(res => res.json());
+  }
 }

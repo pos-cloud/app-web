@@ -284,6 +284,11 @@
               Marcas más vendidas
             </button>
             <button class="dropdown-item"
+                    [routerLink]="['admin','rubros-mas-vendidos']"
+                    [routerLinkActive]="['active']">
+              Rubros más vendidos
+            </button>
+            <button class="dropdown-item"
                     [routerLink]="['admin','ventas-por-cliente']"
                     [routerLinkActive]="['active']">
               Ventas por cliente

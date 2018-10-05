@@ -165,6 +165,7 @@ import { ReportBestSellingArticleComponent } from './components/report-best-sell
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
+import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { CashBoxComponent } from './components/cash-box/cash-box.component';
 import { AddLocationComponent } from './components/add-location/add-location.component';
 import { UpdateLocationComponent } from './components/update-location/update-location.component';
@@ -289,6 +290,7 @@ import { ExportIvaComponent } from './components/export-iva/export-iva.component
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
     ReportSalesByMakeComponent,
+    ReportSalesByCategoryComponent,
     CashBoxComponent,
     AddLocationComponent,
     UpdateLocationComponent,

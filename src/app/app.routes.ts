@@ -79,6 +79,7 @@ import { ListSummaryOfAccountsComponent } from "./components/list-summary-of-acc
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
+import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -108,6 +109,11 @@ const _routes: Routes = [
   {
     path: 'admin/ventas-por-cliente',
     component: ReportSalesByClientComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/rubros-mas-vendidos',
+    component: ReportSalesByCategoryComponent,
     data: { roles: ['Administrador'] }
   },
   {

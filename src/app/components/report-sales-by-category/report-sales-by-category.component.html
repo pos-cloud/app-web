@@ -1,24 +1,24 @@
 <!--ESTADISTICAS GENERALES-->
 <div class="card card-outline-primary" *ngIf="listType === 'statistics'">
-  <div class="card-header bg-primary">Marcas más vendidas
+  <div class="card-header bg-primary">Rubros más vendidos
   </div>
   <div class="card-block table-responsive">
     <table class="table table-hover">
       <thead>
         <tr>
-          <th>Marca </th>
+          <th>Rubro </th>
           <th>Ítems </th>
           <th>Monto total </th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of items">
-          <td class="flat">{{ item.make.description }}</td>
+          <td class="flat">{{ item.category.description }}</td>
           <td class="flat">{{ item.count }}</td>
           <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
         </tr>
-        <tr align="center" *ngIf="areMakesEmpty">
-          <td colspan="3">No se encontraron ventas por marcas</td>
+        <tr align="center" *ngIf="areCategoriesEmpty">
+          <td colspan="3">No se encontraron ventas por rubros</td>
         </tr>
       </tbody>
     </table>
@@ -63,25 +63,25 @@
     </div>
   </div>
   <div class="card card-outline-primary card-large">
-    <div class="card-header bg-primary">Marcas más vendidas
+    <div class="card-header bg-primary">Rubros más vendidos
     </div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
           <tr>
-            <th (click)="orderBy('make.description')">Marca</th>
+            <th (click)="orderBy('category.description')">Rubro</th>
             <th (click)="orderBy('count')">Ítems</th>
             <th (click)="orderBy('total')">Monto Total</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of items">
-            <td class="flat">{{ item.make.description }}</td>
+            <td class="flat">{{ item.category.description }}</td>
             <td class="flat">{{ item.count }}</td>
             <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
           </tr>
-          <tr align="center" *ngIf="areMakesEmpty">
-            <td colspan="3">No se encontraron ventas por marcas</td>
+          <tr align="center" *ngIf="areCategoriesEmpty">
+            <td colspan="3">No se encontraron ventas por rubros</td>
           </tr>
         </tbody>
       </table>
