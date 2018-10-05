@@ -15,10 +15,12 @@ export class MovementOfArticle {
     public otherFields: ArticleFields[];
     public taxes: Taxes[];
     public costPrice: number = 0.00;
+    public unitPrice: number = 0.00;
     public markupPercentage: number = 0.00;
     public markupPrice: number = 0.00;
     public transactionDiscountAmount: number = 0.00;
     public salePrice: number = 0.00;
+    public roundingAmount: number = 0.00;
     public make: Make;
     public category: Category;
     public barcode: string;
