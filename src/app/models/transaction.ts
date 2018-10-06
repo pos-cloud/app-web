@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 export class Transaction {
-	
+
 	public _id: string;
 	public origin: number = 0;
 	public letter: string = "X";
@@ -24,7 +24,8 @@ export class Transaction {
 	public taxes: Taxes[];
 	public discountAmount: number = 0.00;
 	public discountPercent: number = 0.00;
-	public totalPrice: number = 0.00;
+  public totalPrice: number = 0.00;
+  public roundingAmount: number = 0.00;
 	public diners: number = 0;
 	public observation: string;
 	public madein: string;

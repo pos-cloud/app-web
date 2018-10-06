@@ -254,7 +254,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (this.transactionType.resetNumber === undefined) this.transactionType.resetNumber = false;
     if (this.transactionType.electronics === undefined) this.transactionType.electronics  = false;
     if (this.transactionType.printable === undefined) this.transactionType.printable  = false;
-    if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
+    if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = undefined;
     if (this.transactionType.tax === undefined) this.transactionType.tax = false;
     if (this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
     if (this.transactionType.cashOpening === undefined) this.transactionType.cashOpening = false;

@@ -1018,25 +1018,30 @@ export class PrintComponent implements OnInit {
 
       // DATOS DE LA EMPRESA O IMAGEN
       if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-        this.doc.setFontSize(this.fontSizes.extraLarge)
-        this.doc.setFontType('bold')
-        this.doc.setFontSize(this.fontSizes.extraLarge)
-        this.doc.setFontType('bold')
-        if (this.config[0].companyName) {
-          this.centerText(5, 5, 105, 0, 20, this.config[0].companyName);
-        }
-        this.doc.setFontSize(this.fontSizes.normal)
-        this.doc.setFontType('normal')
-        if (this.config[0].companyAddress) {
-          this.centerText(5, 5, 105, 0, 30, this.config[0].companyAddress);
-        }
-        if (this.config[0].companyPhone) {
-          this.centerText(5, 5, 105, 0, 35, '(' + this.config[0].companyPhone + ')');
-        }
+        this.getCompanyData();
       }
     }
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.setFontType('normal')
+  }
+
+  public getCompanyData(): void {
+
+    this.doc.setFontSize(this.fontSizes.extraLarge)
+    this.doc.setFontType('bold')
+    this.doc.setFontSize(this.fontSizes.extraLarge)
+    this.doc.setFontType('bold')
+    if (this.config[0].companyName) {
+      this.centerText(5, 5, 105, 0, 20, this.config[0].companyName);
+    }
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('normal');
+    if (this.config[0].companyAddress) {
+      this.centerText(5, 5, 105, 0, 30, this.config[0].companyAddress);
+    }
+    if (this.config[0].companyPhone) {
+      this.centerText(5, 5, 105, 0, 35, '(' + this.config[0].companyPhone + ')');
+    }
   }
 
   public getCompanyPicture(lmargin, rmargin, width, height): void {
@@ -1045,19 +1050,20 @@ export class PrintComponent implements OnInit {
     this._configService.getCompanyPicture(this.config[0]['companyPicture']).subscribe(
       result => {
         if (!result.imageBase64) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.getCompanyData();
+          this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
           this.loading = false;
         } else {
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-          // this.doc.addImage(imageURL, 'jpeg', 10, 5, 80, 40);
           this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
           this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
+        this.getCompanyData();
+        this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
         this.loading = false;
       }
     );
@@ -1066,51 +1072,53 @@ export class PrintComponent implements OnInit {
   public getClient() {
 
     // Lineas divisorias horizontales para el receptor
-    this.doc.line(0, 70, 240, 70)
-    this.doc.line(0, 80, 240, 80)
+    this.doc.line(0, 70, 240, 70);
+    this.doc.line(0, 80, 240, 80);
 
     // Detalle receptor
-    this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.setFontType('bold')
-    this.doc.text("Nombre y Apellido:", 8, 55)
-    this.doc.text("Condición de IVA:", 8, 65)
-    this.doc.text("Dirección:", 120, 55)
-    this.doc.text("Teléfono:", 120, 60)
-    this.doc.text("Localidad:", 120, 65)
-    this.doc.setFontType('normal')
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('bold');
+    this.doc.text("Nombre y Apellido:", 8, 55);
+    this.doc.text("Condición de IVA:", 8, 65);
+    this.doc.text("Dirección:", 120, 55);
+    this.doc.text("Teléfono:", 120, 60);
+    this.doc.text("Localidad:", 120, 65);
+    this.doc.setFontType('normal');
 
     if (this.company) {
-      this.doc.text(this.company.name, 42, 55)
-      if (this.company.DNI) {
-        this.doc.setFontType('bold')
-        this.doc.text("DNI:", 8, 60)
-        this.doc.setFontType('normal')
-        this.doc.text(this.company.DNI, 17, 60)
-      } else if (!this.company.DNI) {
-        this.doc.setFontType('bold')
-        this.doc.text("CUIT:", 8, 60)
-        this.doc.setFontType('normal')
-        this.doc.text(this.company.CUIT, 18, 60)
+      this.doc.text(this.company.name, 42, 55);
+      if (this.company.DNI && this.company.DNI !== '') {
+        this.doc.setFontType('bold');
+        this.doc.text("DNI:", 8, 60);
+        this.doc.setFontType('normal');
+        this.doc.text(this.company.DNI, 17, 60);
+      } else if (this.company.CUIT && this.company.CUIT !== '') {
+        this.doc.setFontType('bold');
+        this.doc.text("CUIT:", 8, 60);
+        this.doc.setFontType('normal');
+        this.doc.text(this.company.CUIT, 18, 60);
       }
-      this.doc.setFontType('normal')
-      this.doc.text(this.company.vatCondition.description, 40, 65)
+      this.doc.setFontType('normal');
+      if (this.company.vatCondition) {
+        this.doc.text(this.company.vatCondition.description, 40, 65);
+      }
       if (this.company.address) {
-        this.doc.text(this.company.address, 140, 55)
+        this.doc.text(this.company.address, 140, 55);
       }
       if (this.company.phones) {
-        this.doc.text(this.company.phones, 138, 60)
+        this.doc.text(this.company.phones, 138, 60);
       }
       if (this.company.city) {
-        this.doc.text(this.company.city, 140, 65)
+        this.doc.text(this.company.city, 140, 65);
       }
     } else {
-      this.doc.setFontType('bold')
-      this.doc.text("CUIT:", 8, 60)
-      this.doc.setFontType('normal')
-      this.doc.text("Consumidor Final", 40, 65)
+      this.doc.setFontType('bold');
+      this.doc.text("CUIT:", 8, 60);
+      this.doc.setFontType('normal');
+      this.doc.text("Consumidor Final", 40, 65);
     }
-    this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.setFontType('normal')
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('normal');
   }
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {

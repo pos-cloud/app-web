@@ -242,7 +242,7 @@
         <div class="form-group col-md-12">
           <label for="requestEmployee" class="control-label">Selecciona el tipo de empleado a solicitar en la carga</label>
           <select class="form-control" formControlName="requestEmployee">
-            <option *ngFor="let employeeType of employeeTypes" [ngValue]="employeeType">{{ employeeType.description }}</option>
+            <option *ngFor="let employeeType of employeeTypes" [selected]="transactionType.requestEmployee && transactionType.requestEmployee._id === employeeType._id" [ngValue]="employeeType">{{ employeeType.description }}</option>
           </select>
         </div>
       </div>

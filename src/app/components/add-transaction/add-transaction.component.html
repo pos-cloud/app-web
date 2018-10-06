@@ -28,6 +28,18 @@
           </button>
         </div>
       </div>
+      <div class="row" *ngIf="transaction.type.requestEmployee">
+        <div class="form-group col-md-12">
+          <label for="employeeOpening" class="control-label">Asignar {{ transaction.type.requestEmployee.description }}</label>
+          <select class="form-control" formControlName="employeeOpening">
+            <option *ngFor="let employee of employees"
+                    [selected]="transaction.employeeOpening && employee._id === transaction.employeeOpening._id"
+                    [value]="employee._id">
+              {{employee.name}}
+            </option>
+          </select>
+        </div>
+      </div>
       <div class="row" *ngIf="transactionMovement === 'Venta'">
         <div class="form-group col-md-6">
           <label for="date" class="control-label">Fecha:</label>
@@ -122,7 +134,7 @@
       <div class="row">
         <div class="form-group col-md-12">
           <label for="observation" class="control-label">Observación:</label>
-          <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2">
+          <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [disabled]="readonly">
           </textarea>
         </div>
       </div>

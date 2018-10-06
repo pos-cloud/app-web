@@ -13,11 +13,13 @@ import { Transaction } from './../../models/transaction';
 import { TransactionMovement } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 import { Taxes } from '../../models/taxes';
+import { Employee } from './../../models/employee';
 
 //Services
 import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 import { CompanyService } from './../../services/company.service';
+import { EmployeeService } from './../../services/employee.service';
 
 //Pipes
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
@@ -45,6 +47,7 @@ export class AddTransactionComponent implements OnInit {
   public letters: string[] = ["A", "B", "C", "E", "M", "R", "T","X"];
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: string;
+  public employees: Employee[] = new Array();
   public readonly: boolean = false;
 
   public formErrors = {
@@ -55,7 +58,8 @@ export class AddTransactionComponent implements OnInit {
     'basePrice': '',
     'exempt': '',
     'totalPrice': '',
-    'company': ''
+    'company': '',
+    'employeeOpening': ''
   };
 
   public validationMessages = {
@@ -82,6 +86,8 @@ export class AddTransactionComponent implements OnInit {
     },
     'totalPrice': {
       'required': 'Este campo es requerido.'
+    },
+    'employeeOpening': {
     }
   };
 
@@ -89,6 +95,7 @@ export class AddTransactionComponent implements OnInit {
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _companyService: CompanyService,
+    public _employeeService: EmployeeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -103,21 +110,26 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
+    // VERIFICAMOS PARA LAS COMPROBACIONES DE INTERFAZ QUE TIPO DE MOVIMIENTO ES
     this.transactionMovement = this.transaction.type.transactionMovement.toString();
 
+    if (this.transaction.type.requestEmployee) {
+      this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
+    }
+
+    //NUEVA TRANSACCIÓN
     if (!this.transaction._id || this.transaction._id === '') {
-      this.readonly = false;
+
+      // DEFINIMOS EL ORIGEN SI TIENE FIJO O NO
       if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
         this.transaction.origin = this.transaction.type.fixedOrigin;
       }
 
+      // DEFINIMOS LA LETRA SI TIENE FIJA O NO
       if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
         this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
       }
-    } else {
-      if(this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-        this.readonly = true;
-      }
+    }   else {  // TRANSACCIÓN EXISTENTE
       this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
     }
 
@@ -134,6 +146,7 @@ export class AddTransactionComponent implements OnInit {
     if (!this.transaction.letter) this.transaction.letter = "X";
     if (!this.transaction.number) this.transaction.number = 1;
     if (!this.transaction.observation) this.transaction.observation = '';
+    if (!this.transaction.employeeOpening) this.transaction.employeeOpening = null;
 
     this.transactionForm.setValue({
       'company': this.transaction.company.name,
@@ -144,7 +157,8 @@ export class AddTransactionComponent implements OnInit {
       'basePrice': this.transactionForm.value.basePrice,
       'exempt': this.transaction.exempt,
       'totalPrice': this.transaction.totalPrice,
-      'observation': this.transaction.observation
+      'observation': this.transaction.observation,
+      'employeeOpening': this.transaction.employeeOpening
     });
   }
 
@@ -186,6 +200,9 @@ export class AddTransactionComponent implements OnInit {
       'observation': [this.transaction.observation, [
         ]
       ],
+      'employeeOpening': [this.transaction.employeeOpening, [
+        ]
+      ],
     });
 
     this.transactionForm.valueChanges
@@ -211,6 +228,28 @@ export class AddTransactionComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getEmployees(query: string): void {
+
+    this.loading = true;
+
+    this._employeeService.getEmployees(query).subscribe(
+      result => {
+        if (!result.employees) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.employees = result.employees;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public addTransactionTaxes(taxes: Taxes[]): void {
@@ -274,8 +313,12 @@ export class AddTransactionComponent implements OnInit {
   public addTransaction(): void {
 
     this.transaction.observation = this.transactionForm.value.observation;
+    this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
+    this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
 
-    if (!this.readonly) {
+    if ((this.transaction.type.requestEmployee &&
+      this.transaction.employeeOpening) ||
+      !this.transaction.type.requestEmployee) {
 
       this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
       this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
@@ -285,7 +328,7 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.number = this.transactionForm.value.number;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
 
-      if(this.transaction._id && this.transaction._id !== '' && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+      if(this.transaction._id && this.transaction._id !== '') {
         this.updateTransaction();
       } else {
         if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
@@ -296,7 +339,7 @@ export class AddTransactionComponent implements OnInit {
         }
       }
     } else {
-      this.updateTransaction();
+      this.showMessage("Debe asignar el empleado " + this.transaction.type.requestEmployee.description, "info", true);
     }
   }
 

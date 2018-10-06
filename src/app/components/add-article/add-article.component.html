@@ -66,7 +66,12 @@
 							<div class="form-group col-md-6">
 								<label for="category" class="control-label">Rubro:</label>
 								<select class="form-control" formControlName="category">
-									<option *ngFor="let category of categories" [selected]="article.category && category._id===article.category._id" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
+                  <option *ngFor="let category of categories"
+                          [selected]="article.category && category._id===article.category._id"
+                          [value]="category._id"
+                          [disabled]="readonly">
+                          {{category.description}}
+                  </option>
 								</select>
 								<div *ngIf="formErrors.category" class="alert alert-danger">
 									{{ formErrors.category }}
