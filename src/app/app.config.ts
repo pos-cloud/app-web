@@ -20,6 +20,7 @@ export class Config {
     static companyName: string;
     static companyCUIT: string;
     static companyAddress: string;
+    static companyFantasyName: string;
     static companyPhone: string;
     static companyVatCondition: VATCondition;
     static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -66,12 +67,12 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( companyPicture, companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,
-                                    companyStartOfActivity, companyGrossIncome, footerInvoice): void {
+    public static setConfigCompany( companyPicture, companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName): void {
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
         Config.companyCUIT = companyCUIT;
         Config.companyAddress = companyAddress;
+        Config.companyFantasyName = companyFantasyName;
         Config.companyPhone = companyPhone;
         Config.companyVatCondition = companyVatCondition;
         Config.companyStartOfActivity = companyStartOfActivity;

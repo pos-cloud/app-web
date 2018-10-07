@@ -49,11 +49,22 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Razon Social</span>
+              <span class="input-group-addon" id="basic-addon1">Razón Social</span>
               <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName" aria-describedby="basic-addon1">
             </div>
             <div *ngIf="formErrors.companyName" class="alert alert-danger">
               {{ formErrors.companyName }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Nombre de fantasía</span>
+              <input type="text" class="form-control" formControlName="companyFantasyName" name="companyFantasyName" id="companyFantasyName" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyFantasyName" class="alert alert-danger">
+              {{ formErrors.companyFantasyName }}
             </div>
           </div>
         </div>

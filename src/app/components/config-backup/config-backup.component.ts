@@ -174,6 +174,9 @@ export class ConfigBackupComponent implements OnInit {
       'companyCUIT': [this.config['companyCUIT'], [
         ]
       ],
+      'companyFantasyName' : [this.config['companyFantasyName'],[
+        ]
+      ],
       'companyVatCondition': [this.config['companyVatCondition'], [
         ]
       ],
@@ -592,6 +595,7 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['emailPassword']) this.config['emailPassword'] = '';
     if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
     if (!this.config['companyName']) this.config['companyName'] = '';
+    if (!this.config['companyFantasyName']) this.config['companyFantasyName'] = '';
     if (!this.config['companyCUIT']) this.config['companyCUIT'] = '';
     if (!this.config['companyVatCondition']) {
       if(this.vatConditions && this.vatConditions.length > 0) {
@@ -614,6 +618,7 @@ export class ConfigBackupComponent implements OnInit {
       'companyName': this.config['companyName'],
       'companyCUIT': this.config['companyCUIT'],
       'companyAddress': this.config['companyAddress'],
+      'companyFantasyName': this.config['companyFantasyName'],
       'companyPhone': this.config['companyPhone'],
       'companyVatCondition': this.config['companyVatCondition'],
       'companyStartOfActivity': moment(this.config['companyStartOfActivity'], 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY'),
@@ -638,7 +643,7 @@ export class ConfigBackupComponent implements OnInit {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyPicture, config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
-      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice);
+      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
