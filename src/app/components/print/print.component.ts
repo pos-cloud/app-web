@@ -988,12 +988,12 @@ export class PrintComponent implements OnInit {
     if (this.config[0]) {
       this.doc.setFontSize(this.fontSizes.normal)
 
-      this.doc.setFontType('bold')
+      /*this.doc.setFontType('bold')
       this.doc.text("Condición de IVA:", 110, 30)
       this.doc.setFontType('normal')
       if (this.config[0].companyVatCondition) {
         this.doc.text(this.config[0].companyVatCondition.description, 145, 30)
-      }
+      }*/
 
       this.doc.setFontType('bold')
       this.doc.text("CUIT:", 110, 35)
@@ -1018,13 +1018,41 @@ export class PrintComponent implements OnInit {
 
       // DATOS DE LA EMPRESA O IMAGEN
       if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-        this.getCompanyData();
+        this.doc.setFontSize(this.fontSizes.extraLarge)
+        this.doc.setFontType('bold')
+        this.doc.setFontSize(this.fontSizes.extraLarge)
+        this.doc.setFontType('bold')
+        if (this.config[0].companyFantasyName) {
+          this.centerText(5, 5, 105, 0, 20, this.config[0].companyFantasyName);
+        } else {
+          this.centerText(5, 5, 105, 0, 20, this.config[0].companyName);
+        }
+        this.doc.setFontSize(this.fontSizes.normal)
+        this.doc.setFontType('normal')
+        if(this.config[0].companyName) {
+          this.doc.setFontType('bold')
+          this.doc.text("Razón social:",5,35)
+          this.doc.setFontType('normal')
+          this.doc.text(this.config[0].companyName,45,35);
+        }
+        if (this.config[0].companyAddress) {
+          this.doc.setFontType('bold')
+          this.doc.text("Domicilio Comercial:",5,40)
+          this.doc.setFontType('normal')
+          this.doc.text(this.config[0].companyAddress,45,40);
+        } 
+        if (this.config[0].companyVatCondition) {
+          this.doc.setFontType('bold')
+          this.doc.text("Condición de IVA:",5,45)
+          this.doc.setFontType('normal')
+          this.doc.text(this.config[0].companyVatCondition.description,45,45);
+        }
       }
     }
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.setFontType('normal')
   }
-
+  
   public getCompanyData(): void {
 
     this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -1209,7 +1237,7 @@ export class PrintComponent implements OnInit {
     this.getClient();
 
     // Dibujar la linea cortada para la letra
-    this.doc.line(105, 13, 105, 50); //vertical letra
+    this.doc.line(105, 16, 105, 50); //vertical letra
 
     // Numeración de la transacción
     this.doc.setFontSize(this.fontSizes.extraLarge);
@@ -1222,16 +1250,16 @@ export class PrintComponent implements OnInit {
     }
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.setFontType('bold');
-    this.doc.text("Comp. Nº:", 110, 20);
+    this.doc.text("Comp. Nº:", 110, 25);
     this.doc.setFontType('normal');
-    this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+    this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 25);
     this.doc.setFontType('bold');
-    this.doc.text("Fecha:", 110, 25);
+    this.doc.text("Fecha:", 110, 30);
     this.doc.setFontType('normal');
     if (this.transaction.endDate) {
-      this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+      this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 30);
     } else {
-      this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+      this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 30);
     }
 
     // Letra de transacción
@@ -1240,8 +1268,19 @@ export class PrintComponent implements OnInit {
     this.doc.setDrawColor("Black");
     this.doc.rect(100, 3, 10, 10);
     this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-    this.doc.setFontType('normal');
+    var code;
+    if (this.transaction.type.codes){
+      console.log(this.transaction.type.codes);
+      for (let i = 0; i < this.transaction.type.codes.length; i++) {
+        if(this.transaction.letter === this.transaction.type.codes[i].letter){
+          this.doc.setFontSize('8');
+          this.doc.text("Cod:"+this.padString((this.transaction.type.codes[i].code).toString(),2),101,16);
+        }
+      }
+    }
 
+    this.doc.setFontType('normal');
+    this.doc.setFontSize('normal');
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
