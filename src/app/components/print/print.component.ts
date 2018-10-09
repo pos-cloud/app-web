@@ -182,6 +182,7 @@ export class PrintComponent implements OnInit {
 
   public getVATBook() {
 
+
     this._transactionService.getVATBook(this.params).subscribe(
       result => {
         if (!result) {
@@ -210,6 +211,7 @@ export class PrintComponent implements OnInit {
     var gravado = 0;
     var iva = 0;
     var exento = 0;
+    var folio = parseInt(this.params.split("&")[2]);
 
     var row = 10;
     this.doc.setFontType('bold');
@@ -226,7 +228,9 @@ export class PrintComponent implements OnInit {
       this.doc.text(this.config[0].companyCUIT, 25, row);
     }
 
+
     this.doc.setFontType('bold');
+    this.doc.text("N° DE FOLIO:"+folio.toString(),240,row);
     this.centerText(5, 5, 300, 0, row, "LIBRO DE IVA " + this.params.split("&")[0].toString().toUpperCase() + "S - PERÍODO " + this.params.split("&")[1].toString().toUpperCase());
 
     row += 3;
@@ -312,18 +316,33 @@ export class PrintComponent implements OnInit {
 
       row += 5;
 
-      if (this.bookVAT[i].movement === "Entrada"){
-        gravado = gravado + this.bookVAT[i].GRAVADO;
-        total = total + this.bookVAT[i].TOTAL;
-        iva = iva + this.bookVAT[i].IVA;
-        exento = exento + this.bookVAT[i].EXENT_NOGRAV;
-      } else {
-        gravado = gravado - this.bookVAT[i].GRAVADO;
-        total = total - this.bookVAT[i].TOTAL;
-        iva = iva - this.bookVAT[i].IVA;
-        exento = exento - this.bookVAT[i].EXENT_NOGRAV;
-      }
+      console.log(this.params.split("&")[0].toString());
 
+      if (this.params.split("&")[0].toString() == "Venta"){
+        if (this.bookVAT[i].movement === "Entrada"){
+                gravado = gravado + this.bookVAT[i].GRAVADO;
+                total = total + this.bookVAT[i].TOTAL;
+                iva = iva + this.bookVAT[i].IVA;
+                exento = exento + this.bookVAT[i].EXENT_NOGRAV;
+            } else {
+                gravado = gravado - this.bookVAT[i].GRAVADO;
+                total = total - this.bookVAT[i].TOTAL;
+                iva = iva - this.bookVAT[i].IVA;
+                exento = exento - this.bookVAT[i].EXENT_NOGRAV;
+              }
+      } else {
+          if (this.bookVAT[i].movement === "Entrada"){
+                  gravado = gravado - this.bookVAT[i].GRAVADO;
+                  total = total - this.bookVAT[i].TOTAL;
+                  iva = iva - this.bookVAT[i].IVA;
+                  exento = exento - this.bookVAT[i].EXENT_NOGRAV;
+              } else {
+                  gravado = gravado + this.bookVAT[i].GRAVADO;
+                  total = total + this.bookVAT[i].TOTAL;
+                  iva = iva + this.bookVAT[i].IVA;
+                  exento = exento + this.bookVAT[i].EXENT_NOGRAV;
+            }
+      }
 
       if (row >= 190 ) {
 
@@ -349,6 +368,8 @@ export class PrintComponent implements OnInit {
         }
 
         this.doc.setFontType('bold');
+        folio = folio + 1;
+        this.doc.text("N° DE FOLIO:"+folio.toString(),240,row);
         this.centerText(5, 5, 300, 0, row, "LIBRO DE IVA " + this.params.split("&")[0].toString().toUpperCase() + "S - PERÍODO " + this.params.split("&")[1].toString().toUpperCase());
 
         row += 3;
@@ -387,6 +408,7 @@ export class PrintComponent implements OnInit {
     this.doc.text((this.roundNumber.transform(iva)).toString(), 225, row);
     this.doc.text("0", 245, row);
     this.doc.text("0", 275, row);
+
 
     this.doc.setFontType('normal');
     row += 3;
