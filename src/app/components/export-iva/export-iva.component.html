@@ -32,6 +32,17 @@
               </div>
           </div>
         </div>
+        <div class = row>
+          <div class="form-group col-md-4">
+            <label for="folioNumber" class="control-label">Folio:</label>
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="folioNumber" folioNumber="folioNumber" id="folioNumber"/>
+            </div>
+            <div *ngIf="formErrors.folioNumber" class="alert alert-danger">
+              {{ formErrors.folioNumber }}
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
