@@ -80,6 +80,7 @@ import { ReportSalesByPaymentMethodComponent } from './components/report-sales-b
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
+import { ListCompaniesGroupComponent } from "./components/list-companies-group/list-companies-group.component";
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -383,6 +384,12 @@ const _routes: Routes = [
   {
     path: 'admin/clientes',
     component: ListCompaniesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/grupo-empresas',
+    component: ListCompaniesGroupComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

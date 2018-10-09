@@ -47,6 +47,7 @@ import { DepositService } from './services/deposit.service';
 import { LocationService } from './services/location.service';
 import { CompanyNewsService } from './services/company-news.service';
 import { ArticleFieldService } from './services/article-field.service';
+import { CompanyGroupService } from "./services/company-group.service";
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -180,6 +181,10 @@ import { ListArticleFieldsComponent } from './components/list-article-fields/lis
 import { AddArticleFieldsComponent } from './components/add-article-fields/add-article-fields.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ExportIvaComponent } from './components/export-iva/export-iva.component';
+import { ListCompaniesGroupComponent } from './components/list-companies-group/list-companies-group.component';
+import { AddCompanyGroupComponent } from './components/add-company-group/add-company-group.component';
+import { DeleteCompanyGroupComponent } from './components/delete-company-group/delete-company-group.component';
+import { UpdateCompanyGroupComponent } from './components/update-company-group/update-company-group.component';
 
 @NgModule({
   declarations: [
@@ -304,7 +309,11 @@ import { ExportIvaComponent } from './components/export-iva/export-iva.component
     ListArticleFieldsComponent,
     AddArticleFieldsComponent,
     ListSummaryOfAccountsComponent,
-    ExportIvaComponent
+    ExportIvaComponent,
+    ListCompaniesGroupComponent,
+    AddCompanyGroupComponent,
+    UpdateCompanyGroupComponent,
+    DeleteCompanyGroupComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -338,7 +347,10 @@ import { ExportIvaComponent } from './components/export-iva/export-iva.component
     DeleteLocationComponent,
     AddArticleFieldComponent,
     UpdateArticleFieldComponent,
-    DeleteArticleFieldComponent
+    DeleteArticleFieldComponent,
+    AddCompanyGroupComponent,
+    UpdateCompanyGroupComponent,
+    DeleteCompanyGroupComponent
   ],
   imports: [
     BrowserModule,
@@ -392,7 +404,8 @@ import { ExportIvaComponent } from './components/export-iva/export-iva.component
     DepositService,
     LocationService,
     CompanyNewsService,
-    ArticleFieldService
+    ArticleFieldService,
+    CompanyGroupService
   ],
   bootstrap: [AppComponent]
 })
