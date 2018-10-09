@@ -8,9 +8,11 @@ import 'moment/locale/es';
 
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
+import { CompanyGroup } from 'app/models/company-group';
 
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
+import { CompanyGroupService } from './../../services/company-group.service'
 
 @Component({
   selector: 'app-update-company',
@@ -24,6 +26,7 @@ export class UpdateCompanyComponent implements OnInit {
   @Input() company: Company;
   @Input() readonly: boolean;
   public types: CompanyType[];
+  public companiesGroup: CompanyGroup;
   public vatConditions: VATCondition[];
   public identityTypes: string[] = ["DNI", "CUIT"];
   public identityTypeSelected: string;
@@ -49,7 +52,8 @@ export class UpdateCompanyComponent implements OnInit {
     'gender':'',
     'birthday':'',
     'observation' : '',
-    'allowCurrentAccount': ''
+    'allowCurrentAccount': '',
+    'group' : ''
   };
 
   public validationMessages = {
@@ -90,12 +94,14 @@ export class UpdateCompanyComponent implements OnInit {
     'gender': {
     },
     'observation': {},
-    'allowCurrentAccount': {}
+    'allowCurrentAccount': {},
+    'group' : {}
   };
 
   constructor(
     public _companyService: CompanyService,
     public _vatCondition: VATConditionService,
+    public _companyGroupService : CompanyGroupService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -133,8 +139,27 @@ export class UpdateCompanyComponent implements OnInit {
 
     this.buildForm();
     this.getVATConditions();
-
+    this.getCompaniesGroup();
     this.setValueForm();
+  }
+
+  public getCompaniesGroup(): void {
+    this.loading = true;
+
+    this._companyGroupService.getCompaniesGroup().subscribe(
+      result => {
+        if (!result.companiesGroup) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.companiesGroup = result.companiesGroup;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -196,7 +221,8 @@ export class UpdateCompanyComponent implements OnInit {
       ]],
       'gender' : [this.company.gender,[]],
       'observation' : [this.company.observation,[]],
-      'allowCurrentAccount': [this.company.allowCurrentAccount,[]]
+      'allowCurrentAccount': [this.company.allowCurrentAccount,[]],
+      'group':[this.company.group,[]],
     });
 
     this.companyForm.valueChanges
@@ -245,6 +271,8 @@ export class UpdateCompanyComponent implements OnInit {
     if(!this.company.observation) this.company.observation = '';
     if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
     
+    if(!this.company.group) this.company.group = null;
+
     const values = {
       '_id': this.company._id,
       'code': this.company.code,
@@ -262,7 +290,8 @@ export class UpdateCompanyComponent implements OnInit {
       'gender': this.company.gender,
       'birthday': this.company.birthday,
       'observation' : this.company.observation,
-      'allowCurrentAccount' : this.company.allowCurrentAccount
+      'allowCurrentAccount' : this.company.allowCurrentAccount,
+      'group' : this.company.group
     };
 
     this.companyForm.setValue(values);

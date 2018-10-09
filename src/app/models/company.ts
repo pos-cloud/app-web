@@ -1,4 +1,5 @@
 import { VATCondition } from './vat-condition';
+import { CompanyGroup } from './company-group';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -22,6 +23,7 @@ export class Company {
     public birthday: string;
     public observation: string;
     public allowCurrentAccount: boolean;
+    public group: CompanyGroup;
 
     constructor() {}
 }

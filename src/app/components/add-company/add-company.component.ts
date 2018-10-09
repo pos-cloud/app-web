@@ -6,11 +6,13 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
+import { CompanyGroup } from 'app/models/company-group';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
+import { CompanyGroupService } from "./../../services/company-group.service";
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
 @Component({
@@ -26,6 +28,7 @@ export class AddCompanyComponent  implements OnInit {
   @Input() companyType: CompanyType;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
+  public companiesGroup: CompanyGroup[];
   public dateFormat = new DateFormatPipe();
   public identityTypes: string[] = ["DNI","CUIT"];
   public identityTypeSelected: string;
@@ -52,8 +55,8 @@ export class AddCompanyComponent  implements OnInit {
     'gender':'',
     'birthday':'',
     'observation':'',
-    'allowCurrentAccount':''
-
+    'allowCurrentAccount':'',
+    'group':''
   };
 
   public validationMessages = {
@@ -98,12 +101,14 @@ export class AddCompanyComponent  implements OnInit {
     'gender': {
     },
     'observation':{},
-    'allowCurrentAccount':{}
+    'allowCurrentAccount':{},
+    'group':{}
   };
 
   constructor(
     public _companyService: CompanyService,
-    public _vatCondition: VATConditionService,
+    public _vatConditionService: VATConditionService,
+    public _companyGroupService: CompanyGroupService, 
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -132,11 +137,31 @@ export class AddCompanyComponent  implements OnInit {
     this.company.type = this.types[0];
     this.buildForm();
     this.getVATConditions();
+    this.getCompaniesGroup();
     this.getLastCompany();
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getCompaniesGroup(): void {
+    this.loading = true;
+
+    this._companyGroupService.getCompaniesGroup().subscribe(
+      result => {
+        if (!result.companiesGroup) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.companiesGroup = result.companiesGroup;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public buildForm(): void {
@@ -195,7 +220,8 @@ export class AddCompanyComponent  implements OnInit {
         ]
       ],
       'observation': [this.company.observation,[]],
-      'allowCurrentAccount': [this.company.observation,[]]
+      'allowCurrentAccount': [this.company.observation,[]],
+      'group': [this.company.group,[]]
     });
 
     this.companyForm.valueChanges
@@ -267,6 +293,11 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+
+    if (!this.company.group) {
+        this.company.group = null;
+    }
+
     const values = {
       'code': this.company.code,
       'name': this.company.name,
@@ -283,7 +314,8 @@ export class AddCompanyComponent  implements OnInit {
       'gender': this.company.gender,
       'birthday': this.company.birthday,
       'observation': this.company.observation,
-      'allowCurrentAccount': this.company.allowCurrentAccount
+      'allowCurrentAccount': this.company.allowCurrentAccount,
+      'group': this.company.group
     };
 
     this.companyForm.setValue(values);
@@ -293,7 +325,7 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
 
-    this._vatCondition.getVATConditions().subscribe(
+    this._vatConditionService.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
