@@ -254,18 +254,16 @@ export class UpdateCompanyComponent implements OnInit {
     if(!this.company.observation) this.company.observation = '';
     if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
     
-    let group;
+    let group = null;
     if (!this.company.group) {
       group = null;
     } else {
       if (this.company.group._id) {
         group = this.company.group._id;
       } else {
-        group = this.company.group;
+        group = null;
       }
     }
-
-    console.log(this.company);
 
     const values = {
       '_id': this.company._id,
@@ -285,7 +283,7 @@ export class UpdateCompanyComponent implements OnInit {
       'birthday': this.company.birthday,
       'observation' : this.company.observation,
       'allowCurrentAccount' : this.company.allowCurrentAccount,
-      'companyGroup' : group
+      'group' : group
     };
 
     this.companyForm.setValue(values);

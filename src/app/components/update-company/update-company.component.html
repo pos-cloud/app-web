@@ -177,7 +177,7 @@
 							<div class="form-group col-md-12">
 								<label for="group" class="control-label">Grupo</label>
 								<select class="form-control" formControlName="group">
-									<option *ngFor="let companyGroup of companiesGroup" [selected]="company.group && companyGroup._id===company.group._id" [value]="companyGroup._id" [disabled]="readonly">
+									<option *ngFor="let companyGroup of companiesGroup" [selected]="company.group && companyGroup._id == company.group._id" [value]="companyGroup._id" [disabled]="readonly">
 										{{companyGroup.description}}
 									</option>
 								</select>
