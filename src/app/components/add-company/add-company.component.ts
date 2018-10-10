@@ -294,8 +294,15 @@ export class AddCompanyComponent  implements OnInit {
     }
 
 
+    let group;
     if (!this.company.group) {
-        this.company.group = null;
+      group = null;
+    } else {
+      if (this.company.group._id) {
+        group = this.company.group._id;
+      } else {
+        group = this.company.group;
+      }
     }
 
     const values = {
@@ -315,7 +322,7 @@ export class AddCompanyComponent  implements OnInit {
       'birthday': this.company.birthday,
       'observation': this.company.observation,
       'allowCurrentAccount': this.company.allowCurrentAccount,
-      'group': this.company.group
+      'group': group
     };
 
     this.companyForm.setValue(values);
@@ -382,6 +389,9 @@ export class AddCompanyComponent  implements OnInit {
       this.companyForm.value.CUIT = '';
     }
     this.company = this.companyForm.value;
+
+    console.log (this.company);
+
     if (this.company.birthday) {
       this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
     }

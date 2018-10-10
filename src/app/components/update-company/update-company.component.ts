@@ -143,24 +143,7 @@ export class UpdateCompanyComponent implements OnInit {
     this.setValueForm();
   }
 
-  public getCompaniesGroup(): void {
-    this.loading = true;
-
-    this._companyGroupService.getCompaniesGroup().subscribe(
-      result => {
-        if (!result.companiesGroup) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.companiesGroup = result.companiesGroup;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
+ 
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
@@ -271,7 +254,18 @@ export class UpdateCompanyComponent implements OnInit {
     if(!this.company.observation) this.company.observation = '';
     if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
     
-    if(!this.company.group) this.company.group = null;
+    let group;
+    if (!this.company.group) {
+      group = null;
+    } else {
+      if (this.company.group._id) {
+        group = this.company.group._id;
+      } else {
+        group = this.company.group;
+      }
+    }
+
+    console.log(this.company);
 
     const values = {
       '_id': this.company._id,
@@ -291,7 +285,7 @@ export class UpdateCompanyComponent implements OnInit {
       'birthday': this.company.birthday,
       'observation' : this.company.observation,
       'allowCurrentAccount' : this.company.allowCurrentAccount,
-      'group' : this.company.group
+      'companyGroup' : group
     };
 
     this.companyForm.setValue(values);
@@ -307,6 +301,27 @@ export class UpdateCompanyComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.vatConditions = result.vatConditions;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+   public getCompaniesGroup(): void {
+    this.loading = true;
+
+    this._companyGroupService.getCompaniesGroup().subscribe(
+      result => {
+        if (!result.companiesGroup) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.hideMessage();
+        } else {
+          this.companiesGroup = result.companiesGroup;
+          this.hideMessage();
         }
         this.loading = false;
       },
@@ -340,6 +355,7 @@ export class UpdateCompanyComponent implements OnInit {
     } else {
       this.companyForm.value.CUIT = '';
     }
+
   }
 
   public updateCompany (): void {
@@ -350,6 +366,7 @@ export class UpdateCompanyComponent implements OnInit {
         this.companyForm.value.CUIT = '';
       }
       this.company = this.companyForm.value;
+      console.log(this.company.group)
       if (this.company.birthday) {
         this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
       }
