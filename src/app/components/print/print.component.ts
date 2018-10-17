@@ -241,14 +241,14 @@ export class PrintComponent implements OnInit {
     this.doc.text("RAZÓN SOCIAL", 5, row);
     this.doc.text("IDENTIFICADOR", 50, row);
     this.doc.text("FECHA", 80, row);
-    this.doc.text("ESPECIE", 95, row);
-    this.doc.text("COMPROBANTE", 120, row);
-    this.doc.text("TOTAL", 160, row);
-    this.doc.text("% IVA", 175, row);
-    this.doc.text("GRAV.", 190, row);
-    this.doc.text("EXENTO", 205, row);
-    this.doc.text("IVA", 225, row);
-    this.doc.text("PERC. IVA", 240, row);
+    this.doc.text("TIPO COMPROBANTE", 95, row);
+    this.doc.text("NRO COMPROBANTE", 130, row);
+    this.doc.text("TOTAL", 167, row);
+    this.doc.text("% IVA", 182, row);
+    this.doc.text("GRAV.", 198, row);
+    this.doc.text("EXENTO", 212, row);
+    this.doc.text("IVA", 231, row);
+    this.doc.text("PERC. IVA", 253, row);
     this.doc.text("PERC. IIBB", 270, row);
     this.doc.setFontSize(8);
     this.doc.setFontType('normal');
@@ -266,57 +266,60 @@ export class PrintComponent implements OnInit {
       } else {
         this.doc.text("CONSUMIDOR FINAL".substr(0, 25), 5, row);
       }
-      if(this.bookVAT[i].DNICompany != undefined) {
+
+      if(this.bookVAT[i].DNICompany && this.bookVAT.DNICompany != '' ) {
         this.doc.text(this.bookVAT[i].DNICompany.toString(), 50, row);
-      } else if (this.bookVAT[i].CUITCompany != undefined) {
-        this.doc.text(this.bookVAT[i].CUITCompany.toString(), 50, row);
+      } else if (this.bookVAT[i].CUITCompany && this.bookVAT.CUITCompany != '') {
+        this.doc.text((this.bookVAT[i].CUITCompany).toString(), 50, row);
       } else {
         this.doc.text("00000000000", 50, row);
       }
 
+      //console.log(this.bookVAT[i].CUITCompany);
+    
       this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'),80, row);
 
       if (this.bookVAT[i].labelPrint && this.bookVAT[i].labelPrint !== "") {
-         this.doc.text((this.bookVAT[i].labelPrint).toString(), 96, row);
+         this.doc.text((this.bookVAT[i].labelPrint).toString(), 101, row);
       } else {
-        this.doc.text((this.bookVAT[i].typeName).toString(), 96, row);
+        this.doc.text((this.bookVAT[i].typeName).toString(), 101, row);
       }
 
-      this.doc.text(this.padString((this.bookVAT[i].origin).toString(), 5)+"-"+this.bookVAT[i].letter+"-"+this.padString((this.bookVAT[i].number).toString(), 8), 120, row);
+      this.doc.text(this.padString((this.bookVAT[i].origin).toString(), 5)+"-"+this.bookVAT[i].letter+"-"+this.padString((this.bookVAT[i].number).toString(), 8), 130, row);
+
+
+      this.doc.text((parseFloat(this.bookVAT[i].TOTAL).toFixed(2)).toString(),167, row);
 
       if (this.bookVAT[i].IVA_PORCENTAJE) {
-        this.doc.text((this.bookVAT[i].IVA_PORCENTAJE).toString(), 180, row);
+        this.doc.text((this.bookVAT[i].IVA_PORCENTAJE).toString(), 182, row);
       } else {
-        this.doc.text("0".toString(), 180, row);
+        this.doc.text("0".toString(), 182, row);
       }
 
-      this.doc.text((this.bookVAT[i].TOTAL).toString(),160, row);
 
       if (this.bookVAT[i].GRAVADO) {
-        this.doc.text((this.bookVAT[i].GRAVADO).toString(),190, row);
+        this.doc.text((parseFloat(this.bookVAT[i].GRAVADO).toFixed(2)).toString(),198, row);
       } else {
-        this.doc.text("0".toString(), 190, row);
+        this.doc.text("0".toString(), 198, row);
       }
 
       if (this.bookVAT[i].EXENT_NOGRAV) {
-        this.doc.text((this.bookVAT[i].EXENT_NOGRAV).toString(),205, row);
+        this.doc.text((parseFloat(this.bookVAT[i].EXENT_NOGRAV).toFixed(2)).toString(),212, row);
       } else {
-        this.doc.text("0".toString(), 205, row);
+        this.doc.text("0".toString(), 212, row);
       }
 
       if (this.bookVAT[i].IVA) {
-        this.doc.text((this.bookVAT[i].IVA).toString(),225,row)
+        this.doc.text((parseFloat(this.bookVAT[i].IVA).toFixed(2)).toString(),231,row)
       } else {
-        this.doc.text("0".toString(), 225, row);
+        this.doc.text("0".toString(), 231, row);
       }
 
-      this.doc.text("0".toString(),245, row);
+      this.doc.text("0.00".toString(),253, row);
 
-      this.doc.text("0".toString(),275, row);
+      this.doc.text("0.00".toString(),275, row);
 
       row += 5;
-
-      console.log(this.params.split("&")[0].toString());
 
       if (this.params.split("&")[0].toString() == "Venta"){
         if (this.bookVAT[i].movement === "Entrada"){
@@ -380,14 +383,14 @@ export class PrintComponent implements OnInit {
         this.doc.text("RAZÓN SOCIAL", 5, row);
         this.doc.text("IDENTIFICADOR", 50, row);
         this.doc.text("FECHA", 80, row);
-        this.doc.text("ESPECIE", 95, row);
-        this.doc.text("COMPROBANTE", 120, row);
-        this.doc.text("TOTAL", 160, row);
-        this.doc.text("% IVA", 175, row);
-        this.doc.text("GRAV.", 190, row);
-        this.doc.text("EXENTO", 205, row);
-        this.doc.text("IVA", 225, row);
-        this.doc.text("PERC. IVA", 240, row);
+        this.doc.text("TIPO COMPROBANTE", 95, row);
+        this.doc.text("NRO COMPROBANTE", 130, row);
+        this.doc.text("TOTAL", 167, row);
+        this.doc.text("% IVA", 182, row);
+        this.doc.text("GRAV.", 198, row);
+        this.doc.text("EXENTO", 212, row);
+        this.doc.text("IVA", 231, row);
+        this.doc.text("PERC. IVA", 253, row);
         this.doc.text("PERC. IIBB", 270, row);
         this.doc.setFontSize(8);
         this.doc.setFontType('normal');
@@ -402,12 +405,12 @@ export class PrintComponent implements OnInit {
     row += 5;
     this.doc.setFontType('bold');
 
-    this.doc.text((this.roundNumber.transform(total)).toString(), 160, row);
-    this.doc.text((this.roundNumber.transform(gravado)).toString(), 190, row);
-    this.doc.text((this.roundNumber.transform(exento)).toString(),205, row);
-    this.doc.text((this.roundNumber.transform(iva)).toString(), 225, row);
-    this.doc.text("0", 245, row);
-    this.doc.text("0", 275, row);
+    this.doc.text((this.roundNumber.transform(total)).toString(), 167, row);
+    this.doc.text((this.roundNumber.transform(gravado)).toString(), 198, row);
+    this.doc.text((this.roundNumber.transform(exento)).toString(),212, row);
+    this.doc.text((this.roundNumber.transform(iva)).toString(), 231, row);
+    this.doc.text("0.00", 253, row);
+    this.doc.text("0.00", 275, row);
 
 
     this.doc.setFontType('normal');
@@ -1498,6 +1501,8 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      
+    this.doc.save('asd');
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
       this.getCompanyPicture(10, 5, 80, 40);
