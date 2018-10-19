@@ -1,10 +1,10 @@
-<div class="modal-header">
+<div class="modal-header" *ngIf="!fastPayment">
   <h4 class="modal-title">Forma de pago</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<section class="container-fluid">
+<section class="container-fluid" *ngIf="!fastPayment">
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}

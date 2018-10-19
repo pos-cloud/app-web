@@ -106,7 +106,7 @@ export class UpdateCompanyComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { 
+  ) {
     this.types = new Array();
   }
 
@@ -130,7 +130,7 @@ export class UpdateCompanyComponent implements OnInit {
     } else {
       this.identityTypeSelected = "DNI";
     }
-    
+
     if (this.company.birthday) {
       this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
     } else {
@@ -143,7 +143,7 @@ export class UpdateCompanyComponent implements OnInit {
     this.setValueForm();
   }
 
- 
+
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
@@ -215,7 +215,7 @@ export class UpdateCompanyComponent implements OnInit {
   }
 
   public setValueForm(): void {
-    
+
     if (!this.company._id) this.company._id = '';
     if (!this.company.code) this.company.code = 1;
     if (!this.company.name) this.company.name = '';
@@ -229,7 +229,7 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.company.phones) this.company.phones = '';
     if (!this.company.emails) this.company.emails = '';
     if (!this.company.gender) this.company.gender = null;
-    
+
     if (this.company.CUIT && this.company.CUIT !== '') {
       this.identityTypeSelected = "CUIT";
     } else {
@@ -241,7 +241,7 @@ export class UpdateCompanyComponent implements OnInit {
     } else {
       this.company.birthday = null;
     }
-    
+
     let vatConditionID = '';
 
     if (!this.company.vatCondition) {
@@ -253,7 +253,7 @@ export class UpdateCompanyComponent implements OnInit {
     }
     if(!this.company.observation) this.company.observation = '';
     if(!this.company.allowCurrentAccount) this.company.allowCurrentAccount = false;
-    
+
     let group = null;
     if (!this.company.group) {
       group = null;
@@ -364,7 +364,6 @@ export class UpdateCompanyComponent implements OnInit {
         this.companyForm.value.CUIT = '';
       }
       this.company = this.companyForm.value;
-      console.log(this.company.group)
       if (this.company.birthday) {
         this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
       }
@@ -373,9 +372,9 @@ export class UpdateCompanyComponent implements OnInit {
   }
 
   public saveChanges(): void {
-    
+
     this.loading = true;
-    
+
     this._companyService.updateCompany(this.company).subscribe(
     result => {
         if (!result.company) {
@@ -393,7 +392,7 @@ export class UpdateCompanyComponent implements OnInit {
       }
     );
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

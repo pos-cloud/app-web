@@ -105,7 +105,20 @@
         </table>
       </div>
       <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
-        <div class="col-md-12 btn-action btn-large center-content" (click)="openModal('charge')">
+        <div  *ngIf="transaction.type && !transaction.type.fastPayment"
+              class="col-md-12 btn-action btn-large center-content"
+              (click)="openModal('charge')">
+          <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
+          <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
+        </div>
+        <div  *ngIf="transaction.type && transaction.type.fastPayment"
+              class="col-md-6 btn-action btn-large center-content"
+              (click)="openModal('charge', null, transaction.type.fastPayment)">
+          <span>{{ transaction.type.fastPayment.name }}</span>
+        </div>
+        <div  *ngIf="transaction.type && transaction.type.fastPayment"
+              class="col-md-6 btn-action btn-large center-content"
+              (click)="openModal('charge')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
         </div>

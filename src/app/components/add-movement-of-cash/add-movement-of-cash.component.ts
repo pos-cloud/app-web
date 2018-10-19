@@ -35,6 +35,7 @@ import { MovementOfArticleService } from '../../services/movement-of-article.ser
 export class AddMovementOfCashComponent implements OnInit {
 
   @Input() transaction: Transaction;
+  @Input() fastPayment: PaymentMethod;
   public movementOfCash: MovementOfCash;
   public movementsOfCashes: MovementOfCash[];
   public paymentMethods: PaymentMethod[];
@@ -101,8 +102,12 @@ export class AddMovementOfCashComponent implements OnInit {
 
   ngOnInit() {
     this.transactionAmount = this.transaction.totalPrice;
-    this.buildForm();
-    this.getPaymentMethods();
+    if (this.fastPayment) {
+      this.addMovementOfCash();
+    } else {
+      this.buildForm();
+      this.getPaymentMethods();
+    }
   }
 
   ngAfterViewInit() {
@@ -428,7 +433,6 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-
     if (op !== 'amountToPay') {
       this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
     }
@@ -494,30 +498,60 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public addMovementOfCash(): void {
 
-    if (this.areValidAmounts()) {
-      this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountToPay;
-      this.movementOfCash.transaction = this.transaction;
-      this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
-      this.movementOfCash.observation = this.movementOfCashForm.value.observation;
-      this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+    if (!this.fastPayment) {
+      if (this.areValidAmounts()) {
+        this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountToPay;
+        this.movementOfCash.transaction = this.transaction;
+        this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+        this.movementOfCash.observation = this.movementOfCashForm.value.observation;
+        this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
 
-      if (this.movementOfCash.type.checkDetail) {
-        this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
-        this.movementOfCash.number = this.movementOfCashForm.value.number;
-        this.movementOfCash.bank = this.movementOfCashForm.value.bank;
-        this.movementOfCash.titular = this.movementOfCashForm.value.titular;
-        this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
-        this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
-        // this.movementOfCash.state = MovementOfCashState.InPortafolio;
-        this.movementOfCash.state = MovementOfCashState.Closed;
-      } else {
-        this.movementOfCash.receiver = '';
-        this.movementOfCash.number = '';
-        this.movementOfCash.bank = '';
-        this.movementOfCash.titular = '';
-        this.movementOfCash.CUIT = '';
-        this.movementOfCash.deliveredBy = '';
-        this.movementOfCash.state = MovementOfCashState.Closed;
+        if (this.movementOfCash.type.checkDetail) {
+          this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+          this.movementOfCash.number = this.movementOfCashForm.value.number;
+          this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+          this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+          this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+          this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
+          // this.movementOfCash.state = MovementOfCashState.InPortafolio;
+          this.movementOfCash.state = MovementOfCashState.Closed;
+        } else {
+          this.movementOfCash.receiver = '';
+          this.movementOfCash.number = '';
+          this.movementOfCash.bank = '';
+          this.movementOfCash.titular = '';
+          this.movementOfCash.CUIT = '';
+          this.movementOfCash.deliveredBy = '';
+          this.movementOfCash.state = MovementOfCashState.Closed;
+        }
+
+        this.saveMovementOfCash();
+      }
+    } else {
+      this.movementOfCash.amountPaid = this.transaction.totalPrice;
+      this.movementOfCash.transaction = this.transaction;
+      this.movementOfCash.type = this.fastPayment;
+      this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
+      this.movementOfCash.receiver = '';
+      this.movementOfCash.number = '';
+      this.movementOfCash.bank = '';
+      this.movementOfCash.titular = '';
+      this.movementOfCash.CUIT = '';
+      this.movementOfCash.deliveredBy = '';
+      this.movementOfCash.state = MovementOfCashState.Closed;
+      this.movementOfCash.discount = this.movementOfCash.type.discount;
+      this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
+
+      if (this.movementOfCash.discount &&
+        this.movementOfCash.discount !== 0) {
+        this.amountDiscount = this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
+        this.transaction.totalPrice = this.transaction.totalPrice - this.amountDiscount;
+        this.transactionAmount = this.transaction.totalPrice;
+      } else if ( this.movementOfCash.surcharge &&
+                  this.movementOfCash.surcharge !== 0) {
+        this.amountDiscount = this.roundNumber.transform(this.transaction.totalPrice * this.movementOfCash.discount / 100);
+        this.transaction.totalPrice = this.transaction.totalPrice + this.amountDiscount;
+        this.transactionAmount = this.transaction.totalPrice;
       }
 
       this.saveMovementOfCash();
@@ -538,6 +572,7 @@ export class AddMovementOfCashComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
+          this.movementOfCash = result.movementOfCash;
           this.movementOfCash.number = '';
           if (this.transactionAmount !== this.transaction.totalPrice) {
             this.transaction.totalPrice = this.transactionAmount;
@@ -547,7 +582,17 @@ export class AddMovementOfCashComponent implements OnInit {
               this.updateTransaction();
             }
           } else {
-            this.getMovementOfCashesByTransaction();
+            this.movementsOfCashes = new Array();
+            this.movementsOfCashes.push(this.movementOfCash);
+            if(!this.fastPayment) {
+              this.getMovementOfCashesByTransaction();
+            } else {
+              if(this.amountDiscount && this.amountDiscount !== 0) {
+                this.addMovementOfArticle();
+              } else {
+                this.updateTransaction();
+              }
+            }
           }
         }
       },
@@ -625,7 +670,7 @@ export class AddMovementOfCashComponent implements OnInit {
     );
   }
 
-  public updateTransaction(closed: boolean = false): void {
+  public updateTransaction(): void {
 
     this.loading = true;
 
@@ -634,7 +679,11 @@ export class AddMovementOfCashComponent implements OnInit {
         if (!result.transaction) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.getMovementOfCashesByTransaction();
+          if(!this.fastPayment) {
+            this.getMovementOfCashesByTransaction();
+          } else {
+            this.activeModal.close({ movementsOfCashes: this.movementsOfCashes });
+          }
         }
         this.loading = false;
       },

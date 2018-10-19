@@ -108,7 +108,7 @@ export class AddCompanyComponent  implements OnInit {
   constructor(
     public _companyService: CompanyService,
     public _vatConditionService: VATConditionService,
-    public _companyGroupService: CompanyGroupService, 
+    public _companyGroupService: CompanyGroupService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -389,8 +389,6 @@ export class AddCompanyComponent  implements OnInit {
       this.companyForm.value.CUIT = '';
     }
     this.company = this.companyForm.value;
-
-    console.log (this.company);
 
     if (this.company.birthday) {
       this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
