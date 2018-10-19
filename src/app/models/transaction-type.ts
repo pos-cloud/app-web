@@ -1,5 +1,6 @@
 import { Printer } from './printer';
 import { EmployeeType } from './employee-type';
+import { PaymentMethod } from './payment-method';
 
 export class TransactionType {
 
@@ -31,6 +32,7 @@ export class TransactionType {
   public allowAPP: boolean = false;
   public allowDelete: boolean = false;
   public requestEmployee: EmployeeType;
+  public fastPayment: PaymentMethod;
 
 	constructor() { }
 }
