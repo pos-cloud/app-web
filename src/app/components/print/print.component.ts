@@ -128,7 +128,7 @@ export class PrintComponent implements OnInit {
     if (this.typePrint === "label") {
       orientation = "l";
     }
-
+    
     this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
 
     this.getConfig();
@@ -274,8 +274,6 @@ export class PrintComponent implements OnInit {
       } else {
         this.doc.text("00000000000", 50, row);
       }
-
-      //console.log(this.bookVAT[i].CUITCompany);
     
       this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'),80, row);
 
@@ -1295,7 +1293,6 @@ export class PrintComponent implements OnInit {
     this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
     var code;
     if (this.transaction.type.codes){
-      console.log(this.transaction.type.codes);
       for (let i = 0; i < this.transaction.type.codes.length; i++) {
         if(this.transaction.letter === this.transaction.type.codes[i].letter){
           this.doc.setFontSize('8');
@@ -1501,8 +1498,6 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-      
-    this.doc.save('asd');
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
       this.getCompanyPicture(10, 5, 80, 40);
@@ -1516,7 +1511,7 @@ export class PrintComponent implements OnInit {
     var row = 5;
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.large);
-    this.centerText(3, 5, 80, 0, row, "COCINA");
+    this.centerText(3, 5, 60, 0, row, "COCINA");
     this.doc.setFontType('normal');
     this.doc.setFontSize(this.fontSizes.normal);
 
@@ -1524,7 +1519,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
-    this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), 40, row);
+    this.doc.text("Fecha: " + this.dateFormat.transform(this.transaction.startDate, 'DD/MM'), 30, row);
+    row+= 5;
+    this.doc.text("Hora: " + this.dateFormat.transform(this.transaction.startDate, 'hh:ss'), 30, row);
 
     if (this.transaction.table) {
       row += 5;
@@ -1532,7 +1529,7 @@ export class PrintComponent implements OnInit {
       if (this.transaction.employeeOpening) {
         this.doc.text("Mozo: " + this.transaction.employeeOpening.name, margin, row);
       }
-      this.doc.text("Mesa: " + this.transaction.table.description, 40, row);
+      this.doc.text("Mesa: " + this.transaction.table.description, 30, row);
       this.doc.setFontType('normal');
     } else if (this.transaction.employeeOpening) {
       row += 5;
@@ -1555,9 +1552,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.printed === 0) {
           row += 5;
-          this.centerText(3, 5, 15, 0, row, movementOfArticle.amount.toString());
+          this.centerText(3, 5, 15, 0, row, (movementOfArticle.amount-movementOfArticle.printed
+            ).toString());
           if (movementOfArticle.article) {
             this.doc.text(movementOfArticle.article.posDescription, 20, row);
           } else {
@@ -1570,7 +1567,7 @@ export class PrintComponent implements OnInit {
             this.doc.text(movementOfArticle.notes, 20, row);
             this.doc.setFontStyle("normal");
           }
-        }
+        
       }
     }
 
@@ -1773,7 +1770,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
-      this.getCompanyPicture(3, 3, 52, 26);
+      this.getCompanyPicture(3, 3, 40, 26);
     }
   }
 

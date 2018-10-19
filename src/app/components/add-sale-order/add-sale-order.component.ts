@@ -436,12 +436,18 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
+
+        
+
+        if (movementOfArticle.article.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
           this.barArticlesToPrint.push(movementOfArticle);
+
         }
 
-        if (movementOfArticle.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+        if (movementOfArticle.article.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+          
           this.kitchenArticlesToPrint.push(movementOfArticle);
+
         }
       }
     }
@@ -452,8 +458,9 @@ export class AddSaleOrderComponent implements OnInit {
     } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "kitchen";
       this.openModal('printers');
-    } else {
-      if (this.posType === "resto") {
+    } 
+
+    if (this.posType === "resto") {
         this.changeStateOfTable(TableState.Busy, true);
       } else if (this.posType === "delivery" && this.movementsOfArticles && this.movementsOfArticles.length > 0) {
         this.typeOfOperationToPrint = "kitchen";
@@ -461,7 +468,28 @@ export class AddSaleOrderComponent implements OnInit {
       } else {
         this.backFinal();
       }
-    }
+    
+  }
+
+  public updateMovementOfArticlePrinted( movementOfArticle: MovementOfArticle): void{
+    this.loading = true;
+
+    movementOfArticle.printed = movementOfArticle.amount;
+
+    this._movementOfArticleService.updateMovementOfArticle(movementOfArticle).subscribe(
+      result => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          return;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public changeStateOfTable(state: any, closed: boolean): void {
@@ -934,7 +962,7 @@ export class AddSaleOrderComponent implements OnInit {
     )
   }
 
-  public openModal(op: string, movementOfArticle?: MovementOfArticle): void {
+  public openModal(op: string, movementOfArticle?: MovementOfArticle ): void {
 
     let modalRef;
 
@@ -1102,6 +1130,20 @@ export class AddSaleOrderComponent implements OnInit {
           this.backFinal();
         });
         break;
+      case 'printKitchen':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transaction = this.transaction;
+        modalRef.componentInstance.movementsOfArticles = this.kitchenArticlesToPrint;
+        modalRef.componentInstance.printer = this.printerSelected;
+        modalRef.componentInstance.typePrint = 'kitchen';
+
+        modalRef.result.then((result) => {
+        }, (reason) => {
+          for (let index = 0; index < this.kitchenArticlesToPrint.length; index++) {
+            this.updateMovementOfArticlePrinted(this.kitchenArticlesToPrint[index]);
+          }
+        });
+        break;
       default: ;
     };
   }
@@ -1262,7 +1304,7 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'kitchen':
         if (printer.type === PrinterType.PDF) {
-          this.openModal("print");
+          this.openModal('printKitchen');
         }
         break;
       case 'bar':
