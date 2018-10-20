@@ -1,5 +1,5 @@
 //Paquetes de angular
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 //Modelos
@@ -98,6 +98,11 @@ export class PrintComponent implements OnInit {
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer
   ) {
+  }
+
+  @HostListener("document:click", ["$event"])
+  onDocumentClicked(ev) {
+    console.log("clicked", ev);
   }
 
   ngOnInit() {
@@ -211,7 +216,11 @@ export class PrintComponent implements OnInit {
     var gravado = 0;
     var iva = 0;
     var exento = 0;
-    var folio = parseInt(this.params.split("&")[2]);
+    var folio = 1;
+
+    if (this.params.split("&")[2] && !isNaN(this.params.split("&")[2])) {
+      parseInt(this.params.split("&")[2]);
+    }
 
     var row = 10;
     this.doc.setFontType('bold');
