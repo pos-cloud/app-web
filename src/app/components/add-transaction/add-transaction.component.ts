@@ -120,7 +120,7 @@ export class AddTransactionComponent implements OnInit {
     //NUEVA TRANSACCIÓN
     if (!this.transaction._id || this.transaction._id === '') {
 
-      // DEFINIMOS EL ORIGEN SI TIENE FIJO O NO
+      // DEFINIMOS EL PUNTO DE VENTA SI TIENE FIJO O NO
       if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
         this.transaction.origin = this.transaction.type.fixedOrigin;
       }

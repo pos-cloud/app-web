@@ -24,7 +24,7 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type','name')">Tipo</th>
-            <th (click)="orderBy('origin')">Origen</th>
+            <th (click)="orderBy('origin')">POS</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('endDate')">Fecha</th>
@@ -42,7 +42,7 @@
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="POS..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
             <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
@@ -251,7 +251,7 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type','name')">Tipo</th>
-            <th (click)="orderBy('origin')">Origen</th>
+            <th (click)="orderBy('origin')">POS</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('endDate')">Fecha</th>
@@ -264,7 +264,7 @@
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="POS..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
             <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
