@@ -69,7 +69,8 @@
                       <th>Cant</th>
                       <th>Rubro</th>
                       <th>Marca</th>
-                      <th>Description</th>
+                      <th>Código</th>
+                      <th>Descripción</th>
                       <th>Precio Total</th>
                     </tr>
                   </thead>
@@ -80,6 +81,7 @@
                       <td *ngIf="!movementOfArticle.category"></td>
                       <td *ngIf="movementOfArticle.make">{{movementOfArticle.make.description}}</td>
                       <td *ngIf="!movementOfArticle.make"></td>
+                      <td>{{movementOfArticle.code}}</td>
                       <td>{{movementOfArticle.description}}
                           <strong *ngIf="movementOfArticle.notes">
                             <br>
