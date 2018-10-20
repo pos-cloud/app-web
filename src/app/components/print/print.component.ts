@@ -128,7 +128,7 @@ export class PrintComponent implements OnInit {
     if (this.typePrint === "label") {
       orientation = "l";
     }
-    
+
     this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
 
     this.getConfig();
@@ -274,7 +274,7 @@ export class PrintComponent implements OnInit {
       } else {
         this.doc.text("00000000000", 50, row);
       }
-    
+
       this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'),80, row);
 
       if (this.bookVAT[i].labelPrint && this.bookVAT[i].labelPrint !== "") {
@@ -414,7 +414,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
     row += 3;
     this.doc.line(0, row, 400, row);
-
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -520,7 +520,7 @@ export class PrintComponent implements OnInit {
         }
       }
     }
-
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -804,6 +804,7 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
       this.getCompanyPicture(10, 5, 80, 40);
@@ -943,6 +944,7 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     // Abrir PDF a imprimir
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -996,6 +998,7 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     // Abrir PDF a imprimir
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -1063,7 +1066,7 @@ export class PrintComponent implements OnInit {
           this.doc.text("Domicilio Comercial:",5,40)
           this.doc.setFontType('normal')
           this.doc.text(this.config[0].companyAddress,45,40);
-        } 
+        }
         if (this.config[0].companyVatCondition) {
           this.doc.setFontType('bold')
           this.doc.text("Condición de IVA:",5,45)
@@ -1075,7 +1078,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal)
     this.doc.setFontType('normal')
   }
-  
+
   public getCompanyData(): void {
 
     this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -1102,18 +1105,21 @@ export class PrintComponent implements OnInit {
       result => {
         if (!result.imageBase64) {
           this.getCompanyData();
+          this.doc.autoPrint();
           this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
           this.loading = false;
         } else {
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
           this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
+          this.doc.autoPrint();
           this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
         }
         this.loading = false;
       },
       error => {
         this.getCompanyData();
+        this.doc.autoPrint();
         this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
         this.loading = false;
       }
@@ -1248,6 +1254,7 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     // Abrir PDF a imprimir
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -1498,6 +1505,7 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
       this.getCompanyPicture(10, 5, 80, 40);
@@ -1567,10 +1575,10 @@ export class PrintComponent implements OnInit {
             this.doc.text(movementOfArticle.notes, 20, row);
             this.doc.setFontStyle("normal");
           }
-        
+
       }
     }
-
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -1638,7 +1646,7 @@ export class PrintComponent implements OnInit {
         }
       }
     }
-
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
@@ -1768,6 +1776,7 @@ export class PrintComponent implements OnInit {
     this.doc.setTextColor(0, 0, 0);
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     } else {
       this.getCompanyPicture(3, 3, 40, 26);
@@ -1800,19 +1809,19 @@ export class PrintComponent implements OnInit {
         this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
 
       }
-
+      this.doc.autoPrint();
       this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
 
     }  else if (this.article) {
-        this.doc.text(this.article.description, 10,10);
-        //this.doc.text("$",42,15);
-        //this.doc.text(this.article.salePrice.toString(), 45, 15);
+      this.doc.text(this.article.description, 10,10);
+      //this.doc.text("$",42,15);
+      //this.doc.text(this.article.salePrice.toString(), 45, 15);
 
-        let imgdata = 'data:image/png;base64,' + this.barcode64;
+      let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-        this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
-
-        this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+      this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+      this.doc.autoPrint();
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
     }
   }
 
