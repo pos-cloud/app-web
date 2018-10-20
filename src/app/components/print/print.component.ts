@@ -414,8 +414,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
     row += 3;
     this.doc.line(0, row, 400, row);
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
   public printPriceList(): void {
@@ -520,8 +519,7 @@ export class PrintComponent implements OnInit {
         }
       }
     }
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
 
@@ -804,8 +802,7 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-      this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+      this.finishImpression();
     } else {
       this.getCompanyPicture(10, 5, 80, 40);
     }
@@ -942,10 +939,7 @@ export class PrintComponent implements OnInit {
     }
 
     this.getFooter();
-
-    // Abrir PDF a imprimir
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
   public toPrintTurn(): void {
@@ -996,10 +990,7 @@ export class PrintComponent implements OnInit {
     if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.thirdPartyCheck !== 0) { this.doc.text('Cheque de Terceros: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.thirdPartyCheck, '1.2-2'), 30, row += 8) };
 
     this.getFooter();
-
-    // Abrir PDF a imprimir
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
   public getHeader(): void {
@@ -1105,22 +1096,19 @@ export class PrintComponent implements OnInit {
       result => {
         if (!result.imageBase64) {
           this.getCompanyData();
-          this.doc.autoPrint();
-          this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+          this.finishImpression();
           this.loading = false;
         } else {
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
           this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
-          this.doc.autoPrint();
-          this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+          this.finishImpression();
         }
         this.loading = false;
       },
       error => {
         this.getCompanyData();
-        this.doc.autoPrint();
-        this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+        this.finishImpression();
         this.loading = false;
       }
     );
@@ -1253,9 +1241,7 @@ export class PrintComponent implements OnInit {
     this.getGreeting();
     this.getFooter();
 
-    // Abrir PDF a imprimir
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
   public toPrintInvoice(): void {
@@ -1505,11 +1491,15 @@ export class PrintComponent implements OnInit {
     this.getFooter();
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-      this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+      this.finishImpression();
     } else {
       this.getCompanyPicture(10, 5, 80, 40);
     }
+  }
+
+  public finishImpression(): void {
+    this.doc.autoPrint();
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
   }
 
   public toPrintKitchen() {
@@ -1578,8 +1568,7 @@ export class PrintComponent implements OnInit {
 
       }
     }
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
   public toPrintBar() {
@@ -1646,8 +1635,7 @@ export class PrintComponent implements OnInit {
         }
       }
     }
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.finishImpression();
   }
 
   public toPrintRoll() {
@@ -1776,8 +1764,7 @@ export class PrintComponent implements OnInit {
     this.doc.setTextColor(0, 0, 0);
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-      this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+      this.finishImpression();
     } else {
       this.getCompanyPicture(3, 3, 40, 26);
     }
@@ -1809,9 +1796,7 @@ export class PrintComponent implements OnInit {
         this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
 
       }
-      this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
-
+      this.finishImpression();
     }  else if (this.article) {
       this.doc.text(this.article.description, 10,10);
       //this.doc.text("$",42,15);
@@ -1820,8 +1805,7 @@ export class PrintComponent implements OnInit {
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
       this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
-      this.doc.autoPrint();
-      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+      this.finishImpression();
     }
   }
 
