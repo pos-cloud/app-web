@@ -43,6 +43,7 @@ import { CashBoxService } from '../../services/cash-box.service';
   styleUrls: ['./print.component.css'],
   providers: [RoundNumberPipe]
 })
+
 export class PrintComponent implements OnInit {
 
   @Input() company: Company;
@@ -98,11 +99,6 @@ export class PrintComponent implements OnInit {
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer
   ) {
-  }
-
-  @HostListener("document:click", ["$event"])
-  onDocumentClicked(ev) {
-    console.log("clicked", ev);
   }
 
   ngOnInit() {
