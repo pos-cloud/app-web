@@ -15,6 +15,7 @@ import { AddTableComponent } from './../../components/add-table/add-table.compon
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
 import { DeleteTableComponent } from './../../components/delete-table/delete-table.component';
 import { SelectEmployeeComponent } from './../../components/select-employee/select-employee.component';
+import { TransactionType } from 'app/models/transaction-type';
 
 @Component({
   selector: 'app-list-tables',
@@ -39,6 +40,7 @@ export class ListTablesComponent implements OnInit {
   @Input() filterRoom: string;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public transactionTypeDefectOrder: TransactionType;
 
   constructor(
     public _tableService: TableService,
@@ -96,13 +98,13 @@ export class ListTablesComponent implements OnInit {
   }
 
   public calculateAmountOfDiners() {
-    
+
     this.amountOfDiners = 0;
     this.amountOfDinersNow = 0;
 
     for(let table of this.tables) {
       this.amountOfDiners += table.chair;
-      if ( table.state === TableState.Busy || 
+      if ( table.state === TableState.Busy ||
           table.state === TableState.Pending) {
             this.amountOfDinersNow += table.diners;
       }
@@ -172,7 +174,7 @@ export class ListTablesComponent implements OnInit {
                   modalRef = this._modalService.open(SelectEmployeeComponent);
                   modalRef.componentInstance.table = this.tableSelected;
                   modalRef.componentInstance.requireLogin = false;
-                  modalRef.componentInstance.typeEmployee = "Mozo";
+                  modalRef.componentInstance.typeEmployee = this.transactionTypeDefectOrder.requestEmployee;
                   modalRef.componentInstance.op = "open-table";
                   modalRef.result.then((result) => {
                     if (result.employee) {
@@ -183,7 +185,7 @@ export class ListTablesComponent implements OnInit {
                   }, (reason) => {
                   });
                 } else {
-                  this.getDefectOrder();
+                  this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + this.transactionTypeDefectOrder._id]);
                 }
         } else {
           this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);
@@ -205,7 +207,7 @@ export class ListTablesComponent implements OnInit {
         } else {
           this.hideMessage();
           this.loading = false;
-          this.getDefectOrder();
+          this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + this.transactionTypeDefectOrder._id]);
         }
       },
       error => {
@@ -214,8 +216,8 @@ export class ListTablesComponent implements OnInit {
       }
     );
   }
-  
-  public getDefectOrder(): void {
+
+  public getDefectOrder(table: Table): void {
 
     this.loading = true;
 
@@ -225,7 +227,8 @@ export class ListTablesComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + result.transactionTypes[0]._id]);
+          this.transactionTypeDefectOrder = result.transactionTypes[0];
+          this.openModal('select-employee', table);
         }
         this.loading = false;
       },

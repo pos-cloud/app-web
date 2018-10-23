@@ -1,6 +1,5 @@
 //Paquetes Angular
 import { Component, OnInit, ElementRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -68,7 +67,6 @@ export class AddSaleOrderComponent implements OnInit {
   public printers: Printer[];
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
-  public paymentForm: FormGroup;
   public userType: string;
   public posType: string;
   public table: Table; //Solo se usa si posType es igual a resto
@@ -92,7 +90,6 @@ export class AddSaleOrderComponent implements OnInit {
   public apiURL = Config.apiURL;
 
   constructor(
-    public _fb: FormBuilder,
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _movementOfArticleService: MovementOfArticleService,
@@ -1108,8 +1105,8 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'change-employee':
         modalRef = this._modalService.open(SelectEmployeeComponent);
-        modalRef.componentInstance.requireLogin = true;
-        modalRef.componentInstance.typeEmployee = "Mozo";
+        modalRef.componentInstance.requireLogin = false;
+        modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
         modalRef.componentInstance.op = "change-employee";
         modalRef.result.then((result) => {
           if (result.employee) {

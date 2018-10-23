@@ -30,7 +30,7 @@
             <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('company','name')">Cliente</th>
             <th (click)="orderBy('table','description')">Mesa</th>
-            <th (click)="orderBy('employeeClosing','name')">Mozo</th>
+            <th (click)="orderBy('employeeClosing','name')">Vendedor</th>
             <th (click)="orderBy('turnOpening','startDate')">Turno</th>
             <th (click)="orderBy('diners')">Comensales</th>
             <th (click)="orderBy('madein')">Canal</th>
@@ -48,7 +48,7 @@
             <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterEmployee" placeholder="Mozo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterEmployee" placeholder="Vendedor..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTurn" placeholder="Turno..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDiners" placeholder="Comensales..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMadein" placeholder="Canal..."></th>

@@ -26,6 +26,8 @@ import { ListCompaniesComponent } from 'app/components/list-companies/list-compa
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { CompanyType } from '../../models/company';
 import { CashBoxComponent } from '../cash-box/cash-box.component';
+import { EmployeeType } from 'app/models/employee-type';
+import { EmployeeTypeService } from 'app/services/employee-type.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -62,6 +64,7 @@ export class PointOfSaleComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _paymentMethodService: PaymentMethodService,
     public _printerService: PrinterService,
+    public _employeeTypeService: EmployeeTypeService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
@@ -262,7 +265,11 @@ export class PointOfSaleComponent implements OnInit {
 
     if (type.transactionMovement !== TransactionMovement.Purchase) {
       if (type.requestArticles) {
-        this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+        if(type.requestEmployee) {
+          this.openModal('select-employee', type, null, null, type.requestEmployee);
+        } else {
+          this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+        }
       } else {
         this.openModal('company', type);
       }
@@ -271,7 +278,12 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public openModal(op: string, typeTransaction?: TransactionType, transaction?: Transaction, printerSelected?: Printer): void {
+  public openModal(
+    op: string,
+    typeTransaction?: TransactionType,
+    transaction?: Transaction,
+    printerSelected?: Printer,
+    employeeType?: EmployeeType): void {
 
     let modalRef;
 
@@ -398,8 +410,8 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'open-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
-        modalRef.componentInstance.requireLogin = true;
-        modalRef.componentInstance.typeEmployee = 'Mozo';
+        modalRef.componentInstance.requireLogin = false;
+        modalRef.componentInstance.typeEmployee = employeeType;
         modalRef.componentInstance.op = 'open-turn';
         modalRef.result.then((result) => {
           if (result.turn) {
@@ -411,8 +423,8 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'close-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
-        modalRef.componentInstance.requireLogin = true;
-        modalRef.componentInstance.typeEmployee = 'Mozo';
+        modalRef.componentInstance.requireLogin = false;
+        modalRef.componentInstance.typeEmployee = employeeType;
         modalRef.componentInstance.op = 'close-turn';
         modalRef.result.then((result) => {
           if (result.turn) {
@@ -452,12 +464,22 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
         modalRef.componentInstance.op = 'select-employee';
-        modalRef.componentInstance.typeEmployee = 'Repartidor';
+        modalRef.componentInstance.typeEmployee = employeeType;
         modalRef.result.then((result) => {
           if (result.employee) {
-            transaction.state = TransactionState.Sent;
-            transaction.employeeOpening = result.employee;
-            this.updateTransaction(transaction);
+            if(this.posType === "delivery") {
+              transaction.state = TransactionState.Sent;
+            }
+
+            if(transaction) {
+              transaction.employeeOpening = result.employee;
+              this.updateTransaction(transaction);
+            } else {
+              transaction = new Transaction();
+              transaction.type = typeTransaction;
+              transaction.employeeOpening = result.employee;
+              this.getLastTransactionByType(transaction);
+            }
           }
         }, (reason) => {
 
@@ -465,6 +487,61 @@ export class PointOfSaleComponent implements OnInit {
         break;
       default: ;
     }
+  }
+
+  public getLastTransactionByType(transaction: Transaction): void {
+
+    this.loading = true;
+
+    this._transactionService.getLastTransactionByTypeAndOrigin(transaction.type, 0, transaction.letter).subscribe(
+      result => {
+        if (!result.transactions) {
+          transaction.origin = 0;
+          transaction.number = 1;
+          this.saveTransaction(transaction);
+        } else {
+          transaction.origin = result.transactions[0].origin;
+          transaction.number = result.transactions[0].number + 1;
+          this.saveTransaction(transaction);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public saveTransaction(transaction: Transaction): void {
+
+    this.loading = true;
+    transaction.madein = this.posType;
+
+    this._transactionService.saveTransaction(transaction).subscribe(
+      result => {
+        if (!result.transaction) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.hideMessage();
+          transaction = result.transaction;
+          if (transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+            if (transaction.type.requestArticles) {
+              this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
+            } else {
+              this.openModal('company', transaction.type);
+            }
+          } else {
+            this.openModal('company', transaction.type);
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public countPrinters(): number {
@@ -527,7 +604,11 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
 
     if (state === "Enviado") {
-      this.openModal('select-employee', transaction.type, transaction);
+      if(transaction.type.requestEmployee) {
+        this.openModal('select-employee', transaction.type, transaction, null, transaction.type.requestEmployee);
+      } else {
+        transaction.state = TransactionState.Sent;
+      }
     } else if (state === "Entregado") {
       transaction.state = TransactionState.Delivered;
     }
@@ -536,6 +617,33 @@ export class PointOfSaleComponent implements OnInit {
     transaction.expirationDate = transaction.endDate;
 
     this.updateTransaction(transaction);
+  }
+
+  public getEmployeeType(op: string, employeeType: string, transaction?: Transaction): void {
+
+    this.loading = true;
+
+    let query = 'where="description":"' + employeeType + '"';
+
+    this._employeeTypeService.getEmployeeTypes(query).subscribe(
+      result => {
+        if (!result.employeeTypes) {
+          this.showMessage("No existen empleados de tipo Repartidor", "info", true);
+        } else {
+          this.hideMessage();
+          if(transaction) {
+            this.openModal(op, transaction.type, transaction, null, result.employeeTypes[0]);
+          } else {
+            this.openModal(op, null, null, null, result.employeeTypes[0]);
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public changeRoom(room: Room): void {

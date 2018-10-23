@@ -9,5 +9,8 @@
 }
 
 .btn {
-    cursor: pointer;
+  cursor: pointer;
+}
+.btn-employee {
+  width: 400px;
 }

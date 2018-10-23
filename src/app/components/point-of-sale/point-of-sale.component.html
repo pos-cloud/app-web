@@ -22,11 +22,11 @@
   </div>
   <div class="row">
     <div class="col-md-12 container-btns">
-      <div class="btn center-content btn-turn btn-turn-text" (click)="openModal('open-turn')">
+      <div class="btn center-content btn-turn btn-turn-text" (click)="getEmployeeType('open-turn', 'Mozo')">
         <b>Abrir
           <br>Turno</b>
       </div>
-      <div class="btn center-content btn-turn btn-turn-text" (click)="openModal('close-turn')">
+      <div class="btn center-content btn-turn btn-turn-text" (click)="getEmployeeType('close-turn', 'Mozo')">
         <b>Cerrar
           <br>Turno</b>
       </div>
@@ -296,6 +296,7 @@
             <th (click)="orderBy('type','name')">Tipo</th>
             <th (click)="orderBy('startDate')">Fecha</th>
             <th (click)="orderBy('number')">Número</th>
+            <th (click)="orderBy('employeeClosing','name')" *ngIf="transactionMovement === 'Venta'">Vendedor</th>
             <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Venta'">Cliente</th>
             <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Compra'">Proveedor</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
@@ -305,6 +306,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
             <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..." *ngIf="transactionMovement === 'Venta'"></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
           </tr>
@@ -313,6 +315,7 @@
           <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
                                                       | filter: filterStartDate:'startDate'
                                                       | filter: filterNumber:'number'
+                                                      | filter: filterEmployeeClosing:'name':'employeeClosing'
                                                       | filter: filterCompany:'name':'company'
                                                       | filter: filterTotalPrice:'totalPrice'
                                                       | orderBy: orderTerm: propertyTerm
@@ -332,13 +335,15 @@
             <td (click)="openTransaction(transaction)">
               <b>{{transaction.number}}</b>
             </td>
+            <td *ngIf="transaction.employeeClosing && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)">{{transaction.employeeClosing.name}}</td>
+            <td *ngIf="!transaction.employeeClosing && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)"></td>
             <td *ngIf="transaction.company && (transactionMovement === 'Compra' || transactionMovement === 'Venta')" (click)="openTransaction(transaction)">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)">Consumidor Final</td>
             <td *ngIf="!transaction.company && (transactionMovement === 'Compra')" (click)="openTransaction(transaction)"></td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="areTransactionsEmpty">
-            <td colspan="6">Aún no hay transacciones pendientes</td>
+            <td colspan="7">Aún no hay transacciones pendientes</td>
           </tr>
         </tbody>
       </table>

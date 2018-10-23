@@ -21,6 +21,13 @@
               <input type="text" class="form-control" name="date" *ngIf="!transaction.company" value="Consumidor Final" readonly/>
             </div>
           </div>
+          <div class="row" *ngIf="transaction.type.requestEmployee">
+            <div class="form-group col-md-12">
+              <label for="employeeOpening" class="control-label">{{ transaction.type.requestEmployee.description }}</label>
+              <input type="text" class="form-control" name="date" *ngIf="transaction.employeeClosing" value="{{transaction.employeeClosing.name}}" readonly />
+              <input type="text" class="form-control" name="date" *ngIf="!transaction.employeeClosing" value="" readonly />
+            </div>
+          </div>
           <div class="row">
             <div class="form-group col-md-4">
               <label for="date" class="control-label">Fecha:</label>

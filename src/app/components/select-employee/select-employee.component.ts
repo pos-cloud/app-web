@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -19,38 +19,28 @@ import { UserService } from './../../services/user.service';
 import { TransactionService } from './../../services/transaction.service';
 
 import { PrintComponent } from './../../components/print/print.component';
+import { EmployeeType } from 'app/models/employee-type';
 
 @Component({
   selector: 'app-select-employee',
   templateUrl: './select-employee.component.html',
   styleUrls: ['./select-employee.component.css']
 })
+
 export class SelectEmployeeComponent implements OnInit {
 
-  public selectEmployeeForm: FormGroup;
+  public employees: Employee[] = new Array();
   public employeeSelected: Employee;
   public turn: Turn;
-  public employees: Employee[] = new Array();
-  public alertMessage: string = '';
-  public loading: boolean = false;
   @Input() requireLogin: boolean;
   @Input() op: string;
-  @Input() typeEmployee: string;
+  @Input() typeEmployee: EmployeeType;
   @Input() table: Table;
+  public chair: number = 0;
+  public password: string = '';
+  public alertMessage: string = '';
+  public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-
-  public formErrors = {
-    'employee': '',
-    'chair': ''
-  };
-
-  public validationMessages = {
-    'employee': {
-      'required': 'Este campo es requerido.'
-    },
-    'chair': {
-    }
-  };
 
   constructor(
     public _fb: FormBuilder,
@@ -68,77 +58,15 @@ export class SelectEmployeeComponent implements OnInit {
   ngOnInit() {
 
     this.employeeSelected = new Employee();
+    this.getEmployees('where="type":"' + this.typeEmployee._id + '"');
 
-    this.getEmployeeTypes('where="description":"' + this.typeEmployee + '"');
-    
-    this.buildForm();
-    this.setValuesForm();
+    if(this.table) {
+      this.chair = this.table.chair;
+    }
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
-  }
-
-  public buildForm(): void {
-
-    this.selectEmployeeForm = this._fb.group({
-      'employee': [this.employeeSelected.name, [
-          Validators.required
-        ]
-      ],
-      'chair': [0, [
-        ]
-      ],
-      'password': ['', [
-        ]
-      ]
-    });
-
-    this.selectEmployeeForm.valueChanges
-      .subscribe(data => this.onValueChanged(data));
-
-    this.onValueChanged();
-  }
-
-  public onValueChanged(data?: any): void {
-
-    if (!this.selectEmployeeForm) { return; }
-    const form = this.selectEmployeeForm;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
-  }
-
-  public getEmployeeTypes(query: string): void {
-
-    this.employees = new Array();
-    this.loading = true;
-
-    this._employeeTypeService.getEmployeeTypes(query).subscribe(
-      result => {
-        if (!result.employeeTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.getEmployees('where="type":"' + result.employeeTypes[0]._id + '"');
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   public getEmployees(query: string): void {
@@ -155,8 +83,6 @@ export class SelectEmployeeComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.employees = result.employees;
-          this.employeeSelected = this.employees[0];
-          this.setValuesForm();
         }
       },
       error => {
@@ -166,24 +92,8 @@ export class SelectEmployeeComponent implements OnInit {
     );
   }
 
-  public setValuesForm(): void {
-
-    var chair = 0;
-    var password = '';
-
-    if (!this.employeeSelected && this.employees && this.employees.length > 0) this.employeeSelected = this.employees[0];
-    if (!this.employeeSelected && this.employees && this.employees.length === 0) this.employeeSelected = null;
-    if (this.table && this.table.chair) chair = this.table.chair;
-
-    this.selectEmployeeForm.setValue({
-      'employee': this.employeeSelected,
-      'chair': chair,
-      'password': this.selectEmployeeForm.value.password
-    });
-  }
-  
   public getTransactions(query: string, turn?: Turn): void {
-    
+
     this.loading = true;
 
     this._transactionService.getTransactions(query).subscribe(
@@ -227,7 +137,7 @@ export class SelectEmployeeComponent implements OnInit {
               this.activeModal.close({ employee: this.employeeSelected, turn: turn });
               break;
             case "open-table":
-              this.activeModal.close({ employee: this.employeeSelected, diners: this.selectEmployeeForm.value.chair  });
+              this.activeModal.close({ employee: this.employeeSelected, diners: this.chair  });
               break;
           }
         }
@@ -308,7 +218,7 @@ export class SelectEmployeeComponent implements OnInit {
               this.activeModal.close({ turn: turn });
               break;
             case "open-table":
-              this.activeModal.close({ employee: this.employeeSelected, diners: this.selectEmployeeForm.value.chair });
+              this.activeModal.close({ employee: this.employeeSelected, diners: this.chair });
               break;
           }
         }
@@ -323,67 +233,80 @@ export class SelectEmployeeComponent implements OnInit {
 
   public selectEmployee(): void {
 
-    this.employeeSelected = this.selectEmployeeForm.value.employee;
-
-    if (this.requireLogin) {
-      this.getUserOfEmployee();
-    } else {
-      switch (this.op) {
-        case "open-turn":
-          this.getOpenTurn();
-          break;
-        case "close-turn":
-          this.getOpenTurn();
-          break;
-        case "select-employee":
-          if (this.table) {
-            this.table.chair = this.selectEmployeeForm.value.chair;
-            this.activeModal.close({ employee: this.employeeSelected, table: this.table });
-          } else {
-            this.activeModal.close({ employee: this.employeeSelected });
-          }
-          break;
-        case "open-table":
-          this.getOpenTurn();
-          break;
-        case "change-employee":
-          this.getOpenTurn();
-          break;
-          default:
+    if (this.isValidForm()) {
+      if (this.requireLogin) {
+        this.getUserOfEmployee();
+      } else {
+        switch (this.op) {
+          case "open-turn":
+            this.getOpenTurn();
             break;
+          case "close-turn":
+            this.getOpenTurn();
+            break;
+          case "select-employee":
+            if (this.table) {
+              this.table.chair = this.chair;
+              this.activeModal.close({ employee: this.employeeSelected, table: this.table });
+            } else {
+              this.activeModal.close({ employee: this.employeeSelected });
+            }
+            break;
+          case "open-table":
+            this.getOpenTurn();
+            break;
+          case "change-employee":
+            this.getOpenTurn();
+            break;
+            default:
+              break;
+        }
       }
     }
   }
 
+  public isValidForm(): boolean {
+
+    let isValid: boolean = true;
+
+    if(this.table && this.chair <= 0) {
+      isValid = false;
+      this.showMessage("La cantidad de comensables debe ser superior a 0", "info", true);
+    }
+
+    if (this.requireLogin && (!this.password || this.password === '')) {
+      isValid = false;
+      this.showMessage("Debe completar la contraseña del " + this.typeEmployee.description, "info", true);
+    }
+
+    if (!this.employeeSelected || !this.employeeSelected._id) {
+      isValid = false;
+      this.showMessage("Debe seleccionar un " + this.typeEmployee.description, "info", true);
+    } else {
+    }
+
+    return isValid;
+  }
+
   public addChair(): void {
-    this.selectEmployeeForm.setValue({
-      'employee': this.selectEmployeeForm.value.employee,
-      'chair': this.selectEmployeeForm.value.chair + 1,
-      'password': this.selectEmployeeForm.value.password
-    });
+
+    this.chair += 1;
   }
 
   public subtractChair(): void {
-    if (this.selectEmployeeForm.value.chair > 1) {
-      this.selectEmployeeForm.setValue({
-        'employee': this.selectEmployeeForm.value.employee,
-        'chair': this.selectEmployeeForm.value.chair - 1,
-        'password': this.selectEmployeeForm.value.password
-      });
+
+    if (this.chair > 1) {
+      this.chair -= 1;
     } else {
-      this.selectEmployeeForm.setValue({
-        'employee': this.selectEmployeeForm.value.employee,
-        'chair': 1,
-        'password': this.selectEmployeeForm.value.password
-      });
+      this.chair = 1;
     }
   }
 
   public login(user: User): void {
-    
+
     this.loading = true;
-    
-    user.password = this.selectEmployeeForm.value.password;
+
+    user.password = this.password;
 
     //Obtener el token del usuario
     this._userService.login(user).subscribe(
@@ -403,7 +326,7 @@ export class SelectEmployeeComponent implements OnInit {
               break;
             case "select-employee":
               if (this.table) {
-                this.table.chair = this.selectEmployeeForm.value.chair;
+                this.table.chair = this.chair;
                 this.activeModal.close({ employee: this.employeeSelected, table: this.table });
               } else {
                 this.activeModal.close({ employee: this.employeeSelected });

@@ -113,11 +113,7 @@ export class AddTransactionComponent implements OnInit {
     // VERIFICAMOS PARA LAS COMPROBACIONES DE INTERFAZ QUE TIPO DE MOVIMIENTO ES
     this.transactionMovement = this.transaction.type.transactionMovement.toString();
 
-    if (this.transaction.type.requestEmployee) {
-      this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
-    }
-
-    //NUEVA TRANSACCIÓN
+    // SI ES NUEVA TRANSACCIÓN
     if (!this.transaction._id || this.transaction._id === '') {
 
       // DEFINIMOS EL PUNTO DE VENTA SI TIENE FIJO O NO
@@ -134,32 +130,14 @@ export class AddTransactionComponent implements OnInit {
     }
 
     this.buildForm();
+
+    if (this.transaction.type.requestEmployee) {
+      this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
+    }
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
-  }
-
-  public setValuesForm(): void {
-
-    if (!this.transaction.origin) this.transaction.origin = 0;
-    if (!this.transaction.letter) this.transaction.letter = "X";
-    if (!this.transaction.number) this.transaction.number = 1;
-    if (!this.transaction.observation) this.transaction.observation = '';
-    if (!this.transaction.employeeOpening) this.transaction.employeeOpening = null;
-
-    this.transactionForm.setValue({
-      'company': this.transaction.company.name,
-      'date': moment(this.transaction.startDate).format('YYYY-MM-DD'),
-      'origin': this.transaction.origin,
-      'letter': this.transaction.letter,
-      'number': this.transaction.number,
-      'basePrice': this.transactionForm.value.basePrice,
-      'exempt': this.transaction.exempt,
-      'totalPrice': this.transaction.totalPrice,
-      'observation': this.transaction.observation,
-      'employeeOpening': this.transaction.employeeOpening
-    });
   }
 
   public buildForm(): void {
@@ -212,6 +190,38 @@ export class AddTransactionComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
+  public setValuesForm(): void {
+
+    if (!this.transaction.origin) this.transaction.origin = 0;
+    if (!this.transaction.letter) this.transaction.letter = "X";
+    if (!this.transaction.number) this.transaction.number = 1;
+    if (!this.transaction.observation) this.transaction.observation = '';
+
+    let employeeOpening;
+    if (!this.transaction.employeeOpening) {
+      employeeOpening = null;
+    } else {
+      if (this.transaction.employeeOpening._id) {
+        employeeOpening = this.transaction.employeeOpening._id;
+      } else {
+        employeeOpening = this.transaction.employeeOpening;
+      }
+    }
+
+    this.transactionForm.setValue({
+      'company': this.transaction.company.name,
+      'date': moment(this.transaction.startDate).format('YYYY-MM-DD'),
+      'origin': this.transaction.origin,
+      'letter': this.transaction.letter,
+      'number': this.transaction.number,
+      'basePrice': this.transactionForm.value.basePrice,
+      'exempt': this.transaction.exempt,
+      'totalPrice': this.transaction.totalPrice,
+      'observation': this.transaction.observation,
+      'employeeOpening': employeeOpening
+    });
+  }
+
   public onValueChanged(data?: any): void {
 
     if (!this.transactionForm) { return; }
@@ -243,6 +253,9 @@ export class AddTransactionComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.employees = result.employees;
+          this.transaction.employeeOpening = this.employees[0];
+          this.transaction.employeeClosing = this.employees[0];
+          this.setValuesForm();
         }
       },
       error => {
