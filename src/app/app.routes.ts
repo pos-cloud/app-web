@@ -81,6 +81,7 @@ import { ReportSalesByMakeComponent } from './components/report-sales-by-make/re
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ListCompaniesGroupComponent } from "./components/list-companies-group/list-companies-group.component";
+import { UpdateArticlePriceComponent } from "./components/update-article-price/update-article-price.component"
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -570,6 +571,12 @@ const _routes: Routes = [
   {
     path: 'admin/movimientos-de-medios',
     component: ListMovementOfCashesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/update-article-price',
+    component: UpdateArticlePriceComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

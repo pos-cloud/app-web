@@ -22,6 +22,7 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { TransactionMovement } from '../../models/transaction-type';
+import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -224,7 +225,11 @@ export class ListArticlesComponent implements OnInit {
             }
           }
         }
-        break;
+          break;
+        case 'update-price':
+          modalRef = this._modalService.open(UpdateArticlePriceComponent);
+          modalRef.componentInstance.operation = "update-price";
+          break;
       default: ;
     }
   };

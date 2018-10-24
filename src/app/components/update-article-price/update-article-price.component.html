@@ -1,0 +1,77 @@
+<div class="modal-header">
+	<h4 class="modal-title">Actualizar Precios</h4>
+	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+	<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<section class="container-fluid">
+	<div class="center-content" *ngIf="alertMessage !== ''">
+	  <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+		{{alertMessage}}
+	  </ngb-alert>
+	</div>
+	<form [formGroup]="updatePriceForm" #formUpdateArticle="ngForm" (ngSubmit)="updatePrice()" autocomplete="off">	
+		<div class="modal-body">
+			<div class ="row">
+				<div class="form-group col-md-6">
+					<label for="make" class="control-label">Actualizar por:</label>
+					<select [(ngModel)]= "optionUpdate" class="form-control" formControlName="optionUpdate">
+						<option [value]="'make'" [selected]="'make'">Marca </option>
+						<option [value]="'category'"> Rubro </option>
+						<option [value]="'all'"> Todos los productos</option>
+					</select>
+				</div>
+				<div *ngIf = "optionUpdate === 'make'" class="form-group col-md-6">
+					<label for="make" class="control-label">Marca</label>
+					<select class="form-control" formControlName="make">
+						<option *ngFor="let make of makes" [value]="make._id" [disabled]="readonly">{{make.description}}</option>
+					</select>
+					<div *ngIf="formErrors.make" class="alert alert-danger">
+						{{ formErrors.make }}
+					</div>
+				</div>
+			</div>
+			<div class="row" >
+				<div *ngIf = "optionUpdate === 'category'" class="form-group col-md-6" >
+					<label for="category" class="control-label">Rubro:</label>
+					<select class="form-control" formControlName="category">
+						<option *ngFor="let category of categories" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
+					</select>
+					<div *ngIf="formErrors.category" class="alert alert-danger">
+						{{ formErrors.category }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="percentage" class="control-label">Porcentaje de Aumento:</label>
+					<div class="input-group">
+						<span class="input-group-addon">%</span>
+						<input type="number" class="form-control" formControlName="percentage" name="percentage"/>
+					</div>
+					<div *ngIf="formErrors.percentage" class="alert alert-danger">
+						{{ formErrors.percentage }}
+					</div>
+				</div>
+			</div>
+			<div class ="row">
+				<div class="form-group col-md-12">
+					<label for="field" class="control-label">Actualiza:</label>
+					<select class="form-control" formControlName="field">
+						<option [value]="'basePrice'" >Precio base </option>
+						<option [value]="'markupPercentage'"> Margen </option>
+						<option [value]="'salePrice'"> Precio de Venta </option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+			<button type="submit" class="btn btn-primary" [disabled]="!updatePriceForm.valid || loading" >
+				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+				<span *ngIf="!loading">Actualizar</span>
+				<span *ngIf="loading">Espere por favor</span>
+			</button>
+		</div>
+</form>
+</section>

@@ -8,6 +8,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Productos
       <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('update-price',null)"><i class="fa fa-dollar-sign"> Actualizar Precios</i></button>
         <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Producto</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <button class="btn btn-primary" (click)="openModal('print', null, 'priceList')"><i class="fa fa-print"></i> Imprimir Lista</button>

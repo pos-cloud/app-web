@@ -185,6 +185,7 @@ import { ListCompaniesGroupComponent } from './components/list-companies-group/l
 import { AddCompanyGroupComponent } from './components/add-company-group/add-company-group.component';
 import { DeleteCompanyGroupComponent } from './components/delete-company-group/delete-company-group.component';
 import { UpdateCompanyGroupComponent } from './components/update-company-group/update-company-group.component';
+import { UpdateArticlePriceComponent } from './components/update-article-price/update-article-price.component';
 
 @NgModule({
   declarations: [
@@ -313,7 +314,8 @@ import { UpdateCompanyGroupComponent } from './components/update-company-group/u
     ListCompaniesGroupComponent,
     AddCompanyGroupComponent,
     UpdateCompanyGroupComponent,
-    DeleteCompanyGroupComponent
+    DeleteCompanyGroupComponent,
+    UpdateArticlePriceComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -350,7 +352,8 @@ import { UpdateCompanyGroupComponent } from './components/update-company-group/u
     DeleteArticleFieldComponent,
     AddCompanyGroupComponent,
     UpdateCompanyGroupComponent,
-    DeleteCompanyGroupComponent
+    DeleteCompanyGroupComponent,
+    UpdateArticlePriceComponent,
   ],
   imports: [
     BrowserModule,
