@@ -184,7 +184,7 @@ export class UpdateArticlePriceComponent implements OnInit {
         console.log(result.status);
 
         if (result.status === "Error") {
-          this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count, 'info', true);
+          this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ".No se actualizaron:" + result.articleFailure, 'info', true);
         } else {
           console.log("entro");
           this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.count + " productos", 'success', false);
