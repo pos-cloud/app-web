@@ -796,7 +796,6 @@ export class AddArticleComponent implements OnInit {
                   } else {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
-                  // console.log(console.log(this.imageURL));
                   if (this.article.containsVariants) {
                     this.addVariants(this.article);
                   } else {

@@ -157,10 +157,8 @@ export class UpdateArticlePriceComponent implements OnInit {
 
     this.loading = true;
 
-    console.log(this.updatePriceForm.value);
-
     let where;
-    
+
 
     switch (this.updatePriceForm.value.optionUpdate) {
       case "make":
@@ -172,21 +170,15 @@ export class UpdateArticlePriceComponent implements OnInit {
       default:where = '{}'
         break;
     }
-    
+
 
     let query = ' { "where":'+where+', "percentage":"'+ this.updatePriceForm.value.percentage +'", "field":"'+ this.updatePriceForm.value.field +'" }'
 
-    console.log (query);
-
-    
     this._articleService.updatePrice(query).subscribe(
       result => {
-        console.log(result.status);
-
         if (result.status === "Error") {
           this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ".No se actualizaron:" + result.articleFailure, 'info', true);
         } else {
-          console.log("entro");
           this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.count + " productos", 'success', false);
         }
         this.loading = false;

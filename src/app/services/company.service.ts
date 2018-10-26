@@ -40,16 +40,16 @@ export class CompanyService {
 		return this._http.get(Config.apiURL + "companies", { headers: headers }).map (res => res.json());
   	}
 
-  
+
   	getCompaniesByType (type: string) {
 	  	let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()	
+			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'companies/where="type":"' + type + '"', { headers: headers }).map (res => res.json());
 	}
-	
+
 	saveCompany (company : Company) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export class CompanyService {
 		});
 		return this._http.put(Config.apiURL + "company/"+company._id, company, { headers: headers }).map (res => res.json());
 	}
-	  
+
 	getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -96,12 +96,17 @@ export class CompanyService {
 		return this._http.get(Config.apiURL + 'sales-by-client/' + query, { headers: headers }).map(res => res.json());
 	}
 
-	getSummaryOfAccounts(){
+  getSummaryOfAccounts(companyId?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
-		});
-		return this._http.get(Config.apiURL + "summary-of-accounts/", { headers: headers }).map(res => res.json());
-	}
+    });
+
+    if (companyId) {
+      return this._http.get(Config.apiURL + "summary-of-accounts/" + companyId, { headers: headers }).map(res => res.json());
+    } else {
+      return this._http.get(Config.apiURL + "summary-of-accounts/", { headers: headers }).map(res => res.json());
+    }
+  }
 }

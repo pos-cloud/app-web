@@ -24,7 +24,7 @@ export class ClockComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._clockSubscription = this.clockSubscription.getClock().subscribe(
-      time => 
+      time =>
         {
           this.endTime = time;
           this.calcularDiasDiferencia();
@@ -40,7 +40,7 @@ export class ClockComponent implements OnInit, OnDestroy {
   //   // this.difference = this.endTime.getMilliseconds() - this.startTime.getMilliseconds();
   //   this.endTime.diff(this.startTime, 'h');
   //   console.log("hora");
-  //   console.log(this.difference); 
+  //   console.log(this.difference);
   // }
 
   public calcularDiasDiferencia() {

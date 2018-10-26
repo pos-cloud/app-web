@@ -18,8 +18,9 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
   styleUrls: ['./view-transaction.component.css'],
   providers: [NgbAlertConfig]
 })
+
 export class ViewTransactionComponent implements OnInit {
-  
+
   @Input() transaction: Transaction;
   public alertMessage = '';
   public loading = false;
@@ -35,7 +36,8 @@ export class ViewTransactionComponent implements OnInit {
     public _movementOfCashService: MovementOfCashService,
     public alertConfig: NgbAlertConfig,
     public activeModal: NgbActiveModal
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.movementsOfArticles = new Array();

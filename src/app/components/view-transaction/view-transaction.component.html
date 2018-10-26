@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{transaction.type.name}} {{transaction.origin}}-{{transaction.letter}}-{{transaction.number}}</h4>
+  <h4 class="modal-title" *ngIf="transaction.type">{{transaction.type.name}} {{transaction.origin}}-{{transaction.letter}}-{{transaction.number}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -21,9 +21,9 @@
               <input type="text" class="form-control" name="date" *ngIf="!transaction.company" value="Consumidor Final" readonly/>
             </div>
           </div>
-          <div class="row" *ngIf="transaction.type.requestEmployee">
+          <div class="row" *ngIf="transaction.type && transaction.type.requestEmployee">
             <div class="form-group col-md-12">
-              <label for="employeeOpening" class="control-label">{{ transaction.type.requestEmployee.description }}</label>
+              <label for="employeeOpening" class="control-label" *ngIf="transaction.type">{{ transaction.type.requestEmployee.description }}</label>
               <input type="text" class="form-control" name="date" *ngIf="transaction.employeeClosing" value="{{transaction.employeeClosing.name}}" readonly />
               <input type="text" class="form-control" name="date" *ngIf="!transaction.employeeClosing" value="" readonly />
             </div>
@@ -128,7 +128,7 @@
                         <td>{{movementOfCash.bank}}</td>
                         <td>{{movementOfCash.observation}}</td>
                       </tr>
-                      <tr align="center " *ngIf="areMovementsOfCashEmpty ">
+                      <tr align="center " *ngIf="movementsOfCashes.length === 0">
                         <td colspan="10 ">No existen método de pagos en la transacción</td>
                       </tr>
                     </tbody>
