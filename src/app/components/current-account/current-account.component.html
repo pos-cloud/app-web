@@ -1,5 +1,4 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
-
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Cuenta Corriente
       <div class="pull-right">
@@ -40,72 +39,78 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th (click)="orderBy('date')">Fecha</th>
-              <th (click)="orderBy('type','name')">Tipo</th>
-              <th (click)="orderBy('origin')">Punto de venta</th>
-              <th (click)="orderBy('number')">Número</th>
-              <th (click)="orderBy('totalPrice')">Monto</th>
+              <th>
+                <i class="fa fa-bars"></i>
+              </th>
+              <th (click)="orderBy('transactionDate')">Fecha</th>
+              <th (click)="orderBy('transactionTypeName')">Tipo</th>
+              <th (click)="orderBy('transactionOrigin')">Punto de venta</th>
+              <th (click)="orderBy('transactionLetter')">Letra</th>
+              <th (click)="orderBy('transactionNumber')">Número</th>
+              <th (click)="orderBy('transactionTotalPrice')">Importe</th>
+              <th (click)="orderBy('paymentMethodName')">Método</th>
+              <th (click)="orderBy('debe')">Debe</th>
+              <th (click)="orderBy('haber')">Haber</th>
+              <th>Saldo</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
+              <th></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Monto..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Importe..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodName" placeholder="Método..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterDebe" placeholder="Debe..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterHaber" placeholder="Haber..."></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of transactions | filter: filterDate:'date'
-                                                        | filter: filterType:'name':'type'
-                                                        | filter: filterOrigin:'origin'
-                                                        | filter: filterNumber:'number'
-                                                        | filter: filterTotalPrice:'totalPrice'
+            <tr *ngFor="let item of items | filter: filterDate:'transactionDate'
+                                                        | filter: filterType:'transactionTypeName'
+                                                        | filter: filterOrigin:'transactionOrigin'
+                                                        | filter: filterLetter:'transactionLetter'
+                                                        | filter: filterNumber:'transactionNumber'
+                                                        | filter: filterTotalPrice:'transactionTotalPrice'
+                                                        | filter: filterPaymentMethodName:'paymentMethodName'
+                                                        | filter: filterDebe:'debe'
+                                                        | filter: filterHaber:'haber'
+                                                        | filter: filterSaldo:'saldo'
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
-                                                                      currentPage: p,
+                                                                      currentPage: currentPage,
                                                                       totalItems: totalItems
                                                                     }">
-              <td *ngIf="transaction.endDate">{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
-              <td *ngIf="transaction.type">{{transaction.type.name}}</td>
-              <td *ngIf="!transaction.type"></td>
-              <td>{{transaction.origin}}</td>
-              <td>{{transaction.number}}</td>
-              <td align="right" *ngIf="transaction.type.currentAccount !== 'Cobra'" [ngClass]="{'debit': transaction.type.movement==='Entrada',
-                              'credit': transaction.type.movement==='Salida'}">
-                <strong *ngIf="transaction.totalPrice>=0">
-                  {{transaction.totalPrice | currency:'USD':'1.2-2'}}
-                </strong>
-                <strong *ngIf="transaction.totalPrice<0">
-                  {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
-                </strong>
+              <td align="left" width="50">
+              <button type="button" class="btn btn-success  btn-sm" (click)="getTransaction(item.transactionId)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
-              <td align="right" *ngIf="transaction.type.currentAccount === 'Cobra'"
-                                [ngClass]="{  'debit': transaction.type.movement==='Salida',
-                                             'credit': transaction.type.movement==='Entrada'}">
-                <strong *ngIf="transaction.totalPrice>=0">
-                  {{transaction.totalPrice | currency:'USD':'1.2-2'}}
-                </strong>
-                <strong *ngIf="transaction.totalPrice<0">
-                  {{transaction.totalPrice*-1 | currency:'USD':'1.2-2'}}
-                </strong>
-              </td>
+              <td *ngIf="item.transactionEndDate">{{item.transactionEndDate | dateFormat:'DD/MM/YYYY' }}</td>
+              <td *ngIf="!item.transactionEndDate">{{item.transactionStartDate | dateFormat:'DD/MM/YYYY' }}</td>
+              <td *ngIf="item.transactionTypeName">{{item.transactionTypeName}}</td>
+              <td>{{item.transactionOrigin}}</td>
+              <td>{{item.transactionLetter}}</td>
+              <td>{{item.transactionNumber}}</td>
+              <td>{{item.transactionTotalPrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{item.paymentMethodName}}</td>
+              <td [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'1.2-2'}}</td>
+              <td [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'1.2-2'}}</td>
+              <td [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'1.2-2'}}</td>
             </tr>
-            <tr align="center" *ngIf="areTransactionsEmpty">
-              <td colspan="5">No se encontraron transacciones</td>
+            <tr align="center" *ngIf="items.length === 0">
+              <td colspan="11">No se encontraron movimientos</td>
             </tr>
           </tbody>
           <tfoot [ngClass]="{'credit':balance>0,'debit':balance<0}">
-            <td>
-              <strong>Saldo</strong>
+            <td colspan="10" align="right">
+              <strong>SALDO TOTAL</strong>
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
             <td *ngIf="balance>=0">
               <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
             </td>
             <td *ngIf="balance<0">
-              <strong>{{balance*-1 | currency:'USD':'1.2-2'}}</strong>
+              <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
             </td>
           </tfoot>
         </table>
@@ -114,7 +119,7 @@
     <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
+          <pagination-controls class="my-pagination" (pageChange)="currentPage=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">

@@ -7,7 +7,6 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { CurrentAcount, Movements } from './../../models/transaction-type';
 import { Company } from './../../models/company';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
@@ -23,6 +22,8 @@ import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-moveme
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
+import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-current-account',
@@ -43,9 +44,12 @@ export class CurrentAccountComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  public balance: number = 0;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public items: any[] = new Array();
+  public balance: number = 0;
+  public currentPage: number = 1;
+  public roundNumber: RoundNumberPipe;
 
   constructor(
     public _transactionService: TransactionService,
@@ -58,6 +62,7 @@ export class CurrentAccountComponent implements OnInit {
     public _printerService: PrinterService
   ) {
     this.movementsOfCashes = new Array();
+    this.roundNumber = new RoundNumberPipe();
   }
 
   ngOnInit(): void {
@@ -71,35 +76,30 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public getTransactionsByCompany(): void {
+  public getSummary(): void {
 
     this.loading = true;
 
-    if (this.companySelected) {
-      this._transactionService.getTransactionsByCompany(this.companySelected._id).subscribe(
-        result => {
-          if (!result.transactions) {
-            this.transactions = new Array();
-            this.areTransactionsEmpty = true;
-            this.balance = 0;
-          } else {
-            this.getMovementOfCurrentAccountByCompany(result.transactions);
-            this.areTransactionsEmpty = false;
-          }
+    this._companyService.getSummaryOfAccounts(this.companySelected._id).subscribe(
+      result => {
+        if (!result) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.items = null;
+          this.totalItems = 0;
+        } else {
           this.hideMessage();
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-          this.transactions = new Array();
-          this.balance = 0;
+          this.items = result;
+          this.totalItems = this.items.length;
+          this.currentPage = this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5);
+          this.getBalance();
         }
-      );
-    } else {
-      this.showMessage("Debe seleccionar una empresa.", 'info', true);
-      this.loading = false;
-    }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getCompany(companyId: string): void {
@@ -112,7 +112,7 @@ export class CurrentAccountComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.companySelected = result.company;
-          this.getTransactionsByCompany();
+          this.getSummary();
         }
         this.loading = false;
       },
@@ -121,89 +121,6 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  public getMovementOfCurrentAccountByCompany(transactions: Transaction[]): void {
-
-    this.loading = true;
-
-    if (this.companySelected) {
-
-      this._movementOfCashService.getMovementOfCurrentAccountByCompany(this.companySelected._id).subscribe(
-        result => {
-          if (!result.movementsOfCashes) {
-            this.hideMessage();
-          } else {
-            this.hideMessage();
-            this.movementsOfCashes = result.movementsOfCashes;
-            this.filterTransactions(transactions);
-          }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
-        }
-      );
-    } else {
-      this.showMessage("Debe seleccionar una empresa.", 'info', true);
-      this.loading = false;
-    }
-  }
-
-  public filterTransactions(transactions: Transaction[]): void {
-
-    this.transactions = new Array();
-    this.balance = 0;
-
-    if (transactions && transactions.length > 0) {
-      for (let transaction of transactions) {
-        if (transaction.state === TransactionState.Closed &&
-          transaction.company._id === this.companySelected._id &&
-          transaction.type.currentAccount !== CurrentAcount.No) {
-          if (transaction.type.currentAccount === CurrentAcount.Yes &&
-            this.getPaymentMethodName(transaction) === "Cuenta Corriente") {
-            this.transactions.push(transaction);
-            if (transaction.type.movement === Movements.Outflows) {
-              this.balance += transaction.totalPrice;
-            } else {
-              this.balance -= transaction.totalPrice;
-            }
-          } else if (transaction.type.currentAccount === CurrentAcount.Charge) {
-            this.transactions.push(transaction);
-            if (transaction.type.movement === Movements.Outflows) {
-              this.balance -= transaction.totalPrice;
-            } else {
-              this.balance += transaction.totalPrice;
-            }
-          } else {
-            //No se toma en cuenta el documento
-          }
-        } else {
-          //No se toma en cuenta el documento
-        }
-      }
-    }
-    this.totalItems = this.transactions.length;
-
-    if (this.totalItems <= 0) {
-      this.areTransactionsEmpty = true;
-    }
-  }
-
-  public getPaymentMethodName(transaction): string {
-
-    let name: string = '';
-
-    for (let movementOfCash of this.movementsOfCashes) {
-      if (movementOfCash.transaction) {
-        if (movementOfCash.transaction._id === transaction._id) {
-          name = movementOfCash.type.name;
-        }
-      }
-    }
-
-    return name;
   }
 
   public orderBy(term: string, property?: string): void {
@@ -219,9 +136,25 @@ export class CurrentAccountComponent implements OnInit {
   public refresh(): void {
 
     if (this.companySelected) {
-      this.getTransactionsByCompany();
+      this.getSummary();
     } else {
       this.showMessage("Debe seleccionar una empresa", 'info', true);
+    }
+  }
+
+  public getBalance(): void {
+
+    this.balance = 0;
+
+    for(let i = 0; i < this.items.length; i++) {
+      if (this.items[i].isCurrentAccount || this.items[i].typeCurrentAccount !== "No") {
+        this.balance += this.items[i].debe;
+        this.balance -= this.items[i].haber;
+        this.items[i].balance = (this.items[i].debe - this.items[i].haber);
+        if(this.items[i-1]) {
+          this.items[i].balance += this.items[i-1].balance;
+        }
+      }
     }
   }
 
@@ -241,6 +174,10 @@ export class CurrentAccountComponent implements OnInit {
 
           }
         );
+        break;
+      case 'view-transaction':
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
         break;
       case 'movement-of-cash':
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
@@ -267,7 +204,7 @@ export class CurrentAccountComponent implements OnInit {
           (result) => {
             if (result.company) {
               this.companySelected = result.company;
-              this.getTransactionsByCompany();
+              this.getSummary();
             }
           }, (reason) => {
           }
@@ -276,7 +213,7 @@ export class CurrentAccountComponent implements OnInit {
       case 'print':
         if (this.companySelected) {
           modalRef = this._modalService.open(PrintComponent);
-          modalRef.componentInstance.transactions = this.transactions;
+          modalRef.componentInstance.items = this.items;
           modalRef.componentInstance.company = this.companySelected;
           modalRef.componentInstance.typePrint = 'current-account';
           modalRef.componentInstance.balance = this.balance;
@@ -286,6 +223,28 @@ export class CurrentAccountComponent implements OnInit {
         break;
       default: ;
     }
+  }
+
+  public getTransaction(transactionId: string): void {
+
+    this.loading = true;
+
+    this._transactionService.getTransaction(transactionId).subscribe(
+      result => {
+        if (!result.transaction) {
+          this.showMessage(result.message, 'danger', false);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.openModal('view-transaction', result.transaction);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public addTransaction(type: string): void {
