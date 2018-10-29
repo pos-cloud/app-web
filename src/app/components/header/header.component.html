@@ -1,5 +1,5 @@
 <nav class="navbar navbar-toggleable-md bg-faded"
-      *ngIf="!hideMenu">
+      *ngIf="!hideMenu && identity">
   <button class="navbar-toggler navbar-toggler-right"
           type="button"
           data-toggle="collapse"
@@ -10,7 +10,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <span class="navbar-brand btn" (click)="goToHome()">
-      POS Cloud
+      <img width="100" src="assets/img/logo.png">
   </span>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto" *ngIf="modules">
@@ -411,11 +411,11 @@
           <i class="fa fa-sign-out"></i>Cerrar Sesión</a>
       </li>
       <li class="nav-item pull-right">
-        <a class="nav-link btn" *ngIf="!identity" (click)="openModal('login')">
+        <a class="nav-link btn" *ngIf="!identity" [routerLink]="['login']">
           <i class="fa fa-sign-in"></i>Iniciar Sesión</a>
       </li>
       <li class="nav-item pull-right">
-        <a class="nav-link btn" *ngIf="!identity" (click)="openModal('register')">
+        <a class="nav-link btn" *ngIf="!identity" [routerLink]="['registrar']">
           <i class="fa fa-sign-in"></i>Registrarme</a>
       </li>
     </ul>

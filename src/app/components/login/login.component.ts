@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
-import { Turn } from './../../models/turn';
 import { Employee } from './../../models/employee';
 import { EmployeeType } from './../../models/employee-type';
 
@@ -53,16 +52,14 @@ export class LoginComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _router: Router,
-    private _route: ActivatedRoute
-    ) { 
+    public _router: Router
+    ) {
       this.alertMessage = '';
       this.database = this._userService.getDatabase();
     }
 
   ngOnInit() {
-
-    this.user = new User();    
+    this.user = new User();
     this.buildForm();
   }
 
@@ -112,13 +109,8 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  public login(): void {
-    
-    this.isDatabaseValid();
-  }
+  public isDatabaseValid(): boolean {
 
-  public isDatabaseValid(): void {
-    
     let isValid: boolean = true;
 
     if (this.database || this.loginForm.value.name.indexOf('@') !== -1) {
@@ -129,20 +121,18 @@ export class LoginComponent implements OnInit {
               localStorage.setItem('database', this.loginForm.value.name.split("@")[1].toLowerCase());
             } else {
               isValid = false;
-              this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);  
+              this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
             }
       } else if (!this.database) {
         isValid = false;
-        this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);  
+        this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
       }
     } else {
       isValid = false;
       this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
     }
 
-    if (isValid) {
-      this.login2();
-    }
+    return isValid;
   }
 
   public isDBNameValid(dbName: string): boolean {
@@ -158,55 +148,59 @@ export class LoginComponent implements OnInit {
     return isValid;
   }
 
-  public login2() : void {
+  public login(): void {
 
-    if (this.database && this.loginForm.value.name.indexOf('@') === -1) {
-      this.user.name = this.loginForm.value.name;
-    } else {
-      this.user.name = this.loginForm.value.name.split("@")[0];
-    }
-    this.user.password = this.loginForm.value.password;
-
-    this.showMessage("Comprobando usuario...", 'info', false);
-    this.loading = true;
-
-    //Obtener el token del usuario
-    this._userService.login(this.user).subscribe(
-      result => {
-        if (!result.user) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.showMessage("Ingresando...", 'success', false);
-          this.user = result.user;
-          let userStorage = new User();
-          userStorage._id = this.user._id;
-          userStorage.name = this.user.name;
-          if (this.user.employee) {
-            userStorage.employee = new Employee();
-            userStorage.employee._id = this.user.employee._id;
-            userStorage.employee.name = this.user.employee.name;
-            userStorage.employee.type = new EmployeeType();
-            userStorage.employee.type._id = this.user.employee.type._id;
-            userStorage.employee.type.description = this.user.employee.type.description;
-          }
-          sessionStorage.setItem('user', JSON.stringify(userStorage));
-          sessionStorage.setItem('session_token', this.user.token);
-          this.activeModal.close({ user: this.user });
-          this.loading = false;
-        }
-      },
-      error => {
-        if (error.status === 0) {
-          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
-        } else {
-          this.showMessage(error._body, 'danger', false);
-        }
-        this.loading = false;
+    if (this.isDatabaseValid()) {
+      if (this.database && this.loginForm.value.name.indexOf('@') === -1) {
+        this.user.name = this.loginForm.value.name;
+      } else {
+        this.user.name = this.loginForm.value.name.split("@")[0];
       }
-    )
+      this.user.password = this.loginForm.value.password;
+
+      this.showMessage("Comprobando usuario...", 'info', false);
+      this.loading = true;
+
+      //Obtener el token del usuario
+      this._userService.login(this.user).subscribe(
+        result => {
+          if (!result.user) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+          } else {
+            this.showMessage("Ingresando...", 'success', false);
+            this.user = result.user;
+            let userStorage = new User();
+            userStorage._id = this.user._id;
+            userStorage.name = this.user.name;
+            if (this.user.employee) {
+              userStorage.employee = new Employee();
+              userStorage.employee._id = this.user.employee._id;
+              userStorage.employee.name = this.user.employee.name;
+              userStorage.employee.type = new EmployeeType();
+              userStorage.employee.type._id = this.user.employee.type._id;
+              userStorage.employee.type.description = this.user.employee.type.description;
+            }
+            sessionStorage.setItem('user', JSON.stringify(userStorage));
+            sessionStorage.setItem('session_token', this.user.token);
+            // this._router.navigate(['/admin/statistics']);
+            this._router.navigate(['/']);
+            location.reload();
+            this.loading = false;
+          }
+        },
+        error => {
+          if (error.status === 0) {
+            this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
+          } else {
+            this.showMessage(error._body, 'danger', false);
+          }
+          this.loading = false;
+        }
+      );
+    }
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

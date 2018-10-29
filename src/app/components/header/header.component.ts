@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, Renderer2 } from '@angular/core';
-import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
+import { Router, NavigationStart, Event as NavigationEvent, NavigationEnd } from '@angular/router';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 
@@ -9,8 +9,6 @@ import { User } from './../../models/user';
 import { Config } from './../../app.config';
 
 import { UserService } from './../../services/user.service';
-
-import { LoginComponent } from './../../components/login/login.component';
 
 @Component({
   selector: 'app-header',
@@ -55,7 +53,7 @@ export class HeaderComponent implements OnInit {
   public validateIdentity(): void {
 
     this.identity = this._userService.getIdentity();
-    
+
     if (this.identity) {
       this._router.events.forEach((event: NavigationEvent) => {
         if (event instanceof NavigationStart) {
@@ -70,44 +68,22 @@ export class HeaderComponent implements OnInit {
         }
       });
       // this.sessionTimer = setTimeout(this.logout(), this.identity.tokenExpiration);
-      this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
-        this.sessionCount();
-      });
+      // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
+      //   this.sessionCount();
+      // });
     } else {
-      if (this._userService.getDatabase()) {
-        this.openModal("login");
-      } else {
-        this.openModal("register");
-      }
+      this._router.events.filter(e => e instanceof NavigationEnd).first().subscribe(() => {
+        console.log(this._router.url);
+        if (this._userService.getDatabase() && this._router.url !== "/registrar") {
+          this._router.navigate(['/login']);
+        } else {
+          this._router.navigate(['/registrar']);
+        }
+      });
     }
   }
 
   public sessionCount() {
-
-  }
-
-  public openModal(op: string): void {
-
-    let modalRef;
-
-    switch (op) {
-      case 'login':
-        this._router.navigate(['/']);
-        modalRef = this._modalService.open(LoginComponent);
-        modalRef.result.then((result) => {
-          if (result.user) {
-            let user: User = result.user;
-            this.validateIdentity();
-            location.reload();
-          }
-        }, (reason) => {
-        });
-        break;
-      case 'register':
-        this._router.navigate(['register']);
-      default:
-        break;
-    }
   }
 
   public goToHome(): void {
@@ -122,6 +98,6 @@ export class HeaderComponent implements OnInit {
     sessionStorage.removeItem("session_token");
     sessionStorage.removeItem("user");
     this.identity = undefined;
-    this._router.navigate(['/']);
+    this._router.navigate(['/login']);
   }
-} 
+}

@@ -1,4 +1,5 @@
 .fondo {
-	height: 800px;
-	widows: 1600px;
+  display:block;
+  height: 500px;
+  margin: auto;
 }

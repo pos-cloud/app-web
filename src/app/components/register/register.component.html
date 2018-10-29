@@ -1,111 +1,145 @@
-<section>
-  <div class="row">
-    <div class="center-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Registrar</h4>
+<section class="fondo-register center-content">
+  <div class="box-register" [ngClass]="{ 'box-register-max': alertMessage !== '' }">
+    <div class="row" align="center">
+      <div class="logo">
+        <img width="130" src="assets/img/logo.png">
       </div>
     </div>
-  </div>
-  <div class="center-content" *ngIf="alertMessage !== ''">
-    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-      {{alertMessage}}
-    </ngb-alert>
+    <br>
+    <div class="row" align="center">
+      <h5>Registra tu negocio GRATIS</h5>
     </div>
-    <div class="row">
+    <hr>
+    <div class="row" *ngIf="alertMessage !== ''">
       <div class="center-content">
-        <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
-          <div class="modal-body">
-            <div class="row">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+          {{alertMessage}}
+        </ngb-alert>
+      </div>
+    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+      <div class="row">
+        <div class="center-content">
+          <div class="row">
               <div class="form-group col-md-12">
-                <label for="employeeName" class="control-label">Tu nombre y apellido:</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" formControlName="employeeName" name="employeeName" id="employeeName" [focus]="focusEvent" />
-                </div>
-                <div *ngIf="formErrors.employeeName" class="alert alert-danger">
-                  {{ formErrors.employeeName }}
-                </div>
+              <label for="employeeName" class="control-label">Tu nombre y apellido:</label>
+              <div class="input-group">
+                <input type="text" class="form-control" formControlName="employeeName" name="employeeName" id="employeeName" [focus]="focusEvent" />
+              </div>
+              <div *ngIf="formErrors.employeeName" class="alert alert-danger">
+                {{ formErrors.employeeName }}
               </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="companyName" class="control-label">Nombre de tu negocio:</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName"/>
-                </div>
-                <div *ngIf="formErrors.companyName" class="alert alert-danger">
-                  {{ formErrors.companyName }}
-                </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="companyName" class="control-label">Nombre de tu negocio:</label>
+              <div class="input-group">
+                <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName"/>
+              </div>
+              <div *ngIf="formErrors.companyName" class="alert alert-danger">
+                {{ formErrors.companyName }}
               </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="email" class="control-label">Tu e-mail:</label>
-                <div class="input-group">
-                  <input type="email" class="form-control" formControlName="email" name="email" id="email" placeholder="juan@example.com"/>
-                </div>
-                <div *ngIf="formErrors.email" class="alert alert-danger">
-                  {{ formErrors.email }}
-                </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="email" class="control-label">Tu e-mail:</label>
+              <div class="input-group">
+                <input type="email" class="form-control" formControlName="email" name="email" id="email" placeholder="juan@example.com"/>
+              </div>
+              <div *ngIf="formErrors.email" class="alert alert-danger">
+                {{ formErrors.email }}
               </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="phone" class="control-label">Tu teléfono:</label>
-                <div class="input-group">
-                  <input type="phone" class="form-control" formControlName="phone" name="phone" id="phone"/>
-                </div>
-                <div *ngIf="formErrors.phone" class="alert alert-danger">
-                  {{ formErrors.phone }}
-                </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="phone" class="control-label">Tu teléfono:</label>
+              <div class="input-group">
+                <input type="phone" class="form-control" formControlName="phone" name="phone" id="phone"/>
+              </div>
+              <div *ngIf="formErrors.phone" class="alert alert-danger">
+                {{ formErrors.phone }}
               </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="category" class="control-label">Tu tipo de negocio</label>
-                <select class="form-control" formControlName="category" (change)="checkModules($event.target.value)">
-                  <option *ngFor="let category of categories" [value]="category">
-                    {{category}}
-                  </option>
-                </select>
-                <div *ngIf="formErrors.category" class="alert alert-danger">
-                  {{ formErrors.category }}
-                </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="category" class="control-label">Tu tipo de negocio</label>
+              <select class="form-control" formControlName="category" (change)="checkModules($event.target.value)">
+                <option *ngFor="let category of categories" [value]="category">
+                  {{category}}
+                </option>
+              </select>
+              <div *ngIf="formErrors.category" class="alert alert-danger">
+                {{ formErrors.category }}
               </div>
             </div>
-            <p><b>
-              SELECCIONA LOS COMPONENTES QUE DESEA<br>AGREGAR A TU SISTEMA POS CLOUD
-            </b></p>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <b>SELECCIONA LOS COMPONENTES QUE DESEA<br>AGREGAR A TU SISTEMA POS CLOUD</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="purchase" name="purchase" id="purchase" /> Módulo Compras
             </div>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="stock" name="stock" id="stock" /> Módulo Stock
             </div>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="counter" name="counter" id="counter" /> ¿Realizas ventas por mostrador?
             </div>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="resto" name="resto" id="resto" /> ¿Quieres controlar las mesas de tu negocio?
             </div>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="delivery" name="delivery" id="delivery" /> ¿Quieres manejar repartos y entregas? (Delivery)
             </div>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="currentAccount" name="currentAccount" id="currentAccount" /> ¿Quieres manejar las cuentas corrientes de tus clientes/proveedores?
             </div>
-            <div class="row">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
               <input type="checkbox" formControlName="electronicTransactions" name="electronicTransactions" id="electronicTransactions" /> ¿Quieres realizar facturas electrónicas?
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || loading">
-              <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-              <span *ngIf="!loading">Registrar</span>
-              <span *ngIf="loading">Espere por favor</span>
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+      <hr>
+      <div class="row">
+        <div class="center-content">
+          <div class="row">
+            <div class="col-md-12" align="right">
+              <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || loading">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Registrar</span>
+                <span *ngIf="loading">Espere por favor</span>
+              </button>
+            </div>
+            <br><br>
+            <div class="row">
+              <div class="form-group col-md-12" align="center">
+                <b>¿Ya tienes una cuenta?</b> <a routerLink="/login">Iniciar sesión</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </section>

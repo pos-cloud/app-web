@@ -1,55 +1,71 @@
- <section>
-	<div class="row">
-		<div class="center-content">
-			<div class="modal-header">
-				<h4 class="modal-title">Iniciar Sessión</h4>
-			</div>
-		</div>
-	</div>
-	<div class="row" *ngIf="alertMessage !== ''">
-		<div class="center-content">
-			<ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-				{{alertMessage}}
-			</ngb-alert>
-		</div>
-	</div>
-	<div class="row">
-		<div class="center-content">
-			<form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
-				<div class="modal-body">
-					<div class="row">
-						<div class="form-group col-md-12">
-							<label for="name" class="control-label">Usuario</label>
-							<div class="input-group">
-								<input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
-								<span class="input-group-addon" [hidden]="!database">@{{database}}</span>
-							</div>
-							<div *ngIf="formErrors.name" class="alert alert-danger">
-								{{ formErrors.name }}
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-md-12">
-							<label for="password" class="control-label">Password:</label>
-							<div class="input-group">
-								<input type="password" class="form-control" formControlName="password" name="password" id="password"/>
-							</div>
-							<div *ngIf="formErrors.password" class="alert alert-danger">
-								{{ formErrors.password }}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-					<button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || loading" >
-						<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-						<span *ngIf="!loading">Iniciar</span>
-						<span *ngIf="loading">Espere por favor</span>
-					</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</section> 
+ <section class="fondo-login center-content">
+  <div class="box-login" [ngClass]="{ 'box-login-max': alertMessage !== '' }">
+    <div class="row" align="center">
+      <div class="logo">
+        <img width="130" src="assets/img/logo.png">
+      </div>
+    </div>
+    <br>
+    <div class="row" align="center">
+      <h5>Ingresa a tu cuenta</h5>
+    </div>
+    <hr>
+    <div class="row" *ngIf="alertMessage !== ''">
+      <div class="center-content">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+          {{alertMessage}}
+        </ngb-alert>
+      </div>
+    </div>
+    <form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
+      <div class="row">
+        <div class="center-content">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="name" class="control-label">Usuario</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+                  <span class="input-group-addon" [hidden]="!database">@{{database}}</span>
+                </div>
+                <div *ngIf="formErrors.name" class="alert alert-danger">
+                  {{ formErrors.name }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="password" class="control-label">Password:</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" formControlName="password" name="password" id="password"/>
+                </div>
+                <div *ngIf="formErrors.password" class="alert alert-danger">
+                  {{ formErrors.password }}
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="center-content">
+          <div class="row">
+            <div class="col-md-12" align="right">
+              <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || loading">
+                <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+                <span *ngIf="!loading">Iniciar</span>
+                <span *ngIf="loading">Espere por favor</span>
+              </button>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col-md-12" align="center">
+              <b>¿No tienes una cuenta?</b> <a routerLink="/registrar">Crear una cuenta</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

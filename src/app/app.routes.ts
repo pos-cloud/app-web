@@ -87,7 +87,7 @@ const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'registrar', component: RegisterComponent },
   {
     path: 'admin/statistics',
     component: StatisticsComponent,
