@@ -212,6 +212,15 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
+          <label for="allowEdit" class="control-label">¿Se puede editar el documento?</label>
+          <select class="form-control" formControlName="allowEdit">
+            <option value="true" selected>Si</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
           <label for="allowDelete" class="control-label">¿Se puede borrar el documento?</label>
           <select class="form-control" formControlName="allowDelete">
             <option value="true" selected>Si</option>

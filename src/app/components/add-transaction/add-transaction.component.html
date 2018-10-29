@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar {{transaction.type.name}}</h4>
+  <h4 class="modal-title" *ngIf="!transaction._id || transaction._id === ''">Agregar {{transaction.type.name}}</h4>
+  <h4 class="modal-title" *ngIf="transaction._id && transaction._id !== ''">Editar {{transaction.type.name}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -23,7 +24,7 @@
           <input type="text" class="form-control" formControlName="company" name="company" readonly/>
         </div>
         <div class="col-md-2" align="right">
-          <button type="button" class="btn btn-secondary" (click)="activeModal.close('change-company')">
+          <button type="button" class="btn btn-secondary" (click)="changeCompany()">
             Cambiar
           </button>
         </div>
@@ -136,6 +137,18 @@
           <label for="observation" class="control-label">Observación:</label>
           <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [disabled]="readonly">
           </textarea>
+        </div>
+      </div>
+      <div class="row" *ngIf="transaction.type.allowEdit">
+        <div class="form-group col-md-12">
+          <label for="state" class="control-label">Estado</label>
+          <select class="form-control" formControlName="state">
+            <option *ngFor="let state of states"
+                    [selected]="transaction.state && state === transaction.state"
+                    [value]="state">
+              {{state}}
+            </option>
+          </select>
         </div>
       </div>
     </div>

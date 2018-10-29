@@ -30,6 +30,7 @@ export class TransactionType {
 	public cashOpening: boolean = false;
 	public cashClosing: boolean = false;
   public allowAPP: boolean = false;
+  public allowEdit: boolean = false;
   public allowDelete: boolean = false;
   public requestEmployee: EmployeeType;
   public fastPayment: PaymentMethod;

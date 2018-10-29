@@ -37,6 +37,7 @@
             <th>Cídigo A</th>
             <th>Cídigo B</th>
             <th>Cídigo C</th>
+            <th (click)="orderBy('allowEdit')">Permite Editar</th>
             <th (click)="orderBy('allowDelete')">Permite Eliminar</th>
             <th (click)="orderBy('printable')">Imprime al finalizar</th>
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
@@ -65,6 +66,7 @@
             <th></th>
             <th></th>
             <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Editar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Eliminar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
@@ -90,6 +92,7 @@
                                                               | filter: filterFixedOrigin:'fixedOrigin'
                                                               | filter: filterFixedLetter:'letter'
                                                               | filter: filterElectronics:'electronics'
+                                                              | filter: filterAllowEdit:'allowEdit'
                                                               | filter: filterAllowDelete:'allowDelete'
                                                               | filter: filterPrintable:'printable'
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
@@ -131,6 +134,7 @@
             <td class="flat">{{getCode(transactionType, "A")}}</td>
             <td class="flat">{{getCode(transactionType, "B")}}</td>
             <td class="flat">{{getCode(transactionType, "C")}}</td>
+            <td class="flat">{{transactionType.allowEdit}}</td>
             <td class="flat">{{transactionType.allowDelete}}</td>
             <td class="flat">{{transactionType.printable}}</td>
             <td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>

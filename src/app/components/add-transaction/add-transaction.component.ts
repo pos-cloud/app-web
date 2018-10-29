@@ -9,9 +9,9 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Transaction } from './../../models/transaction';
+import { Transaction, TransactionState } from './../../models/transaction';
 import { TransactionMovement } from './../../models/transaction-type';
-import { Company } from './../../models/company';
+import { Company, CompanyType } from './../../models/company';
 import { Taxes } from '../../models/taxes';
 import { Employee } from './../../models/employee';
 
@@ -24,6 +24,7 @@ import { EmployeeService } from './../../services/employee.service';
 //Pipes
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { ListCompaniesComponent } from '../list-companies/list-companies.component';
 
 @Component({
   selector: 'app-add-transaction',
@@ -49,6 +50,15 @@ export class AddTransactionComponent implements OnInit {
   public transactionMovement: string;
   public employees: Employee[] = new Array();
   public readonly: boolean = false;
+  public states: TransactionState[] = [
+    TransactionState.Open,
+    TransactionState.Canceled,
+    TransactionState.Closed,
+    TransactionState.Delivered,
+    TransactionState.Sent,
+    TransactionState.Pending
+  ];
+  public companyName: string = "Consumidor Final";
 
   public formErrors = {
     'date': '',
@@ -110,6 +120,10 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
+    if(this.transaction.company) {
+      this.companyName = this.transaction.company.name;
+    }
+
     // VERIFICAMOS PARA LAS COMPROBACIONES DE INTERFAZ QUE TIPO DE MOVIMIENTO ES
     this.transactionMovement = this.transaction.type.transactionMovement.toString();
 
@@ -143,7 +157,7 @@ export class AddTransactionComponent implements OnInit {
   public buildForm(): void {
 
     this.transactionForm = this._fb.group({
-      'company': [this.transaction.company.name, [
+      'company': [this.companyName, [
           Validators.required
         ]
       ],
@@ -181,6 +195,9 @@ export class AddTransactionComponent implements OnInit {
       'employeeOpening': [this.transaction.employeeOpening, [
         ]
       ],
+      'state': [this.transaction.state, [
+        ]
+      ],
     });
 
     this.transactionForm.valueChanges
@@ -208,8 +225,12 @@ export class AddTransactionComponent implements OnInit {
       }
     }
 
+    if (this.transaction.company) {
+      this.companyName = this.transaction.company.name;
+    }
+
     this.transactionForm.setValue({
-      'company': this.transaction.company.name,
+      'company': this.companyName,
       'date': moment(this.transaction.startDate).format('YYYY-MM-DD'),
       'origin': this.transaction.origin,
       'letter': this.transaction.letter,
@@ -218,7 +239,8 @@ export class AddTransactionComponent implements OnInit {
       'exempt': this.transaction.exempt,
       'totalPrice': this.transaction.totalPrice,
       'observation': this.transaction.observation,
-      'employeeOpening': employeeOpening
+      'employeeOpening': employeeOpening,
+      'state': this.transaction.state
     });
   }
 
@@ -237,6 +259,46 @@ export class AddTransactionComponent implements OnInit {
           this.formErrors[field] += messages[key] + ' ';
         }
       }
+    }
+  }
+
+  public changeCompany(): void {
+    if (this.transaction._id && this.transaction._id !== '') {
+      this.openModal('change-company', this.transaction);
+    } else {
+      this.activeModal.close('change-company');
+    }
+  }
+
+  public openModal(
+    op: string,
+    transaction?: Transaction): void {
+
+    let modalRef;
+
+    switch (op) {
+      case 'change-company':
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        if (transaction.type.transactionMovement === TransactionMovement.Purchase) {
+          modalRef.componentInstance.type = CompanyType.Provider;
+        } else if (transaction.type.transactionMovement === TransactionMovement.Sale) {
+          modalRef.componentInstance.type = CompanyType.Client;
+        }
+        modalRef.result.then(
+          (result) => {
+            if (result.company) {
+              if (!transaction) {
+                transaction = new Transaction();
+              }
+              transaction.company = result.company;
+            }
+          }, (reason) => {
+
+          }
+        );
+        break;
+      default:
+        break;
     }
   }
 
@@ -340,6 +402,9 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.number = this.transactionForm.value.number;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
+      if (this.transactionForm.value.state) {
+        this.transaction.state = this.transactionForm.value.state;
+      }
 
       if(this.transaction._id && this.transaction._id !== '') {
         this.updateTransaction();

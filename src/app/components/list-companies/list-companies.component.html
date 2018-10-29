@@ -140,89 +140,89 @@
 </section>
 
 <section class="container-fluid" *ngIf="userType=='pos'">
-    <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
-      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-        {{alertMessage}}
-      </ngb-alert>
-    </div>
-    <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Listado de Empresas
-        <div class="pull-right">
-          <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Empresa</i></button>
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        </div>
+  <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Listado de Empresas
+      <div class="pull-right">
+        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Empresa</i></button>
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
       </div>
-        <div class="card-block table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th (click)="orderBy('name')">Nombre </th>
-                <th (click)="orderBy('name')">Condición IVA </th>
-                <th (click)="orderBy('DNI')">DNI </th>
-                <th (click)="orderBy('CUIT')">CUIT </th>
-                <th (click)="orderBy('address')">Dirección </th>
-                <th (click)="orderBy('phones')">Teléfonos </th>
-              </tr>
-              <tr>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
-                  <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
-                                                    | filter: filterCode:'code'
-                                                    | filter: filterName:'name'
-                                                    | filter: filterVATCondition:'description':'vatCondition'
-                                                    | filter: filterDNI:'DNI'
-                                                    | filter: filterCUIT:'CUIT'
-                                                    | filter: filterAddress:'address'
-                                                    | filter: filterPhones:'phones'
-                                                    | paginate: { itemsPerPage: itemsPerPage,
-                                                                  currentPage: p,
-                                                                  totalItems: totalItems
-                                                                }"
-                  (click)="selectCompany(company)">
-                <td>{{company.name}}</td>
-                <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
-                <td *ngIf="!company.vatCondition">Consumidor Final</td>
-                <td>{{company.DNI}}</td>
-                <td>{{company.CUIT}}</td>
-                <td>{{company.address}}</td>
-                <td>{{company.phones}}</td>
-              </tr>
-              <tr align="center" *ngIf="areCompaniesEmpty">
-                <td colspan="7">No se encontraron empresas</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer bg-primary">
-          <div class="row">
-            <div class="col-md-10">
-              <pagination-controls
-                      class="my-pagination"
-                      (pageChange)="p=$event"
-                      #api
-                      previousLabel="Ant."
-                      nextLabel="Sig."
-                      autoHide="true">
-              </pagination-controls>
-            </div>
-            <div class="form-group col-md-2">
-              <select class="form-control" [(ngModel)]="itemsPerPage">
-                <option [value]="5">Mostrar 5 ítems</option>
-                <option [value]="10">Mostrar 10 ítems</option>
-                <option [value]="15">Mostrar 15 ítems</option>
-                <option [value]="20">Mostrar 20 ítems</option>
-                <option [value]="50">Mostrar 50 ítems</option>
-                <option [value]="100">Mostrar 100 ítems</option>
-              </select>
-            </div>
+    </div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('name')">Nombre </th>
+              <th (click)="orderBy('name')">Condición IVA </th>
+              <th (click)="orderBy('DNI')">DNI </th>
+              <th (click)="orderBy('CUIT')">CUIT </th>
+              <th (click)="orderBy('address')">Dirección </th>
+              <th (click)="orderBy('phones')">Teléfonos </th>
+            </tr>
+            <tr>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
+                                                  | filter: filterCode:'code'
+                                                  | filter: filterName:'name'
+                                                  | filter: filterVATCondition:'description':'vatCondition'
+                                                  | filter: filterDNI:'DNI'
+                                                  | filter: filterCUIT:'CUIT'
+                                                  | filter: filterAddress:'address'
+                                                  | filter: filterPhones:'phones'
+                                                  | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: p,
+                                                                totalItems: totalItems
+                                                              }"
+                (click)="selectCompany(company)">
+              <td>{{company.name}}</td>
+              <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
+              <td *ngIf="!company.vatCondition">Consumidor Final</td>
+              <td>{{company.DNI}}</td>
+              <td>{{company.CUIT}}</td>
+              <td>{{company.address}}</td>
+              <td>{{company.phones}}</td>
+            </tr>
+            <tr align="center" *ngIf="areCompaniesEmpty">
+              <td colspan="7">No se encontraron empresas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls
+                    class="my-pagination"
+                    (pageChange)="p=$event"
+                    #api
+                    previousLabel="Ant."
+                    nextLabel="Sig."
+                    autoHide="true">
+            </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 ítems</option>
+              <option [value]="10">Mostrar 10 ítems</option>
+              <option [value]="15">Mostrar 15 ítems</option>
+              <option [value]="20">Mostrar 20 ítems</option>
+              <option [value]="50">Mostrar 50 ítems</option>
+              <option [value]="100">Mostrar 100 ítems</option>
+            </select>
           </div>
         </div>
-    </div>
-  </section>
+      </div>
+  </div>
+</section>

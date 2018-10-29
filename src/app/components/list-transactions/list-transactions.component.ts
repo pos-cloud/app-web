@@ -22,6 +22,7 @@ import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -142,6 +143,10 @@ export class ListTransactionsComponent implements OnInit {
     switch (op) {
       case 'view':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = transaction;
+        break;
+      case 'edit':
+        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = transaction;
         break;
       case 'print':

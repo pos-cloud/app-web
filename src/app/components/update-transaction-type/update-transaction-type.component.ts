@@ -227,6 +227,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'entryAmount': [this.transactionType.entryAmount, [
         ]
       ],
+      'allowEdit': [this.transactionType.allowEdit, [
+        ]
+      ],
       'allowDelete': [this.transactionType.allowDelete, [
         ]
       ],
@@ -296,6 +299,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
       if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
+    if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
     if (!this.transactionType.requestEmployee) this.transactionType.requestEmployee = null;
     if (!this.transactionType.fastPayment) this.transactionType.fastPayment = null;
 
@@ -328,6 +332,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
       'allowAPP': this.transactionType.allowAPP,
       'showPrices': this.transactionType.showPrices,
       'entryAmount': this.transactionType.entryAmount,
+      'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,
       'requestEmployee': this.transactionType.requestEmployee,
       'fastPayment': this.transactionType.fastPayment
