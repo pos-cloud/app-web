@@ -136,6 +136,24 @@
                 </div>
           </ng-template>
       </ngb-tab>
+      <ngb-tab title="AFIP" *ngIf="transaction.type && transaction.type.electronics">
+        <ng-template ngbTabContent>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>CAE</th>
+                  <th>Fecha Vencimiento CAE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>{{transaction.CAE}}</td>
+                <td>{{transaction.CAEExpirationDate | dateFormat:'DD/MM/YYYY' }}</td>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </ngb-tab>
     </ngb-tabset>
   </div>
   <div class="modal-footer">
