@@ -13,6 +13,10 @@ export class CashBoxService {
     public _userService: UserService
   ) { }
 
+  getCortizacion() {
+		return this._http.get('http://ws.geeklab.com.ar/dolar/get-dolar-json.php').map(res => res.json());
+	}	  
+
   getOpenCashBox (employeeId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

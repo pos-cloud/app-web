@@ -88,6 +88,7 @@ export class AddSaleOrderComponent implements OnInit {
   public amountModifyStock = 0; //Saber cuando termina de actualizar el stock
   public areMovementsOfArticlesEmpty: boolean = true;
   public apiURL = Config.apiURL;
+  public dolar;
 
   constructor(
     public _transactionService: TransactionService,
@@ -118,6 +119,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.quotation();
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -147,6 +149,23 @@ export class AddSaleOrderComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public quotation(){
+
+    this._cashBoxService.getCortizacion().subscribe(
+      result => {
+        if(!result){
+          console.log("no hay cotizaciones")
+        } else {
+          console.log("result"+result.libre)
+          this.dolar = result.libre;
+        }
+      },
+      error => {
+          console.log("error"+error)
+      }
+    );
   }
 
   public getTransactionType(transactionTypeID: string): void {
