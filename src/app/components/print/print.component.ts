@@ -677,7 +677,7 @@ export class PrintComponent implements OnInit {
   public toPrintPayment(): void {
 
     // Encabezado de la transacción
-    this.getHeader();
+    this.getHeader(true);
     this.getClient();
 
     // Dibujar la linea cortada para la letra
@@ -959,7 +959,7 @@ export class PrintComponent implements OnInit {
     this.loading = true;
     this.showMessage("Imprimiendo, Espere un momento...", 'info', false);
 
-    this.getHeader();
+    this.getHeader(false);
 
     let decimalPipe = new DeprecatedDecimalPipe('es-AR');
 
@@ -1045,37 +1045,13 @@ export class PrintComponent implements OnInit {
       }
 
       // DATOS DE LA EMPRESA O IMAGEN
+      console.log(!logoPrint);
+      console.log(!this.config[0].companyPicture);
       if (!logoPrint || !this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-
-        this.doc.setFontSize(this.fontSizes.extraLarge)
-        this.doc.setFontType('bold')
-        this.doc.setFontSize(this.fontSizes.extraLarge)
-        this.doc.setFontType('bold')
-        if (this.config[0].companyFantasyName) {
-          this.centerText(8, 8, 105, 0, 20, this.config[0].companyFantasyName);
-        } else {
-          this.centerText(8, 8, 105, 0, 20, this.config[0].companyName);
-        }
-        this.doc.setFontSize(this.fontSizes.normal)
-        this.doc.setFontType('normal')
-        if(this.config[0].companyName) {
-          this.doc.setFontType('bold')
-          this.doc.text("Razón Social:", 8, 35)
-          this.doc.setFontType('normal')
-          this.doc.text(this.config[0].companyName, 32, 35);
-        }
-        if (this.config[0].companyAddress) {
-          this.doc.setFontType('bold')
-          this.doc.text("Domicilio Comercial:", 8, 40);
-          this.doc.setFontType('normal')
-          this.doc.text(this.config[0].companyAddress, 45, 40);
-        }
-        if (this.config[0].companyVatCondition) {
-          this.doc.setFontType('bold')
-          this.doc.text("Condición de IVA:", 8, 45)
-          this.doc.setFontType('normal')
-          this.doc.text(this.config[0].companyVatCondition.description, 40, 45);
-        }
+        console.log("si");
+        this.getCompanyData();
+      } else {
+        console.log("no");
       }
     }
     this.doc.setFontSize(this.fontSizes.normal)
@@ -1084,25 +1060,45 @@ export class PrintComponent implements OnInit {
 
   public getCompanyData(): void {
 
+    console.log("getCompanyData");
     this.doc.setFontSize(this.fontSizes.extraLarge)
     this.doc.setFontType('bold')
-    this.doc.setFontSize(this.fontSizes.extraLarge)
-    this.doc.setFontType('bold')
-    if (this.config[0].companyName) {
-      this.centerText(5, 5, 105, 0, 20, this.config[0].companyName);
+    if (this.config[0].companyFantasyName) {
+      this.centerText(8, 8, 105, 0, 20, this.config[0].companyFantasyName);
+    } else {
+      this.centerText(8, 8, 105, 0, 20, this.config[0].companyName);
     }
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.setFontType('normal');
-    if (this.config[0].companyAddress) {
-      this.centerText(5, 5, 105, 0, 30, this.config[0].companyAddress);
+    this.doc.setFontSize(this.fontSizes.normal)
+    this.doc.setFontType('normal')
+    if (this.config[0].companyName) {
+      this.doc.setFontType('bold')
+      this.doc.text("Razón Social:", 8, 30)
+      this.doc.setFontType('normal')
+      this.doc.text(this.config[0].companyName, 32, 30);
     }
     if (this.config[0].companyPhone) {
-      this.centerText(5, 5, 105, 0, 35, '(' + this.config[0].companyPhone + ')');
+      this.doc.setFontType('bold')
+      this.doc.text("Teléfono:", 8, 35)
+      this.doc.setFontType('normal')
+      this.doc.text(this.config[0].companyPhone, 25, 35);
+    }
+    if (this.config[0].companyAddress) {
+      this.doc.setFontType('bold')
+      this.doc.text("Domicilio Comercial:", 8, 40);
+      this.doc.setFontType('normal')
+      this.doc.text(this.config[0].companyAddress, 45, 40);
+    }
+    if (this.config[0].companyVatCondition) {
+      this.doc.setFontType('bold')
+      this.doc.text("Condición de IVA:", 8, 45)
+      this.doc.setFontType('normal')
+      this.doc.text(this.config[0].companyVatCondition.description, 40, 45);
     }
   }
 
   public getCompanyPicture(lmargin, rmargin, width, height): void {
 
+    console.log("getCompanyPicture");
     this.loading = true;
     this._configService.getCompanyPicture(this.config[0]['companyPicture']).subscribe(
       result => {
@@ -1111,6 +1107,7 @@ export class PrintComponent implements OnInit {
           this.finishImpression();
           this.loading = false;
         } else {
+          console.log("entro");
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
           this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
@@ -1119,6 +1116,7 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
+        console.log(error);
         this.getCompanyData();
         this.finishImpression();
         this.loading = false;
@@ -1199,7 +1197,7 @@ export class PrintComponent implements OnInit {
 
     let margin = 5;
 
-    this.getHeader(false);
+    this.getHeader(true);
     this.getClient();
 
     // Encabezado de la tabla de Detalle de transacciones
@@ -1253,7 +1251,7 @@ export class PrintComponent implements OnInit {
 
           row = 85;
           this.doc.addPage();
-          this.getHeader(false);
+          this.getHeader(true);
           this.getClient();
 
           // Encabezado de la tabla de Detalle de transacciones
@@ -1299,7 +1297,7 @@ export class PrintComponent implements OnInit {
     var transport =0;
 
     // Encabezado de la transacción
-    this.getHeader();
+    this.getHeader(true);
     this.getClient();
 
     // Dibujar la linea cortada para la letra
@@ -1423,7 +1421,7 @@ export class PrintComponent implements OnInit {
           this.doc.text("TRANSPORTE:".toString(),25,85);
           this.doc.text(transport.toString(),185,85);
 
-          this.getHeader();
+          this.getHeader(true);
           this.getClient();
 
           // Dibujar la linea cortada para la letra
