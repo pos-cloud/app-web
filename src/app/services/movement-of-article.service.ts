@@ -44,13 +44,13 @@ export class MovementOfArticleService {
     }
   }
 
-  movementOfArticleExists(movementOfArticle: MovementOfArticle) {
+  movementOfArticleExists(articleId: string, transactionId: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    return this._http.get(Config.apiURL + 'movements-of-articles/where="article":"' + movementOfArticle.article._id + '","transaction":"' + movementOfArticle.transaction._id + '"', { headers: headers }).map(res => res.json());
+    return this._http.get(Config.apiURL + 'movements-of-articles/where="article":"' + articleId + '","transaction":"' + transactionId + '"', { headers: headers }).map(res => res.json());
   }
 
   saveMovementOfArticle (movementOfArticle: MovementOfArticle) {

@@ -1045,13 +1045,8 @@ export class PrintComponent implements OnInit {
       }
 
       // DATOS DE LA EMPRESA O IMAGEN
-      console.log(!logoPrint);
-      console.log(!this.config[0].companyPicture);
       if (!logoPrint || !this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-        console.log("si");
         this.getCompanyData();
-      } else {
-        console.log("no");
       }
     }
     this.doc.setFontSize(this.fontSizes.normal)
@@ -1060,7 +1055,6 @@ export class PrintComponent implements OnInit {
 
   public getCompanyData(): void {
 
-    console.log("getCompanyData");
     this.doc.setFontSize(this.fontSizes.extraLarge)
     this.doc.setFontType('bold')
     if (this.config[0].companyFantasyName) {
@@ -1098,7 +1092,6 @@ export class PrintComponent implements OnInit {
 
   public getCompanyPicture(lmargin, rmargin, width, height): void {
 
-    console.log("getCompanyPicture");
     this.loading = true;
     this._configService.getCompanyPicture(this.config[0]['companyPicture']).subscribe(
       result => {
@@ -1107,7 +1100,6 @@ export class PrintComponent implements OnInit {
           this.finishImpression();
           this.loading = false;
         } else {
-          console.log("entro");
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
           this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
@@ -1116,7 +1108,6 @@ export class PrintComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        console.log(error);
         this.getCompanyData();
         this.finishImpression();
         this.loading = false;

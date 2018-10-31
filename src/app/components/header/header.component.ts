@@ -73,7 +73,6 @@ export class HeaderComponent implements OnInit {
       // });
     } else {
       this._router.events.filter(e => e instanceof NavigationEnd).first().subscribe(() => {
-        console.log(this._router.url);
         if (this._userService.getDatabase() && this._router.url !== "/registrar") {
           this._router.navigate(['/login']);
         } else {
