@@ -1307,7 +1307,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Comp. Nº:", 110, 25);
     this.doc.setFontType('normal');
-    this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 25);
+    this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 130, 25);
     this.doc.setFontType('bold');
     this.doc.text("Fecha:", 110, 30);
     this.doc.setFontType('normal');
