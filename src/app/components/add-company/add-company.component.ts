@@ -151,7 +151,6 @@ export class AddCompanyComponent  implements OnInit {
     this._companyGroupService.getCompaniesGroup().subscribe(
       result => {
         if (!result.companiesGroup) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.companiesGroup = result.companiesGroup;
         }

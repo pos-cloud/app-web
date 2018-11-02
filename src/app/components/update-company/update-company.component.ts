@@ -315,7 +315,6 @@ export class UpdateCompanyComponent implements OnInit {
     this._companyGroupService.getCompaniesGroup().subscribe(
       result => {
         if (!result.companiesGroup) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.hideMessage();
         } else {
           this.companiesGroup = result.companiesGroup;
