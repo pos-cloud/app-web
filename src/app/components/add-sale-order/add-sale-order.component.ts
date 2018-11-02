@@ -1166,6 +1166,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
       this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      this.transaction.VATPeriod = moment().format('YYYYMM');
       this.transaction.expirationDate = this.transaction.endDate;
     }
     this.transaction.state = TransactionState.Closed;
