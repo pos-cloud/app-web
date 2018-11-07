@@ -37,15 +37,15 @@
 						</div>
 						<div class="row">
 							<div class="form-group col-md-3">
-								<label for="identityType" class="control-label"></label>
+								<label for="identityType" class="control-label">Tipo de Identificación</label>
 								<select class="form-control" formControlName="identityType">
 									<option *ngFor="let identityType of identityTypes" [selected]="identityTypeSelected === identityType">
 										{{identityType}}
 									</option>
 								</select>
 							</div>
-							<div class="form-group col-md-9" *ngIf="identityTypeSelected==='CUIT'">
-								<label for="CUIT" class="control-label"></label>
+							<div class="form-group col-md-4" *ngIf="identityTypeSelected==='CUIT'">
+								<label for="CUIT" class="control-label">Número</label>
 								<div class="input-group">
 									<input type="text" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
 								</div>
@@ -53,15 +53,21 @@
 									{{ formErrors.CUIT }}
 								</div>
 							</div>
-							<div class="form-group col-md-9" *ngIf="identityTypeSelected==='DNI'">
-								<label for="DNI" class="control-label"></label>
+							<div class="form-group col-md-4" *ngIf="identityTypeSelected==='DNI'">
+								<label for="DNI" class="control-label">Número</label>
 								<div class="input-group">
 									<input type="number" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent"/>
 								</div>
 								<div *ngIf="formErrors.DNI" class="alert alert-danger">
 									{{ formErrors.DNI }}
 								</div>
-							</div>
+              </div>
+              <div class="form-group col-md-5">
+                <label for="grossIncome" class="control-label">Ingresos Brutos:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" formControlName="grossIncome" name="grossIncome" id="grossIncome" />
+                </div>
+              </div>
 						</div>
 						<div class="row">
 							<div class="form-group col-md-6">
@@ -146,7 +152,7 @@
 						<div class = "row">
 							<div class="form-group col-md-12">
 								<label for="observation" class="control-label">Observación:</label>
-								<input type="text" class="form-control" formControlName="observation" name="observation" id="observation"/>
+								<textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
 								<div *ngIf="formErrors.observation" class="alert alert-danger">
 									{{ formErrors.observation }}
 								</div>

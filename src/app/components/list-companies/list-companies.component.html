@@ -27,6 +27,7 @@
               <th (click)="orderBy('vatCondition','description')">Condición de IVA</th>
               <th (click)="orderBy('DNI')">DNI</th>
               <th (click)="orderBy('CUIT')">CUIT</th>
+              <th (click)="orderBy('grossIncome')">Ingresos Brutos</th>
               <th (click)="orderBy('address')">Dirección</th>
               <th (click)="orderBy('city')">Ciudad</th>
               <th (click)="orderBy('phones')">Teléfonos</th>
@@ -43,6 +44,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDNI" placeholder="DNI..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCUIT" placeholder="CUIT..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterGrossIncome" placeholder="Ingresos Brutos..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
@@ -59,6 +61,7 @@
                                                   | filter: filterVATCondition:'description':'vatCondition'
                                                   | filter: filterCUIT:'CUIT'
                                                   | filter: filterDNI:'DNI'
+                                                  | filter: filterGrossIncome: 'grossIncome'
                                                   | filter: filterAddress:'address'
                                                   | filter: filterCity:'city'
                                                   | filter: filterPhones:'phones'
@@ -83,6 +86,7 @@
               <td *ngIf="!company.vatCondition">Consumidor Final</td>
               <td>{{company.DNI}}</td>
               <td>{{company.CUIT}}</td>
+              <td>{{company.grossIncome}}</td>
               <td>{{company.address}}</td>
               <td>{{company.city}}</td>
               <td>{{company.phones}}</td>
