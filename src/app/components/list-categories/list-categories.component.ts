@@ -51,7 +51,7 @@ export class ListCategoriesComponent implements OnInit {
     if (this.userType !== "pos") {
       this.orderTerm = ['description'];
     } else {
-      this.orderTerm = ['-order'];
+      this.orderTerm = ['order'];
     }
     this.getCategories();
   }
