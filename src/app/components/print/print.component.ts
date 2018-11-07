@@ -1061,10 +1061,10 @@ export class PrintComponent implements OnInit {
     let decimalPipe = new DeprecatedDecimalPipe('es-AR');
 
     // Título
-    this.doc.setFontSize(this.fontSizes.extraLarge)
-    this.doc.text("Cierre de Turno", 140, 10)
-    this.doc.setFontSize(this.fontSizes.large)
-    this.doc.setFontType('normal')
+    this.doc.setFontSize(this.fontSizes.extraLarge);
+    this.doc.text("Cierre de Turno", 140, 10);
+    this.doc.setFontSize(this.fontSizes.large);
+    this.doc.setFontType('normal');
 
     // Detalle del turno
     let row = 70;
@@ -1215,7 +1215,7 @@ export class PrintComponent implements OnInit {
   public getClient() {
 
     // Lineas divisorias horizontales para el receptor
-    this.doc.line(0, 70, 240, 70);
+    this.doc.line(0, 72, 240, 72);
     this.doc.line(0, 80, 240, 80);
 
     // Detalle receptor
@@ -1223,6 +1223,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Nombre y Apellido:", 8, 55);
     this.doc.text("Condición de IVA:", 8, 65);
+    this.doc.text("Ingresos Brutos:", 8, 70);
     this.doc.text("Dirección:", 110, 55);
     this.doc.text("Teléfono:", 110, 60);
     this.doc.text("Localidad:", 110, 65);
@@ -1244,6 +1245,9 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
       if (this.company.vatCondition) {
         this.doc.text(this.company.vatCondition.description, 40, 65);
+      }
+      if (this.company.grossIncome) {
+        this.doc.text(this.company.grossIncome, 38, 70);
       }
       if (this.company.address) {
         this.doc.text(this.company.address, 130, 55);
@@ -1462,24 +1466,24 @@ export class PrintComponent implements OnInit {
               this.movementsOfArticles[i].make.visibleSale) {
             if (this.movementsOfArticles[i].category.visibleInvoice === true &&
                 this.movementsOfArticles[i].make.visibleSale === true) {
-              this.doc.text(this.movementsOfArticles[i].description + ' - ' +
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' +
                             this.movementsOfArticles[i].category.description + ' - ' +
-                            this.movementsOfArticles[i].make.description, 46, row);
+                            this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
             } else if ( this.movementsOfArticles[i].category.visibleInvoice === true &&
                         this.movementsOfArticles[i].make.visibleSale === false) {
-              this.doc.text(this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description, 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 49), 46, row);
             } else if (this.movementsOfArticles[i].make.visibleSale === true && this.movementsOfArticles[i].category.visibleInvoice === false) {
-              this.doc.text(this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description, 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
             }
           } else {
             if (this.movementsOfArticles[i].category &&
                 this.movementsOfArticles[i].category.visibleInvoice &&
                 this.movementsOfArticles[i].category.visibleInvoice === true){
-              this.doc.text(this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description, 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 49), 46, row);
             }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale === true){
-              this.doc.text(this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description, 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
             } else
-            this.doc.text(this.movementsOfArticles[i].description, 46, row);
+              this.doc.text((this.movementsOfArticles[i].description).slice(0, 49), 46, row);
           }
 
         }
