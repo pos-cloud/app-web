@@ -907,7 +907,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(10, 5, 80, 40);
+      this.getCompanyPicture(10, 5, 80, 40, true);
     }
   }
 
@@ -1151,62 +1151,68 @@ export class PrintComponent implements OnInit {
   }
 
   public getCompanyData(): void {
-
-    this.doc.setFontSize(this.fontSizes.extraLarge)
-    this.doc.setFontType('bold')
+    console.log("getCompanyData");
+    this.doc.setFontSize(this.fontSizes.extraLarge);
+    this.doc.setFontType('bold');
     if (this.config[0].companyFantasyName) {
       this.centerText(8, 8, 105, 0, 20, this.config[0].companyFantasyName);
     } else {
       this.centerText(8, 8, 105, 0, 20, this.config[0].companyName);
     }
-    this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.setFontType('normal')
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('normal');
     if (this.config[0].companyName) {
-      this.doc.setFontType('bold')
-      this.doc.text("Razón Social:", 8, 30)
-      this.doc.setFontType('normal')
+      this.doc.setFontType('bold');
+      this.doc.text("Razón Social:", 8, 30);
+      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyName, 32, 30);
     }
     if (this.config[0].companyPhone) {
-      this.doc.setFontType('bold')
-      this.doc.text("Teléfono:", 8, 35)
-      this.doc.setFontType('normal')
+      this.doc.setFontType('bold');
+      this.doc.text("Teléfono:", 8, 35);
+      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyPhone, 25, 35);
     }
     if (this.config[0].companyAddress) {
-      this.doc.setFontType('bold')
+      this.doc.setFontType('bold');
       this.doc.text("Domicilio Comercial:", 8, 40);
-      this.doc.setFontType('normal')
+      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyAddress, 45, 40);
     }
     if (this.config[0].companyVatCondition) {
-      this.doc.setFontType('bold')
-      this.doc.text("Condición de IVA:", 8, 45)
-      this.doc.setFontType('normal')
+      this.doc.setFontType('bold');
+      this.doc.text("Condición de IVA:", 8, 45);
+      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyVatCondition.description, 40, 45);
     }
   }
 
-  public getCompanyPicture(lmargin, rmargin, width, height): void {
+  public getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false): void {
 
     this.loading = true;
     this._configService.getCompanyPicture(this.config[0]['companyPicture']).subscribe(
       result => {
         if (!result.imageBase64) {
           this.getCompanyData();
-          this.finishImpression();
+          if (finish) {
+            this.finishImpression();
+          }
           this.loading = false;
         } else {
           this.hideMessage();
           let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
           this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
-          this.finishImpression();
+          if (finish) {
+            this.finishImpression();
+          }
         }
         this.loading = false;
       },
       error => {
         this.getCompanyData();
-        this.finishImpression();
+        if (finish) {
+          this.finishImpression();
+        }
         this.loading = false;
       }
     );
@@ -1289,7 +1295,7 @@ export class PrintComponent implements OnInit {
 
     let margin = 5;
 
-    this.getHeader(true);
+    this.getHeader(false);
     this.getClient();
 
     // Encabezado de la tabla de Detalle de transacciones
@@ -1297,7 +1303,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Fecha", margin, 77);
     this.doc.text("Tipo Comp.", 25, 77);
-    this.doc.text("Nro Comprobante.", 53, 77);
+    this.doc.text("Nro Comprobante", 53, 77);
     this.doc.text("Monto", 90, 77);
     this.doc.text("Método", 110, 77);
     this.doc.text("Debe", 145, 77);
@@ -1339,11 +1345,13 @@ export class PrintComponent implements OnInit {
         row += 8;
         i++;
 
-        if (i == 26) {
+        if (i == 20) {
 
+          this.getGreeting();
+          this.getFooter();
           row = 85;
           this.doc.addPage();
-          this.getHeader(true);
+          this.getHeader(false);
           this.getClient();
 
           // Encabezado de la tabla de Detalle de transacciones
@@ -1424,7 +1432,6 @@ export class PrintComponent implements OnInit {
     this.doc.setDrawColor("Black");
     this.doc.rect(100, 3, 10, 10);
     this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-    var code;
     if (this.transaction.type.codes){
       for (let i = 0; i < this.transaction.type.codes.length; i++) {
         if(this.transaction.letter === this.transaction.type.codes[i].letter){
@@ -1439,14 +1446,14 @@ export class PrintComponent implements OnInit {
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Cantidad", 5, 77);
-    this.doc.text("Código", 25, 77);
+    this.doc.text("Cant.", 5, 77);
+    this.doc.text("Código", 18, 77);
     this.doc.text("Detalle", 45, 77);
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Precio U.", 155, 77);
       this.doc.text("Total", 185, 77);
-      this.doc.setFontType('normal');
     }
+    this.doc.setFontType('normal');
 
     // Detalle de productos
     var row = 85;
@@ -1457,7 +1464,7 @@ export class PrintComponent implements OnInit {
           this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
         }
         if (this.movementsOfArticles[i].code) {
-          this.doc.text((this.movementsOfArticles[i].code).toString(), 26, row);
+          this.doc.text((this.movementsOfArticles[i].code).toString(), 19, row);
         }
         if (this.movementsOfArticles[i].description) {
           if( this.movementsOfArticles[i].category &&
@@ -1487,14 +1494,15 @@ export class PrintComponent implements OnInit {
           }
 
         }
-        if (this.movementsOfArticles[i].notes) {
-          this.doc.setFontStyle("italic");
-          this.doc.text(this.movementsOfArticles[i].notes, 25, row + 5);
-          this.doc.setFontStyle("normal");
-        }
         if (this.transaction.type && this.transaction.type.showPrices) {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row);
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+        }
+        if (this.movementsOfArticles[i].notes) {
+          this.doc.setFontStyle("italic");
+          this.doc.text(this.movementsOfArticles[i].notes.slice(0, 49), 46, row + 5);
+          this.doc.setFontStyle("normal");
+          row += 5;
         }
 
         transport = transport + this.movementsOfArticles[i].salePrice;
@@ -1505,6 +1513,7 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
           this.doc.text(transport.toString(),185, row);
+          this.getCompanyPicture(10, 5, 80, 40);
           row = 95;
           this.doc.addPage();
 
@@ -1642,7 +1651,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(10, 5, 80, 40);
+      this.getCompanyPicture(10, 5, 80, 40, true);
     }
   }
 
@@ -1915,7 +1924,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(3, 3, 40, 26);
+      this.getCompanyPicture(3, 3, 40, 26, true);
     }
   }
 
