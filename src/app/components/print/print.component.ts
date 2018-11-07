@@ -1151,7 +1151,7 @@ export class PrintComponent implements OnInit {
   }
 
   public getCompanyData(): void {
-    console.log("getCompanyData");
+
     this.doc.setFontSize(this.fontSizes.extraLarge);
     this.doc.setFontType('bold');
     if (this.config[0].companyFantasyName) {
