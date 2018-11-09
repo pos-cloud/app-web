@@ -15,6 +15,7 @@ export class Company {
     public vatCondition: VATCondition;
     public CUIT: string;
     public DNI: string;
+    public grossIncome: string;
     public address: string;
     public city: string;
     public phones: string;

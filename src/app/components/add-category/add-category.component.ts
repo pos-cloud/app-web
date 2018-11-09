@@ -29,11 +29,15 @@ export class AddCategoryComponent  implements OnInit {
   public imageURL: string;
 
   public formErrors = {
+    'order': '',
     'description': '',
     'visibleInvoice': ''
   };
 
   public validationMessages = {
+    'order': {
+      'required': 'Este campo es requerido.'
+    },
     'description': {
       'required':       'Este campo es requerido.'
     }
@@ -54,6 +58,7 @@ export class AddCategoryComponent  implements OnInit {
     this.category = new Category ();
     this.imageURL = './../../../assets/img/default.jpg';
     this.buildForm();
+    this.getLastCategory();
   }
 
   ngAfterViewInit() {
@@ -63,11 +68,17 @@ export class AddCategoryComponent  implements OnInit {
   public buildForm(): void {
 
     this.categoryForm = this._fb.group({
+      'order': [this.category.order, [
+          Validators.required
+        ]
+      ],
       'description': [this.category.description, [
           Validators.required
         ]
       ],
-      'visibleInvoice' : [this.category.visibleInvoice, []]
+      'visibleInvoice' : [this.category.visibleInvoice, [
+        ]
+      ]
     });
 
     this.categoryForm.valueChanges
@@ -93,6 +104,38 @@ export class AddCategoryComponent  implements OnInit {
         }
       }
     }
+  }
+
+  public getLastCategory(): void {
+
+    this.loading = true;
+
+    this._categoryService.getLastCategory().subscribe(
+      result => {
+        if (!result.categories) {
+          this.category.order = 1;
+          this.setValueForm();
+        } else {
+          this.hideMessage();
+          this.category.order = result.categories[0].order + 1;
+          this.setValueForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public setValueForm(): void {
+
+    this.categoryForm.setValue({
+      'order': this.category.order,
+      'description': this.category.description,
+      'visibleInvoice': this.category.visibleInvoice
+    });
   }
 
   public addCategory(): void {

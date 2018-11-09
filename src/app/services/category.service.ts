@@ -19,7 +19,7 @@ export class CategoryService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'categories/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + 'categories/sort="order":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
 	getCategory (id) {

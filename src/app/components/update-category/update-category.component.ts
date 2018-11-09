@@ -31,11 +31,15 @@ export class UpdateCategoryComponent implements OnInit {
 
 
   public formErrors = {
+    'order': '',
     'description': '',
     'visibleInvoice' : ''
   };
 
   public validationMessages = {
+    'order': {
+      'required': 'Este campo es requerido.'
+    },
     'description': {
       'required':       'Este campo es requerido.'
     }
@@ -62,10 +66,16 @@ export class UpdateCategoryComponent implements OnInit {
       this.imageURL = './../../../assets/img/default.jpg';
     }
     this.buildForm();
+    this.setValueForm();
+  }
+
+  public setValueForm(): void {
+
     this.categoryForm.setValue({
-      '_id':this.category._id,
+      '_id': this.category._id,
+      'order': this.category.order,
       'description': this.category.description,
-      'visibleInvoice' : this.category.visibleInvoice
+      'visibleInvoice': this.category.visibleInvoice
     });
   }
 
@@ -77,6 +87,10 @@ export class UpdateCategoryComponent implements OnInit {
 
     this.categoryForm = this._fb.group({
       '_id': [this.category._id, [
+        ]
+      ],
+      'order': [this.category.order, [
+          Validators.required
         ]
       ],
       'description': [this.category.description, [

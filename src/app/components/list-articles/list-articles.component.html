@@ -131,8 +131,9 @@
 <!--POS-->
 <section class="container-fluid" *ngIf="userType==='pos'">
   <div class="row" *ngIf="areArticlesVisible">
-    <div *ngFor="let article of articles  | filter: filterArticle
-                                           | filter: filterCategorySelected.description:'description':'category'">
+    <div *ngFor="let article of articles
+                                          | filter: filterArticle
+                                          | filter: filterCategorySelected.description:'description':'category'">
       <div class="iarticle" (click)="addItem(article)">
         <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction.type && transaction.type.showPrices">
           <span class="badge badge-info">

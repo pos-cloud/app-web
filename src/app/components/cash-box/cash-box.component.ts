@@ -481,6 +481,7 @@ export class CashBoxComponent implements OnInit {
     this.transaction.totalPrice = this.cashBoxForm.value.amount;
     this.transaction.state = TransactionState.Closed;
     this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    this.transaction.VATPeriod = moment().format('YYYYMM');
     this.transaction.expirationDate = this.transaction.endDate;
     this.transaction.cashBox = this.cashBox;
 

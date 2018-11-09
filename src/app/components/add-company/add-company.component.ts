@@ -151,7 +151,6 @@ export class AddCompanyComponent  implements OnInit {
     this._companyGroupService.getCompaniesGroup().subscribe(
       result => {
         if (!result.companiesGroup) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.companiesGroup = result.companiesGroup;
         }
@@ -199,6 +198,9 @@ export class AddCompanyComponent  implements OnInit {
           Validators.maxLength(8),
           Validators.minLength(8),
           Validators.pattern('^[0-9]{8}$')
+        ]
+      ],
+      'grossIncome': [this.company.grossIncome, [
         ]
       ],
       'address': [this.company.address, [
@@ -292,7 +294,7 @@ export class AddCompanyComponent  implements OnInit {
         this.company.allowCurrentAccount = true;
       }
     }
-
+    if (!this.company.grossIncome) this.company.grossIncome = '';
 
     let group;
     if (!this.company.group) {
@@ -314,6 +316,7 @@ export class AddCompanyComponent  implements OnInit {
       'identityType': this.identityTypeSelected,
       'CUIT': this.company.CUIT,
       'DNI': this.company.DNI,
+      'grossIncome': this.company.grossIncome,
       'address': this.company.address,
       'city': this.company.city,
       'phones': this.company.phones,

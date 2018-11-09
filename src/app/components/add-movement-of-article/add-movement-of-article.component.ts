@@ -22,7 +22,7 @@ import { ArticleStockService } from '../../services/article-stock.service';
 
 //Pipes
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
-import { TransactionMovement } from '../../models/transaction-type';
+import { TransactionMovement, EntryAmount } from '../../models/transaction-type';
 import { Taxes } from '../../models/taxes';
 import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
@@ -100,20 +100,44 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public buildForm(): void {
 
+    if(this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+      if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
+        if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
+          let unitPrice = this.movementOfArticle.unitPrice;
+          for (const articleTax of this.movementOfArticle.taxes) {
+            articleTax.taxBase = this.roundNumber.transform((unitPrice / ((articleTax.percentage / 100) + 1)));
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            this.movementOfArticle.unitPrice -= (articleTax.taxAmount);
+          }
+        }
+      }
+    } else {
+      if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
+        if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
+          let unitPrice = this.movementOfArticle.unitPrice;
+          for (const articleTax of this.movementOfArticle.taxes) {
+            articleTax.taxBase = unitPrice;
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            this.movementOfArticle.unitPrice += (articleTax.taxAmount);
+          }
+        }
+      }
+    }
+
     this.movementOfArticleForm = this._fb.group({
       '_id': [this.movementOfArticle._id, [
-      ]
+        ]
       ],
       'description': [this.movementOfArticle.description, [
-        Validators.required
-      ]
+          Validators.required
+        ]
       ],
       'amount': [this.movementOfArticle.amount, [
-        Validators.required
-      ]
+          Validators.required
+        ]
       ],
       'notes': [this.movementOfArticle.notes, [
-      ]
+        ]
       ],
       'unitPrice': [this.movementOfArticle.unitPrice, [
         ]
@@ -313,14 +337,38 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public addMovementOfArticle(): void {
 
-    this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
     this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
     this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
 
     // Si puede editar el precio a mano se cambia el precio del artículo temporalmente
     if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-      this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.article.basePrice * this.movementOfArticle.amount);
-      this.movementOfArticle.salePrice = this.roundNumber.transform((this.movementOfArticle.unitPrice * this.movementOfArticle.amount) + this.movementOfArticle.roundingAmount);
+      if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithVAT) {
+        this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
+      } else if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.SaleWithoutVAT) {
+        if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
+          this.movementOfArticle.unitPrice = 0;
+          for (const articleTax of this.movementOfArticle.taxes) {
+            articleTax.taxBase = this.movementOfArticleForm.value.unitPrice;
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            this.movementOfArticle.unitPrice += (articleTax.taxAmount);
+          }
+        }
+        this.movementOfArticle.unitPrice += this.movementOfArticleForm.value.unitPrice;
+      }
+    } else {
+      if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.CostWithVAT) {
+        if (this.movementOfArticle.taxes && this.movementOfArticle.taxes.length > 0) {
+          let unitPrice = this.movementOfArticleForm.value.unitPrice;
+          this.movementOfArticle.unitPrice = unitPrice;
+          for (const articleTax of this.movementOfArticle.taxes) {
+            articleTax.taxBase = this.roundNumber.transform((unitPrice / ((articleTax.percentage / 100) + 1)));
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            this.movementOfArticle.unitPrice -= (articleTax.taxAmount);
+          }
+        }
+      } else if (this.movementOfArticle.transaction.type.entryAmount === EntryAmount.CostWithoutVAT) {
+        this.movementOfArticle.unitPrice = this.movementOfArticleForm.value.unitPrice;
+      }
     }
 
     if (this.containsVariants) {

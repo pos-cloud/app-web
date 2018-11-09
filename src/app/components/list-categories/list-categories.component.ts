@@ -26,7 +26,7 @@ export class ListCategoriesComponent implements OnInit {
   public areCategoriesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   @Output() eventAddItem: EventEmitter<Category> = new EventEmitter<Category>();
@@ -45,9 +45,14 @@ export class ListCategoriesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if (this.userType !== "pos") {
+      this.orderTerm = ['description'];
+    } else {
+      this.orderTerm = ['order'];
+    }
     this.getCategories();
   }
 
@@ -56,7 +61,7 @@ export class ListCategoriesComponent implements OnInit {
     return true;
   }
 
-  public getCategories(): void {  
+  public getCategories(): void {
 
     this.loading = true;
 
@@ -87,9 +92,9 @@ export class ListCategoriesComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -97,7 +102,7 @@ export class ListCategoriesComponent implements OnInit {
   public refresh(): void {
     this.getCategories();
   }
-  
+
   public openModal(op: string, category:Category): void {
 
     let modalRef;
@@ -122,7 +127,7 @@ export class ListCategoriesComponent implements OnInit {
               this.getCategories();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -134,7 +139,7 @@ export class ListCategoriesComponent implements OnInit {
               this.getCategories();
             }
           }, (reason) => {
-            
+
           });
           break;
       case 'import':

@@ -397,6 +397,7 @@ export class AddTransactionComponent implements OnInit {
 
       this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
       this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
+      this.transaction.VATPeriod = moment().format('YYYYMM');
       this.transaction.expirationDate = this.transaction.endDate;
       this.transaction.origin = this.transactionForm.value.origin;
       this.transaction.letter = this.transactionForm.value.letter;

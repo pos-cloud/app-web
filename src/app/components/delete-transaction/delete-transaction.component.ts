@@ -47,6 +47,7 @@ export class DeleteTransactionComponent implements OnInit {
 
     if(!this.transaction.endDate) {
       this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      this.transaction.VATPeriod = moment().format('YYYYMM');
       this.transaction.expirationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     }
     this.transaction.state = TransactionState.Canceled;

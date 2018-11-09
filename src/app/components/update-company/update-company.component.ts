@@ -83,6 +83,8 @@ export class UpdateCompanyComponent implements OnInit {
     },
     'address': {
     },
+    'grossIncome': {
+    },
     'city': {
     },
     'phones': {
@@ -188,6 +190,9 @@ export class UpdateCompanyComponent implements OnInit {
           Validators.minLength(8)
         ]
       ],
+      'grossIncome': [this.company.grossIncome, [
+        ]
+      ],
       'address': [this.company.address, [
         ]
       ],
@@ -224,6 +229,7 @@ export class UpdateCompanyComponent implements OnInit {
     if (!this.identityTypeSelected) this.company.DNI = '';
     if (!this.company.CUIT) this.company.CUIT = '';
     if (!this.company.DNI) this.company.DNI = '';
+    if (!this.company.grossIncome) this.company.grossIncome = '';
     if (!this.company.address) this.company.address = '';
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
@@ -275,6 +281,7 @@ export class UpdateCompanyComponent implements OnInit {
       'identityType': this.identityTypeSelected,
       'CUIT': this.company.CUIT,
       'DNI': this.company.DNI,
+      'grossIncome': this.company.grossIncome,
       'address': this.company.address,
       'city': this.company.city,
       'phones': this.company.phones,
@@ -315,7 +322,6 @@ export class UpdateCompanyComponent implements OnInit {
     this._companyGroupService.getCompaniesGroup().subscribe(
       result => {
         if (!result.companiesGroup) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.hideMessage();
         } else {
           this.companiesGroup = result.companiesGroup;

@@ -324,6 +324,7 @@ export class PointOfSaleComponent implements OnInit {
               } else {
                 if (this.posType === "resto" || this.posType === "delivery") {
                   transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+                  transaction.VATPeriod = moment().format('YYYYMM');
                 }
                 transaction.expirationDate = transaction.endDate;
                 transaction.state = TransactionState.Closed;
@@ -344,6 +345,7 @@ export class PointOfSaleComponent implements OnInit {
           if (result.movementsOfCashes) {
             if (this.posType === "resto" || this.posType === "delivery") {
               transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+              transaction.VATPeriod = moment().format('YYYYMM');
             }
             transaction.expirationDate = transaction.endDate;
             transaction.state = TransactionState.Closed;
@@ -614,6 +616,7 @@ export class PointOfSaleComponent implements OnInit {
     }
 
     transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    transaction.VATPeriod = moment().format('YYYYMM');
     transaction.expirationDate = transaction.endDate;
 
     this.updateTransaction(transaction);
