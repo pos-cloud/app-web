@@ -70,6 +70,8 @@
         <thead>
           <tr>
             <th (click)="orderBy('article.description')">Producto</th>
+            <th (click)="orderBy('article.category.description')">Categoría</th>
+            <th (click)="orderBy('article.make.description')">Marca</th>
             <th (click)="orderBy('count')">Ítems</th>
             <th (click)="orderBy('total')">Monto Total</th>
           </tr>
@@ -77,6 +79,8 @@
         <tbody>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item.article.description }}</td>
+            <td class="flat">{{ item.article.category.description }}</td>
+            <td class="flat">{{ item.article.make.description }}</td>
             <td class="flat">{{ item.count }}</td>
             <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
           </tr>
