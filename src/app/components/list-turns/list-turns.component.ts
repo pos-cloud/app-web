@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { Turn, TurnState } from './../../models/turn';
+import { Turn } from './../../models/turn';
 import { TurnService } from './../../services/turn.service';
 
 import { PrintComponent } from './../../components/print/print.component';
@@ -37,17 +37,17 @@ export class ListTurnsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     this.getTurns();
   }
 
-  public getTurns(): void {  
+  public getTurns(): void {
 
     this.loading = true;
-    
+
     this._turnService.getTurns().subscribe(
       result => {
         if (!result.turns) {
@@ -72,9 +72,9 @@ export class ListTurnsComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -82,7 +82,7 @@ export class ListTurnsComponent implements OnInit {
   public refresh(): void {
     this.getTurns();
   }
-  
+
   public openModal(op: string, turn:Turn): void {
 
     let modalRef;
@@ -92,9 +92,9 @@ export class ListTurnsComponent implements OnInit {
           modalRef.componentInstance.turn = turn;
           modalRef.componentInstance.typePrint = 'turn';
           modalRef.result.then((result) => {
-            
+
           }, (reason) => {
-            
+
           });
         break;
       default : ;

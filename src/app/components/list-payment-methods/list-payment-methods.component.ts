@@ -24,7 +24,7 @@ export class ListPaymentMethodsComponent implements OnInit {
   public arePaymentMethodsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;

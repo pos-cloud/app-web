@@ -9,7 +9,6 @@ import { VariantValueService } from './../../services/variant-value.service';
 import { AddVariantValueComponent } from './../../components/add-variant-value/add-variant-value.component';
 import { UpdateVariantValueComponent } from './../../components/update-variant-value/update-variant-value.component';
 import { DeleteVariantValueComponent } from './../../components/delete-variant-value/delete-variant-value.component';
-import { ImportComponent } from './../../components/import/import.component';
 
 @Component({
   selector: 'app-list-variant-values',
@@ -24,7 +23,7 @@ export class ListVariantValuesComponent implements OnInit {
   public areVariantValuesEmpty: boolean = true;
   public alertMessage: string = '';
   public userValue: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;

@@ -131,7 +131,7 @@
 <!--POS-->
 <section class="container-fluid" *ngIf="userType==='pos'">
   <div class="row" *ngIf="areArticlesVisible">
-    <div *ngFor="let article of articles
+    <div *ngFor="let article of articles  | orderBy: orderTerm: propertyTerm
                                           | filter: filterArticle
                                           | filter: filterCategorySelected.description:'description':'category'">
       <div class="iarticle" (click)="addItem(article)">

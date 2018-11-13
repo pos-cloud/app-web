@@ -37,7 +37,7 @@ export class ListArticlesComponent implements OnInit {
   public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string = '';
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -73,6 +73,11 @@ export class ListArticlesComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if(this.userType === 'pos') {
+      this.orderTerm = ['posDescription'];
+    } else {
+      this.orderTerm = ['description'];
+    }
     this.totals = new Array();
     this.getPrinters();
     this.getFinalArticles();

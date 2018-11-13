@@ -23,7 +23,7 @@ export class ListEmployeeTypesComponent implements OnInit {
   public areEmployeeTypesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -38,20 +38,20 @@ export class ListEmployeeTypesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getEmployeeTypes();
   }
 
-  public getEmployeeTypes(): void {  
+  public getEmployeeTypes(): void {
 
     this.loading = true;
-    
+
     this._employeeTypeService.getEmployeeTypes().subscribe(
       result => {
         if (!result.employeeTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.employeeTypes = null;
           this.areEmployeeTypesEmpty = true;
@@ -73,9 +73,9 @@ export class ListEmployeeTypesComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -83,7 +83,7 @@ export class ListEmployeeTypesComponent implements OnInit {
   public refresh(): void {
     this.getEmployeeTypes();
   }
-  
+
   public openModal(op: string, employeeType:EmployeeType): void {
 
     let modalRef;
@@ -103,7 +103,7 @@ export class ListEmployeeTypesComponent implements OnInit {
               this.getEmployeeTypes();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -114,13 +114,13 @@ export class ListEmployeeTypesComponent implements OnInit {
               this.getEmployeeTypes();
             }
           }, (reason) => {
-            
+
           });
         break;
       default : ;
     }
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

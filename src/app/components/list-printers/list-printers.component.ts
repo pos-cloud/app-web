@@ -23,7 +23,7 @@ export class ListPrintersComponent implements OnInit {
   public arePrintersEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -39,20 +39,20 @@ export class ListPrintersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getPrinters();
   }
 
-  public getPrinters(): void {  
+  public getPrinters(): void {
 
     this.loading = true;
-    
+
     this._printerService.getPrinters().subscribe(
         result => {
           if (!result.printers) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
             this.printers = null;
             this.arePrintersEmpty = true;
@@ -74,9 +74,9 @@ export class ListPrintersComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -84,7 +84,7 @@ export class ListPrintersComponent implements OnInit {
   public refresh(): void {
     this.getPrinters();
   }
-  
+
   public openModal(op: string, printer:Printer): void {
 
     let modalRef;
@@ -110,7 +110,7 @@ export class ListPrintersComponent implements OnInit {
               this.getPrinters();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -121,7 +121,7 @@ export class ListPrintersComponent implements OnInit {
               this.getPrinters();
             }
           }, (reason) => {
-            
+
           });
         break;
       default : ;
@@ -131,7 +131,7 @@ export class ListPrintersComponent implements OnInit {
   public addItem(printerSelected) {
     this.eventAddItem.emit(printerSelected);
   }
-    
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

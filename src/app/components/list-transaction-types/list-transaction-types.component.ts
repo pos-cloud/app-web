@@ -23,7 +23,7 @@ export class ListTransactionTypesComponent implements OnInit {
   public areTransactionTypesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -129,7 +129,7 @@ export class ListTransactionTypesComponent implements OnInit {
   };
 
   public getCode(transactionType: TransactionType, letter: string): number {
-    
+
     let code: number;
     if (transactionType.codes) {
       let jsonString = JSON.stringify(transactionType.codes);

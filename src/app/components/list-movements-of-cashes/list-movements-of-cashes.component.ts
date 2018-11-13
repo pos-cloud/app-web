@@ -20,7 +20,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public areMovementOfCashesEmpty = true;
   public alertMessage = '';
   public userType: string;
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[] = ['-expirationDate'];
   public propertyTerm: string;
   public areFiltersVisible = false;
   public loading = false;

@@ -10,7 +10,6 @@ import { CompanyGroupService } from "./../../services/company-group.service";
 import { AddCompanyGroupComponent } from "./../../components/add-company-group/add-company-group.component";
 import { UpdateCompanyGroupComponent } from "./../../components/update-company-group/update-company-group.component";
 import { DeleteCompanyGroupComponent } from "./../../components/delete-company-group/delete-company-group.component";
-import { Company } from '../../models/company';
 
 @Component({
   selector: 'app-list-companies-group',
@@ -40,20 +39,20 @@ export class ListCompaniesGroupComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getCompaniesGroup();
   }
 
-  public getCompaniesGroup(): void {  
+  public getCompaniesGroup(): void {
 
     this.loading = true;
-    
+
     this._companyGroupService.getCompaniesGroup().subscribe(
         result => {
           if (!result.companiesGroup) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
             this.companiesGroup = null;
             this.areCompanyGroupEmpty = true;
@@ -75,9 +74,9 @@ export class ListCompaniesGroupComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -85,7 +84,7 @@ export class ListCompaniesGroupComponent implements OnInit {
   public refresh(): void {
     this.getCompaniesGroup();
   }
-  
+
   public openModal(op: string, companyGroup:CompanyGroup): void {
 
     let modalRef;
@@ -111,7 +110,7 @@ export class ListCompaniesGroupComponent implements OnInit {
               this.getCompaniesGroup();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -122,7 +121,7 @@ export class ListCompaniesGroupComponent implements OnInit {
               this.getCompaniesGroup();
             }
           }, (reason) => {
-            
+
           });
         break;
       default : ;
@@ -132,7 +131,7 @@ export class ListCompaniesGroupComponent implements OnInit {
   public addItem(companyGroupSelected) {
     this.eventAddItem.emit(companyGroupSelected);
   }
-    
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

@@ -38,16 +38,16 @@ export class ListLocationsComponent implements OnInit {
   ) { }
 
   ngOnInit() : void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getLocations();
   }
 
-  public getLocations(): void {  
+  public getLocations(): void {
 
     this.loading = true;
-    
+
     this._locationService.getLocations().subscribe(
         result => {
           if (!result.locations) {
@@ -72,9 +72,9 @@ export class ListLocationsComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -82,7 +82,7 @@ export class ListLocationsComponent implements OnInit {
   public refresh(): void {
     this.getLocations();
   }
-  
+
   public openModal(op: string, location:Location): void {
 
     let modalRef;
@@ -108,7 +108,7 @@ export class ListLocationsComponent implements OnInit {
               this.getLocations();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -119,7 +119,7 @@ export class ListLocationsComponent implements OnInit {
               this.getLocations();
             }
           }, (reason) => {
-            
+
           });
           break;
       default : ;
@@ -129,7 +129,7 @@ export class ListLocationsComponent implements OnInit {
   public addItem(locationSelected) {
     this.eventAddItem.emit(locationSelected);
   }
-    
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

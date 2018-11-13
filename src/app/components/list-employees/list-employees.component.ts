@@ -23,7 +23,7 @@ export class ListEmployeesComponent implements OnInit {
   public areEmployeesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['code'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -38,20 +38,20 @@ export class ListEmployeesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getEmployees();
   }
 
-  public getEmployees(): void {  
+  public getEmployees(): void {
 
     this.loading = true;
 
     this._employeeService.getEmployees().subscribe(
         result => {
 					if (!result.employees) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
 					  this.employees = null;
             this.areEmployeesEmpty = true;
@@ -73,19 +73,19 @@ export class ListEmployeesComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
-  
+
   public refresh(): void {
     this.getEmployees();
   }
-  
+
   public openModal(op: string, employee:Employee): void {
-    
+
     let modalRef;
     switch(op) {
       case 'view' :
@@ -109,7 +109,7 @@ export class ListEmployeesComponent implements OnInit {
               this.getEmployees();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -120,13 +120,13 @@ export class ListEmployeesComponent implements OnInit {
               this.getEmployees();
             }
           }, (reason) => {
-            
+
           });
         break;
       default : ;
     }
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

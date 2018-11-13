@@ -28,7 +28,7 @@ export class ListCompaniesComponent implements OnInit {
   public areCompaniesEmpty: boolean = true;
   public alertMessage: string = '';
   @Input() userType: string;
-  public orderTerm: string[] = ['code'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -41,12 +41,12 @@ export class ListCompaniesComponent implements OnInit {
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { 
+  ) {
     this.companies = new Array();
   }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     if (!this.userType) {
       this.userType = pathLocation[1];
@@ -70,7 +70,7 @@ export class ListCompaniesComponent implements OnInit {
     this._companyService.getCompaniesByType(this.type.toString()).subscribe(
         result => {
 					if (!result.companies) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
 					  this.companies = null;
             this.areCompaniesEmpty = true;
@@ -92,9 +92,9 @@ export class ListCompaniesComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -102,7 +102,7 @@ export class ListCompaniesComponent implements OnInit {
   public refresh(): void {
     this.getCompaniesByType();
   }
-  
+
   public openModal(op: string, company:Company): void {
 
     let modalRef;
@@ -132,7 +132,7 @@ export class ListCompaniesComponent implements OnInit {
               this.getCompaniesByType();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -143,7 +143,7 @@ export class ListCompaniesComponent implements OnInit {
               this.getCompaniesByType();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'import':
@@ -176,12 +176,12 @@ export class ListCompaniesComponent implements OnInit {
   };
 
   public openMail(): void {
-    
+
     if (Config.emailAccount) {
       if (this.companies && this.companies.length !== 0) {
         let modalRef;
         let emails = '';
-  
+
         modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
         if(this.companies && this.companies.length > 0) {
           for(let i=0; i < this.companies.length; i++){
@@ -202,11 +202,11 @@ export class ListCompaniesComponent implements OnInit {
       this.showMessage("Debe primero configurar la cuenta de correo.", 'info', true);
     }
   }
-  
+
   public selectCompany(companySelected: Company): void {
     this.activeModal.close({ company: companySelected });
   }
-  
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;

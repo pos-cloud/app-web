@@ -8,7 +8,6 @@ import { ArticleStockService } from './../../services/article-stock.service';
 
 import { AddArticleStockComponent } from './../../components/add-article-stock/add-article-stock.component';
 import { UpdateArticleStockComponent } from './../../components/update-article-stock/update-article-stock.component';
-import { ImportComponent } from './../../components/import/import.component';
 
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
@@ -27,7 +26,7 @@ export class ListArticleStocksComponent implements OnInit {
   public areArticleStocksEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['description'];
+  public orderTerm: string[] = ['-realStock'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -152,7 +151,7 @@ export class ListArticleStocksComponent implements OnInit {
           }
         }
         break;
-      default: 
+      default:
         break;
     }
   };
