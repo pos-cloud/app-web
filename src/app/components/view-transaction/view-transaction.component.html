@@ -112,6 +112,7 @@
                     <thead>
                       <tr>
                         <th>Método</th>
+                        <th>Cuota</th>
                         <th>Monto</th>
                         <th>Comprobante</th>
                         <th>Vencimiento</th>
@@ -120,8 +121,9 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let movementOfCash of movementsOfCashes">
+                      <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                         <td>{{movementOfCash.type.name}}</td>
+                        <td>{{movementOfCash.quota}}</td>
                         <td>{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
                         <td>{{movementOfCash.number}}</td>
                         <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>

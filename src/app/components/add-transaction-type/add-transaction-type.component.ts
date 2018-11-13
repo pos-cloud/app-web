@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAcount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAccount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount } from './../../models/transaction-type';
 import { Printer } from './../../models/printer';
 import { EmployeeType } from './../../models/employee-type';
 
@@ -286,7 +286,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = null;
     if (!this.transactionType.name) this.transactionType.name = '';
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = '';
-    if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAcount.No;
+    if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAccount.No;
     if (!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
     if (this.transactionType.modifyStock === undefined) this.transactionType.modifyStock = false;
     if (!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Outflows;

@@ -83,6 +83,15 @@
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="allowToFinance" class="control-label">¿Permite financiar?</label>
+          <select class="form-control" formControlName="allowToFinance">
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

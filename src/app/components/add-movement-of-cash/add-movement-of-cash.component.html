@@ -27,11 +27,7 @@
             <select class="form-control" formControlName="paymentMethod" name="paymentMethod"  (change)="updateAmounts('paymentMethod')">
                 <option *ngFor="let paymentMethod of paymentMethods"
                         [selected]="this.movementOfCash.type && this.movementOfCash.type._id === paymentMethod._id"
-                        [ngValue]="paymentMethod"
-                        [disabled]="(!transaction.company && paymentMethod.name === 'Cuenta Corriente') ||
-                                    (transaction.company && !transaction.company.allowCurrentAccount && paymentMethod.name === 'Cuenta Corriente') ||
-                                    (transaction.type.name === 'Cobro' && paymentMethod.name === 'Cuenta Corriente') ||
-                                    ((transaction.type.name === 'Saldo Inicial (+)' || transaction.type.name === 'Saldo Inicial (+)') && paymentMethod.name !== 'Cuenta Corriente')">
+                        [ngValue]="paymentMethod">
                       {{paymentMethod.name}}
                 </option>
               </select>
@@ -60,7 +56,7 @@
             </div>
           </div>
           <div class="form-group col-md-4">
-            <label for="amountDiscount" class="control-label">Descuento/Recargo:</label>
+            <label for="amountDiscount" class="control-label">Monto Descuento/Recargo:</label>
             <div class="input-group">
               <span class="input-group-addon">$</span>
               <input type="number" class="form-control" min="0" step="1" formControlName="amountDiscount" name="amountDiscount" readonly/>
@@ -86,6 +82,56 @@
             </div>
             <div *ngIf="formErrors.amountPaid" class="alert alert-danger">
               {{ formErrors.amountPaid }}
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="movementOfCash.type.allowToFinance">
+          <div class="form-group col-md-12 box-finance">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <b>Financiación</b>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="quotas" class="control-label">Cant. Cuotas:</label>
+                <div class="input-group">
+                  <span class="input-group-addon"><i class="fa fa-list-ol"></i></span>
+                  <input type="number" class="form-control" formControlName="quotas" name="quotas" min="0" step="1" (change)="calculateQuotas('quotas')"/>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="days" class="control-label">Cant. Días:</label>
+                <div class="input-group">
+                  <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                  <input type="number" class="form-control" formControlName="days" name="days" min="0" step="1" (change)="calculateQuotas('days')"/>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="expirationDate" class="control-label">Fecha:</label>
+              </div>
+              <div class="form-group col-md-4">
+                  <label for="quota" class="control-label">Cuota:</label>
+              </div>
+              <div class="form-group col-md-4">
+                  <label for="amount" class="control-label">Monto:</label>
+              </div>
+            </div>
+            <div class="row" *ngFor="let mov of movementsOfCashesToFinance">
+              <div class="form-group col-md-4">
+                <input type="date" class="form-control" name="expirationDate" min="0" step="1" #expirationDateMov [value]="mov.expirationDate | dateFormat:'YYYY-MM-DD'" (blur)="calculateQuotas('expirationDate', expirationDateMov.value, mov)"/>
+              </div>
+              <div class="form-group col-md-4">
+                <input type="number" class="form-control" name="expirationDate" min="0" step="1" [value]="mov.quota" readonly/>
+              </div>
+              <div class="form-group col-md-4">
+                <div class="input-group">
+                  <span class="input-group-addon">$</span>
+                  <input type="number" class="form-control" name="amountPaid" min="0" step="1" #amountPaidMov [value]="mov.amountPaid" (change)="calculateQuotas('amountPaid', amountPaidMov.value, mov)"/>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -157,19 +203,23 @@
                   <i class="fa fa-bars"></i>
                 </th>
                 <th>Método</th>
+                <th>Cuota</th>
                 <th>Monto</th>
+                <th>Vencimiento</th>
                 <th>Comprobante</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let movement of movementsOfCashes">
+              <tr *ngFor="let movement of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                 <td align="left" width="130">
                   <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="openModal('delete', movement)">
                     <i class="fa fa-trash-o"></i>
                   </button>
                 </td>
                 <td class="flat" width="430">{{ movement.type.name }}</td>
+                <td class="flat" width="430">{{ movement.quota }}</td>
                 <td class="flat" width="430">{{ movement.amountPaid }}</td>
+                <td class="flat" width="430">{{ movement.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                 <td class="flat" width="430">{{ movement.number }}</td>
               </tr>
             </tbody>

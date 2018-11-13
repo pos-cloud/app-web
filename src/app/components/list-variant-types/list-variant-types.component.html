@@ -36,12 +36,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let variantType of variantTypes | filter: filterName:'name' 
-                                          | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
-                                                        totalItems: totalItems
-                                                      }">
+          <tr *ngFor="let variantType of variantTypes | filter: filterName:'name'
+                                                      | orderBy: orderTerm: propertyTerm
+                                                      | paginate: { itemsPerPage: itemsPerPage,
+                                                                    currentPage: p,
+                                                                    totalItems: totalItems
+                                                                  }">
             <td align="left" width="130">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', variantType)" title="Ver">
                 <i class="fa fa-eye"></i>

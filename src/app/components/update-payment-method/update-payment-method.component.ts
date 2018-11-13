@@ -78,6 +78,8 @@ export class UpdatePaymentMethodComponent implements OnInit {
         ]
       ],'cardDetail': [this.paymentMethod.cardDetail, [
         ]
+      ],'allowToFinance': [this.paymentMethod.allowToFinance, [
+        ]
       ]
     });
 
@@ -116,6 +118,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
     if (this.paymentMethod.inputAndOuput === undefined) this.paymentMethod.inputAndOuput = false;
     if (this.paymentMethod.checkDetail === undefined) this.paymentMethod.checkDetail = false;
     if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
+    if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
 
     this.paymentMethodForm.setValue({
       '_id': this.paymentMethod._id,
@@ -126,7 +129,8 @@ export class UpdatePaymentMethodComponent implements OnInit {
       'acceptReturned': this.paymentMethod.acceptReturned,
       'inputAndOuput': this.paymentMethod.acceptReturned,
       'checkDetail': this.paymentMethod.checkDetail,
-      'cardDetail': this.paymentMethod.cardDetail
+      'cardDetail': this.paymentMethod.cardDetail,
+      'allowToFinance': this.paymentMethod.allowToFinance
     });
   }
 

@@ -9,7 +9,6 @@ import { VariantTypeService } from './../../services/variant-type.service';
 import { AddVariantTypeComponent } from './../../components/add-variant-type/add-variant-type.component';
 import { UpdateVariantTypeComponent } from './../../components/update-variant-type/update-variant-type.component';
 import { DeleteVariantTypeComponent } from './../../components/delete-variant-type/delete-variant-type.component';
-import { ImportComponent } from './../../components/import/import.component';
 
 @Component({
   selector: 'app-list-variant-types',

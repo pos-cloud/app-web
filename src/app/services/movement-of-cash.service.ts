@@ -47,7 +47,17 @@ export class MovementOfCashService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.post(Config.apiURL + "movement-of-cash", movementOfCash, { headers: headers }).map(res => res.json());
-	}
+  }
+
+  saveMovementsOfCashes(movementsOfCashes: MovementOfCash[]) {
+    console.log(movementsOfCashes);
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.post(Config.apiURL + "movements-of-cashes", { movementsOfCashes: movementsOfCashes }, { headers: headers }).map(res => res.json());
+  }
 
 	deleteMovementOfCash(id: string) {
 		let headers = new Headers({

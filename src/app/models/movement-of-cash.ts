@@ -8,6 +8,7 @@ export class MovementOfCash {
 
     public _id: string;
     public date: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    public quota: number = 1;
     public expirationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public discount: number = 0.00;
     public surcharge: number = 0.00;

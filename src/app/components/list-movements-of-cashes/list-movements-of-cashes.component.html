@@ -23,6 +23,7 @@
               </th>
               <th (click)="orderBy('transaction','endDate')">Fecha </th>
               <th (click)="orderBy('type','name')">Método </th>
+              <th (click)="orderBy('quota')">Couta </th>
               <th (click)="orderBy('amountPaid')">Importe </th>
               <th (click)="orderBy('discount')">Descuento </th>
               <th (click)="orderBy('number')">Comprobante </th>
@@ -39,6 +40,7 @@
               <th></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterEndDate" placeholder="Fecha..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Método..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterQuota" placeholder="Cuota..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAmountPaid" placeholder="Importe..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDiscount" placeholder="Descuento..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Comprobante..." ></th>
@@ -55,6 +57,7 @@
           <tbody>
             <tr *ngFor="let movementOfCash of movementsOfCashes | filter: filterEndDate:'endDate':'transaction'
                                                                 | filter: filterType:'name':'type'
+                                                                | filter: filterQuota:'quota'
                                                                 | filter: filterAmountPaid:'amountPaid'
                                                                 | filter: filterDiscount:'discount'
                                                                 | filter: filterNumber:'number'
@@ -78,6 +81,7 @@
               <td class="flat" *ngIf="!movementOfCash.transaction"></td>
               <td class="flat" *ngIf="movementOfCash.type">{{movementOfCash.type.name}}</td>
               <td class="flat" *ngIf="!movementOfCash.type"></td>
+              <td class="flat" >{{movementOfCash.quota }}</td>
               <td class="flat" >{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
               <td class="flat" >{{movementOfCash.discount | currency:'USD':'1.2-2'}}</td>
               <td class="flat" >{{movementOfCash.number}}</td>

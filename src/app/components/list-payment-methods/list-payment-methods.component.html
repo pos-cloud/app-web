@@ -29,6 +29,7 @@
               <th (click)="orderBy('inputAndOuput')">Entrada/Salida </th>
               <th (click)="orderBy('checkDetail')">Detalle de cheque </th>
               <th (click)="orderBy('cardDetail')">Detalle de tarjeta </th>
+              <th (click)="orderBy('allowToFinance')">Permite financiar </th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
@@ -40,20 +41,22 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterInputAndOuput" placeholder="Entrada/Salida..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCheckDetail" placeholder="Detalle de cheque..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCardDetail" placeholder="Detalle de tarjeta..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterAllowToFinance" placeholder="Permite financiar..." ></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let paymentMethod of paymentMethods | filter: filterName:'name' 
+            <tr *ngFor="let paymentMethod of paymentMethods | filter: filterName:'name'
                                                             | filter: filterDiscount:'discount'
                                                             | filter: filterSurcharge:'surcharge'
                                                             | filter: filterIsCurrentAccount:'isCurrentAccount'
                                                             | filter: filterAcceptReturned:'acceptReturned'
                                                             | filter: filterInputAndOuput:'inputAndOuput'
                                                             | filter: filterCheckDetail:'checkDetail'
+                                                            | filter: filterAllowToFinance:'allowToFinance'
                                                             | filter: filterCardDetail:'cardDetail'
                                                             | orderBy: orderTerm: propertyTerm
-                                                            | paginate: { itemsPerPage: itemsPerPage, 
-                                                                          currentPage: p, 
+                                                            | paginate: { itemsPerPage: itemsPerPage,
+                                                                          currentPage: p,
                                                                           totalItems: totalItems
                                                                         }">
               <td align="left" width="130">
@@ -69,8 +72,9 @@
               <td class="flat">{{paymentMethod.inputAndOuput}}</td>
               <td class="flat">{{paymentMethod.checkDetail}}</td>
               <td class="flat">{{paymentMethod.cardDetail}}</td>
+              <td class="flat">{{paymentMethod.allowToFinance}}</td>
             </tr>
-            <tr align="center" *ngIf="areMakesEmpty">
+            <tr align="center" *ngIf="arePaymentMethodsEmpty">
               <td colspan="2">No se encontraron métodos de pagos</td>
             </tr>
           </tbody>
@@ -79,11 +83,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

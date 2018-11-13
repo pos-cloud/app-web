@@ -74,6 +74,8 @@ export class AddPaymentMethodComponent implements OnInit {
         ]
       ],'cardDetail': [this.paymentMethod.cardDetail, [
         ]
+      ],'allowToFinance': [this.paymentMethod.allowToFinance, [
+        ]
       ]
     });
 

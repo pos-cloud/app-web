@@ -47,28 +47,28 @@ export class ListMovementOfCashesComponent implements OnInit {
     this.loading = true;
 
     this._movementOfCashService.getMovementsOfCashes().subscribe(
-        result => {
-          if (!result.movementsOfCashes) {
-            if (result.message && result.message !== '') {
-              this.showMessage(result.message, 'info', true);
-            }
-            this.loading = false;
-            this.movementsOfCashes = null;
-            this.areMovementOfCashesEmpty = true;
-          } else {
-            this.hideMessage();
-            this.loading = false;
-            this.movementsOfCashes = result.movementsOfCashes;
-            this.totalItems = this.movementsOfCashes.length;
-            this.areMovementOfCashesEmpty = false;
+      result => {
+        if (!result.movementsOfCashes) {
+          if (result.message && result.message !== '') {
+            this.showMessage(result.message, 'info', true);
           }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
           this.loading = false;
+          this.movementsOfCashes = null;
+          this.areMovementOfCashesEmpty = true;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.movementsOfCashes = result.movementsOfCashes;
+          this.totalItems = this.movementsOfCashes.length;
+          this.areMovementOfCashesEmpty = false;
         }
-      );
-   }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
   public orderBy (term: string, property?: string): void {
 

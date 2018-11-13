@@ -8,7 +8,7 @@ export class TransactionType {
 	public transactionMovement: TransactionMovement;
 	public name: string = '';
 	public labelPrint: string;
-	public currentAccount: CurrentAcount = CurrentAcount.No;
+	public currentAccount: CurrentAccount = CurrentAccount.No;
 	public movement: Movements = Movements.Inflows;
 	public modifyStock: boolean = false;
 	public stockMovement: StockMovement = StockMovement.Inflows;
@@ -48,7 +48,7 @@ export enum StockMovement {
 	Outflows = <any>"Salida"
 }
 
-export enum CurrentAcount {
+export enum CurrentAccount {
 	Yes = <any>"Si",
 	No = <any>"No",
 	Charge = <any>"Cobra"

@@ -19,19 +19,33 @@
       </div>
       <div class="row">
         <div class="form-group col-md-12">
-          <label *ngIf="companySelected" for="company" class="control-label">{{companySelected.type}}:</label>
+          <label *ngIf="companySelected" for="company" class="control-label"><b>{{companySelected.type}}:</b></label>
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-10" *ngIf="companySelected">
+        <div class="form-group col-md-3" *ngIf="companySelected">
+          <label for="name" class="control-label">Nombre:</label>
           <input type="text" class="form-control" [value]="companySelected.name" readonly/>
+        </div>
+        <div class="form-group col-md-3" *ngIf="companySelected">
+          <label for="address" class="control-label">Dirección:</label>
+          <input type="text" class="form-control" [value]="companySelected.address" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="companySelected">
+          <label for="phones" class="control-label">Teléfono:</label>
+          <input type="text" class="form-control" [value]="companySelected.phones" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="companySelected">
+          <label for="emails" class="control-label">Email:</label>
+          <input type="text" class="form-control" [value]="companySelected.emails" readonly/>
         </div>
         <div class="form-group col-md-10" *ngIf="!companySelected">
           <input type="text" class="form-control" value="Seleccione una empresa" readonly/>
         </div>
         <div class="col-md-2" align="right">
+          <br>
           <button type="button" class="btn btn-secondary" (click)="openModal('company')">
-            Cambiar
+            Cambiar <span *ngIf="companySelected">{{companySelected.type}}</span>
           </button>
         </div>
       </div>
@@ -49,6 +63,8 @@
               <th (click)="orderBy('transactionNumber')">Número</th>
               <th (click)="orderBy('transactionTotalPrice')">Importe</th>
               <th (click)="orderBy('paymentMethodName')">Método</th>
+              <th (click)="orderBy('quota')">Cuota</th>
+              <th (click)="orderBy('paymentMethodExpirationDate')">Vencimiento</th>
               <th (click)="orderBy('debe')">Debe</th>
               <th (click)="orderBy('haber')">Haber</th>
               <th>Saldo</th>
@@ -62,6 +78,8 @@
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Importe..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodName" placeholder="Método..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterQuota" placeholder="Cuota..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodExpirationDate" placeholder="Vencimiento..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterDebe" placeholder="Debe..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterHaber" placeholder="Haber..."></th>
               <th></th>
@@ -69,20 +87,22 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of items | filter: filterDate:'transactionDate'
-                                                        | filter: filterType:'transactionTypeName'
-                                                        | filter: filterOrigin:'transactionOrigin'
-                                                        | filter: filterLetter:'transactionLetter'
-                                                        | filter: filterNumber:'transactionNumber'
-                                                        | filter: filterTotalPrice:'transactionTotalPrice'
-                                                        | filter: filterPaymentMethodName:'paymentMethodName'
-                                                        | filter: filterDebe:'debe'
-                                                        | filter: filterHaber:'haber'
-                                                        | filter: filterSaldo:'saldo'
-                                                        | orderBy: orderTerm: propertyTerm
-                                                        | paginate: { itemsPerPage: itemsPerPage,
-                                                                      currentPage: currentPage,
-                                                                      totalItems: totalItems
-                                                                    }">
+                                          | filter: filterType:'transactionTypeName'
+                                          | filter: filterOrigin:'transactionOrigin'
+                                          | filter: filterLetter:'transactionLetter'
+                                          | filter: filterNumber:'transactionNumber'
+                                          | filter: filterTotalPrice:'transactionTotalPrice'
+                                          | filter: filterPaymentMethodName:'paymentMethodName'
+                                          | filter: filterQuota:'quota'
+                                          | filter: filterPaymentMethodExpirationDate:'paymentMethodExpirationDate'
+                                          | filter: filterDebe:'debe'
+                                          | filter: filterHaber:'haber'
+                                          | filter: filterSaldo:'saldo'
+                                          | orderBy: orderTerm: propertyTerm
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: currentPage,
+                                                        totalItems: totalItems
+                                                      }">
               <td align="left" width="50">
               <button type="button" class="btn btn-success  btn-sm" (click)="getTransaction(item.transactionId)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
@@ -94,16 +114,18 @@
               <td>{{item.transactionNumber}}</td>
               <td>{{item.transactionTotalPrice | currency:'USD':'1.2-2'}}</td>
               <td>{{item.paymentMethodName}}</td>
+              <td>{{item.quota}}</td>
+              <td>{{item.paymentMethodExpirationDate | dateFormat:'DD/MM/YYYY' }}</td>
               <td [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'1.2-2'}}</td>
               <td [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'1.2-2'}}</td>
               <td [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'1.2-2'}}</td>
             </tr>
             <tr align="center" *ngIf="items.length === 0">
-              <td colspan="11">No se encontraron movimientos</td>
+              <td colspan="13">No se encontraron movimientos</td>
             </tr>
           </tbody>
           <tfoot [ngClass]="{'credit':balance>0,'debit':balance<0}">
-            <td colspan="10" align="right">
+            <td colspan="12" align="right">
               <strong>SALDO TOTAL</strong>
             </td>
             <td *ngIf="balance>=0">
@@ -119,7 +141,13 @@
     <div class="card-footer bg-primary">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls class="my-pagination" (pageChange)="currentPage=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
+          <pagination-controls
+            class="my-pagination"
+            (pageChange)="currentPage=$event"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true">
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">

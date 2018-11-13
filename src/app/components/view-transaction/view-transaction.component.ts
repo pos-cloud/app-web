@@ -29,6 +29,8 @@ export class ViewTransactionComponent implements OnInit {
   public movementsOfCashes: MovementOfCash[];
   public areMovementsOfCashesEmpty = true;
   public roundNumber = new RoundNumberPipe();
+  public orderTerm: string[] = ['expirationDate'];
+  public propertyTerm: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -114,6 +116,16 @@ export class ViewTransactionComponent implements OnInit {
           this.loading = false;
         }
       );
+  }
+
+  public orderBy(term: string, property?: string): void {
+
+    if (this.orderTerm[0] === term) {
+      this.orderTerm[0] = "-" + term;
+    } else {
+      this.orderTerm[0] = term;
+    }
+    this.propertyTerm = property;
   }
 
   public showMessage(
