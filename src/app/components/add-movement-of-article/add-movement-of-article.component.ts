@@ -43,6 +43,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public variantTypes: VariantType[];
   public selectedVariants;
   public areVariantsEmpty: boolean = true;
+  public allowMeasure: boolean = false;
   public movementOfArticleForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -85,6 +86,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   ngOnInit(): void {
 
+    if(this.movementOfArticle.article.allowMeasure === true){
+      this.allowMeasure = true;
+    }
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.containsVariants = this.movementOfArticle.article.containsVariants;
@@ -141,7 +145,11 @@ export class AddMovementOfArticleComponent implements OnInit {
       ],
       'unitPrice': [this.movementOfArticle.unitPrice, [
         ]
-      ]
+      ],
+      'measure' : [ this.movementOfArticle.measure, [
+
+      ]],
+      'quantityMeasure' : [this.movementOfArticle.quantityMeasure,[]]
     });
 
     this.movementOfArticleForm.valueChanges
@@ -321,6 +329,8 @@ export class AddMovementOfArticleComponent implements OnInit {
     if (!this.movementOfArticle.amount) this.movementOfArticle.amount = 1;
     if (!this.movementOfArticle.notes) this.movementOfArticle.notes = '';
     if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
+    if (!this.movementOfArticle.measure) this.movementOfArticle.measure = "";
+    if (!this.movementOfArticle.quantityMeasure) this.movementOfArticle.quantityMeasure = 0;
 
     this.movementOfArticle.amount = this.roundNumber.transform(this.movementOfArticle.amount);
 
@@ -329,13 +339,25 @@ export class AddMovementOfArticleComponent implements OnInit {
       'description': this.movementOfArticle.description,
       'amount': this.movementOfArticle.amount,
       'notes': this.movementOfArticle.notes,
-      'unitPrice': this.movementOfArticle.unitPrice
+      'unitPrice': this.movementOfArticle.unitPrice,
+      'measure':this.movementOfArticle.measure,
+      'quantityMeasure' : this.movementOfArticle.quantityMeasure
     };
 
     this.movementOfArticleForm.setValue(values);
   }
 
   public addMovementOfArticle(): void {
+
+    if(this.movementOfArticleForm.value.measure){
+      this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
+      this.movementOfArticle.quantityMeasure = this.movementOfArticleForm.value.quantityMeasure;
+      let number = this.movementOfArticleForm.value.measure.split("*");
+      
+      this.movementOfArticleForm.value.amount = number[0]*number[1] * this.movementOfArticleForm.value.quantityMeasure;
+      this.movementOfArticleForm.value.notes = this.movementOfArticleForm.value.measure;
+
+    }
 
     this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
     this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
@@ -371,7 +393,9 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
     }
 
+
     if (this.containsVariants) {
+      console.log("entro");
       if (!this.isValidSelectedVariants()) {
         if (!this.variants || this.variants.length === 0) {
           if (Config.modules.stock &&
@@ -390,17 +414,21 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.movementOfArticle.transaction.type.modifyStock) {
           this.getArticleStock();
         } else {
+          
           this.movementOfArticleExists();
         }
 
       }
     } else {
+      
       // Si tiene el modulo de stock y la transacción afecta stock verificamos que tenga stock
       if (Config.modules.stock &&
         this.movementOfArticle.transaction.type.modifyStock) {
         this.getArticleStock();
       } else {
         // Corroboramos si ya existe algún movimiento del artículo a agregar
+       
+      console.log("entro");
         this.movementOfArticleExists();
       }
     }
@@ -500,6 +528,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         } else {
           let movementFound = result.movementsOfArticles[0];
 
+
           this.movementOfArticle.article = movementFound.article;
 
           if (!this.containsVariants) {
@@ -508,8 +537,14 @@ export class AddMovementOfArticleComponent implements OnInit {
           if (this.movementOfArticle._id && this.movementOfArticle._id !== '') {
             this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
           } else {
-            this.movementOfArticle._id = movementFound._id;
-            this.movementOfArticle.amount += movementFound.amount;
+
+            if(movementFound.measure === this.movementOfArticleForm.value.measure){
+              this.movementOfArticle._id = movementFound._id;
+              this.movementOfArticle.amount += movementFound.amount;
+            } else {
+              this.saveMovementOfArticle();
+            }
+           
           }
 
           if (this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {

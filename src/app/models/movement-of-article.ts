@@ -30,6 +30,8 @@ export class MovementOfArticle {
     public printed: number = 0;
     public article: Article;
     public transaction: Transaction = null;
+    public measure: string ;
+    public quantityMeasure : number = 0;
 
 	constructor () {}
 }

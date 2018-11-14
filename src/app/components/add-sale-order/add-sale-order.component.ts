@@ -557,7 +557,8 @@ export class AddSaleOrderComponent implements OnInit {
       this.filterArticle = '';
     }
 
-    if (!itemData.article.containsVariants) {
+
+    if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
 
       let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
 
