@@ -183,6 +183,7 @@
 								</div>
 							</div>
 						</div>
+						
 					</ng-template>
 				</ngb-tab>
 				<!-- <ngb-tab title="Variantes">
@@ -214,6 +215,15 @@
 							<div class="form-group col-md-12">
 								<label for="allowSaleWithoutStock" class="control-label">¿Se puede vender el producto sin stock disponible?</label>
 								<select class="form-control" formControlName="allowSaleWithoutStock">
+									<option [value]="true" [disabled]="readonly">Si</option>
+									<option [value]="false" [disabled]="readonly">No</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label for="allowMeasure" class="control-label">¿El producto pide medida?</label>
+								<select class="form-control" formControlName="allowMeasure">
 									<option [value]="true" [disabled]="readonly">Si</option>
 									<option [value]="false" [disabled]="readonly">No</option>
 								</select>

@@ -253,7 +253,10 @@ export class AddArticleComponent implements OnInit {
       ],
       'allowSaleWithoutStock': [this.article.allowSaleWithoutStock, [
         ]
-      ]
+      ],
+      'allowMeasure' : [this.article.allowMeasure, [
+
+      ]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -691,7 +694,8 @@ export class AddArticleComponent implements OnInit {
       'printIn': this.article.printIn,
       'allowPurchase': this.article.allowPurchase,
       'allowSale': this.article.allowSale,
-      'allowSaleWithoutStock': this.article.allowSaleWithoutStock
+      'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
+      'allowMeasure' : this.article.allowMeasure
     };
 
     this.articleForm.setValue(values);
