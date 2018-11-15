@@ -63,6 +63,12 @@
             </div>
           </div>
         </div>
+        <div class="row" *ngIf="movementOfCash.type.isCurrentAccount && !movementOfCash.type.allowToFinance">
+          <div class="form-group col-md-12">
+            <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
+            <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate" min="2000-01-01" />
+          </div>
+        </div>
         <div class="row">
           <div class="form-group col-md-6">
             <label for="amountToPay" class="control-label">Importe a pagar:</label>
