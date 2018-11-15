@@ -402,7 +402,6 @@ export class AddMovementOfArticleComponent implements OnInit {
 
 
     if (this.containsVariants) {
-      console.log("entro");
       if (!this.isValidSelectedVariants()) {
         if (!this.variants || this.variants.length === 0) {
           if (Config.modules.stock &&
@@ -435,7 +434,6 @@ export class AddMovementOfArticleComponent implements OnInit {
       } else {
         // Corroboramos si ya existe algún movimiento del artículo a agregar
        
-      console.log("entro");
         this.movementOfArticleExists();
       }
     }

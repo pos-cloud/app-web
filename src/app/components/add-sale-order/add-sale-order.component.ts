@@ -156,13 +156,11 @@ export class AddSaleOrderComponent implements OnInit {
     this._cashBoxService.getCortizacion().subscribe(
       result => {
         if (!result) {
-          console.log("no hay cotizaciones");
         } else {
           this.dolar = result.libre;
         }
       },
       error => {
-        console.log("error " + error);
       }
     );
   }

@@ -50,7 +50,6 @@ export class MovementOfCashService {
   }
 
   saveMovementsOfCashes(movementsOfCashes: MovementOfCash[]) {
-    console.log(movementsOfCashes);
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
