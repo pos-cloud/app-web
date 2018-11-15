@@ -347,15 +347,22 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticleForm.setValue(values);
   }
 
+  public calculateMeasure() :void {
+
+    this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
+    this.movementOfArticle.quantityMeasure = this.movementOfArticleForm.value.quantityMeasure;
+
+    this.movementOfArticle.amount = eval(this.movementOfArticleForm.value.measure) * this.movementOfArticleForm.value.quantityMeasure * this.movementOfArticleForm.value.unitPrice;
+    this.movementOfArticle.notes = this.movementOfArticleForm.value.measure;
+
+    this.setValueForm();
+  }
+
   public addMovementOfArticle(): void {
 
     if(this.movementOfArticleForm.value.measure){
-      this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
-      this.movementOfArticle.quantityMeasure = this.movementOfArticleForm.value.quantityMeasure;
-      let number = this.movementOfArticleForm.value.measure.split("*");
-      
-      this.movementOfArticleForm.value.amount = number[0]*number[1] * this.movementOfArticleForm.value.quantityMeasure;
-      this.movementOfArticleForm.value.notes = this.movementOfArticleForm.value.measure;
+
+      this.calculateMeasure();
 
     }
 
