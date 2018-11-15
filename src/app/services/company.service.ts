@@ -87,26 +87,32 @@ export class CompanyService {
 		return this._http.get(Config.apiURL + "quantity-of-companies-by-type/" + query, { headers: headers }).map(res => res.json());
 	}
 
-	getSalesByClient(query: string) {
+	getSalesByCompany(query: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'sales-by-client/' + query, { headers: headers }).map(res => res.json());
+		return this._http.get(Config.apiURL + 'sales-by-company/' + query, { headers: headers }).map(res => res.json());
 	}
 
-  getSummaryOfAccounts(companyId?: string) {
+  getSummaryOfAccountsByCompany(query: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
     });
 
-    if (companyId) {
-      return this._http.get(Config.apiURL + "summary-of-accounts/" + companyId, { headers: headers }).map(res => res.json());
-    } else {
-      return this._http.get(Config.apiURL + "summary-of-accounts/", { headers: headers }).map(res => res.json());
-    }
+    return this._http.get(Config.apiURL + "summary-of-accounts-by-company/" + query, { headers: headers }).map(res => res.json());
+  }
+
+  getSummaryOfAccounts(query: string) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+
+    return this._http.get(Config.apiURL + "summary-of-accounts/" + query, { headers: headers }).map(res => res.json());
   }
 }

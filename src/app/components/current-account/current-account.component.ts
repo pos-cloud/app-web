@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
@@ -40,7 +42,7 @@ export class CurrentAccountComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['-endDate'];
+  public orderTerm: string[] = ['-paymentMethodExpirationDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -50,6 +52,8 @@ export class CurrentAccountComponent implements OnInit {
   public balance: number = 0;
   public currentPage: number = 1;
   public roundNumber: RoundNumberPipe;
+  public startDate: string;
+  public endDate: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -63,6 +67,8 @@ export class CurrentAccountComponent implements OnInit {
   ) {
     this.movementsOfCashes = new Array();
     this.roundNumber = new RoundNumberPipe();
+    this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
+    this.endDate = moment().format('YYYY-MM-DD');
   }
 
   ngOnInit(): void {
@@ -80,7 +86,13 @@ export class CurrentAccountComponent implements OnInit {
 
     this.loading = true;
 
-    this._companyService.getSummaryOfAccounts(this.companySelected._id).subscribe(
+    let query = {
+      company: this.companySelected._id,
+      startDate: this.startDate,
+      endDate: this.endDate
+    }
+
+    this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
       result => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

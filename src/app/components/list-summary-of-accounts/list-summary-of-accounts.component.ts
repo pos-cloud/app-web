@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 import { CompanyService } from './../../services/company.service';
 import { CompanyType } from '../../models/company';
@@ -25,13 +27,18 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public itemsPerPage = 10;
   public totalItems = 0;
   public filterType: CompanyType;
+  public startDate: string;
+  public endDate: string;
 
   constructor(
     public _companyService: CompanyService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
+    this.endDate = moment().format('YYYY-MM-DD');
+  }
 
   ngOnInit(): void {
     let pathLocation: string[] = this._router.url.split('/');
@@ -52,7 +59,12 @@ export class ListSummaryOfAccountsComponent implements OnInit {
 
     this.loading = true;
 
-    this._companyService.getSummaryOfAccounts().subscribe(
+    let query = {
+      startDate: this.startDate,
+      endDate: this.endDate
+    }
+
+    this._companyService.getSummaryOfAccounts(JSON.stringify(query)).subscribe(
         result => {
           if (!result) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

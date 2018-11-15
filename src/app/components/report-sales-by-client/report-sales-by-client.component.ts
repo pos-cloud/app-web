@@ -51,10 +51,10 @@ export class ReportSalesByClientComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.listType = pathLocation[2];
-    this.getSalesByClient();
+    this.getSalesByCompany();
   }
 
-  public getSalesByClient(): void {
+  public getSalesByCompany(): void {
 
     this.loading = true;
 
@@ -69,7 +69,7 @@ export class ReportSalesByClientComponent implements OnInit {
       limit: this.limit
     }
 
-    this._companyService.getSalesByClient(JSON.stringify(query)).subscribe(
+    this._companyService.getSalesByCompany(JSON.stringify(query)).subscribe(
       result => {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -98,11 +98,11 @@ export class ReportSalesByClientComponent implements OnInit {
       this.sort = JSON.parse('{"' + term + '": 1 }');
     }
 
-    this.getSalesByClient();
+    this.getSalesByCompany();
   }
 
   public refresh(): void {
-    this.getSalesByClient();
+    this.getSalesByCompany();
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

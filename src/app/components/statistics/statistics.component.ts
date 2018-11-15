@@ -82,7 +82,7 @@ export class StatisticsComponent implements OnInit {
     this.reportSalesByClient.endDate = this.endDate;
     this.reportSalesByClient.endTime = this.endTime;
     this.reportSalesByClient.limit = 5;
-    this.reportSalesByClient.getSalesByClient();
+    this.reportSalesByClient.getSalesByCompany();
     this.reportSalesByMake.startDate = this.startDate;
     this.reportSalesByMake.startTime = this.startTime;
     this.reportSalesByMake.endDate = this.endDate;
