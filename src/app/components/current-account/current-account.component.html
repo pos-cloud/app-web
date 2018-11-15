@@ -72,26 +72,25 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th rowspan="2" class="th transaction-data">
-                <i class="fa fa-bars"></i>
-              </th>
+              <th class="th transaction-data"></th>
               <th colspan="6" class="th transaction-data">Datos del Comprobante</th>
               <th colspan="3" class="th payment-method-data">Datos del Pago</th>
               <th colspan="3" class="th balance-data">Saldos</th>
             </tr>
             <tr>
-              <th (click)="orderBy('transactionDate')" class="transaction-data">Fecha</th>
-              <th (click)="orderBy('transactionTypeName')" class="transaction-data">Tipo</th>
-              <th (click)="orderBy('transactionOrigin')" class="transaction-data">Punto de venta</th>
-              <th (click)="orderBy('transactionLetter')" class="transaction-data">Letra</th>
-              <th (click)="orderBy('transactionNumber')" class="transaction-data">Número</th>
-              <th (click)="orderBy('transactionTotalPrice')" class="transaction-data">Importe</th>
-              <th (click)="orderBy('paymentMethodName')" class="payment-method-data">Método</th>
-              <th (click)="orderBy('quota')" class="payment-method-data">Cuota</th>
-              <th (click)="orderBy('paymentMethodExpirationDate')" class="payment-method-data">Vencimiento</th>
-              <th (click)="orderBy('debe')" class="balance-data">Debe</th>
-              <th (click)="orderBy('haber')" class="balance-data">Haber</th>
-              <th class="balance-data">Saldo</th>
+              <th class=""><i class="fa fa-bars"></i></th>
+              <th class="">Fecha</th>
+              <th class="">Tipo</th>
+              <th class="">Punto de venta</th>
+              <th class="">Letra</th>
+              <th class="">Número</th>
+              <th class="">Importe</th>
+              <th class="">Método</th>
+              <th class="">Cuota</th>
+              <th class="">Vencimiento</th>
+              <th class="">Debe</th>
+              <th class="">Haber</th>
+              <th class="">Saldo</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
@@ -122,7 +121,6 @@
                                           | filter: filterDebe:'debe'
                                           | filter: filterHaber:'haber'
                                           | filter: filterSaldo:'saldo'
-                                          | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: currentPage,
                                                         totalItems: totalItems
@@ -130,8 +128,8 @@
               <td align="left" width="50">
               <button type="button" class="btn btn-success  btn-sm" (click)="getTransaction(item.transactionId)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
-              <td class="align-center" *ngIf="item.transactionEndDate">{{item.transactionEndDate | dateFormat:'DD/MM/YYYY' }}</td>
-              <td class="align-center" *ngIf="!item.transactionEndDate">{{item.transactionStartDate | dateFormat:'DD/MM/YYYY' }}</td>
+              <td class="align-center" *ngIf="item.transactionEndDate">{{item.transactionEndDate | dateFormat: 'DD/MM/YYYY' }}</td>
+              <td class="align-center" *ngIf="!item.transactionEndDate">{{item.transactionStartDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td *ngIf="item.transactionTypeName">{{item.transactionTypeName}}</td>
               <td class="align-center">{{item.transactionOrigin}}</td>
               <td class="align-center">{{item.transactionLetter}}</td>
@@ -139,7 +137,7 @@
               <td class="align-right">{{item.transactionTotalPrice | currency:'USD':'1.2-2'}}</td>
               <td class="align-left">{{item.paymentMethodName}}</td>
               <td class="align-center">{{item.quota}}</td>
-              <td class="align-center">{{item.paymentMethodExpirationDate | dateFormat:'DD/MM/YYYY' }}</td>
+              <td class="align-center">{{item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td class="align-right" [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'1.2-2'}}</td>
               <td class="align-right" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'1.2-2'}}</td>
               <td class="align-right" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'1.2-2'}}</td>
@@ -149,13 +147,13 @@
             </tr>
           </tbody>
           <tfoot [ngClass]="{'credit':balance>0,'debit':balance<0}">
-            <td colspan="12" align="right">
+            <td colspan="12" class="align-right">
               <strong>SALDO TOTAL</strong>
             </td>
-            <td *ngIf="balance>=0">
+            <td *ngIf="balance>=0" class="align-right">
               <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
             </td>
-            <td *ngIf="balance<0">
+            <td *ngIf="balance<0" class="align-right">
               <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
             </td>
           </tfoot>

@@ -42,7 +42,6 @@ export class CurrentAccountComponent implements OnInit {
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['-paymentMethodExpirationDate'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -135,16 +134,6 @@ export class CurrentAccountComponent implements OnInit {
     );
   }
 
-  public orderBy(term: string, property?: string): void {
-
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
-    } else {
-      this.orderTerm[0] = term;
-    }
-    this.propertyTerm = property;
-  }
-
   public refresh(): void {
 
     if (this.companySelected) {
@@ -176,6 +165,9 @@ export class CurrentAccountComponent implements OnInit {
     switch (op) {
       case 'transaction':
         modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
+        if(this.balance < 0) {
+          transaction.totalPrice = this.balance * (-1);
+        }
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then(
           (result) => {

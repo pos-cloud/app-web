@@ -26,7 +26,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public propertyTerm: string;
   public itemsPerPage = 10;
   public totalItems = 0;
-  public filterType: CompanyType;
+  public filterCompanyType: CompanyType;
   public startDate: string;
   public endDate: string;
 
@@ -43,12 +43,12 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   ngOnInit(): void {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if (!this.filterType) {
+    if (!this.filterCompanyType) {
       if (pathLocation[3] === "cliente") {
-        this.filterType = CompanyType.Client;
+        this.filterCompanyType = CompanyType.Client;
         this.orderTerm = ['balance'];
       } else if (pathLocation[3] === "proveedor") {
-        this.filterType = CompanyType.Provider;
+        this.filterCompanyType = CompanyType.Provider;
         this.orderTerm = ['-balance'];
       }
     }

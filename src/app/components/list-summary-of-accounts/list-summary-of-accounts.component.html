@@ -39,14 +39,14 @@
             <thead>
               <tr>
                 <th></th>
-                <th (click)="orderBy('_id','companyName')">Nombre</th>
-                <th (click)="orderBy('_id','companyType')">Tipo</th>
-                <th (click)="orderBy('_id','companyDNI')">DNI</th>
-                <th (click)="orderBy('_id','companyCUIT')">CUIT</th>
-                <th (click)="orderBy('_id','companyAddress')">Dirección</th>
-                <th (click)="orderBy('_id','companyPhones')">Teléfono</th>
-                <th (click)="orderBy('_id','companyEmails')">Email</th>
-                <th (click)="orderBy('balance')">Saldo</th>
+                <th class="align-center" (click)="orderBy('_id','companyName')">Nombre</th>
+                <th class="align-center" (click)="orderBy('_id','companyType')">Tipo</th>
+                <th class="align-center" (click)="orderBy('_id','companyDNI')">DNI</th>
+                <th class="align-center" (click)="orderBy('_id','companyCUIT')">CUIT</th>
+                <th class="align-center" (click)="orderBy('_id','companyAddress')">Dirección</th>
+                <th class="align-center" (click)="orderBy('_id','companyPhones')">Teléfono</th>
+                <th class="align-center" (click)="orderBy('_id','companyEmails')">Email</th>
+                <th class="align-center" (click)="orderBy('balance')">Saldo</th>
               </tr>
               <tr *ngIf="areFiltersVisible" class="filters">
                 <th></th>
@@ -61,13 +61,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of items | filter: filterCompanyName:'name':'_id'
-                                            | filter: filterCompanyType:'type':'_id'
-                                            | filter: filterCompanyDNI:'DNI':'_id'
-                                            | filter: filterCompanyCUIT:'CUIT':'_id'
-                                            | filter: filterCompanyAddress:'CUIT':'_id'
-                                            | filter: filterCompanyPhones:'CUIT':'_id'
-                                            | filter: filterCompanyEmails:'CUIT':'_id'
+              <tr *ngFor="let item of items | filter: filterCompanyName:'companyName':'_id'
+                                            | filter: filterCompanyType:'companyType':'_id'
+                                            | filter: filterCompanyDNI:'companyDNI':'_id'
+                                            | filter: filterCompanyCUIT:'companyCUIT':'_id'
+                                            | filter: filterCompanyAddress:'companyAddress':'_id'
+                                            | filter: filterCompanyPhones:'companyPhones':'_id'
+                                            | filter: filterCompanyEmails:'companyEmails':'_id'
                                             | filter: filterBalance:'balance'
                                             | orderBy: orderTerm: propertyTerm
                                             | paginate: { itemsPerPage: itemsPerPage,
@@ -80,20 +80,20 @@
                 </td>
                 <td class="flat">{{ item._id.companyName }}</td>
                 <td class="flat">{{ item._id.companyType }}</td>
-                <td class="flat">{{ item._id.companyDNI }}</td>
-                <td class="flat">{{ item._id.companyCUIT }}</td>
+                <td class="flat align-center">{{ item._id.companyDNI }}</td>
+                <td class="flat align-center">{{ item._id.companyCUIT }}</td>
                 <td class="flat">{{ item._id.companyAddress }}</td>
                 <td class="flat">{{ item._id.companyPhones }}</td>
                 <td class="flat">{{ item._id.companyEmails }}</td>
-                <td class="flat" *ngIf="item.balance>=0">
+                <td class="flat align-right" *ngIf="item.balance>=0">
                   <strong>{{item.balance | currency:'USD':'1.2-2'}}</strong>
                 </td>
-                <td class="flat" *ngIf="item.balance<0">
-                  <strong>( {{item.balance*-1 | currency:'USD':'1.2-2'}} )</strong>
+                <td class="flat align-right" *ngIf="item.balance<0">
+                  <strong>{{item.balance | currency:'USD':'1.2-2'}}</strong>
                 </td>
               </tr>
               <tr align="center" *ngIf="items.length === 0">
-                <td colspan="6">No se encontraron cuentas</td>
+                <td colspan="9">No se encontraron cuentas</td>
               </tr>
             </tbody>
           </table>
