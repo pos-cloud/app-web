@@ -96,6 +96,31 @@
                 <td colspan="9">No se encontraron cuentas</td>
               </tr>
             </tbody>
+            <tfoot>
+              <td>
+                <strong>Totales</strong>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>
+                <b>
+                  ${{ calculateTotal(items 
+                  | filter: filterCompanyName:'companyName':'_id'
+                  | filter: filterCompanyType:'companyType':'_id'
+                  | filter: filterCompanyDNI:'companyDNI':'_id'
+                  | filter: filterCompanyCUIT:'companyCUIT':'_id'
+                  | filter: filterCompanyAddress:'companyAddress':'_id'
+                  | filter: filterCompanyPhones:'companyPhones':'_id'
+                  | filter: filterCompanyEmails:'companyEmails':'_id'
+                  | filter: filterBalance:'balance'  , 'balance', '1.2-2') }}
+                </b>
+              </td>
+            </tfoot>
           </table>
         </div>
       </div>

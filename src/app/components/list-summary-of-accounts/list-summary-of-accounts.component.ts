@@ -8,6 +8,8 @@ import 'moment/locale/es';
 import { CompanyService } from './../../services/company.service';
 import { CompanyType } from '../../models/company';
 
+import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+
 @Component({
   selector: 'app-list-summary-of-accounts',
   templateUrl: './list-summary-of-accounts.component.html',
@@ -29,6 +31,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public filterCompanyType: CompanyType;
   public startDate: string;
   public endDate: string;
+  public roundNumber = new RoundNumberPipe();
 
   constructor(
     public _companyService: CompanyService,
@@ -73,6 +76,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
           } else {
             this.hideMessage();
             this.items = result;
+            console.log(this.items);
             this.totalItems = this.items.length;
           }
           this.loading = false;
@@ -102,6 +106,17 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
+  }
+
+  public calculateTotal(items,col){
+
+    let total = 0;
+    if (items) {
+      for(let item of items) {
+          total= total+item[col]
+      }
+    }
+    return this.roundNumber.transform(total);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
