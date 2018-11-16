@@ -84,8 +84,7 @@ export class AddCompanyComponent  implements OnInit {
     },
     'DNI': {
       'minlength': 'El DNI debe contener 8 díguitos.',
-      'maxlength': 'El DNI debe contener 8 díguitos.',
-      'pattern':   ' Ingrese solo números.'
+      'maxlength': 'El DNI debe contener 8 díguitos.'
     },
     'address': {
     },
