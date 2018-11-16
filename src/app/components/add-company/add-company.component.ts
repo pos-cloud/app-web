@@ -196,8 +196,7 @@ export class AddCompanyComponent  implements OnInit {
       ],
       'DNI': [this.company.DNI, [
           Validators.maxLength(8),
-          Validators.minLength(8),
-          Validators.pattern('^[0-9]{8}$')
+          Validators.minLength(8)
         ]
       ],
       'grossIncome': [this.company.grossIncome, [
