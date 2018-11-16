@@ -728,7 +728,9 @@ export class PrintComponent implements OnInit {
           this.hideMessage();
           this.movementsOfArticles = result.movementsOfArticles;
 
-          if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
+          this.getMovementOfCash();
+
+          /*if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
             this.calculateBarcode();
           } else {
             if (this.printer.pageWidth < 150) {
@@ -738,7 +740,7 @@ export class PrintComponent implements OnInit {
             } else {
               this.toPrintInvoice();
             }
-          }
+          }*/
         }
         this.loading = false;
       },
@@ -760,7 +762,21 @@ export class PrintComponent implements OnInit {
         } else {
           this.hideMessage();
           this.movementsOfCashes = result.movementsOfCashes;
-          this.toPrintPayment();
+          if (this.typePrint === "cobro") {
+            this.toPrintPayment();
+          } else if (this.typePrint === "invoice") {
+            if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
+              this.calculateBarcode();
+            } else {
+              if (this.printer.pageWidth < 150) {
+                this.toPrintRoll();
+              } else if (this.printer.pageHigh > 150) {
+                this.toPrintInvoice();
+              } else {
+                this.toPrintInvoice();
+              }
+            }
+          }
         }
         this.loading = false;
       },
@@ -1627,7 +1643,7 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc.setFontType('bold');
-    this.doc.text("Observaciones:", 10, 246);
+    this.doc.text("Observaciones: "+this.movementsOfCashes[0].observation, 10, 246);
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
 
