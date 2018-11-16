@@ -286,7 +286,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (this.transactionType.resetNumber === undefined) this.transactionType.resetNumber = false;
     if (this.transactionType.electronics === undefined) this.transactionType.electronics  = false;
     if (this.transactionType.printable === undefined) this.transactionType.printable  = false;
-    if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = undefined;
+    if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
     if (this.transactionType.tax === undefined) this.transactionType.tax = false;
     if (this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
     if (this.transactionType.cashOpening === undefined) this.transactionType.cashOpening = false;
@@ -294,9 +294,9 @@ export class UpdateTransactionTypeComponent implements OnInit {
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
     if (this.transactionType.showPrices === undefined) this.transactionType.showPrices = true;
     if(this.transactionType.transactionMovement === TransactionMovement.Sale) {
-      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+      if (!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
     } else {
-      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
+      if (!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
@@ -392,6 +392,7 @@ export class UpdateTransactionTypeComponent implements OnInit {
           this.loading = false;
         } else {
           this.transactionType = result.transactionType;
+          console.log(this.transactionType);
           this.showMessage("El tipo de transacción se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
