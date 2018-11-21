@@ -729,7 +729,7 @@ export class PrintComponent implements OnInit {
           this.movementsOfArticles = result.movementsOfArticles;
 
 
-          if(this.transaction.type.currentAccount.toString() === "No"){
+          if(this.transaction.type.requestPaymentMethods === false){
             if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
               this.calculateBarcode();
             } else {
