@@ -141,7 +141,7 @@
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
             <td class="flat">{{transactionType.requestTaxes}}</td>
             <td class="flat">{{transactionType.tax}}</td>
-            <td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.description}}</td>
+            <td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.name}}</td>
             <td class="flat" *ngIf="!transactionType.requestEmployee"></td>
             <td class="flat" *ngIf="transactionType.fastPayment">{{transactionType.fastPayment.name}}</td>
             <td class="flat" *ngIf="!transactionType.fastPayment"></td>

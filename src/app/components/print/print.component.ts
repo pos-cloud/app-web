@@ -728,19 +728,22 @@ export class PrintComponent implements OnInit {
           this.hideMessage();
           this.movementsOfArticles = result.movementsOfArticles;
 
-          this.getMovementOfCash();
 
-          /*if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
-            this.calculateBarcode();
-          } else {
-            if (this.printer.pageWidth < 150) {
-              this.toPrintRoll();
-            } else if (this.printer.pageHigh > 150) {
-              this.toPrintInvoice();
+          if(this.transaction.type.currentAccount.toString() === "No"){
+            if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
+              this.calculateBarcode();
             } else {
-              this.toPrintInvoice();
+              if (this.printer.pageWidth < 150) {
+                this.toPrintRoll();
+              } else if (this.printer.pageHigh > 150) {
+                this.toPrintInvoice();
+              } else {
+                this.toPrintInvoice();
+              }
             }
-          }*/
+          } else {
+            this.getMovementOfCash();
+          }
         }
         this.loading = false;
       },
@@ -1643,7 +1646,10 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc.setFontType('bold');
-    this.doc.text("Observaciones: "+this.movementsOfCashes[0].observation, 10, 246);
+    if(this.movementsOfCashes){
+      this.doc.text("Observaciones: "+this.movementsOfCashes[0].observation, 10, 246);
+    }
+    
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
 
