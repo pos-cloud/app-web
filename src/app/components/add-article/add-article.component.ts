@@ -255,8 +255,11 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'allowMeasure' : [this.article.allowMeasure, [
-
-      ]]
+        ]
+      ],
+      'ecommerceEnabled' : [this.article.ecommerceEnabled, [
+        ]
+      ]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -674,6 +677,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowPurchase === undefined) { this.article.allowPurchase = true; }
     if (!this.article.allowSale === undefined) { this.article.allowSale = true; }
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
+    if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
 
     const values = {
       '_id': this.article._id,
@@ -695,7 +699,8 @@ export class AddArticleComponent implements OnInit {
       'allowPurchase': this.article.allowPurchase,
       'allowSale': this.article.allowSale,
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
-      'allowMeasure' : this.article.allowMeasure
+      'allowMeasure': this.article.allowMeasure,
+      'ecommerceEnabled': this.article.ecommerceEnabled
     };
 
     this.articleForm.setValue(values);

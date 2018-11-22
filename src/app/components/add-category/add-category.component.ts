@@ -78,6 +78,9 @@ export class AddCategoryComponent  implements OnInit {
       ],
       'visibleInvoice' : [this.category.visibleInvoice, [
         ]
+      ],
+      'ecommerceEnabled' : [this.category.ecommerceEnabled, [
+        ]
       ]
     });
 
@@ -134,7 +137,8 @@ export class AddCategoryComponent  implements OnInit {
     this.categoryForm.setValue({
       'order': this.category.order,
       'description': this.category.description,
-      'visibleInvoice': this.category.visibleInvoice
+      'visibleInvoice': this.category.visibleInvoice,
+      'ecommerceEnabled': this.category.ecommerceEnabled
     });
   }
 

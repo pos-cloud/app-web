@@ -75,7 +75,8 @@ export class UpdateCategoryComponent implements OnInit {
       '_id': this.category._id,
       'order': this.category.order,
       'description': this.category.description,
-      'visibleInvoice': this.category.visibleInvoice
+      'visibleInvoice': this.category.visibleInvoice,
+      'ecommerceEnabled': this.category.ecommerceEnabled
     });
   }
 
@@ -98,6 +99,9 @@ export class UpdateCategoryComponent implements OnInit {
         ]
       ],
       'visibleInvoice' : [this.category.visibleInvoice,[
+        ]
+      ],
+      'ecommerceEnabled' : [this.category.ecommerceEnabled,[
         ]
       ]
     });
