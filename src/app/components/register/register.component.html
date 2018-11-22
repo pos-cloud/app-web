@@ -22,7 +22,7 @@
         <div class="center-content">
           <div class="row">
               <div class="form-group col-md-12">
-              <label for="employeeName" class="control-label">Tu nombre y apellido:</label>
+              <label for="employeeName" class="control-label">Nombre y Apellido:</label>
               <div class="input-group">
                 <input type="text" class="form-control" formControlName="employeeName" name="employeeName" id="employeeName" [focus]="focusEvent" />
               </div>
@@ -33,7 +33,7 @@
           </div>
           <div class="row">
             <div class="form-group col-md-12">
-              <label for="companyName" class="control-label">Nombre de tu negocio:</label>
+              <label for="companyName" class="control-label">Nombre del negocio:</label>
               <div class="input-group">
                 <input type="text" class="form-control" formControlName="companyName" name="companyName" id="companyName"/>
               </div>
@@ -44,7 +44,7 @@
           </div>
           <div class="row">
             <div class="form-group col-md-12">
-              <label for="email" class="control-label">Tu e-mail:</label>
+              <label for="email" class="control-label">E-mail:</label>
               <div class="input-group">
                 <input type="email" class="form-control" formControlName="email" name="email" id="email" placeholder="juan@example.com"/>
               </div>
@@ -55,7 +55,7 @@
           </div>
           <div class="row">
             <div class="form-group col-md-12">
-              <label for="phone" class="control-label">Tu teléfono:</label>
+              <label for="phone" class="control-label">Teléfono:</label>
               <div class="input-group">
                 <input type="phone" class="form-control" formControlName="phone" name="phone" id="phone"/>
               </div>
@@ -66,7 +66,7 @@
           </div>
           <div class="row">
             <div class="form-group col-md-12">
-              <label for="category" class="control-label">Tu tipo de negocio</label>
+              <label for="category" class="control-label">Tipo de negocio</label>
               <select class="form-control" formControlName="category" (change)="checkModules($event.target.value)">
                 <option *ngFor="let category of categories" [value]="category">
                   {{category}}
