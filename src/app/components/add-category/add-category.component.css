@@ -49,3 +49,7 @@ img.mediana{
 .btn-action:hover {
       background: #025aa5;
 }
+
+.tab-content {
+  padding-top: 30px;
+}
