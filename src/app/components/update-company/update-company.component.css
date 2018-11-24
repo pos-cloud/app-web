@@ -11,3 +11,7 @@
       -webkit-justify-content: center;
       justify-content: center;
 }
+
+.tab-content {
+  padding-top: 20px;
+}

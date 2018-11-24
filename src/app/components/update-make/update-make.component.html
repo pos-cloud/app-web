@@ -16,12 +16,16 @@
       <ngb-tabset>
           <ngb-tab title="Datos principales">
             <ng-template ngbTabContent>
-              <div class="row">
+              <div class="row tab-content">
                 <div class="form-group col-md-12">
-                <label for="description" class="control-label">Descripción:</label>
-                <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
-                <div *ngIf="formErrors.description" class="alert alert-danger">
-                  {{ formErrors.description }}
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                    <label for="description" class="control-label">Descripción:</label>
+                    <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
+                    <div *ngIf="formErrors.description" class="alert alert-danger">
+                      {{ formErrors.description }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -29,13 +33,17 @@
         </ngb-tab>
             <ngb-tab title="Configuracion">
                 <ng-template ngbTabContent>
-                  <div class="row">
+                  <div class="row tab-content">
                     <div class="form-group col-md-12">
-                      <label for="visibleSale" class="control-label">La marca es visible en la venta?</label>
-                      <select class="form-control" formControlName="visibleSale">
-                        <option value="true" >Si</option>
-                        <option value="false" selected>No</option>
-                      </select>
+                      <div class="row">
+                        <div class="form-group col-md-12">
+                          <label for="visibleSale" class="control-label">La marca es visible en la venta?</label>
+                          <select class="form-control" formControlName="visibleSale">
+                            <option value="true" >Si</option>
+                            <option value="false" selected>No</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </ng-template>
