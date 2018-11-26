@@ -36,7 +36,7 @@
                                                         currentPage: p, 
                                                         totalItems: totalItems
                                                     }">
-          <td class="flat">{{companyNews.date | dateFormat:'DD/MM/YYYY HH:mm:ss' }}</td>
+          <td class="flat">{{companyNews.date | dateFormat:'DD/MM/YYYY' }}</td>
           <td class="flat"><pre>{{companyNews.news}}</pre></td>
           <td align="left" width="50"><button type="button" class="btn btn-danger btn-sm" (click)="deleteCompanyNews(companyNews)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
         </tr>
