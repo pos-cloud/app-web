@@ -1,0 +1,50 @@
+<!--ADMIN-->
+<section class="container-fluid" *ngIf="userType=='admin'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areCompaniesContactEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+            <th (click)="orderBy('name')">Nombre </th>
+            <th (click)="orderBy('phone')">Telefono </th>
+            <th (click)="orderBy('position')">Puesto </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="flat"><input  class="form-control" placeholder="Name" [(ngModel)]="companyContact.name" [focus]="focusEvent"></td>
+          <td class="flat"><input  class="form-control" placeholder="Telefono" [(ngModel)]="companyContact.phone" [focus]="focusEvent"></td>
+          <td class="flat"><input  class="form-control" placeholder="Puesto" [(ngModel)]="companyContact.position" [focus]="focusEvent"></td>
+          <td align="left" width="50"><button type="button" class="btn btn-success btn-sm" (click)="addCompanyContact()" title="Agregar"><i class="fa fa-plus"></i></button></td>
+        </tr>
+        <tr *ngFor="let companyContact of companiesContact  | filter: filterName:'name' 
+                                                      | orderBy: orderTerm: propertyTerm
+                                                      | paginate: { itemsPerPage: itemsPerPage, 
+                                                        currentPage: p, 
+                                                        totalItems: totalItems
+                                                    }">
+          <td class="flat"><pre>{{companyContact.name}} </pre></td>
+          <td class="flat"><pre>{{companyContact.phone}}</pre></td>
+          <td class="flat"><pre>{{companyContact.position}}</pre></td>
+          <td align="left" width="50"><button type="button" class="btn btn-danger btn-sm" (click)="deleteCompanyContact(companyContact)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
+        </tr>
+      </tbody>
+    </table>
+  <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <pagination-controls 
+          class="my-pagination"
+          (pageChange)="p=$event" 
+          #api 
+          previousLabel="Ant." 
+          nextLabel="Sig." 
+          autoHide="true">
+        </pagination-controls>
+      </div>
+    </div>
+  </div>
+</section>

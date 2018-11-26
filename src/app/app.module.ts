@@ -48,6 +48,7 @@ import { LocationService } from './services/location.service';
 import { CompanyNewsService } from './services/company-news.service';
 import { ArticleFieldService } from './services/article-field.service';
 import { CompanyGroupService } from "./services/company-group.service";
+import { CompanyContactService } from "./services/company-contact.service";
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -186,6 +187,7 @@ import { AddCompanyGroupComponent } from './components/add-company-group/add-com
 import { DeleteCompanyGroupComponent } from './components/delete-company-group/delete-company-group.component';
 import { UpdateCompanyGroupComponent } from './components/update-company-group/update-company-group.component';
 import { UpdateArticlePriceComponent } from './components/update-article-price/update-article-price.component';
+import { CompanyContactComponent } from './components/company-contact/company-contact.component';
 
 @NgModule({
   declarations: [
@@ -315,7 +317,8 @@ import { UpdateArticlePriceComponent } from './components/update-article-price/u
     AddCompanyGroupComponent,
     UpdateCompanyGroupComponent,
     DeleteCompanyGroupComponent,
-    UpdateArticlePriceComponent
+    UpdateArticlePriceComponent,
+    CompanyContactComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -408,7 +411,8 @@ import { UpdateArticlePriceComponent } from './components/update-article-price/u
     LocationService,
     CompanyNewsService,
     ArticleFieldService,
-    CompanyGroupService
+    CompanyGroupService,
+    CompanyContactService
   ],
   bootstrap: [AppComponent]
 })
