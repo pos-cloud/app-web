@@ -39,24 +39,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let articleStock of articleStocks | filter: filterCode:'code':'article' 
+          <tr *ngFor="let articleStock of articleStocks | filter: filterCode:'code':'article'
                                                         | filter: filterDescription:'description':'article'
                                                         | filter: filterRealStock:'realStock'
                                                         | filter: filterMinStock:'minStock'
                                                         | orderBy: orderTerm: propertyTerm
-                                                        | paginate: { itemsPerPage: itemsPerPage, 
-                                                                      currentPage: p, 
+                                                        | paginate: { itemsPerPage: itemsPerPage,
+                                                                      currentPage: p,
                                                                       totalItems: totalItems
                                                                     }">
 
 
             <td align="left" width="100">
-             
+
               <button type="button" class="btn btn-secondary btn-sm" title="Imprimir" *ngIf="'articleStock.realStock' >= '0'"  (click)= "openModal('print', articleStock )">
                 <i class="fa fa-print"></i>
               </button>
-             
-            </td>  
+
+            </td>
             <td class="flat" *ngIf="articleStock.article.make">{{articleStock.article.make.description}}</td>
             <td class="flat" *ngIf="!articleStock.article.make"></td>
             <td class="flat">{{articleStock.article.code}}</td>
@@ -67,7 +67,7 @@
             <td class="flat">{{articleStock.minStock}}</td>
           </tr>
           <tr align="center" *ngIf="areArticleStocksEmpty">
-            <td colspan="6">No se encontró stock</td>
+            <td colspan="7">No se encontró stock</td>
           </tr>
         </tbody>
       </table>

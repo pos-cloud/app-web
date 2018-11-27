@@ -30,10 +30,10 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public listType: string;
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
-  public totalItems = 0;
   public sort = {
     "count": -1
   };
+  public transactionMovement: string;
 
   constructor(
     public _articleService: ArticleService,
@@ -49,18 +49,26 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.listType = pathLocation[2];
     this.getBestSellingArticle();
   }
 
   public getBestSellingArticle(): void {
 
     this.loading = true;
+    let pathLocation: string[] = this._router.url.split('/');
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.listType = pathLocation[3];
+
+    let movement;
+    if (this.transactionMovement === "Venta") {
+      movement = "Entrada";
+    } else if (this.transactionMovement === "Compra") {
+      movement = "Salida";
+    }
 
     let query = {
-      type: "Venta",
-      movement: "Entrada",
+      type: this.transactionMovement,
+      movement: movement,
       currentAccount: "Si",
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
@@ -80,7 +88,6 @@ export class ReportBestSellingArticleComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.items = result;
-          this.totalItems = this.items[0];
           this.areArticlesEmpty = false;
         }
       },

@@ -33,6 +33,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   public sort = {
     "count": -1
   };
+  public transactionMovement: string;
 
   constructor(
     public _paymentMethodService: PaymentMethodService,
@@ -48,18 +49,26 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.listType = pathLocation[2];
     this.getSalesByPaymentMethod();
   }
 
   public getSalesByPaymentMethod(): void {
 
     this.loading = true;
+    let pathLocation: string[] = this._router.url.split('/');
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.listType = pathLocation[3];
+
+    let movement;
+    if (this.transactionMovement === "Venta") {
+      movement = "Entrada";
+    } else if (this.transactionMovement === "Compra") {
+      movement = "Salida";
+    }
 
     let query = {
-      type: "Venta",
-      movement: "Entrada",
+      type: this.transactionMovement,
+      movement: movement,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
       sort: this.sort,

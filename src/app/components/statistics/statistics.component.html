@@ -45,8 +45,10 @@
               </div>
               <div class="col-7 d-flex align-items-center">
                 <div class="numbers">
-                  <p class="card-category">Ventas</p>
-                  <h4 class="card-title">{{ totalSales | currency:'USD':'1.2-2' }}</h4>
+                  <p class="card-category" *ngIf="transactionMovement === 'Venta'">Ventas</p>
+                  <p class="card-category" *ngIf="transactionMovement === 'Compra'">Compras</p>
+                  <h4 class="card-title" *ngIf="loading">Cargando...</h4>
+                  <h4 class="card-title" *ngIf="!loading">{{ totalSales | currency:'USD':'1.2-2' }}</h4>
                 </div>
               </div>
             </div>
@@ -64,8 +66,10 @@
               </div>
               <div class="col-7 d-flex align-items-center">
                 <div class="numbers">
-                  <p class="card-category">Cobranzas</p>
-                  <h4 class="card-title" >{{ totalCollections | currency:'USD':'1.2-2' }}</h4>
+                  <p class="card-category" *ngIf="transactionMovement === 'Venta'">Cobranzas</p>
+                  <p class="card-category" *ngIf="transactionMovement === 'Compra'">Pagos</p>
+                  <h4 class="card-title" *ngIf="loading">Cargando...</h4>
+                  <h4 class="card-title" *ngIf="!loading">{{ totalCollections | currency:'USD':'1.2-2' }}</h4>
                 </div>
               </div>
             </div>
@@ -84,7 +88,8 @@
               <div class="col-7 d-flex align-items-center">
                 <div class="numbers">
                   <p class="card-category">Devoluciones</p>
-                  <h4 class="card-title">{{ totalReturns | currency:'USD':'1.2-2' }}</h4>
+                  <h4 class="card-title" *ngIf="loading">Cargando...</h4>
+                  <h4 class="card-title" *ngIf="!loading">{{ totalReturns | currency:'USD':'1.2-2' }}</h4>
                 </div>
               </div>
             </div>

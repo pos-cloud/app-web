@@ -1,7 +1,7 @@
 <!--ESTADISTICAS GENERALES-->
 <div class="card card-outline-primary" *ngIf="listType === 'statistics'">
-  <div class="card-header bg-primary">Ventas por cliente
-  </div>
+  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por cliente</div>
+  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por proveedor</div>
   <div class="card-block table-responsive">
     <table class="table table-hover">
       <thead>
@@ -14,11 +14,19 @@
       <tbody>
         <tr *ngFor="let item of items">
           <td class="flat">{{ item.company.name }}</td>
-          <td class="flat">{{ item.count }}</td>
-          <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
         </tr>
-        <tr align="center" *ngIf="areCompaniesEmpty">
+        <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Venta'">
           <td colspan="3">No se encontraron ventas por clientes</td>
+        </tr>
+        <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Compra'">
+          <td colspan="3">No se encontraron compras por proveedores</td>
+        </tr>
+        <tr align="center" *ngIf="areCompaniesEmpty && loading">
+          <td colspan="3">Cargando...</td>
         </tr>
       </tbody>
     </table>
@@ -63,8 +71,8 @@
     </div>
   </div>
   <div class="card card-outline-primary card-large">
-    <div class="card-header bg-primary">Ventas por cliente
-    </div>
+  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por cliente</div>
+  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por proveedor</div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
@@ -77,11 +85,19 @@
         <tbody>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item.company.name }}</td>
-            <td class="flat">{{ item.count }}</td>
-            <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
           </tr>
-          <tr align="center" *ngIf="areCompaniesEmpty">
+          <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Venta'">
             <td colspan="3">No se encontraron ventas por clientes</td>
+          </tr>
+          <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Compra'">
+            <td colspan="3">No se encontraron compras por proveedores</td>
+          </tr>
+          <tr align="center" *ngIf="areCompaniesEmpty && loading">
+            <td colspan="3">Cargando...</td>
           </tr>
         </tbody>
       </table>

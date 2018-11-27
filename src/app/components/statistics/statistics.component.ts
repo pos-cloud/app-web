@@ -11,6 +11,7 @@ import { ReportBestSellingArticleComponent } from '../report-best-selling-articl
 import { ReportSalesByPaymentMethodComponent } from '../report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByClientComponent } from '../report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales-by-make.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-statistics',
@@ -34,13 +35,17 @@ export class StatisticsComponent implements OnInit {
   @ViewChild(ReportSalesByPaymentMethodComponent) reportSalesByPaymentMethod: ReportSalesByPaymentMethodComponent;
   @ViewChild(ReportSalesByClientComponent) reportSalesByClient: ReportSalesByClientComponent;
   @ViewChild(ReportSalesByMakeComponent) reportSalesByMake: ReportSalesByMakeComponent;
+  public transactionMovement: string;
 
   constructor(
     public _companyService: CompanyService,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
-    public _userService: UserService
+    public _userService: UserService,
+    public _router: Router
   ) {
+    let pathLocation: string[] = this._router.url.split('/');
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
   }
 
   ngOnInit(): void {
@@ -93,9 +98,16 @@ export class StatisticsComponent implements OnInit {
 
   public getTotalSales(): void {
 
+    let movement;
+    if (this.transactionMovement === "Venta") {
+      movement = "Entrada";
+    } else if (this.transactionMovement === "Compra") {
+      movement = "Salida";
+    }
+
     let query = {
-      type: "Venta",
-      movement: "Entrada",
+      type: this.transactionMovement,
+      movement: movement,
       currentAccount: "Si",
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
@@ -107,9 +119,16 @@ export class StatisticsComponent implements OnInit {
 
   public getTotalCollections(): void {
 
+    let movement;
+    if (this.transactionMovement === "Venta") {
+      movement = "Entrada";
+    } else if (this.transactionMovement === "Compra") {
+      movement = "Salida";
+    }
+
     let query = {
-      type: "Venta",
-      movement: "Entrada",
+      type: this.transactionMovement,
+      movement: movement,
       currentAccount: "Cobra",
       modifyStock: false,
       startDate: this.startDate + " " + this.startTime,
@@ -121,9 +140,17 @@ export class StatisticsComponent implements OnInit {
 
   public getTotalReturns(): void {
 
+    let movement;
+    if (this.transactionMovement === "Venta") {
+      movement = "Salida";
+    } else if (this.transactionMovement === "Compra") {
+      movement = "Entrada";
+    }
+
+
     let query = {
-      type: "Venta",
-      movement: "Salida",
+      type: this.transactionMovement,
+      movement: movement,
       currentAccount: "Si",
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime,

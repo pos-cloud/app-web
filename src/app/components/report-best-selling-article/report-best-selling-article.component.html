@@ -1,7 +1,7 @@
 <!--ESTADISTICAS GENERALES-->
 <div class="card card-outline-primary" *ngIf="listType === 'statistics'">
-  <div class="card-header bg-primary">Productos más vendidos
-  </div>
+  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Productos más vendidos</div>
+  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Productos más comprados</div>
   <div class="card-block table-responsive">
     <table class="table table-hover">
       <thead>
@@ -14,11 +14,19 @@
       <tbody>
         <tr *ngFor="let item of items">
           <td class="flat">{{ item.article.description }}</td>
-          <td class="flat">{{ item.count }}</td>
-          <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
         </tr>
-        <tr align="center" *ngIf="areArticlesEmpty">
+        <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Venta'">
           <td colspan="3">No se encontraron ventas por productos</td>
+        </tr>
+        <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Compra'">
+          <td colspan="3">No se encontraron compras por productos</td>
+        </tr>
+        <tr align="center" *ngIf="areArticlesEmpty && loading">
+          <td colspan="3">Cargando...</td>
         </tr>
       </tbody>
     </table>
@@ -63,12 +71,13 @@
     </div>
   </div>
   <div class="card card-outline-primary card-large">
-    <div class="card-header bg-primary">Productos más vendidos
-    </div>
+    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Productos más vendidos</div>
+    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Productos más comprados</div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
           <tr>
+            <th (click)="orderBy('article.code')">Código</th>
             <th (click)="orderBy('article.description')">Producto</th>
             <th (click)="orderBy('article.category.description')">Categoría</th>
             <th (click)="orderBy('article.make.description')">Marca</th>
@@ -78,14 +87,25 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of items">
+            <td class="flat">{{ item.article.code }}</td>
             <td class="flat">{{ item.article.description }}</td>
-            <td class="flat">{{ item.article.category.description }}</td>
-            <td class="flat">{{ item.article.make.description }}</td>
-            <td class="flat">{{ item.count }}</td>
-            <td class="flat">{{ item.total | currency:'USD':'1.2-2' }}</td>
+            <td class="flat" *ngIf="item.article.category">{{ item.article.category.description }}</td>
+            <td class="flat" *ngIf="!item.article.category"></td>
+            <td class="flat" *ngIf="item.article.make">{{ item.article.make.description }}</td>
+            <td class="flat" *ngIf="!item.article.make"></td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
           </tr>
-          <tr align="center" *ngIf="areArticlesEmpty">
-            <td colspan="5">No se encontraron ventas por productos</td>
+          <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Venta'">
+            <td colspan="6">No se encontraron ventas por productos</td>
+          </tr>
+          <tr align="center" *ngIf="areArticlesEmpty && !loading && transactionMovement === 'Compra'">
+            <td colspan="6">No se encontraron compras por productos</td>
+          </tr>
+          <tr align="center" *ngIf="areArticlesEmpty && loading">
+            <td colspan="6">Cargando...</td>
           </tr>
         </tbody>
       </table>

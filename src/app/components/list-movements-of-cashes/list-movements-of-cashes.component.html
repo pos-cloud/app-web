@@ -6,7 +6,7 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Movimientos de Cobros
+    <div class="card-header bg-primary">Listado de Movimientos de Medios
       <div class="pull-right">
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
@@ -102,8 +102,8 @@
               <td class="flat" >{{movementOfCash.deliveredBy}}</td>
               <td class="flat" >{{movementOfCash.receiver}}</td>
             </tr>
-            <tr align="center" *ngIf="areMovementOfCashesEmpty">
-              <td colspan="14">No se encontraron movimientos</td>
+            <tr align="center" *ngIf="totalItems === 0">
+              <td colspan="15">No se encontraron movimientos</td>
             </tr>
           </tbody>
         </table>

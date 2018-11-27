@@ -87,34 +87,65 @@ const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'registrar', component: RegisterComponent },
+  { path: 'registrar', component: RegisterComponent }
+  ,
   {
-    path: 'admin/statistics',
+    path: 'admin/venta/statistics',
     component: StatisticsComponent,
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/productos-mas-vendidos',
+    path: 'admin/venta/productos-mas-vendidos',
     component: ReportBestSellingArticleComponent,
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/ventas-por-metodo-de-pago',
+    path: 'admin/venta/ventas-por-metodo-de-pago',
     component: ReportSalesByPaymentMethodComponent,
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/marcas-mas-vendidas',
+    path: 'admin/venta/marcas-mas-vendidas',
     component: ReportSalesByMakeComponent,
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/ventas-por-cliente',
+    path: 'admin/venta/ventas-por-cliente',
     component: ReportSalesByClientComponent,
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/rubros-mas-vendidos',
+    path: 'admin/venta/rubros-mas-vendidos',
+    component: ReportSalesByCategoryComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/statistics',
+    component: StatisticsComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/productos-mas-comprados',
+    component: ReportBestSellingArticleComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/compras-por-metodo-de-pago',
+    component: ReportSalesByPaymentMethodComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/marcas-mas-compradas',
+    component: ReportSalesByMakeComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/compras-por-proveedor',
+    component: ReportSalesByClientComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/rubros-mas-comprados',
     component: ReportSalesByCategoryComponent,
     data: { roles: ['Administrador'] }
   },
@@ -569,7 +600,19 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/movimientos-de-medios',
+    path: 'admin/venta/movimientos-de-medios',
+    component: ListMovementOfCashesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compra/movimientos-de-medios',
+    component: ListMovementOfCashesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/fondos/movimientos-de-medios',
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }

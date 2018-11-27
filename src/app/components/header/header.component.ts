@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
   public pathLocation: string[];
   @Input() isAPIConected: boolean;
   @Input() modules;
+  public isReportVisible: boolean;
 
   constructor(
     public _userService: UserService,
@@ -36,6 +37,7 @@ export class HeaderComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
+    this.isReportVisible = false;
     this.online = Observable.merge(
       Observable.of(navigator.onLine),
       Observable.fromEvent(window, 'online').mapTo(true),
@@ -91,6 +93,19 @@ export class HeaderComponent implements OnInit {
     } else {
       this._router.navigate(['/']);
     }
+  }
+
+  public makeVisibleReport(visible: boolean): void {
+    if(visible) {
+      this.isReportVisible = !this.isReportVisible;
+    } else {
+      this.isReportVisible = false;
+    }
+  }
+
+  public openReport(link: string): void {
+    this.isReportVisible = false;
+    this._router.navigate([link]);
   }
 
   public logout(): void {

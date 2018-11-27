@@ -6,7 +6,8 @@
           data-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent"
           aria-expanded="false"
-          aria-label="Toggle navigation">
+          aria-label="Toggle navigation"
+          (click)="makeVisibleReport(false)">
     <span class="navbar-toggler-icon"></span>
   </button>
   <span class="navbar-brand btn" (click)="goToHome()">
@@ -21,29 +22,34 @@
                   identity.employee.type.description !== 'Administrador' &&
                   modules &&
                   modules.sale &&
-                  modules.sale.resto">
+                  modules.sale.resto"
+          (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','resto']"
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-cutlery"></i> Resto</a>
       </li>
-      <li class="nav-item" *ngIf="identity &&
-                                  identity.employee &&
-                                  identity.employee.type.description !== 'Administrador' &&
-                                  modules &&
-                                  modules.sale &&
-                                  modules.sale.counter">
+      <li class="nav-item"
+          *ngIf="identity &&
+                identity.employee &&
+                identity.employee.type.description !== 'Administrador' &&
+                modules &&
+                modules.sale &&
+                modules.sale.counter"
+          (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','mostrador','venta']"
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-handshake-o"></i> Mostrador</a>
       </li>
-      <li class="nav-item" *ngIf="identity &&
-                                  identity.employee &&
-                                  identity.employee.type.description !== 'Administrador' &&
-                                  modules &&
-                                  modules.sale &&
-                                  modules.sale.delivery">
+      <li class="nav-item"
+          *ngIf="identity &&
+                identity.employee &&
+                identity.employee.type.description !== 'Administrador' &&
+                modules &&
+                modules.sale &&
+                modules.sale.delivery"
+          (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','delivery']"
             [routerLinkActive]="['active-primary']">
@@ -54,7 +60,8 @@
           ngbDropdown
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')">
+                  identity.employee.type.description === 'Administrador')"
+          (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-fax"></i> Ventas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -87,19 +94,23 @@
           </div>
         </div>
       </li>
-      <li class="nav-item" *ngIf="identity &&
-                                  identity.employee &&
-                                  identity.employee.type.description === 'Administrador' &&
-                                  modules && modules.purchase">
+      <li class="nav-item"
+          *ngIf="identity &&
+                identity.employee &&
+                identity.employee.type.description === 'Administrador' &&
+                modules && modules.purchase"
+          (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','mostrador','compra']"
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-bar-chart"></i> Compras</a>
       </li>
-      <li class="nav-item" *ngIf="identity &&
-                                  identity.employee &&
-                                  identity.employee.type.description === 'Administrador' &&
-                                  modules && modules.stock">
+      <li class="nav-item"
+          *ngIf="identity &&
+                identity.employee &&
+                identity.employee.type.description === 'Administrador' &&
+                modules && modules.stock"
+          (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','mostrador','stock']"
             [routerLinkActive]="['active-primary']">
@@ -109,7 +120,8 @@
           ngbDropdown
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')">
+                  identity.employee.type.description === 'Administrador')"
+                  (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-shopping-basket"></i> Productos</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -145,7 +157,8 @@
           ngbDropdown
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')">
+                  identity.employee.type.description === 'Administrador')"
+          (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -205,7 +218,8 @@
           ngbDropdown
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')">
+                  identity.employee.type.description === 'Administrador')"
+          (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-users"></i> Empleados</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -235,7 +249,8 @@
                 identity.employee.type.description === 'Administrador' &&
                 modules &&
                 modules.sale &&
-                modules.sale.resto">
+                modules.sale.resto"
+          (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-cutlery"></i> Resto</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -253,99 +268,22 @@
       </li>
       <li class="nav-item"
           ngbDropdown
+          #dropReports
+          (focus)="dropReports.open()"
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')">
+                  identity.employee.type.description === 'Administrador')"
+                  (click)="makeVisibleReport(true)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
-          <i class="fa fa-bar-chart"></i> Reportes</a>
-        <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngIf="modules &&
-                      modules.sale &&
-                      (modules.sale.resto ||
-                      modules.sale.counter ||
-                      modules.sale.delivery)">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','statistics']"
-                    [routerLinkActive]="['active']">
-              Estadísticas Generales
-            </button>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','ventas']"
-                    [routerLinkActive]="['active']">
-              Ventas
-            </button>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','productos-mas-vendidos']"
-                    [routerLinkActive]="['active']">
-              Productos más vendidos
-            </button>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','ventas-por-metodo-de-pago']"
-                    [routerLinkActive]="['active']">
-              Ventas por medio de pago
-            </button>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','marcas-mas-vendidas']"
-                    [routerLinkActive]="['active']">
-              Marcas más vendidas
-            </button>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','rubros-mas-vendidos']"
-                    [routerLinkActive]="['active']">
-              Rubros más vendidos
-            </button>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','ventas-por-cliente']"
-                    [routerLinkActive]="['active']">
-              Ventas por cliente
-            </button>
-          </div>
-          <div *ngIf="modules && modules.purchase" class="dropdown-divider"></div>
-          <div *ngIf="modules &&
-                      modules.purchase">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','compras']"
-                    [routerLinkActive]="['active']">
-              Compras
-            </button>
-          </div>
-          <div *ngIf="modules && modules.stock" class="dropdown-divider"></div>
-          <div *ngIf="modules && modules.stock">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','stock']"
-                    [routerLinkActive]="['active']">
-              Movimientos de Stock
-            </button>
-          </div>
-          <div *ngIf="modules && modules.stock">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','stock-de-productos']"
-                    [routerLinkActive]="['active']">
-              Inventario
-            </button>
-          </div>
-          <div class="dropdown-divider"></div>
-          <div>
-            <button class="dropdown-item"
-                    [routerLink]="['admin','movimientos-de-medios']"
-                    [routerLinkActive]="['active']">
-              Movimientos de medios
-            </button>
-          </div>
-          <div *ngIf="modules && modules.money">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','fondos']"
-                    [routerLinkActive]="['active']">
-              Fondos
-            </button>
-          </div>
-        </div>
+          <i class="fa fa-bar-chart"></i> Reportes
+        </a>
       </li>
       <li class="nav-item"
           ngbDropdown
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')">
+                  identity.employee.type.description === 'Administrador')"
+          (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
@@ -402,22 +340,192 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li class="nav-item">
+      <li class="nav-item"
+          (click)="makeVisibleReport(false)">
         <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
         <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
       </li>
-      <li class="nav-item">
+      <li class="nav-item"
+          (click)="makeVisibleReport(false)">
         <a class="nav-link btn" *ngIf="identity" (click)="logout()">
           <i class="fa fa-sign-out"></i>Cerrar Sesión</a>
       </li>
       <li class="nav-item pull-right">
-        <a class="nav-link btn" *ngIf="!identity" [routerLink]="['login']">
+        <a class="nav-link btn"
+          *ngIf="!identity"
+          [routerLink]="['login']"
+          (click)="makeVisibleReport(false)">
           <i class="fa fa-sign-in"></i>Iniciar Sesión</a>
       </li>
       <li class="nav-item pull-right">
-        <a class="nav-link btn" *ngIf="!identity" [routerLink]="['registrar']">
-          <i class="fa fa-sign-in"></i>Registrarme</a>
+        <a class="nav-link btn"
+           *ngIf="!identity"
+           [routerLink]="['registrar']"
+           (click)="makeVisibleReport(false)">
+          <i class="fa fa-sign-in"></i>Registrarme
+        </a>
       </li>
     </ul>
   </div>
 </nav>
+
+<!-- MENU DE REPORTES -->
+<div class="center-content">
+  <div class="row mega-dropdown-menu" *ngIf="isReportVisible">
+    <div class="col-md-3" *ngIf="modules &&
+                                modules.sale &&
+                                (modules.sale.resto ||
+                                modules.sale.counter ||
+                                modules.sale.delivery)">
+      <ul>
+        <li class="dropdown-header">Ventas</li>
+        <li>
+          <a (click)="openReport('admin/venta/statistics')">
+            Estadísticas Generales
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/ventas')">
+            Listado de ventas
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/venta/movimientos-de-medios')">
+            Movimientos de medios
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/venta/productos-mas-vendidos')">
+            Productos más vendidos
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/venta/ventas-por-metodo-de-pago')">
+            Ventas por medio de pago
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/venta/marcas-mas-vendidas')">
+            Marcas más vendidas
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/venta/rubros-mas-vendidos')">
+            Rubros más vendidos
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/venta/ventas-por-cliente')">
+            Ventas por cliente
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                                modules.purchase">
+      <ul>
+        <li class="dropdown-header">Compras</li>
+        <li>
+          <a (click)="openReport('admin/compra/statistics')">
+            Estadísticas Generales
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compras')">
+            Listado de compras
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/movimientos-de-medios')">
+            Movimientos de medios
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/productos-mas-comprados')">
+            Productos más comprados
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/compras-por-metodo-de-pago')">
+            Compras por medio de pago
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/marcas-mas-compradas')">
+            Marcas más compradas
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/rubros-mas-comprados')">
+            Rubros más comprados
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/compras-por-proveedor')">
+            Compras por proveedor
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                                !modules.sale">
+      <ul>
+        <li class="dropdown-header">Ventas</li>
+        <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                                !modules.purchase">
+      <ul>
+        <li class="dropdown-header">Compras</li>
+        <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                        modules.stock">
+      <ul>
+        <li class="dropdown-header">Stock</li>
+        <li>
+          <a (click)="openReport('admin/stock-de-productos')">
+            Inventario
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/stock')">
+            Movimientos
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                                !modules.stock">
+      <ul>
+        <li class="dropdown-header">Stock</li>
+        <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                                modules.money">
+      <ul>
+        <li class="dropdown-header">Fondos</li>
+        <li>
+          <a (click)="openReport('admin/fondos')">
+            Listado de transacciones
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/fondos/movimientos-de-medios')">
+            Movimiento de medios
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-3" *ngIf="modules &&
+                                !modules.money">
+      <ul>
+        <li class="dropdown-header">Fondos</li>
+        <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
