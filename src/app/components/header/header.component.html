@@ -268,8 +268,6 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          #dropReports
-          (focus)="dropReports.open()"
           *ngIf="(identity &&
                   identity.employee &&
                   identity.employee.type.description === 'Administrador')"

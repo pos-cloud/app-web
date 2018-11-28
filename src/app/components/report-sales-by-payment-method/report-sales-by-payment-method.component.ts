@@ -69,8 +69,6 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     let query = {
       type: this.transactionMovement,
       movement: movement,
-      currentAccount: "Si",
-      modifyStock: true,
       startDate: this.startDate + " " + this.startTime,
       endDate: this.endDate + " " + this.endTime,
       sort: this.sort,
