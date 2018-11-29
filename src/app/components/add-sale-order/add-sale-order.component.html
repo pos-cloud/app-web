@@ -64,8 +64,8 @@
                 <span class="badge badge-info">
                   <b>{{ movementOfArticle.amount}}</b>
                 </span>
-                <img *ngIf="movementOfArticle.article.picture == 'default.jpg' || movementOfArticle.article.picture == undefined" src="./../../../assets/img/default.jpg" height="50" width="50">
-                <img *ngIf="movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined" [src]="apiURL + 'get-image-article/'+movementOfArticle. article.picture" height="50" width="50">
+                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture == 'default.jpg' || movementOfArticle.article.picture == undefined)" src="./../../../assets/img/default.jpg" height="50" width="50">
+                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture" height="50" width="50">
               </td>
               <td>{{movementOfArticle.description}}
                 <strong *ngIf="movementOfArticle.notes">

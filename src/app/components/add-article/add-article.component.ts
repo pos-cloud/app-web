@@ -259,6 +259,9 @@ export class AddArticleComponent implements OnInit {
       ],
       'ecommerceEnabled' : [this.article.ecommerceEnabled, [
         ]
+      ],
+      'favourite' : [this.article.favourite, [
+        ]
       ]
     });
 
@@ -700,7 +703,8 @@ export class AddArticleComponent implements OnInit {
       'allowSale': this.article.allowSale,
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
       'allowMeasure': this.article.allowMeasure,
-      'ecommerceEnabled': this.article.ecommerceEnabled
+      'ecommerceEnabled': this.article.ecommerceEnabled,
+      'favourite': this.article.favourite
     };
 
     this.articleForm.setValue(values);

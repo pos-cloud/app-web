@@ -702,7 +702,9 @@ export class AddSaleOrderComponent implements OnInit {
 
   public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
-    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
+    if (movementOfArticle.article) {
+      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
+    }
 
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
@@ -717,7 +719,9 @@ export class AddSaleOrderComponent implements OnInit {
     }
     movementOfArticle.otherFields = fields;
 
-    movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
+    if (movementOfArticle.article) {
+      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
+    }
     movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;

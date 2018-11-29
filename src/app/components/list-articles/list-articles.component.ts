@@ -23,6 +23,7 @@ import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { TransactionMovement } from '../../models/transaction-type';
 import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
+import { OrderByPipe } from 'app/pipes/order-by.pipe';
 
 @Component({
   selector: 'app-list-articles',
@@ -74,7 +75,7 @@ export class ListArticlesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if(this.userType === 'pos') {
-      this.orderTerm = ['posDescription'];
+      this.orderTerm = ['posDescription', '-favourite'];
     } else {
       this.orderTerm = ['description'];
     }
@@ -128,7 +129,11 @@ export class ListArticlesComponent implements OnInit {
           this.totals["markupPercentage"] = result.markupPercentage;
           this.totals["markupPrice"] = result.markupPrice;
           this.totals["salePrice"] = result.salePrice;
-          this.articles = result.articles;
+          let orderBy2 = new OrderByPipe();
+          this.articles = orderBy2.transform(result.articles, ['posDescription']);
+          console.log(this.articles);
+          this.articles = orderBy2.transform(this.articles, ['-favourite']);
+          console.log(this.articles);
           this.areArticlesEmpty = false;
         }
       },
@@ -141,12 +146,12 @@ export class ListArticlesComponent implements OnInit {
 
   public orderBy(term: string, property?: string): void {
 
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
-    } else {
-      this.orderTerm[0] = term;
-    }
-    this.propertyTerm = property;
+    // if (this.orderTerm[0] === term) {
+    //   this.orderTerm[0] = "-" + term;
+    // } else {
+    //   this.orderTerm[0] = term;
+    // }
+    // this.propertyTerm = property;
   }
 
   public refresh(): void {

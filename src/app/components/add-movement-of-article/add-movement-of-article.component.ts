@@ -87,7 +87,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.containsVariants = this.movementOfArticle.article.containsVariants;
+    if (this.movementOfArticle.article) {
+      this.containsVariants = this.movementOfArticle.article.containsVariants;
+    }
     if (this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
     }

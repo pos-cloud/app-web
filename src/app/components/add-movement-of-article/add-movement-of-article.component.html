@@ -23,7 +23,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="movementOfArticle.article.allowMeasure">
+      <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-6">
           <label class="control-label">Medida:</label>
           <div class="input-group">
@@ -37,7 +37,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="movementOfArticle.article.allowMeasure">
+      <div class="row" *ngIf="movementOfArticle.article && movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-12">
           <label class="control-label">Cantidad calculada:</label>
           <input type="number" class="form-control" formControlName="amount" name="amount" readonly/>
@@ -46,12 +46,12 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="!movementOfArticle.article.allowMeasure">
+      <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-12">
           <label for="amount" class="control-label">Ingrese la Cantidad:</label>
         </div>
       </div>
-      <div class="row" *ngIf="!movementOfArticle.article.allowMeasure">
+      <div class="row" *ngIf="!movementOfArticle.article || !movementOfArticle.article.allowMeasure">
         <div class="form-group col-md-10">
           <div class="input-group">
             <input type="number" class="form-control" formControlName="amount" name="amount" autofocus/>

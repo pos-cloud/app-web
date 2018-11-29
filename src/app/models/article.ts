@@ -7,46 +7,47 @@ import { ArticleFields } from './article-fields';
 
 export class Article {
 
-    public _id: string;
-    public type: ArticleType = ArticleType.Final;
-    public containsVariants: boolean = false;
-    public code: string = "00001";
-    public description: string = '';
-    public posDescription: string = '';
-    public variantDescription: string;
-    public observation: string;
-    public basePrice: number = 0.00;
-    public taxes: Taxes[];
-    public otherFields: ArticleFields[];
-    public costPrice: number = 0.00;
-    public markupPercentage: number = 0.00;
-    public markupPrice: number = 0.00;
-    public salePrice: number = 0.00;
-    public make: Make;
-    public deposit: Deposit;
-    public location: Location;
-    public category: Category;
-    public barcode: string;
-    public printIn: ArticlePrintIn = ArticlePrintIn.Counter;
-    public allowPurchase: Boolean = true;
-    public allowSale: Boolean = true;
-    public allowSaleWithoutStock: Boolean = false;
-    public allowMeasure: Boolean = false;
-    public ecommerceEnabled: Boolean = false;
-    public printed: boolean;
-    public picture: string = 'default.jpg';
+  public _id: string;
+  public type: ArticleType = ArticleType.Final;
+  public containsVariants: boolean = false;
+  public code: string = "00001";
+  public description: string = '';
+  public posDescription: string = '';
+  public variantDescription: string;
+  public observation: string;
+  public basePrice: number = 0.00;
+  public taxes: Taxes[];
+  public otherFields: ArticleFields[];
+  public costPrice: number = 0.00;
+  public markupPercentage: number = 0.00;
+  public markupPrice: number = 0.00;
+  public salePrice: number = 0.00;
+  public make: Make;
+  public deposit: Deposit;
+  public location: Location;
+  public category: Category;
+  public barcode: string;
+  public printIn: ArticlePrintIn = ArticlePrintIn.Counter;
+  public allowPurchase: Boolean = true;
+  public allowSale: Boolean = true;
+  public allowSaleWithoutStock: Boolean = false;
+  public allowMeasure: Boolean = false;
+  public ecommerceEnabled: Boolean = false;
+  public favourite: Boolean = false;
+  public printed: boolean;
+  public picture: string = 'default.jpg';
 
-    constructor() {}
+  constructor() {}
 }
 
 export enum ArticlePrintIn {
-    Bar = <any> "Bar",
-    Kitchen = <any> "Cocina",
-    Counter = <any> "Mostrador"
+  Bar = <any> "Bar",
+  Kitchen = <any> "Cocina",
+  Counter = <any> "Mostrador"
 }
 
 export enum ArticleType {
-    Final = <any>"Final",
-    Variant = <any>"Variante",
-    Ingredient = <any>"Ingrediente"
+  Final = <any>"Final",
+  Variant = <any>"Variante",
+  Ingredient = <any>"Ingrediente"
 }
