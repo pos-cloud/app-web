@@ -427,7 +427,6 @@ export class AddTransactionTypeComponent implements OnInit {
         } else {
           this.transactionType = result.transactionType;
           this.showMessage("El tipo de transacción se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },
