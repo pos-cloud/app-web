@@ -68,7 +68,7 @@ export enum TransactionMovement {
 
 export enum EntryAmount {
 	CostWithoutVAT = <any>"Costo sin IVA",
-	CostWithVAT = <any>"Conto con IVA",
+	CostWithVAT = <any>"Costo con IVA",
 	SaleWithoutVAT = <any>"Venta sin IVA",
 	SaleWithVAT = <any>"Venta con IVA"
 }
