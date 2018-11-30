@@ -38,9 +38,9 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() operation: string;
 
   // OPCIONES FORMULARIO
-  public opCurrentAccount: string;
-  public opCashMovement: string;
-  public opStockMovement: string;
+  public opCurrentAccount: string = '';
+  public opCashMovement: string = '';
+  public opStockMovement: string = '';
 
   public formErrors = {
     'transactionMovement': '',
@@ -75,9 +75,15 @@ export class AddTransactionTypeComponent implements OnInit {
     if(!this.transactionType) {
       this.transactionType = new TransactionType();
     } else {
-      this.opCurrentAccount = this.transactionType.currentAccount.toString();
-      this.opCashMovement = this.transactionType.movement.toString();
-      this.opStockMovement = this.transactionType.stockMovement.toString();
+      if (this.transactionType.currentAccount) {
+        this.opCurrentAccount = this.transactionType.currentAccount.toString();
+      }
+      if (this.transactionType.movement) {
+        this.opCashMovement = this.transactionType.movement.toString();
+      }
+      if (this.transactionType.stockMovement) {
+        this.opStockMovement = this.transactionType.stockMovement.toString();
+      }
     }
 
     this.getPaymentMethods();
