@@ -33,22 +33,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let tax of taxes | filter: filterName:'name' 
+          <tr *ngFor="let tax of taxes | filter: filterName:'name'
                                           | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
                                                         totalItems: totalItems
                                                       }">
             <td align="left" width="130">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', tax)" title="Ver">
-                <i class="fa fa-eye"></i>
-              </button>
-              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', tax)" title="Modificar">
-                <i class="fa fa-pencil"></i>
-              </button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', tax)" title="Eliminar">
-                <i class="fa fa-trash-o"></i>
-              </button>
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', tax)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', tax)" title="Modificar"><i class="fa fa-pencil"></i></button>
+              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', tax)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
             </td>
             <td class="flat">{{tax.name}}</td>
           </tr>

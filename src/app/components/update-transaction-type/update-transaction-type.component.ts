@@ -58,7 +58,8 @@ export class UpdateTransactionTypeComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     let pathLocation: string[] = this._router.url.split('/');
@@ -392,7 +393,6 @@ export class UpdateTransactionTypeComponent implements OnInit {
           this.loading = false;
         } else {
           this.transactionType = result.transactionType;
-          console.log(this.transactionType);
           this.showMessage("El tipo de transacción se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }

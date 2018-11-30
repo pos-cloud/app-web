@@ -131,9 +131,7 @@ export class ListArticlesComponent implements OnInit {
           this.totals["salePrice"] = result.salePrice;
           let orderBy2 = new OrderByPipe();
           this.articles = orderBy2.transform(result.articles, ['posDescription']);
-          console.log(this.articles);
           this.articles = orderBy2.transform(this.articles, ['-favourite']);
-          console.log(this.articles);
           this.areArticlesEmpty = false;
         }
       },

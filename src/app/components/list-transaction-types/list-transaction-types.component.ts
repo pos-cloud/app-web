@@ -90,19 +90,23 @@ export class ListTransactionTypesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateTransactionTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'view';
         modalRef.componentInstance.transactionType = transactionType;
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then((result) => {
           this.getTransactionTypes();
         }, (reason) => {
           this.getTransactionTypes();
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateTransactionTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.transactionType = transactionType;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {

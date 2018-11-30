@@ -1,5 +1,7 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Tipo de Transacción</h4>
+  <h4 class="modal-title" *ngIf="operation==='add'">Agregar Tipo de Transacción</h4>
+  <h4 class="modal-title" *ngIf="operation==='update'">Editar Tipo de Transacción {{transactionType.name}}</h4>
+  <h4 class="modal-title" *ngIf="operation==='view'">Tipo de Transacción {{transactionType.name}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -12,265 +14,506 @@
   </div>
   <form [formGroup]="transactionTypeForm" #formAddTable="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
     <div class="modal-body">
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="transactionMovement" class="control-label">¿Qué tipo de movimiento es el comprobante que quieres?</label>
-          <select class="form-control" formControlName="transactionMovement">
-            <option *ngFor="let transactionMovement of transactionMovements" [ngValue]="transactionMovement">{{transactionMovement}}</option>
-          </select>
-          <div *ngIf="formErrors.transactionMovement" class="alert alert-danger">
-            {{ formErrors.transactionMovement }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="name">¿Nombre del documento con el que se realizará las transacciones?</label>
-          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" />
-          <div *ngIf="formErrors.name" class="alert alert-danger">
-            {{ formErrors.name }}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="labelPrint">¿Como saldrá el nombre del comprobante en la impresión?</label>
-          <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="currentAccount" class="control-label">¿Afecta la cuenta corriente?</label>
-          <select class="form-control" formControlName="currentAccount">
-            <option value="Si">Si</option>
-            <option value="No" selected>No</option>
-            <option value="Cobra">Cobra</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="movement" class="control-label">¿Qué tipo de movimiento de dinero realiza?</label>
-          <select class="form-control" formControlName="movement">
-            <option value="Entrada" selected>Entrada</option>
-            <option value="Salida">Salida</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="cashOpening" class="control-label">¿Se utiliza para apertura de caja?</label>
-          <select class="form-control" formControlName="cashOpening">
-            <option value="true" selected>Si</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="cashClosing" class="control-label">¿Se utiliza para cierre de caja?</label>
-          <select class="form-control" formControlName="cashClosing">
-            <option value="true" selected>Si</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="requestArticles" class="control-label">¿Se intercambia productos en la transacción?</label>
-          <select class="form-control" formControlName="requestArticles">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="modifyArticle" class="control-label">¿Se puede modificar el producto?</label>
-          <select class="form-control" formControlName="modifyArticle">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="entryAmount" class="control-label">¿Monto a editar?</label>
-          <select class="form-control" formControlName="entryAmount">
-            <option value="Costo sin IVA">Costo sin IVA</option>
-            <option value="Conto con IVA">Conto con IVA</option>
-            <option value="Venta sin IVA">Venta sin IVA</option>
-            <option value="Venta con IVA">Venta con IVA</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="showPrices" class="control-label">¿Se puede ver el precio de venta?</label>
-          <select class="form-control" formControlName="showPrices">
-            <option value="true" selected>Si</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row" *ngIf="transactionTypeForm.value.requestArticles">
-        <div class="form-group col-md-12">
-          <label for="modifyStock" class="control-label">¿La transacción afecta stock?</label>
-          <select class="form-control" formControlName="modifyStock">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="stockMovement" class="control-label">¿Como modifica al stock?</label>
-          <select class="form-control" formControlName="stockMovement">
-            <option value="Entrada" selected>Entrada</option>
-            <option value="Salida">Salida</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="defectOrders" class="control-label">¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?</label>
-          <select class="form-control" formControlName="defectOrders">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="fixedOrigin">¿El documento siempre va a tener el mismo punto de venta?, ¿Cuál?</label>
-          <input type="number" class="form-control" formControlName="fixedOrigin" name="fixedOrigin" id="fixedOrigin"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="fixedLetter">¿El documento siempre va a tener la misma letra?, ¿Cuál?</label>
-          <input type="text" class="form-control" formControlName="fixedLetter" name="fixedLetter" id="fixedLetter"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="resetNumber" class="control-label">¿Se resetea el número cuando abre una nueva caja?</label>
-          <select class="form-control" formControlName="resetNumber">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="requestPaymentMethods" class="control-label">¿Requiere método de pago?</label>
-          <select class="form-control" formControlName="requestPaymentMethods">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="fastPayment" class="control-label">¿Qué método de pago tendrá el botón de pago rápido?</label>
-          <select class="form-control" formControlName="fastPayment">
-            <option *ngFor="let paymentMethod of paymentMethods" [ngValue]="paymentMethod">{{ paymentMethod.name }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="electronics" class="control-label">¿Es un documento electrónico?</label>
-          <select class="form-control" formControlName="electronics">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-4">
-          <label for="codeA">Código AFIP A</label>
-          <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"/>
-        </div>
-        <div class="form-group col-md-4">
-          <label for="codeB">Código AFIP B</label>
-          <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"/>
-        </div>
-        <div class="form-group col-md-4">
-          <label for="codeC">Código AFIP C</label>
-          <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="printable" class="control-label">¿Imprime al finalizar la carga?</label>
-          <select class="form-control" formControlName="printable">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="allowEdit" class="control-label">¿Se puede editar el documento?</label>
-          <select class="form-control" formControlName="allowEdit">
-            <option value="true" selected>Si</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="allowDelete" class="control-label">¿Se puede borrar el documento?</label>
-          <select class="form-control" formControlName="allowDelete">
-            <option value="true" selected>Si</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="defectPrinter" class="control-label">Selecciona impresora defecto</label>
-          <select class="form-control" formControlName="defectPrinter">
-            <option *ngFor="let printer of printers" [ngValue]="printer">{{printer.name}}</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="requestTaxes" class="control-label">¿Permite cargar impuestos en la transacción?</label>
-          <select class="form-control" formControlName="requestTaxes">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="tax">¿La transacción afecta el libro de IVA?</label>
-          <select class="form-control" formControlName="tax">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="requestEmployee" class="control-label">Selecciona el tipo de empleado a solicitar en la carga</label>
-          <select class="form-control" formControlName="requestEmployee">
-            <option *ngFor="let employeeType of employeeTypes" [ngValue]="employeeType">{{ employeeType.description }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12">
-          <label for="allowAPP">¿Permitir usar en la aplicación?</label>
-          <select class="form-control" formControlName="allowAPP">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
-          </select>
-        </div>
-      </div>
+      <ngb-tabset>
+        <ngb-tab title="Datos principales">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label for="transactionMovement" class="control-label">Movimiento</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="transactionMovement">
+                        <option *ngFor="let transactionMovement of transactionMovements"
+                                [ngValue]="transactionMovement"
+                                [selected]="transactionType.transactionMovement && transactionType.transactionMovement === transactionMovement"
+                        >{{transactionMovement}}</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Qué tipo de movimiento es el comprobante que quieres crear/editar?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                    <div *ngIf="formErrors.transactionMovement" class="alert alert-danger">
+                      {{ formErrors.transactionMovement }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <label for="name">Nombre</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Nombre del documento con el que se realizará las transacciones?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                    <div *ngIf="formErrors.name" class="alert alert-danger">
+                      {{ formErrors.name }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="labelPrint">Impresión</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" [readonly]="readonly"/>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Como saldrá el nombre del comprobante en la impresión?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="currentAccount" class="control-label">Cuenta Corriente</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="currentAccount">
+                        <option value="Si" [selected]="opCurrentAccount === 'Si'">Si</option>
+                        <option value="No" [selected]="opCurrentAccount === 'No'">No</option>
+                        <option value="Cobra" [selected]="opCurrentAccount === 'Cobra'">Cobra/Paga</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Afecta la cuenta corriente la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="movement" class="control-label">Movimiento de dinero</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="movement">
+                        <option value="Entrada" [selected]="opCashMovement === 'Entrada'">Entrada</option>
+                        <option value="Salida" [selected]="opCashMovement === 'Salida'">Salida</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Qué tipo de movimiento de dinero realiza?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="electronics" class="control-label">Transacción Electrónica</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="electronics">
+                        <option value="true" [selected]="transactionType.electronics">Si</option>
+                        <option value="false" [selected]="!transactionType.electronics">No</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿La transacción se presenta en AFIP?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="codeA">Código AFIP A</label>
+                    <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="codeB">Código AFIP B</label>
+                    <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"  [readonly]="readonly"/>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="codeC">Código AFIP C</label>
+                    <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"  [readonly]="readonly"/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="requestTaxes" class="control-label">Pide Impuestos</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="requestTaxes">
+                        <option value="true" [selected]="transactionType.requestTaxes">Si</option>
+                        <option value="false" [selected]="!transactionType.requestTaxes">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Permite cargar impuestos en la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="tax">Libro de IVA</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="tax">
+                        <option value="true" [selected]="transactionType.tax">Si</option>
+                        <option value="false" [selected]="!transactionType.tax">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿La transacción se presenta en el libro de IVA?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <b>PERMISOS</b>
+                <hr>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="allowEdit" class="control-label">Permite editar</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="allowEdit">
+                        <option value="true" [selected]="transactionType.allowEdit">Si</option>
+                        <option value="false" [selected]="!transactionType.allowEdit">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Se puede editar la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="allowDelete" class="control-label">Permite borrar</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="allowDelete">
+                        <option value="true" [selected]="transactionType.allowDelete">Si</option>
+                        <option value="false" [selected]="!transactionType.allowDelete">No</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Se puede borrar la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="allowAPP">Permite APP</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="allowAPP">
+                        <option value="true" [selected]="transactionType.allowAPP">Si</option>
+                        <option value="false" [selected]="!transactionType.allowAPP">No</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Permitir usar en la aplicación?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <b>PERSONALIZADO</b>
+                <hr>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="defectOrders" class="control-label">Defecto como pedido</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="defectOrders">
+                          <option value="true" [selected]="transactionType.defectOrders" [disabled]="readonly">Si</option>
+                          <option value="false" [selected]="!transactionType.defectOrders" [disabled]="readonly">No</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?">
+                          <b>?</b>
+                        </button>
+                      </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="requestEmployee" class="control-label">Pide empleado</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="requestEmployee">
+                          <option *ngFor="let employeeType of employeeTypes"
+                                  [ngValue]="employeeType._id"
+                                  [selected]="transactionType.requestEmployee && transactionType.requestEmployee._id === employeeType._id"
+                                  [disabled]="readonly"
+                          >{{ employeeType.description }}</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="Selecciona el tipo de empleado a solicitar en la carga">
+                          <b>?</b>
+                        </button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Numeración">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="fixedOrigin">Punto de venta fijo</label>
+                    <div class="input-group">
+                      <input type="number" class="form-control" formControlName="fixedOrigin" name="fixedOrigin" id="fixedOrigin" [readonly]="readonly"/>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿El documento siempre va a tener el mismo punto de venta?, ¿Cuál?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="fixedLetter">Letra fija</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="fixedLetter">
+                        <option [value]="" [disabled]="readonly"></option>
+                        <option *ngFor="let letter of letters"
+                                [selected]="transactionType.fixedLetter === letter"
+                                [value]="letter"
+                                [disabled]="readonly">
+                          {{ letter }}
+                        </option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿El documento siempre va a tener la misma letra?, ¿Cuál?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="resetNumber" class="control-label">Resetear Número</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="resetNumber">
+                        <option value="true" [selected]="transactionType.resetNumber" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.resetNumber" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Se resetea el número cuando abre una nueva caja?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Producto">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label for="requestArticles" class="control-label">Intercambia Productos</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="requestArticles">
+                        <option value="true" [selected]="transactionType.requestArticles" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.requestArticles" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Se intercambia productos en la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="modifyArticle" class="control-label">Modifica Producto</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="modifyArticle">
+                        <option value="true" [selected]="transactionType.modifyArticle" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.modifyArticle" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Permite modificar el producto dentro de la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="entryAmount" class="control-label">Monto a editar</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="entryAmount">
+                        <option value="Costo sin IVA" [disabled]="readonly">Costo sin IVA</option>
+                        <option value="Conto con IVA" [disabled]="readonly">Conto con IVA</option>
+                        <option value="Venta sin IVA" [disabled]="readonly">Venta sin IVA</option>
+                        <option value="Venta con IVA" [disabled]="readonly">Venta con IVA</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Cuál es el precio unitario a modificar dentro de la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="showPrices" class="control-label">Ver precios</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="showPrices">
+                        <option value="true" [selected]="transactionType.showPrices" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.showPrices" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Permite ver el precio del producto en el listado dentro de la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Método de Pago">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="requestPaymentMethods" class="control-label">¿Requiere método de pago?</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="requestPaymentMethods">
+                        <option value="true" [selected]="transactionType.requestPaymentMethods" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.requestPaymentMethods" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Al finalizar la transacción, ¿Desea que se solicite el método de pago?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="fastPayment" class="control-label">Botón de Pago Rápido</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="fastPayment">
+                        <option *ngFor="let paymentMethod of paymentMethods"
+                                [selected]="transactionType.fastPayment && transactionType.fastPayment._id === paymentMethod._id"
+                                [ngValue]="paymentMethod._id"
+                                [disabled]="readonly"
+                        >{{ paymentMethod.name }}
+                        </option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Qué método de pago tendrá el botón de pago rápido?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Stock">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="modifyStock" class="control-label">Afecta stock</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="modifyStock">
+                        <option value="true" [selected]="transactionType.modifyStock" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.modifyStock" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Afecta el stock la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="stockMovement" class="control-label">Movimiento</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="stockMovement">
+                        <option value="Entrada" [selected]="opStockMovement === 'Entrada'" [disabled]="readonly">Entrada</option>
+                        <option value="Salida" [selected]="opStockMovement === 'Salida'" [disabled]="readonly">Salida</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Como modifica al stock?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Fondos">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="cashOpening" class="control-label">Apertura de caja</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="cashOpening">
+                        <option value="true" [selected]="transactionType.cashOpening" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.cashOpening" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Se utiliza para apertura de caja?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="cashClosing" class="control-label">Cierre de caja</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="cashClosing">
+                        <option value="true" [selected]="transactionType.cashClosing" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.cashClosing" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Se utiliza para cierre de caja?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Impresión">
+          <ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="printable" class="control-label">Impresión automática</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="printable">
+                        <option value="true" [selected]="transactionType.printable" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.printable" >No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Si se imprime al finalizar la carga de la transacción">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="defectPrinter" class="control-label">Impresora defecto</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="defectPrinter">
+                        <option *ngFor="let printer of printers"
+                                [selected]="transactionType.defectPrinter && transactionType.defectPrinter._id === printer._id"
+                                [ngValue]="printer._id">
+                        {{printer.name}}</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Al imprimir la transacción, se emitirá por la impresora seleccionada como defecto.">
+                          <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
@@ -281,4 +524,5 @@
       </button>
     </div>
   </form>
+  {{transactionTypeForm.value | json}}
 </section>

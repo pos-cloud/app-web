@@ -20,7 +20,7 @@ export class TransactionType {
 	public defectOrders: boolean = false;
 	public electronics: boolean = false;
 	public codes: CodeAFIP[];
-	public fixedOrigin: number = 1;
+	public fixedOrigin: number;
 	public fixedLetter: string;
 	public resetNumber: boolean = false;
 	public showPrices: boolean = true;

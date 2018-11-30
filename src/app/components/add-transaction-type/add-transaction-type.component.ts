@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -23,7 +23,7 @@ import { PaymentMethod } from 'app/models/payment-method';
 
 export class AddTransactionTypeComponent implements OnInit {
 
-  public transactionType: TransactionType;
+  @Input() transactionType: TransactionType;
   public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
   public transactionTypeForm: FormGroup;
   public alertMessage: string = '';
@@ -33,6 +33,14 @@ export class AddTransactionTypeComponent implements OnInit {
   public printers: Printer[];
   public employeeTypes: EmployeeType[];
   public paymentMethods: PaymentMethod[];
+  public letters: string[] = ["A", "B", "C", "E", "M", "R", "T", "X"];
+  @Input() readonly: boolean;
+  @Input() operation: string;
+
+  // OPCIONES FORMULARIO
+  public opCurrentAccount: string;
+  public opCashMovement: string;
+  public opStockMovement: string;
 
   public formErrors = {
     'transactionMovement': '',
@@ -64,7 +72,13 @@ export class AddTransactionTypeComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.transactionType = new TransactionType();
+    if(!this.transactionType) {
+      this.transactionType = new TransactionType();
+    } else {
+      this.opCurrentAccount = this.transactionType.currentAccount.toString();
+      this.opCashMovement = this.transactionType.movement.toString();
+      this.opStockMovement = this.transactionType.stockMovement.toString();
+    }
 
     this.getPaymentMethods();
     this.getEmployeeTypes();
@@ -142,6 +156,9 @@ export class AddTransactionTypeComponent implements OnInit {
   public buildForm(): void {
 
     this.transactionTypeForm = this._fb.group({
+      '_id': [this.transactionType._id, [
+        ]
+      ],
       'transactionMovement': [this.transactionType.transactionMovement, [
           Validators.required
         ]
@@ -282,6 +299,7 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public setValueForm(): void {
 
+    if (!this.transactionType._id) this.transactionType._id = '';
     if (!this.transactionType.transactionMovement && this.transactionMovements && this.transactionMovements.length > 0) this.transactionType.transactionMovement = TransactionMovement.Sale;
     if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = null;
     if (!this.transactionType.name) this.transactionType.name = '';
@@ -299,7 +317,18 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.resetNumber === undefined) this.transactionType.resetNumber = false;
     if (this.transactionType.electronics === undefined) this.transactionType.electronics = false;
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
-    if (!this.transactionType.defectPrinter) this.transactionType.defectPrinter = null;
+
+    let defectPrinter;
+    if (!this.transactionType.defectPrinter) {
+      defectPrinter = null;
+    } else {
+      if (this.transactionType.defectPrinter._id) {
+        defectPrinter = this.transactionType.defectPrinter._id;
+      } else {
+        defectPrinter = this.transactionType.defectPrinter;
+      }
+    }
+
     if (this.transactionType.tax === undefined) this.transactionType.tax = false;
     if (this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
     if (this.transactionType.cashOpening === undefined) this.transactionType.cashOpening = false;
@@ -313,8 +342,28 @@ export class AddTransactionTypeComponent implements OnInit {
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
-    if (!this.transactionType.requestEmployee) this.transactionType.requestEmployee = null;
-    if (!this.transactionType.fastPayment) this.transactionType.fastPayment = null;
+
+    let requestEmployee;
+    if (!this.transactionType.requestEmployee) {
+      requestEmployee = null;
+    } else {
+      if (this.transactionType.requestEmployee._id) {
+        requestEmployee = this.transactionType.requestEmployee._id;
+      } else {
+        requestEmployee = this.transactionType.requestEmployee;
+      }
+    }
+
+    let fastPayment;
+    if (!this.transactionType.fastPayment) {
+      fastPayment = null;
+    } else {
+      if (this.transactionType.fastPayment._id) {
+        fastPayment = this.transactionType.fastPayment._id;
+      } else {
+        fastPayment = this.transactionType.fastPayment;
+      }
+    }
 
     this.transactionTypeForm.setValue({
       'transactionMovement': this.transactionType.transactionMovement,
@@ -337,7 +386,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'codeB': this.getCode(this.transactionType, "B"),
       'codeC': this.getCode(this.transactionType, "C"),
       'printable': this.transactionType.printable,
-      'defectPrinter': this.transactionType.defectPrinter,
+      'defectPrinter': defectPrinter,
       'tax': this.transactionType.tax,
       'cashOpening': this.transactionType.cashOpening,
       'cashClosing': this.transactionType.cashClosing,
@@ -346,8 +395,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'entryAmount': this.transactionType.entryAmount,
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,
-      'requestEmployee': this.transactionType.requestEmployee,
-      'fastPayment': this.transactionType.fastPayment
+      'requestEmployee': requestEmployee,
+      'fastPayment': fastPayment
     });
   }
 
@@ -355,7 +404,32 @@ export class AddTransactionTypeComponent implements OnInit {
     this.loading = true;
     this.transactionType = this.transactionTypeForm.value;
     this.transactionType.codes = this.getCodes();
-    this.saveTransactionType();
+    if(this.operation === 'save') {
+      this.saveTransactionType();
+    } else if (this.operation === 'update') {
+      this.updateTransactionType();
+    }
+  }
+
+  public updateTransactionType(): void {
+
+    this._transactionTypeService.updateTransactionType(this.transactionType).subscribe(
+      result => {
+        if (!result.transactionType) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.transactionType = result.transactionType;
+          this.showMessage("El tipo de transacción se ha actualizado con éxito.", 'success', false);
+          this.activeModal.close('save_close');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getCodes(): CodeAFIP[] {

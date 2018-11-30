@@ -56,9 +56,6 @@ export class OrderByPipe implements PipeTransform {
   //config = propiedad a comparar u objecto de otro objeto
   //arg2 = si existe objeto de otro objeto es la propiedad del segundo objeto a comparar
   transform(input:any, [config = '+'], arg2?: string): any{
-    console.log(config);
-    console.log(input);
-    console.log(arg2);
     //Si no existe mas de un elemento en la lista a ordenar
     if (!Array.isArray(input)) return input;
 
