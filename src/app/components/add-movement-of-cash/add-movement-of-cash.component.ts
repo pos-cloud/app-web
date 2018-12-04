@@ -314,7 +314,7 @@ export class AddMovementOfCashComponent implements OnInit {
         for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
           if (this.movementsOfCashesToFinance[i].expirationDate === movement.expirationDate) {
             // Editamos desde la fecha modificada en adelante
-            isEdit = true;
+             isEdit = true;
             this.movementsOfCashesToFinance[i].expirationDate = moment(newValue).toString();
           } else {
             if (isEdit) {
@@ -594,10 +594,10 @@ export class AddMovementOfCashComponent implements OnInit {
       this.showMessage('Debe ingresar fecha de vencimiento de pago válida', 'info', true);
     }
 
-    if ((moment(this.movementOfCash.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
+    /*if ((moment(this.movementOfCash.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
       areValid = false;
       this.showMessage('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción', 'info', true);
-    }
+    }*/
 
     if(this.movementOfCash.type.allowToFinance) {
       let amountTotal = 0;
