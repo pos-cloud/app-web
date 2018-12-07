@@ -285,7 +285,6 @@ export class ListArticlesComponent implements OnInit {
     movementOfArticle.make = articleSelected.make;
     movementOfArticle.category = articleSelected.category;
     movementOfArticle.barcode = articleSelected.barcode;
-    movementOfArticle.amount = 1;
     this.eventAddItem.emit(movementOfArticle);
   }
 
@@ -339,7 +338,6 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.make = article.make;
               movementOfArticle.category = article.category;
               movementOfArticle.barcode = article.barcode;
-              movementOfArticle.amount = 1;
               this.filterArticle = '';
               this.eventAddItem.emit(movementOfArticle);
       }

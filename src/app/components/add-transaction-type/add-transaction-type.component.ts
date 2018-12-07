@@ -372,6 +372,7 @@ export class AddTransactionTypeComponent implements OnInit {
     }
 
     this.transactionTypeForm.setValue({
+      '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
       'name': this.transactionType.name,
       'labelPrint': this.transactionType.labelPrint,

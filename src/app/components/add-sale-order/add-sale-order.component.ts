@@ -550,7 +550,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   public addItem(itemData: MovementOfArticle): void {
 
-
     if (this.filterArticle && this.filterArticle !== '') {
       this.filterArticle = '';
     }
@@ -627,12 +626,12 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     if (Config.modules.stock &&
-      this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       this.transaction.type.modifyStock &&
+      this.transaction.type.stockMovement === StockMovement.Outflows &&
       !movementOfArticle.article.allowSaleWithoutStock &&
-      (!articleStock || ((articleStock && movementOfArticle.amount + 1) > articleStock.realStock))) {
+      (!articleStock || (articleStock && ((movementOfArticle.amount + 1) > articleStock.realStock)))) {
       allowed = false;
-      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", 'info', true);
+      this.showMessage("No tiene el stock suficiente para la operación solicitada.", 'info', true);
     }
 
     if (allowed) {
@@ -1049,7 +1048,7 @@ export class AddSaleOrderComponent implements OnInit {
         if (this.isValidCharge()) {
 
           if (this.transaction.type.requestPaymentMethods ||
-            fastPayment) {
+             fastPayment) {
 
             modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
             modalRef.componentInstance.transaction = this.transaction;
@@ -1075,13 +1074,17 @@ export class AddSaleOrderComponent implements OnInit {
                     this.assignTransactionNumber();
                   }
                 } else {
-                  this.finish();
+                  if (Config.modules.stock &&
+                    this.transaction.type.modifyStock) {
+                    this.updateRealStock();
+                  } else {
+                    this.finish();
+                  }
                 }
               }
             }, (reason) => {
             });
           } else {
-
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.assignLetter();
               if (this.transaction.type.electronics && !this.transaction.CAE) {
@@ -1092,7 +1095,12 @@ export class AddSaleOrderComponent implements OnInit {
                 this.assignTransactionNumber();
               }
             } else {
-              this.finish();
+              if (Config.modules.stock &&
+                this.transaction.type.modifyStock) {
+                this.updateRealStock();
+              } else {
+                this.finish();
+              }
             }
           }
         }
