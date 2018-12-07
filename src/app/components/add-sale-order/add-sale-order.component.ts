@@ -137,7 +137,6 @@ export class AddSaleOrderComponent implements OnInit {
     } else {
       if (op === "agregar-transaccion") {
         let transactionTypeID = pathLocation[4];
-        this.getOpenCashBox();
         this.getTransactionType(transactionTypeID);
       } else if (op = "editar-transaccion") {
         let transactionId = pathLocation[4];
@@ -176,6 +175,9 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.type = result.transactionType;
           this.transactionMovement = '' + this.transaction.type.transactionMovement;
+          if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+            this.getOpenCashBox();
+          }
           this.getLastTransactionByType();
         }
         this.loading = false;
@@ -281,7 +283,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.hideMessage();
           this.transaction = result.transaction;
           this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          if (!this.transaction.cashBox) {
+          if (!this.transaction.cashBox && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
             this.getOpenCashBox();
           }
           this.getMovementsOfTransaction();
