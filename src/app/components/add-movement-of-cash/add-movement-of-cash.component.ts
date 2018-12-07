@@ -646,7 +646,11 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.fastPayment) {
       if (this.areValidAmounts()) {
         if(!this.movementOfCash.type.allowToFinance) {
-          this.movementOfCash.amountPaid = this.movementOfCashForm.value.amountToPay;
+          if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount)) {
+            this.movementOfCash.amountPaid = this.roundNumber.transform(this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange)));
+          } else {
+            this.movementOfCash.amountPaid = this.amountToPay;
+          }
           this.movementOfCash.transaction = this.transaction;
           this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
           this.movementOfCash.observation = this.movementOfCashForm.value.observation;
