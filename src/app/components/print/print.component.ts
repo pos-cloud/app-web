@@ -1596,11 +1596,11 @@ export class PrintComponent implements OnInit {
 
       let rowTotals = 247;
       this.doc.setFontType('bold');
-      this.doc.text("Subtotal:", 147, rowTotals);
+      this.doc.text("Subtotal:", 140, rowTotals);
       rowTotals +=8;
-      this.doc.text("Descuento:", 147, rowTotals);
+      this.doc.text("Descuento:", 140, rowTotals);
       this.doc.setFontType('normal');
-      this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 180, rowTotals);
+      this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 173, rowTotals);
       let subtotal = 0;
 
       if (this.transaction.company &&
@@ -1612,9 +1612,9 @@ export class PrintComponent implements OnInit {
               for (let tax of this.transaction.taxes) {
                 rowTotals += 8;
                 this.doc.setFontType('bold');
-                this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 147, rowTotals);
+                this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 140, rowTotals);
                 this.doc.setFontType('normal');
-                this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 180, rowTotals);
+                this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 173, rowTotals);
                 subtotal += this.roundNumber.transform(tax.taxBase);
               }
             }
@@ -1622,9 +1622,9 @@ export class PrintComponent implements OnInit {
             if (this.transaction.exempt && this.transaction.exempt > 0) {
               rowTotals += 8;
               this.doc.setFontType('bold');
-              this.doc.text("Exento:", 147, rowTotals);
+              this.doc.text("Exento:", 140, rowTotals);
               this.doc.setFontType('normal');
-              this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 180, rowTotals);
+              this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 173, rowTotals);
               subtotal += this.transaction.exempt;
             }
       } else {
@@ -1634,14 +1634,14 @@ export class PrintComponent implements OnInit {
       if (this.transaction.discountAmount) {
         subtotal += this.transaction.discountAmount;
       }
-      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 180, 247);
+      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 173, 247);
       rowTotals += 8;
       this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.large);
-      this.doc.text("Total:", 147, rowTotals);
+      this.doc.text("Total:", 140, rowTotals);
       this.doc.setFontType('normal');
-      this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, rowTotals);
+      this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 173, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
@@ -1649,7 +1649,7 @@ export class PrintComponent implements OnInit {
     if(this.movementsOfCashes){
       this.doc.text("Observaciones: "+this.movementsOfCashes[0].observation, 10, 246);
     }
-    
+
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
 
