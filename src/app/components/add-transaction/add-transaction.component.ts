@@ -139,6 +139,10 @@ export class AddTransactionComponent implements OnInit {
       if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
         this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
       }
+
+      if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+        this.getLastTransactionByType(false);
+      }
     }   else {  // TRANSACCIÓN EXISTENTE
       this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
     }
@@ -426,7 +430,7 @@ export class AddTransactionComponent implements OnInit {
     }
   }
 
-  public getLastTransactionByType(): void {
+  public getLastTransactionByType(toSave: boolean = true): void {
 
     this.loading = true;
 
@@ -437,7 +441,11 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction.number = result.transactions[0].number + 1;
         }
-        this.saveTransaction();
+        if (toSave) {
+          this.saveTransaction();
+        } else {
+          this.setValuesForm();
+        }
         this.loading = false;
       },
       error => {
