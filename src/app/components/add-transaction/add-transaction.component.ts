@@ -407,7 +407,9 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.number = this.transactionForm.value.number;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-      if(this.transaction.totalPrice > 0) {
+      if (this.transaction.type.requestArticles ||
+        (this.transaction.totalPrice > 0 &&
+        !this.transaction.type.requestArticles)) {
         if (this.transactionForm.value.state) {
           this.transaction.state = this.transactionForm.value.state;
         }
