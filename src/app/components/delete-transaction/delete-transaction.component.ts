@@ -45,39 +45,47 @@ export class DeleteTransactionComponent implements OnInit {
 
     this.loading = true;
 
-    if(!this.transaction.endDate) {
-      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      this.transaction.VATPeriod = moment().format('YYYYMM');
-      this.transaction.expirationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    }
-    this.transaction.state = TransactionState.Canceled;
-
-    this._transactionService.updateTransaction(this.transaction).subscribe(
-      result => {
-        this.activeModal.close("delete_close");
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
+    if (!this.transaction.CAE) {
+      if(!this.transaction.endDate) {
+        this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+        this.transaction.VATPeriod = moment().format('YYYYMM');
+        this.transaction.expirationDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
       }
-    );
+      this.transaction.state = TransactionState.Canceled;
+
+      this._transactionService.updateTransaction(this.transaction).subscribe(
+        result => {
+          this.activeModal.close("delete_close");
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
+        }
+      );
+    } else {
+      this.showMessage('No se puede anular una transacción ya validada por AFIP.', 'info', true);
+    }
   }
 
   public deleteTransaction(): void {
 
     this.loading = true;
 
-    this._transactionService.deleteTransaction(this.transaction._id).subscribe(
-      result => {
-        this.activeModal.close("delete_close");
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loading = false;
-      }
-    );
+    if(!this.transaction.CAE) {
+      this._transactionService.deleteTransaction(this.transaction._id).subscribe(
+        result => {
+          this.activeModal.close("delete_close");
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          this.loading = false;
+        }
+      );
+    } else {
+      this.showMessage('No se puede eliminar una transacción ya validada por AFIP.', 'info', true);
+    }
   }
 
   public showMessage(
