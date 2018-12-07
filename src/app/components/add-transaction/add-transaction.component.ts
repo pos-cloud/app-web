@@ -403,19 +403,23 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.number = this.transactionForm.value.number;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-      if (this.transactionForm.value.state) {
-        this.transaction.state = this.transactionForm.value.state;
-      }
-
-      if(this.transaction._id && this.transaction._id !== '') {
-        this.updateTransaction();
-      } else {
-        if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          this.getLastTransactionByType();
-        } else {
-          this.transaction.number = this.transactionForm.value.number;
-          this.saveTransaction();
+      if(this.transaction.totalPrice > 0) {
+        if (this.transactionForm.value.state) {
+          this.transaction.state = this.transactionForm.value.state;
         }
+
+        if(this.transaction._id && this.transaction._id !== '') {
+          this.updateTransaction();
+        } else {
+          if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+            this.getLastTransactionByType();
+          } else {
+            this.transaction.number = this.transactionForm.value.number;
+            this.saveTransaction();
+          }
+        }
+      } else {
+        this.showMessage("El monto ingresado debe ser mayor a 0.", "info", true);
       }
     } else {
       this.showMessage("Debe asignar el empleado " + this.transaction.type.requestEmployee.description, "info", true);
