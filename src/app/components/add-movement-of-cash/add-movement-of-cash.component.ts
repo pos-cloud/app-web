@@ -260,6 +260,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.quotas = this.movementOfCashForm.value.quotas;
     this.days = this.movementOfCashForm.value.days;
+    let expirationDate = 1;
     switch(field) {
       case 'quotas':
         this.movementsOfCashesToFinance = new Array();
@@ -271,7 +272,8 @@ export class AddMovementOfCashComponent implements OnInit {
           mov.observation = this.movementOfCash.observation;
           mov.state = MovementOfCashState.Closed;
           mov.quota = i + 1;
-          mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add((this.days * (i + 1)) + 1, 'days').format('YYYY-MM-DD').toString();
+          mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+          expirationDate = (this.days * (i + 1)) + 1;
           mov.amountPaid = this.roundNumber.transform(this.amountToPay / this.quotas);
           amountTotal += mov.amountPaid;
           if(i === (this.quotas - 1)) {
@@ -286,7 +288,8 @@ export class AddMovementOfCashComponent implements OnInit {
         let i = 1;
         this.days = this.movementOfCashForm.value.days;
         for(let mov of this.movementsOfCashesToFinance) {
-          mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add((this.days * i) + 1, 'days').format('YYYY-MM-DD').toString();
+          mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+          expirationDate = (this.days * i) + 1;
           i++;
         }
         break;
@@ -320,10 +323,12 @@ export class AddMovementOfCashComponent implements OnInit {
             if (isEdit) {
               if(!isSum) {
                 // Se suma el valor de la fecha en un dia para que de correctamente los dias.
-                this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i-1].expirationDate).format('YYYY-MM-DD')).add(this.days + 1, 'days').format('YYYY-MM-DD').toString();
+                this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                expirationDate = (this.days + 1);
                 isSum = true;
               } else {
-                this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(this.days, 'days').format('YYYY-MM-DD').toString();
+                this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                expirationDate = this.days;
               }
             }
           }
