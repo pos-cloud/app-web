@@ -48,7 +48,6 @@ import { UpdatePrinterComponent } from './components/update-printer/update-print
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
-import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
 import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
@@ -504,12 +503,6 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/editar-tipo-transaccion',
-    component: UpdateTransactionTypeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/eliminar-tipo-transaccion',
     component: DeleteTransactionTypeComponent,
     canActivate: [AuthGuard],
@@ -642,6 +635,7 @@ const _routes: Routes = [
   },
   { path: 'pos/mostrador/compra', component: PointOfSaleComponent },
   { path: 'pos/mostrador/venta', component: PointOfSaleComponent },
+  { path: 'pos/mostrador/fondo', component: PointOfSaleComponent },
   { path: 'pos/mostrador/stock', component: PointOfSaleComponent },
   {
     path: 'pos/mostrador/agregar-transaccion/:type',

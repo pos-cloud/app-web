@@ -1,6 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="op === 'open'">Apertura de caja</h4>
-  <h4 class="modal-title" *ngIf="op === 'close'">Cierre de caja</h4>
+  <h4 class="modal-title" *ngIf="transactionType">{{ transactionType.name }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -66,14 +65,14 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button"  *ngIf="op==='open'" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="openCashBox()">
+      <button type="button"  *ngIf="transactionType.cashOpening" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="openCashBox()">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading && op==='open'">Aceptar</span>
+        <span *ngIf="!loading && transactionType.cashOpening">Abrir Caja</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
-      <button type="button" *ngIf="op==='close'" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="closeCashBox()">
+      <button type="button" *ngIf="transactionType.cashClosing" class="btn btn-primary" [disabled]="!cashBoxForm.valid || loading" (click)="closeCashBox()">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-        <span *ngIf="!loading">Aceptar</span>
+        <span *ngIf="!loading">Cerrar Caja</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
     </div>

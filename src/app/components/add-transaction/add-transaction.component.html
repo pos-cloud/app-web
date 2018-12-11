@@ -19,7 +19,7 @@
           <label for="company" class="control-label" *ngIf="transactionMovement === 'Compra'">Proveedor:</label>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="transaction.type.requestCompany">
         <div class="form-group col-md-10">
           <input type="text" class="form-control" formControlName="company" name="company" readonly/>
         </div>

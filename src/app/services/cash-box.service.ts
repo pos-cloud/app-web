@@ -15,7 +15,7 @@ export class CashBoxService {
 
   getCortizacion() {
 		return this._http.get('http://ws.geeklab.com.ar/dolar/get-dolar-json.php').map(res => res.json());
-	}	  
+	}
 
   getOpenCashBox (employeeId: string) {
 		let headers = new Headers({
@@ -24,7 +24,7 @@ export class CashBoxService {
 			'Database': this._userService.getDatabase()
 		});
 
-		let query: string = 'where="employee":"'+employeeId+'","state":"'+CashBoxState.Open+'"';
+		let query: string = 'where="state":"'+CashBoxState.Open+'"';
 		return this._http.get(Config.apiURL + 'cash-boxes/' + query, { headers: headers }).map (res => res.json());
 	}
 
@@ -81,7 +81,7 @@ export class CashBoxService {
 		});
 		return this._http.put(Config.apiURL + "cash-box/"+cashBox._id, cashBox, { headers: headers }).map (res => res.json());
 	}
-	
+
 	getClosingCashBox(id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

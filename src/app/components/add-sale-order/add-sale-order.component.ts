@@ -175,9 +175,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.type = result.transactionType;
           this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-            this.getOpenCashBox();
-          }
           this.getLastTransactionByType();
         }
         this.loading = false;
@@ -198,10 +195,13 @@ export class AddSaleOrderComponent implements OnInit {
         if (!result.transactions) {
           this.transaction.origin = 0;
           this.transaction.number = 1;
-          this.addTransaction();
         } else {
           this.transaction.origin = result.transactions[0].origin;
           this.transaction.number = result.transactions[0].number + 1;
+        }
+        if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+          this.getOpenCashBox();
+        } else {
           this.addTransaction();
         }
         this.loading = false;
@@ -283,7 +283,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.hideMessage();
           this.transaction = result.transaction;
           this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          if (!this.transaction.cashBox && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+          if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
             this.getOpenCashBox();
           }
           this.getMovementsOfTransaction();
@@ -374,8 +374,16 @@ export class AddSaleOrderComponent implements OnInit {
     this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
       result => {
         if (!result.cashBoxes) {
+          if(!this.transaction._id || this.transaction._id === '') {
+            this.addTransaction();
+          }
         } else {
           this.transaction.cashBox = result.cashBoxes[0];
+          if(this.transaction._id && this.transaction._id !== '') {
+            this.updateTransaction();
+          } else {
+            this.addTransaction();
+          }
         }
         this.loading = false;
       },

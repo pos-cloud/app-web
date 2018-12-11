@@ -37,7 +37,7 @@ export class TransactionTypeService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		
+
 		if (query) {
 			return this._http.get(Config.apiURL + "transaction-types/" + query, {headers: headers}).map(res => res.json());
 		} else {
@@ -52,8 +52,17 @@ export class TransactionTypeService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transaction-types/where="transactionMovement":"' + transactionMovement + '"', { headers: headers }).map(res => res.json());
-	}
-	
+  }
+
+  getTransactionTypesOfCashBox() {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.get(Config.apiURL + 'transaction-types/where="$or":[{"cashOpening":true},{"cashClosing":true}]', { headers: headers }).map(res => res.json());
+  }
+
 	getDefectOrder() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

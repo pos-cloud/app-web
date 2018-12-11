@@ -25,6 +25,9 @@
             <th (click)="orderBy('labelPrint')">Etiqueta</th>
             <th (click)="orderBy('currentAccount')">Afecta CC</th>
             <th (click)="orderBy('movement')">Movimiento de dinero</th>
+            <th (click)="orderBy('cashBoxImpact')">Caja Diaria</th>
+            <th (click)="orderBy('cashOpening')">Apertura de Caja</th>
+            <th (click)="orderBy('cashClosing')">Cierre de Caja</th>
             <th (click)="orderBy('requestArticles')">Intercambia productos</th>
             <th (click)="orderBy('modifyArticle')">Modifica producto</th>
             <th (click)="orderBy('entryAmount')">Monto a editar</th>
@@ -43,6 +46,7 @@
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
             <th (click)="orderBy('requestTaxes')">Pide impuestos</th>
             <th (click)="orderBy('tax')">Afecta Libro IVA</th>
+            <th (click)="orderBy('requestCompany')">Pide Empresa</th>
             <th (click)="orderBy('requestEmployee','description')">Pide Empleado</th>
             <th (click)="orderBy('fastPayment','name')">Pago rápido</th>
             <th (click)="orderBy('allowAPP')">APP</th>
@@ -54,6 +58,9 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterLabelPrint" placeholder="Etiqueta..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCurrentAccount" placeholder="Cuenta Corriente..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMovement" placeholder="Movimiento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCashBoxImpact" placeholder="Caja Diaria..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCashOpening" placeholder="Apertura de Caja..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCashClosing" placeholder="Ciere de Caja..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestArticles" placeholder="Intercambia productos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyArticle" placeholder="Modifica productos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterEntryAmount" placeholder="Monto a editar..."></th>
@@ -73,6 +80,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestTaxes" placeholder="Pide impuestos..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="Afechta Libro IVA..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestEmployee" placeholder="Pide Empleado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterRequestCompany" placeholder="Pide Empresa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFastPayment" placeholder="Pago rápido..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowAPP" placeholder="APP..."></th>
           </tr>
@@ -83,6 +91,9 @@
                                                               | filter: filterLabelPrint:'labelPrint'
                                                               | filter: filterCurrentAccount:'currentAccount'
                                                               | filter: filterMovement:'movement'
+                                                              | filter: filterCashBoxImpact:'cashBoxImpact'
+                                                              | filter: filterCashOpening:'cashOpening'
+                                                              | filter: filterCashClosing:'cashClosing'
                                                               | filter: filterRequestArticles:'requestArticles'
                                                               | filter: filterModifyArticle:'modifyArticle'
                                                               | filter: filterEntryAmount:'entryAmount'
@@ -98,6 +109,7 @@
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
                                                               | filter: filterRequestTaxes:'requestTaxes'
                                                               | filter: filterTax:'tax'
+                                                              | filter: filterRequestCompany:'requestCompany'
                                                               | filter: filterRequestEmployee:'description':'requestEmployee'
                                                               | filter: filterFastPayment:'name':'fastPayment'
                                                               | filter: filterAllowAPP:'allowAPP'
@@ -116,6 +128,9 @@
             <td class="flat">{{transactionType.labelPrint}}</td>
             <td class="flat">{{transactionType.currentAccount}}</td>
             <td class="flat">{{transactionType.movement}}</td>
+            <td class="flat">{{transactionType.cashBoxImpact}}</td>
+            <td class="flat">{{transactionType.cashOpening}}</td>
+            <td class="flat">{{transactionType.cashClosing}}</td>
             <td class="flat">{{transactionType.requestArticles}}</td>
             <td class="flat">{{transactionType.modifyArticle}}</td>
             <td class="flat">{{transactionType.entryAmount}}</td>
@@ -135,6 +150,7 @@
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>
             <td class="flat">{{transactionType.requestTaxes}}</td>
             <td class="flat">{{transactionType.tax}}</td>
+            <td class="flat">{{transactionType.requestCompany}}</td>
             <td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.name}}</td>
             <td class="flat" *ngIf="!transactionType.requestEmployee"></td>
             <td class="flat" *ngIf="transactionType.fastPayment">{{transactionType.fastPayment.name}}</td>

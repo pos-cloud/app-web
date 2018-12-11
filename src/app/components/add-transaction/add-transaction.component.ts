@@ -25,6 +25,8 @@ import { EmployeeService } from './../../services/employee.service';
 import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { ListCompaniesComponent } from '../list-companies/list-companies.component';
+import { CashBoxService } from 'app/services/cash-box.service';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-add-transaction',
@@ -110,7 +112,9 @@ export class AddTransactionComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public _cashBoxService: CashBoxService,
+    public _userService: UserService
   ) {
   }
 
@@ -140,18 +144,58 @@ export class AddTransactionComponent implements OnInit {
         this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
       }
 
-      if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+      if (this.transaction.type.transactionMovement === TransactionMovement.Purchase ||
+          this.transaction.type.transactionMovement === TransactionMovement.Money) {
         this.getLastTransactionByType(false);
       }
     }   else {  // TRANSACCIÓN EXISTENTE
       this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+      if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+        this.getOpenCashBox();
+      }
     }
-
-    this.buildForm();
 
     if (this.transaction.type.requestEmployee) {
       this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
     }
+
+    this.buildForm();
+  }
+
+  public getOpenCashBox(toSave: boolean = false): void {
+
+    this.loading = true;
+
+    this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
+      result => {
+        if (!result.cashBoxes) {
+          if (toSave) {
+            this.saveTransaction();
+          } else {
+            this.setValuesForm();
+          }
+        } else {
+          this.transaction.cashBox = result.cashBoxes[0];
+          if (toSave) {
+            if(!this.transaction._id || this.transaction._id === '') {
+              this.saveTransaction();
+            } else {
+              this.updateTransaction();
+            }
+          } else {
+            this.setValuesForm();
+            if (this.transaction._id && this.transaction._id !== '') {
+              this.updateTransaction();
+            }
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -443,10 +487,14 @@ export class AddTransactionComponent implements OnInit {
         } else {
           this.transaction.number = result.transactions[0].number + 1;
         }
-        if (toSave) {
-          this.saveTransaction();
+        if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+          this.getOpenCashBox(toSave);
         } else {
-          this.setValuesForm();
+          if (toSave) {
+            this.saveTransaction();
+          } else {
+            this.setValuesForm();
+          }
         }
         this.loading = false;
       },

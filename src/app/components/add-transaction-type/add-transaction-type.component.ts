@@ -13,6 +13,7 @@ import { PrinterService } from './../../services/printer.service';
 import { EmployeeTypeService } from './../../services/employee-type.service';
 import { PaymentMethodService } from 'app/services/payment-method.service';
 import { PaymentMethod } from 'app/models/payment-method';
+import { CompanyType } from 'app/models/company';
 
 @Component({
   selector: 'app-add-transaction-type',
@@ -26,6 +27,7 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() transactionType: TransactionType;
   public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
   public transactionTypeForm: FormGroup;
+  public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -230,6 +232,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'tax': [this.transactionType.tax, [
         ]
       ],
+      'cashBoxImpact': [this.transactionType.cashBoxImpact, [
+        ]
+      ],
       'cashOpening': [this.transactionType.cashOpening, [
         ]
       ],
@@ -258,6 +263,9 @@ export class AddTransactionTypeComponent implements OnInit {
         ]
       ],
       'fastPayment': [this.transactionType.fastPayment, [
+        ]
+      ],
+      'requestCompany': [this.transactionType.requestCompany, [
         ]
       ]
     });
@@ -335,8 +343,10 @@ export class AddTransactionTypeComponent implements OnInit {
       }
     }
 
+    if (!this.transactionType.requestCompany) this.transactionType.requestCompany = null;
     if (this.transactionType.tax === undefined) this.transactionType.tax = false;
     if (this.transactionType.allowAPP === undefined) this.transactionType.allowAPP = false;
+    if (this.transactionType.cashBoxImpact === undefined) this.transactionType.cashBoxImpact = true;
     if (this.transactionType.cashOpening === undefined) this.transactionType.cashOpening = false;
     if (this.transactionType.cashClosing === undefined) this.transactionType.cashClosing = false;
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
@@ -403,15 +413,17 @@ export class AddTransactionTypeComponent implements OnInit {
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,
       'requestEmployee': requestEmployee,
-      'fastPayment': fastPayment
+      'fastPayment': fastPayment,
+      'requestCompany': this.transactionType.requestCompany
     });
   }
 
   public addTransactionType(): void {
+
     this.loading = true;
     this.transactionType = this.transactionTypeForm.value;
     this.transactionType.codes = this.getCodes();
-    if(this.operation === 'save') {
+    if(this.operation === 'add') {
       this.saveTransactionType();
     } else if (this.operation === 'update') {
       this.updateTransactionType();
@@ -419,6 +431,8 @@ export class AddTransactionTypeComponent implements OnInit {
   }
 
   public updateTransactionType(): void {
+
+    this.loading = true;
 
     this._transactionTypeService.updateTransactionType(this.transactionType).subscribe(
       result => {
@@ -465,7 +479,6 @@ export class AddTransactionTypeComponent implements OnInit {
       result => {
         if (!result.transactionType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
         } else {
           this.transactionType = result.transactionType;
           this.showMessage("El tipo de transacción se ha añadido con éxito.", 'success', false);

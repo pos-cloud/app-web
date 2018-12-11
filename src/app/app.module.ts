@@ -113,7 +113,6 @@ import { ViewTransactionComponent } from './components/view-transaction/view-tra
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
 import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
-import { UpdateTransactionTypeComponent } from './components/update-transaction-type/update-transaction-type.component';
 import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 import { UpdateArticleStockComponent } from './components/update-article-stock/update-article-stock.component';
@@ -259,7 +258,6 @@ import { CompanyContactComponent } from './components/company-contact/company-co
     ListTurnsComponent,
     ListTransactionTypesComponent,
     AddTransactionTypeComponent,
-    UpdateTransactionTypeComponent,
     DeleteTransactionTypeComponent,
     RegisterComponent,
     ExportCitiComponent,

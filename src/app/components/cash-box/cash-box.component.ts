@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -24,6 +24,7 @@ import { TransactionTypeService } from '../../services/transaction-type.service'
 //Componentes
 import { DeleteMovementOfCashComponent } from './../delete-movement-of-cash/delete-movement-of-cash.component';
 import { PrintComponent } from './../../components/print/print.component';
+import { TransactionType } from 'app/models/transaction-type';
 
 @Component({
   selector: 'app-cash-box',
@@ -44,7 +45,7 @@ export class CashBoxComponent implements OnInit {
   public alertMessage: string = '';
   public movementsOfCashes: MovementOfCash[];
   public focusEvent = new EventEmitter<boolean>();
-  public op: string; // valores posibles open - close
+  @Input() transactionType: TransactionType;
 
   constructor(
     public _fb: FormBuilder,
@@ -62,7 +63,9 @@ export class CashBoxComponent implements OnInit {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
     this.transaction = new Transaction();
+    this.transaction.type = this.transactionType;
     this.movementOfCash = new MovementOfCash();
+    this.movementsOfCashes = new Array();
   }
 
   ngOnInit() {
@@ -71,7 +74,6 @@ export class CashBoxComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     this.buildForm();
-    this.getOpenCashBox();
     this.getPaymentMethods();
   }
 
@@ -152,17 +154,15 @@ export class CashBoxComponent implements OnInit {
     this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
       result => {
         if (!result.cashBoxes) {
-          if (this.op === "open") {
+          if (this.transactionType.cashOpening) {
             this.cashBox.employee = this._userService.getIdentity().employee;
-          } else if (this.op === "close") {
+          } else if (this.transactionType.cashClosing) {
             this.showMessage("No se encuentran cajas abiertas.", 'info', true);
           }
         } else {
           this.cashBox = result.cashBoxes[0];
-          if (this.op === "open") {
+          if (this.transactionType.cashOpening) {
             this.showMessage("La caja ya se encuentra abierta.", 'info', true);
-          } else if (this.op === "close") {
-            this.getTransactionTypeCashClosing();
           }
         }
         this.loading = false;
@@ -174,7 +174,7 @@ export class CashBoxComponent implements OnInit {
     );
   }
 
-  public saveCashBox(close?: boolean): void {
+  public saveCashBox(): void {
 
     this.loading = true;
 
@@ -186,7 +186,17 @@ export class CashBoxComponent implements OnInit {
         } else {
           this.cashBox = result.cashBox;
           if (this.cashBoxForm.value.amount && this.cashBoxForm.value.amount > 0) {
-            this.getTransactionTypeCashOpening();
+            if (this.transactionType.fixedOrigin) {
+              this.transaction.origin = this.transactionType.fixedOrigin;
+            } else {
+              this.transaction.origin = 0;
+            }
+            if (this.transactionType.fixedLetter) {
+              this.transaction.letter = this.transactionType.fixedLetter;
+            } else {
+              this.transaction.letter = "X";
+            }
+            this.getLastTransactionByType();
           } else {
             this.activeModal.close({ cashBox: this.cashBox });
           }
@@ -202,51 +212,12 @@ export class CashBoxComponent implements OnInit {
     );
   }
 
-  public getTransactionTypeCashOpening(): void {
-
-    this.loading = true;
-
-    let query = 'where="cashOpening":true';
-
-    this._transactionTypeService.getTransactionTypes(query).subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          this.showMessage("Debe configurar un tipo de transacción como apertura de caja", 'info', true);
-        } else {
-          this.hideMessage();
-          let transactionType = result.transactionTypes[0];
-          this.transaction.type = transactionType;
-          if (transactionType.fixedOrigin) {
-            this.transaction.origin = transactionType.fixedOrigin;
-          } else {
-            this.transaction.origin = 0;
-          }
-          if (transactionType.fixedLetter) {
-            this.transaction.letter = transactionType.fixedLetter;
-          } else {
-            this.transaction.letter = "X";
-          }
-          this.loading = false;
-          this.getLastTransactionByType();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   public openCashBox(): void {
 
     if (!this.cashBox || !this.cashBox._id) {
       this.saveCashBox();
     } else {
-      if (this.transaction._id) {
-        this.activeModal.close({ cashBox: this.cashBox });
-      } else {
-        this.activeModal.close();
-      }
+      this.showMessage("La caja ya se encuentra abierta.", 'info', true);
     }
   }
 
@@ -256,14 +227,14 @@ export class CashBoxComponent implements OnInit {
       if (this.cashBox.state === CashBoxState.Closed) {
         this.openModal("print");
       } else {
-        this.getOpenTransactionsByCashBox(true);
+        this.getOpenTransactionsByCashBox();
       }
     } else {
-      this.activeModal.close();
+      this.showMessage("No se encuentran cajas abiertas.", 'info', true);
     }
   }
 
-  public updateCashBox(close?: boolean): void {
+  public updateCashBox(): void {
 
     this.loading = true;
     this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
@@ -275,12 +246,7 @@ export class CashBoxComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.cashBox = result.cashBox;
-          if (close) {
-            this.openModal("print");
-          } else {
-            this.getMovementOfCashesByTransaction();
-
-          }
+          this.openModal("print");
         }
         this.loading = false;
       },
@@ -309,15 +275,13 @@ export class CashBoxComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg' });
-        modalRef.componentInstance.movementOfCash = movement;
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getMovementOfCashesByTransaction();
+        let del = -1;
+        for (let i = 0; i < this.movementsOfCashes.length; i ++) {
+          if(this.movementsOfCashes[i]._id === movement._id) {
+            del = i;
           }
-        }, (reason) => {
-
-        });
+        }
+        this.movementsOfCashes.splice(del, 1);
         break;
       default: ;
     }
@@ -334,6 +298,7 @@ export class CashBoxComponent implements OnInit {
         } else {
           this.paymentMethods = result.paymentMethods;
           this.setValueForm();
+          this.getOpenCashBox();
         }
         this.loading = false;
       },
@@ -346,103 +311,43 @@ export class CashBoxComponent implements OnInit {
 
   public addMovementOfCash(): void {
 
-    this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
-    this.movementOfCash.state = MovementOfCashState.Closed;
-
-    if (this.cashBox && this.cashBox._id) {
-      if (this.op === "open" && (!this.transaction || !this.transaction._id)) {
-        this.showMessage("La caja ya se encuentra abierta.", 'info', true);
-      } else if (this.op === "close") {
-        if (!this.transaction || !this.transaction._id) {
-          this.getLastTransactionByType();
-        } else {
-          this.saveMovementOfCash();
-        }
-      } else {
-        this.saveMovementOfCash();
-      }
+    if(!this.movementOfCash.type.isCurrentAccount) {
+      this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
+      this.movementOfCash.state = MovementOfCashState.Closed;
+      let mov = new MovementOfCash();
+      mov.date = this.movementOfCash.date;
+      mov.quota = this.movementOfCash.quota;
+      mov.expirationDate = this.movementOfCash.expirationDate;
+      mov.discount = this.movementOfCash.discount;
+      mov.surcharge = this.movementOfCash.surcharge;
+      mov.state = this.movementOfCash.state;
+      mov.amountPaid = this.movementOfCash.amountPaid;
+      mov.observation = this.movementOfCash.observation;
+      mov.type = this.movementOfCash.type;
+      mov.transaction = this.movementOfCash.transaction;
+      mov.receiver = this.movementOfCash.receiver;
+      mov.number = this.movementOfCash.number;
+      mov.bank = this.movementOfCash.bank;
+      mov.titular = this.movementOfCash.titular;
+      mov.CUIT = this.movementOfCash.CUIT;
+      mov.deliveredBy = this.movementOfCash.deliveredBy;
+      this.movementsOfCashes.push(mov);
     } else {
-      if (this.op === "open") {
-        this.saveCashBox();
-      } else if (this.op === "close") {
-        this.showMessage("No se encuentran cajas abiertas.", 'info', true);
-      }
+      this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no esta permitido para realizar esta acción', 'info', true);
     }
   }
 
-  public getTransactionTypeCashClosing(): void {
-
-    this.loading = true;
-
-    let query = 'where="cashClosing":true';
-
-    this._transactionTypeService.getTransactionTypes(query).subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          this.showMessage("Debe configurar un tipo de transacción como cierre de caja", 'info', true);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          let transactionType = result.transactionTypes[0];
-          this.transaction.type = transactionType;
-          if (transactionType.fixedOrigin) {
-            this.transaction.origin = transactionType.fixedOrigin;
-          } else {
-            this.transaction.origin = 0;
-          }
-          if (transactionType.fixedLetter) {
-            this.transaction.letter = transactionType.fixedLetter;
-          } else {
-            this.transaction.letter = "X";
-          }
-          this.getOpenTransactionsByCashBox();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getOpenTransactionsByCashBox(close?: boolean): void {
+  public getOpenTransactionsByCashBox(): void {
 
     this.loading = true;
 
     this._transactionService.getOpenTransactionsByCashBox(this.cashBox._id).subscribe(
       result => {
         if (!result.transactions) {
-          if (close) {
-            this.updateCashBox(true);
-          } else {
-            this.getTransactionsByTypeAndCashBox();
-          }
+          this.getLastTransactionByType();
         } else {
           this.showMessage("No puede cerrar la caja con transacciones abiertas.", 'info', true);
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getTransactionsByTypeAndCashBox(): void {
-
-    this.loading = true;
-
-    let query: string = 'where="type":"' + this.transaction.type._id + '","cashBox":"' + this.cashBox._id + '"';
-
-    this._transactionService.getTransactions(query).subscribe(
-      result => {
-        if (!result.transactions) {
-        } else {
-          this.transaction = result.transactions[0];
-          this.getMovementOfCashesByTransaction();
         }
         this.loading = false;
       },
@@ -457,7 +362,7 @@ export class CashBoxComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+    this._transactionService.getLastTransactionByTypeAndOrigin(this.transactionType, this.transaction.origin, this.transaction.letter).subscribe(
       result => {
         if (!result.transactions) {
           this.transaction.number = 1;
@@ -478,75 +383,63 @@ export class CashBoxComponent implements OnInit {
 
     this.loading = true;
     this.transaction.madein = this.posType;
-    this.transaction.totalPrice = this.cashBoxForm.value.amount;
-    this.transaction.state = TransactionState.Closed;
-    this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    this.transaction.VATPeriod = moment().format('YYYYMM');
-    this.transaction.expirationDate = this.transaction.endDate;
-    this.transaction.cashBox = this.cashBox;
+    this.transaction.totalPrice = 0;
+    if (this.movementsOfCashes.length > 0) {
 
-    this._transactionService.saveTransaction(this.transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.hideMessage();
-          this.transaction = result.transaction;
-          this.saveMovementOfCash();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+      for (let mov of this.movementsOfCashes) {
+        this.transaction.totalPrice += mov.amountPaid;
       }
-    );
-  }
+      this.transaction.state = TransactionState.Closed;
+      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      this.transaction.VATPeriod = moment().format('YYYYMM');
+      this.transaction.expirationDate = this.transaction.endDate;
+      this.transaction.cashBox = this.cashBox;
+      this.transaction.type = this.transactionType;
 
-  public saveMovementOfCash(): void {
-
-    this.loading = true;
-
-    this.movementOfCash.transaction = this.transaction;
-
-    this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
-      result => {
-        if (!result.movementOfCash) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          if (this.op === "close") {
-            this.updateCashBox();
+      this._transactionService.saveTransaction(this.transaction).subscribe(
+        result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
-            this.getMovementOfCashesByTransaction();
+            this.hideMessage();
+            this.transaction = result.transaction;
+            for (let movementOfCash of this.movementsOfCashes) {
+              movementOfCash.transaction = this.transaction;
+            }
+            this.saveMovementsOfCashes();
           }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+      );
+    } else {
+      if (this.transactionType.cashOpening) {
+        this.activeModal.close({ cashBox: this.cashBox });
+      } else {
+        this.updateCashBox();
       }
-    );
+    }
   }
 
-  public getMovementOfCashesByTransaction(): void {
+  public saveMovementsOfCashes(): void {
 
     this.loading = true;
 
-    this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
+    this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashes).subscribe(
       result => {
         if (!result.movementsOfCashes) {
-          this.movementsOfCashes = new Array();
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
         } else {
-          this.movementsOfCashes = result.movementsOfCashes;
-          let totalPrice = 0;
-          for(let movementOfCash of this.movementsOfCashes) {
-            totalPrice += movementOfCash.amountPaid;
+          if(this.transactionType.cashOpening) {
+            this.activeModal.close({ cashBox: this.cashBox });
+          } else {
+            this.updateCashBox();
           }
-          this.updateTransaction();
-          this.setValueForm();
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

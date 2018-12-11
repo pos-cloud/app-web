@@ -84,6 +84,7 @@ export class PointOfSaleComponent implements OnInit {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
     } else if (this.posType === "delivery") {
+      this.getTransactionTypesOfCashBox();
       this.getOpenTransactions();
     } else if (this.posType === "mostrador") {
       if (pathLocation[3] === "venta") {
@@ -92,6 +93,8 @@ export class PointOfSaleComponent implements OnInit {
         this.transactionMovement = TransactionMovement.Purchase;
       } else if (pathLocation[3] === "stock") {
         this.transactionMovement = TransactionMovement.Stock;
+      } else if (pathLocation[3] === "fondo") {
+        this.transactionMovement = TransactionMovement.Money;
       }
       this.getTransactionTypesByMovement();
       this.getOpenTransactionsByMovement(this.transactionMovement);
@@ -126,6 +129,25 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
 
     this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
+      result => {
+        if (!result.transactionTypes) {
+        } else {
+          this.transactionTypes = result.transactionTypes;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getTransactionTypesOfCashBox(): void {
+
+    this.loading = true;
+
+    this._transactionTypeService.getTransactionTypesOfCashBox().subscribe(
       result => {
         if (!result.transactionTypes) {
         } else {
@@ -263,18 +285,22 @@ export class PointOfSaleComponent implements OnInit {
 
   public addTransaction(type: TransactionType): void {
 
-    if (type.transactionMovement !== TransactionMovement.Purchase) {
-      if (type.requestArticles) {
-        if(type.requestEmployee) {
-          this.openModal('select-employee', type, null, null, type.requestEmployee);
-        } else {
-          this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
-        }
-      } else {
+    if(!type.cashOpening && !type.cashClosing) {
+      if (type.requestCompany) {
         this.openModal('company', type);
+      } else {
+          if (type.requestEmployee) {
+            this.openModal('select-employee', type, null, null, type.requestEmployee);
+          } else {
+            if (type.requestArticles) {
+              this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+            } else {
+              this.openModal('transaction', type);
+            }
+          }
       }
     } else {
-      this.openModal('company', type);
+      this.openModal('cash-box', type);
     }
   }
 
@@ -284,17 +310,12 @@ export class PointOfSaleComponent implements OnInit {
     transaction?: Transaction,
     printerSelected?: Printer,
     employeeType?: EmployeeType): void {
-
     let modalRef;
 
     switch (op) {
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        if (typeTransaction.transactionMovement === TransactionMovement.Purchase) {
-          modalRef.componentInstance.type = CompanyType.Provider;
-        } else if (typeTransaction.transactionMovement === TransactionMovement.Sale) {
-          modalRef.componentInstance.type = CompanyType.Client;
-        }
+        modalRef.componentInstance.type = typeTransaction.requestCompany;
         modalRef.result.then(
           (result) => {
             if (result.company) {
@@ -302,7 +323,13 @@ export class PointOfSaleComponent implements OnInit {
                 transaction = new Transaction();
               }
               transaction.company = result.company;
-              this.openModal('transaction', typeTransaction, transaction);
+              if (typeTransaction.requestEmployee) {
+                this.openModal('select-employee', typeTransaction, transaction, null, typeTransaction.requestEmployee);
+              } else if (typeTransaction.requestArticles) {
+                  this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + typeTransaction._id]);
+              } else {
+                this.openModal('transaction', typeTransaction, transaction);
+              }
             }
           }, (reason) => {
 
@@ -310,6 +337,9 @@ export class PointOfSaleComponent implements OnInit {
         );
         break;
       case 'transaction':
+        if (!transaction) {
+          transaction = new Transaction();
+        }
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
         transaction.type = typeTransaction;
         modalRef.componentInstance.transaction = transaction;
@@ -436,25 +466,11 @@ export class PointOfSaleComponent implements OnInit {
 
         });
         break;
-      case 'open-cash-box':
-        modalRef = this._modalService.open(CashBoxComponent, { size: 'lg' });
-        modalRef.componentInstance.op = "open";
-        modalRef.result.then((result) => {
-          if (result && result.cashBox) {
-            this.showMessage("La caja se ha abierto correctamente", 'success', true);
-          } else {
-            this.hideMessage();
-          }
-        }, (reason) => {
-          this.hideMessage();
-        });
-        break;
       case 'cash-box':
         modalRef = this._modalService.open(CashBoxComponent, { size: 'lg' });
-        modalRef.componentInstance.op = "close";
+        modalRef.componentInstance.transactionType = typeTransaction;
         modalRef.result.then((result) => {
           if (result && result.cashBox) {
-            this.showMessage("La caja se ha cerrado correctamente", 'success', true);
           } else {
             this.hideMessage();
           }
@@ -469,11 +485,10 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.typeEmployee = employeeType;
         modalRef.result.then((result) => {
           if (result.employee) {
-            if(this.posType === "delivery") {
-              transaction.state = TransactionState.Sent;
-            }
-
-            if(transaction) {
+            if (transaction) {
+              if (this.posType === "delivery") {
+                transaction.state = TransactionState.Sent;
+              }
               transaction.employeeOpening = result.employee;
               this.updateTransaction(transaction);
             } else {

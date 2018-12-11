@@ -10,7 +10,7 @@ import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
-import { TransactionType } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, CurrentAccount, Movements } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
 import { Article } from './../../models/article';
 
@@ -1008,35 +1008,30 @@ export class PrintComponent implements OnInit {
     let invoicedAmountCanceled = 0;
 
     if (close && close.length > 0) {
-
       for(let c of close) {
-        switch (c._id.type) {
-          case "Apertura":
-            openingAmount = c.openingAmount;
-            break;
-          case "Cierre":
-            closingAmount = c.closingAmount;
-            break;
-          case "Ticket":
-            if (amountOrders == 0) {
-              amountOrders = c.amountOrders;
-            }
-            if (amountOrdersCanceled == 0) {
-              amountOrdersCanceled = c.amountOrdersCanceled;
-            }
-            if (invoicedAmount == 0) {
-              invoicedAmount = c.invoicedAmount;
-            }
-            if (invoicedAmountCanceled == 0) {
-              invoicedAmountCanceled = c.invoicedAmountCanceled;
-            }
-            break;
+        openingAmount += c.openingAmount;
+        closingAmount += c.closingAmount;
+        if (amountOrders == 0) {
+          amountOrders += c.amountOrders;
+        }
+        if (amountOrdersCanceled == 0) {
+          amountOrdersCanceled += c.amountOrdersCanceled;
+        }
+        if (invoicedAmount == 0) {
+          if (c.movement === Movements.Inflows) {
+            invoicedAmount += c.invoicedAmount;
+          } else {
+            invoicedAmount -= c.invoicedAmount;
+          }
+        }
+        if (invoicedAmountCanceled == 0) {
+          invoicedAmountCanceled += c.invoicedAmountCanceled;
         }
       }
 
       this.doc.text('Facturado: $' + decimalPipe.transform(invoicedAmount, '1.2-2'), margin, row += 5);
-      this.doc.text('Tickets: ' + amountOrders, margin, row += 5);
-      this.doc.text('Tickets Anulados: ' + amountOrdersCanceled, margin, row += 5);
+      this.doc.text('Transacciones: ' + amountOrders, margin, row += 5);
+      this.doc.text('Transacciones Anuladas: ' + amountOrdersCanceled, margin, row += 5);
 
       this.doc.text('Detalle de Cierre:', margin, row += 5);
       margin = 10;

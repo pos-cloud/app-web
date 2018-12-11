@@ -7,7 +7,6 @@ import { TransactionType } from './../../models/transaction-type';
 import { TransactionTypeService } from './../../services/transaction-type.service';
 
 import { AddTransactionTypeComponent } from './../../components/add-transaction-type/add-transaction-type.component';
-import { UpdateTransactionTypeComponent } from './../../components/update-transaction-type/update-transaction-type.component';
 import { DeleteTransactionTypeComponent } from './../../components/delete-transaction-type/delete-transaction-type.component';
 
 @Component({
@@ -110,11 +109,9 @@ export class ListTransactionTypesComponent implements OnInit {
         modalRef.componentInstance.transactionType = transactionType;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getTransactionTypes();
-          }
+          this.getTransactionTypes();
         }, (reason) => {
-
+          this.getTransactionTypes();
         });
         break;
       case 'delete':

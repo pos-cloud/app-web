@@ -192,22 +192,25 @@
                 <b>PERSONALIZADO</b>
                 <hr>
                 <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="defectOrders" class="control-label">Defecto como pedido</label>
+                  <div class="form-group col-md-4">
+                    <label for="requestCompany" class="control-label">Pide empresa</label>
                       <div class="input-group">
-                        <select class="form-control" formControlName="defectOrders">
-                          <option value="true" [selected]="transactionType.defectOrders" [disabled]="readonly">Si</option>
-                          <option value="false" [selected]="!transactionType.defectOrders" [disabled]="readonly">No</option>
+                        <select class="form-control" formControlName="requestCompany">
+                          <option *ngFor="let companyType of companyTypes"
+                                  [ngValue]="companyType"
+                                  [selected]="transactionType.requestCompany === companyType"
+                                  [disabled]="readonly"
+                          >{{ companyType }}</option>
                         </select>
                         <button type="button"
                                 class="btn btn-secondary"
                                 placement="right"
-                                ngbPopover="¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?">
+                                ngbPopover="Selecciona el tipo de empresa a solicitar en la carga">
                           <b>?</b>
                         </button>
                       </div>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
                     <label for="requestEmployee" class="control-label">Pide empleado</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="requestEmployee">
@@ -221,6 +224,21 @@
                                 class="btn btn-secondary"
                                 placement="right"
                                 ngbPopover="Selecciona el tipo de empleado a solicitar en la carga">
+                          <b>?</b>
+                        </button>
+                      </div>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="defectOrders" class="control-label">Defecto como pedido</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="defectOrders">
+                          <option value="true" [selected]="transactionType.defectOrders" [disabled]="readonly">Si</option>
+                          <option value="false" [selected]="!transactionType.defectOrders" [disabled]="readonly">No</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="¿Se utiliza para dar de alta pedidos en POS modo resto o delivery?">
                           <b>?</b>
                         </button>
                       </div>
@@ -371,11 +389,12 @@
                     <label for="fastPayment" class="control-label">Botón de Pago Rápido</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="fastPayment">
-                        <option *ngFor="let paymentMethod of paymentMethods"
-                                [selected]="transactionType.fastPayment && transactionType.fastPayment._id === paymentMethod._id"
-                                [ngValue]="paymentMethod._id"
-                                [disabled]="readonly"
-                        >{{ paymentMethod.name }}
+                        <option
+                          *ngFor="let paymentMethod of paymentMethods"
+                          [selected]="transactionType.fastPayment && transactionType.fastPayment._id === paymentMethod._id"
+                          [ngValue]="paymentMethod._id"
+                          [disabled]="readonly">
+                          {{ paymentMethod.name }}
                         </option>
                       </select>
                       <button type="button"
@@ -436,7 +455,22 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
+                    <label for="cashBoxImpact" class="control-label">Caja diaria</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="cashBoxImpact">
+                        <option value="true" [selected]="transactionType.cashBoxImpact" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.cashBoxImpact" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Afecta la caja diaria?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
                     <label for="cashOpening" class="control-label">Apertura de caja</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="cashOpening">
@@ -451,7 +485,7 @@
                       </button>
                     </div>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
                     <label for="cashClosing" class="control-label">Cierre de caja</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="cashClosing">
@@ -524,4 +558,5 @@
       </button>
     </div>
   </form>
+  {{transactionTypeForm.valid}}
 </section>
