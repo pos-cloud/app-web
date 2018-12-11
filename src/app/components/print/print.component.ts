@@ -1018,7 +1018,7 @@ export class PrintComponent implements OnInit {
           amountOrdersCanceled += c.amountOrdersCanceled;
         }
         if (invoicedAmount == 0) {
-          if (c.movement === Movements.Inflows) {
+          if (c._id.movement === Movements.Inflows) {
             invoicedAmount += c.invoicedAmount;
           } else {
             invoicedAmount -= c.invoicedAmount;
