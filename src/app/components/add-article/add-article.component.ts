@@ -165,10 +165,7 @@ export class AddArticleComponent implements OnInit {
         this.imageURL = './../../../assets/img/default.jpg';
       }
       this.setValuesForm();
-    } else if (this.operation === 'view') {
-
-      console.log(this.article);
-      
+    } else if (this.operation === 'view') {      
       this.taxes = this.article.taxes;
       this.otherFields = this.article.otherFields;
       this.readonly = true;

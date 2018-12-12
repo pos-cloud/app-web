@@ -5,6 +5,7 @@ import { Employee } from './employee';
 import { Turn } from './turn';
 import { TransactionType } from './transaction-type';
 import { Taxes } from './taxes';
+import { User } from './user';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -39,6 +40,10 @@ export class Transaction {
 	public employeeClosing: Employee;
 	public turnOpening: Turn;
 	public turnClosing: Turn;
+	public creationUser: User;
+	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+	public updateUser: User;
+	public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
 	constructor () {}
 }

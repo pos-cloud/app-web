@@ -156,6 +156,36 @@
           </div>
         </ng-template>
       </ngb-tab>
+      <ngb-tab title="Auditoría">
+        <ng-template ngbTabContent>
+          <div class="row tab-content">
+            <div class="form-group col-md-12">
+              <div class="row">
+                <div class="form-group col-md-6">
+                    <label class="control-label">Creado por:</label>
+                    <label *ngIf="transaction.creationUser" class="control-label"><b>{{transaction.creationUser.name}}</b></label>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="control-label">El día:</label>
+                    <label *ngIf="transaction.creationDate" class="control-label"> <b>{{transaction.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-6">
+                    <label class="control-label">Modificado por:</label>
+                    <label *ngIf="transaction.updateUser" class="control-label"><b>{{transaction.updateUser.name}}</b></label>
+                    <label *ngIf="!transaction.updateUser" class="control-label"><b>-</b></label>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="control-label">El día:</label>
+                    <label *ngIf="transaction.updateDate" class="control-label"><b>{{transaction.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                    <label *ngIf="!transaction.updateDate" class="control-label"><b>-</b></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
     </ngb-tabset>
   </div>
   <div class="modal-footer">
