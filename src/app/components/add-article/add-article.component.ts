@@ -166,6 +166,9 @@ export class AddArticleComponent implements OnInit {
       }
       this.setValuesForm();
     } else if (this.operation === 'view') {
+
+      console.log(this.article);
+      
       this.taxes = this.article.taxes;
       this.otherFields = this.article.otherFields;
       this.readonly = true;

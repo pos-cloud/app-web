@@ -270,7 +270,31 @@
               </div>
             </div>
 					</ng-template>
-				</ngb-tab>
+        </ngb-tab>
+        <ngb-tab title="Auditoría">
+					<ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                      <label class="control-label">Creado por: <b>{{article.creationUser.name}}</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label class="control-label">El día: <b>{{article.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                      <label class="control-label">Modificado por : <b>{{article.updateUser.name}}</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label class="control-label">El día: <b>{{article.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                  </div>
+                </div>
+            </div>
+            </div>
+					</ng-template>
+        </ngb-tab>
 			</ngb-tabset>
 		</div>
 		<div class="modal-footer" *ngIf="!readonly">

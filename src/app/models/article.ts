@@ -4,6 +4,10 @@ import { Taxes } from './taxes';
 import { Deposit } from './deposit';
 import { Location } from './location';
 import { ArticleFields } from './article-fields';
+import { User } from './user';
+
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 export class Article {
 
@@ -36,6 +40,10 @@ export class Article {
   public favourite: Boolean = false;
   public printed: boolean;
   public picture: string = 'default.jpg';
+  public creationUser: User;
+  public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public updateUser: User;
+  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
   constructor() {}
 }
