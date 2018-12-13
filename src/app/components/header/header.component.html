@@ -60,7 +60,11 @@
           ngbDropdown
           *ngIf="(identity &&
                   identity.employee &&
-                  identity.employee.type.description === 'Administrador')"
+                  identity.employee.type.description === 'Administrador') &&
+                  modules &&
+                  modules.sale &&
+                  (modules.sale.resto || modules.sale.delivery || modules.sale.counter)
+                  "
           (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-fax"></i> Ventas</a>
@@ -208,7 +212,8 @@
                 Cuentas Corrientes
               </button>
             </div>
-          <div *ngIf="modules && modules.purchase"class="dropdown-divider"></div>
+            <div *ngIf="modules && modules.purchase"class="dropdown-divider"></div>
+          </div>
           <div *ngIf="modules &&
                       modules.purchase">
             <button class="dropdown-item"
@@ -230,12 +235,13 @@
             </div>
           </div>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item"
-                [routerLink]="['admin','grupo-empresas']"
-                [routerLinkActive]="['active']">
-          Grupo de Empresas
-        </button>
-      </div>
+          <div>
+              <button class="dropdown-item"
+                    [routerLink]="['admin','grupo-empresas']"
+                    [routerLinkActive]="['active']">
+              Grupo de Empresas
+            </button>
+          </div>
         </div>
       </li>
       <li class="nav-item"
@@ -443,6 +449,17 @@
         </li>
       </ul>
     </div>
+    <div class="col-md-3" *ngIf=" modules &&
+                                  !modules.sale ||
+                                  (modules.sale &&
+                                  !modules.sale.resto &&
+                                  !modules.sale.delivery &&
+                                  !modules.sale.counter)">
+      <ul>
+        <li class="dropdown-header">Ventas</li>
+        <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
+      </ul>
+    </div>
     <div class="col-md-3" *ngIf="modules &&
                                 modules.purchase">
       <ul>
@@ -487,13 +504,6 @@
             Compras por proveedor
           </a>
         </li>
-      </ul>
-    </div>
-    <div class="col-md-3" *ngIf="modules &&
-                                !modules.sale">
-      <ul>
-        <li class="dropdown-header">Ventas</li>
-        <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
       </ul>
     </div>
     <div class="col-md-3" *ngIf="modules &&

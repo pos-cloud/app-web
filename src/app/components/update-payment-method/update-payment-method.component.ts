@@ -80,6 +80,8 @@ export class UpdatePaymentMethodComponent implements OnInit {
         ]
       ],'allowToFinance': [this.paymentMethod.allowToFinance, [
         ]
+      ],'cashBoxImpact': [this.paymentMethod.cashBoxImpact, [
+        ]
       ]
     });
 
@@ -119,6 +121,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
     if (this.paymentMethod.checkDetail === undefined) this.paymentMethod.checkDetail = false;
     if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
     if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
+    if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
 
     this.paymentMethodForm.setValue({
       '_id': this.paymentMethod._id,
@@ -130,7 +133,8 @@ export class UpdatePaymentMethodComponent implements OnInit {
       'inputAndOuput': this.paymentMethod.acceptReturned,
       'checkDetail': this.paymentMethod.checkDetail,
       'cardDetail': this.paymentMethod.cardDetail,
-      'allowToFinance': this.paymentMethod.allowToFinance
+      'allowToFinance': this.paymentMethod.allowToFinance,
+      'cashBoxImpact': this.paymentMethod.cashBoxImpact
     });
   }
 

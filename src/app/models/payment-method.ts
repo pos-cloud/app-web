@@ -10,6 +10,7 @@ export class PaymentMethod {
 	public checkDetail: boolean;
   public cardDetail: boolean;
   public allowToFinance: boolean;
+  public cashBoxImpact: boolean;
 
 	constructor () {}
 }

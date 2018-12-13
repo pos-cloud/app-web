@@ -1,5 +1,5 @@
 //Paquetes de angular
-import { Component, OnInit, Input, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 //Modelos
@@ -10,7 +10,7 @@ import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
-import { TransactionType, TransactionMovement, CurrentAccount, Movements } from './../../models/transaction-type';
+import { TransactionType, Movements } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
 import { Article } from './../../models/article';
 
@@ -110,11 +110,6 @@ export class PrintComponent implements OnInit {
       this.printer.printIn = PrinterPrintIn.Counter;
       this.printer.type = PrinterType.PDF;
       this.printer.pageWidth = 210;
-      this.printer.pageHigh = 297;
-    }
-
-    if (this.typePrint === "cash-box") {
-      this.printer.pageWidth = 80;
       this.printer.pageHigh = 297;
     }
 
@@ -625,7 +620,6 @@ export class PrintComponent implements OnInit {
     this.finishImpression();
   }
 
-
   public getClosingCashBox(): void {
 
     this.loading = true;
@@ -633,9 +627,21 @@ export class PrintComponent implements OnInit {
     this._cashBoxService.getClosingCashBox(this.cashBox._id).subscribe(
       result => {
         if (!result || result.length <= 0) {
-          this.toPrintCashBox(undefined);
+          if (this.printer.pageWidth < 150) {
+            this.toPrintCashBox(undefined);
+          } else if (this.printer.pageHigh > 150) {
+            this.toPrintCashBoxReport(undefined);
+          } else {
+            this.toPrintCashBoxReport(undefined);
+          }
         } else {
-          this.toPrintCashBox(result);
+          if (this.printer.pageWidth < 150) {
+            this.toPrintCashBox(result);
+          } else if (this.printer.pageHigh > 150) {
+            this.toPrintCashBoxReport(result);
+          } else {
+            this.toPrintCashBoxReport(result);
+          }
         }
         this.loading = false;
       },
@@ -1065,6 +1071,120 @@ export class PrintComponent implements OnInit {
     this.finishImpression();
   }
 
+  public toPrintCashBoxReport(close): void {
+
+    this.loading = true;
+    this.showMessage("Imprimiendo, Espere un momento...", 'info', false);
+    let decimalPipe = new DeprecatedDecimalPipe('es-AR');
+
+    let margin = 8;
+
+    this.getHeader(false);
+
+    // Nombre del comprobante
+    this.doc.setFontSize(this.fontSizes.extraLarge);
+    this.doc.text("Cierre de Caja", 140, 10);
+    this.doc.setFontSize(this.fontSizes.normal);
+
+    // Detalle de cierre
+    var row = 55;
+
+    // Detalle de la caja
+    this.doc.setFontType('bold');
+    this.doc.text("Cajero:", margin, row);
+    this.doc.setFontType('normal');
+    if (this.cashBox.employee) this.doc.text(this.cashBox.employee.name, 40, row);
+    this.doc.setFontType('bold');
+    this.doc.text("Apertura:", margin, row += 5);
+    this.doc.setFontType('normal');
+    if (this.cashBox.openingDate) this.doc.text(this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'), 40, row);
+    this.doc.setFontType('bold');
+    this.doc.text("Cierre:", margin, row += 5);
+    this.doc.setFontType('normal');
+    if (this.cashBox.closingDate) this.doc.text(this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'), 40, row);
+
+    let openingAmount = 0;
+    let closingAmount = 0;
+    let invoicedAmount = 0;
+    let amountOrders = 0;
+    let amountOrdersCanceled = 0;
+    let invoicedAmountCanceled = 0;
+
+    console.log(close);
+    if (close && close.length > 0) {
+      for (let c of close) {
+        openingAmount += c.openingAmount;
+        closingAmount += c.closingAmount;
+        if (amountOrders == 0) {
+          amountOrders += c.amountOrders;
+        }
+        if (amountOrdersCanceled == 0) {
+          amountOrdersCanceled += c.amountOrdersCanceled;
+        }
+        if (invoicedAmount == 0) {
+          if (c._id.movement === Movements.Inflows) {
+            invoicedAmount += c.invoicedAmount;
+          } else {
+            invoicedAmount -= c.invoicedAmount;
+          }
+        }
+        if (invoicedAmountCanceled == 0) {
+          invoicedAmountCanceled += c.invoicedAmountCanceled;
+        }
+      }
+    }
+
+    this.doc.setFontType('bold');
+    this.doc.text("Facturado:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text('$ ' + decimalPipe.transform(invoicedAmount, '1.2-2'), 40, row);
+
+    this.doc.setFontType('bold');
+    this.doc.text("Transacciones:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text(amountOrders.toString(), 40, row);
+
+    this.doc.setFontType('bold');
+    this.doc.text("Trans. Anuladas:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text(amountOrdersCanceled.toString(), 40, row);
+
+    this.doc.setFontType('bold');
+    this.doc.text('Detalle de Cierre:', margin, row += 5);
+    this.doc.setFontType('normal');
+
+    margin = 20;
+
+    this.doc.setFontType('bold');
+    this.doc.text("Monto Apertura:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text("$ " + decimalPipe.transform(openingAmount, '1.2-2'), 55, row);
+
+    this.doc.setFontType('bold');
+    this.doc.text("Total en caja:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text("$ " + decimalPipe.transform(openingAmount + invoicedAmount, '1.2-2'), 55, row);
+
+    this.doc.setFontType('bold');
+    this.doc.text("Monto Cierre:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text("$ " + decimalPipe.transform(closingAmount, '1.2-2'), 55, row);
+
+    this.doc.setFontType('bold');
+    this.doc.text("Diferencia de caja:", margin, row += 5);
+    this.doc.setFontType('normal');
+    this.doc.text("$ " + decimalPipe.transform(closingAmount - (openingAmount + invoicedAmount), '1.2-2'), 55, row);
+
+    // Pie de la impresión
+    this.doc.setFontStyle("normal");
+    this.doc.setTextColor(164, 164, 164);
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.text("Generado en https://poscloud.com.ar, tu Punto de Venta en la NUBE.", 5, 290);
+    this.doc.setTextColor(0, 0, 0);
+
+    this.finishImpression();
+  }
+
   public toPrintTurn(): void {
 
     this.loading = true;
@@ -1118,14 +1238,14 @@ export class PrintComponent implements OnInit {
 
   public getHeader(logoPrint: boolean = false): void {
 
-    this.doc.setDrawColor(110, 110, 110)
+    this.doc.setDrawColor(110, 110, 110);
 
     // Dibujar lineas horizontales
-    this.doc.line(0, 50, 240, 50)
+    this.doc.line(0, 50, 240, 50);
 
     // Detalle Emisor
     if (this.config[0]) {
-      this.doc.setFontSize(this.fontSizes.normal)
+      this.doc.setFontSize(this.fontSizes.normal);
 
       /*this.doc.setFontType('bold')
       this.doc.text("Condición de IVA:", 110, 30)
@@ -1134,25 +1254,25 @@ export class PrintComponent implements OnInit {
         this.doc.text(this.config[0].companyVatCondition.description, 145, 30)
       }*/
 
-      this.doc.setFontType('bold')
-      this.doc.text("CUIT:", 110, 35)
+      this.doc.setFontType('bold');
+      this.doc.text("CUIT:", 110, 35);
+      this.doc.setFontType('normal');
       if (this.config[0].companyCUIT) {
-        this.doc.setFontType('normal')
-        this.doc.text(this.config[0].companyCUIT, 122, 35)
+        this.doc.text(this.config[0].companyCUIT, 122, 35);
       }
 
-      this.doc.setFontType('bold')
-      this.doc.text("Ingresos Brutos:", 110, 40)
+      this.doc.setFontType('bold');
+      this.doc.text("Ingresos Brutos:", 110, 40);
+      this.doc.setFontType('normal');
       if (this.config[0].companyGrossIncome) {
-        this.doc.setFontType('normal')
-        this.doc.text(this.config[0].companyGrossIncome, 140, 40)
+        this.doc.text(this.config[0].companyGrossIncome, 140, 40);
       }
 
-      this.doc.setFontType('bold')
-      this.doc.text("Inicio de Actividades:", 110, 45)
+      this.doc.setFontType('bold');
+      this.doc.text("Inicio de Actividades:", 110, 45);
+      this.doc.setFontType('normal');
       if (this.config[0].companyStartOfActivity) {
-        this.doc.setFontType('normal')
-        this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45)
+        this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
       }
 
       // DATOS DE LA EMPRESA O IMAGEN
@@ -1160,8 +1280,8 @@ export class PrintComponent implements OnInit {
         this.getCompanyData();
       }
     }
-    this.doc.setFontSize(this.fontSizes.normal)
-    this.doc.setFontType('normal')
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.setFontType('normal');
   }
 
   public getCompanyData(): void {
@@ -1174,29 +1294,32 @@ export class PrintComponent implements OnInit {
       this.centerText(8, 8, 105, 0, 20, this.config[0].companyName);
     }
     this.doc.setFontSize(this.fontSizes.normal);
+
+    this.doc.setFontType('bold');
+    this.doc.text("Razón Social:", 8, 30);
     this.doc.setFontType('normal');
     if (this.config[0].companyName) {
-      this.doc.setFontType('bold');
-      this.doc.text("Razón Social:", 8, 30);
-      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyName, 32, 30);
     }
+
+    this.doc.setFontType('bold');
+    this.doc.text("Teléfono:", 8, 35);
+    this.doc.setFontType('normal');
     if (this.config[0].companyPhone) {
-      this.doc.setFontType('bold');
-      this.doc.text("Teléfono:", 8, 35);
-      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyPhone, 25, 35);
     }
+
+    this.doc.setFontType('bold');
+    this.doc.text("Domicilio Comercial:", 8, 40);
+    this.doc.setFontType('normal');
     if (this.config[0].companyAddress) {
-      this.doc.setFontType('bold');
-      this.doc.text("Domicilio Comercial:", 8, 40);
-      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyAddress, 45, 40);
     }
+
+    this.doc.setFontType('bold');
+    this.doc.text("Condición de IVA:", 8, 45);
+    this.doc.setFontType('normal');
     if (this.config[0].companyVatCondition) {
-      this.doc.setFontType('bold');
-      this.doc.text("Condición de IVA:", 8, 45);
-      this.doc.setFontType('normal');
       this.doc.text(this.config[0].companyVatCondition.description, 40, 45);
     }
   }

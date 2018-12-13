@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { PaymentMethod } from './../../models/payment-method';
 
@@ -75,6 +75,8 @@ export class AddPaymentMethodComponent implements OnInit {
       ],'cardDetail': [this.paymentMethod.cardDetail, [
         ]
       ],'allowToFinance': [this.paymentMethod.allowToFinance, [
+        ]
+      ],'cashBoxImpact': [this.paymentMethod.cashBoxImpact, [
         ]
       ]
     });

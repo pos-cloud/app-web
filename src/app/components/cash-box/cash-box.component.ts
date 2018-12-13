@@ -268,6 +268,7 @@ export class CashBoxComponent implements OnInit {
         let modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.cashBox = this.cashBox;
         modalRef.componentInstance.typePrint = 'cash-box';
+        modalRef.componentInstance.printer = this.transactionType.defectPrinter;
         modalRef.result.then((result) => {
           this.activeModal.close({ cashBox: this.cashBox });
         }, (reason) => {

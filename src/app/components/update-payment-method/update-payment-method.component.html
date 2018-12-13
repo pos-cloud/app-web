@@ -92,6 +92,15 @@
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="cashBoxImpact" class="control-label">¿Afecta la caja diaria?</label>
+          <select class="form-control" formControlName="cashBoxImpact">
+            <option value="true">Si</option>
+            <option value="false" selected>No</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="modal-footer" *ngIf="!readonly">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
