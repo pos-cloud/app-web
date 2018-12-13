@@ -13,10 +13,9 @@
   </div>
   <form [formGroup]="transactionForm" #formAddTransaction="ngForm" (ngSubmit)="addTransaction()" autocomplete="off">
     <div class="modal-body">
-      <div class="row">
+      <div class="row" *ngIf="transaction.type.requestCompany">
         <div class="form-group col-md-12">
-          <label for="company" class="control-label" *ngIf="transactionMovement === 'Venta'">Cliente:</label>
-          <label for="company" class="control-label" *ngIf="transactionMovement === 'Compra'">Proveedor:</label>
+          <label for="company" class="control-label">{{ transaction.type.requestCompany }}:</label>
         </div>
       </div>
       <div class="row" *ngIf="transaction.type.requestCompany">
