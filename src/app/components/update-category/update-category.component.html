@@ -70,7 +70,37 @@
                     </div>
                   </div>
                 </ng-template>
-              </ngb-tab>
+            </ngb-tab>
+            <ngb-tab title="Auditoría">
+              <ng-template ngbTabContent>
+                <div class="row tab-content">
+                  <div class="form-group col-md-12">
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                          <label class="control-label">Creado por:</label>
+                          <label *ngIf="category.creationUser" class="control-label"><b>{{category.creationUser.name}}</b></label>
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label class="control-label">El día:</label>
+                          <label *ngIf="category.creationDate" class="control-label"> <b>{{category.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                          <label class="control-label">Modificado por:</label>
+                          <label *ngIf="category.updateUser" class="control-label"><b>{{category.updateUser.name}}</b></label>
+                          <label *ngIf="!category.updateUser" class="control-label"><b>-</b></label>
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label class="control-label">El día:</label>
+                          <label *ngIf="category.updateDate" class="control-label"><b>{{category.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                          <label *ngIf="!category.updateDate" class="control-label"><b>-</b></label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-tab>
       </ngb-tabset>
     </div>
     <div class="modal-footer" *ngIf="!readonly">
