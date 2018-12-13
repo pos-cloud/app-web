@@ -45,7 +45,6 @@ export class ViewTransactionComponent implements OnInit {
     this.movementsOfArticles = new Array();
     this.movementsOfCashes = new Array();
     this.getTransaction(this.transaction._id);
-    console.log(this.transaction.creationUser)
   }
 
   public getTransaction(transactionId): void {

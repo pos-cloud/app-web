@@ -1110,7 +1110,6 @@ export class PrintComponent implements OnInit {
     let amountOrdersCanceled = 0;
     let invoicedAmountCanceled = 0;
 
-    console.log(close);
     if (close && close.length > 0) {
       for (let c of close) {
         openingAmount += c.openingAmount;

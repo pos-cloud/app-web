@@ -91,7 +91,6 @@ export class ConfigBackupComponent implements OnInit {
     this.buildFormCompany();
     this.buildFormEmail();
     this.buildFormLabel();
-    console.log(this.config);
   }
 
   ngAfterViewInit() {
@@ -579,7 +578,6 @@ export class ConfigBackupComponent implements OnInit {
             this.imageURL = './../../../assets/img/default.jpg';
           }
           this.setValuesForm();
-          console.log(this.config)
         }
       },
       error => {

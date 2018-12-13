@@ -313,7 +313,7 @@ export class CashBoxComponent implements OnInit {
   public addMovementOfCash(): void {
 
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
-    if(!this.movementOfCash.type.isCurrentAccount) {
+    if(this.movementOfCash.type.cashBoxImpact) {
       this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
       this.movementOfCash.state = MovementOfCashState.Closed;
       let mov = new MovementOfCash();
@@ -335,7 +335,7 @@ export class CashBoxComponent implements OnInit {
       mov.deliveredBy = this.movementOfCash.deliveredBy;
       this.movementsOfCashes.push(mov);
     } else {
-      this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no esta permitido para realizar esta acción', 'info', true);
+      this.showMessage('El método de pago ' + this.movementOfCash.type.name + ' no impacta en la caja.', 'info', true);
     }
   }
 
