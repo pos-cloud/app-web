@@ -73,6 +73,7 @@ export class AddTransactionTypeComponent implements OnInit {
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
+    console.log(this.operation);
     this.userType = pathLocation[1];
     if(!this.transactionType) {
       this.transactionType = new TransactionType();

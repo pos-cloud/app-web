@@ -2,6 +2,10 @@ import { Printer } from './printer';
 import { EmployeeType } from './employee-type';
 import { PaymentMethod } from './payment-method';
 import { CompanyType } from './company';
+import { User } from './user';
+
+import * as moment from 'moment';
+import 'moment/locale/es';
 
 export class TransactionType {
 
@@ -27,16 +31,20 @@ export class TransactionType {
 	public showPrices: boolean = true;
 	public printable: boolean = false;
 	public defectPrinter: Printer;
-  public tax: boolean = false;
-  public cashBoxImpact: boolean = true;
+	public tax: boolean = false;
+	public cashBoxImpact: boolean = true;
 	public cashOpening: boolean = false;
 	public cashClosing: boolean = false;
-  public allowAPP: boolean = false;
-  public allowEdit: boolean = false;
-  public allowDelete: boolean = false;
-  public requestEmployee: EmployeeType;
-  public fastPayment: PaymentMethod;
-  public requestCompany: CompanyType;
+	public allowAPP: boolean = false;
+	public allowEdit: boolean = false;
+	public allowDelete: boolean = false;
+	public requestEmployee: EmployeeType;
+	public fastPayment: PaymentMethod;
+	public requestCompany: CompanyType;
+	public creationUser: User;
+	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+	public updateUser: User;
+	public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
 	constructor() { }
 }

@@ -13,7 +13,7 @@
     </ngb-alert>
   </div>
   <form [formGroup]="transactionTypeForm" #formAddTable="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
-    <div class="modal-body">
+    <div class="modal-body-lg">
       <ngb-tabset>
         <ngb-tab title="Datos principales">
           <ng-template ngbTabContent>
@@ -546,6 +546,36 @@
               </div>
             </div>
           </ng-template>
+        </ngb-tab>
+        <ngb-tab *ngIf="operation === 'update'" title="Auditoría">
+					<ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                      <label class="control-label">Creado por:</label>
+                      <label *ngIf="transactionType.creationUser" class="control-label"><b>{{transactionType.creationUser.name}}</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label class="control-label">El día:</label>
+                      <label *ngIf="transactionType.creationDate" class="control-label"> <b>{{transactionType.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                      <label class="control-label">Modificado por:</label>
+                      <label *ngIf="transactionType.updateUser" class="control-label"><b>{{transactionType.updateUser.name}}</b></label>
+                      <label *ngIf="!transactionType.updateUser" class="control-label"><b>-</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label class="control-label">El día:</label>
+                      <label *ngIf="transactionType.updateDate" class="control-label"><b>{{transactionType.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      <label *ngIf="!transactionType.updateDate" class="control-label"><b>-</b></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+					</ng-template>
         </ngb-tab>
       </ngb-tabset>
     </div>
