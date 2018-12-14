@@ -86,7 +86,7 @@
                   </div>
                   <div class="form-group col-md-6">
                     <label for="fantasyName" class="control-label">Nombre de Fantasía:</label>
-                    <div class="input-group">
+                    <div class="input-group">    
                       <input type="text" class="form-control" formControlName="fantasyName" name="fantasyName" id="fantasyName" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.fantasyName" class="alert alert-danger">
@@ -214,7 +214,37 @@
               </div>
             </div>
 					</ng-template>
-				</ngb-tab>
+        </ngb-tab>
+        <ngb-tab title="Auditoría">
+					<ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                      <label class="control-label">Creado por:</label>
+                      <label *ngIf="company.creationUser" class="control-label"><b>{{company.creationUser.name}}</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label class="control-label">El día:</label>
+                      <label *ngIf="company.creationDate" class="control-label"> <b>{{company.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                      <label class="control-label">Modificado por:</label>
+                      <label *ngIf="company.updateUser" class="control-label"><b>{{company.updateUser.name}}</b></label>
+                      <label *ngIf="!company.updateUser" class="control-label"><b>-</b></label>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label class="control-label">El día:</label>
+                      <label *ngIf="company.updateDate" class="control-label"><b>{{company.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      <label *ngIf="!company.updateDate" class="control-label"><b>-</b></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+					</ng-template>
+        </ngb-tab>
 			</ngb-tabset>
 		</div>
 		<div class="modal-footer" *ngIf="!readonly">
