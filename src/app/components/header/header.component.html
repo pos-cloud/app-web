@@ -400,11 +400,11 @@
 <!-- MENU DE REPORTES -->
 <div class="center-content">
   <div class="row mega-dropdown-menu" *ngIf="isReportVisible">
-    <div class="col-md-3" *ngIf="modules &&
-                                modules.sale &&
-                                (modules.sale.resto ||
-                                modules.sale.counter ||
-                                modules.sale.delivery)">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      modules.sale &&
+                                                      (modules.sale.resto ||
+                                                      modules.sale.counter ||
+                                                      modules.sale.delivery)">
       <ul>
         <li class="dropdown-header">Ventas</li>
         <li>
@@ -449,19 +449,19 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf=" modules &&
-                                  !modules.sale ||
-                                  (modules.sale &&
-                                  !modules.sale.resto &&
-                                  !modules.sale.delivery &&
-                                  !modules.sale.counter)">
+    <div class="col-md-3"  style="width: 300px" *ngIf=" modules &&
+                                                !modules.sale ||
+                                                (modules.sale &&
+                                                !modules.sale.resto &&
+                                                !modules.sale.delivery &&
+                                                !modules.sale.counter)">
       <ul>
         <li class="dropdown-header">Ventas</li>
         <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf="modules &&
-                                modules.purchase">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      modules.purchase">
       <ul>
         <li class="dropdown-header">Compras</li>
         <li>
@@ -506,15 +506,15 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf="modules &&
-                                !modules.purchase">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      !modules.purchase">
       <ul>
         <li class="dropdown-header">Compras</li>
         <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf="modules &&
-                        modules.stock">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      modules.stock">
       <ul>
         <li class="dropdown-header">Stock</li>
         <li>
@@ -529,15 +529,15 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf="modules &&
-                                !modules.stock">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      !modules.stock">
       <ul>
         <li class="dropdown-header">Stock</li>
         <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf="modules &&
-                                modules.money">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      modules.money">
       <ul>
         <li class="dropdown-header">Fondos</li>
         <li>
@@ -552,8 +552,8 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" *ngIf="modules &&
-                                !modules.money">
+    <div class="col-md-3" style="width: 300px" *ngIf="modules &&
+                                                      !modules.money">
       <ul>
         <li class="dropdown-header">Fondos</li>
         <li class="btn-li"><a class="btn btn-success" href="https://www.poscloud.com.ar" target="blank">Contratar Módulo</a></li>
