@@ -1,3 +1,8 @@
+import { User } from './user';
+
+import * as moment from 'moment';
+import 'moment/locale/es';
+
 export class PaymentMethod {
 
 	public _id: string;
@@ -10,7 +15,11 @@ export class PaymentMethod {
 	public checkDetail: boolean;
   public cardDetail: boolean;
   public allowToFinance: boolean;
-  public cashBoxImpact: boolean;
+	public cashBoxImpact: boolean;
+	public creationUser: User;
+  public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public updateUser: User;
+  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 
 	constructor () {}
 }
