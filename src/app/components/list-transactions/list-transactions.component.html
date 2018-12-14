@@ -29,10 +29,10 @@
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('company','name')">Cliente</th>
-            <th (click)="orderBy('table','description')">Mesa</th>
+            <th *ngIf ="this.allowResto === true" (click)="orderBy('table','description')">Mesa</th>
             <th (click)="orderBy('employeeClosing','name')">Vendedor</th>
             <th (click)="orderBy('turnOpening','startDate')">Turno</th>
-            <th (click)="orderBy('diners')">Comensales</th>
+            <th *ngIf ="this.allowResto === true" (click)="orderBy('diners')">Comensales</th>
             <th (click)="orderBy('madein')">Canal</th>
             <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
@@ -47,10 +47,10 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
             <th><input type="date" class="form-control" [(ngModel)]="filterEndDate" placeholder="Fecha Fin..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Cliente..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa..."></th>
+            <th><input *ngIf ="this.allowResto === true" type="text" class="form-control" [(ngModel)]="filterTable" placeholder="Mesa..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterEmployee" placeholder="Vendedor..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTurn" placeholder="Turno..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDiners" placeholder="Comensales..."></th>
+            <th><input *ngIf ="this.allowResto === true" type="text" class="form-control" [(ngModel)]="filterDiners" placeholder="Comensales..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMadein" placeholder="Canal..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterState" placeholder="Estado..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterObservation" placeholder="Observación..."></th>
@@ -94,12 +94,11 @@
             <td>{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
             <td *ngIf="transaction.company">{{transaction.company.name}}</td>
             <td *ngIf="!transaction.company">Consumidor Final</td>
-            <td *ngIf="transaction.table">{{transaction.table.description}}</td>
-            <td *ngIf="!transaction.table"></td>
+            <td *ngIf ="this.allowResto === true && transaction.table">{{transaction.table.description}}</td>
             <td *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</td>
             <td *ngIf="!transaction.employeeClosing"></td>
             <td *ngIf="transaction.turnOpening">{{transaction.turnOpening.startDate | dateFormat:'DD/MM/YYYY' }}</td>
-            <td *ngIf="!transaction.turnOpening"></td>
+            <td *ngIf ="this.allowResto === true"></td> <!--comensales-->
             <td *ngIf="transaction.diners">{{transaction.diners}}</td>
             <td *ngIf="!transaction.diners"></td>
             <td>{{transaction.madein}}</td>
@@ -201,6 +200,7 @@
           </td>
         </tfoot>
       </table>
+      
     </div>
     <div class="card-footer bg-primary">
       <div class="row">

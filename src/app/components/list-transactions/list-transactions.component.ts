@@ -9,11 +9,11 @@ import { TransactionMovement, Movements } from './../../models/transaction-type'
 import { Config } from './../../app.config';
 
 import { TransactionService } from './../../services/transaction.service';
+import { ConfigService } from './../../services/config.service'
 
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
 import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
-
 import { ExportIvaComponent } from './../../components/export-iva/export-iva.component';
 
 
@@ -34,6 +34,7 @@ import { AddTransactionComponent } from '../add-transaction/add-transaction.comp
 export class ListTransactionsComponent implements OnInit {
 
   public transactions: Transaction[] = new Array();
+  public config: Config;
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
@@ -48,9 +49,11 @@ export class ListTransactionsComponent implements OnInit {
   public printers: Printer[];
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: TransactionMovement;
+  public allowResto: boolean;
 
   constructor(
     public _transactionService: TransactionService,
+    public _configService: ConfigService,
     public _router: Router,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
@@ -59,6 +62,8 @@ export class ListTransactionsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.getConfig();
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -75,6 +80,25 @@ export class ListTransactionsComponent implements OnInit {
       this.transactionMovement = TransactionMovement.Money;
     }
     this.getTransactionsByMovement();
+    
+  }
+
+  public getConfig(): void {
+    this._configService.getConfigApi().subscribe(
+      result => {
+        if(!result.configs){
+          this.showMessage("No se encontro la configuracion", 'danger', false);
+          this.loading = false;
+        } else {
+          this.config = result.configs;
+          this.allowResto = this.config[0].modules.sale.resto      
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   public getPrinters(): void {
