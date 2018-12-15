@@ -13,7 +13,7 @@
   <form [formGroup]="importForm" #formImport="ngForm" (ngSubmit)="import()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-12">
           <label for="filePath" class="control-label">Archivo:</label>
           <input type="text" class="form-control" formControlName="filePath" name="filePath" id="filePath" [focus]="focusEvent"/>
           <div *ngIf="formErrors.filePath" class="alert alert-danger">
@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="row" *ngFor="let property of properties">
-        <div class="form-group col-md-8" *ngIf="property !== 'model' && property !== 'primaryKey' && property !== 'relations'">
+        <div class="form-group col-md-12" *ngIf="property !== 'model' && property !== 'primaryKey' && property !== 'relations'">
           <label for="newProperties[property]" class="control-label">{{property.charAt(0).toUpperCase() + property.slice(1)}}:</label>
           <input type="text" class="form-control" formControlName="{{newProperties[property]}}" name="newProperties[property]" id="newProperties[property]"/>
         </div>

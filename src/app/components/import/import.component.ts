@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -67,7 +67,7 @@ export class ImportComponent  implements OnInit {
         ]
       ]
     });
-    
+
     for(let property of this.properties) {
 
       let newProperty = property.toString();
@@ -82,9 +82,9 @@ export class ImportComponent  implements OnInit {
 
     if (this.model["relations"]) {
       for (let relation of this.model["relations"]) {
-        
+
         let property = relation.toString();
-        
+
         this.importForm.addControl(property, new FormControl(''));
 
 
@@ -120,22 +120,49 @@ export class ImportComponent  implements OnInit {
   }
 
   public import(): void {
-    
+
     this.loading = true;
     this.modelToImport = this.importForm.value;
     this._importService.import(this.modelToImport).subscribe(
       result => {
-        if (result.message !== 'ok') {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
-          this.loading = false;
+        if (result.message) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.showMessage("Se ha importado con éxito.", 'success', false);
-          // this.activeModal.close("import_close");
+          var message = '';
+          if (result.records === 0) {
+            message = "No se encontraron registros para importar.";
+          } else if (result.records === 1) {
+            message = "Se procesó " + result.records + " registro.";
+            if (result.recordSaved === 1) {
+              message += "Se creó " + result.recordSaved + " nuevo registro.";
+            } else if (result.recordSaved > 1) {
+              message += "Se crearon " + result.recordSaved + " nuevos registros.";
+            }
+            if (result.recordUpdated === 1) {
+              message += "Se actualizó " + result.recordUpdated + " registro.";
+            } else if (result.recordUpdated > 1) {
+              message += "Se actualizaron " + result.recordUpdated + " registros.";
+            }
+          } else {
+            this.showMessage("Se han importado con éxito " + result.records + " registros.", 'success', true);
+            message = "Se procesó " + result.records + " registro.";
+            if (result.recordSaved === 1) {
+              message += "Se creó " + result.recordSaved + " nuevo registro.";
+            } else if (result.recordSaved > 1) {
+              message += "Se crearon " + result.recordSaved + " nuevos registros.";
+            }
+            if (result.recordUpdated === 1) {
+              message += "Se actualizó " + result.recordUpdated + " registro.";
+            } else if (result.recordUpdated > 1) {
+              message += "Se actualizaron " + result.recordUpdated + " registros.";
+            }
+          }
+          this.showMessage(message, 'success', true);
         }
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
+        this.showMessage(error._body, 'danger', true);
         this.loading = false;
       }
     );

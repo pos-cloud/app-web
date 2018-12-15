@@ -13,6 +13,8 @@ import { UpdateCompanyComponent } from './../../components/update-company/update
 import { DeleteCompanyComponent } from './../../components/delete-company/delete-company.component';
 import { SendMailComponent } from './../../components/send-mail/send-mail.component';
 import { ImportComponent } from '../import/import.component';
+import { User } from 'app/models/user';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-list-companies',
@@ -23,6 +25,7 @@ import { ImportComponent } from '../import/import.component';
 
 export class ListCompaniesComponent implements OnInit {
 
+  public identity: User;
   public companies: Company[];
   @Input() type: CompanyType;
   public areCompaniesEmpty: boolean = true;
@@ -40,14 +43,17 @@ export class ListCompaniesComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _userService: UserService
   ) {
     this.companies = new Array();
   }
 
   ngOnInit(): void {
 
+    this.identity = this._userService.getIdentity();
     let pathLocation: string[] = this._router.url.split('/');
+
     if (!this.userType) {
       this.userType = pathLocation[1];
     }
@@ -155,13 +161,17 @@ export class ListCompaniesComponent implements OnInit {
         model.name = '';
         model.fantasyName = '';
         model.type = CompanyType.Client;
-        model.vatCondition = null;
+        model.relations = new Array();
+        model.relations.push("vat-condition_relation_description");
         model.CUIT = '';
         model.DNI = '';
         model.address = '';
         model.city = '';
         model.phones = '';
         model.emails = '';
+        model.birthday = '';
+        model.observation = '';
+        model.gender = '';
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {

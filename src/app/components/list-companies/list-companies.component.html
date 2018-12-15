@@ -8,12 +8,12 @@
     <div class="card-header bg-primary">Listado de Empresas
       <div class="pull-right">
         <!-- <button class="btn btn-primary" (click)="openMail()"> Enviar Mail </button> -->
+        <button class="btn btn-primary" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-cloud-upload"></i> Importar</button>
         <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Empresa</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
-        <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar Clientes</button> -->
       </div>
     </div>
       <div class="card-block table-responsive">

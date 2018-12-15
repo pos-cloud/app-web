@@ -143,7 +143,6 @@ export class UpdateCompanyComponent implements OnInit {
     this.getVATConditions();
     this.getCompaniesGroup();
     this.setValueForm();
-    console.log(this.company);
   }
 
 
