@@ -293,7 +293,11 @@ export class PointOfSaleComponent implements OnInit {
             this.openModal('select-employee', type, null, null, type.requestEmployee);
           } else {
             if (type.requestArticles) {
-              this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+              if (this.transactionMovement !== TransactionMovement.Purchase) {
+                this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+              } else {
+                this.openModal('transaction', type, null);
+              }
             } else {
               this.openModal('transaction', type);
             }
@@ -326,7 +330,11 @@ export class PointOfSaleComponent implements OnInit {
               if (typeTransaction.requestEmployee) {
                 this.openModal('select-employee', typeTransaction, transaction, null, typeTransaction.requestEmployee);
               } else if (typeTransaction.requestArticles) {
-                  this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + typeTransaction._id]);
+                  if(this.transactionMovement !== TransactionMovement.Purchase) {
+                    this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + typeTransaction._id]);
+                  } else {
+                    this.openModal('transaction', typeTransaction, transaction);
+                  }
               } else {
                 this.openModal('transaction', typeTransaction, transaction);
               }
