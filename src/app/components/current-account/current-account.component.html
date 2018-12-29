@@ -126,8 +126,9 @@
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="50">
-              <button type="button" class="btn btn-success  btn-sm" (click)="getTransaction(item.transactionId)" title="Ver"><i class="fa fa-eye"></i></button>
-              </td>
+              <button type="button" class="btn btn-success  btn-sm" (click)="getTransaction(item.transactionId, 'view')" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button" class="btn btn-secondary btn-sm" (click)="getTransaction(item.transactionId, 'print')" title="Imprimir"><i class="fa fa-print"></i></button>
+            </td>
               <td class="align-center" *ngIf="item.transactionEndDate">{{item.transactionEndDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td class="align-center" *ngIf="!item.transactionEndDate">{{item.transactionStartDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td *ngIf="item.transactionTypeName">{{item.transactionTypeName}}</td>

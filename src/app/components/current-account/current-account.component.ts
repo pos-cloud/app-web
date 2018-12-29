@@ -23,6 +23,7 @@ import { AddTransactionComponent } from './../add-transaction/add-transaction.co
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { PrintComponent } from 'app/components/print/print.component';
+import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
@@ -53,6 +54,7 @@ export class CurrentAccountComponent implements OnInit {
   public roundNumber: RoundNumberPipe;
   public startDate: string;
   public endDate: string;
+  public printers: Printer[];
 
   constructor(
     public _transactionService: TransactionService,
@@ -161,6 +163,8 @@ export class CurrentAccountComponent implements OnInit {
 
   public openModal(op: string, transaction?: Transaction): void {
 
+    
+      
     let modalRef;
     switch (op) {
       case 'transaction':
@@ -225,11 +229,54 @@ export class CurrentAccountComponent implements OnInit {
           this.showMessage("Debe seleccionar una empresa",'info', true);
         }
         break;
+      case 'printTransaction':
+
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.company = this.companySelected;
+        if(!transaction.type.requestArticles){
+          modalRef.componentInstance.typePrint = 'cobro';
+        } else {
+          modalRef.componentInstance.typePrint = 'invoice';
+        }
+        if (transaction.type.defectPrinter) {
+          modalRef.componentInstance.printer = transaction.type.defectPrinter;
+        } else {
+          if (this.printers && this.printers.length > 0) {
+            for(let printer of this.printers) {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
+            }
+          }
+        }
+       break;
       default: ;
     }
   }
 
-  public getTransaction(transactionId: string): void {
+  public getPrinters(): void {
+
+    this.loading = true;
+
+    this._printerService.getPrinters().subscribe(
+      result => {
+        if (!result.printers) {
+          this.printers = new Array();
+        } else {
+          this.hideMessage();
+          this.printers = result.printers;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getTransaction(transactionId: string, op: string): void {
 
     this.loading = true;
 
@@ -240,7 +287,11 @@ export class CurrentAccountComponent implements OnInit {
           this.loading = false;
         } else {
           this.hideMessage();
-          this.openModal('view-transaction', result.transaction);
+          if (op === 'view'){
+            this.openModal('view-transaction', result.transaction);
+          } else if (op === 'print'){
+            this.openModal('printTransaction',result.transaction);
+          }
         }
         this.loading = false;
       },

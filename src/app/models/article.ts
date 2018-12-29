@@ -59,3 +59,4 @@ export enum ArticleType {
   Variant = <any>"Variante",
   Ingredient = <any>"Ingrediente"
 }
+  
