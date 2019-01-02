@@ -107,8 +107,10 @@ export class ExportCitiComponent implements OnInit {
         } else {
           this.showMessage("Los archivos se generaron correctamente.", "success", false);
 
-          this.compURL = '-' + this._userService.getDatabase()+ '-CITI-' + this.transactionMovement.toString().toLowerCase() + 's-' + 'comp' + this.VATPeriod + ".txt";
-          this.aliURL = '-' + this._userService.getDatabase()+ '-CITI-' + this.transactionMovement.toString().toLowerCase() + 's-' + 'ali' + this.VATPeriod + ".txt";
+          console.log(this.transactionMovement);
+
+          this.compURL = '-' + this._userService.getDatabase()+ '-CITI-' + this.transactionMovement.toString() + 's-' + 'comp' + this.VATPeriod + ".txt";
+          this.aliURL = '-' + this._userService.getDatabase()+ '-CITI-' + this.transactionMovement.toString() + 's-' + 'ali' + this.VATPeriod + ".txt";
           this.toggleButton = true;
         }
         this.loading = false;
