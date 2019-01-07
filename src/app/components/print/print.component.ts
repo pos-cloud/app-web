@@ -2043,8 +2043,9 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, row, 240, row);
     this.doc.setFontStyle('bold');
     row += 5;
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "TOTAL");
-    this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.4, row);
+    this.doc.setFontSize(15);
+    this.centerText(margin, margin, this.printer.pageWidth, 15, row, "TOTAL $ "+ this.transaction.totalPrice);
+    //this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.4, row);
     this.doc.setFontStyle("normal");
 
     if (this.config[0].footerInvoice) {
