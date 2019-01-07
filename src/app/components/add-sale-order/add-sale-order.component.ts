@@ -1264,10 +1264,10 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (isValidCharge &&
       this.transaction.type.electronics &&
-      this.transaction.totalPrice > 1000 &&
+      this.transaction.totalPrice > 5000 &&
       !this.transaction.company) {
       isValidCharge = false;
-      this.showMessage("Debe indentificar al cliente para documentos electrónicos con monto mayor a $1.000,00.", 'info', true);
+      this.showMessage("Debe indentificar al cliente para documentos electrónicos con monto mayor a $5.000,00.", 'info', true);
     }
 
     if (isValidCharge &&
