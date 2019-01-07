@@ -5,12 +5,16 @@ import { Transaction, TransactionState } from './../models/transaction';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
+import { Observable } from "rxjs/Observable";
+import { map, catchError } from "rxjs/operators";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 
 @Injectable()
 export class TransactionService {
 
 	constructor(
-		public _http: Http,
+    public _http: Http,
+    private http: HttpClient,
 		public _userService: UserService
 	) { }
 
@@ -187,7 +191,7 @@ export class TransactionService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
+  }
 
 	validateElectronicTransaction(transaction: Transaction) {
 		let headers = new Headers();
@@ -224,5 +228,41 @@ export class TransactionService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'libroIVA/'+cond, { headers: headers }).map (res => res.json());
-	}
+  }
+
+  // V2
+  public getTransactionsV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}v2/transactions`;
+    console.log(URL);
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._userService.getToken())
+      .set('Database', this._userService.getDatabase());
+    //.set('Authorization', this._authService.getSession()["token"]);
+
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
+
+    return this.http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      })
+    );
+  }
 }

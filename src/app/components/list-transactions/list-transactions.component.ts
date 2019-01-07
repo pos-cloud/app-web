@@ -40,16 +40,34 @@ export class ListTransactionsComponent implements OnInit {
   public userType: string;
   public listType: string;
   public orderTerm: string[] = ['-endDate'];
-  public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage: number = 10;
-  public totalItems = 0;
+  public totalItems: number = 0;
   public modules: Observable<{}>;
   public printers: Printer[];
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: TransactionMovement;
   public allowResto: boolean;
+  public currentPage: number = 0;
+  public displayedColumns = [
+      'type.transactionMovement',
+      'type.name',
+      'origin',
+      'letter',
+      'number',
+      'endDate',
+      'company.name',
+      'employeeClosing.name',
+      'turnClosing.endDate',
+      'madein',
+      'state',
+      'observation',
+      'discountAmount',
+      'totalPrice'
+  ];
+  public filters: any[];
+  public filterValue: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -59,7 +77,12 @@ export class ListTransactionsComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService
-  ) { }
+  ) {
+    this.filters = new Array();
+    for(let field of this.displayedColumns) {
+      this.filters[field] = "";
+    }
+  }
 
   ngOnInit(): void {
 
@@ -79,8 +102,8 @@ export class ListTransactionsComponent implements OnInit {
     } else if (this.listType === "Fondos") {
       this.transactionMovement = TransactionMovement.Money;
     }
-    this.getTransactionsByMovement();
-    
+
+    this.getTransactions();
   }
 
   public getConfig(): void {
@@ -91,7 +114,7 @@ export class ListTransactionsComponent implements OnInit {
           this.loading = false;
         } else {
           this.config = result.configs;
-          this.allowResto = this.config[0].modules.sale.resto      
+          this.allowResto = this.config[0].modules.sale.resto
         }
       },
       error => {
@@ -122,43 +145,112 @@ export class ListTransactionsComponent implements OnInit {
     );
   }
 
-  public getTransactionsByMovement(): void {
+  public getTransactions(): void {
 
-    this.loading = true;
+        this.loading = true;
 
-    this._transactionService.getTransactionsByMovement(this.transactionMovement).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.loading = false;
-          this.transactions = null;
-          this.areTransactionsEmpty = true;
+        /// ORDENAMOS LA CONSULTA
+        let sortAux;
+        if (this.orderTerm[0].charAt(0) === '-') {
+            sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
         } else {
-          this.hideMessage();
-          this.loading = false;
-          this.transactions = result.transactions;
-          this.totalItems = this.transactions.length;
-          this.areTransactionsEmpty = false;
+            sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
+        sortAux = JSON.parse(sortAux);
 
-  public orderBy(term: string, property?: string): void {
+        // FILTRAMOS LA CONSULTA
+        let match = `{`;
+        for(let i = 0; i < this.displayedColumns.length; i++) {
+          let value = this.filters[this.displayedColumns[i]];
+          if (value && value != "") {
+            match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+            if (i < this.displayedColumns.length - 1) {
+              match += ',';
+            }
+          }
+        }
+
+        if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
+          match += `,"type.transactionMovement": "${this.transactionMovement}" }`;
+        } else {
+          match += `"type.transactionMovement": "${this.transactionMovement}" }`;
+        }
+        match = JSON.parse(match);
+
+        // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+        let project = '{}';
+        if (this.displayedColumns && this.displayedColumns.length > 0) {
+            project = '{';
+            for (let i = 0; i < this.displayedColumns.length; i++) {
+                let field = this.displayedColumns[i];
+                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+                if (i < this.displayedColumns.length - 1) {
+                    project += ',';
+                }
+            }
+            project += '}';
+        }
+        project = JSON.parse(project);
+
+        // AGRUPAMOS EL RESULTADO
+        let group = {
+            _id: null,
+            count: { $sum: 1 },
+            transactions: { $push: "$$ROOT" }
+        };
+
+        let page = 0;
+        if(this.currentPage != 0) {
+          page = this.currentPage - 1;
+        }
+        let skip = !isNaN(page * this.itemsPerPage) ?
+                (page * this.itemsPerPage) :
+                    0 // SKIP
+
+        this._transactionService.getTransactionsV2(
+            project, // PROJECT
+            match, // MATCH
+            sortAux, // SORT
+            group, // GROUP
+            this.itemsPerPage, // LIMIT
+            skip // SKIP
+        ).subscribe(
+          result => {
+            if (result && result.transactions) {
+                this.transactions = result.transactions;
+                this.totalItems = result.count;
+            } else {
+                this.loading = false;
+                this.transactions = null;
+                this.totalItems = 0;
+            }
+            this.loading = false;
+          },
+          error => {
+            this.showMessage(error._body, 'danger', false);
+            this.loading = false;
+          }
+        );
+    }
+
+    public pageChange(page): void {
+        this.currentPage = page;
+        this.getTransactions();
+    }
+
+  public orderBy(term: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-" + term;
     } else {
       this.orderTerm[0] = term;
     }
-    this.propertyTerm = property;
+
+    this.getTransactions();
   }
 
   public refresh(): void {
-    this.getTransactionsByMovement();
+      this.getTransactions();
   }
 
   public openModal(op: string, transaction: Transaction): void {
@@ -199,7 +291,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.getTransactionsByMovement();
+              this.getTransactions();
           }
         }, (reason) => {
 
@@ -211,7 +303,7 @@ export class ListTransactionsComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.getTransactionsByMovement();
+              this.getTransactions();
           }
         }, (reason) => {
 

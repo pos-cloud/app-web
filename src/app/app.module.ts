@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCheckboxModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule } from '@angular/material';
+import { HttpClientModule } from '@angular/common/http';
 
 // paquetes de terceros
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
@@ -371,7 +372,8 @@ import { CompanyContactComponent } from './components/company-contact/company-co
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    NgxChartsModule
+    NgxChartsModule,
+    HttpClientModule
   ],
   providers: [
     NgbActiveModal,
