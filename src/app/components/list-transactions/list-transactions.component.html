@@ -41,21 +41,21 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (change)="getTransactions()" (change)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (change)="getTransactions()" placeholder="POS..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (change)="getTransactions()" placeholder="Letra..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (change)="getTransactions()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (change)="getTransactions()" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (change)="getTransactions()" placeholder="Cliente..."></th>
-            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['table.description']" (change)="getTransactions()" placeholder="Mesa..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['employeeClosing.name']" (change)="getTransactions()" placeholder="Vendedor..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['turnOpening.startDate']" (change)="getTransactions()" placeholder="Turno..."></th>
-            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['diners']" (change)="getTransactions()" placeholder="Comensales..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['madein']" (change)="getTransactions()" placeholder="Canal..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (change)="getTransactions()" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (change)="getTransactions()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (change)="getTransactions()" placeholder="Descuento..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (change)="getTransactions()" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (input)="getTransactions()" placeholder="Cliente..."></th>
+            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['table.description']" (input)="getTransactions()" placeholder="Mesa..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['employeeClosing.name']" (input)="getTransactions()" placeholder="Vendedor..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['turnOpening.startDate']" (input)="getTransactions()" placeholder="Turno..."></th>
+            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['diners']" (input)="getTransactions()" placeholder="Comensales..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['madein']" (input)="getTransactions()" placeholder="Canal..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (input)="getTransactions()" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getTransactions()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (input)="getTransactions()" placeholder="Descuento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -119,7 +119,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (input)="getTransactions()">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
@@ -171,16 +171,16 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (change)="getTransactions()" (change)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (change)="getTransactions()" placeholder="POS..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (change)="getTransactions()" placeholder="Letra..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (change)="getTransactions()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (change)="getTransactions()" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (change)="getTransactions()" placeholder="Proveedor..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (change)="getTransactions()" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (change)="getTransactions()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (change)="getTransactions()" placeholder="Descuento..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (change)="getTransactions()" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" (input)="getTransactions()" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (input)="getTransactions()" placeholder="Proveedor..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (input)="getTransactions()" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getTransactions()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (input)="getTransactions()" placeholder="Descuento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -235,7 +235,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (input)="getTransactions()">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
@@ -281,12 +281,12 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (change)="getTransactions()" (change)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (change)="getTransactions()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (change)="getTransactions()" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (change)="getTransactions()" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (change)="getTransactions()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (change)="getTransactions()" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" (input)="getTransactions()" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (input)="getTransactions()" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getTransactions()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -336,7 +336,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (input)="getTransactions()">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
