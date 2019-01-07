@@ -16,7 +16,6 @@ import { ViewTransactionComponent } from './../../components/view-transaction/vi
 import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
 import { ExportIvaComponent } from './../../components/export-iva/export-iva.component';
 
-
 //Pipes
 import { PrintComponent } from 'app/components/print/print.component';
 import { PrinterService } from '../../services/printer.service';
