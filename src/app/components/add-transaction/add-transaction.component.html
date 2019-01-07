@@ -93,6 +93,15 @@
           </div>
         </div>
       </div>
+      <div class="row" *ngIf="transaction.type.tax">
+        <div class="form-group col-md-12">
+          <label for="VATPeriod" class="control-label">Período de IVA:</label>
+          <input type="text" class="form-control" formControlName="VATPeriod" name="VATPeriod" [readonly]="readonly" />
+          <div *ngIf="formErrors.VATPeriod" class="alert alert-danger">
+            {{ formErrors.VATPeriod }}
+          </div>
+        </div>
+      </div>
       <div class="row" *ngIf="transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
@@ -138,7 +147,7 @@
           </textarea>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.allowEdit">
+      <div class="row" *ngIf="transaction.type.allowEdit && transaction && transaction._id && transaction._id !== ''">
         <div class="form-group col-md-12">
           <label for="state" class="control-label">Estado</label>
           <select class="form-control" formControlName="state">

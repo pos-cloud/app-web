@@ -67,6 +67,7 @@ export class AddTransactionComponent implements OnInit {
     'origin': '',
     'letter': '',
     'number': '',
+    'VATPeriod': '',
     'basePrice': '',
     'exempt': '',
     'totalPrice': '',
@@ -88,6 +89,9 @@ export class AddTransactionComponent implements OnInit {
       'required': 'Este campo es requerido.'
     },
     'number': {
+      'required': 'Este campo es requerido.'
+    },
+    'VATPeriod': {
       'required': 'Este campo es requerido.'
     },
     'basePrice': {
@@ -246,6 +250,9 @@ export class AddTransactionComponent implements OnInit {
       'state': [this.transaction.state, [
         ]
       ],
+      'VATPeriod': [this.transaction.VATPeriod, [
+        ]
+      ],
     });
 
     this.transactionForm.valueChanges
@@ -288,7 +295,8 @@ export class AddTransactionComponent implements OnInit {
       'totalPrice': this.transaction.totalPrice,
       'observation': this.transaction.observation,
       'employeeOpening': employeeOpening,
-      'state': this.transaction.state
+      'state': this.transaction.state,
+      'VATPeriod': this.transaction.VATPeriod
     });
   }
 
