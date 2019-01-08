@@ -1372,7 +1372,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
 
     if (this.company) {
-      this.doc.text(this.company.name, 42, 55);
+      if(this.company.name) {
+        this.doc.text(this.company.name, 42, 55);
+      }
       if (this.company.DNI && this.company.DNI !== '') {
         this.doc.setFontType('bold');
         this.doc.text("DNI:", 8, 60);
