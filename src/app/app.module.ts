@@ -11,6 +11,7 @@ import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-boot
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 // rutas
 import { RoutingModule } from './app.routes';
@@ -188,6 +189,9 @@ import { DeleteCompanyGroupComponent } from './components/delete-company-group/d
 import { UpdateCompanyGroupComponent } from './components/update-company-group/update-company-group.component';
 import { UpdateArticlePriceComponent } from './components/update-article-price/update-article-price.component';
 import { CompanyContactComponent } from './components/company-contact/company-contact.component';
+import { Config } from './app.config';
+
+// const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
   declarations: [
@@ -373,7 +377,8 @@ import { CompanyContactComponent } from './components/company-contact/company-co
     MatFormFieldModule,
     MatInputModule,
     NgxChartsModule,
-    HttpClientModule
+    HttpClientModule,
+    // SocketIoModule.forRoot(config)
   ],
   providers: [
     NgbActiveModal,

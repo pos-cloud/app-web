@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   public alertMessage = '';
   public isAPIConected: boolean;
   public loading = true;
-  public modules;
+  public modules: any;
 
   constructor(
     public _configService: ConfigService,

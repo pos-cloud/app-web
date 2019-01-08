@@ -43,8 +43,8 @@ export class ConfigBackupComponent implements OnInit {
   public loadingBackup: boolean = false;
   public loadingLicense: boolean = false;
   public dateFormat: DateFormatPipe = new DateFormatPipe();
-  public resultUpload;
-  public imageURL;
+  public resultUpload: any;
+  public imageURL: string;
 
   public formErrors = {
     'backupTime' : '',
@@ -406,6 +406,25 @@ export class ConfigBackupComponent implements OnInit {
     this.updateConfigLabel();
   }
 
+  public generateLicensePayment() {
+
+    this.loadingLicense = true;
+
+    this._configService.generateLicensePayment().subscribe(
+      result => {
+        if (!result.paymentLink) {
+          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
+        } else {
+          window.open(result.paymentLink, '_blank')
+        }
+        this.loadingLicense = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loadingLicense = false;
+      }
+    )
+  }
 
   public updateConfigBackup(): void {
 
