@@ -240,8 +240,8 @@ export class TransactionService {
     skip: number = 0
   ): Observable<any> {
 
-    const URL = `${Config.apiURL}v2/transactions`;
-    console.log(URL);
+	const URL = `${Config.apiURL}v2/transactions`;
+	
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._userService.getToken())

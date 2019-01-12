@@ -52,6 +52,7 @@ export class ListTransactionsComponent implements OnInit {
   public displayedColumns = [
       'type.transactionMovement',
       'type.name',
+      'type.requestArticles',
       'origin',
       'letter',
       'number',
@@ -266,9 +267,12 @@ export class ListTransactionsComponent implements OnInit {
         break;
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transaction = transaction;
+        //modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.company = transaction.company;
-        if(!transaction.type.requestArticles){
+        modalRef.componentInstance.transactionId = transaction._id;
+
+
+        if(transaction.type.name === "Cobro"){
           modalRef.componentInstance.typePrint = 'cobro';
         } else {
           modalRef.componentInstance.typePrint = 'invoice';

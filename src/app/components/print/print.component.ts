@@ -10,9 +10,10 @@ import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
-import { TransactionType, Movements } from './../../models/transaction-type';
+import { TransactionType, Movements, TransactionMovement } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
 import { Article } from './../../models/article';
+
 
 //Paquetes de terceros
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -60,6 +61,7 @@ export class PrintComponent implements OnInit {
   @Input() article: Article;
   @Input() articles: Article[];
   @Input() printer: Printer;
+  @Input() transactionId: string;
   public loading: boolean;
   public alertMessage: string = '';
   public shiftClosingTransaction;
@@ -78,10 +80,12 @@ export class PrintComponent implements OnInit {
   public dateFormat = new DateFormatPipe();
   public barcode64: string;
   public transactionTypes: TransactionType[] = new Array();
+  public transactionMovement: TransactionMovement;
   public fontSizes = JSON.parse(`{"small" : 5,
                                   "normal" : 10,
                                   "large" : 15,
                                   "extraLarge" : 20}`);
+              
 
   constructor(
     public _turnService: TurnService,
@@ -129,6 +133,93 @@ export class PrintComponent implements OnInit {
     this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
 
     this.getConfig();
+          
+  }
+
+  public getTransaction( transactionId : string) : void {
+
+
+    
+    let sortAux = {};
+
+    // FILTRAMOS LA CONSULTA
+    let match = { _id: transactionId };
+
+    // CAMPOS A TRAER
+    let project = {
+        '_id': { $toString: '$_id' },
+        'type.transactionMovement':1,
+        'type.name':1,
+        'type.requestPaymentMethods':1,
+        'type.requestArticles':1,
+        'origin':1,
+        'letter':1,
+        'number':1,
+        'endDate':1,
+        'company.name':1,
+        'employeeClosing.name':1,
+        'turnClosing.endDate':1,
+        'madein':1,
+        'startDate':1,
+        'state':1,
+        'observation':1,
+        'discountAmount':1,
+        'totalPrice':1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 1;
+
+    let skip = 0;
+
+    this._transactionService.getTransactionsV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        limit, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (result && result.transactions) {
+            this.transaction = result.transactions[0];
+
+            if (this.typePrint === "turn") {
+              this.getShiftClosingByTransaccion();
+            } else if (this.typePrint === "invoice") {
+              this.getMovementOfArticle();
+            } else if (this.typePrint === "cobro") {
+              this.getMovementOfCash();
+            } else if (this.typePrint === "current-account") {
+              this.toPrintCurrentAccount();
+            } else if (this.typePrint === "cash-box") {
+              this.getClosingCashBox();
+            } else if (this.typePrint === "label") {
+              let code
+              if (this.articleStock) {
+                code = this.articleStock.article.code;
+              } else if (this.article) {
+                code = this.article.code;
+              }
+              this.getBarcode64('code128?value=' + code, this.typePrint);
+            } else if (this.typePrint === "kitchen") {
+              this.toPrintKitchen();
+            } else if (this.typePrint === "IVA"){
+              this.getVATBook();
+            } else if (this.typePrint === "priceList") {
+              this.printPriceList();
+            }
+
+        } else {
+            this.transaction = null;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      });
   }
 
   public getConfig(): void {
@@ -142,31 +233,8 @@ export class PrintComponent implements OnInit {
         } else {
           this.hideMessage();
           this.config = result.configs;
-          if (this.typePrint === "turn") {
-            this.getShiftClosingByTransaccion();
-          } else if (this.typePrint === "invoice") {
-            this.getMovementOfArticle();
-          } else if (this.typePrint === "cobro") {
-            this.getMovementOfCash();
-          } else if (this.typePrint === "current-account") {
-            this.toPrintCurrentAccount();
-          } else if (this.typePrint === "cash-box") {
-            this.getClosingCashBox();
-          } else if (this.typePrint === "label") {
-            let code
-            if (this.articleStock) {
-              code = this.articleStock.article.code;
-            } else if (this.article) {
-              code = this.article.code;
-            }
-            this.getBarcode64('code128?value=' + code, this.typePrint);
-          } else if (this.typePrint === "kitchen") {
-            this.toPrintKitchen();
-          } else if (this.typePrint === "IVA"){
-            this.getVATBook();
-          } else if (this.typePrint === "priceList") {
-            this.printPriceList();
-          }
+          this.getTransaction(this.transactionId);
+        
         }
         this.loading = false;
       },
@@ -725,7 +793,7 @@ export class PrintComponent implements OnInit {
 
     this.loading = true;
 
-    this._movementOfArticle.getMovementsOfTransaction(this.transaction._id).subscribe(
+    this._movementOfArticle.getMovementsOfTransaction(this.transactionId).subscribe(
       result => {
         if (!result.movementsOfArticles) {
           this.showMessage("No se encontraron productos en la transacción", 'info', false);
@@ -734,7 +802,6 @@ export class PrintComponent implements OnInit {
           this.hideMessage();
           this.movementsOfArticles = result.movementsOfArticles;
 
-
           if(this.transaction.type.requestPaymentMethods === false){
             if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
               this.calculateBarcode();
@@ -742,6 +809,7 @@ export class PrintComponent implements OnInit {
               if (this.printer.pageWidth < 150) {
                 this.toPrintRoll();
               } else if (this.printer.pageHigh > 150) {
+
                 this.toPrintInvoice();
               } else {
                 this.toPrintInvoice();
@@ -763,7 +831,7 @@ export class PrintComponent implements OnInit {
   public getMovementOfCash(): void {
     this.loading = true;
 
-    this._movementOfCash.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
+    this._movementOfCash.getMovementOfCashesByTransaction(this.transactionId).subscribe(
       result => {
         if (!result.movementsOfCashes) {
           this.showMessage("No se encontraron movimientos en la transacción", 'info', false);
@@ -1963,7 +2031,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
-    this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/1.6), row);
+   this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/1.6), row);
     this.doc.setFontType('normal');
 
     if(this.transaction.company) {
