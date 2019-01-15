@@ -1158,7 +1158,7 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transaction = this.transaction;
+        modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.componentInstance.company = this.transaction.company;
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'invoice';
@@ -1169,7 +1169,7 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'printKitchen':
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transaction = this.transaction;
+        modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.componentInstance.movementsOfArticles = this.kitchenArticlesToPrint;
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'kitchen';

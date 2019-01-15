@@ -48,8 +48,8 @@ import { CashBoxService } from '../../services/cash-box.service';
 export class PrintComponent implements OnInit {
 
   @Input() company: Company;
-  @Input() transaction: Transaction;
-  @Input() transactions: Transaction[];
+  public transaction: Transaction;
+  public transactions: Transaction[];
   @Input() items: any[];
   @Input() movementsOfArticles: MovementOfArticle[];
   @Input() turn: Turn;

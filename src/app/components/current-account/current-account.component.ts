@@ -232,7 +232,7 @@ export class CurrentAccountComponent implements OnInit {
       case 'printTransaction':
 
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transactionId = transaction._id;
         modalRef.componentInstance.company = this.companySelected;
         if(!transaction.type.requestArticles){
           modalRef.componentInstance.typePrint = 'cobro';
