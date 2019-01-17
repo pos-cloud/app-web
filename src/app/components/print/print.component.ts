@@ -186,6 +186,8 @@ export class PrintComponent implements OnInit {
         if (result && result.transactions) {
             this.transaction = result.transactions[0];
 
+            console.log(this.typePrint);
+
             if (this.typePrint === "turn") {
               this.getShiftClosingByTransaccion();
             } else if (this.typePrint === "invoice") {
@@ -2140,39 +2142,37 @@ export class PrintComponent implements OnInit {
 
   public toPrintBarcode(): void {
 
+    console.log(this.printer.pageWidth)
+
+
     if (this.articleStock) {
 
-      this.doc.text(this.articleStock.article.description, 10, 10);
-      //this.doc.text("$",42,15);
-      //this.doc.text(this.articleStock.article.salePrice.toString(), 45, 15);
+      this.doc.text(this.articleStock.article.description, 0 , 5);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+      this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
 
       for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
 
 
         this.doc.addPage();
 
-        this.doc.text(this.articleStock.article.description, 10,10);
-        //this.doc.text("$",42,15);
-        //this.doc.text(this.articleStock.article.salePrice.toString(), 45, 15);
+        this.doc.text(this.articleStock.article.description, 0 , 5);
 
         let imgdata = 'data:image/png;base64,' + this.barcode64;
-
-        this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+  
+        this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
 
       }
       this.finishImpression();
     }  else if (this.article) {
-      this.doc.text(this.article.description, 10,10);
-      //this.doc.text("$",42,15);
-      //this.doc.text(this.article.salePrice.toString(), 45, 15);
+      
+      this.doc.text(this.article.description, 0 , 5);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 10, 17, 40, 10);
+      this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
       this.finishImpression();
     }
   }
