@@ -404,67 +404,68 @@ export class PrintComponent implements OnInit {
 
       this.doc.text(this.padString((this.bookVAT[i].origin).toString(), 5)+"-"+this.bookVAT[i].letter+"-"+this.padString((this.bookVAT[i].number).toString(), 8), 120, row);
 
-      let printGravado = "0.00";
-      let printExento = "0.00";
-      let printPorcentajeIVA = "0.00";
-      let printIVA = "0.00";
-      let printTotal = "0.00";
+      let printGravado = "0,00";
+      let printExento = "0,00";
+      let printPorcentajeIVA = "0,00";
+      let printIVA = "0,00";
+      let printTotal = "0,00";
       if ((this.roundNumber.transform(gravado)).toString().split(".")[1]) {
         if (this.roundNumber.transform(gravado).toString().split(".")[1].length === 1) {
-          printGravado = gravado + "0";
+          printGravado = gravado.toLocaleString('de-DE') + "0";
         } else {
-          printGravado = gravado.toString();
+          printGravado = gravado.toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform(gravado)) {
-        printGravado = gravado + ".00";
+        printGravado = gravado.toLocaleString('de-DE') + ",00";
       }
 
       if ((this.roundNumber.transform(exento)).toString().split(".")[1]) {
         if (this.roundNumber.transform(exento).toString().split(".")[1].length === 1) {
-          printExento = exento + "0";
+          printExento = exento.toLocaleString('de-DE') + "0";
         } else {
-          printExento = exento.toString();
+          printExento = exento.toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform(exento)) {
-        printExento = exento + ".00";
+        printExento = exento.toLocaleString('de-DE') + ",00";
       }
 
       if ((this.roundNumber.transform(porcentajeIVA)).toString().split(".")[1]) {
         if (this.roundNumber.transform(porcentajeIVA).toString().split(".")[1].length === 1) {
-          printPorcentajeIVA = porcentajeIVA + "0";
+          printPorcentajeIVA = porcentajeIVA.toLocaleString('de-DE') + "0";
         } else {
-          printPorcentajeIVA = porcentajeIVA.toString();
+          printPorcentajeIVA = porcentajeIVA.toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform(porcentajeIVA)) {
-        printPorcentajeIVA = porcentajeIVA + ".00";
+        printPorcentajeIVA = porcentajeIVA.toLocaleString('de-DE') + ",00";
       }
 
       if ((this.roundNumber.transform(iva)).toString().split(".")[1]) {
         if (this.roundNumber.transform(iva).toString().split(".")[1].length === 1) {
-          printIVA = iva + "0";
+          printIVA = iva.toLocaleString('de-DE') + "0";
         } else {
-          printIVA = iva.toString();
+          printIVA = iva.toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform(iva)) {
-        printIVA = iva + ".00";
+        printIVA = iva.toLocaleString('de-DE') + ",00";
       }
 
       if ((this.roundNumber.transform(total)).toString().split(".")[1]) {
         if (this.roundNumber.transform(total).toString().split(".")[1].length === 1) {
-          printTotal = total + "0";
+          printTotal = total.toLocaleString('de-DE') + "0";
         } else {
-          printTotal = total.toString();
+          printTotal = total.toLocaleString('de-DE');
         }
       } else if (this.roundNumber.transform(total)) {
-        printTotal = total + ".00";
+        printTotal = total.toLocaleString('de-DE') + ",00";
+
       }
 
       this.doc.text(printGravado, 152, row);
       this.doc.text(printExento, 172, row);
       this.doc.text(printPorcentajeIVA, 192, row);
       this.doc.text(printIVA, 212, row);
-      this.doc.text("0.00", 232, row);
-      this.doc.text("0.00", 252, row);
+      this.doc.text("0,00", 232, row);
+      this.doc.text("0,00", 252, row);
       this.doc.text(printTotal, 272, row);
 
       row += 5;
@@ -523,59 +524,64 @@ export class PrintComponent implements OnInit {
       }
     }
 
+
     this.doc.line(0, row, 400, row);
     row += 5;
     this.doc.setFontType('bold');
 
-    let printGravado = "0.00";
-    let printExento = "0.00";
-    let printIVA = "0.00";
-    let printTotal = "0.00";
+    let printGravado = "0,00";
+    let printExento = "0,00";
+    let printIVA = "0,00";
+    let printTotal = "0,00";
     if ((this.roundNumber.transform(totalGravado)).toString().split(".")[1]) {
       if (this.roundNumber.transform(totalGravado).toString().split(".")[1].length === 1) {
-        printGravado = this.roundNumber.transform(totalGravado) + "0";
+        printGravado = this.roundNumber.transform(totalGravado).toLocaleString('de-DE') + "0";
       } else {
-        printGravado = this.roundNumber.transform(totalGravado).toString();
+        printGravado = this.roundNumber.transform(totalGravado).toLocaleString('de-DE');
       }
     } else if (this.roundNumber.transform(totalGravado)) {
-      printGravado = this.roundNumber.transform(totalGravado) + ".00";
+      printGravado = this.roundNumber.transform(totalGravado).toLocaleString('de-DE') + ",00";
     }
 
     if ((this.roundNumber.transform(totalExento)).toString().split(".")[1]) {
       if (this.roundNumber.transform(totalExento).toString().split(".")[1].length === 1) {
-        printExento = this.roundNumber.transform(totalExento) + "0";
+        printExento = this.roundNumber.transform(totalExento).toLocaleString('de-DE') + "0";
       } else {
-        printExento = this.roundNumber.transform(totalExento).toString();
+        printExento = this.roundNumber.transform(totalExento).toLocaleString('de-DE');
       }
     } else if (this.roundNumber.transform(totalExento)) {
-      printExento = this.roundNumber.transform(totalExento) + ".00";
+      printExento = this.roundNumber.transform(totalExento).toLocaleString('de-DE') + ",00";
     }
 
     if ((this.roundNumber.transform(totalIVA)).toString().split(".")[1]) {
       if (this.roundNumber.transform(totalIVA).toString().split(".")[1].length === 1) {
         printIVA = this.roundNumber.transform(totalIVA) + "0";
       } else {
-        printIVA = this.roundNumber.transform(totalIVA).toString();
+        printIVA = this.roundNumber.transform(totalIVA).toLocaleString('de-DE');
       }
     } else if (this.roundNumber.transform(totalIVA)) {
-      printIVA = this.roundNumber.transform(totalIVA) + ".00";
+      printIVA = this.roundNumber.transform(totalIVA).toLocaleString('de-DE') + ",00";
     }
 
     if ((this.roundNumber.transform(montoTotal)).toString().split(".")[1]) {
       if (this.roundNumber.transform(montoTotal).toString().split(".")[1].length === 1) {
-        printTotal = this.roundNumber.transform(montoTotal) + "0";
+  
+        printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE') + "0";
       } else {
-        printTotal = this.roundNumber.transform(montoTotal).toString();
+  
+        printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE');
+
       }
     } else if (this.roundNumber.transform(montoTotal)) {
-      printTotal = this.roundNumber.transform(montoTotal) + ".00";
+
+      printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE') + ",00";
     }
 
     this.doc.text(printGravado, 152, row);
     this.doc.text(printExento, 172, row);
     this.doc.text(printIVA, 212, row);
-    this.doc.text("0.00", 232, row);
-    this.doc.text("0.00", 252, row);
+    this.doc.text("0,00", 232, row);
+    this.doc.text("0,00", 252, row);
     this.doc.text(printTotal, 272, row);
 
 
