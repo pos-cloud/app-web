@@ -24,7 +24,6 @@ import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-moveme
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
-import { CompanyType } from '../../models/company';
 import { CashBoxComponent } from '../cash-box/cash-box.component';
 import { EmployeeType } from 'app/models/employee-type';
 import { EmployeeTypeService } from 'app/services/employee-type.service';
@@ -415,7 +414,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.transactionId = transaction._id;
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.printer = printerSelected;
-        modalRef.componentInstance.typePrint = 'cobro';
+        modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
         }, (reason) => {
         });

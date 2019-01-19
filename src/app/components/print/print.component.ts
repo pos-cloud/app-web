@@ -133,7 +133,6 @@ export class PrintComponent implements OnInit {
     this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
 
     this.getConfig();
-
   }
 
   public getTransaction( transactionId : string) : void {

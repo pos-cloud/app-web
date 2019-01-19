@@ -359,7 +359,9 @@ export class AddMovementOfCashComponent implements OnInit {
         } else {
           this.movementsOfCashes = result.movementsOfCashes;
           if (this.isChargedFinished()) {
-            this.activeModal.close({ movementsOfCashes: this.movementsOfCashes });
+            if(this.areValidAmounts()) {
+              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes });
+            }
           } else {
             this.updateAmounts();
           }

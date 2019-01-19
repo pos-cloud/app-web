@@ -163,8 +163,8 @@ export class CurrentAccountComponent implements OnInit {
 
   public openModal(op: string, transaction?: Transaction): void {
 
-    
-      
+
+
     let modalRef;
     switch (op) {
       case 'transaction':
@@ -234,11 +234,7 @@ export class CurrentAccountComponent implements OnInit {
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.transactionId = transaction._id;
         modalRef.componentInstance.company = this.companySelected;
-        if(!transaction.type.requestArticles){
-          modalRef.componentInstance.typePrint = 'cobro';
-        } else {
-          modalRef.componentInstance.typePrint = 'invoice';
-        }
+        modalRef.componentInstance.typePrint = 'invoice';
         if (transaction.type.defectPrinter) {
           modalRef.componentInstance.printer = transaction.type.defectPrinter;
         } else {
