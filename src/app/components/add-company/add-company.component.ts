@@ -394,7 +394,21 @@ export class AddCompanyComponent  implements OnInit {
     if (this.company.birthday) {
       this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
     }
-    this.saveCompany();
+    if(this.isValid()) {
+      this.saveCompany();
+    }
+  }
+
+  public isValid(): boolean {
+
+    let valid: boolean = true;
+
+    if (this.identityTypeSelected === "DNI" && this.company.vatCondition.description !== "Consumidor Final") {
+        valid = false;
+        this.showMessage("Al ingresar una condición de IVA distinta de Consumidor Final, debe ingresar el CUIT de la empresa", "info", true);
+    }
+
+    return valid;
   }
 
   public saveCompany(): void {
