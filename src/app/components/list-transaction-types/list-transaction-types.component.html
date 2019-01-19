@@ -157,7 +157,7 @@
             <td class="flat" *ngIf="!transactionType.fastPayment"></td>
             <td class="flat">{{transactionType.allowAPP}}</td>
           </tr>
-          <tr align="center" *ngIf="areTransactionTypesEmpty">
+          <tr align="center" *ngIf="areTransactionTypesEmpty && !loading">
             <td colspan="19">No se encontraron tipos de transacción</td>
           </tr>
         </tbody>

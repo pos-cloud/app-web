@@ -28,10 +28,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let companyGroup of companiesGroup | filter: filterDescription:'description' 
+            <tr *ngFor="let companyGroup of companiesGroup | filter: filterDescription:'description'
                                           | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="130">
@@ -41,7 +41,7 @@
               </td>
               <td class="flat">{{companyGroup.description}}</td>
             </tr>
-            <tr align="center" *ngIf="areCompanyGroupEmpty">
+            <tr align="center" *ngIf="areCompanyGroupEmpty && !loading">
               <td colspan="2">No se encontraron Grupos</td>
             </tr>
           </tbody>
@@ -50,11 +50,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

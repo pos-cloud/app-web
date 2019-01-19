@@ -33,10 +33,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of users | filter: filterName:'name' 
+            <tr *ngFor="let user of users | filter: filterName:'name'
                                           | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="130">
@@ -57,7 +57,7 @@
               <td *ngIf="user.employee">{{user.employee.name}}</td>
               <td *ngIf="!user.employee"></td>
             </tr>
-            <tr align="center" *ngIf="areUsersEmpty">
+            <tr align="center" *ngIf="areUsersEmpty && !loading">
               <td colspan="5">No se encontraron usuarios</td>
             </tr>
           </tbody>
@@ -66,11 +66,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

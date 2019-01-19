@@ -31,13 +31,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let turn of turns | filter: filterStartDate:'startDate' 
-                                          | filter: filterEndDate:'endDate' 
+            <tr *ngFor="let turn of turns | filter: filterStartDate:'startDate'
+                                          | filter: filterEndDate:'endDate'
                                           | filter: filterState:'state'
                                           | filter: filterEmployee:'name':'employee'
                                           | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="100">
@@ -58,7 +58,7 @@
               </td>
               <td>{{turn.employee.name}}</td>
             </tr>
-            <tr align="center" *ngIf="areTurnsEmpty">
+            <tr align="center" *ngIf="areTurnsEmpty && !loading">
               <td colspan="13">No se encontraron turnos</td>
             </tr>
           </tbody>
@@ -67,11 +67,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

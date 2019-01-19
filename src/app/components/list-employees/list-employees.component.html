@@ -31,12 +31,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employee of employees | filter: filterCode:'code' 
-                                                  | filter: filterName:'name' 
-                                                  | filter: filterType:'description':'type' 
+            <tr *ngFor="let employee of employees | filter: filterCode:'code'
+                                                  | filter: filterName:'name'
+                                                  | filter: filterType:'description':'type'
                                                   | orderBy: orderTerm: propertyTerm
-                                                  | paginate: { itemsPerPage: itemsPerPage, 
-                                                                currentPage: p, 
+                                                  | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: p,
                                                                 totalItems: totalItems
                                                               }">
               <td align="left" width="130">
@@ -49,7 +49,7 @@
               <td *ngIf="employee.type">{{employee.type.description}}</td>
               <td *ngIf="!employee.type"></td>
             </tr>
-            <tr align="center" *ngIf="areEmployeesEmpty">
+            <tr align="center" *ngIf="areEmployeesEmpty && !loading">
               <td colspan="4">No se encontraron empleados</td>
             </tr>
           </tbody>
@@ -58,11 +58,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

@@ -40,11 +40,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let variantValue of variantValues | filter: filterType:'name':'type' 
+          <tr *ngFor="let variantValue of variantValues | filter: filterType:'name':'type'
                                                         | filter: filterDescription:'description'
                                                         | orderBy: orderTerm: propertyTerm
-                                                        | paginate: { itemsPerPage: itemsPerPage, 
-                                                                      currentPage: p, 
+                                                        | paginate: { itemsPerPage: itemsPerPage,
+                                                                      currentPage: p,
                                                                       totalItems: totalItems
                                                                     }">
             <td align="left" width="130">
@@ -58,7 +58,7 @@
             <td class="flat">{{variantValue.type.name}}</td>
             <td class="flat">{{variantValue.description}}</td>
           </tr>
-          <tr align="center" *ngIf="areVariantValuesEmpty">
+          <tr align="center" *ngIf="areVariantValuesEmpty && !loading">
             <td colspan="3">No se encontraron valores de variantes</td>
           </tr>
         </tbody>

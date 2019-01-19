@@ -33,11 +33,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let deposit of deposits | filter: filterName:'name' 
-                                               | filter: filterCapacity:'capacity' 
+          <tr *ngFor="let deposit of deposits | filter: filterName:'name'
+                                               | filter: filterCapacity:'capacity'
                                           | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
                                                         totalItems: totalItems
                                                       }">
             <td align="left" width="130">
@@ -54,7 +54,7 @@
             <td class="flat">{{deposit.name}}</td>
             <td class="flat">{{deposit.capacity}}</td>
           </tr>
-          <tr align="center" *ngIf="areDepositsEmpty">
+          <tr align="center" *ngIf="areDepositsEmpty && !loading">
             <td colspan="3">No se encontraron depósitos</td>
           </tr>
         </tbody>

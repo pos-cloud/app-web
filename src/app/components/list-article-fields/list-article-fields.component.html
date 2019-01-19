@@ -58,7 +58,7 @@
               <td class="flat">{{articleField.modify}}</td>
               <td class="flat">{{articleField.modifyVAT}}</td>
             </tr>
-            <tr align="center" *ngIf="areArticleFieldsEmpty">
+            <tr align="center" *ngIf="areArticleFieldsEmpty && !loading">
               <td colspan="6">No se encontraron campos de producto</td>
             </tr>
           </tbody>

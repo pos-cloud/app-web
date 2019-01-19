@@ -59,7 +59,7 @@
               <td *ngIf="cashBox.employee">{{cashBox.employee.name}}</td>
               <td *ngIf="!cashBox.employee"></td>
             </tr>
-            <tr align="center" *ngIf="areCashBoxesEmpty">
+            <tr align="center" *ngIf="areCashBoxesEmpty && !loading">
               <td colspan="5">No se encontraron cajas</td>
             </tr>
           </tbody>

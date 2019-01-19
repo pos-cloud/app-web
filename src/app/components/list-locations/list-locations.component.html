@@ -35,13 +35,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let location of locations | filter: filterDescription:'description' 
-                                                  | filter: filterPositionX:'positionX' 
-                                                  | filter: filterPositionY:'positionY' 
+            <tr *ngFor="let location of locations | filter: filterDescription:'description'
+                                                  | filter: filterPositionX:'positionX'
+                                                  | filter: filterPositionY:'positionY'
                                                   | filter: filterPositionZ:'positionZ'
                                                   | orderBy: orderTerm: propertyTerm
-                                                  | paginate: { itemsPerPage: itemsPerPage, 
-                                                                currentPage: p, 
+                                                  | paginate: { itemsPerPage: itemsPerPage,
+                                                                currentPage: p,
                                                                 totalItems: totalItems
                                                               }">
               <td align="left" width="130">
@@ -54,7 +54,7 @@
               <td class="flat">{{location.positionY}}</td>
               <td class="flat">{{location.positionZ}}</td>
             </tr>
-            <tr align="center" *ngIf="areLocationsEmpty">
+            <tr align="center" *ngIf="areLocationsEmpty && !loading">
               <td colspan="5">No se encontraron Ubicaciones</td>
             </tr>
           </tbody>
@@ -63,11 +63,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

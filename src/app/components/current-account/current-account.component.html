@@ -143,7 +143,7 @@
               <td class="align-right" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'1.2-2'}}</td>
               <td class="align-right" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'1.2-2'}}</td>
             </tr>
-            <tr align="center" *ngIf="items.length === 0">
+            <tr align="center" *ngIf="items.length === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
             </tr>
           </tbody>

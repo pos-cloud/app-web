@@ -35,7 +35,7 @@
         <td class="flat">{{variantLocal.type.name}}</td>
         <td class="flat">{{variantLocal.value.description}}</td>
       </tr>
-      <tr align="center" *ngIf="areVariantsEmpty">
+      <tr align="center" *ngIf="areVariantsEmpty && !loading">
         <td colspan="3">No se encontraron variantes</td>
       </tr>
     </tbody>

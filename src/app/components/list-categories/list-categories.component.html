@@ -45,7 +45,7 @@
               <td class="flat">{{category.order}}</td>
               <td class="flat">{{category.description}}</td>
             </tr>
-            <tr align="center" *ngIf="areCategoriesEmpty">
+            <tr align="center" *ngIf="areCategoriesEmpty && !loading">
               <td colspan="2">No se encontraron rubros</td>
             </tr>
           </tbody>

@@ -78,7 +78,7 @@
               <td class="flat">{{paymentMethod.allowToFinance}}</td>
               <td class="flat">{{paymentMethod.cashBoxImpact}}</td>
             </tr>
-            <tr align="center" *ngIf="arePaymentMethodsEmpty">
+            <tr align="center" *ngIf="arePaymentMethodsEmpty && !loading">
               <td colspan="2">No se encontraron métodos de pagos</td>
             </tr>
           </tbody>

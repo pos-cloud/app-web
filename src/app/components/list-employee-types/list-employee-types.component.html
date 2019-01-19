@@ -26,10 +26,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let employeeType of employeeTypes | filter: filterDescription:'description' 
+            <tr *ngFor="let employeeType of employeeTypes | filter: filterDescription:'description'
                                                           | orderBy: orderTerm: propertyTerm
-                                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                                        currentPage: p, 
+                                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                                        currentPage: p,
                                                                         totalItems: totalItems
                                                                       }">
               <td align="left" width="90">
@@ -38,7 +38,7 @@
               </td>
               <td>{{employeeType.description}}</td>
             </tr>
-            <tr align="center" *ngIf="areEmployeeTypesEmpty">
+            <tr align="center" *ngIf="areEmployeeTypesEmpty && !loading">
               <td colspan="3">No se encontraron tipos de empleados</td>
             </tr>
           </tbody>
@@ -47,11 +47,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

@@ -36,14 +36,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let printer of printers | filter: filterName:'name' 
+            <tr *ngFor="let printer of printers | filter: filterName:'name'
                                                 | filter: filterType:'type'
                                                 | filter: filterPageWidth:'pageWidth'
                                                 | filter: filterPageHigh:'pageHigh'
                                                 | filter: filterPrintIn:'printIn'
                                                 | orderBy: orderTerm: propertyTerm
-                                                | paginate: { itemsPerPage: itemsPerPage, 
-                                                              currentPage: p, 
+                                                | paginate: { itemsPerPage: itemsPerPage,
+                                                              currentPage: p,
                                                               totalItems: totalItems
                                                             }">
               <td align="left" width="130">
@@ -57,7 +57,7 @@
               <td class="flat">{{printer.pageHigh}}</td>
               <td class="flat">{{printer.printIn}}</td>
             </tr>
-            <tr align="center" *ngIf="arePrintersEmpty">
+            <tr align="center" *ngIf="arePrintersEmpty && !loading">
               <td colspan="5">No se encontraron impresoras</td>
             </tr>
           </tbody>
@@ -66,11 +66,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

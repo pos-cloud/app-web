@@ -102,7 +102,7 @@
               <td class="flat" >{{movementOfCash.deliveredBy}}</td>
               <td class="flat" >{{movementOfCash.receiver}}</td>
             </tr>
-            <tr align="center" *ngIf="totalItems === 0">
+            <tr align="center" *ngIf="totalItems === 0 && !loading">
               <td colspan="15">No se encontraron movimientos</td>
             </tr>
           </tbody>

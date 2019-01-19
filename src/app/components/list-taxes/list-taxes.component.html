@@ -46,7 +46,7 @@
             </td>
             <td class="flat">{{tax.name}}</td>
           </tr>
-          <tr align="center" *ngIf="areTaxesEmpty">
+          <tr align="center" *ngIf="areTaxesEmpty && !loading">
             <td colspan="2">No se encontraron impuestos</td>
           </tr>
         </tbody>

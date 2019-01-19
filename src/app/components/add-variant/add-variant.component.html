@@ -51,7 +51,7 @@
               <td class="flat" width="430">{{articleAux.variantDescription}}</td>
               <td class="flat"><input type="text" [value]="articleAux.barcode"/></td>
             </tr>
-            <tr align="center" *ngIf="!articlesWithVariants || articlesWithVariants.length === 0">
+            <tr align="center" *ngIf="!articlesWithVariants || articlesWithVariants.length === 0 && !loading">
               <td colspan="10">No se encontraron variantes</td>
             </tr>
           </tbody>

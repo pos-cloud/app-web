@@ -92,7 +92,7 @@
                   <strong>{{item.balance | currency:'USD':'1.2-2'}}</strong>
                 </td>
               </tr>
-              <tr align="center" *ngIf="items.length === 0">
+              <tr align="center" *ngIf="items.length === 0 && !loading">
                 <td colspan="9">No se encontraron cuentas</td>
               </tr>
             </tbody>
@@ -109,7 +109,7 @@
               <td></td>
               <td>
                 <b>
-                  ${{ calculateTotal(items 
+                  ${{ calculateTotal(items
                   | filter: filterCompanyName:'companyName':'_id'
                   | filter: filterCompanyType:'companyType':'_id'
                   | filter: filterCompanyDNI:'companyDNI':'_id'

@@ -55,7 +55,7 @@
             </td>
             <td class="flat">{{variantType.name}}</td>
           </tr>
-          <tr align="center" *ngIf="areVariantTypesEmpty">
+          <tr align="center" *ngIf="areVariantTypesEmpty && !loading">
             <td colspan="2">No se encontraron tipos de variantes</td>
           </tr>
         </tbody>

@@ -29,10 +29,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let make of makes | filter: filterDescription:'description' 
+            <tr *ngFor="let make of makes | filter: filterDescription:'description'
                                           | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage, 
-                                                        currentPage: p, 
+                                          | paginate: { itemsPerPage: itemsPerPage,
+                                                        currentPage: p,
                                                         totalItems: totalItems
                                                       }">
               <td align="left" width="130">
@@ -42,7 +42,7 @@
               </td>
               <td class="flat">{{make.description}}</td>
             </tr>
-            <tr align="center" *ngIf="areMakesEmpty">
+            <tr align="center" *ngIf="areMakesEmpty && !loading">
               <td colspan="2">No se encontraron marcas</td>
             </tr>
           </tbody>
@@ -51,11 +51,11 @@
       <div class="card-footer bg-primary">
         <div class="row">
           <div class="col-md-10">
-            <pagination-controls 
+            <pagination-controls
                       class="my-pagination"
-                      (pageChange)="p=$event" 
-                      #api 
-                      previousLabel="Ant." 
+                      (pageChange)="p=$event"
+                      #api
+                      previousLabel="Ant."
                       nextLabel="Sig."
                       autoHide="true">
             </pagination-controls>

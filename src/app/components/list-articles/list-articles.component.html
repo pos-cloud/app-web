@@ -76,7 +76,7 @@
             <td>{{article.observation}}</td>
             <td>{{article.barcode}}</td>
           </tr>
-          <tr align="center" *ngIf="areArticlesEmpty">
+          <tr align="center" *ngIf="areArticlesEmpty && !loading">
             <td colspan="9">No se encontraron productos</td>
           </tr>
         </tbody>
@@ -141,7 +141,7 @@
         <div id="make" *ngIf="article.make != undefined && article.make.visibleSale == true" class="image-title">{{article.make.description}}</div>
       </div>
     </div>
-    <div class="center-content" *ngIf="areArticlesEmpty">
+    <div class="center-content" *ngIf="areArticlesEmpty && !loading">
       <ngb-alert (close)="areArticlesEmpty">
         No se encontraron productos
       </ngb-alert>

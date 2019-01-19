@@ -61,7 +61,7 @@
               </h6>
             </td>
           </tr>
-          <tr align="center" *ngIf="areTablesEmpty">
+          <tr align="center" *ngIf="areTablesEmpty && !loading">
             <td colspan="5">No se encontraron mesas</td>
           </tr>
         </tbody>
