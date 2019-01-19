@@ -258,6 +258,11 @@
                   [routerLinkActive]="['active']">
             Empleados
           </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','tipos-de-empleado']"
+                  [routerLinkActive]="['active']">
+            Tipos de Empleado
+          </button>
           <div *ngIf="modules && modules.sale && modules.sale.resto">
             <button class="dropdown-item"
                     [routerLink]="['admin','turnos']"
