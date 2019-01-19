@@ -138,52 +138,13 @@ export class PrintComponent implements OnInit {
 
   public getTransaction( transactionId : string) : void {
 
-    let sortAux = {};
+    this.loading = true;
 
-    // FILTRAMOS LA CONSULTA
-    let match = { _id: transactionId };
-
-    // CAMPOS A TRAER
-    let project = {
-        '_id': { $toString: '$_id' },
-        'type.transactionMovement':1,
-        'type.name':1,
-        'type.requestPaymentMethods':1,
-        'type.requestArticles':1,
-        'origin':1,
-        'letter':1,
-        'number':1,
-        'endDate':1,
-        'company.name':1,
-        'employeeClosing.name':1,
-        'turnClosing.endDate':1,
-        'madein':1,
-        'startDate':1,
-        'state':1,
-        'observation':1,
-        'discountAmount':1,
-        'totalPrice':1
-    };
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 1;
-
-    let skip = 0;
-
-    this._transactionService.getTransactionsV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
-    ).subscribe(
+    this._transactionService.getTransaction(transactionId).subscribe(
       result => {
-        if (result && result.transactions) {
-            this.transaction = result.transactions[0];
-
+        if (result && result.transaction) {
+            this.transaction = result.transaction;
+            this.company = this.transaction.company;
             if (this.typePrint === "turn") {
               this.getShiftClosingByTransaccion();
             } else if (this.typePrint === "invoice") {
