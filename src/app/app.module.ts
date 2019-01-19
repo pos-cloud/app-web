@@ -386,7 +386,7 @@ import { VATConditionComponent } from './components/vat-condition/vat-condition.
     MatInputModule,
     NgxChartsModule,
     HttpClientModule,
-    SocketIoModule.forRoot(config),
+    // SocketIoModule.forRoot(config),
   ],
   providers: [
     NgbActiveModal,
