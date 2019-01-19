@@ -85,7 +85,7 @@ export class PrintComponent implements OnInit {
                                   "normal" : 10,
                                   "large" : 15,
                                   "extraLarge" : 20}`);
-              
+
 
   constructor(
     public _turnService: TurnService,
@@ -133,13 +133,11 @@ export class PrintComponent implements OnInit {
     this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
 
     this.getConfig();
-          
+
   }
 
   public getTransaction( transactionId : string) : void {
 
-
-    
     let sortAux = {};
 
     // FILTRAMOS LA CONSULTA
@@ -186,14 +184,14 @@ export class PrintComponent implements OnInit {
         if (result && result.transactions) {
             this.transaction = result.transactions[0];
 
-            console.log(this.typePrint);
-
             if (this.typePrint === "turn") {
               this.getShiftClosingByTransaccion();
             } else if (this.typePrint === "invoice") {
-              this.getMovementOfArticle();
-            } else if (this.typePrint === "cobro") {
-              this.getMovementOfCash();
+              if (this.transaction.type.requestArticles) {
+                this.getMovementOfArticle();
+              } else {
+                this.getMovementOfCash();
+              }
             } else if (this.typePrint === "current-account") {
               this.toPrintCurrentAccount();
             } else if (this.typePrint === "cash-box") {
@@ -236,7 +234,7 @@ export class PrintComponent implements OnInit {
           this.hideMessage();
           this.config = result.configs;
           this.getTransaction(this.transactionId);
-        
+
         }
         this.loading = false;
       },
@@ -565,10 +563,10 @@ export class PrintComponent implements OnInit {
 
     if ((this.roundNumber.transform(montoTotal)).toString().split(".")[1]) {
       if (this.roundNumber.transform(montoTotal).toString().split(".")[1].length === 1) {
-  
+
         printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE') + "0";
       } else {
-  
+
         printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE');
 
       }
@@ -847,9 +845,9 @@ export class PrintComponent implements OnInit {
         } else {
           this.hideMessage();
           this.movementsOfCashes = result.movementsOfCashes;
-          if (this.typePrint === "cobro") {
+          if(!this.transaction.type.requestArticles) {
             this.toPrintPayment();
-          } else if (this.typePrint === "invoice") {
+          } else {
             if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
               this.calculateBarcode();
             } else {
@@ -2167,13 +2165,13 @@ export class PrintComponent implements OnInit {
         this.doc.text(this.articleStock.article.description, 0 , 5);
 
         let imgdata = 'data:image/png;base64,' + this.barcode64;
-  
+
         this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
 
       }
       this.finishImpression();
     }  else if (this.article) {
-      
+
       this.doc.text(this.article.description, 0 , 5);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;

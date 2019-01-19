@@ -270,13 +270,7 @@ export class ListTransactionsComponent implements OnInit {
         //modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.transactionId = transaction._id;
-
-
-        if(transaction.type.name === "Cobro"){
-          modalRef.componentInstance.typePrint = 'cobro';
-        } else {
-          modalRef.componentInstance.typePrint = 'invoice';
-        }
+        modalRef.componentInstance.typePrint = 'invoice';
         if (transaction.type.defectPrinter) {
           modalRef.componentInstance.printer = transaction.type.defectPrinter;
         } else {
