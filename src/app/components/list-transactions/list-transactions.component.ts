@@ -42,7 +42,7 @@ export class ListTransactionsComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public itemsPerPage: number = 10;
-  public totalItems: number = 0;
+  public totalItems: number = -1;
   public modules: Observable<{}>;
   public printers: Printer[];
   public roundNumber = new RoundNumberPipe();
@@ -229,6 +229,7 @@ export class ListTransactionsComponent implements OnInit {
           error => {
             this.showMessage(error._body, 'danger', false);
             this.loading = false;
+            this.totalItems = 0;
           }
         );
     }
@@ -267,7 +268,6 @@ export class ListTransactionsComponent implements OnInit {
         break;
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
-        //modalRef.componentInstance.transaction = transaction;
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.transactionId = transaction._id;
         modalRef.componentInstance.typePrint = 'invoice';

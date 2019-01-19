@@ -99,8 +99,11 @@
             <td>{{transaction.discountAmount | currency:'USD':'1.2-2'}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
-          <tr align="center" *ngIf="totalItems === 0">
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
+          </tr>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
@@ -215,8 +218,11 @@
             <td>{{transaction.discountAmount | currency:'USD':'1.2-2'}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
-          <tr align="center" *ngIf="totalItems === 0">
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
+          </tr>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
@@ -316,8 +322,11 @@
             <td>{{transaction.observation}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
           </tr>
-          <tr align="center" *ngIf="totalItems === 0">
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
+          </tr>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
