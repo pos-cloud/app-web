@@ -81,6 +81,7 @@ import { ReportSalesByClientComponent } from './components/report-sales-by-clien
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { ListCompaniesGroupComponent } from "./components/list-companies-group/list-companies-group.component";
 import { UpdateArticlePriceComponent } from "./components/update-article-price/update-article-price.component"
+import { ListVATConditionsComponent } from './components/list-vat-conditions/list-vat-conditions.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -337,6 +338,12 @@ const _routes: Routes = [
   {
     path: 'admin/eliminar-marca',
     component: DeleteMakeComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/condiciones-de-iva',
+    component: ListVATConditionsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

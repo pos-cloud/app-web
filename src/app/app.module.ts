@@ -182,6 +182,7 @@ import { DeleteArticleFieldComponent } from './components/delete-article-field/d
 import { ListArticleFieldsComponent } from './components/list-article-fields/list-article-fields.component';
 import { AddArticleFieldsComponent } from './components/add-article-fields/add-article-fields.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
+import { ListVATConditionsComponent } from './components/list-vat-conditions/list-vat-conditions.component';
 import { ExportIvaComponent } from './components/export-iva/export-iva.component';
 import { ListCompaniesGroupComponent } from './components/list-companies-group/list-companies-group.component';
 import { AddCompanyGroupComponent } from './components/add-company-group/add-company-group.component';
@@ -190,6 +191,8 @@ import { UpdateCompanyGroupComponent } from './components/update-company-group/u
 import { UpdateArticlePriceComponent } from './components/update-article-price/update-article-price.component';
 import { CompanyContactComponent } from './components/company-contact/company-contact.component';
 import { Config } from './app.config';
+import { DeleteVATConditionComponent } from './components/delete-vat-condition/delete-vat-condition.component';
+import { VATConditionComponent } from './components/vat-condition/vat-condition.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -220,6 +223,9 @@ import { Config } from './app.config';
     DeleteRoomComponent,
     UpdateRoomComponent,
     ListMakesComponent,
+    ListVATConditionsComponent,
+    DeleteVATConditionComponent,
+    VATConditionComponent,
     AddMakeComponent,
     DeleteMakeComponent,
     UpdateMakeComponent,
@@ -360,6 +366,8 @@ import { Config } from './app.config';
     UpdateCompanyGroupComponent,
     DeleteCompanyGroupComponent,
     UpdateArticlePriceComponent,
+    VATConditionComponent,
+    DeleteVATConditionComponent
   ],
   imports: [
     BrowserModule,
@@ -378,7 +386,7 @@ import { Config } from './app.config';
     MatInputModule,
     NgxChartsModule,
     HttpClientModule,
-    // SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
   ],
   providers: [
     NgbActiveModal,

@@ -336,6 +336,26 @@
             Tipos de Transacciones
           </button>
           <button class="dropdown-item"
+                  [routerLink]="['admin','metodos-de-pago']"
+                  [routerLinkActive]="['active']">
+            Métodos de pago
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','impuestos']"
+                  [routerLinkActive]="['active']">
+            Impuestos
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','condiciones-de-iva']"
+                  [routerLinkActive]="['active']">
+            Condiciones de IVA
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','campos-de-productos']"
+                  [routerLinkActive]="['active']">
+            Campos de producto
+          </button>
+          <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-variantes']"
                   [routerLinkActive]="['active']"
                   *ngIf=" modules &&
@@ -348,21 +368,6 @@
                   *ngIf=" modules &&
                           modules.variants">
             Valores de Variantes
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','impuestos']"
-                  [routerLinkActive]="['active']">
-            Impuestos
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','campos-de-productos']"
-                  [routerLinkActive]="['active']">
-            Campos de producto
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','metodos-de-pago']"
-                  [routerLinkActive]="['active']">
-            Métodos de pago
           </button>
         </div>
       </li>
