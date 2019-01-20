@@ -86,7 +86,6 @@ export class PrintComponent implements OnInit {
                                   "large" : 15,
                                   "extraLarge" : 20}`);
 
-
   constructor(
     public _turnService: TurnService,
     public _cashBoxService: CashBoxService,
@@ -157,7 +156,7 @@ export class PrintComponent implements OnInit {
             } else if (this.typePrint === "cash-box") {
               this.getClosingCashBox();
             } else if (this.typePrint === "label") {
-              let code
+              let code;
               if (this.articleStock) {
                 code = this.articleStock.article.code;
               } else if (this.article) {
@@ -171,7 +170,6 @@ export class PrintComponent implements OnInit {
             } else if (this.typePrint === "priceList") {
               this.printPriceList();
             }
-
         } else {
             this.transaction = null;
         }
@@ -193,8 +191,37 @@ export class PrintComponent implements OnInit {
         } else {
           this.hideMessage();
           this.config = result.configs;
-          this.getTransaction(this.transactionId);
-
+          if (this.transactionId) {
+            this.getTransaction(this.transactionId);
+          } else {
+            if (this.typePrint === "turn") {
+              this.getShiftClosingByTransaccion();
+            } else if (this.typePrint === "invoice") {
+              if (this.transaction.type.requestArticles) {
+                this.getMovementOfArticle();
+              } else {
+                this.getMovementOfCash();
+              }
+            } else if (this.typePrint === "current-account") {
+              this.toPrintCurrentAccount();
+            } else if (this.typePrint === "cash-box") {
+              this.getClosingCashBox();
+            } else if (this.typePrint === "label") {
+              let code;
+              if (this.articleStock) {
+                code = this.articleStock.article.code;
+              } else if (this.article) {
+                code = this.article.code;
+              }
+              this.getBarcode64('code128?value=' + code, this.typePrint);
+            } else if (this.typePrint === "kitchen") {
+              this.toPrintKitchen();
+            } else if (this.typePrint === "IVA") {
+              this.getVATBook();
+            } else if (this.typePrint === "priceList") {
+              this.printPriceList();
+            }
+          }
         }
         this.loading = false;
       },
@@ -2105,9 +2132,6 @@ export class PrintComponent implements OnInit {
   }
 
   public toPrintBarcode(): void {
-
-    console.log(this.printer.pageWidth)
-
 
     if (this.articleStock) {
 
