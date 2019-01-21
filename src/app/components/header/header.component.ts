@@ -1,13 +1,18 @@
+// ANGULAR
 import { Component, OnInit, Input, ElementRef, Renderer2 } from '@angular/core';
 import { Router, NavigationStart, Event as NavigationEvent, NavigationEnd } from '@angular/router';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 
+// DE TERCEROS
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+// import { Socket } from 'ngx-socket-io';
 
+// MODELS
 import { User } from './../../models/user';
 import { Config } from './../../app.config';
 
+// SERVICES
 import { UserService } from './../../services/user.service';
 
 @Component({
@@ -22,10 +27,10 @@ export class HeaderComponent implements OnInit {
   public online: Observable<boolean>;
   public accessType: string;
   public hideMenu: boolean;
-  public sessionTimer;
+  public sessionTimer: any;
   public pathLocation: string[];
   @Input() isAPIConected: boolean;
-  @Input() modules;
+  @Input() modules: any;
   public isReportVisible: boolean;
 
   constructor(
@@ -35,7 +40,8 @@ export class HeaderComponent implements OnInit {
     public renderer: Renderer2,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    // private socket: Socket,
   ) {
     this.isReportVisible = false;
     this.online = Observable.merge(
@@ -73,7 +79,13 @@ export class HeaderComponent implements OnInit {
       // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
       //   this.sessionCount();
       // });
+
+      // this.socket.emit('init', {
+      //   identity: this.identity,
+      //   database: this._userService.getDatabase()
+      // });
     } else {
+      // this.socket.emit('clear');
       this._router.events.filter(e => e instanceof NavigationEnd).first().subscribe(() => {
         if (this._userService.getDatabase() && this._router.url !== "/registrar") {
           this._router.navigate(['/login']);

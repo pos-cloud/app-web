@@ -1,0 +1,93 @@
+<!--ESTADISTICAS GENERALES-->
+<div class="card card-outline-primary"  *ngIf="listType === 'statistics'">
+  <div class="card-header bg-primary">HOY Cumplen años</div>
+  <div class="card-block table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><i class="fa fa-bars"></i></th>
+          <th>Quién </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let company of companies">
+          <td align="left" width="130">
+            <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
+            <a class="btn btn-default btn-sm icon-ws" href="https://api.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
+            <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i class="fa fa-envelope"></i></a>
+          </td>
+          <td class="flat">{{ company.name }}</td>
+        </tr>
+        <tr align="center" *ngIf="companies.length === 0 && !loading">
+          <td colspan="4">No se encontraron cumpleaños</td>
+        </tr>
+        <tr align="center" *ngIf="companies.length === 0 && loading">
+          <td colspan="4">Cargando...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!--REPORTE-->
+<section class="container-fluid" *ngIf="listType !== 'statistics'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="row container-filter">
+    <div class="col-md-2 offset-md-4">
+      <label for="when" class="control-label">
+        <b>Cuando:</b>
+      </label>
+      <select class="form-control" [(ngModel)]="when" name="when">
+        <option *ngFor="let w of dates" [value]="w" [selected]="when === w">{{ w }}</option>
+      </select>
+    </div>
+    <div class="col-md-2" (click)="refresh()">
+      <span class="form-control btn-action center-content">
+        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+    </div>
+  </div>
+  <div class="card card-outline-primary card-large">
+    <div class="card-header bg-primary">Cumpleaños</div>
+    <div class="card-block table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th><i class="fa fa-bars"></i></th>
+            <th>Tipo</th>
+            <th>Quién</th>
+            <th>Cuándo</th>
+            <th>Teléfonos</th>
+            <th>Emails</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let company of companies">
+            <td align="left" width="150">
+              <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
+              <a class="btn btn-default btn-sm icon-ws" href="https://api.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
+              <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i class="fa fa-envelope"></i></a>
+            </td>
+            <td class="flat">{{ company.type }}</td>
+            <td class="flat">{{ company.name }}</td>
+            <td class="flat" *ngIf="company.birthday">{{ company.birthday.slice(0, 10) }}</td>
+            <td class="flat" *ngIf="!company.birthday"></td>
+            <td class="flat">{{ company.phones }}</td>
+            <td class="flat">{{ company.emails }}</td>
+          </tr>
+          <tr align="center" *ngIf="companies.length === 0 && !loading">
+            <td colspan="6">No se encontraron cumpleaños</td>
+          </tr>
+          <tr align="center" *ngIf="companies.length === 0 && loading">
+            <td colspan="6">Cargando...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-primary">
+    </div>
+  </div>
+</section>

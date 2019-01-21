@@ -82,6 +82,7 @@ import { ReportSalesByCategoryComponent } from './components/report-sales-by-cat
 import { ListCompaniesGroupComponent } from "./components/list-companies-group/list-companies-group.component";
 import { UpdateArticlePriceComponent } from "./components/update-article-price/update-article-price.component"
 import { ListVATConditionsComponent } from './components/list-vat-conditions/list-vat-conditions.component';
+import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -92,6 +93,11 @@ const _routes: Routes = [
   {
     path: 'admin/venta/statistics',
     component: StatisticsComponent,
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/cumpleaños',
+    component: ReportBirthdayComponent,
     data: { roles: ['Administrador'] }
   },
   {

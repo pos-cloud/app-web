@@ -24,6 +24,7 @@ import { CompanyGroupService } from './../../services/company-group.service'
 export class UpdateCompanyComponent implements OnInit {
 
   @Input() company: Company;
+  @Input() companyId: string;
   @Input() readonly: boolean;
   public types: CompanyType[];
   public companiesGroup: CompanyGroup;
@@ -126,26 +127,28 @@ export class UpdateCompanyComponent implements OnInit {
     }
 
     this.vatConditions = new Array();
-
-    if (this.company.CUIT && this.company.CUIT !== '') {
-      this.identityTypeSelected = "CUIT";
-    } else {
-      this.identityTypeSelected = "DNI";
-    }
-
-    if (this.company.birthday) {
-      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
-    } else {
-      this.company.birthday = null;
-    }
-
-    this.buildForm();
     this.getVATConditions();
     this.getCompaniesGroup();
-    this.setValueForm();
+
+    if(this.company) {
+      if (this.company.CUIT && this.company.CUIT !== '') {
+        this.identityTypeSelected = "CUIT";
+      } else {
+        this.identityTypeSelected = "DNI";
+      }
+
+      if (this.company.birthday) {
+        this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+      } else {
+        this.company.birthday = null;
+      }
+
+      this.buildForm();
+      this.setValueForm();
+    } else {
+      this.getCompany(this.companyId);
+    }
   }
-
-
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
@@ -294,6 +297,40 @@ export class UpdateCompanyComponent implements OnInit {
     };
 
     this.companyForm.setValue(values);
+  }
+
+  public getCompany(companyId: string): void {
+
+    this.loading = true;
+
+    this._companyService.getCompany(companyId).subscribe(
+      result => {
+        if (!result.company) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.company = result.company;
+          if (this.company.CUIT && this.company.CUIT !== '') {
+            this.identityTypeSelected = "CUIT";
+          } else {
+            this.identityTypeSelected = "DNI";
+          }
+
+          if (this.company.birthday) {
+            this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+          } else {
+            this.company.birthday = null;
+          }
+
+          this.buildForm();
+          this.setValueForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getVATConditions(): void {

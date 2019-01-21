@@ -12,6 +12,7 @@ import { ReportSalesByPaymentMethodComponent } from '../report-sales-by-payment-
 import { ReportSalesByClientComponent } from '../report-sales-by-client/report-sales-by-client.component';
 import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales-by-make.component';
 import { Router } from '@angular/router';
+import { ReportBirthdayComponent } from '../report-birthday/report-birthday.component';
 
 @Component({
   selector: 'app-statistics',
@@ -35,6 +36,7 @@ export class StatisticsComponent implements OnInit {
   @ViewChild(ReportSalesByPaymentMethodComponent) reportSalesByPaymentMethod: ReportSalesByPaymentMethodComponent;
   @ViewChild(ReportSalesByClientComponent) reportSalesByClient: ReportSalesByClientComponent;
   @ViewChild(ReportSalesByMakeComponent) reportSalesByMake: ReportSalesByMakeComponent;
+  @ViewChild(ReportBirthdayComponent) reportBirthday: ReportBirthdayComponent;
   public transactionMovement: string;
 
   constructor(
