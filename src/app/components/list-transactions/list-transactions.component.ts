@@ -64,7 +64,8 @@ export class ListTransactionsComponent implements OnInit {
       'state',
       'observation',
       'discountAmount',
-      'totalPrice'
+      'totalPrice',
+      'operationType'
   ];
   public filters: any[];
   public filterValue: string;
@@ -171,9 +172,9 @@ export class ListTransactionsComponent implements OnInit {
         }
 
         if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
-          match += `,"type.transactionMovement": "${this.transactionMovement}" }`;
+          match += `,"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
         } else {
-          match += `"type.transactionMovement": "${this.transactionMovement}" }`;
+          match += `"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
         }
         match = JSON.parse(match);
 
