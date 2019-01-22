@@ -53,6 +53,8 @@ export class ListTransactionsComponent implements OnInit {
       'type.transactionMovement',
       'type.name',
       'type.requestArticles',
+      'type.allowEdit',
+      'type.allowDelete',
       'origin',
       'letter',
       'number',
@@ -265,7 +267,7 @@ export class ListTransactionsComponent implements OnInit {
         break;
       case 'edit':
         modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transactionId = transaction._id;
         break;
       case 'print':
         modalRef = this._modalService.open(PrintComponent);

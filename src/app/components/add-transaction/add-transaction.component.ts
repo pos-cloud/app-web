@@ -39,7 +39,8 @@ export class AddTransactionComponent implements OnInit {
 
   public transactionForm: FormGroup;
   public companies: Company[];
-  @Input() transaction: Transaction;
+  @Input() transactionId: string;
+  public transaction: Transaction;
   public taxes: Taxes[] = new Array();
   public alertMessage: string = '';
   public userType: string;
@@ -128,42 +129,69 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
-    if(this.transaction.company) {
-      this.companyName = this.transaction.company.name;
-    }
+    this.getTransaction(this.transactionId);
 
-    // VERIFICAMOS PARA LAS COMPROBACIONES DE INTERFAZ QUE TIPO DE MOVIMIENTO ES
-    this.transactionMovement = this.transaction.type.transactionMovement.toString();
+ 
 
-    // SI ES NUEVA TRANSACCIÓN
-    if (!this.transaction._id || this.transaction._id === '') {
+  }
 
-      // DEFINIMOS EL PUNTO DE VENTA SI TIENE FIJO O NO
-      if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-        this.transaction.origin = this.transaction.type.fixedOrigin;
-      }
+  public getTransaction( transactionId : string) : void {
 
-      // DEFINIMOS LA LETRA SI TIENE FIJA O NO
-      if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
-        this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
-      }
+    this.loading = true;
 
-      if (this.transaction.type.transactionMovement === TransactionMovement.Purchase ||
-          this.transaction.type.transactionMovement === TransactionMovement.Money) {
-        this.getLastTransactionByType(false);
-      }
-    }   else {  // TRANSACCIÓN EXISTENTE
-      this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-      if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-        this.getOpenCashBox();
-      }
-    }
+    this._transactionService.getTransaction(transactionId).subscribe(
+      result => {
+        if (result && result.transaction) {
+            this.transaction = result.transaction;
+            console.log(this.transaction);
 
-    if (this.transaction.type.requestEmployee) {
-      this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
-    }
+            if(this.transaction.company) {
+              this.companyName = this.transaction.company.name;
+            }
+        
+            // VERIFICAMOS PARA LAS COMPROBACIONES DE INTERFAZ QUE TIPO DE MOVIMIENTO ES
+            this.transactionMovement = this.transaction.type.transactionMovement.toString();
+        
+            // SI ES NUEVA TRANSACCIÓN
+            if (!this.transaction._id || this.transaction._id === '') {
+        
+              // DEFINIMOS EL PUNTO DE VENTA SI TIENE FIJO O NO
+              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                this.transaction.origin = this.transaction.type.fixedOrigin;
+              }
+        
+              // DEFINIMOS LA LETRA SI TIENE FIJA O NO
+              if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
+                this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+              }
+        
+              if (this.transaction.type.transactionMovement === TransactionMovement.Purchase ||
+                  this.transaction.type.transactionMovement === TransactionMovement.Money) {
+                this.getLastTransactionByType(false);
+              }
+            }   else {  // TRANSACCIÓN EXISTENTE
+              this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+              if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+                this.getOpenCashBox();
+              }
+            }
+        
+            if (this.transaction.type.requestEmployee) {
+              this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
+            }
 
-    this.buildForm();
+                    
+            this.buildForm();
+
+        } else {
+            this.transaction = null;
+            this.buildForm();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      });
   }
 
   public getOpenCashBox(toSave: boolean = false): void {

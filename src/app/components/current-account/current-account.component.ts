@@ -172,7 +172,7 @@ export class CurrentAccountComponent implements OnInit {
         if(this.balance < 0) {
           transaction.totalPrice = this.balance * (-1);
         }
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transactionId = transaction._id;
         modalRef.result.then(
           (result) => {
             if (result.transaction) {
