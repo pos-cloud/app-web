@@ -27,6 +27,7 @@ import { ViewTransactionComponent } from './../../components/view-transaction/vi
 import { CashBoxComponent } from '../cash-box/cash-box.component';
 import { EmployeeType } from 'app/models/employee-type';
 import { EmployeeTypeService } from 'app/services/employee-type.service';
+import { Company } from 'app/models/company';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -285,22 +286,18 @@ export class PointOfSaleComponent implements OnInit {
   public addTransaction(type: TransactionType): void {
 
     if(!type.cashOpening && !type.cashClosing) {
-      if (type.requestCompany) {
-        this.openModal('company', type);
+      if (type.requestEmployee && type.requestArticles) {
+        this.openModal('select-employee', type);
+      } else if (type.requestCompany) {
+          this.openModal('company', type);
+      } else if (type.requestArticles) {
+        if (this.transactionMovement !== TransactionMovement.Purchase) {
+          this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+        } else {
+          this.openModal('transaction', type);
+        }
       } else {
-          if (type.requestEmployee) {
-            this.openModal('select-employee', type, null, null, type.requestEmployee);
-          } else {
-            if (type.requestArticles) {
-              if (this.transactionMovement !== TransactionMovement.Purchase) {
-                this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
-              } else {
-                this.openModal('transaction', type, null);
-              }
-            } else {
-              this.openModal('transaction', type);
-            }
-          }
+        this.openModal('transaction', type);
       }
     } else {
       this.openModal('cash-box', type);
@@ -312,7 +309,9 @@ export class PointOfSaleComponent implements OnInit {
     typeTransaction?: TransactionType,
     transaction?: Transaction,
     printerSelected?: Printer,
-    employeeType?: EmployeeType): void {
+    employeeType?: EmployeeType,
+    company?: Company): void {
+
     let modalRef;
 
     switch (op) {
@@ -321,35 +320,38 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.type = typeTransaction.requestCompany;
         modalRef.result.then(
           (result) => {
-            if (result.company) {
-              if (!transaction) {
-                transaction = new Transaction();
-              }
-              transaction.company = result.company;
-              if (typeTransaction.requestEmployee) {
-                this.openModal('select-employee', typeTransaction, transaction, null, typeTransaction.requestEmployee);
-              } else if (typeTransaction.requestArticles) {
-                  if(this.transactionMovement !== TransactionMovement.Purchase) {
-                    this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + typeTransaction._id]);
-                  } else {
-                    this.openModal('transaction', typeTransaction, transaction);
-                  }
+            if(result.company) {
+              if (transaction) {
+                transaction.company = result.company;
+                this.updateTransaction(transaction, false);
               } else {
-                this.openModal('transaction', typeTransaction, transaction);
+                transaction = new Transaction();
+                transaction.type = typeTransaction;
+                transaction.company = result.company;
+                this.getLastTransactionByType(transaction);
               }
+            } else {
+              this.refresh();
             }
           }, (reason) => {
-
+            this.refresh();
           }
         );
         break;
       case 'transaction':
-        if (!transaction) {
-          transaction = new Transaction();
-        }
+      
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
-        transaction.type = typeTransaction;
-        modalRef.componentInstance.transaction = transaction;
+        //transaction.type = typeTransaction;
+        if ( !transaction ) {
+          modalRef.componentInstance.transactionTypeId = typeTransaction._id;
+        } else {
+          modalRef.componentInstance.transactionId = transaction._id;
+        }
+
+        if(company) {
+          modalRef.componentInstance.companyId = company._id;
+        }
+        
         modalRef.result.then(
           (result) => {
             transaction = result.transaction;
@@ -369,9 +371,11 @@ export class PointOfSaleComponent implements OnInit {
               }
             } else if (result === "change-company") {
               this.openModal('company', typeTransaction, transaction);
+            } else {
+              this.refresh();
             }
           }, (reason) => {
-
+            this.refresh();
           }
         );
         break;
@@ -395,18 +399,10 @@ export class PointOfSaleComponent implements OnInit {
               }
             }
           } else {
-            if (this.posType === "delivery") {
-              this.getOpenTransactions();
-            } else {
-              this.getOpenTransactionsByMovement(this.transactionMovement);
-            }
+            this.refresh();
           }
         }, (reason) => {
-          if (this.posType === "delivery") {
-            this.getOpenTransactions();
-          } else {
-            this.getOpenTransactionsByMovement(this.transactionMovement);
-          }
+          this.refresh();
         });
         break;
       case 'print':
@@ -489,24 +485,29 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
         modalRef.componentInstance.op = 'select-employee';
-        modalRef.componentInstance.typeEmployee = employeeType;
+        modalRef.componentInstance.typeEmployee = typeTransaction.requestEmployee;
         modalRef.result.then((result) => {
           if (result.employee) {
             if (transaction) {
               if (this.posType === "delivery") {
                 transaction.state = TransactionState.Sent;
+                transaction.employeeOpening = result.employee;
+                this.updateTransaction(transaction, true);
+              } else {
+                transaction.employeeOpening = result.employee;
+                this.updateTransaction(transaction, false);
               }
-              transaction.employeeOpening = result.employee;
-              this.updateTransaction(transaction);
             } else {
               transaction = new Transaction();
               transaction.type = typeTransaction;
               transaction.employeeOpening = result.employee;
               this.getLastTransactionByType(transaction);
             }
+          } else {
+            this.refresh();
           }
         }, (reason) => {
-
+          this.refresh();
         });
         break;
       default: ;
@@ -549,14 +550,20 @@ export class PointOfSaleComponent implements OnInit {
         } else {
           this.hideMessage();
           transaction = result.transaction;
-          if (transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-            if (transaction.type.requestArticles) {
-              this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
+          if (!transaction.employeeOpening && 
+              transaction.type.requestEmployee && 
+              transaction.type.requestArticles) {
+            this.openModal('select-employee', transaction.type, transaction);
+          } else if (!transaction.company && transaction.type.requestCompany) {
+              this.openModal('company', transaction.type, transaction);
+          } else if (transaction.type.requestArticles) {
+            if (this.transactionMovement !== TransactionMovement.Purchase) {
+              this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction.type._id]);
             } else {
-              this.openModal('company', transaction.type);
+              this.openModal('transaction', transaction.type, transaction);
             }
           } else {
-            this.openModal('company', transaction.type);
+            this.openModal('transaction', transaction.type, transaction);
           }
         }
         this.loading = false;
@@ -602,7 +609,7 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public updateTransaction(transaction: Transaction): void {
+  public updateTransaction(transaction: Transaction, close: boolean = true): void {
 
     this.loading = true;
 
@@ -612,7 +619,26 @@ export class PointOfSaleComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.refresh();
+          transaction = result.transaction;
+          if(close) {
+            this.refresh();
+          } else {
+            if (!transaction.employeeOpening && 
+              transaction.type.requestEmployee && 
+              transaction.type.requestArticles) {
+              this.openModal('select-employee', transaction.type, transaction);
+            } else if (!transaction.company && transaction.type.requestCompany) {
+                this.openModal('company', transaction.type, transaction);
+            } else if (transaction.type.requestArticles) {
+              if (this.transactionMovement !== TransactionMovement.Purchase) {
+                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction.type._id]);
+              } else {
+                this.openModal('transaction', transaction.type, transaction);
+              }
+            } else {
+              this.openModal('transaction', transaction.type, transaction);
+            }
+          }
         }
         this.loading = false;
       },

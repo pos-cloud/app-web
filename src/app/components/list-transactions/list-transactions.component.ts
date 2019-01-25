@@ -22,6 +22,7 @@ import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
+import moment = require('moment');
 
 @Component({
   selector: 'app-list-transactions',
@@ -186,7 +187,7 @@ export class ListTransactionsComponent implements OnInit {
             project = '{';
             for (let i = 0; i < this.displayedColumns.length; i++) {
                 let field = this.displayedColumns[i];
-                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":"America/Argentina/Cordoba"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
                 if (i < this.displayedColumns.length - 1) {
                     project += ',';
                 }
@@ -210,6 +211,8 @@ export class ListTransactionsComponent implements OnInit {
                 (page * this.itemsPerPage) :
                     0 // SKIP
 
+                    console.log(project)
+
         this._transactionService.getTransactionsV2(
             project, // PROJECT
             match, // MATCH
@@ -222,6 +225,8 @@ export class ListTransactionsComponent implements OnInit {
             if (result && result.transactions) {
                 this.transactions = result.transactions;
                 this.totalItems = result.count;
+
+                console.log(this.transactions);
             } else {
                 this.loading = false;
                 this.transactions = null;

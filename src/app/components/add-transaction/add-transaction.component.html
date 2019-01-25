@@ -1,6 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="!transaction._id || transaction._id === ''">Agregar {{transaction.type.name}}</h4>
-  <h4 class="modal-title" *ngIf="transaction._id && transaction._id !== ''">Editar {{transaction.type.name}}</h4>
+  <h4 class="modal-title" *ngIf="transaction && transaction.type && (!transaction._id || transaction._id === '' )">Agregar {{transaction.type.name}}</h4>
+  <h4 class="modal-title" *ngIf="transaction && transaction._id && transaction._id !== ''">Editar {{transaction.type.name}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -13,12 +13,12 @@
   </div>
   <form [formGroup]="transactionForm" #formAddTransaction="ngForm" (ngSubmit)="addTransaction()" autocomplete="off">
     <div class="modal-body">
-      <div class="row" *ngIf="transaction.type.requestCompany">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestCompany">
         <div class="form-group col-md-12">
           <label for="company" class="control-label">{{ transaction.type.requestCompany }}:</label>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.requestCompany">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestCompany">
         <div class="form-group col-md-10">
           <input type="text" class="form-control" formControlName="company" name="company" readonly/>
         </div>
@@ -28,7 +28,7 @@
           </button>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.requestEmployee">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestEmployee">
         <div class="form-group col-md-12">
           <label for="employeeOpening" class="control-label">Asignar {{ transaction.type.requestEmployee.description }}</label>
           <select class="form-control" formControlName="employeeOpening">
@@ -56,7 +56,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transactionMovement === 'Compra'">
+      <div class="row" *ngIf="transactionMovement && transactionMovement === 'Compra'">
         <div class="form-group col-md-4">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"[readonly]="readonly" />
@@ -93,7 +93,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.tax">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.tax">
         <div class="form-group col-md-12">
           <label for="VATPeriod" class="control-label">Período de IVA:</label>
           <input type="text" class="form-control" formControlName="VATPeriod" name="VATPeriod" [readonly]="readonly" />
@@ -102,7 +102,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
@@ -126,9 +126,9 @@
       </div>
       <app-add-article-tax  (eventAddArticleTax)="addTransactionTaxes($event)"
                             [articleTaxes]="taxes"
-                            *ngIf="transaction.type && transaction.type.requestTaxes&& !transaction.type.requestArticles">
+                            *ngIf="transaction && transaction.type && transaction.type.requestTaxes&& !transaction.type.requestArticles">
       </app-add-article-tax>
-      <div class="row" *ngIf="transaction.type && !transaction.type.requestArticles">
+      <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles">
         <div class="form-group col-md-12">
           <label for="totalPrice" class="control-label">Importe Total:</label>
           <div class="input-group">
@@ -147,12 +147,12 @@
           </textarea>
         </div>
       </div>
-      <div class="row" *ngIf="transaction.type.allowEdit && transaction && transaction._id && transaction._id !== ''">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.allowEdit && transaction && transaction._id && transaction._id !== ''">
         <div class="form-group col-md-12">
           <label for="state" class="control-label">Estado</label>
           <select class="form-control" formControlName="state">
             <option *ngFor="let state of states"
-                    [selected]="transaction.state && state === transaction.state"
+                    [selected]="transaction && transaction.state && state === transaction.state"
                     [value]="state">
               {{state}}
             </option>

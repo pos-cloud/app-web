@@ -40,6 +40,8 @@ export class AddTransactionComponent implements OnInit {
   public transactionForm: FormGroup;
   public companies: Company[];
   @Input() transactionId: string;
+  @Input() transactionTypeId: string;
+  @Input() companyId: string;
   public transaction: Transaction;
   public taxes: Taxes[] = new Array();
   public alertMessage: string = '';
@@ -129,65 +131,98 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
 
-    this.getTransaction(this.transactionId);
+    this.transaction = new Transaction();
+    this.buildForm(); 
 
- 
-
+    if (this.transactionId){
+        this.getTransaction();
+      } else {
+        this.getTransactionType();
+    }
   }
 
-  public getTransaction( transactionId : string) : void {
+  public getTransaction() : void {
 
     this.loading = true;
 
-    this._transactionService.getTransaction(transactionId).subscribe(
+    this._transactionService.getTransaction(this.transactionId).subscribe(
       result => {
         if (result && result.transaction) {
-            this.transaction = result.transaction;
-            console.log(this.transaction);
+          this.transaction = result.transaction;
+          this.transactionMovement = this.transaction.type.transactionMovement.toString();
+          this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+          if(this.transaction.company) {
+            this.companyName = this.transaction.company.name;
+          }
+          this.setValuesForm();
+          if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+            this.getOpenCashBox();
+          }
+          if (this.transaction.type.requestEmployee) {
+            this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
+          }
+        } else {
+            this.transaction = null;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      });
+  }
 
-            if(this.transaction.company) {
-              this.companyName = this.transaction.company.name;
-            }
-        
-            // VERIFICAMOS PARA LAS COMPROBACIONES DE INTERFAZ QUE TIPO DE MOVIMIENTO ES
+  public getTransactionType(): void {
+
+    this._transactionTypeService.getTransactionType(this.transactionTypeId).subscribe(
+      result => {
+         if(result.transactionType) {
+
+            this.transaction.type = result.transactionType;
             this.transactionMovement = this.transaction.type.transactionMovement.toString();
-        
-            // SI ES NUEVA TRANSACCIÓN
-            if (!this.transaction._id || this.transaction._id === '') {
-        
-              // DEFINIMOS EL PUNTO DE VENTA SI TIENE FIJO O NO
-              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-                this.transaction.origin = this.transaction.type.fixedOrigin;
-              }
-        
-              // DEFINIMOS LA LETRA SI TIENE FIJA O NO
-              if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
-                this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
-              }
-        
-              if (this.transaction.type.transactionMovement === TransactionMovement.Purchase ||
-                  this.transaction.type.transactionMovement === TransactionMovement.Money) {
-                this.getLastTransactionByType(false);
-              }
-            }   else {  // TRANSACCIÓN EXISTENTE
-              this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-              if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-                this.getOpenCashBox();
-              }
+            if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+              this.transaction.origin = this.transaction.type.fixedOrigin;
             }
-        
+            
+            if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
+              this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+            }
+
+            this.setValuesForm();
+
+            if (this.transaction.type.transactionMovement === TransactionMovement.Purchase ||
+              this.transaction.type.transactionMovement === TransactionMovement.Money) {
+              this.getLastTransactionByType(false);
+            }
+      
             if (this.transaction.type.requestEmployee) {
               this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
             }
 
-                    
-            this.buildForm();
+            if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+              this.getOpenCashBox();
+            }
 
-        } else {
-            this.transaction = null;
-            this.buildForm();
-        }
-      },
+            if(this.companyId) {
+              this.getCompany();
+            }
+          }
+      }, 
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      });
+  }
+
+  public getCompany(): void {
+
+    this._companyService.getCompany(this.companyId).subscribe(
+      result => {
+         if(result.company) {
+            this.transaction.company = result.company;
+            this.companyName = this.transaction.company.name;
+            this.setValuesForm();
+          }
+      }, 
       error => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
