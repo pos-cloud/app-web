@@ -68,7 +68,8 @@ export class ListTransactionsComponent implements OnInit {
       'observation',
       'discountAmount',
       'totalPrice',
-      'operationType'
+      'operationType',
+      'CAE'
   ];
   public filters: any[];
   public filterValue: string;
@@ -187,7 +188,7 @@ export class ListTransactionsComponent implements OnInit {
             project = '{';
             for (let i = 0; i < this.displayedColumns.length; i++) {
                 let field = this.displayedColumns[i];
-                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":"America/Argentina/Cordoba"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"America/Argentina/Cordoba"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
                 if (i < this.displayedColumns.length - 1) {
                     project += ',';
                 }
@@ -211,8 +212,6 @@ export class ListTransactionsComponent implements OnInit {
                 (page * this.itemsPerPage) :
                     0 // SKIP
 
-                    console.log(project)
-
         this._transactionService.getTransactionsV2(
             project, // PROJECT
             match, // MATCH
@@ -225,8 +224,6 @@ export class ListTransactionsComponent implements OnInit {
             if (result && result.transactions) {
                 this.transactions = result.transactions;
                 this.totalItems = result.count;
-
-                console.log(this.transactions);
             } else {
                 this.loading = false;
                 this.transactions = null;
@@ -273,6 +270,13 @@ export class ListTransactionsComponent implements OnInit {
       case 'edit':
         modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.result.then((result) => {
+          if (result.transaction) {
+            this.getTransactions();
+          }
+        }, (reason) => {
+
+        });
         break;
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
