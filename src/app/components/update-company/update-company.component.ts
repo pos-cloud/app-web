@@ -309,6 +309,8 @@ export class UpdateCompanyComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
+
+
           if (this.company.CUIT && this.company.CUIT !== '') {
             this.identityTypeSelected = "CUIT";
           } else {
@@ -400,20 +402,25 @@ export class UpdateCompanyComponent implements OnInit {
   }
 
   public updateCompany (): void {
-    if (!this.readonly) {
+
+
+    if (!this.readonly ) {
       if (this.identityTypeSelected === "CUIT") {
         this.companyForm.value.DNI = '';
       } else {
         this.companyForm.value.CUIT = '';
       }
-      this.company = this.companyForm.value;
-      if (this.company.birthday) {
-        this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
-      }
 
-      if (this.isValid()) {
-        this.saveChanges();
-      }
+        this.company = this.companyForm.value;
+
+        if (this.company.birthday) {
+          this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+        }
+
+        if (this.isValid()) {
+          this.saveChanges();
+        }
+
     }
   }
 
@@ -421,7 +428,15 @@ export class UpdateCompanyComponent implements OnInit {
 
     let valid: boolean = true;
 
-    if (this.identityTypeSelected === "DNI" && this.company.vatCondition.description !== "Consumidor Final") {
+    let vatCondition
+
+    for (let index = 0; index < this.vatConditions.length; index++) {
+      if (this.vatConditions[index]._id === (this.company.vatCondition).toString()) {
+        vatCondition = this.vatConditions[index].description
+      }
+    }
+
+    if (this.identityTypeSelected === "DNI" && vatCondition !== "Consumidor Final") {
       valid = false;
       this.showMessage("Al ingresar una condición de IVA distinta de Consumidor Final, debe ingresar el CUIT de la empresa", "info", true);
     }

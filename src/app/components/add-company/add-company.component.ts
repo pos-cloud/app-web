@@ -403,9 +403,10 @@ export class AddCompanyComponent  implements OnInit {
 
     let valid: boolean = true;
 
+
     if (this.identityTypeSelected === "DNI" && this.company.vatCondition.description !== "Consumidor Final") {
-        valid = false;
-        this.showMessage("Al ingresar una condición de IVA distinta de Consumidor Final, debe ingresar el CUIT de la empresa", "info", true);
+      valid = false;
+      this.showMessage("Al ingresar una condición de IVA distinta de Consumidor Final, debe ingresar el CUIT de la empresa", "info", true);
     }
 
     return valid;
