@@ -42,7 +42,7 @@
                                                                 totalItems: totalItems
                                                               }">
               <td align="left" width="100">
-                <button *ngIf="cashBox.state === 'Cerrada'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', cashBox)" title="Imprimir">
+                <button *ngIf="cashBox.state === 'Cerrada'" type="button" class="btn btn-secondary btn-sm" (click)="printBoxClosure(cashBox)" title="Imprimir">
                     <i class="fa fa-print"></i>
                 </button>
               </td>

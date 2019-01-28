@@ -7,6 +7,8 @@ import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
 
 import { PrintComponent } from './../../components/print/print.component';
+import { TransactionTypeService } from 'app/services/transaction-type.service';
+import { Printer } from 'app/models/printer';
 
 @Component({
   selector: 'app-list-cash-boxes',
@@ -32,11 +34,12 @@ export class ListCashBoxesComponent implements OnInit {
     public _cashBoxService: CashBoxService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _transactionTypeService: TransactionTypeService
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getCashBoxes();
@@ -47,14 +50,14 @@ export class ListCashBoxesComponent implements OnInit {
     return true;
   }
 
-  public getCashBoxes(): void {  
+  public getCashBoxes(): void {
 
     this.loading = true;
 
     this._cashBoxService.getCashBoxes().subscribe(
         result => {
 					if (!result.cashBoxes) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
 					  this.cashBoxes = null;
             this.areCashBoxesEmpty = true;
 					} else {
@@ -75,9 +78,9 @@ export class ListCashBoxesComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -85,14 +88,42 @@ export class ListCashBoxesComponent implements OnInit {
   public refresh(): void {
     this.getCashBoxes();
   }
-  
-  public openModal(op: string, cashBox: CashBox): void {
+
+  public printBoxClosure(cashBox: CashBox): void {
+    this.getTransactionTypes(cashBox);
+  }
+
+  public getTransactionTypes(cashBox: CashBox): void {
+
+    this.loading = true;
+
+    this._transactionTypeService.getTransactionTypes('where="cashClosing":true,"cashBoxImpact":true').subscribe(
+      result => {
+        if (!result.transactionTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+          this.openModal('print', cashBox);
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.openModal('print', cashBox, result.transactionTypes[0].defectPrinter);
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public openModal(op: string, cashBox: CashBox, printer: Printer = null): void {
 
     let modalRef;
     switch (op) {
       case 'print':
         let modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.cashBox = cashBox;
+        modalRef.componentInstance.printer = printer;
         modalRef.componentInstance.typePrint = 'cash-box';
         modalRef.result.then((result) => {
 

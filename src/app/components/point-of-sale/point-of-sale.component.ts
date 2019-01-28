@@ -339,9 +339,9 @@ export class PointOfSaleComponent implements OnInit {
         );
         break;
       case 'transaction':
-      
+
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
-        //transaction.type = typeTransaction;
+
         if ( !transaction ) {
           modalRef.componentInstance.transactionTypeId = typeTransaction._id;
         } else {
@@ -351,7 +351,7 @@ export class PointOfSaleComponent implements OnInit {
         if(company) {
           modalRef.componentInstance.companyId = company._id;
         }
-        
+
         modalRef.result.then(
           (result) => {
             transaction = result.transaction;
@@ -550,8 +550,8 @@ export class PointOfSaleComponent implements OnInit {
         } else {
           this.hideMessage();
           transaction = result.transaction;
-          if (!transaction.employeeOpening && 
-              transaction.type.requestEmployee && 
+          if (!transaction.employeeOpening &&
+              transaction.type.requestEmployee &&
               transaction.type.requestArticles) {
             this.openModal('select-employee', transaction.type, transaction);
           } else if (!transaction.company && transaction.type.requestCompany) {
@@ -623,8 +623,8 @@ export class PointOfSaleComponent implements OnInit {
           if(close) {
             this.refresh();
           } else {
-            if (!transaction.employeeOpening && 
-              transaction.type.requestEmployee && 
+            if (!transaction.employeeOpening &&
+              transaction.type.requestEmployee &&
               transaction.type.requestArticles) {
               this.openModal('select-employee', transaction.type, transaction);
             } else if (!transaction.company && transaction.type.requestCompany) {

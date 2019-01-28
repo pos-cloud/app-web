@@ -10,7 +10,7 @@ import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
-import { TransactionType, Movements, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
 import { Article } from './../../models/article';
 
@@ -142,6 +142,14 @@ export class PrintComponent implements OnInit {
       result => {
         if (result && result.transaction) {
             this.transaction = result.transaction;
+            if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter) {
+              this.printer = this.transaction.type.defectPrinter;
+              let orientation = "p";
+              if (this.typePrint === "label") {
+                orientation = "l";
+              }
+              this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
+            }
             this.company = this.transaction.company;
             if (this.typePrint === "turn") {
               this.getShiftClosingByTransaccion();
@@ -1067,60 +1075,264 @@ export class PrintComponent implements OnInit {
     if (this.cashBox.openingDate) { this.doc.text('Apertura: ' + this.dateFormat.transform(this.cashBox.openingDate, 'DD/MM/YYYY HH:mm:ss'), margin, row += 5) };
     if (this.cashBox.closingDate) { this.doc.text('Cierre: ' + this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'), margin, row += 5) };
 
-    let openingAmount = 0;
-    let closingAmount = 0;
-    let invoicedAmount = 0;
-    let amountOrders = 0;
-    let amountOrdersCanceled = 0;
-    let invoicedAmountCanceled = 0;
+    let openingAmounts = [];
+    let closingAmounts = [];
+    let inputAmounts = [];
+    let amountsInput = [];
+    let amountsInputCanceled = [];
+    let inputAmountsCanceled = [];
+    let outputAmounts = [];
+    let amountsOutput = [];
+    let amountsOutputCanceled = [];
+    let outputAmountsCanceled = [];
 
     if (close && close.length > 0) {
-      for(let c of close) {
-        openingAmount += c.openingAmount;
-        closingAmount += c.closingAmount;
-        if (amountOrders == 0) {
-          amountOrders += c.amountOrders;
-        }
-        if (amountOrdersCanceled == 0) {
-          amountOrdersCanceled += c.amountOrdersCanceled;
-        }
-        if (invoicedAmount == 0) {
-          if (c._id.movement === Movements.Inflows) {
-            invoicedAmount += c.invoicedAmount;
+      for (let i = 0; i < close.length; i++) {
+        // SUMA MONTO APERTURA
+        if (close[i].type.cashOpening && close[i].state === 'Cerrado') {
+          if (openingAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            invoicedAmount -= c.invoicedAmount;
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
-        if (invoicedAmountCanceled == 0) {
-          invoicedAmountCanceled += c.invoicedAmountCanceled;
+
+        // SUMA MONTO CIERRE
+        if (close[i].type.cashClosing && close[i].state === 'Cerrado') {
+          if (closingAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA MONTO ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
+          if (inputAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA MONTO SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
+          if (outputAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA CANTIDAD ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
+              amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              amountsInput[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
+        }
+
+        // SUMA CANTIDAD SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
+              amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              amountsOutput[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
+        }
+
+        // SUMA MONTO ANULADO ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
+          if (amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA MONTO ANULADO SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
+        }
+
+        // SUMA CANTIDAD ANULADO ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
+          if (inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA CANTIDAD ANULADO SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
         }
       }
-
-      this.doc.text('Facturado: $' + decimalPipe.transform(invoicedAmount, '1.2-2'), margin, row += 5);
-      this.doc.text('Transacciones: ' + amountOrders, margin, row += 5);
-      this.doc.text('Transacciones Anuladas: ' + amountOrdersCanceled, margin, row += 5);
-
-      this.doc.text('Detalle de Cierre:', margin, row += 5);
-      margin = 10;
-      this.doc.text('Monto Apertura:', margin, row += 5);
-      this.doc.text("$" + decimalPipe.transform(openingAmount, '1.2-2'), 50, row);
-      this.doc.text('Total en caja:', margin, row += 5);
-      this.doc.text("$" + decimalPipe.transform(openingAmount + invoicedAmount, '1.2-2'), 50, row);
-      this.doc.text('Monto Cierre:', margin, row += 5);
-      this.doc.text("$" + decimalPipe.transform(closingAmount, '1.2-2'), 50, row);
-      this.doc.text('Diferencia de caja:', margin, row += 5);
-      this.doc.text("$" + decimalPipe.transform(closingAmount - (openingAmount + invoicedAmount), '1.2-2'), 50, row);
-      // this.doc.text('Detalle de Medios de Pago', margin, row += 5);
-      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.cash !== 0) { this.doc.text('Efectivo: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.cash, '1.2-2'), 30, row += 5) };
-      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.currentAccount !== 0) { this.doc.text('Cuenta Corriente: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.currentAccount, '1.2-2'), 30, row += 5) };
-      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.creditCard !== 0) { this.doc.text('Tarjeta de Crédito: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.creditCard, '1.2-2'), 30, row += 5) };
-      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.debitCard !== 0) { this.doc.text('Tarjeta de Débito: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.debitCard, '1.2-2'), 30, row += 5) };
-      // if (this.shiftClosingMovementOfCash && this.shiftClosingMovementOfCash.thirdPartyCheck !== 0) { this.doc.text('Cheque de Terceros: $' + decimalPipe.transform(this.shiftClosingMovementOfCash.thirdPartyCheck, '1.2-2'), 30, row += 5) };
-    } else {
-      this.doc.text('Facturado: $' + decimalPipe.transform(0, '1.2-2'), margin, row += 5);
-      this.doc.text('Tickets: ' + 0, margin, row += 5);
-      this.doc.text('Tickets Anulados: ' + 0, margin, row += 5);
     }
+
+    let input: number = 0;
+    let output: number = 0;
+    let openCash: number = 0;
+    let closeCash: number = 0;
+
+    this.doc.setFontType('bold');
+    this.doc.text("Detalle de Apertura:", margin, row += 5);
+    this.doc.setFontType('normal');
+    if (Object.keys(openingAmounts).length > 0) {
+      for (let k of Object.keys(openingAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(openingAmounts[k], '1.2-2'), 60, row);
+        openCash += openingAmounts[k];
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(openCash, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
+
+    this.doc.setFontType('bold');
+    this.doc.text("Entradas:", margin, row += 5);
+    this.doc.setFontType('normal');
+    if (Object.keys(inputAmounts).length > 0) {
+      for (let k of Object.keys(inputAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(inputAmounts[k], '1.2-2'), 60, row);
+        input += inputAmounts[k];
+        this.doc.setFontType('italic');
+        if (amountsInput[k] === 1) {
+          this.doc.text(amountsInput[k] + ' operación', margin + 10, row += 5);
+        } else {
+          this.doc.text(amountsInput[k] + ' operaciones', margin + 10, row += 5);
+        }
+        this.doc.setFontType('normal');
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(input, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
+
+    this.doc.setFontType('bold');
+    this.doc.text("Salidas:", margin, row += 5);
+    this.doc.setFontType('normal');
+    if (Object.keys(outputAmounts).length > 0) {
+      for (let k of Object.keys(outputAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(outputAmounts[k], '1.2-2'), 60, row);
+        output += outputAmounts[k];
+        this.doc.setFontType('italic');
+        if (amountsOutput[k] === 1) {
+          this.doc.text(amountsOutput[k] + ' operación', margin + 10, row += 5);
+        } else {
+          this.doc.text(amountsOutput[k] + ' operaciones', margin + 10, row += 5);
+        }
+        this.doc.setFontType('normal');
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(output, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
+
+    this.doc.setFontType('bold');
+    this.doc.text("Detalle de Cierre:", margin, row += 5);
+    this.doc.setFontType('normal');
+    if (Object.keys(closingAmounts).length > 0) {
+      for (let k of Object.keys(closingAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k], '1.2-2'), 60, row);
+        closeCash += closingAmounts[k];
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(closeCash, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
+
+    this.doc.setFontType('bold');
+    this.doc.text("Diferencia de caja:", margin, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
+
+    // this.doc.setFontType('italic');
+    // this.doc.text("Observaciones:", margin, row += 5);
+    // this.doc.setFontType('normal');
+
+    // this.doc.setFontType('bold');
+    // this.doc.text("Entradas anuladas:", margin + 5, row += 5);
+    // this.doc.setFontType('normal');
+    // if (Object.keys(inputAmountsCanceled).length > 0) {
+    //   for (let k of Object.keys(inputAmountsCanceled)) {
+    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
+    //     this.doc.text('$ ' + decimalPipe.transform(inputAmountsCanceled[k], '1.2-2'), 60, row);
+    //     this.doc.setFontType('italic');
+    //     if (amountsInputCanceled[k] === 1) {
+    //       this.doc.text(amountsInputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
+    //     } else {
+    //       this.doc.text(amountsInputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
+    //     }
+    //     this.doc.setFontType('normal');
+    //   }
+    // } else {
+    //   this.doc.setFontType('italic');
+    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
+    //   this.doc.setFontType('normal');
+    // }
+
+    // this.doc.setFontType('bold');
+    // this.doc.text("Salidas anuladas:", margin + 5, row += 5);
+    // this.doc.setFontType('normal');
+    // if (Object.keys(outputAmountsCanceled).length > 0) {
+    //   for (let k of Object.keys(outputAmountsCanceled)) {
+    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
+    //     this.doc.text('$ ' + decimalPipe.transform(outputAmountsCanceled[k], '1.2-2'), 60, row);
+    //     this.doc.setFontType('italic');
+    //     if (amountsOutputCanceled[k] === 1) {
+    //       this.doc.text(amountsOutputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
+    //     } else {
+    //       this.doc.text(amountsOutputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
+    //     }
+    //     this.doc.setFontType('normal');
+    //   }
+    // } else {
+    //   this.doc.setFontType('italic');
+    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
+    //   this.doc.setFontType('normal');
+    // }
 
     // Pie de la impresión
     this.doc.setFontStyle("normal");
@@ -1164,76 +1376,264 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
     if (this.cashBox.closingDate) this.doc.text(this.dateFormat.transform(this.cashBox.closingDate, 'DD/MM/YYYY HH:mm:ss'), 40, row);
 
-    let openingAmount = 0;
-    let closingAmount = 0;
-    let invoicedAmount = 0;
-    let amountOrders = 0;
-    let amountOrdersCanceled = 0;
-    let invoicedAmountCanceled = 0;
+    let openingAmounts = [];
+    let closingAmounts = [];
+    let inputAmounts = [];
+    let amountsInput = [];
+    let amountsInputCanceled = [];
+    let inputAmountsCanceled = [];
+    let outputAmounts = [];
+    let amountsOutput = [];
+    let amountsOutputCanceled = [];
+    let outputAmountsCanceled = [];
 
     if (close && close.length > 0) {
-      for (let c of close) {
-        openingAmount += c.openingAmount;
-        closingAmount += c.closingAmount;
-        if (amountOrders == 0) {
-          amountOrders += c.amountOrders;
-        }
-        if (amountOrdersCanceled == 0) {
-          amountOrdersCanceled += c.amountOrdersCanceled;
-        }
-        if (invoicedAmount == 0) {
-          if (c._id.movement === Movements.Inflows) {
-            invoicedAmount += c.invoicedAmount;
+      for (let i = 0; i < close.length; i++) {
+        // SUMA MONTO APERTURA
+        if (close[i].type.cashOpening && close[i].state === 'Cerrado') {
+          if (openingAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
-            invoicedAmount -= c.invoicedAmount;
+            openingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
           }
         }
-        if (invoicedAmountCanceled == 0) {
-          invoicedAmountCanceled += c.invoicedAmountCanceled;
+
+        // SUMA MONTO CIERRE
+        if (close[i].type.cashClosing && close[i].state === 'Cerrado') {
+          if (closingAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            closingAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA MONTO ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
+          if (inputAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            inputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA MONTO SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
+          if (outputAmounts[close[i]['movement-of-cash']['type']['name']]) {
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            outputAmounts[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA CANTIDAD ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
+          if (close[i - 1] && close[i]._id !== close[i-1]._id) {
+            if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
+              amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              amountsInput[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
+        }
+
+        // SUMA CANTIDAD SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
+              amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              amountsOutput[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
+        }
+
+        // SUMA MONTO ANULADO ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
+          if (amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA MONTO ANULADO SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
+        }
+
+        // SUMA CANTIDAD ANULADO ENTRADA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
+          if (inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
+          } else {
+            inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = close[i]['movement-of-cash']['amountPaid'];
+          }
+        }
+
+        // SUMA CANTIDAD ANULADO SALIDA
+        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
+          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
+            if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+            } else {
+              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
+            }
+          }
         }
       }
     }
 
-    this.doc.setFontType('bold');
-    this.doc.text("Facturado:", margin, row += 5);
-    this.doc.setFontType('normal');
-    this.doc.text('$ ' + decimalPipe.transform(invoicedAmount, '1.2-2'), 40, row);
+    let input: number = 0;
+    let output: number = 0;
+    let openCash: number = 0;
+    let closeCash: number = 0;
 
     this.doc.setFontType('bold');
-    this.doc.text("Transacciones:", margin, row += 5);
+    this.doc.text("Detalle de Apertura:", margin, row += 5);
     this.doc.setFontType('normal');
-    this.doc.text(amountOrders.toString(), 40, row);
+    if (Object.keys(openingAmounts).length > 0) {
+      for (let k of Object.keys(openingAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(openingAmounts[k], '1.2-2'), 60, row);
+        openCash += openingAmounts[k];
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(openCash, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
 
     this.doc.setFontType('bold');
-    this.doc.text("Trans. Anuladas:", margin, row += 5);
+    this.doc.text("Entradas:", margin, row += 5);
     this.doc.setFontType('normal');
-    this.doc.text(amountOrdersCanceled.toString(), 40, row);
+    if (Object.keys(inputAmounts).length > 0) {
+      for (let k of Object.keys(inputAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(inputAmounts[k], '1.2-2'), 60, row);
+        input += inputAmounts[k];
+        this.doc.setFontType('italic');
+        if (amountsInput[k] === 1) {
+          this.doc.text(amountsInput[k] + ' operación', margin + 10, row += 5);
+        } else {
+          this.doc.text(amountsInput[k] + ' operaciones', margin + 10, row += 5);
+        }
+        this.doc.setFontType('normal');
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(input, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
 
     this.doc.setFontType('bold');
-    this.doc.text('Detalle de Cierre:', margin, row += 5);
+    this.doc.text("Salidas:", margin, row += 5);
     this.doc.setFontType('normal');
-
-    margin = 20;
+    if (Object.keys(outputAmounts).length > 0) {
+      for (let k of Object.keys(outputAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(outputAmounts[k], '1.2-2'), 60, row);
+        output += outputAmounts[k];
+        this.doc.setFontType('italic');
+        if (amountsOutput[k] === 1) {
+          this.doc.text(amountsOutput[k] + ' operación', margin + 10, row += 5);
+        } else {
+          this.doc.text(amountsOutput[k] + ' operaciones', margin + 10, row += 5);
+        }
+        this.doc.setFontType('normal');
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(output, '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
 
     this.doc.setFontType('bold');
-    this.doc.text("Monto Apertura:", margin, row += 5);
+    this.doc.text("Detalle de Cierre:", margin, row += 5);
     this.doc.setFontType('normal');
-    this.doc.text("$ " + decimalPipe.transform(openingAmount, '1.2-2'), 55, row);
-
+    if (Object.keys(closingAmounts).length > 0) {
+      for (let k of Object.keys(closingAmounts)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k], '1.2-2'), 60, row);
+        closeCash += closingAmounts[k];
+      }
+    } else {
+      this.doc.setFontType('italic');
+      this.doc.text('No se encontraron operaciones', margin + 10, row += 5);
+      this.doc.setFontType('normal');
+    }
     this.doc.setFontType('bold');
-    this.doc.text("Total en caja:", margin, row += 5);
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(closeCash, '1.2-2'), 60, row);
     this.doc.setFontType('normal');
-    this.doc.text("$ " + decimalPipe.transform(openingAmount + invoicedAmount, '1.2-2'), 55, row);
-
-    this.doc.setFontType('bold');
-    this.doc.text("Monto Cierre:", margin, row += 5);
-    this.doc.setFontType('normal');
-    this.doc.text("$ " + decimalPipe.transform(closingAmount, '1.2-2'), 55, row);
 
     this.doc.setFontType('bold');
     this.doc.text("Diferencia de caja:", margin, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
     this.doc.setFontType('normal');
-    this.doc.text("$ " + decimalPipe.transform(closingAmount - (openingAmount + invoicedAmount), '1.2-2'), 55, row);
+
+    // this.doc.setFontType('italic');
+    // this.doc.text("Observaciones:", margin, row += 5);
+    // this.doc.setFontType('normal');
+
+    // this.doc.setFontType('bold');
+    // this.doc.text("Entradas anuladas:", margin + 5, row += 5);
+    // this.doc.setFontType('normal');
+    // if (Object.keys(inputAmountsCanceled).length > 0) {
+    //   for (let k of Object.keys(inputAmountsCanceled)) {
+    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
+    //     this.doc.text('$ ' + decimalPipe.transform(inputAmountsCanceled[k], '1.2-2'), 60, row);
+    //     this.doc.setFontType('italic');
+    //     if (amountsInputCanceled[k] === 1) {
+    //       this.doc.text(amountsInputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
+    //     } else {
+    //       this.doc.text(amountsInputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
+    //     }
+    //     this.doc.setFontType('normal');
+    //   }
+    // } else {
+    //   this.doc.setFontType('italic');
+    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
+    //   this.doc.setFontType('normal');
+    // }
+
+    // this.doc.setFontType('bold');
+    // this.doc.text("Salidas anuladas:", margin + 5, row += 5);
+    // this.doc.setFontType('normal');
+    // if (Object.keys(outputAmountsCanceled).length > 0) {
+    //   for (let k of Object.keys(outputAmountsCanceled)) {
+    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
+    //     this.doc.text('$ ' + decimalPipe.transform(outputAmountsCanceled[k], '1.2-2'), 60, row);
+    //     this.doc.setFontType('italic');
+    //     if (amountsOutputCanceled[k] === 1) {
+    //       this.doc.text(amountsOutputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
+    //     } else {
+    //       this.doc.text(amountsOutputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
+    //     }
+    //     this.doc.setFontType('normal');
+    //   }
+    // } else {
+    //   this.doc.setFontType('italic');
+    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
+    //   this.doc.setFontType('normal');
+    // }
 
     // Pie de la impresión
     this.doc.setFontStyle("normal");
@@ -1265,11 +1665,11 @@ export class PrintComponent implements OnInit {
     if (this.turn.employee) { this.doc.text('Mozo: ' + this.turn.employee.name, 15, row) };
     if (this.turn.startDate) { this.doc.text('Apertura: ' + this.dateFormat.transform(this.turn.startDate, 'DD/MM/YYYY HH:mm'), 15, row += 8) };
     if (this.turn.endDate) { this.doc.text('Cierre: ' + this.dateFormat.transform(this.turn.endDate, 'DD/MM/YYYY HH:mm'), 15, row += 8) };
-    if (this.shiftClosingTransaction) { this.doc.text('Facturado: ' + decimalPipe.transform(this.shiftClosingTransaction.invoicedAmount, '1.2-2'), 15, row += 8) };
+    if (this.shiftClosingTransaction) { this.doc.text('Facturado: ' + decimalPipe.transform(this.shiftClosingTransaction.inputAmount, '1.2-2'), 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Facturado: $0.00', 15, row += 8) };
-    if (this.shiftClosingTransaction) { this.doc.text('Tickets: ' + this.shiftClosingTransaction.amountOrders, 15, row += 8) };
+    if (this.shiftClosingTransaction) { this.doc.text('Tickets: ' + this.shiftClosingTransaction.amountInput, 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Tickets: 0', 15, row += 8) };
-    if (this.shiftClosingTransaction) { this.doc.text('Tiques Anulados: ' + this.shiftClosingTransaction.amountOrdersCanceled, 15, row += 8) };
+    if (this.shiftClosingTransaction) { this.doc.text('Tiques Anulados: ' + this.shiftClosingTransaction.amountInputCanceled, 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Tickets Anulados: 0', 15, row += 8) };
     if (this.shiftClosingTransaction && this.shiftClosingTransaction.detailCanceled && this.shiftClosingTransaction.detailCanceled.length > 0) {
       this.doc.text('Detalle de Tickets Anulados:', 15, row += 8)

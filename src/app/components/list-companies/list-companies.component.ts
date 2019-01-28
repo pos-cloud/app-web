@@ -228,30 +228,34 @@ export class ListCompaniesComponent implements OnInit {
   }
 
   exportAsXLSX():void {
-    
+
     let data = [] ;
 
     for (let index = 0; index < this.companies.length; index++) {
 
-      data[index] = {
-        Nombre : this.companies[index].name,
-        NombredeFantasía : this.companies[index].fantasyName,
-        Direccion : this.companies[index].address,
-        Telefono : this.companies[index].phones,
-        observacion : this.companies[index].observation,
-        CUIT : this.companies[index].CUIT,
-        DNI : this.companies[index].DNI,
-        Ciudad : this.companies[index].city
-      }
-      
-      if (this.companies[index].group) {
-        data[index]['Grupo'] = this.companies[index].group.description;
-      }
+      data[index] = {};
+      data[index]['Nombre'] = this.companies[index].name;
+      data[index]['Nombre de Fantasía'] = this.companies[index].fantasyName;
 
       if (this.companies[index].vatCondition) {
         data[index]['CondiciónDeIVA'] = this.companies[index].vatCondition.description;
-      } 
+      } else {
+        data[index]['CondiciónDeIVA'] = 'Consumidor Final';
+      }
+      data[index]['DNI'] = this.companies[index].DNI;
+      data[index]['CUIT'] = this.companies[index].CUIT;
+      data[index]['Teléfono'] = this.companies[index].phones;
+      data[index]['Dirección'] = this.companies[index].address;
+      data[index]['Ciudad'] = this.companies[index].city;
+      data[index]['Cumpleaños'] = this.companies[index].birthday;
+      data[index]['Género'] = this.companies[index].gender;
+      data[index]['Observación'] = this.companies[index].observation;
 
+      if (this.companies[index].group) {
+        data[index]['Grupo'] = this.companies[index].group.description;
+      } else {
+        data[index]['Grupo'] = '';
+      }
     }
     this._companyService.exportAsExcelFile(data, this.type.toString());
  }
