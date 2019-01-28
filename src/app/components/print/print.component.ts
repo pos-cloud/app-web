@@ -1930,6 +1930,8 @@ export class PrintComponent implements OnInit {
 
         if (i == 20) {
 
+          i = 0;
+
           this.getGreeting();
           this.getFooter();
           row = 85;
