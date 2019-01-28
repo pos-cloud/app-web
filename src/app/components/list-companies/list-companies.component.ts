@@ -226,4 +226,34 @@ export class ListCompaniesComponent implements OnInit {
   public hideMessage():void {
     this.alertMessage = '';
   }
+
+  exportAsXLSX():void {
+    
+    let data = [] ;
+
+    for (let index = 0; index < this.companies.length; index++) {
+
+      data[index] = {
+        Nombre : this.companies[index].name,
+        NombredeFantasía : this.companies[index].fantasyName,
+        Direccion : this.companies[index].address,
+        Telefono : this.companies[index].phones,
+        observacion : this.companies[index].observation,
+        CUIT : this.companies[index].CUIT,
+        DNI : this.companies[index].DNI,
+        Ciudad : this.companies[index].city
+      }
+      
+      if (this.companies[index].group) {
+        data[index]['Grupo'] = this.companies[index].group.description;
+      }
+
+      if (this.companies[index].vatCondition) {
+        data[index]['CondiciónDeIVA'] = this.companies[index].vatCondition.description;
+      } 
+
+    }
+    this._companyService.exportAsExcelFile(data, this.type.toString());
+ }
+
 }

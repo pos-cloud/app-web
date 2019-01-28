@@ -43,6 +43,7 @@
     "classlist.js": "1.1.20150312",
     "core-js": "2.5.3",
     "d3": "4.13.0",
+    "file-saver": "^2.0.0",
     "hammerjs": "2.0.8",
     "intl": "1.2.5",
     "jspdf": "^1.3.5",
@@ -60,6 +61,7 @@
     "tether": "^1.4.0",
     "tinymce": "4.6.6",
     "web-animations-js": "2.3.1",
+    "xlsx": "^0.14.1",
     "zone.js": "0.8.20"
   },
   "devDependencies": {
