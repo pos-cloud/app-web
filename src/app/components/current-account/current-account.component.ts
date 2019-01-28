@@ -27,6 +27,7 @@ import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { TransactionType } from 'app/models/transaction-type';
 
 @Component({
   selector: 'app-current-account',
@@ -163,8 +164,6 @@ export class CurrentAccountComponent implements OnInit {
 
   public openModal(op: string, transaction?: Transaction): void {
 
-
-
     let modalRef;
     switch (op) {
       case 'transaction':
@@ -172,7 +171,15 @@ export class CurrentAccountComponent implements OnInit {
         if(this.balance < 0) {
           transaction.totalPrice = this.balance * (-1);
         }
-        modalRef.componentInstance.transactionId = transaction._id;
+        if (transaction && transaction._id) {
+          modalRef.componentInstance.transactionId = transaction._id;
+        }
+        if (transaction.type) {
+          modalRef.componentInstance.transactionTypeId = transaction.type._id;
+        }
+        if (transaction.company) {
+          modalRef.componentInstance.companyId = transaction.company._id;
+        }
         modalRef.result.then(
           (result) => {
             if (result.transaction) {
@@ -310,17 +317,19 @@ export class CurrentAccountComponent implements OnInit {
 
     this._transactionTypeService.getTransactionTypeByName(name).subscribe(
       result => {
+        console.log(result);
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           let transaction = new Transaction();
-          transaction.company = this.companySelected;
           transaction.type = result.transactionTypes[0];
+          transaction.company = this.companySelected;
           this.openModal('transaction', transaction);
         }
         this.loading = false;
       },
       error => {
+        console.log(error);
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
