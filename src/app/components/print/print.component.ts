@@ -1126,23 +1126,19 @@ export class PrintComponent implements OnInit {
 
         // SUMA CANTIDAD ENTRADA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
-              amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              amountsInput[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
+            amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            amountsInput[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
         // SUMA CANTIDAD SALIDA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
-              amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              amountsOutput[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
+            amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            amountsOutput[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
@@ -1157,12 +1153,10 @@ export class PrintComponent implements OnInit {
 
         // SUMA MONTO ANULADO SALIDA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
-              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
@@ -1177,12 +1171,10 @@ export class PrintComponent implements OnInit {
 
         // SUMA CANTIDAD ANULADO SALIDA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
-              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
       }
@@ -1427,23 +1419,19 @@ export class PrintComponent implements OnInit {
 
         // SUMA CANTIDAD ENTRADA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
-          if (close[i - 1] && close[i]._id !== close[i-1]._id) {
-            if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
-              amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              amountsInput[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
+            amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            amountsInput[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
         // SUMA CANTIDAD SALIDA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
-              amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              amountsOutput[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
+            amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            amountsOutput[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
@@ -1458,12 +1446,10 @@ export class PrintComponent implements OnInit {
 
         // SUMA MONTO ANULADO SALIDA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
-              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
 
@@ -1478,12 +1464,10 @@ export class PrintComponent implements OnInit {
 
         // SUMA CANTIDAD ANULADO SALIDA
         if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
-          if (close[i - 1] && close[i]._id !== close[i - 1]._id) {
-            if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
-              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
-            } else {
-              outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
-            }
+          if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
+          } else {
+            outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] = 1;
           }
         }
       }
