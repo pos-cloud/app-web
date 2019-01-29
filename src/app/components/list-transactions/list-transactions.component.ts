@@ -22,7 +22,6 @@ import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
-import moment = require('moment');
 
 @Component({
   selector: 'app-list-transactions',

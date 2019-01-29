@@ -542,7 +542,7 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
     transaction.madein = this.posType;
-
+    console.log(transaction);
     this._transactionService.saveTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -558,7 +558,7 @@ export class PointOfSaleComponent implements OnInit {
               this.openModal('company', transaction.type, transaction);
           } else if (transaction.type.requestArticles) {
             if (this.transactionMovement !== TransactionMovement.Purchase) {
-              this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction.type._id]);
+              this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
             } else {
               this.openModal('transaction', transaction.type, transaction);
             }
@@ -631,7 +631,7 @@ export class PointOfSaleComponent implements OnInit {
                 this.openModal('company', transaction.type, transaction);
             } else if (transaction.type.requestArticles) {
               if (this.transactionMovement !== TransactionMovement.Purchase) {
-                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction.type._id]);
+                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
               } else {
                 this.openModal('transaction', transaction.type, transaction);
               }
