@@ -64,6 +64,7 @@ export class AddTransactionComponent implements OnInit {
     TransactionState.Pending
   ];
   public companyName: string = "Consumidor Final";
+  public transactionDate: string;
 
   public formErrors = {
     'date': '',
@@ -132,6 +133,7 @@ export class AddTransactionComponent implements OnInit {
     this.posType = pathLocation[2];
 
     this.transaction = new Transaction();
+    this.transactionDate = this.transaction.startDate;
     this.buildForm();
 
     if (this.transactionId){
@@ -151,6 +153,11 @@ export class AddTransactionComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction = result.transaction;
+          if(this.transaction.endDate) {
+            this.transactionDate = this.transaction.endDate;
+          } else {
+            this.transactionDate = this.transaction.startDate;
+          }
           this.transactionMovement = this.transaction.type.transactionMovement.toString();
           this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
           if(this.transaction.company) {
@@ -286,7 +293,7 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
-      'date': [moment(this.transaction.startDate).format('YYYY-MM-DD'), [
+      'date': [moment(this.transactionDate).format('YYYY-MM-DD'), [
           Validators.required
         ]
       ],
@@ -359,7 +366,7 @@ export class AddTransactionComponent implements OnInit {
 
     this.transactionForm.setValue({
       'company': this.companyName,
-      'date': moment(this.transaction.startDate).format('YYYY-MM-DD'),
+      'date': moment(this.transactionDate).format('YYYY-MM-DD'),
       'origin': this.transaction.origin,
       'letter': this.transaction.letter,
       'number': this.transaction.number,

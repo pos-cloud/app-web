@@ -76,6 +76,7 @@ export class AddSaleOrderComponent implements OnInit {
   public categorySelected: Category;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
+  @ViewChild('contentChangeDate') contentChangeDate: ElementRef;
   public paymentAmount: number = 0.00;
   public typeOfOperationToPrint: string;
   public kitchenArticlesToPrint: MovementOfArticle[];
@@ -1139,6 +1140,17 @@ export class AddSaleOrderComponent implements OnInit {
         }, (reason) => {
         });
         break;
+      case 'change-date':
+        modalRef = this._modalService.open(this.contentChangeDate).result.then((result) => {
+          if (result !== "cancel" && result !== '') {
+            if(this.transaction.endDate && moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()) {
+              this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+              this.updateTransaction();
+            }
+          }
+        }, (reason) => {
+        });
+        break;
       case 'change-employee':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
@@ -1185,11 +1197,15 @@ export class AddSaleOrderComponent implements OnInit {
 
   public finish(): void {
 
-    if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+    if (!this.transaction.endDate) {
       this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-      this.transaction.VATPeriod = moment().format('YYYYMM');
-      this.transaction.expirationDate = this.transaction.endDate;
     }
+    if(this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      this.transaction.VATPeriod = moment().format('YYYYMM');
+    } else if (!this.transaction.VATPeriod) {
+      this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+    }
+    this.transaction.expirationDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
     this.updateTransaction(false);
 
