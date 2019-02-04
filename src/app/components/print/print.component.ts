@@ -155,6 +155,7 @@ export class PrintComponent implements OnInit {
               this.getShiftClosingByTransaccion();
             } else if (this.typePrint === "invoice") {
               if (this.transaction.type.requestArticles) {
+                
                 this.getMovementOfArticle();
               } else {
                 this.getMovementOfCash();
@@ -2493,7 +2494,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontStyle('bold');
     row += 5;
     this.doc.setFontSize(15);
-    this.centerText(margin, margin, this.printer.pageWidth, 15, row, "TOTAL $ "+ this.transaction.totalPrice);
+    this.centerText(margin, margin, this.printer.pageWidth, 2, row, "TOTAL $ "+ this.transaction.totalPrice);
     //this.doc.text("$ " + this.transaction.totalPrice, this.printer.pageWidth/1.4, row);
     this.doc.setFontStyle("normal");
 
