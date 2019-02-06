@@ -1145,6 +1145,8 @@ export class AddSaleOrderComponent implements OnInit {
           if (result !== "cancel" && result !== '') {
             if(this.transaction.endDate && moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()) {
               this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+              this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+              this.transaction.expirationDate = this.transaction.endDate;
               this.updateTransaction();
             }
           }
@@ -1200,9 +1202,7 @@ export class AddSaleOrderComponent implements OnInit {
     if (!this.transaction.endDate) {
       this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     }
-    if(this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-      this.transaction.VATPeriod = moment().format('YYYYMM');
-    } else if (!this.transaction.VATPeriod) {
+    if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
       this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
     }
     this.transaction.expirationDate = this.transaction.endDate;
