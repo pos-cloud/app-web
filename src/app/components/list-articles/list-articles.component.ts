@@ -322,7 +322,8 @@ export class ListArticlesComponent implements OnInit {
         }
       }
 
-      if ( count === 1 &&
+      if (  count === 1 &&
+            this.filterArticle &&
           ( article &&
             article.barcode === this.filterArticle ||
             article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
