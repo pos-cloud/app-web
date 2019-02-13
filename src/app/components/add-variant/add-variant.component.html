@@ -36,22 +36,28 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th  width="130"><i class="fa fa-bars"></i></th>
-              <th>Variante</th>
-              <th>Código de barras</th>
+              <th>Tipo</th>
+              <th>Valores</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let articleAux of articlesWithVariants">
-              <td align="left" width="130">
-                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteVariant(articleAux)">
-                  <i class="fa fa-trash-o"></i>
-                </button>
+            <tr *ngFor="let vt of variantsByTypes">
+              <td class="flat">{{vt.type.name}}</td>
+              <td class="flat">
+                <div class="btn-group" *ngFor="let v of vt.value">
+                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-sm">
+                      {{v.description}}
+                    </label>
+                    <label class="btn btn-sm btn-danger" (click)="deleteVariant(v)">
+                      <input type="radio" name="options" autocomplete="off">
+                      <i class="fa fa-trash-o"></i>
+                    </label>
+                  </div>
+                </div>
               </td>
-              <td class="flat" width="430">{{articleAux.variantDescription}}</td>
-              <td class="flat"><input type="text" [value]="articleAux.barcode"/></td>
             </tr>
-            <tr align="center" *ngIf="!articlesWithVariants || articlesWithVariants.length === 0 && !loading">
+            <tr align="center" *ngIf="!variantsByTypes || variantsByTypes.length === 0 && !loading">
               <td colspan="10">No se encontraron variantes</td>
             </tr>
           </tbody>

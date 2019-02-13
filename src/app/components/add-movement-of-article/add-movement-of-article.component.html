@@ -67,7 +67,7 @@
       </div>
       <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
         <div class="form-group col-md-12">
-          <label for="variants" class="control-label">Seleccione las variantes:</label>
+          <label for="variants" class="control-label"><b>Seleccione las variantes:</b></label>
         </div>
       </div>
       <div class="row" *ngIf="variantTypes && variantTypes.length > 0">
@@ -113,7 +113,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="button" class="btn btn-danger" (click)="deleteMovementOfArticle()" [disabled]="false">Eliminar</button>
+      <button type="button" class="btn btn-danger" *ngIf="movementOfArticle && movementOfArticle._id && movementOfArticle._id !== ''" (click)="deleteMovementOfArticle()" [disabled]="false">Eliminar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!movementOfArticleForm.valid || loading">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>

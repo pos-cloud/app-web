@@ -168,6 +168,12 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
+    path: 'admin/variantes',
+    component: ListArticlesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
     path: 'admin/agregar-producto',
     component: AddArticleComponent,
     canActivate: [AuthGuard],

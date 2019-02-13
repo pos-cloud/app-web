@@ -542,7 +542,7 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
     transaction.madein = this.posType;
-    console.log(transaction);
+
     this._transactionService.saveTransaction(transaction).subscribe(
       result => {
         if (!result.transaction) {

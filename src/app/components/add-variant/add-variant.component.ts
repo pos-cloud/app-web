@@ -2,17 +2,16 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Variant } from './../../models/variant';
 import { VariantType } from './../../models/variant-type';
 import { VariantValue } from './../../models/variant-value';
-import { Article, ArticleType } from './../../models/article';
+import { Article } from './../../models/article';
 
 import { VariantService } from './../../services/variant.service';
 import { VariantValueService } from './../../services/variant-value.service';
 import { VariantTypeService } from './../../services/variant-type.service';
-import { last } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-variant',
@@ -24,11 +23,11 @@ import { last } from 'rxjs/operators';
 export class AddVariantComponent implements OnInit {
 
   public variant: Variant;
+  @Input() variants: Variant[];
+  public variantsByTypes: any[];
   @Input() article: Article;
-  public variants: Variant[] = new Array();
-  @Input() articlesWithVariants: Article[];
-  public variantsByArticles = new Array();
-  public variantTypes: VariantType[] = new Array();
+  @Output() eventAddVariants: EventEmitter<Variant[]> = new EventEmitter<Variant[]>();
+  public variantTypes: VariantType[];
   public variantTypeSelected: VariantType;
   public variantValues: VariantValue[];
   public variantForm: FormGroup;
@@ -38,7 +37,6 @@ export class AddVariantComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public areVariantsEmpty: boolean;
   public lastVariant: Variant;
-  @Output() eventAddVariants: EventEmitter<Article[]> = new EventEmitter<Article[]>();
 
   public formErrors = {
     'type': '',
@@ -64,25 +62,19 @@ export class AddVariantComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
+    this.variantTypes = new Array();
+    this.variantsByTypes = new Array();
   }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.user = pathLocation[1];
-    if (this.article && 
-        this.article._id && 
-        this.article._id !== '' &&
-        this.variants &&
-        this.variants.length === 0) {
-      this.getVariantsByArticleParent();
-    }
-    if (!this.articlesWithVariants) this.articlesWithVariants = new Array();
-    this.getVariantTypes();
     if (!this.variant) {
       this.variant = new Variant();
       this.variant.articleParent = this.article;
     }
+    this.getVariantTypes();
     this.buildForm();
   }
 
@@ -129,51 +121,6 @@ export class AddVariantComponent implements OnInit {
     this.variantTypeSelected = this.variantForm.value.type;
   }
 
-  public getVariantsByArticleParent(): void {
-
-    this.loading = true;
-
-    this._variantService.getVariantsByArticleParent(this.article).subscribe(
-      result => {
-        if (!result.variants) {
-          this.areVariantsEmpty = true;
-          this.variants = null;
-        } else {
-          this.variants = this.getUniqueVariants(result.variants);
-          this.areVariantsEmpty = false;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getUniqueVariants(variants: Variant[]): Variant[] {
-
-    let variantsToReturn: Variant[] = new Array();
-
-    for (let variant of variants) {
-      if (variantsToReturn && variantsToReturn.length > 0) {
-        let exists: boolean = false;
-        for (let variantAux of variantsToReturn) {
-          if (variantAux.value._id === variant.value._id) {
-            exists = true;
-          }
-        }
-        if (!exists) {
-          variantsToReturn.push(variant);
-        }
-      } else {
-        variantsToReturn.push(variant);
-      }
-    }
-
-    return variantsToReturn;
-  }
-
   public getVariantTypes(): void {
 
     this.loading = true;
@@ -181,13 +128,17 @@ export class AddVariantComponent implements OnInit {
     this._variantTypeService.getVariantTypes().subscribe(
       result => {
         if (!result.variantTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.variantTypes = null;
+          this.variantTypes = new Array();
         } else {
           this.hideMessage();
           this.loading = false;
           this.variantTypes = result.variantTypes;
+          if(this.variants && this.variants.length > 0) {
+            for(let variant of this.variants) {
+              this.setVariantByType(variant);
+            }
+          }
         }
       },
       error => {
@@ -201,7 +152,7 @@ export class AddVariantComponent implements OnInit {
 
     if (!this.variant.type) this.variant.type = null;
     if (!this.variant.value) this.variant.value = null;
-    
+
     this.variantForm.setValue({
       'type': this.variant.type,
       'value': this.variant.value
@@ -227,9 +178,9 @@ export class AddVariantComponent implements OnInit {
     this._variantValueService.getVariantValuesByType(variantType).subscribe(
       result => {
         if (!result.variantValues) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.variantValues = null;
+          this.variantValues = new Array();
         } else {
           this.hideMessage();
           this.loading = false;
@@ -243,10 +194,6 @@ export class AddVariantComponent implements OnInit {
     );
   }
 
-  public openModal(op: string, article: Article): void {
-
-  };
-
   public addVariant(): void {
 
     //Capturamos los valores del formulario de la variante a añadir
@@ -256,81 +203,12 @@ export class AddVariantComponent implements OnInit {
     if (!this.variantExists(this.variant)) {
 
       this.variant.articleParent = this.article;
-
-      //Consultamos si ya fue creado algun producto Child
-      if (this.articlesWithVariants && this.articlesWithVariants.length === 0) {
-        //Si no fue creado un producto child lo creamos, le asigamos nombre de variante y almacenamos
-        let article: Article = this.copyArticle(this.article);
-        article.variantDescription = this.variant.value.description;
-        this.variant.articleChild = article;
-        this.articlesWithVariants.push(article);
-        this.eventAddVariants.emit(this.articlesWithVariants);
-
-        //Almacenamos según la descripción las variantes que le pertecen
-        this.variantsByArticles[article.variantDescription] = new Array();
-        this.variantsByArticles[article.variantDescription].push(this.variant);
-        this.lastVariant = this.variant;
-      } else {
-        //Si fue creado algun producto Child, consultamos si el tipo de variante existe
-        if (this.variantTypeExists(this.variant.type)) {
-          //Juntamos las variantes del primer producto existente por su descripcion para poder unirlas al nuevo producto Child
-          //y solo cambiar la variante que nos hace falta
-          this.variant.articleParent = this.lastVariant.articleParent;
-          this.variant.articleChild = this.lastVariant.articleChild;
-          let variantsByArticlesAux = new Array();
-          let array = new Array();
-          if (this.variantsByArticles) {
-            for (let desc in this.variantsByArticles) {
-              let article: Article = this.copyArticle(this.variant.articleChild);
-              array = this.copyArray(this.variantsByArticles[desc]);
-              if (array && array.length > 0) {
-                for (let i = 0; i < array.length; i++) {
-                  if (array[i].type._id === this.variant.type._id) {
-                    article.variantDescription += this.variant.value.description;
-                    variantsByArticlesAux.push(this.variant);
-                  } else {
-                    article.variantDescription += array[i].value.description;
-                    variantsByArticlesAux.push(array[i]);
-                  }
-      
-                  if (i < (array.length - 1)) {
-                    article.variantDescription += " / ";
-                  }
-                }
-              }
-  
-              if (!this.setOfVariantsExists(article.variantDescription)) {
-                this.articlesWithVariants.push(article);
-                this.eventAddVariants.emit(this.articlesWithVariants);
-                this.variantsByArticles[article.variantDescription] = this.copyArray(variantsByArticlesAux);
-              }
-            }
-          }
-          //Almacenamos nuevo producto, y almacenamos en ese productos todas las variantes que le corresponden
-        } else {
-          //Creamos una copia de variantes de productos y lo vaciamos
-          let variantsByArticlesAux = new Array();
-          variantsByArticlesAux = this.copyArray(this.variantsByArticles);
-          this.variantsByArticles = new Array();
-          //Si el tipo no existe recorremos todos los productos y le agregamos la variante solicitada
-          for (let articleAux of this.articlesWithVariants) {
-            //Guardamos las variantes en un arreglo provisorio para eliminar el elemento del arreglo
-            let variantsByArticleAux = this.copyArray(variantsByArticlesAux[articleAux.variantDescription]);
-            //Agregamos la variante a la descripción
-            articleAux.variantDescription += " / " + this.variant.value.description;
-            //Creamos un nuevo elemento en el arreglo y agregamos la variante que se solicita
-            this.variantsByArticles[articleAux.variantDescription] = new Array();
-            if(variantsByArticleAux && variantsByArticleAux.length > 0) {
-              for (let i = 0; i < variantsByArticleAux.length; i++) {
-                this.variantsByArticles[articleAux.variantDescription].push(variantsByArticleAux[i]);
-              }
-            }
-            this.variantsByArticles[articleAux.variantDescription].push(this.variant);
-          }
-        }
-      }
       this.variants.push(this.variant);
+      this.setVariantByType(this.variant);
+      this.eventAddVariants.emit(this.variants);
+      let variantTypeAux = this.variant.type;
       this.variant = new Variant();
+      this.variant.type = variantTypeAux;
       this.setValueForm();
       this.buildForm();
     } else {
@@ -338,67 +216,68 @@ export class AddVariantComponent implements OnInit {
     }
   }
 
-  public updateVariant(article: Article): void {
-    this.openModal('update', article);
-  }
+  private setVariantByType(variant: Variant): void {
 
-  public copyArticle(articleToCopy: Article): Article {
+    let exist: boolean = false;
 
-    let article: Article = new Article();
-    article.type = ArticleType.Variant;
-    article.containsVariants = false;
-    article.code = articleToCopy.code;
-    article.description = articleToCopy.description;
-    article.posDescription = articleToCopy.posDescription;
-    article.variantDescription = '';
-    article.observation = articleToCopy.observation;
-    article.basePrice = articleToCopy.basePrice;
-    article.costPrice = articleToCopy.costPrice;
-    article.markupPercentage = articleToCopy.markupPercentage;
-    article.markupPrice = articleToCopy.markupPrice;
-    article.salePrice = articleToCopy.salePrice;
-    article.make = articleToCopy.make;
-    article.category = articleToCopy.category;
-    article.barcode = articleToCopy.barcode;
-    article.printIn = articleToCopy.printIn;
-    article.allowPurchase = articleToCopy.allowPurchase;
-    article.allowSale = articleToCopy.allowSale;
-    article.allowSaleWithoutStock = articleToCopy.allowSaleWithoutStock;
-    article.printed = articleToCopy.printed;
-
-    return article;
-  }
-
-  public copyArray(arrayToCopy) {
-    
-    let array = new Array();
-
-    if (arrayToCopy && arrayToCopy.length && arrayToCopy.length > 0) {
-      for(let i = 0; i < arrayToCopy.length; i++) {
-        array.push(arrayToCopy[i]);
-      }
-    } else {
-      for (let prop in arrayToCopy) {
-        array[prop] = arrayToCopy[prop];
+    for(let v of this.variantsByTypes) {
+      if(v.type._id === variant.type._id) {
+        exist = true;
+        v.value.push(variant.value);
       }
     }
 
-    return array;
+    if(!exist) {
+      this.variantsByTypes.push({
+        type: variant.type,
+        value: [variant.value]
+      });
+    }
   }
 
-  public variantTypeExists(variantType: VariantType): boolean {
+  public deleteVariant(v) {
 
-    var exists: boolean = false;
+    let countvt: number = 0;
 
-    if (this.variants && this.variants.length > 0) {
-      for (var variantAux of this.variants) {
-        if (variantAux.type._id === variantType._id) {
-          exists = true;
+    for (let vt of this.variantsByTypes) {
+      let typeId = v.type;
+      if (v.type && v.type._id) {
+        typeId = v.type._id;
+      }
+      if (vt.type._id === typeId) {
+        let countval: number = 0;
+        let delval: number = -1;
+        for(let val of vt.value) {
+          if (val._id == v._id) {
+            delval = countval;
+
+          }
+          countval++;
+        }
+        if(delval !== -1) {
+          vt.value.splice(delval, 1);
+        }
+        if(vt.value.length === 0) {
+          this.variantsByTypes.splice(countvt, 1);
         }
       }
+      countvt++;
     }
 
-    return exists;
+    if (this.variants && this.variants.length > 0) {
+      let countvar: number = 0;
+      let delvar: number = -1;
+      for (var variantAux of this.variants) {
+        if (variantAux.value._id === v._id) {
+          delvar = countvar;
+        }
+        countvar++;
+      }
+      if (delvar !== -1) {
+        this.variants.splice(delvar, 1);
+      }
+    }
+    this.eventAddVariants.emit(this.variants);
   }
 
   public variantExists(variant: Variant): boolean {
@@ -409,21 +288,6 @@ export class AddVariantComponent implements OnInit {
       for (var variantAux of this.variants) {
         if (variantAux.type._id === variant.type._id &&
           variantAux.value._id === variant.value._id) {
-          exists = true;
-        }
-      }
-    }
-
-    return exists;
-  }
-
-  public setOfVariantsExists(variantDescription: string): boolean {
-
-    let exists: boolean = false;
-
-    if (this.articlesWithVariants && this.articlesWithVariants.length > 0) {
-      for(let i = 0; i < this.articlesWithVariants.length; i++) {
-        if (this.articlesWithVariants[i].variantDescription === variantDescription) {
           exists = true;
         }
       }

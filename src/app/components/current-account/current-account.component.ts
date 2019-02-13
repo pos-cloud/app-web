@@ -317,7 +317,6 @@ export class CurrentAccountComponent implements OnInit {
 
     this._transactionTypeService.getTransactionTypeByName(name).subscribe(
       result => {
-        console.log(result);
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
@@ -329,7 +328,6 @@ export class CurrentAccountComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        console.log(error);
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }

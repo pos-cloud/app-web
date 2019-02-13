@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { Article, ArticleType } from './../models/article';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
+import { Variant } from 'app/models/variant';
 
 @Injectable()
 export class ArticleService {
@@ -53,15 +54,15 @@ export class ArticleService {
 		return this._http.get(Config.apiURL + 'articles/where="type":"' + ArticleType.Final + '"', { headers: headers }).map(res => res.json());
 	}
 
-	saveArticle(article: Article) {
+  saveArticle(article: Article, variants: Variant[]) {
 		let headers = new Headers({
 		'Content-Type': 'application/json',
 				'Authorization': this._userService.getToken(),
 				'Database': this._userService.getDatabase()
-		});
-		return this._http.post(Config.apiURL + "article",article, { headers: headers }).map (res => res.json());
+    });
+		return this._http.post(Config.apiURL + "article", { "article": article, "variants": variants }, { headers: headers }).map (res => res.json());
 	}
-  
+
 	deleteArticle (id: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
@@ -71,13 +72,13 @@ export class ArticleService {
 			return this._http.delete(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
 	}
 
-	updateArticle (article: Article){
+  updateArticle(article: Article, variants: Variant[]){
 			let headers = new Headers({
 				'Content-Type': 'application/json',
 				'Authorization': this._userService.getToken(),
 				'Database': this._userService.getDatabase()
 			});
-			return this._http.put(Config.apiURL + "article/"+article._id, article, { headers: headers }).map (res => res.json());
+    return this._http.put(Config.apiURL + "article/" + article._id, { "article": article, "variants": variants }, { headers: headers }).map (res => res.json());
 	}
 
   	getArticlesByCategory (categoryId: string) {
@@ -97,7 +98,7 @@ export class ArticleService {
 		});
 		return this._http.post(Config.apiURL + "upload-image/"+id,'', { headers: headers }).map (res => res.json());
 	}
-	
+
 	public makeFileRequest(idArticle: String, files: Array<File>) {
 
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
@@ -135,7 +136,7 @@ export class ArticleService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		
+
 		return this._http.get(Config.apiURL + "get-best-selling-article/" + query, { headers: headers }).map(res => res.json());
 	}
 
@@ -146,9 +147,9 @@ export class ArticleService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		
+
 		return this._http.put(Config.apiURL + "update-price", query ,{ headers: headers}).map(res => res.json());
 	}
 
-	
+
 }

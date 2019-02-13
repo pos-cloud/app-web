@@ -6,10 +6,10 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Productos
+    <div class="card-header bg-primary">Listado de {{ listTitle }}
       <div class="pull-right">
        <!--<button class="btn btn-primary" (click)="openModal('update-price',null)"><i class="fa fa-dollar-sign"> Actualizar Precios</i></button>-->
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Producto</i></button>
+        <button class="btn btn-primary" (click)="openModal('add', null)" *ngIf="articleType.toString() === 'Final'"><i class="fa fa-plus"> Agregar Producto</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <button class="btn btn-primary" (click)="openModal('print', null, 'priceList')"><i class="fa fa-print"></i> Imprimir Lista</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
@@ -62,7 +62,7 @@
             <td align="left" width="174">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)" title="Editar"><i class="fa fa-pencil"></i></button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <button type="button" class="btn btn-danger btn-sm" *ngIf="article && article.type && article.type.toString() !== 'Variante'" (click)="openModal('delete', article)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article, 'label')" title="Imprimir Etiqueta"><i class="fa fa-print"></i></button>
             </td>
             <td>{{article.code}}</td>
@@ -124,6 +124,7 @@
 <section class="container-fluid" *ngIf="userType==='pos'">
   <div class="row" *ngIf="areArticlesVisible">
     <div *ngFor="let article of articles  | filter: filterArticle
+                                          | filter: 'Final':'type'
                                           | filter: filterCategorySelected._id:'_id':'category'">
       <div class="iarticle" (click)="addItem(article)">
         <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction.type && transaction.type.showPrices">

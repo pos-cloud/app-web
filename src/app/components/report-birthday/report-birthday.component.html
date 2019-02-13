@@ -13,7 +13,7 @@
         <tr *ngFor="let company of companies">
           <td align="left" width="130">
             <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
-            <a class="btn btn-default btn-sm icon-ws" href="https://api.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
+            <a class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
             <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i class="fa fa-envelope"></i></a>
           </td>
           <td class="flat">{{ company.name }}</td>
@@ -68,7 +68,7 @@
           <tr *ngFor="let company of companies">
             <td align="left" width="150">
               <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
-              <a class="btn btn-default btn-sm icon-ws" href="https://api.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
+              <a class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{company.phones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
               <a class="btn btn-info btn-sm" href="mailto:{{company.emails}}" target="_blank"><i class="fa fa-envelope"></i></a>
             </td>
             <td class="flat">{{ company.type }}</td>

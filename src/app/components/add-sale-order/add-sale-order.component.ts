@@ -567,7 +567,6 @@ export class AddSaleOrderComponent implements OnInit {
 
 
     if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
-
       let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
 
       if (!movementOfArticle) {
@@ -763,7 +762,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticleAux of this.movementsOfArticles) {
-        if (movementOfArticleAux.article._id === articleId) {
+        if (movementOfArticleAux.article && movementOfArticleAux.article._id === articleId) {
           movementOfArticle = movementOfArticleAux;
         }
       }

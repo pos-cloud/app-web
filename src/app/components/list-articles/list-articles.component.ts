@@ -52,6 +52,8 @@ export class ListArticlesComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public printers: Printer[];
   public totals: string[];
+  public articleType: ArticleType;
+  public listTitle: string;
 
   constructor(
     public _articleService: ArticleService,
@@ -74,14 +76,23 @@ export class ListArticlesComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
     if(this.userType === 'pos') {
       this.orderTerm = ['posDescription', '-favourite'];
     } else {
       this.orderTerm = ['description'];
     }
+    if ('Variantes' === this.listTitle) {
+      this.articleType = ArticleType.Variant;
+    } else if ('Ingredientes' === this.listTitle) {
+      this.articleType = ArticleType.Ingredient;
+    } else {
+      // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
+      this.articleType = ArticleType.Final;
+    }
     this.totals = new Array();
     this.getPrinters();
-    this.getFinalArticles();
+    this.getArticles();
   }
 
   public getPrinters(): void {
@@ -105,13 +116,17 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
-  public getFinalArticles(field?: string): void {
+  public getArticles(): void {
 
     this.loading = true;
+    let query = '';
 
-    let query = 'where="type":"' + ArticleType.Final;
-
-    query += '"&statistics=true';
+    if (this.userType === 'pos') {
+      query = 'where="$or":[{"type":"' + ArticleType.Final + '"},{"type":"' + ArticleType.Variant +'"}]';
+    } else {
+      query = 'where="type":"' + this.articleType + '"';
+    }
+    query += '&statistics=true';
 
     this._articleService.getArticles(query).subscribe(
       result => {
@@ -153,7 +168,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getFinalArticles();
+    this.getArticles();
   }
 
   public openModal(op: string, article?: Article, typeOfOperationToPrint?: string): void {
@@ -162,26 +177,26 @@ export class ListArticlesComponent implements OnInit {
     switch (op) {
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
-        modalRef.componentInstance.article = article;
+        modalRef.componentInstance.articleId = article._id;
         modalRef.componentInstance.operation = "view";
         break;
       case 'add':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "add";
         modalRef.result.then((result) => {
-          this.getFinalArticles();
+          this.getArticles();
         }, (reason) => {
-          this.getFinalArticles();
+          this.getArticles();
         });
         break;
       case 'update':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
-        modalRef.componentInstance.article = article;
+        modalRef.componentInstance.articleId = article._id;
         modalRef.componentInstance.operation = "update";
         modalRef.result.then((result) => {
-          this.getFinalArticles();
+          this.getArticles();
         }, (reason) => {
-          this.getFinalArticles();
+          this.getArticles();
         });
         break;
       case 'delete':
@@ -189,7 +204,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.article = article;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
-            this.getFinalArticles();
+            this.getArticles();
           }
         }, (reason) => {
 
@@ -206,7 +221,7 @@ export class ListArticlesComponent implements OnInit {
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {
-            this.getFinalArticles();
+            this.getArticles();
           }
         }, (reason) => {
 

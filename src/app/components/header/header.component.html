@@ -159,6 +159,11 @@
             Productos
           </button>
           <button class="dropdown-item"
+                  [routerLink]="['admin','variantes']"
+                  [routerLinkActive]="['active']">
+            Variantes
+          </button>
+          <button class="dropdown-item"
                   [routerLink]="['admin','marcas']"
                   [routerLinkActive]="['active']">
             Marcas
@@ -362,16 +367,12 @@
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-variantes']"
-                  [routerLinkActive]="['active']"
-                  *ngIf=" modules &&
-                          modules.variants">
+                  [routerLinkActive]="['active']">
             Tipos de Variantes
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','valores-de-variantes']"
-                  [routerLinkActive]="['active']"
-                  *ngIf=" modules &&
-                          modules.variants">
+                  [routerLinkActive]="['active']">
             Valores de Variantes
           </button>
         </div>
@@ -469,7 +470,7 @@
         <li class="dropdown-header">Ventas</li>
         <li class="btn-li">
           <a  class="btn btn-success"
-              href="https://api.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20ventas."
+              href="https://web.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20ventas."
               target="blank">
             Más Información
           </a>
@@ -528,7 +529,7 @@
         <li class="dropdown-header">Compras</li>
         <li class="btn-li">
           <a  class="btn btn-success"
-              href="https://api.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20compras."
+              href="https://web.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20compras."
               target="blank">
             Más Información
           </a>
@@ -557,7 +558,7 @@
         <li class="dropdown-header">Stock</li>
         <li class="btn-li">
           <a  class="btn btn-success"
-              href="https://api.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20stock."
+              href="https://web.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20stock."
               target="blank">
               Más Información
           </a>
@@ -586,7 +587,7 @@
         <li class="dropdown-header">Fondos</li>
         <li class="btn-li">
           <a  class="btn btn-success"
-              href="https://api.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20fondos."
+              href="https://web.whatsapp.com/send?phone=5493516158848&text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20m%C3%B3dulo%20de%20fondos."
               target="blank">
             Más Información
           </a>

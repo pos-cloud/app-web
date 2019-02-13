@@ -19,3 +19,7 @@
 section {
       width: 700px;
 }
+
+.btn-group {
+  margin-right: 5px;
+}

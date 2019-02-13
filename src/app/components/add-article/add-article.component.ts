@@ -13,7 +13,6 @@ import { Make } from './../../models/make';
 import { Category } from './../../models/category';
 import { Variant } from '../../models/variant';
 import { Config } from './../../app.config';
-import { VariantType } from '../../models/variant-type';
 import { Taxes } from '../../models/taxes';
 import { Deposit } from '../../models/deposit';
 import { Location } from '../../models/location';
@@ -43,7 +42,8 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 
 export class AddArticleComponent implements OnInit {
 
-  @Input() article: Article;
+  public article: Article;
+  @Input() articleId: string;
   @Input() operation: string;
   @Input() readonly: boolean;
   public articleStock: ArticleStock;
@@ -53,9 +53,6 @@ export class AddArticleComponent implements OnInit {
   public locations: Location[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
-  public articlesWithVariants: Article[] = new Array();
-  public variantsStored = new Array();
-  public raffledVariants: Variant[] = Array();
   public taxes: Taxes[] = new Array();
   public otherFields: ArticleFields[] = new Array();
   public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Counter, ArticlePrintIn.Kitchen];
@@ -65,18 +62,10 @@ export class AddArticleComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public apiURL = Config.apiURL;
   public filesToUpload: Array<File>;
-  public numberOfVariantsStored = 0;
-  public numberOfVariantsToStore = 0;
-  public numberOfGroupOfVariantsStored = 0;
-  public numberOfGroupOfVariantsToStore = 0;
-  public numberOfArticleChildStored = 0;
-  public numberOfArticleChildToStore = 0;
-  public numberOfArticleTaxStored = 0;
-  public numberOfArticleTaxToStore = 0;
-  public uniqueVariantTypes: VariantType[] = new Array();
   public hasChanged = false;
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
+  public articleType: string;
 
   public formErrors = {
     'code': '',
@@ -145,38 +134,47 @@ export class AddArticleComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
-    if (!this.article) {
-      this.article = new Article();
-    }
+    this.article = new Article();
   }
 
   ngOnInit(): void {
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    if (pathLocation[2] === "productos") {
+      this.articleType = "Producto";
+      this.article.type = ArticleType.Final;
+    } else if (pathLocation[2] === "variantes") {
+      this.article.type = ArticleType.Variant;
+      this.articleType = "Variante";
+    }
     this.buildForm();
-    this.getMakes();
-    if (this.operation === 'update') {
-      this.taxes = this.article.taxes;
-      this.otherFields = this.article.otherFields;
-      if (this.article.picture && this.article.picture !== 'default.jpg') {
-        this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-      } else {
-        this.imageURL = './../../../assets/img/default.jpg';
-      }
-      this.setValuesForm();
-    } else if (this.operation === 'view') {      
-      this.taxes = this.article.taxes;
-      this.otherFields = this.article.otherFields;
-      this.readonly = true;
-      if (this.article.picture && this.article.picture !== 'default.jpg') {
-        this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-      } else {
-        this.imageURL = './../../../assets/img/default.jpg';
-      }
-      this.setValuesForm();
+    if(this.articleId) {
+      this.getArticle();
     } else {
-      this.imageURL = './../../../assets/img/default.jpg';
+      this.getMakes();
+      if (this.operation === 'update') {
+        this.taxes = this.article.taxes;
+        this.otherFields = this.article.otherFields;
+        if (this.article.picture && this.article.picture !== 'default.jpg') {
+          this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+        } else {
+          this.imageURL = './../../../assets/img/default.jpg';
+        }
+        this.setValuesForm();
+      } else if (this.operation === 'view') {
+        this.taxes = this.article.taxes;
+        this.otherFields = this.article.otherFields;
+        this.readonly = true;
+        if (this.article.picture && this.article.picture !== 'default.jpg') {
+          this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+        } else {
+          this.imageURL = './../../../assets/img/default.jpg';
+        }
+        this.setValuesForm();
+      } else {
+        this.imageURL = './../../../assets/img/default.jpg';
+      }
     }
   }
 
@@ -286,6 +284,96 @@ export class AddArticleComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getArticle(): void {
+
+    this.loading = true;
+
+    this._articleService.getArticle(this.articleId).subscribe(
+      result => {
+        if (!result.article) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.article = result.article;
+          if(this.article.containsVariants) {
+            this.getVariantsByArticleParent();
+          }
+          this.getMakes();
+          if (this.operation === 'update') {
+            this.taxes = this.article.taxes;
+            this.otherFields = this.article.otherFields;
+            if (this.article.picture && this.article.picture !== 'default.jpg') {
+              this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+            } else {
+              this.imageURL = './../../../assets/img/default.jpg';
+            }
+            this.setValuesForm();
+          } else if (this.operation === 'view') {
+            this.taxes = this.article.taxes;
+            this.otherFields = this.article.otherFields;
+            this.readonly = true;
+            if (this.article.picture && this.article.picture !== 'default.jpg') {
+              this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+            } else {
+              this.imageURL = './../../../assets/img/default.jpg';
+            }
+            this.setValuesForm();
+          } else {
+            this.imageURL = './../../../assets/img/default.jpg';
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getVariantsByArticleParent(): void {
+
+    this.loading = true;
+
+    this._variantService.getVariantsByArticleParent(this.article).subscribe(
+      result => {
+        if (!result.variants) {
+          this.variants = new Array();
+        } else {
+          this.variants = this.getUniqueVariants(result.variants);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getUniqueVariants(variants: Variant[]): Variant[] {
+
+    let variantsToReturn: Variant[] = new Array();
+
+    for (let variant of variants) {
+      if (variantsToReturn && variantsToReturn.length > 0) {
+        let exists: boolean = false;
+        for (let variantAux of variantsToReturn) {
+          if (variantAux.value._id === variant.value._id) {
+            exists = true;
+          }
+        }
+        if (!exists) {
+          variantsToReturn.push(variant);
+        }
+      } else {
+        variantsToReturn.push(variant);
+      }
+    }
+
+    return variantsToReturn;
   }
 
   public padString(n, length) {
@@ -682,6 +770,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
     if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
 
+    console.log(deposit);
     const values = {
       '_id': this.article._id,
       'code': this.article.code,
@@ -717,7 +806,6 @@ export class AddArticleComponent implements OnInit {
       this.loadPosDescription();
       this.article = this.articleForm.value;
       this.autocompleteCode();
-      this.article.type = ArticleType.Final;
       if (this.variants && this.variants.length > 0) {
         this.article.containsVariants = true;
       } else {
@@ -725,6 +813,16 @@ export class AddArticleComponent implements OnInit {
       }
       this.article.otherFields = this.otherFields;
       this.article.taxes = this.taxes;
+
+      const pathLocation: string[] = this._router.url.split('/');
+      if (pathLocation[2] === "productos") {
+        this.article.type = ArticleType.Final;
+      } else if (pathLocation[2] === "variantes") {
+        this.article.type = ArticleType.Variant;
+      } else if (pathLocation[2] === "ingredientes") {
+        this.article.type = ArticleType.Ingredient;
+      }
+
       if (this.operation === 'add') {
         this.saveArticle();
       } else if (this.operation === 'update') {
@@ -737,7 +835,7 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    this._articleService.saveArticle(this.article).subscribe(
+    this._articleService.saveArticle(this.article, this.variants).subscribe(
       result => {
         if (!result.article) {
           this.loading = false;
@@ -757,12 +855,8 @@ export class AddArticleComponent implements OnInit {
                   } else {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
-                  if (this.article.containsVariants) {
-                    this.addVariants(this.article);
-                  } else {
-                    this.loading = false;
-                    this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-                  }
+                  this.loading = false;
+                  this.showMessage('El producto se ha añadido con éxito.', 'success', false);
                 },
                 (error) => {
                   this.loading = false;
@@ -770,12 +864,8 @@ export class AddArticleComponent implements OnInit {
                 }
               );
           } else {
-            if (this.article.containsVariants) {
-              this.addVariants(this.article);
-            } else {
-              this.loading = false;
-              this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-            }
+            this.loading = false;
+            this.showMessage('El producto se ha añadido con éxito.', 'success', false);
           }
         }
       },
@@ -790,7 +880,9 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    this._articleService.updateArticle(this.article).subscribe(
+    console.log(this.article.deposit);
+
+    this._articleService.updateArticle(this.article, this.variants).subscribe(
       result => {
         if (!result.article) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
@@ -809,26 +901,18 @@ export class AddArticleComponent implements OnInit {
                   } else {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
-                  if (this.article.containsVariants) {
-                    this.addVariants(this.article);
-                  } else {
-                    this.filesToUpload = null;
-                    this.loading = false;
-                    this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
-                  }
+                  this.filesToUpload = null;
+                  this.loading = false;
+                  this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
                 },
                 (error) => {
                   this.showMessage(error, 'danger', false);
                 }
               );
           } else {
-            if (this.article.containsVariants) {
-              this.addVariants(this.article);
-            } else {
-              this.filesToUpload = null;
-              this.loading = false;
-              this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
-            }
+            this.filesToUpload = null;
+            this.loading = false;
+            this.showMessage('El producto se ha actualizado con éxito.', 'success', false);
           }
         }
         this.loading = false;
@@ -926,207 +1010,8 @@ export class AddArticleComponent implements OnInit {
   //   );
   // }
 
-  public addVariants(articleParent: Article): void {
-
-    this.loading = true;
-
-    this.numberOfArticleChildToStore = 1;
-
-    const variantTypes: VariantType[] = new Array();
-
-    if (this.variants && this.variants.length > 0) {
-      for (const variant of this.variants) {
-        variantTypes.push(variant.type);
-      }
-    }
-
-    this.uniqueVariantTypes = this.getUniqueValues(variantTypes);
-    this.numberOfVariantsToStore = this.uniqueVariantTypes.length;
-
-    if(this.uniqueVariantTypes && this.uniqueVariantTypes.length > 0) {
-      for (let i = 0; i < this.uniqueVariantTypes.length; i++) {
-        this.numberOfArticleChildToStore = this.roundNumber.transform(this.numberOfArticleChildToStore * this.getDuplicateValues(this.uniqueVariantTypes[i], variantTypes));
-      }
-    }
-
-    this.numberOfGroupOfVariantsToStore = this.numberOfArticleChildToStore;
-
-    this.addArticleChildren(articleParent);
-  }
-
-  public getUniqueValues(array: Array<any>): Array<any> {
-
-    const uniqueArray = new Array();
-
-    if(array && array.length > 0) {
-      for (let index = 0; index < array.length; index++) {
-        const el = array[index];
-        if (uniqueArray.indexOf(el) === -1) { uniqueArray.push(el); }
-      }
-    }
-
-    return uniqueArray;
-  }
-
-  public getDuplicateValues(value: any, array: Array<any>): number {
-
-    let cant = 0;
-
-    if(array && array.length > 0) {
-      for (let index = 0; index < array.length; index++) {
-        if (value._id === array[index]._id) {
-          cant++;
-        }
-      }
-    }
-
-    return cant;
-  }
-
-  public addArticleChildren(articleParent: Article): void {
-
-    if (this.numberOfArticleChildStored < this.numberOfArticleChildToStore) {
-
-      const articleChild = articleParent;
-      articleChild.type = ArticleType.Variant;
-      articleChild.containsVariants = false;
-      this.saveArticleChild(articleParent, articleChild);
-    } else {
-      this.loading = false;
-      this.showMessage('El producto se ha añadido con éxito.', 'success', false);
-    }
-  }
-
-  public saveArticleChild(articleParent: Article, articleChild: Article): void {
-
-    this.loading = true;
-
-    this._articleService.saveArticle(articleChild).subscribe(
-      result => {
-        if (!result.article) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          articleChild = result.article;
-          this.numberOfArticleChildStored++;
-          this.numberOfGroupOfVariantsStored = 0;
-          this.numberOfArticleTaxStored = 0;
-          this.saveVariants(articleParent, articleChild);
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public saveVariants(articleParent: Article, articleChild: Article): void {
-
-    this.loading = true;
-
-    if (this.numberOfGroupOfVariantsStored === 0) {
-      if (!this.raffledVariants || (this.raffledVariants && this.raffledVariants.length === 0)) {
-        let exists = false;
-        do {
-          for (const uniqueVariantType of this.uniqueVariantTypes) {
-            const variant = this.getVariantByType(uniqueVariantType);
-            variant.articleParent = articleParent;
-            variant.articleChild = articleChild;
-            this.raffledVariants.push(variant);
-          }
-
-          if (this.variantsExists()) {
-            exists = true;
-            this.raffledVariants = new Array();
-          } else {
-            exists = false;
-          }
-        } while (exists);
-      }
-      this.variantsStored.push(this.raffledVariants);
-      this.numberOfVariantsStored = 0;
-
-      this.saveGroupOfVariants(articleParent, articleChild);
-    } else {
-      this.addArticleChildren(articleParent);
-    }
-  }
-
-  public variantsExists(): boolean {
-
-    let exists = false;
-    let equals = 0;
-
-    if(this.variantsStored && this.variantsStored.length > 0) {
-      for (let i = 0; i < this.variantsStored.length; i++) {
-        if (!exists) {
-          for (let j = 0; j < this.raffledVariants.length; j++) {
-            for (let k = 0; k < this.variantsStored[i].length; k++) {
-              if (this.raffledVariants[j].type._id === this.variantsStored[i][k].type._id) {
-                if (this.raffledVariants[j].value._id === this.variantsStored[i][k].value._id) {
-                  equals++;
-                }
-              }
-            }
-          }
-        }
-        if (this.uniqueVariantTypes && equals === this.uniqueVariantTypes.length) {
-          exists = true;
-        }
-        equals = 0;
-      }
-    }
-    return exists;
-  }
-
-  public getVariantByType(variantType: VariantType): Variant {
-
-    let variant;
-
-    do {
-      const random: number = Math.round(Math.random() * ((this.variants.length - 1) - 0) + 0);
-      variant = this.variants[random];
-    } while (variant.type._id !== variantType._id);
-
-    return variant;
-  }
-
-  public saveGroupOfVariants(articleParent: Article, articleChild: Article): void {
-
-    this.loading = true;
-
-    if (this.numberOfVariantsStored < this.numberOfVariantsToStore) {
-      this.saveVariant(this.raffledVariants[this.numberOfVariantsStored]);
-    } else {
-      this.numberOfGroupOfVariantsStored++;
-      this.raffledVariants = new Array();
-      this.saveVariants(articleParent, articleChild);
-    }
-  }
-
-  public saveVariant(variant: Variant): void {
-
-    this.loading = true;
-
-    this._variantService.saveVariant(variant).subscribe(
-      result => {
-        if (!result.variant) {
-          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
-        } else {
-          variant = result.variant;
-          this.numberOfVariantsStored++;
-          this.saveGroupOfVariants(variant.articleParent, variant.articleChild);
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public manageVariants(articlesWithVariants: Article[]): void {
-    this.articlesWithVariants = articlesWithVariants;
+  public manageVariants(variants: Variant[]): void {
+    this.variants = variants;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
