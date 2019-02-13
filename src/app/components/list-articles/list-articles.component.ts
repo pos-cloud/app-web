@@ -305,10 +305,26 @@ export class ListArticlesComponent implements OnInit {
 
   public filterItem(articles: Article[]) {
 
-    if (articles && articles.length > 0 && this.articles.length >= 2) {
-      let article = articles[0];
-      if ( articles.length === 1 &&
-          ( article.barcode === this.filterArticle ||
+    if (articles && articles.length > 0 && this.articles && this.articles.length >= 2) {
+
+      let article;
+      var count = 1;
+
+      if (articles.length === 1) {
+        article = articles[0];
+      } else if (articles.length > 1) {
+        count = 0;
+        for(let art of articles) {
+          if(art.type === ArticleType.Final) {
+            count++;
+            article = art;
+          }
+        }
+      }
+
+      if ( count === 1 &&
+          ( article &&
+            article.barcode === this.filterArticle ||
             article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
             article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
             article.code === this.filterArticle)) {
