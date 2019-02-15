@@ -314,11 +314,13 @@ export class AddMovementOfCashComponent implements OnInit {
         break;
       case 'amountPaid':
         this.amountToPay = 0;
-        for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
-          if (this.movementsOfCashesToFinance[i].expirationDate === movement.expirationDate) {
-            this.movementsOfCashesToFinance[i].amountPaid = this.roundNumber.transform(parseFloat(newValue));
+        if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
+          for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
+            if (this.movementsOfCashesToFinance[i].expirationDate === movement.expirationDate) {
+              this.movementsOfCashesToFinance[i].amountPaid = this.roundNumber.transform(parseFloat(newValue));
+            }
+            this.amountToPay = this.roundNumber.transform(this.movementsOfCashesToFinance[i].amountPaid + this.amountToPay);
           }
-          this.amountToPay = this.roundNumber.transform(this.movementsOfCashesToFinance[i].amountPaid + this.amountToPay);
         }
         this.setValueForm();
         this.updateAmounts('amountToPay');
@@ -333,21 +335,23 @@ export class AddMovementOfCashComponent implements OnInit {
           this.showMessage('Debe ingresar una fecha válida', 'info', true);
         }
 
-        for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
-          if (this.movementsOfCashesToFinance[i].expirationDate === movement.expirationDate) {
-            // Editamos desde la fecha modificada en adelante
-             isEdit = true;
-            this.movementsOfCashesToFinance[i].expirationDate = moment(newValue).toString();
-          } else {
-            if (isEdit) {
-              if(!isSum) {
-                // Se suma el valor de la fecha en un dia para que de correctamente los dias.
-                this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
-                expirationDate = (this.days + 1);
-                isSum = true;
-              } else {
-                this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
-                expirationDate = this.days;
+        if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
+          for (let i = 0; i < this.movementsOfCashesToFinance.length; i++) {
+            if (this.movementsOfCashesToFinance[i].expirationDate === movement.expirationDate) {
+              // Editamos desde la fecha modificada en adelante
+               isEdit = true;
+              this.movementsOfCashesToFinance[i].expirationDate = moment(newValue).toString();
+            } else {
+              if (isEdit) {
+                if(!isSum) {
+                  // Se suma el valor de la fecha en un dia para que de correctamente los dias.
+                  this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                  expirationDate = (this.days + 1);
+                  isSum = true;
+                } else {
+                  this.movementsOfCashesToFinance[i].expirationDate = moment(moment(this.movementsOfCashesToFinance[i - 1].expirationDate).format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
+                  expirationDate = this.days;
+                }
               }
             }
           }
@@ -624,15 +628,17 @@ export class AddMovementOfCashComponent implements OnInit {
 
     if(this.paymentMethodSelected.allowToFinance) {
       let amountTotal = 0;
-      for(let mov of this.movementsOfCashesToFinance) {
-        amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
-        if (!moment(mov.expirationDate).isValid()) {
-          isValid = false;
-          this.showMessage('Debe ingresar fechas de vencimiento de pago válidas', 'info', true);
-        } else {
-          if ((moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
+      if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
+        for(let mov of this.movementsOfCashesToFinance) {
+          amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
+          if (!moment(mov.expirationDate).isValid()) {
             isValid = false;
-            this.showMessage('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción', 'info', true);
+            this.showMessage('Debe ingresar fechas de vencimiento de pago válidas', 'info', true);
+          } else {
+            if ((moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
+              isValid = false;
+              this.showMessage('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción', 'info', true);
+            }
           }
         }
       }
