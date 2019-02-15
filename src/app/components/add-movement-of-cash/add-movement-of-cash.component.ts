@@ -668,12 +668,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let areValid: boolean = true;
 
-    let paidWithoutReturn = 0;
+    let paid = 0;
 
     for (let mov of this.movementsOfCashes) {
-      if (!mov.type.acceptReturned) {
-        paidWithoutReturn += mov.amountPaid;
-      }
+      paid += mov.amountPaid;
 
       if (!mov.expirationDate || !moment(mov.expirationDate).isValid()) {
         areValid = false;
@@ -700,9 +698,9 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    if ((parseFloat(paidWithoutReturn.toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2)))) {
+    if ((parseFloat(paid.toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2)))) {
       areValid = false;
-      this.showMessage("La suma de medios de pago que no aceptan vuelto es mayor a la de la transacción.", 'info', true);
+      this.showMessage("La suma de monto de medios de pago no puede ser mayor al de la transacción.", 'info', true);
     }
 
     return areValid;
