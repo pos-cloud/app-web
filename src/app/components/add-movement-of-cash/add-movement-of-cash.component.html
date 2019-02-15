@@ -1,10 +1,10 @@
-<div class="modal-header" *ngIf="!fastPayment">
+<div class="modal-header">
   <h4 class="modal-title">Forma de pago</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<section class="container-fluid" *ngIf="!fastPayment">
+<section class="container-fluid">
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -26,8 +26,8 @@
             <label for="paymentMethod" class="control-label">Medio de pago:</label>
             <select class="form-control" formControlName="paymentMethod" name="paymentMethod"  (change)="updateAmounts('paymentMethod')">
                 <option *ngFor="let paymentMethod of paymentMethods"
-                        [selected]="this.movementOfCash.type && this.movementOfCash.type._id === paymentMethod._id"
-                        [ngValue]="paymentMethod">
+                        [selected]="movementOfCash.type && paymentMethod._id === movementOfCash.type._id"
+                        [value]="paymentMethod._id">
                       {{paymentMethod.name}}
                 </option>
               </select>
@@ -36,11 +36,11 @@
               </div>
           </div>
         </div>
-        <div class="row" *ngIf="movementOfCash.type && (
-                                ( movementOfCash.type.discount &&
-                                  movementOfCash.type.discount > 0) ||
-                                ( movementOfCash.type.surcharge &&
-                                  movementOfCash.type.surcharge > 0))">
+        <div class="row" *ngIf="paymentMethodSelected && (
+                                ( paymentMethodSelected.discount &&
+                                  paymentMethodSelected.discount > 0) ||
+                                ( paymentMethodSelected.surcharge &&
+                                  paymentMethodSelected.surcharge > 0))">
           <div class="form-group col-md-4">
             <label for="discount" class="control-label">Descuento:</label>
             <div class="input-group">
@@ -63,7 +63,7 @@
             </div>
           </div>
         </div>
-        <div class="row" *ngIf="movementOfCash.type.isCurrentAccount && !movementOfCash.type.allowToFinance">
+        <div class="row" *ngIf="paymentMethodSelected && paymentMethodSelected.isCurrentAccount && !paymentMethodSelected.allowToFinance">
           <div class="form-group col-md-12">
             <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
             <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate" min="2000-01-01" />
@@ -91,7 +91,7 @@
             </div>
           </div>
         </div>
-        <div class="row" *ngIf="movementOfCash.type.allowToFinance">
+        <div class="row" *ngIf="paymentMethodSelected.allowToFinance">
           <div class="form-group col-md-12 box-finance">
             <div class="row">
               <div class="form-group col-md-12">
