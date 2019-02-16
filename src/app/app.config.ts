@@ -8,7 +8,7 @@ export class Config {
     static apiHost: string = 'localhost';
     static apiURL: string;
     static apiURLFE: string = 'libs/fe/index.php';
-    static apiPort = 3000;
+    static apiPort = 300;
     static accessType = "Cloud";
     static modules;
     static pathMongo: string;

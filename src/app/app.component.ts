@@ -68,7 +68,7 @@ export class AppComponent implements OnInit {
 
   public setApiConfigurationSettings() {
     Config.setApiHost(window.location.hostname);
-    Config.setApiPort(3000);
+    Config.setApiPort(300);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
