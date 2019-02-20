@@ -458,6 +458,11 @@
             Ventas por cliente
           </a>
         </li>
+        <li>
+          <a (click)="openReport('admin/venta/ventas-por-empleado')">
+            Ventas por empleado
+          </a>
+        </li>
       </ul>
     </div>
     <div class="col-md-3"  style="width: 300px" *ngIf=" modules &&
@@ -519,6 +524,11 @@
         <li>
           <a (click)="openReport('admin/compra/compras-por-proveedor')">
             Compras por proveedor
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('admin/compra/compras-por-empleado')">
+            Compras por empleado
           </a>
         </li>
       </ul>

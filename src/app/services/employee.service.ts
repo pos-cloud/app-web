@@ -78,5 +78,14 @@ export class EmployeeService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "employee/"+employee._id, employee, { headers: headers }).map (res => res.json());
-  }
+	}
+	
+	getSalesByEmployee(query: string) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.get(Config.apiURL + 'sales-by-employee/' + query, { headers: headers }).map(res => res.json());
+	}
 }

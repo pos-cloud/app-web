@@ -1,0 +1,73 @@
+<section class="container-fluid" >
+    <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <div class="row container-filter">
+      <div class="col-md-2 offset-md-1">
+        <label for="startDate" class="control-label">
+          <b>Fecha Desde:</b>
+        </label>
+        <input type="date" class="form-control" name="startDate" min="2000-01-01" [(ngModel)]="startDate" />
+      </div>
+      <div class="col-md-2">
+        <label for="startTime" class="control-label">
+          <b>Hora Desde:</b>
+        </label>
+        <input type="time" class="form-control" name="startTime" [(ngModel)]="startTime" />
+      </div>
+      <div class="col-md-2">
+        <label for="endDate" class="control-label">
+          <b>Fecha Hasta:</b>
+        </label>
+        <input type="date" class="form-control" name="endDate" min="2000-01-01" [(ngModel)]="endDate" />
+      </div>
+      <div class="col-md-2">
+        <label for="endTime" class="control-label">
+          <b>Hora Hasta:</b>
+        </label>
+        <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
+      </div>
+      <div class="col-md-2" (click)="refresh()">
+        <span class="form-control btn-action center-content">
+          <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+      </div>
+    </div>
+    <div class="card card-outline-primary card-large">
+    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por empleado</div>
+    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por empleado</div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th (click)="orderBy('employee.name')" *ngIf="transactionMovement === 'Venta'">Empleado</th>
+              <th (click)="orderBy('employee.name')" *ngIf="transactionMovement === 'Compra'">Empleado</th>
+              <th (click)="orderBy('count')">Transacciones</th>
+              <th (click)="orderBy('total')">Monto Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items">
+              <td class="flat">{{ item.employee.name }}</td>
+              <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
+              <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+              <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
+              <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
+            </tr>
+            <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Venta'">
+              <td colspan="3">No se encontraron ventas por empleado</td>
+            </tr>
+            <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Compra'">
+              <td colspan="3">No se encontraron compras por empleado</td>
+            </tr>
+            <tr align="center" *ngIf="areCompaniesEmpty && loading">
+              <td colspan="3">Cargando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+      </div>
+    </div>
+  </section>

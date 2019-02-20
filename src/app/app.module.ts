@@ -194,6 +194,7 @@ import { Config } from './app.config';
 import { DeleteVATConditionComponent } from './components/delete-vat-condition/delete-vat-condition.component';
 import { VATConditionComponent } from './components/vat-condition/vat-condition.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
+import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -310,6 +311,7 @@ import { ReportBirthdayComponent } from './components/report-birthday/report-bir
     ReportSalesByMakeComponent,
     ReportSalesByCategoryComponent,
     ReportBirthdayComponent,
+    ReportSalesByEmployeeComponent,
     CashBoxComponent,
     AddLocationComponent,
     UpdateLocationComponent,

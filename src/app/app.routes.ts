@@ -83,6 +83,7 @@ import { ListCompaniesGroupComponent } from "./components/list-companies-group/l
 import { UpdateArticlePriceComponent } from "./components/update-article-price/update-article-price.component"
 import { ListVATConditionsComponent } from './components/list-vat-conditions/list-vat-conditions.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
+import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -111,6 +112,11 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
+    path: 'admin/venta/ventas-por-empleado',
+    component : ReportSalesByEmployeeComponent,
+    data: { roles : ['Administrador']}
+  },
+  {
     path: 'admin/venta/marcas-mas-vendidas',
     component: ReportSalesByMakeComponent,
     data: { roles: ['Administrador'] }
@@ -134,6 +140,11 @@ const _routes: Routes = [
     path: 'admin/compra/productos-mas-comprados',
     component: ReportBestSellingArticleComponent,
     data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/compras/compras-por-empleado',
+    component : ReportSalesByEmployeeComponent,
+    data: { roles : ['Administrador']}
   },
   {
     path: 'admin/compra/compras-por-metodo-de-pago',
