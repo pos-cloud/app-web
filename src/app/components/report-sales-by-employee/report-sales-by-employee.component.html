@@ -55,13 +55,13 @@
               <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
               <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
             </tr>
-            <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Venta'">
+            <tr align="center" *ngIf="areEmployeesEmpty && !loading && transactionMovement === 'Venta'">
               <td colspan="3">No se encontraron ventas por empleado</td>
             </tr>
-            <tr align="center" *ngIf="areCompaniesEmpty && !loading && transactionMovement === 'Compra'">
+            <tr align="center" *ngIf="areEmployeesEmpty && !loading && transactionMovement === 'Compra'">
               <td colspan="3">No se encontraron compras por empleado</td>
             </tr>
-            <tr align="center" *ngIf="areCompaniesEmpty && loading">
+            <tr align="center" *ngIf="areEmployeesEmpty && loading">
               <td colspan="3">Cargando...</td>
             </tr>
           </tbody>
