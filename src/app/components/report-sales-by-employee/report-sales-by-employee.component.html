@@ -1,5 +1,5 @@
 <section class="container-fluid" >
-    <div class="center-content" *ngIf="alertMessage !== '' && !areTurnsEmptys">
+    <div class="center-content" *ngIf="alertMessage !== ''">
       <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
         {{alertMessage}}
       </ngb-alert>
