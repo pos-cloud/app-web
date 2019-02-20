@@ -90,7 +90,6 @@ export class ReportSalesByEmployeeComponent implements OnInit {
           this.loading = false;
           this.items = result;
           this.areEmployeesEmpty = false;
-          console.log(this.items);
         }
       },
       error => {
