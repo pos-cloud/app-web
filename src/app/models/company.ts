@@ -1,5 +1,6 @@
 import { VATCondition } from './vat-condition';
 import { CompanyGroup } from './company-group';
+import { Employee } from "./employee";
 import { User } from './user';
 
 import * as moment from 'moment';
@@ -26,6 +27,7 @@ export class Company {
   public observation: string;
   public allowCurrentAccount: boolean;
   public group: CompanyGroup;  
+  public employee : Employee;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;

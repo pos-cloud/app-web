@@ -9,10 +9,12 @@ import 'moment/locale/es';
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
 import { CompanyGroup } from 'app/models/company-group';
+import { Employee } from "app/models/employee";
 
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
 import { CompanyGroupService } from './../../services/company-group.service'
+import { EmployeeService } from "./../../services/employee.service";
 
 @Component({
   selector: 'app-update-company',
@@ -28,6 +30,7 @@ export class UpdateCompanyComponent implements OnInit {
   @Input() readonly: boolean;
   public types: CompanyType[];
   public companiesGroup: CompanyGroup;
+  public employees: Employee[];
   public vatConditions: VATCondition[];
   public identityTypes: string[] = ["DNI", "CUIT"];
   public identityTypeSelected: string;
@@ -54,7 +57,8 @@ export class UpdateCompanyComponent implements OnInit {
     'birthday':'',
     'observation' : '',
     'allowCurrentAccount': '',
-    'group' : ''
+    'group' : '',
+    'employee':''
   };
 
   public validationMessages = {
@@ -98,13 +102,15 @@ export class UpdateCompanyComponent implements OnInit {
     },
     'observation': {},
     'allowCurrentAccount': {},
-    'group' : {}
+    'group' : {},
+    'employee': {}
   };
 
   constructor(
     public _companyService: CompanyService,
     public _vatCondition: VATConditionService,
     public _companyGroupService : CompanyGroupService,
+    public _employeeService : EmployeeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -128,7 +134,9 @@ export class UpdateCompanyComponent implements OnInit {
 
     this.vatConditions = new Array();
     this.getVATConditions();
-    this.getCompaniesGroup();
+    this.getCompaniesGroup();    
+    this.getEmployee();
+
 
     if(this.company) {
       if (this.company.CUIT && this.company.CUIT !== '') {
@@ -214,6 +222,7 @@ export class UpdateCompanyComponent implements OnInit {
       'observation' : [this.company.observation,[]],
       'allowCurrentAccount': [this.company.allowCurrentAccount,[]],
       'group':[this.company.group,[]],
+      'employee' : [this.company.employee,[]]
     });
 
     this.companyForm.valueChanges
@@ -274,6 +283,19 @@ export class UpdateCompanyComponent implements OnInit {
       }
     }
 
+    console.log(this.company.employee)
+
+    let employee = null;
+    if (!this.company.employee) {
+      employee = null;
+    } else {
+      if (this.company.employee._id) {
+        employee = this.company.employee._id;
+      } else {
+        employee = null;
+      }
+    }
+
     const values = {
       '_id': this.company._id,
       'code': this.company.code,
@@ -293,7 +315,8 @@ export class UpdateCompanyComponent implements OnInit {
       'birthday': this.company.birthday,
       'observation' : this.company.observation,
       'allowCurrentAccount' : this.company.allowCurrentAccount,
-      'group' : group
+      'group' : group,
+      'employee' : employee
     };
 
     this.companyForm.setValue(values);
@@ -325,6 +348,25 @@ export class UpdateCompanyComponent implements OnInit {
 
           this.buildForm();
           this.setValueForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getEmployee(): void {
+    
+    this.loading = true;
+
+    this._employeeService.getEmployees().subscribe(
+      result => {
+        if (!result.employees) {
+        } else {
+          this.employees = result.employees;
         }
         this.loading = false;
       },

@@ -211,6 +211,19 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="employee" class="control-label">Empleado asignado</label>
+                    <select class="form-control" formControlName="employee">
+                      <option *ngFor="let employee of employees" [selected]="company.employee && employee._id == company.employee._id" [value]="employee._id" [disabled]="readonly">
+                        {{employee.name}}
+                      </option>
+                    </select>
+                    <div *ngIf="formErrors.employee" class="alert alert-danger">
+                      {{ formErrors.group }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 					</ng-template>

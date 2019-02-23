@@ -187,6 +187,15 @@
                       {{ formErrors.group }}
                     </div>
                   </div>
+                  <div class="form-group col-md-12">
+                    <label for="employee" class="control-label">Empleado asignado</label>
+                    <select class="form-control" formControlName="employee">
+                      <option *ngFor="let employee of employees" [ngValue]="employee">{{employee.name}}</option>
+                    </select>
+                    <div *ngIf="formErrors.employee" class="alert alert-danger">
+                      {{ formErrors.employee }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

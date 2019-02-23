@@ -1,18 +1,25 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+//Modelos
 import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
 import { CompanyGroup } from 'app/models/company-group';
+import { Employee } from "app/models/employee";
+
+//Terceros
 import * as moment from 'moment';
 import 'moment/locale/es';
 
+//SERVICE
 import { CompanyService } from './../../services/company.service';
 import { VATConditionService } from './../../services/vat-condition.service';
 import { CompanyGroupService } from "./../../services/company-group.service";
+import { EmployeeService } from "./../../services/employee.service";
+
+//PIPE
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
 @Component({
@@ -29,6 +36,7 @@ export class AddCompanyComponent  implements OnInit {
   public types: CompanyType[];
   public vatConditions: VATCondition[];
   public companiesGroup: CompanyGroup[];
+  public employees: Employee[];
   public dateFormat = new DateFormatPipe();
   public identityTypes: string[] = ["DNI","CUIT"];
   public identityTypeSelected: string;
@@ -56,7 +64,8 @@ export class AddCompanyComponent  implements OnInit {
     'birthday':'',
     'observation':'',
     'allowCurrentAccount':'',
-    'group':''
+    'group':'',
+    'employee':''
   };
 
   public validationMessages = {
@@ -101,13 +110,15 @@ export class AddCompanyComponent  implements OnInit {
     },
     'observation':{},
     'allowCurrentAccount':{},
-    'group':{}
+    'group':{},
+    'employee': {}
   };
 
   constructor(
     public _companyService: CompanyService,
     public _vatConditionService: VATConditionService,
     public _companyGroupService: CompanyGroupService,
+    public _employeeService: EmployeeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -137,11 +148,31 @@ export class AddCompanyComponent  implements OnInit {
     this.buildForm();
     this.getVATConditions();
     this.getCompaniesGroup();
+    this.getEmployee();
     this.getLastCompany();
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getEmployee(): void {
+    
+    this.loading = true;
+
+    this._employeeService.getEmployees().subscribe(
+      result => {
+        if (!result.employees) {
+        } else {
+          this.employees = result.employees;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getCompaniesGroup(): void {
@@ -221,7 +252,8 @@ export class AddCompanyComponent  implements OnInit {
       ],
       'observation': [this.company.observation,[]],
       'allowCurrentAccount': [this.company.observation,[]],
-      'group': [this.company.group,[]]
+      'group': [this.company.group,[]],
+      'employee' : [this.company.employee,[]]
     });
 
     this.companyForm.valueChanges
@@ -305,6 +337,20 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    
+
+    let employee;
+    if (!this.company.employee) {
+      employee = null;
+    } else {
+      if (this.company.employee._id) {
+        employee = this.company.employee._id;
+      } else {
+        employee = this.company.employee;
+      }
+    }
+
+
     const values = {
       'code': this.company.code,
       'name': this.company.name,
@@ -323,7 +369,8 @@ export class AddCompanyComponent  implements OnInit {
       'birthday': this.company.birthday,
       'observation': this.company.observation,
       'allowCurrentAccount': this.company.allowCurrentAccount,
-      'group': group
+      'group': group,
+      'employee' : employee
     };
 
     this.companyForm.setValue(values);
