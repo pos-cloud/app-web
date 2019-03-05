@@ -187,7 +187,7 @@ export class ListTransactionsComponent implements OnInit {
             project = '{';
             for (let i = 0; i < this.displayedColumns.length; i++) {
                 let field = this.displayedColumns[i];
-                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"America/Argentina/Cordoba"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":${Config.timezone}}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
                 if (i < this.displayedColumns.length - 1) {
                     project += ',';
                 }

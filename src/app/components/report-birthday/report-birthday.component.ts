@@ -9,6 +9,7 @@ import { CompanyService } from 'app/services/company.service';
 import { Company, CompanyType } from 'app/models/company';
 import { UpdateCompanyComponent } from '../update-company/update-company.component';
 import { TransactionMovement } from 'app/models/transaction-type';
+import { Config } from './../../app.config';
 
 @Component({
   selector: 'app-report-birthday',
@@ -105,7 +106,7 @@ export class ReportBirthdayComponent implements OnInit {
       project = '{';
       for (let i = 0; i < displayedColumns.length; i++) {
         let field = displayedColumns[i];
-        project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+        project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":${Config.timezone}}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
         if (i < displayedColumns.length - 1) {
           project += ',';
         }
