@@ -148,5 +148,13 @@ export class ConfigService {
       'Database': this._userService.getDatabase()
     });
     return this._http.get(Config.apiURL + 'generar-licencia-payment', { headers: headers }).map(res => res.json());
-  }
+	}
+	
+	getCountry() {
+		return this._http.get("https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones")
+	}
+
+	getTimeZone(country : string) {
+		return this._http.get("https://restcountries.eu/rest/v2/alpha/"+country)
+	}
 }

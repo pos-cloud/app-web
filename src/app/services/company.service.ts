@@ -49,7 +49,6 @@ export class CompanyService {
 		return this._http.get(Config.apiURL + "companies", { headers: headers }).map (res => res.json());
   	}
 
-
   	getCompaniesByType (type: string) {
 	  	let headers = new Headers({
 			'Content-Type': 'application/json',
@@ -57,25 +56,25 @@ export class CompanyService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.get(Config.apiURL + 'companies/where="type":"' + type + '"', { headers: headers }).map (res => res.json());
-	}
+		}
 
-	saveCompany (company : Company) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
-		});
+		saveCompany (company : Company) {
+			let headers = new Headers({
+				'Content-Type': 'application/json',
+				'Authorization': this._userService.getToken(),
+				'Database': this._userService.getDatabase()
+			});
 		return this._http.post(Config.apiURL + "company",company, { headers: headers }).map (res => res.json());
-	}
+		}
 
-	deleteCompany (id: string) {
+		deleteCompany (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.delete(Config.apiURL + "company/"+id, { headers: headers }).map (res => res.json());
-	}
+		}
 
   	updateCompany (company: Company){
 		let headers = new Headers({
@@ -84,92 +83,124 @@ export class CompanyService {
 			'Database': this._userService.getDatabase()
 		});
 		return this._http.put(Config.apiURL + "company/"+company._id, company, { headers: headers }).map (res => res.json());
-	}
+		}
 
-	getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
-		});
-		var query = '{"type":"' + type +'","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
-		return this._http.get(Config.apiURL + "quantity-of-companies-by-type/" + query, { headers: headers }).map(res => res.json());
-	}
+		getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string) {
+			let headers = new Headers({
+				'Content-Type': 'application/json',
+				'Authorization': this._userService.getToken(),
+				'Database': this._userService.getDatabase()
+			});
+			var query = '{"type":"' + type +'","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
+			return this._http.get(Config.apiURL + "quantity-of-companies-by-type/" + query, { headers: headers }).map(res => res.json());
+		}
 
-	getSalesByCompany(query: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
-		});
-		return this._http.get(Config.apiURL + 'sales-by-company/' + query, { headers: headers }).map(res => res.json());
-	}
+		getSalesByCompany(query: string) {
+			let headers = new Headers({
+				'Content-Type': 'application/json',
+				'Authorization': this._userService.getToken(),
+				'Database': this._userService.getDatabase()
+			});
+			return this._http.get(Config.apiURL + 'sales-by-company/' + query, { headers: headers }).map(res => res.json());
+		}
 
-  getSummaryOfAccountsByCompany(query: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
-    });
-
+  	getSummaryOfAccountsByCompany(query: string) {
+			let headers = new Headers({
+				'Content-Type': 'application/json',
+				'Authorization': this._userService.getToken(),
+				'Database': this._userService.getDatabase()
+			});
     return this._http.get(Config.apiURL + "summary-of-accounts-by-company/" + query, { headers: headers }).map(res => res.json());
-  }
+  	}
 
-  getSummaryOfAccounts(query: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
-    });
-
-    return this._http.get(Config.apiURL + "summary-of-accounts/" + query, { headers: headers }).map(res => res.json());
-  }
+  	getSummaryOfAccounts(query: string) {
+			let headers = new Headers({
+				'Content-Type': 'application/json',
+				'Authorization': this._userService.getToken(),
+				'Database': this._userService.getDatabase()
+			});
+			return this._http.get(Config.apiURL + "summary-of-accounts/" + query, { headers: headers }).map(res => res.json());
+  	}
 
   // V2
-  public getCompaniesV2(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
+  	public getCompaniesV2(
+			project: {},
+				match: {},
+				sort: {},
+				group: {},
+				limit: number = 0,
+				skip: number = 0
+			): Observable<any> {
 
-    const URL = `${Config.apiURL}v2/companies`;
+				const URL = `${Config.apiURL}v2/companies`;
 
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._userService.getToken())
-      .set('Database', this._userService.getDatabase());
-    //.set('Authorization', this._authService.getSession()["token"]);
+				const headers = new HttpHeaders()
+					.set('Content-Type', 'application/json')
+					.set('Authorization', this._userService.getToken())
+					.set('Database', this._userService.getDatabase());
+				//.set('Authorization', this._authService.getSession()["token"]);
 
-    const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
+				const params = new HttpParams()
+					.set('project', JSON.stringify(project))
+					.set('match', JSON.stringify(match))
+					.set('sort', JSON.stringify(sort))
+					.set('group', JSON.stringify(group))
+					.set('limit', limit.toString())
+					.set('skip', skip.toString());
 
-    return this.http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      })
-    );
-	}
+				return this.http.get(URL, {
+					headers: headers,
+					params: params
+				}).pipe(
+					map(res => {
+						return res;
+					})
+				);
+		}
+
+		public getFieldByCompany(
+			project: {},
+			match: {},
+			sort: {},
+			group: {},
+			limit: number = 0,
+			skip: number = 0
+		) : Observable <any> {
+				const URL = `${Config.apiURL}/fields`;
+
+				const headers = new HttpHeaders()
+					.set('Content-Type', 'application/json')
+					.set('Authorization', this._userService.getToken())
+					.set('Database', this._userService.getDatabase());
+				//.set('Authorization', this._authService.getSession()["token"]);
+
+				const params = new HttpParams()
+					.set('project', JSON.stringify(project))
+					.set('match', JSON.stringify(match))
+					.set('sort', JSON.stringify(sort))
+					.set('group', JSON.stringify(group))
+					.set('limit', limit.toString())
+					.set('skip', skip.toString());
+
+				return this.http.get(URL, {
+					headers: headers,
+					params: params
+				}).pipe(
+					map(res => {
+						return res;
+					})
+				);
+		}
 	
 
-	public exportAsExcelFile(json: any[], excelFileName: string): void {
-		const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
-		const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-		const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-		this.saveAsExcelFile(excelBuffer, excelFileName);
-	}
-	private saveAsExcelFile(buffer: any, fileName: string): void {
-		 const data: Blob = new Blob([buffer], {type: EXCEL_TYPE});
-		 FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
-	}
+		public exportAsExcelFile(json: any[], excelFileName: string): void {
+			const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
+			const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+			const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+			this.saveAsExcelFile(excelBuffer, excelFileName);
+		}
+		private saveAsExcelFile(buffer: any, fileName: string): void {
+			const data: Blob = new Blob([buffer], {type: EXCEL_TYPE});
+			FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
+		}
 }

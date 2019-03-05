@@ -45,6 +45,8 @@ export class ConfigBackupComponent implements OnInit {
   public dateFormat: DateFormatPipe = new DateFormatPipe();
   public resultUpload: any;
   public imageURL: string;
+  public countries : any;
+  public timezones : any;
 
   public formErrors = {
     'backupTime' : '',
@@ -88,13 +90,38 @@ export class ConfigBackupComponent implements OnInit {
     this.userType = pathLocation[1];
     this.config = new Config();
     this.getVatConditions();
+
     this.buildFormCompany();
+
+    this.getCountries();
+    
+
     this.buildFormEmail();
     this.buildFormLabel();
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getCountries() : void {
+    this._configService.getCountry().subscribe(
+      result => {
+        this.countries = JSON.parse(result["_body"]);
+      }
+    )
+        
+  }
+
+  public getTimeZone( country : string) {
+
+    this._configService.getTimeZone(country).subscribe(
+      result => {
+        this.timezones = JSON.parse(result["_body"]);
+
+        this.timezones = this.timezones.timezones
+      }
+    )
   }
 
   public upload() {
@@ -195,7 +222,9 @@ export class ConfigBackupComponent implements OnInit {
       ],
       'footerInvoice': [this.config['footerInvoice'], [
         ]
-      ]
+      ],
+      'country' : [this.config['country'],[]],
+      'timezone' : [this.config['timezone'],[]]
     });
 
     this.configFormCompany.valueChanges
@@ -628,6 +657,11 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['companyAddress']) this.config['companyAddress'] = '';
     if (!this.config['companyPhone']) this.config['companyPhone'] = '';
     if (!this.config['footerInvoice']) this.config['footerInvoice'] = '';
+
+    if (!this.config['country']) this.config['country'] = '';
+    if (!this.config['timezone']) this.config['timezone'] = '';
+
+
     if (!this.config['heightLabel']) this.config['heightLabel'] = '';
     if (!this.config['widthLabel']) this.config['widthLabel'] = '';
 
@@ -642,7 +676,10 @@ export class ConfigBackupComponent implements OnInit {
       'companyVatCondition': this.config['companyVatCondition'],
       'companyStartOfActivity': moment(this.config['companyStartOfActivity'], 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY'),
       'companyGrossIncome': this.config['companyGrossIncome'],
-      'footerInvoice': this.config['footerInvoice']
+      'footerInvoice': this.config['footerInvoice'],
+      'country': this.config['country'],
+      'timezone': this.config['timezone']
+
     });
 
     this.configFormEmail.setValue({
@@ -662,7 +699,7 @@ export class ConfigBackupComponent implements OnInit {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyPicture, config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
-      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName);
+      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName, config.country, config.timezone);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

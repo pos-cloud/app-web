@@ -29,6 +29,8 @@ export class Config {
     static widthLabel: number;
     static footerInvoice: string;
     static expirationLicense: string;
+    static country : string;
+    static timezone : string;
 
     constructor() {
         Config.updateApiURL();
@@ -67,7 +69,8 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( companyPicture, companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName): void {
+    public static setConfigCompany( companyPicture, companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName,
+                                    country,timezone): void {
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
         Config.companyCUIT = companyCUIT;
@@ -78,6 +81,8 @@ export class Config {
         Config.companyStartOfActivity = companyStartOfActivity;
         Config.companyGrossIncome = companyGrossIncome;
         Config.footerInvoice = footerInvoice;
+        Config.country = country,
+        Config.timezone = timezone
     }
 
     public static setConfigLabel( heightLabel, widthLabel ): void {
