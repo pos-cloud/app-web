@@ -57,6 +57,8 @@ export class AddUnitOfMeasurementComponent implements OnInit {
     this.buildForm();
     if (this.unitOfMeasurementId) {
       this.getUnitOfMeasurement();
+    } else {
+      this.getLastUnitOfMeasurement();
     }
   }
 
@@ -71,6 +73,9 @@ export class AddUnitOfMeasurementComponent implements OnInit {
         ]
       ],
       'code': [this.unitOfMeasurement.code, [
+        ]
+      ],
+      'abbreviation': [this.unitOfMeasurement.abbreviation, [
         ]
       ],
       'name': [this.unitOfMeasurement.name, [
@@ -104,6 +109,31 @@ export class AddUnitOfMeasurementComponent implements OnInit {
     }
   }
 
+  public getLastUnitOfMeasurement(): void {
+
+    this.loading = true;
+
+    this._unitOfMeasurementService.getLastUnitOfMeasurement().subscribe(
+      result => {
+        if (!result.unitsOfMeasurement) {
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          try {
+            this.unitOfMeasurement.code = (parseInt(result.unitsOfMeasurement[0].code) + 1).toString();
+            this.setValuesForm();
+          } catch(e) {
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
   public getUnitOfMeasurement(): void {
 
     this.loading = true;
@@ -130,11 +160,13 @@ export class AddUnitOfMeasurementComponent implements OnInit {
 
     if (!this.unitOfMeasurement._id) { this.unitOfMeasurement._id = ''; }
     if (!this.unitOfMeasurement.code) { this.unitOfMeasurement.code = '1'; }
+    if (!this.unitOfMeasurement.abbreviation) { this.unitOfMeasurement.abbreviation = ''; }
     if (!this.unitOfMeasurement.name) { this.unitOfMeasurement.name = ''; }
 
     const values = {
       '_id': this.unitOfMeasurement._id,
       'code': this.unitOfMeasurement.code,
+      'abbreviation': this.unitOfMeasurement.abbreviation,
       'name': this.unitOfMeasurement.name,
     };
 

@@ -68,7 +68,7 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
           this.loading = false;
         }
       );
-   }
+  }
 
   public orderBy (term: string, property?: string): void {
 
