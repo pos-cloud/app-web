@@ -19,7 +19,7 @@ export class UnitOfMeasurementService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'units-of-measurement/sort="description":-1&limit=1', { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + 'units-of-measurement/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
 	getUnitOfMeasurement (id) {
@@ -37,7 +37,7 @@ export class UnitOfMeasurementService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "units-of-measurement", { headers: headers }).map (res => res.json());
+    return this._http.get(Config.apiURL + 'units-of-measurement/sort="name":1', { headers: headers }).map (res => res.json());
 	}
 
 	saveUnitOfMeasurement (unitOfMeasurement : UnitOfMeasurement) {
