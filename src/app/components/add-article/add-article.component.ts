@@ -32,6 +32,8 @@ import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../models/article-fields';
 import { ArticleFieldType } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+import { UnitOfMeasurementService } from 'app/services/unit-of-measurement.service';
+import { UnitOfMeasurement } from 'app/models/unit-of-measurement';
 
 @Component({
   selector: 'app-add-article',
@@ -53,6 +55,7 @@ export class AddArticleComponent implements OnInit {
   public locations: Location[] = new Array();
   public categories: Category[] = new Array();
   public variants: Variant[] = new Array();
+  public unitsOfMeasurement: UnitOfMeasurement[] = new Array();
   public taxes: Taxes[] = new Array();
   public otherFields: ArticleFields[] = new Array();
   public printIns: ArticlePrintIn[] = [ArticlePrintIn.Counter, ArticlePrintIn.Counter, ArticlePrintIn.Kitchen];
@@ -129,6 +132,7 @@ export class AddArticleComponent implements OnInit {
     public _locationService: LocationService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
+    public _unitOfMeasurementService: UnitOfMeasurementService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -153,28 +157,7 @@ export class AddArticleComponent implements OnInit {
       this.getArticle();
     } else {
       this.getMakes();
-      if (this.operation === 'update') {
-        this.taxes = this.article.taxes;
-        this.otherFields = this.article.otherFields;
-        if (this.article.picture && this.article.picture !== 'default.jpg') {
-          this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-        } else {
-          this.imageURL = './../../../assets/img/default.jpg';
-        }
-        this.setValuesForm();
-      } else if (this.operation === 'view') {
-        this.taxes = this.article.taxes;
-        this.otherFields = this.article.otherFields;
-        this.readonly = true;
-        if (this.article.picture && this.article.picture !== 'default.jpg') {
-          this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-        } else {
-          this.imageURL = './../../../assets/img/default.jpg';
-        }
-        this.setValuesForm();
-      } else {
-        this.imageURL = './../../../assets/img/default.jpg';
-      }
+      this.imageURL = './../../../assets/img/default.jpg';
     }
   }
 
@@ -226,6 +209,12 @@ export class AddArticleComponent implements OnInit {
       ],
       'category': [this.article.category, [
         Validators.required
+        ]
+      ],
+      'quantityPerMeasure': [this.article.quantityPerMeasure, [
+        ]
+      ],
+      'unitOfMeasurement': [this.article.unitOfMeasurement, [
         ]
       ],
       'deposit' : [this.article.deposit, [
@@ -301,7 +290,6 @@ export class AddArticleComponent implements OnInit {
           if(this.article.containsVariants) {
             this.getVariantsByArticleParent();
           }
-          this.getMakes();
           if (this.operation === 'update') {
             this.taxes = this.article.taxes;
             this.otherFields = this.article.otherFields;
@@ -310,7 +298,7 @@ export class AddArticleComponent implements OnInit {
             } else {
               this.imageURL = './../../../assets/img/default.jpg';
             }
-            this.setValuesForm();
+            this.getMakes();
           } else if (this.operation === 'view') {
             this.taxes = this.article.taxes;
             this.otherFields = this.article.otherFields;
@@ -320,7 +308,7 @@ export class AddArticleComponent implements OnInit {
             } else {
               this.imageURL = './../../../assets/img/default.jpg';
             }
-            this.setValuesForm();
+            this.getMakes();
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
@@ -537,13 +525,41 @@ export class AddArticleComponent implements OnInit {
     this._categoryService.getCategories().subscribe(
       result => {
         if (!result.categories) {
-          this.getLastArticle();
+          this.getUnitsOfMeasurement();
         } else {
           this.hideMessage();
           this.categories = result.categories;
+          this.getUnitsOfMeasurement();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getUnitsOfMeasurement(): void {
+
+    this.loading = true;
+
+    this._unitOfMeasurementService.getUnitsOfMeasurement().subscribe(
+      result => {
+        if (!result.unitsOfMeasurement) {
           if (this.operation === 'add') {
             this.getLastArticle();
+          } else {
+            this.setValuesForm();
           }
+        } else {
+          this.hideMessage();
+          this.unitsOfMeasurement = result.unitsOfMeasurement;
+          if (this.operation === 'add') {
+            this.getLastArticle();
+          } else {
+            this.setValuesForm();
+          };
         }
         this.loading = false;
       },
@@ -762,6 +778,18 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
+    let unitOfMeasurement;
+    if (!this.article.unitOfMeasurement) {
+      unitOfMeasurement = null;
+    } else {
+      if (this.article.unitOfMeasurement._id) {
+        unitOfMeasurement = this.article.unitOfMeasurement._id;
+      } else {
+        unitOfMeasurement = this.article.unitOfMeasurement;
+      }
+    }
+
+    if (!this.article.quantityPerMeasure) { this.article.quantityPerMeasure = 1; }
     if (!this.article.observation) { this.article.observation = ''; }
     if (!this.article.barcode) { this.article.barcode = ''; }
     if (!this.article.printIn) { this.article.printIn = ArticlePrintIn.Counter; }
@@ -770,7 +798,6 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
     if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
 
-    console.log(deposit);
     const values = {
       '_id': this.article._id,
       'code': this.article.code,
@@ -785,6 +812,8 @@ export class AddArticleComponent implements OnInit {
       'markupPrice': this.article.markupPrice,
       'salePrice': this.article.salePrice,
       'category': category,
+      'quantityPerMeasure': this.article.quantityPerMeasure,
+      'unitOfMeasurement': unitOfMeasurement,
       'observation': this.article.observation,
       'barcode': this.article.barcode,
       'printIn': this.article.printIn,
@@ -879,8 +908,6 @@ export class AddArticleComponent implements OnInit {
   public updateArticle(): void {
 
     this.loading = true;
-
-    console.log(this.article.deposit);
 
     this._articleService.updateArticle(this.article, this.variants).subscribe(
       result => {

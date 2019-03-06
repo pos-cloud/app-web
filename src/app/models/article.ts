@@ -5,6 +5,7 @@ import { Deposit } from './deposit';
 import { Location } from './location';
 import { ArticleFields } from './article-fields';
 import { User } from './user';
+import { UnitOfMeasurement } from './unit-of-measurement';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -18,6 +19,8 @@ export class Article {
   public description: string = '';
   public posDescription: string = '';
   public variantDescription: string;
+  public quantityPerMeasure: number = 1;
+  public unitOfMeasurement: UnitOfMeasurement;
   public observation: string;
   public basePrice: number = 0.00;
   public taxes: Taxes[];
@@ -59,4 +62,3 @@ export enum ArticleType {
   Variant = <any>"Variante",
   Ingredient = <any>"Ingrediente"
 }
-  

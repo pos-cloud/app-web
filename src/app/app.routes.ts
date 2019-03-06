@@ -84,6 +84,7 @@ import { UpdateArticlePriceComponent } from "./components/update-article-price/u
 import { ListVATConditionsComponent } from './components/list-vat-conditions/list-vat-conditions.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
+import { ListUnitsOfMeasurementComponent } from './components/list-units-of-measurement/list-units-of-measurement.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -619,6 +620,12 @@ const _routes: Routes = [
   {
     path: 'admin/campos-de-productos',
     component: ListArticleFieldsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/unidades-de-medida',
+    component: ListUnitsOfMeasurementComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

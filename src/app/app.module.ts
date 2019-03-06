@@ -195,6 +195,10 @@ import { DeleteVATConditionComponent } from './components/delete-vat-condition/d
 import { VATConditionComponent } from './components/vat-condition/vat-condition.component';
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
+import { ListUnitsOfMeasurementComponent } from './components/list-units-of-measurement/list-units-of-measurement.component';
+import { AddUnitOfMeasurementComponent } from './components/add-unit-of-measurement/add-unit-of-measurement.component';
+import { DeleteUnitOfMeasurementComponent } from './components/delete-unit-of-measurement/delete-unit-of-measurement.component';
+import { UnitOfMeasurementService } from './services/unit-of-measurement.service';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -331,7 +335,10 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
     UpdateCompanyGroupComponent,
     DeleteCompanyGroupComponent,
     UpdateArticlePriceComponent,
-    CompanyContactComponent
+    CompanyContactComponent,
+    ListUnitsOfMeasurementComponent,
+    AddUnitOfMeasurementComponent,
+    DeleteUnitOfMeasurementComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -371,7 +378,10 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
     DeleteCompanyGroupComponent,
     UpdateArticlePriceComponent,
     VATConditionComponent,
-    DeleteVATConditionComponent
+    DeleteVATConditionComponent,
+    AddUnitOfMeasurementComponent,
+    DeleteArticleComponent,
+    DeleteUnitOfMeasurementComponent
   ],
   imports: [
     BrowserModule,
@@ -429,7 +439,8 @@ import { ReportSalesByEmployeeComponent } from './components/report-sales-by-emp
     CompanyNewsService,
     ArticleFieldService,
     CompanyGroupService,
-    CompanyContactService
+    CompanyContactService,
+    UnitOfMeasurementService
   ],
   bootstrap: [AppComponent]
 })

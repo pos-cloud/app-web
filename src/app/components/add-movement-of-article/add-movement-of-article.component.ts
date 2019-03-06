@@ -208,7 +208,6 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.variantTypes = this.getUniqueValues('type', this.variants);
           this.initializeSelectedVariants();
           this.areVariantsEmpty = false;
-
         }
         this.loading = false;
       },
@@ -262,7 +261,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         let el = array[i][property];
         exists = false;
         for (let j = 0; j < uniqueArray.length; j++) {
-          if (array[i][property]._id === uniqueArray[j]._id) {
+          if (el._id === uniqueArray[j]._id) {
             exists = true;
           }
         }
@@ -271,7 +270,6 @@ export class AddMovementOfArticleComponent implements OnInit {
         }
       }
     }
-
     return uniqueArray;
   }
 

@@ -92,6 +92,30 @@
                     </select>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
+                    <input type="text" class="form-control" formControlName="quantityPerMeasure" name="quantityPerMeasure" id="quantityPerMeasure"
+                      [readonly]="readonly" />
+                    <div *ngIf="formErrors.quantityPerMeasure" class="alert alert-danger">
+                      {{ formErrors.quantityPerMeasure }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="unitOfMeasurement" class="control-label">Unidad de Medida:</label>
+                    <select class="form-control" formControlName="unitOfMeasurement">
+                      <option *ngFor="let unitOfMeasurement of unitsOfMeasurement"
+                              [selected]="article.unitOfMeasurement && unitOfMeasurement._id===article.unitOfMeasurement._id"
+                              [value]="unitOfMeasurement._id"
+                              [disabled]="readonly">
+                              {{unitOfMeasurement.name}}
+                      </option>
+                    </select>
+                    <div *ngIf="formErrors.unitOfMeasurement" class="alert alert-danger">
+                      {{ formErrors.unitOfMeasurement }}
+                    </div>
+                  </div>
+                </div>
                 <div class="row" *ngIf="article && article.type && article.type.toString() === 'Final'">
                   <div class="form-group col-md-12 center-content">
                     <div class="form-check">
