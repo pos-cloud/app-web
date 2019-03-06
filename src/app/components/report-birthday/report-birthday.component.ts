@@ -6,6 +6,8 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { CompanyService } from 'app/services/company.service';
+import { ConfigService } from './../../services/config.service'
+
 import { Company, CompanyType } from 'app/models/company';
 import { UpdateCompanyComponent } from '../update-company/update-company.component';
 import { TransactionMovement } from 'app/models/transaction-type';
@@ -23,7 +25,8 @@ export class ReportBirthdayComponent implements OnInit {
   public companies: Company[] = new Array();
   public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
-  public propertyTerm: string;
+  public propertyTerm: string;  
+  public config: Config;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Input() startDate: string;
@@ -37,10 +40,12 @@ export class ReportBirthdayComponent implements OnInit {
   public itemsPerPage: string = "5";
   public currentPage: number = 1;
   public transactionMovement: string;
+  public timezone;
 
   constructor(
     public _companyService: CompanyService,
-    public _router: Router,
+    public _router: Router,    
+    public _configService: ConfigService,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
   ) {
@@ -53,11 +58,45 @@ export class ReportBirthdayComponent implements OnInit {
 
   ngOnInit(): void {
 
+    
+
     this.loading = true;
-    let pathLocation: string[] = this._router.url.split('/');
-    this.listType = pathLocation[3];
-    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.getBirthday();
+
+    this.getConfig();
+
+    
+    
+  }
+
+  public getConfig(): void {
+    this._configService.getConfigApi().subscribe(
+      result => {
+        if(!result.configs){
+          this.showMessage("No se encontro la configuracion", 'danger', false);
+          this.loading = false;
+        } else {
+          this.config = result.configs;
+
+          if(this.config[0].timezone) {
+            this.timezone = this.config[0].timezone.split('C')
+          } else {
+            this.timezone = "-03:00"
+          }
+
+          let pathLocation: string[] = this._router.url.split('/');
+          this.listType = pathLocation[3];
+          this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+          this.getBirthday();
+          
+          
+          
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   public getBirthday(): void {
@@ -106,7 +145,7 @@ export class ReportBirthdayComponent implements OnInit {
       project = '{';
       for (let i = 0; i < displayedColumns.length; i++) {
         let field = displayedColumns[i];
-        project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":${Config.timezone}}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+        project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":"${this.timezone[1]}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
         if (i < displayedColumns.length - 1) {
           project += ',';
         }

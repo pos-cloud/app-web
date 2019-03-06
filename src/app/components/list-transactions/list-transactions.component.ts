@@ -22,6 +22,7 @@ import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
+import { TestObject } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-list-transactions',
@@ -34,6 +35,7 @@ export class ListTransactionsComponent implements OnInit {
 
   public transactions: Transaction[] = new Array();
   public config: Config;
+  public timezone;
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
@@ -92,22 +94,6 @@ export class ListTransactionsComponent implements OnInit {
 
     this.getConfig();
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.modules = Observable.of(Config.modules);
-    this.getPrinters();
-    if (this.listType === "Compras") {
-      this.transactionMovement = TransactionMovement.Purchase;
-    } else if (this.listType === "Ventas") {
-      this.transactionMovement = TransactionMovement.Sale;
-    } else if (this.listType === "Stock") {
-      this.transactionMovement = TransactionMovement.Stock;
-    } else if (this.listType === "Fondos") {
-      this.transactionMovement = TransactionMovement.Money;
-    }
-
-    this.getTransactions();
   }
 
   public getConfig(): void {
@@ -119,6 +105,31 @@ export class ListTransactionsComponent implements OnInit {
         } else {
           this.config = result.configs;
           this.allowResto = this.config[0].modules.sale.resto
+
+          if(this.config[0].timezone) {
+            this.timezone = this.config[0].timezone.split('C')
+          } else {
+            this.timezone = "-03:00"
+          }
+          
+
+          let pathLocation: string[] = this._router.url.split('/');
+          this.userType = pathLocation[1];
+          this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+          this.modules = Observable.of(Config.modules);
+          this.getPrinters();
+          if (this.listType === "Compras") {
+            this.transactionMovement = TransactionMovement.Purchase;
+          } else if (this.listType === "Ventas") {
+            this.transactionMovement = TransactionMovement.Sale;
+          } else if (this.listType === "Stock") {
+            this.transactionMovement = TransactionMovement.Stock;
+          } else if (this.listType === "Fondos") {
+            this.transactionMovement = TransactionMovement.Money;
+          }
+
+          this.getTransactions();
+          
         }
       },
       error => {
@@ -187,7 +198,7 @@ export class ListTransactionsComponent implements OnInit {
             project = '{';
             for (let i = 0; i < this.displayedColumns.length; i++) {
                 let field = this.displayedColumns[i];
-                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":${Config.timezone}}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"${this.timezone[1]}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
                 if (i < this.displayedColumns.length - 1) {
                     project += ',';
                 }
