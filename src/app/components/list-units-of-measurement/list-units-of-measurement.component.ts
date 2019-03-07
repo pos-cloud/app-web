@@ -90,7 +90,7 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
     switch(op) {
       case 'view':
         modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg' });
-        modalRef.componentInstance.unitOfMeasurement = unitOfMeasurement;
+        modalRef.componentInstance.unitOfMeasurementId = unitOfMeasurement._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
@@ -105,7 +105,7 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
         break;
       case 'update' :
         modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg' });
-        modalRef.componentInstance.unitOfMeasurement = unitOfMeasurement;
+        modalRef.componentInstance.unitOfMeasurementId = unitOfMeasurement._id;
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'update';
         modalRef.result.then((result) => {

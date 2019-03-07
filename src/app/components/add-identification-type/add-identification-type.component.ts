@@ -4,24 +4,24 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { UnitOfMeasurement } from './../../models/unit-of-measurement';
+import { IdentificationType } from './../../models/identification-type';
 
-import { UnitOfMeasurementService } from './../../services/unit-of-measurement.service';
+import { IdentificationTypeService } from './../../services/identification-type.service';
 
 @Component({
-  selector: 'app-add-unit-of-measurement',
-  templateUrl: './add-unit-of-measurement.component.html',
-  styleUrls: ['./add-unit-of-measurement.component.css'],
+  selector: 'app-add-identification-type',
+  templateUrl: './add-identification-type.component.html',
+  styleUrls: ['./add-identification-type.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddUnitOfMeasurementComponent implements OnInit {
+export class AddIdentificationTypeComponent implements OnInit {
 
-  public unitOfMeasurement: UnitOfMeasurement;
-  @Input() unitOfMeasurementId: string;
+  public identificationType: IdentificationType;
+  @Input() identificationTypeId: string;
   @Input() operation: string;
   @Input() readonly: boolean;
-  public unitOfMeasurementForm: FormGroup;
+  public identificationTypeForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -42,13 +42,13 @@ export class AddUnitOfMeasurementComponent implements OnInit {
   };
 
   constructor(
-    public _unitOfMeasurementService: UnitOfMeasurementService,
+    public _identificationTypeService: IdentificationTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
-    this.unitOfMeasurement = new UnitOfMeasurement();
+    this.identificationType = new IdentificationType();
   }
 
   ngOnInit(): void {
@@ -56,10 +56,10 @@ export class AddUnitOfMeasurementComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
-    if (this.unitOfMeasurementId) {
-      this.getUnitOfMeasurement();
+    if (this.identificationTypeId) {
+      this.getIdentificationType();
     } else {
-      this.getLastUnitOfMeasurement();
+      this.getLastIdentificationType();
     }
   }
 
@@ -69,24 +69,21 @@ export class AddUnitOfMeasurementComponent implements OnInit {
 
   public buildForm(): void {
 
-    this.unitOfMeasurementForm = this._fb.group({
-      '_id': [this.unitOfMeasurement._id, [
+    this.identificationTypeForm = this._fb.group({
+      '_id': [this.identificationType._id, [
         ]
       ],
-      'code': [this.unitOfMeasurement.code, [
+      'code': [this.identificationType.code, [
           Validators.required
         ]
       ],
-      'abbreviation': [this.unitOfMeasurement.abbreviation, [
-        ]
-      ],
-      'name': [this.unitOfMeasurement.name, [
+      'name': [this.identificationType.name, [
           Validators.required
         ]
       ]
     });
 
-    this.unitOfMeasurementForm.valueChanges
+    this.identificationTypeForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -95,8 +92,8 @@ export class AddUnitOfMeasurementComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
 
-    if (!this.unitOfMeasurementForm) { return; }
-    const form = this.unitOfMeasurementForm;
+    if (!this.identificationTypeForm) { return; }
+    const form = this.identificationTypeForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -111,22 +108,23 @@ export class AddUnitOfMeasurementComponent implements OnInit {
     }
   }
 
-  public getLastUnitOfMeasurement(): void {
+  public getLastIdentificationType(): void {
 
     this.loading = true;
 
-    this._unitOfMeasurementService.getLastUnitOfMeasurement().subscribe(
+    this._identificationTypeService.getLastIdentificationType().subscribe(
       result => {
-        if (!result.unitsOfMeasurement) {
+        if (!result.identificationTypes) {
+          this.loading = false;
         } else {
-          this.hideMessage();ç
+          this.hideMessage();
+          this.loading = false;
           try {
-            this.unitOfMeasurement.code = (parseInt(result.unitsOfMeasurement[0].code) + 1).toString();
+            this.identificationType.code = (parseInt(result.identificationTypes[0].code) + 1).toString();
             this.setValuesForm();
-          } catch(e) {
+          } catch (e) {
           }
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -135,17 +133,18 @@ export class AddUnitOfMeasurementComponent implements OnInit {
     );
   }
 
-  public getUnitOfMeasurement(): void {
+
+  public getIdentificationType(): void {
 
     this.loading = true;
 
-    this._unitOfMeasurementService.getUnitOfMeasurement(this.unitOfMeasurementId).subscribe(
+    this._identificationTypeService.getIdentificationType(this.identificationTypeId).subscribe(
       result => {
-        if (!result.unitOfMeasurement) {
+        if (!result.identificationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this.unitOfMeasurement = result.unitOfMeasurement;
+          this.identificationType = result.identificationType;
           this.setValuesForm();
         }
         this.loading = false;
@@ -159,46 +158,44 @@ export class AddUnitOfMeasurementComponent implements OnInit {
 
   public setValuesForm(): void {
 
-    if (!this.unitOfMeasurement._id) { this.unitOfMeasurement._id = ''; }
-    if (!this.unitOfMeasurement.code) { this.unitOfMeasurement.code = '1'; }
-    if (!this.unitOfMeasurement.abbreviation) { this.unitOfMeasurement.abbreviation = ''; }
-    if (!this.unitOfMeasurement.name) { this.unitOfMeasurement.name = ''; }
+    if (!this.identificationType._id) { this.identificationType._id = ''; }
+    if (!this.identificationType.code) { this.identificationType.code = '1'; }
+    if (!this.identificationType.name) { this.identificationType.name = ''; }
 
     const values = {
-      '_id': this.unitOfMeasurement._id,
-      'code': this.unitOfMeasurement.code,
-      'abbreviation': this.unitOfMeasurement.abbreviation,
-      'name': this.unitOfMeasurement.name,
+      '_id': this.identificationType._id,
+      'code': this.identificationType.code,
+      'name': this.identificationType.name,
     };
 
-    this.unitOfMeasurementForm.setValue(values);
+    this.identificationTypeForm.setValue(values);
   }
 
-  public addUnitOfMeasurement(): void {
+  public addIdentificationType(): void {
 
     if (!this.readonly) {
-      this.unitOfMeasurement = this.unitOfMeasurementForm.value;
+      this.identificationType = this.identificationTypeForm.value;
       if (this.operation === 'add') {
-        this.saveUnitOfMeasurement();
+        this.saveIdentificationType();
       } else if (this.operation === 'update') {
-        this.updateUnitOfMeasurement();
+        this.updateIdentificationType();
       }
     }
   }
 
-  public saveUnitOfMeasurement(): void {
+  public saveIdentificationType(): void {
 
     this.loading = true;
 
-    this._unitOfMeasurementService.saveUnitOfMeasurement(this.unitOfMeasurement).subscribe(
+    this._identificationTypeService.saveIdentificationType(this.identificationType).subscribe(
       result => {
-        if (!result.unitOfMeasurement) {
+        if (!result.identificationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.unitOfMeasurement = result.unitOfMeasurement;
-          this.showMessage("La unidad de medida se ha añadido con éxito.", 'success', true);
-          this.unitOfMeasurement = new UnitOfMeasurement ();
+          this.identificationType = result.identificationType;
+          this.showMessage("El tipo de identificación se ha añadido con éxito.", 'success', true);
+          this.identificationType = new IdentificationType ();
           this.buildForm();
         }
         this.loading = false;
@@ -210,18 +207,18 @@ export class AddUnitOfMeasurementComponent implements OnInit {
     );
   }
 
-  public updateUnitOfMeasurement(): void {
+  public updateIdentificationType(): void {
 
     this.loading = true;
 
-    this._unitOfMeasurementService.updateUnitOfMeasurement(this.unitOfMeasurement).subscribe(
+    this._identificationTypeService.updateIdentificationType(this.identificationType).subscribe(
       result => {
-        if (!result.unitOfMeasurement) {
+        if (!result.identificationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.unitOfMeasurement = result.unitOfMeasurement;
-          this.showMessage("La unidad de medida se ha actualizado con éxito.", 'success', true);
+          this.identificationType = result.identificationType;
+          this.showMessage("El tipo de identificación se ha actualizado con éxito.", 'success', true);
         }
         this.loading = false;
       },

@@ -85,6 +85,7 @@ import { ListVATConditionsComponent } from './components/list-vat-conditions/lis
 import { ReportBirthdayComponent } from './components/report-birthday/report-birthday.component';
 import { ReportSalesByEmployeeComponent } from './components/report-sales-by-employee/report-sales-by-employee.component'
 import { ListUnitsOfMeasurementComponent } from './components/list-units-of-measurement/list-units-of-measurement.component';
+import { ListIdentificationTypesComponent } from './components/list-identification-types/list-identification-types.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -186,38 +187,8 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-producto',
-    component: AddArticleComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-producto',
-    component: DeleteArticleComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/empleados',
     component: ListEmployeesComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/agregar-empleado',
-    component: AddEmployeeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-empleado',
-    component: UpdateEmployeeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-empleado',
-    component: DeleteEmployeeComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
@@ -228,44 +199,8 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-tipo-de-empleado',
-    component: AddEmployeeTypeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-tipo-de-empleado',
-    component: UpdateEmployeeTypeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-tipo-de-empleado',
-    component: DeleteEmployeeTypeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/mesas',
     component: ListTablesComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/agregar-mesa',
-    component: AddTableComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-mesa',
-    component: UpdateTableComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-mesa',
-    component: DeleteTableComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
@@ -306,12 +241,6 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-transaccion',
-    component: AddTransactionComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/eliminar-transaccion',
     component: DeleteTransactionComponent,
     canActivate: [AuthGuard],
@@ -324,44 +253,8 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-salon',
-    component: AddRoomComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-salon',
-    component: UpdateRoomComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-salon',
-    component: DeleteRoomComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/marcas',
     component: ListMakesComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/agregar-marca',
-    component: AddMakeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-marca',
-    component: UpdateMakeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-marca',
-    component: DeleteMakeComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
@@ -378,68 +271,14 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-rubro',
-    component: AddCategoryComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-rubro',
-    component: UpdateCategoryComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-rubro',
-    component: DeleteCategoryComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/usuarios',
     component: ListUsersComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-usuario',
-    component: AddUserComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-usuario',
-    component: UpdateUserComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-usuario',
-    component: DeleteUserComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/metodos-de-pago',
     component: ListPaymentMethodsComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/agregar-metodo-de-pago',
-    component: AddPaymentMethodComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-metodo-de-pago',
-    component: UpdatePaymentMethodComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-metodo-de-pago',
-    component: DeletePaymentMethodComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
@@ -462,24 +301,6 @@ const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/agregar-empresa',
-    component: AddCompanyComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-empresa',
-    component: UpdateCompanyComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-empresa',
-    component: DeleteCompanyComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
     path: 'admin/turnos',
     component: ListTurnsComponent,
     canActivate: [AuthGuard],
@@ -488,24 +309,6 @@ const _routes: Routes = [
   {
     path: 'admin/impresoras',
     component: ListPrintersComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/agregar-impresora',
-    component: AddPrinterComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/editar-impresora',
-    component: UpdatePrinterComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-impresora',
-    component: DeletePrinterComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
@@ -524,18 +327,6 @@ const _routes: Routes = [
   {
     path: 'admin/valores-de-variantes',
     component: ListVariantValuesComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/agregar-tipo-transaccion',
-    component: AddTransactionTypeComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['Administrador'] }
-  },
-  {
-    path: 'admin/eliminar-tipo-transaccion',
-    component: DeleteTransactionTypeComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
@@ -614,6 +405,12 @@ const _routes: Routes = [
   {
     path: 'admin/ubicaciones',
     component: ListLocationsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/tipos-de-identificacion',
+    component: ListIdentificationTypesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

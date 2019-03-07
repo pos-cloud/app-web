@@ -199,6 +199,10 @@ import { ListUnitsOfMeasurementComponent } from './components/list-units-of-meas
 import { AddUnitOfMeasurementComponent } from './components/add-unit-of-measurement/add-unit-of-measurement.component';
 import { DeleteUnitOfMeasurementComponent } from './components/delete-unit-of-measurement/delete-unit-of-measurement.component';
 import { UnitOfMeasurementService } from './services/unit-of-measurement.service';
+import { ListIdentificationTypesComponent } from './components/list-identification-types/list-identification-types.component';
+import { AddIdentificationTypeComponent } from './components/add-identification-type/add-identification-type.component';
+import { DeleteIdentificationTypeComponent } from './components/delete-identification-type/delete-identification-type.component';
+import { IdentificationTypeService } from './services/identification-type.service';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -338,7 +342,10 @@ import { UnitOfMeasurementService } from './services/unit-of-measurement.service
     CompanyContactComponent,
     ListUnitsOfMeasurementComponent,
     AddUnitOfMeasurementComponent,
-    DeleteUnitOfMeasurementComponent
+    DeleteUnitOfMeasurementComponent,
+    ListIdentificationTypesComponent,
+    AddIdentificationTypeComponent,
+    DeleteIdentificationTypeComponent
   ],
   entryComponents: [
     AddMovementOfCashComponent,
@@ -381,7 +388,9 @@ import { UnitOfMeasurementService } from './services/unit-of-measurement.service
     DeleteVATConditionComponent,
     AddUnitOfMeasurementComponent,
     DeleteArticleComponent,
-    DeleteUnitOfMeasurementComponent
+    DeleteUnitOfMeasurementComponent,
+    AddIdentificationTypeComponent,
+    DeleteIdentificationTypeComponent
   ],
   imports: [
     BrowserModule,
@@ -440,7 +449,8 @@ import { UnitOfMeasurementService } from './services/unit-of-measurement.service
     ArticleFieldService,
     CompanyGroupService,
     CompanyContactService,
-    UnitOfMeasurementService
+    UnitOfMeasurementService,
+    IdentificationTypeService
   ],
   bootstrap: [AppComponent]
 })
