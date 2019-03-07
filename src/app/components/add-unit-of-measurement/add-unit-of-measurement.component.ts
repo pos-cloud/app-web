@@ -119,7 +119,7 @@ export class AddUnitOfMeasurementComponent implements OnInit {
       result => {
         if (!result.unitsOfMeasurement) {
         } else {
-          this.hideMessage();ç
+          this.hideMessage();
           try {
             this.unitOfMeasurement.code = (parseInt(result.unitsOfMeasurement[0].code) + 1).toString();
             this.setValuesForm();
