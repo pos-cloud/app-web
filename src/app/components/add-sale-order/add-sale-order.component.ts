@@ -1286,12 +1286,14 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     if (isValidCharge &&
-      this.transaction.type.electronics &&
-      this.transaction.company &&
-      ((!this.transaction.company.CUIT || (this.transaction.company.CUIT && this.transaction.company.CUIT === '')) &&
-        (!this.transaction.company.DNI || (this.transaction.company.DNI && this.transaction.company.DNI === '')))) {
+        this.transaction.type.electronics &&
+        this.transaction.company && (
+        !this.transaction.company.identificationType ||
+        !this.transaction.company.identificationValue ||
+        this.transaction.company.identificationValue === '')
+      ) {
       isValidCharge = false;
-      this.showMessage("El cliente ingresado no tiene CUIT/DNI.", 'info', true);
+      this.showMessage("El cliente ingresado no está identificado", 'info', true);
       this.loading = false;
     }
 

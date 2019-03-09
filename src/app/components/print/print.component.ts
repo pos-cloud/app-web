@@ -155,7 +155,7 @@ export class PrintComponent implements OnInit {
               this.getShiftClosingByTransaccion();
             } else if (this.typePrint === "invoice") {
               if (this.transaction.type.requestArticles) {
-                
+
                 this.getMovementOfArticle();
               } else {
                 this.getMovementOfCash();
@@ -382,10 +382,8 @@ export class PrintComponent implements OnInit {
         this.doc.text("CONSUMIDOR FINAL".substr(0, 25), 25, row);
       }
 
-      if(this.bookVAT[i].DNICompany && this.bookVAT.DNICompany != '' ) {
-        this.doc.text(this.bookVAT[i].DNICompany.toString(), 70, row);
-      } else if (this.bookVAT[i].CUITCompany && this.bookVAT.CUITCompany != '') {
-        this.doc.text((this.bookVAT[i].CUITCompany).toString(), 70, row);
+      if(this.bookVAT[i].identificationValue && this.bookVAT.identificationValue != '' ) {
+        this.doc.text(this.bookVAT[i].identificationValue.toString(), 70, row);
       } else {
         this.doc.text("00000000000", 70, row);
       }
@@ -1818,32 +1816,28 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
 
     if (this.company) {
+      console.log(this.company);
       if(this.company.name) {
         this.doc.text(this.company.name, 42, 55);
       }
-      if (this.company.DNI && this.company.DNI !== '') {
+      if (this.company.identificationValue && this.company.identificationValue !== '') {
         this.doc.setFontType('bold');
-        this.doc.text("DNI:", 8, 60);
+        this.doc.text(this.company.identificationType.name + ":", 8, 60);
         this.doc.setFontType('normal');
-        this.doc.text(this.company.DNI, 17, 60);
-      } else if (this.company.CUIT && this.company.CUIT !== '') {
-        this.doc.setFontType('bold');
-        this.doc.text("CUIT:", 8, 60);
-        this.doc.setFontType('normal');
-        this.doc.text(this.company.CUIT, 18, 60);
+        this.doc.text(this.company.identificationValue, 42, 60);
       }
       this.doc.setFontType('normal');
-      if (this.company.vatCondition) {
-        this.doc.text(this.company.vatCondition.description, 40, 65);
+      if (this.company.vatCondition && this.company.vatCondition.description) {
+        this.doc.text(this.company.vatCondition.description, 42, 65);
       }
       if (this.company.grossIncome) {
-        this.doc.text(this.company.grossIncome, 38, 70);
+        this.doc.text(this.company.grossIncome, 42, 70);
       }
       if (this.company.address) {
         this.doc.text(this.company.address, 130, 55);
       }
       if (this.company.phones) {
-        this.doc.text(this.company.phones, 128, 60);
+        this.doc.text(this.company.phones, 130, 60);
       }
       if (this.company.city) {
         this.doc.text(this.company.city, 130, 65);

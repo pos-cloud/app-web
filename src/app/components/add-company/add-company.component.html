@@ -38,33 +38,30 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-3">
-                    <label for="identityType" class="control-label">Tipo de Identificación</label>
-                    <select class="form-control" formControlName="identityType">
-                      <option *ngFor="let identityType of identityTypes" [selected]="identityTypeSelected === identityType">
-                        {{identityType}}
+                  <div class="form-group col-md-6">
+                    <label for="identificationType" class="control-label">Tipo de Identificación</label>
+                    <select class="form-control" formControlName="identificationType">
+                      <option *ngFor="let identificationType of identificationTypes"
+                              [ngValue]="identificationType._id">
+                        {{identificationType.name}}
                       </option>
                     </select>
+                    <div *ngIf="formErrors.identificationType" class="alert alert-danger">
+                      {{ formErrors.identificationType }}
+                    </div>
                   </div>
-                  <div class="form-group col-md-4" *ngIf="identityTypeSelected==='CUIT'">
-                    <label for="CUIT" class="control-label">Número</label>
+                  <div class="form-group col-md-6">
+                    <label for="identificationValue" class="control-label">Nro. de identificación</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="CUIT" name="CUIT" id="CUIT" [focus]="focusEvent"/>
+                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue" [focus]="focusEvent"/>
                     </div>
-                    <div *ngIf="formErrors.CUIT" class="alert alert-danger">
-                      {{ formErrors.CUIT }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-4" *ngIf="identityTypeSelected==='DNI'">
-                    <label for="DNI" class="control-label">Número</label>
-                    <div class="input-group">
-                      <input type="number" class="form-control" formControlName="DNI" name="DNI" id="DNI" [focus]="focusEvent"/>
-                    </div>
-                    <div *ngIf="formErrors.DNI" class="alert alert-danger">
-                      {{ formErrors.DNI }}
+                    <div *ngIf="formErrors.identificationValue" class="alert alert-danger">
+                      {{ formErrors.identificationValue }}
                     </div>
                   </div>
-                  <div class="form-group col-md-5">
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="grossIncome" class="control-label">Ingresos Brutos:</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="grossIncome" name="grossIncome" id="grossIncome" />
@@ -187,6 +184,8 @@
                       {{ formErrors.group }}
                     </div>
                   </div>
+                </div>
+                <div class="row">
                   <div class="form-group col-md-12">
                     <label for="employee" class="control-label">Empleado asignado</label>
                     <select class="form-control" formControlName="employee">

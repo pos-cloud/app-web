@@ -21,6 +21,8 @@ import { EmployeeService } from "./../../services/employee.service";
 
 //PIPE
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
+import { IdentificationType } from 'app/models/identification-type';
+import { IdentificationTypeService } from 'app/services/identification-type.service';
 
 @Component({
   selector: 'app-add-company',
@@ -32,14 +34,16 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 export class AddCompanyComponent  implements OnInit {
 
   public company: Company;
+  @Input() companyId: string;
   @Input() companyType: CompanyType;
+  @Input() operation: string;
+  @Input() readonly: boolean;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
   public companiesGroup: CompanyGroup[];
   public employees: Employee[];
   public dateFormat = new DateFormatPipe();
-  public identityTypes: string[] = ["DNI","CUIT"];
-  public identityTypeSelected: string;
+  public identificationTypes: IdentificationType[];
   public companyForm: FormGroup;
   public alertMessage: string = '';
   public genders: any[] = ['', GenderType.Male, GenderType.Female];
@@ -53,9 +57,8 @@ export class AddCompanyComponent  implements OnInit {
     'fantasyName': '',
     'type': '',
     'vatCondition': '',
-    'identityType' : '',
-    'CUIT': '',
-    'DNI': '',
+    'identificationType': '',
+    'identificationValue': '',
     'address': '',
     'city': '',
     'phones': '',
@@ -83,18 +86,6 @@ export class AddCompanyComponent  implements OnInit {
     'vatCondition': {
       'required': 'Este campo es requerido.'
     },
-    'identityType' : {
-      'required': 'Este campo es requerido.'
-    },
-    'CUIT': {
-      'minlength':      'El CUIT debe contener 13 díguitos.',
-      'maxlength':      'El CUIT debe contener 13 díguitos.',
-      'pattern':        ' Ingrese el CUIT con formato con guiones'
-    },
-    'DNI': {
-      'minlength': 'El DNI debe contener 8 díguitos.',
-      'maxlength': 'El DNI debe contener 8 díguitos.'
-    },
     'address': {
     },
     'city': {
@@ -119,12 +110,15 @@ export class AddCompanyComponent  implements OnInit {
     public _vatConditionService: VATConditionService,
     public _companyGroupService: CompanyGroupService,
     public _employeeService: EmployeeService,
+    public _identificationTypeService: IdentificationTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
+    this.company = new Company();
     this.types = new Array();
+    this.vatConditions = new Array();
   }
 
   ngOnInit(): void {
@@ -142,27 +136,81 @@ export class AddCompanyComponent  implements OnInit {
       this.types.push(CompanyType.Provider);
     }
 
-    this.company = new Company();
-    this.vatConditions = new Array();
-    this.company.type = this.types[0];
     this.buildForm();
     this.getVATConditions();
+    this.getIdentificationTypes();
     this.getCompaniesGroup();
-    this.getEmployee();
-    this.getLastCompany();
+    this.getEmployees();
+
+    if(this.companyId) {
+      this.getCompany();
+    } else {
+      this.getLastCompany();
+    }
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
   }
 
-  public getEmployee(): void {
-    
+  public getCompany(): void {
+
+    this.loading = true;
+
+    this._companyService.getCompany(this.companyId).subscribe(
+      result => {
+        if (!result.company) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.company = result.company;
+
+          if (this.company.birthday) {
+            this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+          } else {
+            this.company.birthday = null;
+          }
+          this.setValueForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getIdentificationTypes(): void {
+
+    this.loading = true;
+
+    this._identificationTypeService.getIdentificationTypes().subscribe(
+      result => {
+        if (!result.identificationTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+          this.identificationTypes = null;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.identificationTypes = result.identificationTypes;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getEmployees(): void {
+
     this.loading = true;
 
     this._employeeService.getEmployees().subscribe(
       result => {
         if (!result.employees) {
+          this.employees = null;
         } else {
           this.employees = result.employees;
         }
@@ -196,6 +244,9 @@ export class AddCompanyComponent  implements OnInit {
   public buildForm(): void {
 
     this.companyForm = this._fb.group({
+      '_id': [this.company._id, [
+        ]
+      ],
       'code': [this.company.code, [
           Validators.required
         ]
@@ -215,18 +266,10 @@ export class AddCompanyComponent  implements OnInit {
           Validators.required
         ]
       ],
-      'identityType': [this.identityTypes[0], [
+      'identificationType': [this.company.identificationType, [
         ]
       ],
-      'CUIT': [this.company.CUIT, [
-          Validators.maxLength(13),
-          Validators.minLength(13),
-          Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
-        ]
-      ],
-      'DNI': [this.company.DNI, [
-          Validators.maxLength(8),
-          Validators.minLength(8)
+      'identificationValue': [this.company.identificationValue, [
         ]
       ],
       'grossIncome': [this.company.grossIncome, [
@@ -279,8 +322,6 @@ export class AddCompanyComponent  implements OnInit {
         }
       }
     }
-
-    this.identityTypeSelected = this.companyForm.value.identityType;
   }
 
   public setValueForm(): void {
@@ -290,13 +331,11 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.name) this.company.name = '';
     if (!this.company.fantasyName) this.company.fantasyName = '';
     if (!this.company.type) CompanyType.Client;
-    if (!this.identityTypeSelected) this.company.DNI = '';
-    if (!this.company.CUIT) this.company.CUIT = '';
-    if (!this.company.DNI) this.company.DNI = '';
     if (!this.company.address) this.company.address = '';
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
     if (!this.company.emails) this.company.emails = '';
+    if (!this.company.identificationValue) this.company.identificationValue = '';
     if (this.company.birthday) {
       this.company.birthday = moment(this.company.birthday).format('YYYY-MM-DD');
     } else {
@@ -337,8 +376,6 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
-    
-
     let employee;
     if (!this.company.employee) {
       employee = null;
@@ -350,16 +387,26 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    let identificationType;
+    if (!this.company.identificationType) {
+      identificationType = null;
+    } else {
+      if (this.company.identificationType._id) {
+        identificationType = this.company.identificationType._id;
+      } else {
+        identificationType = this.company.identificationType;
+      }
+    }
 
     const values = {
+      '_id': this.company._id,
       'code': this.company.code,
       'name': this.company.name,
       'fantasyName': this.company.fantasyName,
       'type': this.company.type,
       'vatCondition': vatCondition,
-      'identityType': this.identityTypeSelected,
-      'CUIT': this.company.CUIT,
-      'DNI': this.company.DNI,
+      'identificationType': identificationType,
+      'identificationValue': this.company.identificationValue,
       'grossIncome': this.company.grossIncome,
       'address': this.company.address,
       'city': this.company.city,
@@ -387,11 +434,6 @@ export class AddCompanyComponent  implements OnInit {
         } else {
           this.vatConditions = result.vatConditions;
           this.company.vatCondition = this.vatConditions[0];
-          if(this.company.vatCondition && this.company.vatCondition.description === "Consumidor Final") {
-            this.identityTypeSelected = "DNI";
-          } else {
-            this.identityTypeSelected = "CUIT";
-          }
         }
         this.loading = false;
       },
@@ -416,8 +458,10 @@ export class AddCompanyComponent  implements OnInit {
           }
 
           this.company.code = code;
-          this.company.vatCondition = this.vatConditions[0];
-          this.identityTypeSelected = this.identityTypes[0];
+          if (this.vatConditions && this.vatConditions.length > 0) {
+            this.company.vatCondition = this.vatConditions[0];
+          }
+          this.company.identificationType = result.companies[0].identificationType;
           this.setValueForm();
           this.loading = false;
         },
@@ -431,30 +475,30 @@ export class AddCompanyComponent  implements OnInit {
 
    public addCompany(): void {
 
-    if (this.identityTypeSelected === "CUIT") {
-      this.companyForm.value.DNI = '';
-    } else {
-      this.companyForm.value.CUIT = '';
-    }
-    this.company = this.companyForm.value;
+     if (!this.readonly) {
+       this.company = this.companyForm.value;
 
-    if (this.company.birthday) {
-      this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
-    }
-    if(this.isValid()) {
-      this.saveCompany();
-    }
+       if (this.company.birthday) {
+         this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
+       }
+       if(this.isValid()) {
+         if (this.operation === 'add') {
+           this.saveCompany();
+         } else if (this.operation === 'update') {
+           this.updateCompany();
+         }
+       }
+     }
   }
 
   public isValid(): boolean {
 
     let valid: boolean = true;
 
-
-    if (this.identityTypeSelected === "DNI" && this.company.vatCondition.description !== "Consumidor Final") {
-      valid = false;
-      this.showMessage("Al ingresar una condición de IVA distinta de Consumidor Final, debe ingresar el CUIT de la empresa", "info", true);
-    }
+    // if (this.identityTypeSelected === "" && this.company.vatCondition.description !== "Consumidor Final") {
+    //   valid = false;
+    //   this.showMessage("Al ingresar una condición de IVA distinta de Consumidor Final, debe ingresar el  de la empresa", "info", true);
+    // }
 
     return valid;
   }
@@ -473,7 +517,27 @@ export class AddCompanyComponent  implements OnInit {
           this.company = new Company ();
           this.buildForm();
           this.getLastCompany();
-          this.identityTypeSelected = "CUIT";
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public updateCompany(): void {
+
+    this.loading = true;
+
+    this._companyService.updateCompany(this.company).subscribe(
+      result => {
+        if (!result.company) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.company = result.company;
+          this.showMessage("La empresa se ha actualizado con éxito.", 'success', false);
         }
         this.loading = false;
       },

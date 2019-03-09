@@ -2,6 +2,7 @@ import { VATCondition } from './vat-condition';
 import { CompanyGroup } from './company-group';
 import { Employee } from "./employee";
 import { User } from './user';
+import { IdentificationType } from './identification-type';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -14,6 +15,8 @@ export class Company {
   public fantasyName: string;
   public entryDate: string  = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public type: CompanyType = CompanyType.Client;
+  public identificationType: IdentificationType;
+  public identificationValue: string;
   public vatCondition: VATCondition;
   public CUIT: string;
   public DNI: string;
@@ -26,7 +29,7 @@ export class Company {
   public birthday: string;
   public observation: string;
   public allowCurrentAccount: boolean;
-  public group: CompanyGroup;  
+  public group: CompanyGroup;
   public employee : Employee;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

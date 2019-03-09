@@ -114,12 +114,14 @@ export class ListCompaniesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view' :
-          modalRef = this._modalService.open(UpdateCompanyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
           modalRef.componentInstance.company = company;
           modalRef.componentInstance.readonly = true;
+          modalRef.componentInstance.operation = 'view';
         break;
       case 'add' :
         modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'add';
         if (this.type) {
           modalRef.componentInstance.companyType = this.type;
         }
@@ -130,15 +132,14 @@ export class ListCompaniesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateCompanyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
           modalRef.componentInstance.company = company;
           modalRef.componentInstance.readonly = false;
+          modalRef.componentInstance.operation = 'update';
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getCompaniesByType();
-            }
+            this.getCompaniesByType();
           }, (reason) => {
-
+              this.getCompaniesByType();
           });
         break;
       case 'delete' :
@@ -163,8 +164,8 @@ export class ListCompaniesComponent implements OnInit {
         model.type = CompanyType.Client;
         model.relations = new Array();
         model.relations.push("vat-condition_relation_description");
-        model.CUIT = '';
-        model.DNI = '';
+        model.relations.push("identification-type_relation_description");
+        model.identificationValue = '';
         model.address = '';
         model.city = '';
         model.phones = '';
@@ -242,8 +243,7 @@ export class ListCompaniesComponent implements OnInit {
       } else {
         data[index]['CondiciónDeIVA'] = 'Consumidor Final';
       }
-      data[index]['DNI'] = this.companies[index].DNI;
-      data[index]['CUIT'] = this.companies[index].CUIT;
+      data[index]['Identificador'] = this.companies[index].identificationValue;
       data[index]['Teléfono'] = this.companies[index].phones;
       data[index]['Dirección'] = this.companies[index].address;
       data[index]['Ciudad'] = this.companies[index].city;
