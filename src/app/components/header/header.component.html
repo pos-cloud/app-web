@@ -7,8 +7,9 @@
           aria-controls="navbarSupportedContent"
           aria-expanded="false"
           aria-label="Toggle navigation"
-          (click)="makeVisibleReport(false)">
-    <span class="navbar-toggler-icon"></span>
+          (click)="makeVisibleReport(false)"
+          style="font-size: 30px;margin-top:10px;">
+    <i class="fa fa-bars"></i>
   </button>
   <span class="navbar-brand btn" (click)="goToHome()">
       <img width="100" src="assets/img/logo.png">
@@ -390,11 +391,6 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="nav-item"
-          (click)="makeVisibleReport(false)">
-        <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
-        <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
-      </li>
-      <li class="nav-item"
           ngbDropdown
           *ngIf="identity">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
@@ -409,6 +405,12 @@
               </button>
             </div>
         </div>
+      </li>
+      <li class="nav-item"
+          (click)="makeVisibleReport(false)"
+          style="margin:0px 20px">
+        <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
+        <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
       </li>
       <li class="nav-item pull-right">
         <a class="nav-link btn"

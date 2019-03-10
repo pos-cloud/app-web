@@ -72,3 +72,7 @@ li > a {
   background-color: #088A08;
   color: white;
 }
+
+.navbar-toggler-icon {
+  color: black;
+}
