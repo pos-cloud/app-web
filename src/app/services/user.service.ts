@@ -27,7 +27,7 @@ export class UserService {
     return this._http.get(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
 	}
 
-  getUsers(query?: string, when?: string) {
+  getUsers(query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this.getToken(),
@@ -61,7 +61,7 @@ export class UserService {
     });
     return this._http.post(Config.apiURL + "register", data, { headers: headers }).map(res => res.json());
   }
-  
+
   deleteUser (id: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export class UserService {
   }
 
   updateUser (user: User){
-    let headers = new Headers({ 
+    let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this.getToken(),
 			'Database': this.getDatabase()
@@ -88,7 +88,7 @@ export class UserService {
     });
     return this._http.get(Config.apiURL + 'users/where="employee":"' + employeeId + '"&limit=1', { headers: headers }).map (res => res.json());
   }
-  
+
   isValidToken(token: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
@@ -108,9 +108,9 @@ export class UserService {
   }
 
   getIdentity(): User {
-    
+
     let identity: User = JSON.parse(sessionStorage.getItem('user'));
-    
+
     if (identity !== undefined && identity !== null) {
       return identity;
     } else {

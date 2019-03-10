@@ -14,6 +14,7 @@ import { Config } from './../../app.config';
 
 // SERVICES
 import { UserService } from './../../services/user.service';
+import { UpdateUserComponent } from '../update-user/update-user.component';
 
 @Component({
   selector: 'app-header',
@@ -94,6 +95,33 @@ export class HeaderComponent implements OnInit {
           this._router.navigate(['/registrar']);
         }
       });
+    }
+  }
+
+  public openModal(op: string): void {
+
+    let modalRef;
+    switch (op) {
+      case 'view-user':
+        modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+        modalRef.componentInstance.userId = this.identity._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.result.then((result) => {
+
+        }, (reason) => {
+
+        });
+        break;
+      case 'update-user':
+        modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+        modalRef.componentInstance.userId = this.identity._id;
+        modalRef.result.then((result) => {
+
+        }, (reason) => {
+
+        });
+        break;
+      default: ;
     }
   }
 

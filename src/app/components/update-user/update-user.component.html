@@ -27,7 +27,7 @@
       <div class="row">
         <div class="form-group col-md-12">
           <label for="password" class="control-label">Contraseña:</label>
-          <input type="password" class="form-control" formControlName="password" name="password" id="password" />
+          <input type="password" class="form-control" formControlName="password" name="password" id="password" [readonly]="readonly"/>
           <div *ngIf="formErrors.password" class="alert alert-danger">
             {{ formErrors.password }}
           </div>

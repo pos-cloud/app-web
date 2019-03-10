@@ -38,20 +38,20 @@ export class ListUsersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getUsers();
   }
 
-  public getUsers(): void {  
+  public getUsers(): void {
 
     this.loading = true;
 
-    this._userService.getUsers('',"list").subscribe(
+    this._userService.getUsers().subscribe(
         result => {
 					if (!result.users) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
 					  this.users = null;
             this.areUsersEmpty = true;
@@ -73,9 +73,9 @@ export class ListUsersComponent implements OnInit {
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;  
+      this.orderTerm[0] = "-"+term;
     } else {
-      this.orderTerm[0] = term; 
+      this.orderTerm[0] = term;
     }
     this.propertyTerm = property;
   }
@@ -83,14 +83,14 @@ export class ListUsersComponent implements OnInit {
   public refresh(): void {
     this.getUsers();
   }
-  
+
   public openModal(op: string, user:User): void {
 
     let modalRef;
     switch(op) {
       case 'view':
         modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
-        modalRef.componentInstance.user = user;
+        modalRef.componentInstance.userId = user._id;
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
@@ -102,14 +102,14 @@ export class ListUsersComponent implements OnInit {
         break;
       case 'update' :
           modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
-          modalRef.componentInstance.user = user;
+          modalRef.componentInstance.userId = user._id;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if (result === 'save_close') {
               this.getUsers();
             }
           }, (reason) => {
-            
+
           });
         break;
       case 'delete' :
@@ -120,13 +120,13 @@ export class ListUsersComponent implements OnInit {
               this.getUsers();
             }
           }, (reason) => {
-            
+
           });
         break;
       default : ;
     }
-  }; 
-  
+  };
+
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
     this.alertConfig.type = type;
