@@ -14,6 +14,8 @@ import { ConfigService } from './../../services/config.service';
 import { VATConditionService } from './../../services/vat-condition.service';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { UserService } from '../../services/user.service';
+import { IdentificationType } from 'app/models/identification-type';
+import { IdentificationTypeService } from 'app/services/identification-type.service';
 
 @Component({
   selector: 'app-config-backup',
@@ -27,6 +29,7 @@ export class ConfigBackupComponent implements OnInit {
   public routeFile:string;
   public filesToUpload: Array<File>;
   public userType: string;
+  public identificationTypes: IdentificationType[];
   public vatConditions: VATCondition[];
   public config: Config;
   public loading: boolean = false;
@@ -34,12 +37,10 @@ export class ConfigBackupComponent implements OnInit {
   public configFormBackup: FormGroup;
   public configFormEmail: FormGroup;
   public configFormCompany: FormGroup;
-  public configFormLabel: FormGroup;
   public focusEvent = new EventEmitter<boolean>();
   public alertMessage: string = "";
   public loadingCompany: boolean = false;
   public loadingEmail: boolean = false;
-  public loadingLabel: boolean = false;
   public loadingBackup: boolean = false;
   public loadingLicense: boolean = false;
   public dateFormat: DateFormatPipe = new DateFormatPipe();
@@ -57,9 +58,6 @@ export class ConfigBackupComponent implements OnInit {
   };
 
   public validationMessages = {
-    'backupTime' : {
-      'required':     'Este campo es requerido.'
-    },
     'emailAccount': {
       'required': 'Este campo es requerido'
     },
@@ -78,26 +76,26 @@ export class ConfigBackupComponent implements OnInit {
     public _router: Router,
     public _configService: ConfigService,
     public _vatCondition: VATConditionService,
+    public _identificationTypeService: IdentificationTypeService,
     public _userService: UserService,
     public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig,
-
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+
     this.config = new Config();
     this.getVatConditions();
 
     this.buildFormCompany();
 
     this.getCountries();
-    
 
     this.buildFormEmail();
-    this.buildFormLabel();
   }
 
   ngAfterViewInit() {
@@ -110,7 +108,7 @@ export class ConfigBackupComponent implements OnInit {
         this.countries = JSON.parse(result["_body"]);
       }
     )
-        
+
   }
 
   public getTimeZone( country : string) {
@@ -198,10 +196,13 @@ export class ConfigBackupComponent implements OnInit {
           Validators.required
         ]
       ],
-      'companyCUIT': [this.config['companyCUIT'], [
+      'companyFantasyName' : [this.config['companyFantasyName'],[
         ]
       ],
-      'companyFantasyName' : [this.config['companyFantasyName'],[
+      'companyIdentificationType': [this.config['companyIdentificationType'], [
+        ]
+      ],
+      'companyIdentificationValue': [this.config['companyIdentificationValue'], [
         ]
       ],
       'companyVatCondition': [this.config['companyVatCondition'], [
@@ -223,8 +224,12 @@ export class ConfigBackupComponent implements OnInit {
       'footerInvoice': [this.config['footerInvoice'], [
         ]
       ],
-      'country' : [this.config['country'],[]],
-      'timezone' : [this.config['timezone'],[]]
+      'country' : [this.config['country'], [
+        ]
+      ],
+      'timezone' : [this.config['timezone'], [
+        ]
+      ]
     });
 
     this.configFormCompany.valueChanges
@@ -282,28 +287,6 @@ export class ConfigBackupComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public buildFormLabel() {
-    this.configFormLabel = this._fb.group({
-      '_id': [this.config._id, [
-          Validators.required
-        ]
-      ],
-      'heightLabel': [this.config['heightLabel'], [
-          Validators.required
-        ]
-      ],
-      'widthLabel': [this.config['widthLabel'], [
-        ]
-      ]
-    });
-
-    this.configFormLabel.valueChanges
-      .subscribe(data => this.onValueChangedLabel(data));
-
-    this.onValueChangedLabel();
-    this.focusEvent.emit(true);
-  }
-
   public onValueChangedBackup(data?: any): void {
 
     if (!this.configFormBackup) { return; }
@@ -358,24 +341,6 @@ export class ConfigBackupComponent implements OnInit {
     }
   }
 
-  public onValueChangedLabel(data?: any): void {
-
-    if (!this.configFormLabel) { return; }
-    const form = this.configFormLabel;
-
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
-  }
-
   public validateDate() {
     return function (input: FormControl) {
       let dateValid = false;
@@ -400,15 +365,35 @@ export class ConfigBackupComponent implements OnInit {
       result => {
         if (!result.vatConditions) {
           if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          this.loadingCompany = false;
         } else {
           this.vatConditions = result.vatConditions;
-          this.getConfig();
         }
+        this.getIdentificationTypes();
         this.loadingCompany = false;
       },
       error => {
         this.showMessage(error._body, "danger", false);
+        this.loadingCompany = false;
+      }
+    );
+  }
+
+  public getIdentificationTypes(): void {
+
+    this.loadingCompany = true;
+
+    this._identificationTypeService.getIdentificationTypes().subscribe(
+      result => {
+        if (!result.identificationTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.identificationTypes = result.identificationTypes;
+        }
+        this.getConfig();
+        this.loadingCompany = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
         this.loadingCompany = false;
       }
     );
@@ -428,11 +413,6 @@ export class ConfigBackupComponent implements OnInit {
     this.config = this.configFormCompany.value;
     this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
     this.updateConfigCompany();
-  }
-
-  public addConfigLabel() {
-    this.config = this.configFormLabel.value;
-    this.updateConfigLabel();
   }
 
   public generateLicensePayment() {
@@ -546,30 +526,6 @@ export class ConfigBackupComponent implements OnInit {
     )
   }
 
-  public updateConfigLabel(): void {
-
-    this.loadingLabel = true;
-
-    this._configService.updateConfigLabel(this.config).subscribe(
-      result => {
-        if (!result.configs) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
-          this.loadingLabel = false;
-        } else {
-          this.config = result.configs[0];
-          this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
-          this.setConfigurationSettings(this.config);
-          this.getConfig();
-        }
-        this.loadingLabel = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loadingLabel = false;
-      }
-    )
-  }
-
   public deletePicture(): void {
 
     this.loadingCompany = true;
@@ -644,7 +600,6 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['companyPicture']) this.config['companyPicture'] = 'default.jpg';
     if (!this.config['companyName']) this.config['companyName'] = '';
     if (!this.config['companyFantasyName']) this.config['companyFantasyName'] = '';
-    if (!this.config['companyCUIT']) this.config['companyCUIT'] = '';
     if (!this.config['companyVatCondition']) {
       if(this.vatConditions && this.vatConditions.length > 0) {
         this.config['companyVatCondition'] = this.vatConditions[0];
@@ -652,34 +607,39 @@ export class ConfigBackupComponent implements OnInit {
         this.config['companyVatCondition'] = null;
       }
     }
+
+    if (!this.config['companyIdentificationType']) {
+      if (this.identificationTypes && this.identificationTypes.length > 0) {
+        this.config['companyIdentificationType'] = this.identificationTypes[0];
+      } else {
+        this.config['companyIdentificationType'] = null;
+      }
+    }
+    if (!this.config['companyIdentificationValue']) this.config['companyIdentificationValue'] = '';
     if (!this.config['companyStartOfActivity']) this.config['companyStartOfActivity'] = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = '';
     if (!this.config['companyAddress']) this.config['companyAddress'] = '';
     if (!this.config['companyPhone']) this.config['companyPhone'] = '';
     if (!this.config['footerInvoice']) this.config['footerInvoice'] = '';
 
-    if (!this.config['country']) this.config['country'] = '';
-    if (!this.config['timezone']) this.config['timezone'] = '';
-
-
-    if (!this.config['heightLabel']) this.config['heightLabel'] = '';
-    if (!this.config['widthLabel']) this.config['widthLabel'] = '';
+    if (!this.config['country']) this.config['country'] = 'AR';
+    if (!this.config['timezone']) this.config['timezone'] = 'UTC-03:00';
 
     this.configFormCompany.setValue({
       '_id': this.config['_id'],
       'companyPicture': this.config['companyPicture'],
       'companyName': this.config['companyName'],
-      'companyCUIT': this.config['companyCUIT'],
       'companyAddress': this.config['companyAddress'],
       'companyFantasyName': this.config['companyFantasyName'],
       'companyPhone': this.config['companyPhone'],
+      'companyIdentificationType': this.config['companyIdentificationType'],
+      'companyIdentificationValue': this.config['companyIdentificationValue'],
       'companyVatCondition': this.config['companyVatCondition'],
       'companyStartOfActivity': moment(this.config['companyStartOfActivity'], 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY'),
       'companyGrossIncome': this.config['companyGrossIncome'],
       'footerInvoice': this.config['footerInvoice'],
       'country': this.config['country'],
       'timezone': this.config['timezone']
-
     });
 
     this.configFormEmail.setValue({
@@ -687,19 +647,13 @@ export class ConfigBackupComponent implements OnInit {
       'emailAccount': this.config['emailAccount'],
       'emailPassword': this.config['emailPassword']
     });
-
-    this.configFormLabel.setValue({
-      '_id': this.config['_id'],
-      'heightLabel': this.config['heightLabel'],
-      'widthLabel': this.config['widthLabel'],
-    });
   }
 
   public setConfigurationSettings(config) {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if (config.companyName) Config.setConfigCompany(config.companyPicture, config.companyName, config.companyCUIT, config.companyAddress, config.companyPhone,
-      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName, config.country, config.timezone);
+    if (config.companyName) Config.setConfigCompany(config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
+      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName, config.country, config.timezone, config.companyIdentificationType, config.companyIdentificationValue);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

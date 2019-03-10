@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -9,7 +9,6 @@ import { Config } from './../../app.config';
 import { CompanyService } from './../../services/company.service';
 
 import { AddCompanyComponent } from './../../components/add-company/add-company.component';
-import { UpdateCompanyComponent } from './../../components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './../../components/delete-company/delete-company.component';
 import { SendMailComponent } from './../../components/send-mail/send-mail.component';
 import { ImportComponent } from '../import/import.component';

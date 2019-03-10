@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -9,9 +9,9 @@ import { CompanyService } from 'app/services/company.service';
 import { ConfigService } from './../../services/config.service'
 
 import { Company, CompanyType } from 'app/models/company';
-import { UpdateCompanyComponent } from '../update-company/update-company.component';
-import { TransactionMovement } from 'app/models/transaction-type';
 import { Config } from './../../app.config';
+import { AddArticleComponent } from '../add-article/add-article.component';
+import { AddCompanyComponent } from '../add-company/add-company.component';
 
 @Component({
   selector: 'app-report-birthday',
@@ -25,7 +25,7 @@ export class ReportBirthdayComponent implements OnInit {
   public companies: Company[] = new Array();
   public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
-  public propertyTerm: string;  
+  public propertyTerm: string;
   public config: Config;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -44,7 +44,7 @@ export class ReportBirthdayComponent implements OnInit {
 
   constructor(
     public _companyService: CompanyService,
-    public _router: Router,    
+    public _router: Router,
     public _configService: ConfigService,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
@@ -58,14 +58,14 @@ export class ReportBirthdayComponent implements OnInit {
 
   ngOnInit(): void {
 
-    
+
 
     this.loading = true;
 
     this.getConfig();
 
-    
-    
+
+
   }
 
   public getConfig(): void {
@@ -87,9 +87,9 @@ export class ReportBirthdayComponent implements OnInit {
           this.listType = pathLocation[3];
           this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
           this.getBirthday();
-          
-          
-          
+
+
+
         }
       },
       error => {
@@ -193,7 +193,7 @@ export class ReportBirthdayComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateCompanyComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
         modalRef.componentInstance.companyId = companyId;
         modalRef.componentInstance.readonly = true;
         break;

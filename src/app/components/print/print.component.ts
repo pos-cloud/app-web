@@ -284,9 +284,10 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontType('normal');
     row += 5;
-    if (this.config && this.config[0] && this.config[0].companyCUIT) {
-      this.doc.text("CUIT Nº:", 5, row);
-      this.doc.text(this.config[0].companyCUIT, 25, row);
+
+    if (this.config && this.config[0] && this.config[0].identificationType) {
+      this.doc.text(this.config[0].identificationType.name + ":", 5, row);
+      this.doc.text(this.config[0].identificationValue, 25, row);
     }
 
     this.doc.setFontType('bold');
@@ -480,9 +481,9 @@ export class PrintComponent implements OnInit {
 
         this.doc.setFontType('normal');
         row += 5;
-        if (this.config && this.config[0] && this.config[0].companyCUIT) {
-          this.doc.text("CUIT Nº:", 5, row);
-          this.doc.text(this.config[0].companyCUIT, 25, row);
+        if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+          this.doc.text(this.config[0].companyIdentificationType.name + ":", 5, row);
+          this.doc.text(this.config[0].companyIdentificationValue, 25, row);
         }
 
         this.doc.setFontType('bold');
@@ -596,9 +597,9 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontType('normal');
     row += 5;
-    if (this.config && this.config[0] && this.config[0].companyCUIT) {
-      this.doc.text("CUIT Nº:", margin, row);
-      this.doc.text(this.config[0].companyCUIT, 25, row);
+    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
     }
 
     this.doc.setFontType('bold');
@@ -657,9 +658,9 @@ export class PrintComponent implements OnInit {
 
           this.doc.setFontType('normal');
           row += 5;
-          if (this.config && this.config[0] && this.config[0].companyCUIT) {
-            this.doc.text("CUIT Nº:", margin, row);
-            this.doc.text(this.config[0].companyCUIT, 25, row);
+          if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+            this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+            this.doc.text(this.config[0].companyIdentificationValue, 25, row);
           }
 
           this.doc.setFontType('bold');
@@ -1019,7 +1020,7 @@ export class PrintComponent implements OnInit {
 
     let date = (this.transaction.CAEExpirationDate.split('T')[0].replace('-','')).replace('-','');
 
-    let digit = ((this.config[0].companyCUIT).replace('-', '')).replace('-', '') +
+    let digit = ((this.config[0].companyIdentificationValue).replace('-', '')).replace('-', '') +
                   codeInvoice +
                   this.transaction.origin +
                   this.transaction.CAE + date;
@@ -1045,7 +1046,7 @@ export class PrintComponent implements OnInit {
       checkDigit++
     }
 
-    this.getBarcode64('interleaved2of5?value=' + ((this.config[0].companyCUIT).replace('-', '')).replace('-', '')
+    this.getBarcode64('interleaved2of5?value=' + ((this.config[0].companyIdentificationValue).replace('-', '')).replace('-', '')
       + codeInvoice
       + this.transaction.origin
       + this.transaction.CAE
@@ -1687,21 +1688,14 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, 50, 240, 50);
 
     // Detalle Emisor
-    if (this.config[0]) {
+    if (this.config && this.config[0]) {
       this.doc.setFontSize(this.fontSizes.normal);
 
-      /*this.doc.setFontType('bold')
-      this.doc.text("Condición de IVA:", 110, 30)
-      this.doc.setFontType('normal')
-      if (this.config[0].companyVatCondition) {
-        this.doc.text(this.config[0].companyVatCondition.description, 145, 30)
-      }*/
-
-      this.doc.setFontType('bold');
-      this.doc.text("CUIT:", 110, 35);
-      this.doc.setFontType('normal');
-      if (this.config[0].companyCUIT) {
-        this.doc.text(this.config[0].companyCUIT, 122, 35);
+      if (this.config[0].companyIdentificationType) {
+        this.doc.setFontType('bold');
+        this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+        this.doc.setFontType('normal');
+        this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
       }
 
       this.doc.setFontType('bold');
@@ -1816,7 +1810,6 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('normal');
 
     if (this.company) {
-      console.log(this.company);
       if(this.company.name) {
         this.doc.text(this.company.name, 42, 55);
       }

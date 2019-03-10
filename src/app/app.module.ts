@@ -92,7 +92,6 @@ import { UpdateUserComponent } from './components/update-user/update-user.compon
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
 import { ListCompaniesComponent } from './components/list-companies/list-companies.component';
-import { UpdateCompanyComponent } from './components/update-company/update-company.component';
 import { DeleteCompanyComponent } from './components/delete-company/delete-company.component';
 import { AddCompanyComponent } from './components/add-company/add-company.component';
 import { ListEmployeeTypesComponent } from './components/list-employee-types/list-employee-types.component';
@@ -255,7 +254,6 @@ import { IdentificationTypeService } from './services/identification-type.servic
     ListUsersComponent,
     DeleteUserComponent,
     ListCompaniesComponent,
-    UpdateCompanyComponent,
     DeleteCompanyComponent,
     AddCompanyComponent,
     ClockComponent,
@@ -388,7 +386,6 @@ import { IdentificationTypeService } from './services/identification-type.servic
     ListUsersComponent,
     DeleteUserComponent,
     ListCompaniesComponent,
-    UpdateCompanyComponent,
     DeleteCompanyComponent,
     AddCompanyComponent,
     ClockComponent,

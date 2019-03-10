@@ -197,7 +197,7 @@ export class TransactionService {
 		let headers = new Headers();
 		headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
-		let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyCUIT":"' + Config.companyCUIT + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + this._userService.getDatabase() + '"}';
+    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + this._userService.getDatabase() + '"}';
 
 		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
 	}
@@ -241,7 +241,7 @@ export class TransactionService {
   ): Observable<any> {
 
 	const URL = `${Config.apiURL}v2/transactions`;
-	
+
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', this._userService.getToken())

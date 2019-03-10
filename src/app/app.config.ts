@@ -1,6 +1,7 @@
 import { VATCondition } from './models/vat-condition';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { IdentificationType } from './models/identification-type';
 
 export class Config {
 
@@ -18,11 +19,12 @@ export class Config {
     static emailPassword: string;
     static companyPicture: string;
     static companyName: string;
-    static companyCUIT: string;
     static companyAddress: string;
     static companyFantasyName: string;
     static companyPhone: string;
     static companyVatCondition: VATCondition;
+    static companyIdentificationType: IdentificationType;
+    static companyIdentificationValue: string;
     static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     static companyGrossIncome: string;
     static heightLabel: number;
@@ -69,11 +71,10 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( companyPicture, companyName, companyCUIT, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName,
-                                    country,timezone): void {
+    public static setConfigCompany( companyPicture, companyName, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName,
+                                    country,timezone, companyIdentificationType, companyIdentificationValue): void {
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
-        Config.companyCUIT = companyCUIT;
         Config.companyAddress = companyAddress;
         Config.companyFantasyName = companyFantasyName;
         Config.companyPhone = companyPhone;
@@ -82,7 +83,9 @@ export class Config {
         Config.companyGrossIncome = companyGrossIncome;
         Config.footerInvoice = footerInvoice;
         Config.country = country,
-        Config.timezone = timezone
+        Config.timezone = timezone,
+        Config.companyIdentificationType = companyIdentificationType,
+        Config.companyIdentificationValue = companyIdentificationValue
     }
 
     public static setConfigLabel( heightLabel, widthLabel ): void {
