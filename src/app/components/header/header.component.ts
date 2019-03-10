@@ -32,6 +32,7 @@ export class HeaderComponent implements OnInit {
   @Input() isAPIConected: boolean;
   @Input() modules: any;
   public isReportVisible: boolean;
+  public userName: string;
 
   constructor(
     public _userService: UserService,

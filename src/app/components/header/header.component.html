@@ -395,9 +395,20 @@
         <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
       </li>
       <li class="nav-item"
-          (click)="makeVisibleReport(false)">
-        <a class="nav-link btn" *ngIf="identity" (click)="logout()">
-          <i class="fa fa-sign-out"></i>Cerrar Sesión</a>
+          ngbDropdown
+          *ngIf="identity">
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
+          <i class="fa fa-person"></i> {{ identity.employee.name }}
+        </a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+            <div >
+              <button class="dropdown-item"
+                      (click)="logout()"
+                      [routerLinkActive]="['active']">
+                Cerrar Sesión
+              </button>
+            </div>
+        </div>
       </li>
       <li class="nav-item pull-right">
         <a class="nav-link btn"
