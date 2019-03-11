@@ -50,6 +50,8 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { ArticleFields } from '../../models/article-fields';
 import { ArticleFieldType } from '../../models/article-field';
 import { PaymentMethod } from 'app/models/payment-method';
+import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
+import { UseOfCFDI } from 'app/models/use-of-CFDI';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -64,6 +66,7 @@ export class AddSaleOrderComponent implements OnInit {
   public transactionMovement: string;
   public alertMessage: string = '';
   public movementsOfArticles: MovementOfArticle[];
+  public usesOfCFDI: UseOfCFDI[];
   public printers: Printer[];
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
@@ -107,7 +110,8 @@ export class AddSaleOrderComponent implements OnInit {
     public _userService: UserService,
     private cdref: ChangeDetectorRef,
     private _taxService: TaxService,
-    private _cashBoxService: CashBoxService
+    private _cashBoxService: CashBoxService,
+    public _useOfCFDIService: UseOfCFDIService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -116,11 +120,13 @@ export class AddSaleOrderComponent implements OnInit {
     this.printersAux = new Array();
     this.barArticlesToPrint = new Array();
     this.kitchenArticlesToPrint = new Array();
+    this.usesOfCFDI = new Array();
   }
 
   ngOnInit(): void {
 
     this.quotation();
+    this.getUsesOfCFDI();
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -149,6 +155,29 @@ export class AddSaleOrderComponent implements OnInit {
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getUsesOfCFDI(): void {
+
+    this.loading = true;
+
+    this._useOfCFDIService.getUsesOfCFDI().subscribe(
+      result => {
+        if (!result.usesOfCFDI) {
+          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+          this.usesOfCFDI = null;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.usesOfCFDI = result.usesOfCFDI;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public quotation() {
@@ -424,7 +453,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(closed: boolean = false): void {
-
+    console.log("update " + JSON.stringify(this.transaction.useOfCFDI.description));
     this.loading = true;
 
     this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
@@ -573,6 +602,7 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle = itemData;
         movementOfArticle.transaction = this.transaction;
         if (Config.modules.stock &&
+          this.transaction.type &&
           this.transaction.type.modifyStock) {
           this.getArticleStock("save", movementOfArticle);
         } else {
@@ -580,6 +610,7 @@ export class AddSaleOrderComponent implements OnInit {
         }
       } else {
         if (Config.modules.stock &&
+          this.transaction.type &&
           this.transaction.type.modifyStock) {
           this.getArticleStock("update", movementOfArticle);
         } else {
@@ -623,19 +654,20 @@ export class AddSaleOrderComponent implements OnInit {
 
     let allowed = true;
 
-    if (this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+    if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       !movementOfArticle.article.allowSale) {
       allowed = false;
       this.showMessage("El producto no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+    if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
       !movementOfArticle.article.allowPurchase) {
       allowed = false;
       this.showMessage("El producto no esta habilitado para la compra", 'info', true);
     }
 
     if (Config.modules.stock &&
+      this.transaction.type &&
       this.transaction.type.modifyStock &&
       this.transaction.type.stockMovement === StockMovement.Outflows &&
       !movementOfArticle.article.allowSaleWithoutStock &&
@@ -1504,12 +1536,14 @@ export class AddSaleOrderComponent implements OnInit {
     if (this.posType === "resto") {
       this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
     } else if (this.posType === "mostrador") {
-      if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+      if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
         this._router.navigate(['/pos/' + this.posType + '/compra']);
-      } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+      } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
         this._router.navigate(['/pos/' + this.posType + '/venta']);
-      } else if (this.transaction.type.transactionMovement === TransactionMovement.Stock) {
+      } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Stock) {
         this._router.navigate(['/pos/' + this.posType + '/stock']);
+      } else {
+        this._router.navigate(['/pos/' + this.posType]);
       }
     } else {
       this._router.navigate(['/pos/' + this.posType]);

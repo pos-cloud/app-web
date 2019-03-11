@@ -202,6 +202,10 @@ import { ListIdentificationTypesComponent } from './components/list-identificati
 import { AddIdentificationTypeComponent } from './components/add-identification-type/add-identification-type.component';
 import { DeleteIdentificationTypeComponent } from './components/delete-identification-type/delete-identification-type.component';
 import { IdentificationTypeService } from './services/identification-type.service';
+import { UseOfCFDIService } from './services/use-of-CFDI.service';
+import { AddUseOfCFDIComponent } from './components/add-use-of-CFDI.component.ts/add-use-of-CFDI.component';
+import { DeleteUseOfCFDIComponent } from './components/delete-use-of-CFDI/delete-use-of-CFDI.component';
+import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-uses-of-CFDI.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -343,7 +347,10 @@ import { IdentificationTypeService } from './services/identification-type.servic
     DeleteUnitOfMeasurementComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,
-    DeleteIdentificationTypeComponent
+    DeleteIdentificationTypeComponent,
+    AddUseOfCFDIComponent,
+    DeleteUseOfCFDIComponent,
+    ListUsesOfCFDIComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -475,7 +482,10 @@ import { IdentificationTypeService } from './services/identification-type.servic
     DeleteUnitOfMeasurementComponent,
     ListIdentificationTypesComponent,
     AddIdentificationTypeComponent,
-    DeleteIdentificationTypeComponent
+    DeleteIdentificationTypeComponent,
+    AddUseOfCFDIComponent,
+    DeleteUseOfCFDIComponent,
+    ListUsesOfCFDIComponent
   ],
   imports: [
     BrowserModule,
@@ -535,7 +545,8 @@ import { IdentificationTypeService } from './services/identification-type.servic
     CompanyGroupService,
     CompanyContactService,
     UnitOfMeasurementService,
-    IdentificationTypeService
+    IdentificationTypeService,
+    UseOfCFDIService
   ],
   bootstrap: [AppComponent]
 })

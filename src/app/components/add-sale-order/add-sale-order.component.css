@@ -22,15 +22,10 @@
       padding: 0px;
 }
 
-.table-container{
-      top: -15px;
-}
-
-.header-transaction {
+.header-transaction, .header-mx {
       padding: 15px;
       background: #292B2C;
       color: white;
-      margin-bottom: 15px;
 }
 
 .btn-action {
@@ -41,6 +36,10 @@
       background: #0275d8;
       color: white;
       height: 40px;
+}
+
+.container-transaction {
+  margin-top: 10px;
 }
 
 .btn-action:hover {

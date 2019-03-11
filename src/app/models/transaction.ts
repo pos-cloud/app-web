@@ -9,6 +9,7 @@ import { User } from './user';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { UseOfCFDI } from './use-of-CFDI';
 
 export class Transaction {
 
@@ -30,8 +31,10 @@ export class Transaction {
 	public diners: number = 0;
 	public observation: string;
 	public madein: string;
-	public CAE: string;
-	public CAEExpirationDate: string;
+	public CAE: string; // AR
+  public CAEExpirationDate: string; // AR
+  public expeditionPlace: string; // MX
+  public useOfCFDI: UseOfCFDI; // MX
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;

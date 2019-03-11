@@ -362,6 +362,11 @@
             Impuestos
           </button>
           <button class="dropdown-item"
+                  [routerLink]="['admin','usos-de-cfdi']"
+                  [routerLinkActive]="['active']">
+            Usos de CFDI
+          </button>
+          <button class="dropdown-item"
                   [routerLink]="['admin','condiciones-de-iva']"
                   [routerLinkActive]="['active']">
             Condiciones de IVA

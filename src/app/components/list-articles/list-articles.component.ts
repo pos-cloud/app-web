@@ -291,7 +291,9 @@ export class ListArticlesComponent implements OnInit {
     } else {
       movementOfArticle.markupPercentage = 0;
       movementOfArticle.markupPrice = 0;
-      if (this.transaction.type.requestTaxes) {
+      if (this.transaction &&
+        this.transaction.type &&
+        this.transaction.type.requestTaxes) {
         movementOfArticle.taxes = articleSelected.taxes;
       }
       movementOfArticle.unitPrice = articleSelected.basePrice;
@@ -361,7 +363,9 @@ export class ListArticlesComponent implements OnInit {
               } else {
                 movementOfArticle.markupPercentage = 0;
                 movementOfArticle.markupPrice = 0;
-                if(this.transaction.type.requestTaxes) {
+                if (this.transaction &&
+                  this.transaction.type &&
+                  this.transaction.type.requestTaxes) {
                   movementOfArticle.taxes = article.taxes;
                 }
                 movementOfArticle.unitPrice = article.basePrice;

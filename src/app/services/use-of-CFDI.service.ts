@@ -1,69 +1,69 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { IdentificationType } from './../models/identification-type';
+import { UseOfCFDI } from './../models/use-of-CFDI';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
 
 @Injectable()
-export class IdentificationTypeService {
+export class UseOfCFDIService {
 
 	constructor(
 		public _http: Http,
 		public _userService: UserService
 	) { }
 
-	getLastIdentificationType () {
+	getLastUseOfCFDI () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'identification-types/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + 'uses-of-cfdi/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
-	getIdentificationType (id) {
+	getUseOfCFDI (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "identification-type/"+id, { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + "use-of-cfdi/"+id, { headers: headers }).map (res => res.json());
 	}
 
-	getIdentificationTypes () {
+	getUsesOfCFDI () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-    return this._http.get(Config.apiURL + 'identification-types/sort="name":1', { headers: headers }).map (res => res.json());
+    return this._http.get(Config.apiURL + 'uses-of-cfdi/sort="name":1', { headers: headers }).map (res => res.json());
 	}
 
-	saveIdentificationType (identificationType : IdentificationType) {
+	saveUseOfCFDI (identificationType : UseOfCFDI) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-    return this._http.post(Config.apiURL + "identification-type",identificationType, { headers: headers }).map (res => res.json());
+    return this._http.post(Config.apiURL + "use-of-CFDI",identificationType, { headers: headers }).map (res => res.json());
 	}
 
-	deleteIdentificationType (id: string) {
+	deleteUseOfCFDI (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-    return this._http.delete(Config.apiURL + "identification-type/"+id, { headers: headers }).map (res => res.json());
+    return this._http.delete(Config.apiURL + "use-of-cfdi/"+id, { headers: headers }).map (res => res.json());
 	}
 
-	updateIdentificationType (identificationType: IdentificationType){
+	updateUseOfCFDI (identificationType: UseOfCFDI){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-    return this._http.put(Config.apiURL + "identification-type/" + identificationType._id, identificationType, { headers: headers }).map (res => res.json());
+    return this._http.put(Config.apiURL + "use-of-cfdi/" + identificationType._id, identificationType, { headers: headers }).map (res => res.json());
 	}
 }
