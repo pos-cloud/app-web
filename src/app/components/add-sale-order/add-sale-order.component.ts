@@ -52,6 +52,8 @@ import { ArticleFieldType } from '../../models/article-field';
 import { PaymentMethod } from 'app/models/payment-method';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
 import { UseOfCFDI } from 'app/models/use-of-CFDI';
+import { RelationTypeService } from 'app/services/relation-type.service';
+import { RelationType } from 'app/models/relation-type';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -67,6 +69,7 @@ export class AddSaleOrderComponent implements OnInit {
   public alertMessage: string = '';
   public movementsOfArticles: MovementOfArticle[];
   public usesOfCFDI: UseOfCFDI[];
+  public relationTypes: RelationType[];
   public printers: Printer[];
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
@@ -111,7 +114,8 @@ export class AddSaleOrderComponent implements OnInit {
     private cdref: ChangeDetectorRef,
     private _taxService: TaxService,
     private _cashBoxService: CashBoxService,
-    public _useOfCFDIService: UseOfCFDIService
+    public _useOfCFDIService: UseOfCFDIService,
+    public _relationTypeService: RelationTypeService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -121,12 +125,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.barArticlesToPrint = new Array();
     this.kitchenArticlesToPrint = new Array();
     this.usesOfCFDI = new Array();
+    this.relationTypes = new Array();
   }
 
   ngOnInit(): void {
 
     this.quotation();
     this.getUsesOfCFDI();
+    this.getRelationTypes();
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -171,6 +177,29 @@ export class AddSaleOrderComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.usesOfCFDI = result.usesOfCFDI;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getRelationTypes(): void {
+
+    this.loading = true;
+
+    this._relationTypeService.getRelationTypes().subscribe(
+      result => {
+        if (!result.relationTypes) {
+          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+          this.relationTypes = null;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.relationTypes = result.relationTypes;
         }
       },
       error => {

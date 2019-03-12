@@ -1,5 +1,5 @@
 <div class="modal-header">
-	<h4 class="modal-title">Eliminar Tipo de Identificación {{identificationType.name}}</h4>
+	<h4 class="modal-title">Eliminar Tipo de Relación {{relationType.description}}</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -10,9 +10,9 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-  <p>¿Está seguro de eliminar el tipo de identificación {{identificationType.name}}?</p>
+  <p>¿Está seguro de eliminar el tipo de relación {{relationType.description}}?</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
-  <button type="submit" class="btn btn-primary" (click)="deleteIdentificationType()" [focus]="focusEvent">Eliminar</button>
+  <button type="submit" class="btn btn-primary" (click)="deleteRelationType()" [focus]="focusEvent">Eliminar</button>
 </div>

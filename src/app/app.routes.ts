@@ -52,6 +52,7 @@ import { ListMakesComponent } from './components/list-makes/list-makes.component
 import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
 import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-uses-of-CFDI.component';
+import { ListRelationTypesComponent } from './components/list-relation-types/list-relation-types.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -365,6 +366,12 @@ const _routes: Routes = [
   {
     path: 'admin/usos-de-cfdi',
     component: ListUsesOfCFDIComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/tipos-de-relacion',
+    component: ListRelationTypesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

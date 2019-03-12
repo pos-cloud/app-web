@@ -4,24 +4,24 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IdentificationType } from './../../models/identification-type';
+import { RelationType } from './../../models/relation-type';
 
-import { IdentificationTypeService } from './../../services/identification-type.service';
+import { RelationTypeService } from './../../services/relation-type.service';
 
 @Component({
-  selector: 'app-add-identification-type',
-  templateUrl: './add-identification-type.component.html',
-  styleUrls: ['./add-identification-type.component.css'],
+  selector: 'app-add-relation-type',
+  templateUrl: './add-relation-type.component.html',
+  styleUrls: ['./add-relation-type.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class AddIdentificationTypeComponent implements OnInit {
+export class AddRelationTypeComponent implements OnInit {
 
-  public identificationType: IdentificationType;
-  @Input() identificationTypeId: string;
+  public relationType: RelationType;
+  @Input() relationTypeId: string;
   @Input() operation: string;
   @Input() readonly: boolean;
-  public identificationTypeForm: FormGroup;
+  public relationTypeForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -29,26 +29,26 @@ export class AddIdentificationTypeComponent implements OnInit {
 
   public formErrors = {
     'code': '',
-    'name': ''
+    'description': ''
   };
 
   public validationMessages = {
     'code': {
       'required': 'Este campo es requerido.'
     },
-    'name': {
+    'description': {
       'required': 'Este campo es requerido.'
     }
   };
 
   constructor(
-    public _identificationTypeService: IdentificationTypeService,
+    public _relationTypeService: RelationTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
-    this.identificationType = new IdentificationType();
+    this.relationType = new RelationType();
   }
 
   ngOnInit(): void {
@@ -56,10 +56,10 @@ export class AddIdentificationTypeComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
-    if (this.identificationTypeId) {
-      this.getIdentificationType();
+    if (this.relationTypeId) {
+      this.getRelationType();
     } else {
-      this.getLastIdentificationType();
+      this.getLastRelationType();
     }
   }
 
@@ -69,21 +69,21 @@ export class AddIdentificationTypeComponent implements OnInit {
 
   public buildForm(): void {
 
-    this.identificationTypeForm = this._fb.group({
-      '_id': [this.identificationType._id, [
+    this.relationTypeForm = this._fb.group({
+      '_id': [this.relationType._id, [
         ]
       ],
-      'code': [this.identificationType.code, [
+      'code': [this.relationType.code, [
           Validators.required
         ]
       ],
-      'name': [this.identificationType.name, [
+      'description': [this.relationType.description, [
           Validators.required
         ]
       ]
     });
 
-    this.identificationTypeForm.valueChanges
+    this.relationTypeForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -92,8 +92,8 @@ export class AddIdentificationTypeComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
 
-    if (!this.identificationTypeForm) { return; }
-    const form = this.identificationTypeForm;
+    if (!this.relationTypeForm) { return; }
+    const form = this.relationTypeForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -108,19 +108,19 @@ export class AddIdentificationTypeComponent implements OnInit {
     }
   }
 
-  public getLastIdentificationType(): void {
+  public getLastRelationType(): void {
 
     this.loading = true;
 
-    this._identificationTypeService.getLastIdentificationType().subscribe(
+    this._relationTypeService.getLastRelationType().subscribe(
       result => {
-        if (!result.identificationTypes) {
+        if (!result.relationTypes) {
           this.loading = false;
         } else {
           this.hideMessage();
           this.loading = false;
           try {
-            this.identificationType.code = (parseInt(result.identificationTypes[0].code) + 1).toString();
+            this.relationType.code = (parseInt(result.relationTypes[0].code) + 1).toString();
             this.setValuesForm();
           } catch (e) {
           }
@@ -134,17 +134,17 @@ export class AddIdentificationTypeComponent implements OnInit {
   }
 
 
-  public getIdentificationType(): void {
+  public getRelationType(): void {
 
     this.loading = true;
 
-    this._identificationTypeService.getIdentificationType(this.identificationTypeId).subscribe(
+    this._relationTypeService.getRelationType(this.relationTypeId).subscribe(
       result => {
-        if (!result.identificationType) {
+        if (!result.relationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this.identificationType = result.identificationType;
+          this.relationType = result.relationType;
           this.setValuesForm();
         }
         this.loading = false;
@@ -158,46 +158,46 @@ export class AddIdentificationTypeComponent implements OnInit {
 
   public setValuesForm(): void {
 
-    if (!this.identificationType._id) { this.identificationType._id = ''; }
-    if (!this.identificationType.code) { this.identificationType.code = '1'; }
-    if (!this.identificationType.name) { this.identificationType.name = ''; }
+    if (!this.relationType._id) { this.relationType._id = ''; }
+    if (!this.relationType.code) { this.relationType.code = '1'; }
+    if (!this.relationType.description) { this.relationType.description = ''; }
 
     const values = {
-      '_id': this.identificationType._id,
-      'code': this.identificationType.code,
-      'name': this.identificationType.name,
+      '_id': this.relationType._id,
+      'code': this.relationType.code,
+      'description': this.relationType.description,
     };
 
-    this.identificationTypeForm.setValue(values);
+    this.relationTypeForm.setValue(values);
   }
 
-  public addIdentificationType(): void {
+  public addRelationType(): void {
 
     if (!this.readonly) {
-      this.identificationType = this.identificationTypeForm.value;
+      this.relationType = this.relationTypeForm.value;
       if (this.operation === 'add') {
-        this.saveIdentificationType();
+        this.saveRelationType();
       } else if (this.operation === 'update') {
-        this.updateIdentificationType();
+        this.updateRelationType();
       }
     }
   }
 
-  public saveIdentificationType(): void {
+  public saveRelationType(): void {
 
     this.loading = true;
 
-    this._identificationTypeService.saveIdentificationType(this.identificationType).subscribe(
+    this._relationTypeService.saveRelationType(this.relationType).subscribe(
       result => {
-        if (!result.identificationType) {
+        if (!result.relationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.identificationType = result.identificationType;
-          this.showMessage("El tipo de identificación se ha añadido con éxito.", 'success', true);
-          this.identificationType = new IdentificationType ();
+          this.relationType = result.relationType;
+          this.showMessage("El tipo de relación se ha añadido con éxito.", 'success', true);
+          this.relationType = new RelationType ();
           this.buildForm();
-          this.getLastIdentificationType();
+          this.getLastRelationType();
         }
         this.loading = false;
       },
@@ -208,18 +208,18 @@ export class AddIdentificationTypeComponent implements OnInit {
     );
   }
 
-  public updateIdentificationType(): void {
+  public updateRelationType(): void {
 
     this.loading = true;
 
-    this._identificationTypeService.updateIdentificationType(this.identificationType).subscribe(
+    this._relationTypeService.updateRelationType(this.relationType).subscribe(
       result => {
-        if (!result.identificationType) {
+        if (!result.relationType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.identificationType = result.identificationType;
-          this.showMessage("El tipo de identificación se ha actualizado con éxito.", 'success', true);
+          this.relationType = result.relationType;
+          this.showMessage("El tipo de relación se ha actualizado con éxito.", 'success', true);
         }
         this.loading = false;
       },

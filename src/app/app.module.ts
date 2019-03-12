@@ -206,6 +206,10 @@ import { UseOfCFDIService } from './services/use-of-CFDI.service';
 import { AddUseOfCFDIComponent } from './components/add-use-of-CFDI.component.ts/add-use-of-CFDI.component';
 import { DeleteUseOfCFDIComponent } from './components/delete-use-of-CFDI/delete-use-of-CFDI.component';
 import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-uses-of-CFDI.component';
+import { ListRelationTypesComponent } from './components/list-relation-types/list-relation-types.component';
+import { AddRelationTypeComponent } from './components/add-relation-type/add-relation-type.component';
+import { DeleteRelationTypeComponent } from './components/delete-relation-type/delete-relation-type.component';
+import { RelationTypeService } from './services/relation-type.service';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -350,7 +354,10 @@ import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-use
     DeleteIdentificationTypeComponent,
     AddUseOfCFDIComponent,
     DeleteUseOfCFDIComponent,
-    ListUsesOfCFDIComponent
+    ListUsesOfCFDIComponent,
+    ListRelationTypesComponent,
+    AddRelationTypeComponent,
+    DeleteRelationTypeComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -485,7 +492,10 @@ import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-use
     DeleteIdentificationTypeComponent,
     AddUseOfCFDIComponent,
     DeleteUseOfCFDIComponent,
-    ListUsesOfCFDIComponent
+    ListUsesOfCFDIComponent,
+    ListRelationTypesComponent,
+    AddRelationTypeComponent,
+    DeleteRelationTypeComponent
   ],
   imports: [
     BrowserModule,
@@ -546,7 +556,8 @@ import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-use
     CompanyContactService,
     UnitOfMeasurementService,
     IdentificationTypeService,
-    UseOfCFDIService
+    UseOfCFDIService,
+    RelationTypeService
   ],
   bootstrap: [AppComponent]
 })
