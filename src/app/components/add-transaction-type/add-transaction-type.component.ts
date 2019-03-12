@@ -14,6 +14,7 @@ import { EmployeeTypeService } from './../../services/employee-type.service';
 import { PaymentMethodService } from 'app/services/payment-method.service';
 import { PaymentMethod } from 'app/models/payment-method';
 import { CompanyType } from 'app/models/company';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-add-transaction-type',
@@ -38,6 +39,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public letters: string[] = ["A", "B", "C", "E", "M", "R", "T", "X"];
   @Input() readonly: boolean;
   @Input() operation: string;
+  public userCountry: string = 'AR';
 
   // OPCIONES FORMULARIO
   public opCurrentAccount: string = '';
@@ -72,8 +74,8 @@ export class AddTransactionTypeComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
-
     this.userType = pathLocation[1];
     if(!this.transactionType) {
       this.transactionType = new TransactionType();

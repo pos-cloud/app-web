@@ -64,7 +64,7 @@ export class DeleteTransactionComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage('No se puede anular una transacción ya validada por AFIP.', 'info', true);
+      this.showMessage('No se puede anular una transacción electrónica ya validad.', 'info', true);
     }
   }
 
@@ -84,7 +84,7 @@ export class DeleteTransactionComponent implements OnInit {
         }
       );
     } else {
-      this.showMessage('No se puede eliminar una transacción ya validada por AFIP.', 'info', true);
+      this.showMessage('No se puede eliminar una transacción electrónica ya validada.', 'info', true);
     }
   }
 

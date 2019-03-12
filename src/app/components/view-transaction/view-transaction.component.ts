@@ -11,6 +11,7 @@ import { MovementOfCashService } from './../../services/movement-of-cash.service
 import { TransactionService } from '../../services/transaction.service';
 
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-view-transaction',
@@ -31,6 +32,7 @@ export class ViewTransactionComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
+  public userCountry: string = 'AR';
 
   constructor(
     public _transactionService: TransactionService,
@@ -42,6 +44,7 @@ export class ViewTransactionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userCountry = Config.country;
     this.movementsOfArticles = new Array();
     this.movementsOfCashes = new Array();
     this.getTransaction(this.transaction._id);

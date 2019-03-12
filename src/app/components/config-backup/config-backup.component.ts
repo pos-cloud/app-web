@@ -111,12 +111,11 @@ export class ConfigBackupComponent implements OnInit {
 
   }
 
-  public getTimeZone( country : string) {
+  public getTimeZone(country : string) {
 
     this._configService.getTimeZone(country).subscribe(
       result => {
         this.timezones = JSON.parse(result["_body"]);
-
         this.timezones = this.timezones.timezones
       }
     )

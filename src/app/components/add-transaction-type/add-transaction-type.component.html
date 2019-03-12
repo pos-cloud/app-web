@@ -94,13 +94,26 @@
                         <option value="true" [selected]="transactionType.electronics">Si</option>
                         <option value="false" [selected]="!transactionType.electronics">No</option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿La transacción se presenta en AFIP?">
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              *ngIf="userCountry === 'AR'"
+                              ngbPopover="¿La transacción se presenta en AFIP?"
+                              >
+                        <b>?</b>
+                      </button>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              *ngIf="userCountry === 'MX'"
+                              ngbPopover="¿La transacción se presenta en SAT?"
+                              >
                         <b>?</b>
                       </button>
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="userCountry === 'AR'">
                   <div class="form-group col-md-4">
                     <label for="codeA">Código AFIP A</label>
                     <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>

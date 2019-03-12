@@ -72,7 +72,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">País</span>
-              <select class="form-control" formControlName="country" name="country" id="country" (ngModelChange)="this.getTimeZone($event)">
+              <select class="form-control" formControlName="country" name="country" id="country" (ngModelChange)="getTimeZone($event)">
                 <option *ngFor="let country of countries"
                         [value]="country.alpha2Code">
                   {{country.name}}
@@ -267,7 +267,7 @@
   </div> -->
 
   <!-- AFIP -->
-  <div class="card card-outline-primary">
+  <div class="card card-outline-primary" *ngIf="userCountry === 'AR'">
     <div class="card-header bg-primary">Generar Certificado para Factura Electrónica</div>
     <div class='card-block'>
       <form (ngSubmit)="generateCRS()" autocomplete="off">
