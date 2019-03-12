@@ -35,7 +35,7 @@
           <a class="btn" (click)="openModal('change-employee')">
             <i class="fa fa-exchange"></i> Cambiar Empleado</a>
         </div>
-        <div class="col-md-2" >
+        <div class="col-md-2" *ngIf="posType!=='resto' && posType!=='delivery'">
             <b>Dolar: {{dolar}}</b>
         </div>
       </div>
