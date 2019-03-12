@@ -1698,11 +1698,13 @@ export class PrintComponent implements OnInit {
         this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
       }
 
-      this.doc.setFontType('bold');
-      this.doc.text("Ingresos Brutos:", 110, 40);
-      this.doc.setFontType('normal');
-      if (this.config[0].companyGrossIncome) {
-        this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+      if(this.config[0].country === 'AR') {
+        this.doc.setFontType('bold');
+        this.doc.text("Ingresos Brutos:", 110, 40);
+        this.doc.setFontType('normal');
+        if (this.config[0].companyGrossIncome) {
+          this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+        }
       }
 
       this.doc.setFontType('bold');
@@ -1803,7 +1805,9 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Nombre y Apellido:", 8, 55);
     this.doc.text("Condición de IVA:", 8, 65);
-    this.doc.text("Ingresos Brutos:", 8, 70);
+    if (this.config[0].country === 'AR') {
+      this.doc.text("Ingresos Brutos:", 8, 70);
+    }
     this.doc.text("Dirección:", 110, 55);
     this.doc.text("Teléfono:", 110, 60);
     this.doc.text("Localidad:", 110, 65);

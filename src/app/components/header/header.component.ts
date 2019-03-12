@@ -31,9 +31,8 @@ export class HeaderComponent implements OnInit {
   public sessionTimer: any;
   public pathLocation: string[];
   @Input() isAPIConected: boolean;
-  @Input() modules: any;
+  @Input() config: any;
   public isReportVisible: boolean;
-  public userName: string;
 
   constructor(
     public _userService: UserService,
@@ -55,6 +54,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     if (this.isAPIConected) {
       this.validateIdentity();
     }

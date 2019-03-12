@@ -63,8 +63,8 @@ export class AppComponent implements OnInit {
     }
     if (config.modules) {
       Config.setModules(config.modules);
-      this.modules = config.modules;
     }
+    this.config = config;
   }
 
   public setApiConfigurationSettings() {
