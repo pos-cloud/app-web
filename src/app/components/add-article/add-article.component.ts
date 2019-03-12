@@ -176,6 +176,9 @@ export class AddArticleComponent implements OnInit {
         Validators.maxLength(10)
         ]
       ],
+      'codeSAT': [this.article.codeSAT, [
+        ]
+      ],
       'make': [this.article.make, [
         ]
       ],
@@ -725,6 +728,7 @@ export class AddArticleComponent implements OnInit {
 
     if (!this.article._id) { this.article._id = ''; }
     if (!this.article.code) { this.article.code = '00001'; }
+    if (!this.article.codeSAT) { this.article.codeSAT = ''; }
 
     let make;
     if (!this.article.make) {
@@ -801,6 +805,7 @@ export class AddArticleComponent implements OnInit {
     const values = {
       '_id': this.article._id,
       'code': this.article.code,
+      'codeSAT': this.article.codeSAT,
       'make': make,
       'deposit' : deposit,
       'location' : location,

@@ -116,6 +116,15 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="codeSAT" class="control-label">Código SAT:</label>
+                    <input type="text" class="form-control" formControlName="codeSAT" name="codeSAT" id="codeSAT" [readonly]="readonly" />
+                    <div *ngIf="formErrors.codeSAT" class="alert alert-danger">
+                      {{ formErrors.codeSAT }}
+                    </div>
+                  </div>
+                </div>
                 <div class="row" *ngIf="article && article.type && article.type.toString() === 'Final'">
                   <div class="form-group col-md-12 center-content">
                     <div class="form-check">

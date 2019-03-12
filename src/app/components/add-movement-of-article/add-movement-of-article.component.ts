@@ -481,6 +481,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.movementOfArticle.transaction = transaction;
     this.movementOfArticle.article = articleSelected;
     this.movementOfArticle.code = articleSelected.code;
+    this.movementOfArticle.codeSAT = articleSelected.codeSAT;
     this.movementOfArticle.description = articleSelected.description;
     this.movementOfArticle.observation = articleSelected.observation;
     this.movementOfArticle.basePrice = articleSelected.basePrice;

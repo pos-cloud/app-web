@@ -262,6 +262,7 @@ export class ListArticlesComponent implements OnInit {
     let movementOfArticle = new MovementOfArticle();
     movementOfArticle.article = articleSelected;
     movementOfArticle.code = articleSelected.code;
+    movementOfArticle.codeSAT = articleSelected.codeSAT;
     movementOfArticle.description = articleSelected.description;
     movementOfArticle.observation = articleSelected.observation;
     movementOfArticle.basePrice = articleSelected.basePrice;
@@ -334,6 +335,7 @@ export class ListArticlesComponent implements OnInit {
               let movementOfArticle = new MovementOfArticle();
               movementOfArticle.article = article;
               movementOfArticle.code = article.code;
+              movementOfArticle.codeSAT = article.codeSAT;
               movementOfArticle.description = article.description;
               movementOfArticle.observation = article.observation;
               movementOfArticle.basePrice = article.basePrice;
