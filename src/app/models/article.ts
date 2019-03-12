@@ -16,6 +16,7 @@ export class Article {
   public type: ArticleType = ArticleType.Final;
   public containsVariants: boolean = false;
   public code: string = "00001";
+  public codeSAT: string;
   public description: string = '';
   public posDescription: string = '';
   public variantDescription: string;
