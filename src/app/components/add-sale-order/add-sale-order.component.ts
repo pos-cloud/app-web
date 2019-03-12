@@ -96,6 +96,7 @@ export class AddSaleOrderComponent implements OnInit {
   public areMovementsOfArticlesEmpty: boolean = true;
   public apiURL = Config.apiURL;
   public dolar;
+  public userCountry: string = 'AR';
 
   constructor(
     public _transactionService: TransactionService,
@@ -130,6 +131,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     this.quotation();
     this.getUsesOfCFDI();
     this.getRelationTypes();

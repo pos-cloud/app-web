@@ -69,6 +69,32 @@
           </div>
         </div>
         <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">País</span>
+              <select class="form-control" formControlName="country" name="country" id="country" (ngModelChange)="this.getTimeZone($event)">
+                <option *ngFor="let country of countries"
+                        [value]="country.alpha2Code">
+                  {{country.name}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Zona Horaria</span>
+              <select class="form-control" formControlName="timezone" name="timezone" id="timezone">
+                <option *ngFor="let timezone of timezones"
+                        [value]="timezone">
+                  {{timezone}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="form-group col-md-6">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Tipo de Identificación:</span>
@@ -95,7 +121,8 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Condición de IVA:</span>
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'">Condición de IVA:</span>
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'MX'">Régimen Fiscal:</span>
               <select class="form-control" formControlName="companyVatCondition" name="companyVatCondition" id="companyVatCondition">
                 <option *ngFor="let vatCondition of vatConditions"
                         [selected]="config.companyVatCondition && vatCondition._id === config.companyVatCondition._id"
@@ -117,7 +144,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="configFormCompany.value.country === 'AR'">
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Ingresos Brutos</span>
@@ -156,32 +183,6 @@
             </div>
             <div *ngIf="formErrors.footerInvoice" class="alert alert-danger">
               {{ formErrors.footerInvoice}}
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">País</span>
-              <select class="form-control" formControlName="country" name="country" id="country" (ngModelChange)="this.getTimeZone($event)">
-                <option *ngFor="let country of countries"
-                        [value]="country.alpha2Code">
-                  {{country.name}}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-group col-md-12">
-            <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1">Zona Horaria</span>
-              <select class="form-control" formControlName="timezone" name="timezone" id="timezone">
-                <option *ngFor="let timezone of timezones"
-                        [value]="timezone">
-                  {{timezone}}
-                </option>
-              </select>
             </div>
           </div>
         </div>

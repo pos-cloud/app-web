@@ -10,6 +10,7 @@ import { User } from './user';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { UseOfCFDI } from './use-of-CFDI';
+import { RelationType } from './relation-type';
 
 export class Transaction {
 
@@ -34,6 +35,7 @@ export class Transaction {
 	public CAE: string; // AR
   public CAEExpirationDate: string; // AR
   public expeditionPlace: string; // MX
+  public relationType: RelationType; // MX
   public useOfCFDI: UseOfCFDI; // MX
 	public type: TransactionType;
 	public company: Company;
