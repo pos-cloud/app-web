@@ -132,7 +132,7 @@ export class UpdateCompanyFieldComponent implements OnInit {
           this.loading = false;
         } else {
           this.companyField = result.companyField;
-          this.showMessage("El campo de producto se ha actualizado con éxito.", 'success', false);
+          this.showMessage("El campo de empresa se ha actualizado con éxito.", 'success', false);
           this.activeModal.close('save_close');
         }
         this.loading = false;

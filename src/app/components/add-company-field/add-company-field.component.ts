@@ -114,7 +114,7 @@ export class AddCompanyFieldComponent  implements OnInit {
           this.loading = false;
         } else {
           this.companyField = result.companyField;
-          this.showMessage("El campo de producto se ha añadido con éxito.", 'success', false);
+          this.showMessage("El campo de empresa se ha añadido con éxito.", 'success', false);
           this.companyField = new CompanyField();
           this.buildForm();
         }
