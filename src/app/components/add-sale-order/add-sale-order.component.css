@@ -16,6 +16,10 @@
       height:65vh;
 }
 
+.container-message {
+  margin: 0px;
+}
+
 .articles-container {
       height:44vh;
       margin: 0px;
@@ -26,6 +30,7 @@
       padding: 15px;
       background: #292B2C;
       color: white;
+      margin: 0px;
 }
 
 .btn-action {
@@ -40,6 +45,8 @@
 
 .container-transaction {
   margin-top: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
 .btn-action:hover {
