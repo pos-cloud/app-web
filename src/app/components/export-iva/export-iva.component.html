@@ -10,7 +10,7 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <form [formGroup]="exportIVAForm" #formExportIVA="ngForm" (ngSubmit)="exportIVA()" autocomplete="off">
+    <form [formGroup]="exportIVAForm" #formExportIVA="ngForm" (ngSubmit)="exportPDF()" autocomplete="off">
       <div class="modal-body">
         <div class = "row">
           <div class="form-group col-md-4">
@@ -48,9 +48,10 @@
           <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
           <button type="submit" class="btn btn-primary" [disabled]="!exportIVAForm.valid || loading" >
             <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-            <span *ngIf="!loading">Exportar</span>
+            <span *ngIf="!loading">Exportar PDF</span>
             <span *ngIf="loading">Espere por favor</span>
           </button>
+          <button type="button" class="btn btn-primary" (click)="exportAsXLSX()">Exportar Excel</button>
       </div>
     </form>
   

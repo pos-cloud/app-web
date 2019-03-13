@@ -9,6 +9,9 @@ import 'moment/locale/es';
 import { TransactionService } from './../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
+import { CompanyService } from './../../services/company.service';
+
+
 import { PrintComponent } from './../../components/print/print.component'
 import { Config } from './../../app.config';
 
@@ -56,7 +59,8 @@ export class ExportIvaComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
     public _configService: ConfigService,
-    public _userService: UserService
+    public _userService: UserService,
+    public _companyService: CompanyService,
   ) { }
 
   ngOnInit() {
@@ -100,12 +104,63 @@ export class ExportIvaComponent implements OnInit {
     }
   }
 
-  public exportIVA(): void {
-    
+  public exportPDF(): void {
     
     let modalRef = this._modalService.open(PrintComponent);
     modalRef.componentInstance.typePrint = "IVA";
     modalRef.componentInstance.params = this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber;
+  }
+
+  public exportAsXLSX() : void {
+    
+    this._transactionService.getVATBook(this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber).subscribe(
+      result => {
+        if (!result) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+         
+          } else {
+            this.hideMessage();
+            
+            console.log(result);
+
+            let data: any = [] 
+
+            for (let index = 0; index < result.length; index++) {
+              data[index] = {};
+
+              data[index]['Fecha'] = this.padString(result[index]['day'],2) + '/' + this.padString(result[index]['month'],2);
+              data[index]['Razón Social'] = result[index]['nameCompany'];
+              data[index]['Identificador'] = result[index]['identificationValue'];
+              data[index]['Tipo de Comprobante'] = result[index]['labelPrint'];
+              data[index]['Nro Comprobante'] = this.padString(result[index]['origin'],5)  + '-' + result[index]['letter'] + '-' + this.padString( result[index]['number'],8);
+              data[index]['Gravado'] = result[index]['GRAVADO'];
+              data[index]['Excento'] = result[index]['EXENT_NOGRAV'];
+              data[index]['% IVA'] = result[index]['IVA_PORCENTAJE'];
+              data[index]['IVA'] = result[index]['IVA'];
+              data[index]['PERC. IVA'] = result[index]['IVA_PERCEP'];
+              data[index]['PERC. IIBB'] = result[index]['IIBB_PERCEP'];
+              data[index]['TOTAL'] = result [index]['TOTAL'];
+              
+            }
+
+
+            this._companyService.exportAsExcelFile(data, this.type + '-'+ this.exportIVAForm.value.year+'-'+this.exportIVAForm.value.month);
+            
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+    );
+  }
+
+  public padString(n, length) {
+    var n = n.toString();
+    while (n.length < length)
+      n = "0" + n;
+    return n;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
