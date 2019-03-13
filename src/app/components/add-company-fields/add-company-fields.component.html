@@ -1,0 +1,52 @@
+<section class="container-fluid" *ngIf="companyFields.length > 0">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="companyFieldsForm" #formAddVariantValue="ngForm" (ngSubmit)="addCompanyFields()" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-5">
+          <label for="companyField" class="control-label">Campo</label>
+          <select class="form-control" formControlName="companyField" (change)="changeValues()">
+            <option *ngFor="let companyField of companyFields" [ngValue]="companyField">{{companyField.name}}</option>
+          </select>
+          <div *ngIf="formErrors.name" class="alert alert-danger">
+            {{ formErrors.name }}
+          </div>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="value" class="control-label" >Valor:</label>
+          <div class="input-group">
+            <input value="number" class="form-control" formControlName="value" name="value" id="value" step="1" />
+          </div>
+          <div *ngIf="formErrors.value" class="alert alert-danger">
+            {{ formErrors.value }}
+          </div>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="value" class="control-label">Acción</label>
+          <button type="submit" class="btn btn-success" [disabled]="!companyFieldsForm.valid || loading">Agregar</button>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-hover">
+          <tbody>
+            <tr *ngFor="let fieldAux of fields">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticlField(fieldAux)">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+              <td class="flat">{{fieldAux.name}}</td>
+              <td class="flat" *ngIf="fieldAux.datatype === 'Porcentaje'">{{fieldAux.value}}%</td>
+              <td class="flat" *ngIf="fieldAux.datatype !== 'Porcentaje'">{{fieldAux.value}}</td>
+              <td class="flat" *ngIf="fieldAux.datatype !== 'Alfabético'">{{fieldAux.amount | currency:'USD':'1.3-3'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</section>

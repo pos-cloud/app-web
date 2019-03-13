@@ -8,6 +8,9 @@ import { Company, CompanyType, GenderType } from './../../models/company';
 import { VATCondition } from 'app/models/vat-condition';
 import { CompanyGroup } from 'app/models/company-group';
 import { Employee } from "app/models/employee";
+import { CompanyFields } from '../../models/company-fields';
+import { CompanyFieldType } from '../../models/company-field';
+
 
 //Terceros
 import * as moment from 'moment';
@@ -42,6 +45,7 @@ export class AddCompanyComponent  implements OnInit {
   public vatConditions: VATCondition[];
   public companiesGroup: CompanyGroup[];
   public employees: Employee[];
+  public otherFields: CompanyFields[] = new Array();
   public dateFormat = new DateFormatPipe();
   public identificationTypes: IdentificationType[];
   public companyForm: FormGroup;
@@ -153,6 +157,10 @@ export class AddCompanyComponent  implements OnInit {
     this.focusEvent.emit(true);
   }
 
+  public addCompanyFields(otherFields: CompanyFields[]): void {
+    this.otherFields = otherFields;
+  }
+
   public getCompany(): void {
 
     this.loading = true;
@@ -163,6 +171,8 @@ export class AddCompanyComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
+
+          this.otherFields = this.company.otherFields;
 
           if (this.company.birthday) {
             this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
@@ -462,6 +472,7 @@ export class AddCompanyComponent  implements OnInit {
             this.company.vatCondition = this.vatConditions[0];
           }
           this.company.identificationType = result.companies[0].identificationType;
+          this.otherFields = this.company.otherFields;
           this.setValueForm();
           this.loading = false;
         },
@@ -477,6 +488,8 @@ export class AddCompanyComponent  implements OnInit {
 
      if (!this.readonly) {
        this.company = this.companyForm.value;
+
+       this.company.otherFields = this.otherFields;
 
        if (this.company.birthday) {
          this.company.birthday = moment(this.company.birthday, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
@@ -504,6 +517,7 @@ export class AddCompanyComponent  implements OnInit {
   }
 
   public saveCompany(): void {
+
 
     this.loading = true;
 

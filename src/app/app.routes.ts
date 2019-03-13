@@ -53,6 +53,7 @@ import { ListPaymentMethodsComponent } from './components/list-payment-methods/l
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
 import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListRelationTypesComponent } from './components/list-relation-types/list-relation-types.component';
+import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -396,6 +397,12 @@ const _routes: Routes = [
   {
     path: 'admin/campos-de-productos',
     component: ListArticleFieldsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/campos-de-empresas',
+    component: ListCompanyFieldsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

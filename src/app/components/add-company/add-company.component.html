@@ -1,5 +1,5 @@
 <div class="modal-header">
-	<h4 class="modal-title">Agregar Empresa</h4>
+	<h4 class="modal-title">Empresa</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -160,7 +160,16 @@
               </div>
             </div>
 					</ng-template>
-				</ngb-tab>
+        </ngb-tab>
+        <ngb-tab title="Campos Personalizados">
+					<ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+               <app-add-company-fields (eventAddCompanyFields)="addCompanyFields($event)" [fields]="otherFields"></app-add-company-fields>
+              </div>
+            </div>
+					</ng-template>
+        </ngb-tab>
 				<ngb-tab title="Configuración">
 					<ng-template ngbTabContent>
             <div class="row tab-content">

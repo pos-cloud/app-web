@@ -51,6 +51,7 @@ import { CompanyNewsService } from './services/company-news.service';
 import { ArticleFieldService } from './services/article-field.service';
 import { CompanyGroupService } from "./services/company-group.service";
 import { CompanyContactService } from "./services/company-contact.service";
+import { CompanyFieldService } from './services/company-field.service'
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -140,8 +141,6 @@ import { AddPaymentMethodComponent } from './components/add-payment-method/add-p
 import { UpdatePaymentMethodComponent } from './components/update-payment-method/update-payment-method.component';
 import { DeletePaymentMethodComponent } from './components/delete-payment-method/delete-payment-method.component';
 import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
-
-
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
 import { ClockComponent } from './components/clock/clock.component';
@@ -211,6 +210,11 @@ import { AddRelationTypeComponent } from './components/add-relation-type/add-rel
 import { DeleteRelationTypeComponent } from './components/delete-relation-type/delete-relation-type.component';
 import { RelationTypeService } from './services/relation-type.service';
 
+import { AddCompanyFieldComponent } from './components/add-company-field/add-company-field.component';
+import { UpdateCompanyFieldComponent } from './components/update-company-field/update-company-field.component';
+import { DeleteCompanyFieldComponent } from './components/delete-company-field/delete-company-field.component';
+import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
+import { AddCompanyFieldsComponent } from './components/add-company-fields/add-company-fields.component';
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -357,7 +361,12 @@ import { RelationTypeService } from './services/relation-type.service';
     ListUsesOfCFDIComponent,
     ListRelationTypesComponent,
     AddRelationTypeComponent,
-    DeleteRelationTypeComponent
+    DeleteRelationTypeComponent,
+    AddCompanyFieldComponent,
+    UpdateCompanyFieldComponent,
+    DeleteCompanyFieldComponent,
+    ListCompanyFieldsComponent,
+    AddCompanyFieldsComponent,
   ],
   entryComponents: [
     HomeComponent,
@@ -495,7 +504,12 @@ import { RelationTypeService } from './services/relation-type.service';
     ListUsesOfCFDIComponent,
     ListRelationTypesComponent,
     AddRelationTypeComponent,
-    DeleteRelationTypeComponent
+    DeleteRelationTypeComponent,
+    AddCompanyFieldComponent,
+    UpdateCompanyFieldComponent,
+    DeleteCompanyFieldComponent,
+    ListCompanyFieldsComponent,
+    AddCompanyFieldsComponent,
   ],
   imports: [
     BrowserModule,
@@ -557,7 +571,8 @@ import { RelationTypeService } from './services/relation-type.service';
     UnitOfMeasurementService,
     IdentificationTypeService,
     UseOfCFDIService,
-    RelationTypeService
+    RelationTypeService,
+    CompanyFieldService
   ],
   bootstrap: [AppComponent]
 })

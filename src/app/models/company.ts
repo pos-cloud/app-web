@@ -6,6 +6,7 @@ import { IdentificationType } from './identification-type';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { CompanyFields } from './company-fields';
 
 export class Company {
 
@@ -31,6 +32,7 @@ export class Company {
   public allowCurrentAccount: boolean;
   public group: CompanyGroup;
   public employee : Employee;
+  public otherFields: CompanyFields[];
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
