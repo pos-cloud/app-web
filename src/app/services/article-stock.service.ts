@@ -6,11 +6,16 @@ import { Article } from './../models/article';
 import { Config } from './../app.config';
 import { UserService } from './user.service';
 
+import { Observable } from "rxjs/Observable";
+import { map, catchError } from "rxjs/operators";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+
 @Injectable()
 export class ArticleStockService {
 
 	constructor(
-    public _http: Http,
+		public _http: Http,
+		private http: HttpClient,
     public _userService: UserService
   ) { }
 
@@ -85,4 +90,39 @@ export class ArticleStockService {
 		});
 		return this._http.put(Config.apiURL + 'amount-stock-by-article/' + article._id, '{"amount":' + amount + ', "transactionType":"' + transactionType + '"}', { headers: headers }).map(res => res.json());
 	}
+
+	public getArticleStocksV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
+
+	const URL = `${Config.apiURL}v2/article-stocks`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._userService.getToken())
+      .set('Database', this._userService.getDatabase());
+    //.set('Authorization', this._authService.getSession()["token"]);
+
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
+
+    return this.http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      })
+    );
+  }
 }

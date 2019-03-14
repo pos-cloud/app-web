@@ -22,28 +22,24 @@
               <i class="fa fa-bars"></i>
             </th>
             <th>Marca </th>
-            <th (click)="orderBy('article','code')">Producto </th>
-            <th (click)="orderBy('article','description')">Descripción </th>
+            <th (click)="orderBy('article.code')">Producto </th>
+            <th (click)="orderBy('article.description')">Descripción </th>
             <th>Rubro</th>
             <th (click)="orderBy('realStock')">Stock Actual </th>
             <th (click)="orderBy('minStock')">Stock Mínimo </th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
-            <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="Código..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
-            <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterRealStock" placeholder="Stock Actual..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterMinStock" placeholder="Stock Mínimo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['article.make.description']" (input)="getArticleStocksV2()" placeholder="Marca..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['article.code']" (input)="getArticleStocksV2()" placeholder="Producto..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['article.description']" (input)="getArticleStocksV2()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['article.category.description']" (input)="getArticleStocksV2()" placeholder="Rubro..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['realStock']" (input)="getArticleStocksV2()" placeholder="Stock Actual..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['minStock']" (input)="getArticleStocksV2()" placeholder="Stock Mínimo..."></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let articleStock of articleStocks | filter: filterCode:'code':'article'
-                                                        | filter: filterDescription:'description':'article'
-                                                        | filter: filterRealStock:'realStock'
-                                                        | filter: filterMinStock:'minStock'
-                                                        | orderBy: orderTerm: propertyTerm
+          <tr *ngFor="let articleStock of articleStocks 
                                                         | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: p,
                                                                       totalItems: totalItems
@@ -57,11 +53,10 @@
               </button>
 
             </td>
-            <td class="flat" *ngIf="articleStock.article.make">{{articleStock.article.make.description}}</td>
-            <td class="flat" *ngIf="!articleStock.article.make"></td>
+            <td class="flat">{{articleStock.article.make[0].description}}</td>
             <td class="flat">{{articleStock.article.code}}</td>
             <td class="flat">{{articleStock.article.description}}</td>
-            <td class="flat" *ngIf="articleStock.article.category">{{articleStock.article.category.description}}</td>
+            <td class="flat" *ngIf="articleStock.article.category">{{articleStock.article.category[0].description}}</td>
             <td class="flat" *ngIf="!articleStock.article.category"></td>
             <td class="flat">{{articleStock.realStock}}</td>
             <td class="flat">{{articleStock.minStock}}</td>
