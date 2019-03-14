@@ -121,7 +121,6 @@ export class ExportIvaComponent implements OnInit {
           } else {
             this.hideMessage();
             
-            console.log(result);
 
             let data: any = [] 
 
