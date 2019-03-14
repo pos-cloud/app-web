@@ -21,10 +21,10 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th>Marca </th>
+            <th (click)="orderBy('article.make.description')">Marca </th>
             <th (click)="orderBy('article.code')">Producto </th>
             <th (click)="orderBy('article.description')">Descripción </th>
-            <th>Rubro</th>
+            <th (click)="orderBy('article.category.description')">Rubro </th>
             <th (click)="orderBy('realStock')">Stock Actual </th>
             <th (click)="orderBy('minStock')">Stock Mínimo </th>
           </tr>
@@ -53,11 +53,12 @@
               </button>
 
             </td>
-            <td class="flat">{{articleStock.article.make[0].description}}</td>
+            <td class="flat" *ngIf="articleStock.article.make && articleStock.article.make[0]">{{articleStock.article.make[0].description}}</td>
+            <td class="flat" *ngIf="!articleStock.article.make || !articleStock.article.make[0]"></td>
             <td class="flat">{{articleStock.article.code}}</td>
             <td class="flat">{{articleStock.article.description}}</td>
-            <td class="flat" *ngIf="articleStock.article.category">{{articleStock.article.category[0].description}}</td>
-            <td class="flat" *ngIf="!articleStock.article.category"></td>
+            <td class="flat" *ngIf="articleStock.article.category && articleStock.article.category[0]">{{articleStock.article.category[0].description}}</td>
+            <td class="flat" *ngIf="!articleStock.article.category || !articleStock.article.category[0]"></td>
             <td class="flat">{{articleStock.realStock}}</td>
             <td class="flat">{{articleStock.minStock}}</td>
           </tr>
@@ -69,8 +70,14 @@
     </div>
     <div class="card-footer bg-primary">
       <div class="row">
-        <div class="col-md-10">
-          <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
+        <div class="form-group col-md-10">
+          <pagination-controls 
+            class="my-pagination"
+            (pageChange)="pageChange($event)"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true">
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
