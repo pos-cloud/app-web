@@ -5,7 +5,8 @@ import 'moment/locale/es';
 
 export class PaymentMethod {
 
-	public _id: string;
+  public _id: string;
+  public code: number = 1;
 	public name: string = '';
 	public discount: number = 0.00;
 	public surcharge: number = 0.00;

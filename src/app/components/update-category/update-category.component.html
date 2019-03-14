@@ -82,7 +82,7 @@
                       </div>
                       <div class="form-group col-md-6">
                           <label class="control-label">El día:</label>
-                          <label *ngIf="category.creationDate" class="control-label"> <b>{{category.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                          <label *ngIf="category.creationDate" class="control-label"> <b>{{category.creationDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
                       </div>
                     </div>
                     <div class="row">
@@ -93,7 +93,7 @@
                       </div>
                       <div class="form-group col-md-6">
                           <label class="control-label">El día:</label>
-                          <label *ngIf="category.updateDate" class="control-label"><b>{{category.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                          <label *ngIf="category.updateDate" class="control-label"><b>{{category.updateDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
                           <label *ngIf="!category.updateDate" class="control-label"><b>-</b></label>
                       </div>
                     </div>

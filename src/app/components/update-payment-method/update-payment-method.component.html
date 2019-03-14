@@ -17,9 +17,16 @@
         <ngb-tab title="Datos principales">
           <ng-template ngbTabContent>
             <div class="row">
-              <div class="form-group col-md-8">
+              <div class="form-group col-md-3">
+                <label for="code" class="control-label">Código:</label>
+                <input type="number" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent" />
+                <div *ngIf="formErrors.code" class="alert alert-danger">
+                  {{ formErrors.code }}
+                </div>
+              </div>
+              <div class="form-group col-md-9">
                 <label for="name" class="control-label">Nombre:</label>
-                <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
+                <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
                 <div *ngIf="formErrors.name" class="alert alert-danger">
                   {{ formErrors.name }}
                 </div>
@@ -117,7 +124,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label class="control-label">El día:</label>
-                        <label *ngIf="paymentMethod.creationDate" class="control-label"> <b>{{paymentMethod.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                        <label *ngIf="paymentMethod.creationDate" class="control-label"> <b>{{paymentMethod.creationDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
                     </div>
                   </div>
                   <div class="row">
@@ -128,7 +135,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label class="control-label">El día:</label>
-                        <label *ngIf="paymentMethod.updateDate" class="control-label"><b>{{paymentMethod.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                        <label *ngIf="paymentMethod.updateDate" class="control-label"><b>{{paymentMethod.updateDate | dateFormat:'DD/MM/YYYY hh:mm:ss'}}</b></label>
                         <label *ngIf="!paymentMethod.updateDate" class="control-label"><b>-</b></label>
                     </div>
                   </div>
@@ -147,4 +154,5 @@
       </button>
     </div>
   </form>
+  {{paymentMethodForm.value |json}}
 </section>

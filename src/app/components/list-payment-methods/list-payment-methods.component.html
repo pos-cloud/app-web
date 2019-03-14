@@ -21,6 +21,7 @@
           <thead>
             <tr>
               <th><i class="fa fa-bars"></i></th>
+              <th (click)="orderBy('code')">Código </th>
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('discount')">Descuento </th>
               <th (click)="orderBy('surcharge')">Recargo </th>
@@ -34,6 +35,7 @@
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCode" placeholder="Código..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDiscount" placeholder="Descuento..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterSurcharge" placeholder="Recargo..." ></th>
@@ -47,7 +49,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let paymentMethod of paymentMethods | filter: filterName:'name'
+            <tr *ngFor="let paymentMethod of paymentMethods | filter: filterCode:'code'
+                                                            | filter: filterName:'name'
                                                             | filter: filterDiscount:'discount'
                                                             | filter: filterSurcharge:'surcharge'
                                                             | filter: filterIsCurrentAccount:'isCurrentAccount'
@@ -67,6 +70,7 @@
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', paymentMethod)" title="Modificar"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', paymentMethod)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
+              <td class="flat">{{paymentMethod.code}}</td>
               <td class="flat">{{paymentMethod.name}}</td>
               <td class="flat">{{paymentMethod.discount}}</td>
               <td class="flat">{{paymentMethod.surcharge}}</td>

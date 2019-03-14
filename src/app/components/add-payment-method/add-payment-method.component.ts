@@ -25,10 +25,14 @@ export class AddPaymentMethodComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'code': '',
     'name': ''
   };
 
   public validationMessages = {
+    'code': {
+      'required': 'Este campo es requerido.'
+    },
     'name': {
       'required': 'Este campo es requerido.'
     }
@@ -57,6 +61,9 @@ export class AddPaymentMethodComponent implements OnInit {
   public buildForm(): void {
 
     this.paymentMethodForm = this._fb.group({
+      'code': [this.paymentMethod.code, [
+        ]
+      ],
       'name': [this.paymentMethod.name, [
           Validators.required
         ]

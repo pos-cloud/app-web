@@ -107,11 +107,9 @@ export class ListPaymentMethodsComponent implements OnInit {
         modalRef.componentInstance.paymentMethod = paymentMethod;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getPaymentMethods();
-          }
+          this.getPaymentMethods();
         }, (reason) => {
-
+            this.getPaymentMethods();
         });
         break;
       case 'delete':

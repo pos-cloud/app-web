@@ -26,10 +26,12 @@ export class UpdatePaymentMethodComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'code': '',
     'name': ''
   };
 
   public validationMessages = {
+    'code': {},
     'name': {
       'required': 'Este campo es requerido.'
     }
@@ -59,6 +61,9 @@ export class UpdatePaymentMethodComponent implements OnInit {
 
     this.paymentMethodForm = this._fb.group({
       '_id': [this.paymentMethod._id, [
+        ]
+      ],
+      'code': [this.paymentMethod.code, [
         ]
       ],
       'name': [this.paymentMethod.name, [
@@ -112,6 +117,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.paymentMethod._id) this.paymentMethod._id = '';
+    if (!this.paymentMethod.code) this.paymentMethod.code = 1;
     if (!this.paymentMethod.name) this.paymentMethod.name = '';
     if (!this.paymentMethod.discount) this.paymentMethod.discount = 0.00;
     if (!this.paymentMethod.surcharge) this.paymentMethod.surcharge = 0.00;
@@ -125,6 +131,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
 
     this.paymentMethodForm.setValue({
       '_id': this.paymentMethod._id,
+      'code': this.paymentMethod.code,
       'name': this.paymentMethod.name,
       'discount': this.paymentMethod.discount,
       'surcharge': this.paymentMethod.surcharge,
@@ -147,7 +154,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
   }
 
   public saveChanges(): void {
-
+    console.log(this.paymentMethod);
     this.loading = true;
 
     this._paymentMethodService.updatePaymentMethod(this.paymentMethod).subscribe(
@@ -158,7 +165,6 @@ export class UpdatePaymentMethodComponent implements OnInit {
         } else {
           this.paymentMethod = result.paymentMethod;
           this.showMessage("El método de pago se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },
