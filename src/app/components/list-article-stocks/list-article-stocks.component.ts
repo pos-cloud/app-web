@@ -251,7 +251,7 @@ export class ListArticleStocksComponent implements OnInit {
 
           this.loading = false;
           this.articleStocks = result.articleStocks;
-          this.totalItems = this.articleStocks.length;
+          this.totalItems = result.count;
           this.areArticleStocksEmpty = false;
 
 

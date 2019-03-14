@@ -41,7 +41,7 @@
         <tbody>
           <tr *ngFor="let articleStock of articleStocks 
                                                         | paginate: { itemsPerPage: itemsPerPage,
-                                                                      currentPage: p,
+                                                                      currentPage: currentPage,
                                                                       totalItems: totalItems
                                                                     }">
 
@@ -81,7 +81,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getArticleStocksV2()">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
