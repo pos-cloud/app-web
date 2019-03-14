@@ -130,7 +130,12 @@ export class ExportIvaComponent implements OnInit {
               data[index]['Fecha'] = this.padString(result[index]['day'],2) + '/' + this.padString(result[index]['month'],2);
               data[index]['Razón Social'] = result[index]['nameCompany'];
               data[index]['Identificador'] = result[index]['identificationValue'];
-              data[index]['Tipo de Comprobante'] = result[index]['labelPrint'];
+              if(result[index]['labelPrint']) {
+                data[index]['Tipo de Comprobante'] = result[index]['labelPrint'];
+              } else {
+                data[index]['Tipo de Comprobante'] = result[index]['typeName'];
+              }
+              
               data[index]['Nro Comprobante'] = this.padString(result[index]['origin'],5)  + '-' + result[index]['letter'] + '-' + this.padString( result[index]['number'],8);
               data[index]['Gravado'] = result[index]['GRAVADO'];
               data[index]['Excento'] = result[index]['EXENT_NOGRAV'];
