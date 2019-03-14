@@ -120,6 +120,9 @@ export class ExportIvaComponent implements OnInit {
          
           } else {
             this.hideMessage();
+
+            console.log(result);
+
             
 
             let data: any = [] 
@@ -127,7 +130,7 @@ export class ExportIvaComponent implements OnInit {
             for (let index = 0; index < result.length; index++) {
               data[index] = {};
 
-              data[index]['Fecha'] = this.padString(result[index]['day'],2) + '/' + this.padString(result[index]['month'],2);
+              data[index]['Fecha'] = this.padString(result[index]['day'],2) + '/' + this.padString(result[index]['month'],2)+ '/' + result[index]['year'];
               data[index]['Razón Social'] = result[index]['nameCompany'];
               data[index]['Identificador'] = result[index]['identificationValue'];
               if(result[index]['labelPrint']) {
