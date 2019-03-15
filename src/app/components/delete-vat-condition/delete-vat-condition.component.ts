@@ -5,6 +5,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { VATCondition } from './../../models/vat-condition';
 
 import { VATConditionService } from './../../services/vat-condition.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-delete-vat-condition',
@@ -19,6 +20,7 @@ export class DeleteVATConditionComponent implements OnInit {
   public alertMessage: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public loading: boolean = false;
+  public userCountry: string;
 
   constructor(
     public _vatConditionService: VATConditionService,
@@ -26,7 +28,9 @@ export class DeleteVATConditionComponent implements OnInit {
     public alertConfig: NgbAlertConfig
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.userCountry = Config.country;
+  }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
