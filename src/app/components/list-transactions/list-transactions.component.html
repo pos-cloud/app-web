@@ -8,8 +8,8 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
-        <button class= "btn btn-primary" (click)="exportIVA()">Exportar IVA</button>
-        <button class="btn btn-primary" (click)="exportCiti()">Exportar Régimen de Información</button>
+        <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
+        <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -24,7 +24,7 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type.name')">Tipo</th>
-            <th (click)="orderBy('origin')">POS</th>
+            <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('endDate')">Fecha</th>
@@ -42,7 +42,7 @@
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
@@ -71,7 +71,7 @@
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
-            <td>{{transaction.origin}}</td>
+            <td *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
             <td>{{transaction.endDate }}</td>
@@ -146,8 +146,8 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
-        <button class= "btn btn-primary" (click)="exportIVA()">Exportar IVA</button>
-        <button class="btn btn-primary" (click)="exportCiti()">Exportar Régimen de Información</button>
+        <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
+        <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -162,7 +162,7 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type.name')">Tipo</th>
-            <th (click)="orderBy('origin')">POS</th>
+            <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('endDate')">Fecha</th>
@@ -175,7 +175,7 @@
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
@@ -199,7 +199,7 @@
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
-            <td>{{transaction.origin}}</td>
+            <td *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>
             <td>{{transaction.letter}}</td>
             <td>{{transaction.number}}</td>
             <td>{{transaction.endDate }}</td>

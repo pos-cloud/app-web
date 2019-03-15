@@ -27,6 +27,7 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { ListCompaniesComponent } from '../list-companies/list-companies.component';
 import { CashBoxService } from 'app/services/cash-box.service';
 import { UserService } from 'app/services/user.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-add-transaction',
@@ -50,7 +51,7 @@ export class AddTransactionComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
   public datePipe = new DateFormatPipe();
-  public letters: string[] = ["A", "B", "C", "E", "M", "R", "T","X"];
+  public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T","X"];
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: string;
   public employees: Employee[] = new Array();
@@ -65,6 +66,7 @@ export class AddTransactionComponent implements OnInit {
   ];
   public companyName: string = "Consumidor Final";
   public transactionDate: string;
+  public userCountry: string;
 
   public formErrors = {
     'date': '',
@@ -128,6 +130,7 @@ export class AddTransactionComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];

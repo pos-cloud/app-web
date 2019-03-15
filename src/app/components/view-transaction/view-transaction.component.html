@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="transaction.type">{{transaction.type.name}} {{transaction.origin}}-{{transaction.letter}}-{{transaction.number}}</h4>
+  <h4 class="modal-title" *ngIf="transaction.type && userCountry === 'AR'">{{transaction.type.name}} {{transaction.origin}}-{{transaction.letter}}-{{transaction.number}}</h4>
+  <h4 class="modal-title" *ngIf="transaction.type && userCountry !== 'AR'">{{transaction.type.name}} {{transaction.letter}}-{{transaction.number}}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -34,7 +35,7 @@
               <input type="text" class="form-control" name="date" value="{{transaction.endDate | dateFormat:'DD/MM/YYYY'}}" readonly *ngIf="transaction.endDate"/>
               <input type="text" class="form-control" name="date" value="{{transaction.startDate | dateFormat:'DD/MM/YYYY'}}" readonly *ngIf="!transaction.endDate"/>
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" *ngIf="userCountry === 'AR'">
               <label for="origin" class="control-label">Punto de venta:</label>
               <input type="origin" class="form-control" name="origin" min="0" value="{{transaction.origin}}" readonly/>
             </div>

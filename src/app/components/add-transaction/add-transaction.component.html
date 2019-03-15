@@ -41,18 +41,11 @@
         </div>
       </div>
       <div class="row" *ngIf="transactionMovement === 'Venta'">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-12">
           <label for="date" class="control-label">Fecha:</label>
-          <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" [readonly]="readonly"/>
+          <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" [readonly]="readonly" [focus]="focusEvent"/>
           <div *ngIf="formErrors.date" class="alert alert-danger">
             {{ formErrors.date }}
-          </div>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="origin" class="control-label">POS:</label>
-          <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent" [readonly]="readonly"/>
-          <div *ngIf="formErrors.origin" class="alert alert-danger">
-            {{ formErrors.origin }}
           </div>
         </div>
       </div>
@@ -64,7 +57,7 @@
             {{ formErrors.date }}
           </div>
         </div>
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-2" *ngIf="userCountry === 'AR'">
           <label for="origin" class="control-label">POS:</label>
           <input type="number" class="form-control" formControlName="origin" name="origin" min="0" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.origin" class="alert alert-danger">

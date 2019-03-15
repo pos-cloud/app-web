@@ -34,7 +34,7 @@
             <th (click)="orderBy('modifyStock')">Modifica el stock</th>
             <th (click)="orderBy('stockMovement')">Movimiento de stock</th>
             <th (click)="orderBy('defectOrders')">Para pedidos</th>
-            <th (click)="orderBy('fixedOrigin')">Punto de venta fijo</th>
+            <th (click)="orderBy('fixedOrigin')" *ngIf="userCountry === 'AR'">Punto de venta fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
             <th (click)="orderBy('electronics')">Electrónico</th>
             <th>Cídigo A</th>
@@ -67,7 +67,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyStock" placeholder="Modifica el stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterStockMovement" placeholder="Movimiento de stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..."  *ngIf="userCountry === 'AR'"></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterElectronics" placeholder="Electrónico..."></th>
             <th></th>
@@ -137,7 +137,7 @@
             <td class="flat">{{transactionType.modifyStock}}</td>
             <td class="flat">{{transactionType.stockMovement}}</td>
             <td class="flat">{{transactionType.defectOrders}}</td>
-            <td class="flat">{{transactionType.fixedOrigin}}</td>
+            <td class="flat" *ngIf="userCountry === 'AR'">{{transactionType.fixedOrigin}}</td>
             <td class="flat">{{transactionType.fixedLetter}}</td>
             <td class="flat">{{transactionType.electronics}}</td>
             <td class="flat">{{getCode(transactionType, "A")}}</td>

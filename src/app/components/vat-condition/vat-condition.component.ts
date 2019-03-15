@@ -25,7 +25,7 @@ export class VATConditionComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public letters: string[] = ["A", "B", "C", "E", "M", "R", "T", "X"];
+  public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T", "X"];
 
   public formErrors = {
     'code': '',

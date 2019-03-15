@@ -9,7 +9,6 @@ import { VATCondition } from 'app/models/vat-condition';
 import { CompanyGroup } from 'app/models/company-group';
 import { Employee } from "app/models/employee";
 import { CompanyFields } from '../../models/company-fields';
-import { CompanyFieldType } from '../../models/company-field';
 
 
 //Terceros

@@ -887,7 +887,11 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Comp. Nº:", 110, 20);
     this.doc.setFontType('normal');
-    this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+    if(Config.country === 'AR') {
+      this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+    } else {
+      this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+    }
     this.doc.setFontType('bold');
     this.doc.text("Fecha:", 110, 25);
     this.doc.setFontType('normal');
@@ -1659,14 +1663,22 @@ export class PrintComponent implements OnInit {
       this.doc.text('Detalle de Tickets Anulados:', 15, row += 8)
       for (let i = 0; i < this.shiftClosingTransaction.detailCanceled.length; i++) {
         let transaction = this.shiftClosingTransaction.detailCanceled[i];
-        this.doc.text("TK " + this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 10) + " por $" + transaction.totalPrice, 30, row += 8)
+        if(Config.country === 'AR') {
+          this.doc.text("TK " + this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 10) + " por $" + transaction.totalPrice, 30, row += 8);
+        } else {
+          this.doc.text("TK " + transaction.letter + "-" + this.padString(transaction.number, 10) + " por $" + transaction.totalPrice, 30, row += 8);
+        }
       }
     }
     if (this.shiftClosingMovementOfArticle && this.shiftClosingMovementOfArticle.deletedItems.length > 0) {
       this.doc.text('Detalle de Productos Anulados:', 15, row += 8)
       for (let i = 0; i < this.shiftClosingMovementOfArticle.deletedItems.length; i++) {
         let movementOfArticle = this.shiftClosingMovementOfArticle.deletedItems[i];
-        this.doc.text('' + movementOfArticle.amount + " " + movementOfArticle.description + " anulado en TK " + this.padString(movementOfArticle.transaction.origin, 4) + "-" + movementOfArticle.transaction.letter + "-" + this.padString(movementOfArticle.transaction.number, 10), 30, row += 8)
+        if(Config.country === 'AR') {
+          this.doc.text('' + movementOfArticle.amount + " " + movementOfArticle.description + " anulado en TK " + this.padString(movementOfArticle.transaction.origin, 4) + "-" + movementOfArticle.transaction.letter + "-" + this.padString(movementOfArticle.transaction.number, 10), 30, row += 8);
+        } else {
+          this.doc.text('' + movementOfArticle.amount + " " + movementOfArticle.description + " anulado en TK " + movementOfArticle.transaction.letter + "-" + this.padString(movementOfArticle.transaction.number, 10), 30, row += 8);
+        }
       }
     }
     if (this.shiftClosingMovementOfCash && this.shiftClosingTransaction) { this.doc.text('Detalle de Medios de Pago', 15, row += 8) };
@@ -1908,7 +1920,11 @@ export class PrintComponent implements OnInit {
         } else {
           this.doc.text(item.transactionTypeName.slice(0, 15), 25, row);
         }
-        this.doc.text(this.padString(item.transactionOrigin, 4) + "-" + item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 53, row);
+        if(Config.country === 'AR') {
+          this.doc.text(this.padString(item.transactionOrigin, 4) + "-" + item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 53, row);
+        } else {
+          this.doc.text(item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 53, row);
+        }
         this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 90, row);
         this.doc.text(item.paymentMethodName.slice(0, 22), 110, row);
         this.doc.text("$ " + this.roundNumber.transform(item.debe), 145, row);
@@ -1993,7 +2009,11 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Comp. Nº:", 110, 25);
     this.doc.setFontType('normal');
-    this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 130, 25);
+    if(Config.country === 'AR') {
+      this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 130, 25);
+    } else {
+      this.doc.text(this.padString(this.transaction.number, 8), 130, 25);
+    }
     this.doc.setFontType('bold');
     this.doc.text("Fecha:", 110, 30);
     this.doc.setFontType('normal');
@@ -2118,7 +2138,11 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType('bold');
           this.doc.text("Comp. Nº:", 110, 20);
           this.doc.setFontType('normal');
-          this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+          if (Config.country === 'AR') {
+            this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+          } else {
+            this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+          }
           this.doc.setFontType('bold');
           this.doc.text("Fecha:", 110, 25);
           this.doc.setFontType('normal');

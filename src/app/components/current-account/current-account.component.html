@@ -81,7 +81,7 @@
               <th class=""><i class="fa fa-bars"></i></th>
               <th class="">Fecha</th>
               <th class="">Tipo</th>
-              <th class="">Punto de venta</th>
+              <th class="" *ngIf="userCountry === 'AR'">Punto de venta</th>
               <th class="">Letra</th>
               <th class="">Número</th>
               <th class="">Importe</th>
@@ -96,7 +96,7 @@
               <th></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterOrigin" placeholder="Punto de venta..."  *ngIf="userCountry === 'AR'"></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Importe..."></th>
@@ -132,7 +132,7 @@
               <td class="align-center" *ngIf="item.transactionEndDate">{{item.transactionEndDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td class="align-center" *ngIf="!item.transactionEndDate">{{item.transactionStartDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td *ngIf="item.transactionTypeName">{{item.transactionTypeName}}</td>
-              <td class="align-center">{{item.transactionOrigin}}</td>
+              <td class="align-center"  *ngIf="userCountry === 'AR'">{{item.transactionOrigin}}</td>
               <td class="align-center">{{item.transactionLetter}}</td>
               <td class="align-right">{{item.transactionNumber}}</td>
               <td class="align-right">{{item.transactionTotalPrice | currency:'USD':'1.2-2'}}</td>

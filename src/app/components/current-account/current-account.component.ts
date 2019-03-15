@@ -27,7 +27,7 @@ import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
-import { TransactionType } from 'app/models/transaction-type';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-current-account',
@@ -56,6 +56,7 @@ export class CurrentAccountComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public printers: Printer[];
+  public userCountry: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -75,6 +76,7 @@ export class CurrentAccountComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (pathLocation[4]) {

@@ -36,7 +36,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public printers: Printer[];
   public employeeTypes: EmployeeType[];
   public paymentMethods: PaymentMethod[];
-  public letters: string[] = ["A", "B", "C", "E", "M", "R", "T", "X"];
+  public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T", "X"];
   @Input() readonly: boolean;
   @Input() operation: string;
   public userCountry: string = 'AR';
