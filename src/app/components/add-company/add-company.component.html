@@ -28,7 +28,8 @@
                     </div>
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="vatCondition" class="control-label">Condición de IVA:</label>
+                    <label for="vatCondition" class="control-label" *ngIf="userCountry === 'AR'">Condición de IVA:</label>
+                    <label for="vatCondition" class="control-label" *ngIf="userCountry !== 'AR'">Régimen Fiscal:</label>
                     <select class="form-control" formControlName="vatCondition">
                       <option *ngFor="let vatCondition of vatConditions" [ngValue]="vatCondition">{{vatCondition.description}}</option>
                     </select>

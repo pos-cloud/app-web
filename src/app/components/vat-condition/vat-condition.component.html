@@ -1,7 +1,10 @@
 <div class="modal-header">
-	<h4 class="modal-title" *ngIf="op==='add'">Agregar Condición de IVA</h4>
-	<h4 class="modal-title" *ngIf="op==='update'">Editar Condición de IVA {{vatCondition.description}}</h4>
-	<h4 class="modal-title" *ngIf="op==='view'">Condición de IVA {{vatCondition.description}}</h4>
+	<h4 class="modal-title" *ngIf="op==='add' && userCountry === 'AR'">Agregar Condición de IVA</h4>
+	<h4 class="modal-title" *ngIf="op==='update' && userCountry === 'AR'">Editar Condición de IVA {{vatCondition.description}}</h4>
+	<h4 class="modal-title" *ngIf="op==='view' && userCountry === 'AR'">Condición de IVA {{vatCondition.description}}</h4>
+	<h4 class="modal-title" *ngIf="op==='add' && userCountry !== 'AR'">Agregar Régimen Fiscal</h4>
+	<h4 class="modal-title" *ngIf="op==='update' && userCountry !== 'AR'">Editar Régimen Fiscal {{vatCondition.description}}</h4>
+	<h4 class="modal-title" *ngIf="op==='view' && userCountry !== 'AR'">Régimen Fiscal {{vatCondition.description}}</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
 	<span aria-hidden="true">&times;</span>
 	</button>

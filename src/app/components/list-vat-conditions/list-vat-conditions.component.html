@@ -8,7 +8,8 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Condiciones de IVA
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Condición de IVA</i></button>
+        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus" *ngIf="userCountry === 'AR'"> Agregar Condición de IVA</i></button>
+        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus" *ngIf="userCountry !== 'AR'"> Agregar Régimen Fiscal</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar Condiciones de IVA</button> -->
         <span (click)="areFiltersVisible = !areFiltersVisible">

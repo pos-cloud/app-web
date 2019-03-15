@@ -122,7 +122,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'">Condición de IVA:</span>
-              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'MX'">Régimen Fiscal:</span>
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal:</span>
               <select class="form-control" formControlName="companyVatCondition" name="companyVatCondition" id="companyVatCondition">
                 <option *ngFor="let vatCondition of vatConditions"
                         [selected]="config.companyVatCondition && vatCondition._id === config.companyVatCondition._id"

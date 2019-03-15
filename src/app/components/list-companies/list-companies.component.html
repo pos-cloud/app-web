@@ -25,7 +25,8 @@
               <th (click)="orderBy('name')">Nombre</th>
               <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
               <th (click)="orderBy('type')">Tipo</th>
-              <th (click)="orderBy('vatCondition','description')">Condición de IVA</th>
+              <th (click)="orderBy('vatCondition','description')" *ngIf="userCountry === 'AR'">Condición de IVA</th>
+              <th (click)="orderBy('vatCondition','description')" *ngIf="userCountry !== 'AR'">Régimen Fiscal</th>
               <th (click)="orderBy('identificationType','name')">Tipo Doc</th>
               <th (click)="orderBy('identificationValue')">Nro Doc</th>
               <th (click)="orderBy('grossIncome')">Ingresos Brutos</th>
@@ -42,7 +43,8 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..." *ngIf="userCountry === 'AR'"></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..." *ngIf="userCountry !== 'AR'"></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationType" placeholder="Tipo Doc..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Nro Doc..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterGrossIncome" placeholder="Ingresos Brutos..." ></th>
@@ -163,14 +165,16 @@
           <thead>
             <tr>
               <th (click)="orderBy('name')">Nombre </th>
-              <th (click)="orderBy('name')">Condición IVA </th>
+              <th (click)="orderBy('name')" *ngIf="userCountry === 'AR'">Condición IVA </th>
+              <th (click)="orderBy('name')" *ngIf="userCountry !== 'AR'">Régimen Fiscal </th>
               <th (click)="orderBy('identificationValue')">Identificador</th>
               <th (click)="orderBy('address')">Dirección </th>
               <th (click)="orderBy('phones')">Teléfonos </th>
             </tr>
             <tr>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." *ngIf="userCountry === 'AR'"></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..." *ngIf="userCountry !== 'AR'"></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador" ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>

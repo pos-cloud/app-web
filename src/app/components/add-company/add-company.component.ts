@@ -25,6 +25,7 @@ import { EmployeeService } from "./../../services/employee.service";
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { IdentificationType } from 'app/models/identification-type';
 import { IdentificationTypeService } from 'app/services/identification-type.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-add-company',
@@ -53,6 +54,7 @@ export class AddCompanyComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public userCountry: string;
 
   public formErrors = {
     'code': '',
@@ -126,6 +128,7 @@ export class AddCompanyComponent  implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if ( pathLocation[2] === "clientes" ||

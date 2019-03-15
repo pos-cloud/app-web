@@ -1768,7 +1768,11 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc.setFontType('bold');
-    this.doc.text("Condición de IVA:", 8, 45);
+    if(Config.country === 'AR') {
+      this.doc.text("Condición de IVA:", 8, 45);
+    } else {
+      this.doc.text("Régimen Fiscal:", 8, 45);
+    }
     this.doc.setFontType('normal');
     if (this.config[0].companyVatCondition) {
       this.doc.text(this.config[0].companyVatCondition.description, 40, 45);
@@ -1816,7 +1820,11 @@ export class PrintComponent implements OnInit {
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.setFontType('bold');
     this.doc.text("Nombre y Apellido:", 8, 55);
-    this.doc.text("Condición de IVA:", 8, 65);
+    if (Config.country === 'AR') {
+      this.doc.text("Condición de IVA:", 8, 65);
+    } else {
+      this.doc.text("Régimen Fiscal:", 8, 65);
+    }
     if (this.config[0].country === 'AR') {
       this.doc.text("Ingresos Brutos:", 8, 70);
     }

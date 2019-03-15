@@ -7,6 +7,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { VATCondition } from './../../models/vat-condition';
 
 import { VATConditionService } from './../../services/vat-condition.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-vat-condition',
@@ -26,6 +27,7 @@ export class VATConditionComponent  implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T", "X"];
+  public userCountry: string;
 
   public formErrors = {
     'code': '',
@@ -58,6 +60,7 @@ export class VATConditionComponent  implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (this.op === 'add') {
@@ -185,7 +188,11 @@ export class VATConditionComponent  implements OnInit {
           this.loading = false;
         } else {
           this.vatCondition = result.vatCondition;
-          this.showMessage("La condición de IVA se ha añadido con éxito.", 'success', false);
+          if(Config.country) {
+            this.showMessage("La condición de IVA se ha añadido con éxito.", 'success', false);
+          } else {
+            this.showMessage("El régimen fiscal se ha añadido con éxito.", 'success', false);
+          }
           this.vatCondition = new VATCondition ();
           this.buildForm();
         }
@@ -208,7 +215,11 @@ export class VATConditionComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.vatCondition = result.vatCondition;
-          this.showMessage("La condición de IVA se ha actualizado con éxito.", 'success', false);
+          if (Config.country) {
+            this.showMessage("La condición de IVA se ha actualizado con éxito.", 'success', false);
+          } else {
+            this.showMessage("La régimen fiscal se ha actualizado con éxito.", 'success', false);
+          }
         }
         this.loading = false;
       },

@@ -1,5 +1,6 @@
 <div class="modal-header">
-	<h4 class="modal-title">Eliminar Condición de IVA {{vatCondition.description}}</h4>
+	<h4 class="modal-title" *ngIf="userCountry === 'AR'">Eliminar la Condición de IVA {{vatCondition.description}}</h4>
+	<h4 class="modal-title" *ngIf="userCountry !== 'AR'">Eliminar el Régimen Fiscal {{vatCondition.description}}</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
 	<span aria-hidden="true">&times;</span>
 	</button>
@@ -10,7 +11,8 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-  <p>¿Está seguro de eliminar la condición de IVA {{vatCondition.description}}?</p>
+  <p *ngIf="userCountry === 'AR'">¿Está seguro de eliminar la condición de IVA {{vatCondition.description}}?</p>
+  <p *ngIf="userCountry !== 'AR'">¿Está seguro de eliminar el régimen fiscal {{vatCondition.description}}?</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Cancelar</button>
