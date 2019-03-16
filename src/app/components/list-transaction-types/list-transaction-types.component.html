@@ -67,7 +67,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyStock" placeholder="Modifica el stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterStockMovement" placeholder="Movimiento de stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..."  *ngIf="userCountry === 'AR'"></th>
+            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..." ></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterElectronics" placeholder="Electrónico..."></th>
             <th></th>

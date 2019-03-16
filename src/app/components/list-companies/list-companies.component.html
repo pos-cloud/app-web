@@ -43,8 +43,8 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..." *ngIf="userCountry === 'AR'"></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..." *ngIf="userCountry !== 'AR'"></th>
+              <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..."></th>
+              <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationType" placeholder="Tipo Doc..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Nro Doc..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterGrossIncome" placeholder="Ingresos Brutos..." ></th>
@@ -173,8 +173,8 @@
             </tr>
             <tr>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." *ngIf="userCountry === 'AR'"></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..." *ngIf="userCountry !== 'AR'"></th>
+                <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición IVA..." ></th>
+                <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador" ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>

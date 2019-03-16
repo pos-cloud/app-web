@@ -42,7 +42,7 @@
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
+            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
@@ -175,7 +175,7 @@
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
+            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>

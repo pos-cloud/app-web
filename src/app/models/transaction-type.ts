@@ -24,7 +24,8 @@ export class TransactionType {
 	public requestPaymentMethods: boolean = true;
 	public defectOrders: boolean = false;
 	public electronics: boolean = false;
-	public codes: CodeAFIP[];
+  public codes: CodeAFIP[]; // AR
+  public fiscalCode: string;
 	public fixedOrigin: number;
 	public fixedLetter: string;
 	public resetNumber: boolean = false;

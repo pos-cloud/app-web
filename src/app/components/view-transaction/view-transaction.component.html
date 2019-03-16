@@ -157,6 +157,42 @@
           </div>
         </ng-template>
       </ngb-tab>
+      <ngb-tab title="SAT" *ngIf="transaction.type && transaction.type.electronics && userCountry === 'MX'">
+        <ng-template ngbTabContent>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Sello SAT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>{{transaction.SATStamp}}</td>
+              </tbody>
+            </table>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Sello CFD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>{{transaction.CFDStamp}}</td>
+              </tbody>
+            </table>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Cadena Original SAT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>{{transaction.stringSAT}}</td>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </ngb-tab>
       <ngb-tab title="Auditoría">
         <ng-template ngbTabContent>
           <div class="row tab-content">

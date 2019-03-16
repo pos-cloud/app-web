@@ -97,16 +97,7 @@
                       <button type="button"
                               class="btn btn-secondary"
                               placement="right"
-                              *ngIf="userCountry === 'AR'"
-                              ngbPopover="¿La transacción se presenta en AFIP?"
-                              >
-                        <b>?</b>
-                      </button>
-                      <button type="button"
-                              class="btn btn-secondary"
-                              placement="right"
-                              *ngIf="userCountry === 'MX'"
-                              ngbPopover="¿La transacción se presenta en SAT?"
+                              ngbPopover="¿Se valida el documento fiscal?"
                               >
                         <b>?</b>
                       </button>
@@ -125,6 +116,20 @@
                   <div class="form-group col-md-4">
                     <label for="codeC">Código AFIP C</label>
                     <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"  [readonly]="readonly"/>
+                  </div>
+                </div>
+                <div class="row"  *ngIf="userCountry !== 'AR'">
+                  <div class="form-group col-md-12">
+                    <label for="fiscalCode">Código Fiscal</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
+                        <b>?</b>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="row">

@@ -226,6 +226,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'codeC': [this.getCode(this.transactionType, "C"), [
         ]
       ],
+      'fiscalCode': [this.transactionType.fiscalCode, [
+        ]
+      ],
       'printable': [this.transactionType.printable, [
         ]
       ],
@@ -333,6 +336,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.fixedLetter) this.transactionType.fixedLetter = '';
     if (this.transactionType.resetNumber === undefined) this.transactionType.resetNumber = false;
     if (this.transactionType.electronics === undefined) this.transactionType.electronics = false;
+    if (!this.transactionType.fiscalCode) this.transactionType.fiscalCode = "";
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
 
     let defectPrinter;
@@ -405,6 +409,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'codeA': this.getCode(this.transactionType, "A"),
       'codeB': this.getCode(this.transactionType, "B"),
       'codeC': this.getCode(this.transactionType, "C"),
+      'fiscalCode': this.transactionType.fiscalCode,
       'printable': this.transactionType.printable,
       'defectPrinter': defectPrinter,
       'tax': this.transactionType.tax,

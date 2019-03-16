@@ -37,6 +37,9 @@ export class Transaction {
   public expeditionPlace: string; // MX
   public relationType: RelationType; // MX
   public useOfCFDI: UseOfCFDI; // MX
+  public stringSAT: string; // MX
+  public CFDStamp: string; // MX
+  public SATStamp: string; // MX
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;
