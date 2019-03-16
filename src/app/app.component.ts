@@ -6,6 +6,7 @@ import { ConfigService } from './services/config.service';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,6 +19,8 @@ export class AppComponent implements OnInit {
   public isAPIConected: boolean;
   public loading = true;
   public modules: any;
+  public allowNotification = false;
+  public dias;
 
   constructor(
     public _configService: ConfigService,
@@ -31,6 +34,18 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.setApiConfigurationSettings();
     this.getConfigApi();
+    
+    let today = new Date(); 
+
+    if(today.getDate() < 10) {
+      
+      this.dias = 10 - today.getDate()
+      
+      this.allowNotification = true
+
+
+    }
+
   }
 
   public getConfigApi() {

@@ -12,6 +12,7 @@ import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/p
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { PushNotificationComponent } from './../app/components/notification/notification.component';
 
 // rutas
 import { RoutingModule } from './app.routes';
@@ -367,6 +368,7 @@ import { AddCompanyFieldsComponent } from './components/add-company-fields/add-c
     DeleteCompanyFieldComponent,
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
+    PushNotificationComponent
   ],
   entryComponents: [
     HomeComponent,
