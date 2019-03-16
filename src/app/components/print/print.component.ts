@@ -1798,32 +1798,32 @@ export class PrintComponent implements OnInit {
     this.doc.text("Razón Social:", margin, 30);
     this.doc.setFontType('normal');
     if (this.config[0].companyName) {
-      this.doc.text(this.config[0].companyName, 32, 30);
+      this.doc.text(this.config[0].companyName.slice(0, 34), 30, 30);
     }
 
     this.doc.setFontType('bold');
     this.doc.text("Teléfono:", margin, 35);
     this.doc.setFontType('normal');
     if (this.config[0].companyPhone) {
-      this.doc.text(this.config[0].companyPhone, 25, 35);
+      this.doc.text(this.config[0].companyPhone, 23, 35);
     }
 
     this.doc.setFontType('bold');
     this.doc.text("Domicilio Comercial:", margin, 40);
     this.doc.setFontType('normal');
     if (this.config[0].companyAddress) {
-      this.doc.text(this.config[0].companyAddress, 45, 40);
+      this.doc.text(this.config[0].companyAddress, 42, 40);
     }
 
     this.doc.setFontType('bold');
     if(Config.country === 'AR') {
       this.doc.text("Condición de IVA:", margin, 45);
     } else {
-      this.doc.text("Régimen Fiscal:", margin, 45);
+      this.doc.text("Condición de IVA:", margin, 45);
     }
     this.doc.setFontType('normal');
     if (this.config[0].companyVatCondition) {
-      this.doc.text(this.config[0].companyVatCondition.description, 40, 45);
+      this.doc.text(this.config[0].companyVatCondition.description.slice(0, 31), 36, 45);
     }
   }
 
