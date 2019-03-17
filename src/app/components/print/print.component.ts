@@ -156,7 +156,6 @@ export class PrintComponent implements OnInit {
               this.getShiftClosingByTransaccion();
             } else if (this.typePrint === "invoice") {
               if (this.transaction.type.requestArticles) {
-
                 this.getMovementOfArticle();
               } else {
                 this.getMovementOfCash();
@@ -806,33 +805,15 @@ export class PrintComponent implements OnInit {
 
           if(!this.transaction.type.requestPaymentMethods) {
             if (this.transaction.type.electronics) {
-              if(Config.country === 'AR') {
-                if (this.transaction.CAE &&
+              if( Config.country === 'AR' &&
+                  this.transaction.CAE &&
                   this.transaction.CAEExpirationDate) {
                   this.calculateBarcodeAR();
-                } else {
-                  if (this.printer.pageWidth < 150) {
-                    this.toPrintRoll();
-                  } else if (this.printer.pageHigh > 150) {
-                    this.toPrintInvoice();
-                  } else {
-                    this.toPrintInvoice();
-                  }
-                }
-              } else if (Config.country === 'MX') {
-                if (this.transaction.stringSAT &&
-                    this.transaction.SATStamp &&
-                    this.transaction.CFDStamp) {
-
-                } else {
-                  if (this.printer.pageWidth < 150) {
-                    this.toPrintRoll();
-                  } else if (this.printer.pageHigh > 150) {
-                    this.toPrintInvoice();
-                  } else {
-                    this.toPrintInvoice();
-                  }
-                }
+              } else if ( Config.country === 'MX' &&
+                          this.transaction.stringSAT &&
+                          this.transaction.SATStamp &&
+                          this.transaction.CFDStamp) {
+                  this.calculateBarcodeMX();
               } else {
                 if (this.printer.pageWidth < 150) {
                   this.toPrintRoll();
@@ -878,8 +859,15 @@ export class PrintComponent implements OnInit {
           if(!this.transaction.type.requestArticles) {
             this.toPrintPayment();
           } else {
-            if (this.transaction.CAE && this.transaction.CAEExpirationDate) {
+            if (Config.country === 'AR' &&
+                this.transaction.CAE &&
+                this.transaction.CAEExpirationDate) {
               this.calculateBarcodeAR();
+            } else if (Config.country === 'MX' &&
+                      this.transaction.stringSAT &&
+                      this.transaction.CFDStamp &&
+                      this.transaction.SATStamp) {
+              this.calculateBarcodeMX();
             } else {
               if (this.printer.pageWidth < 150) {
                 this.toPrintRoll();
@@ -1032,7 +1020,7 @@ export class PrintComponent implements OnInit {
     }
 
     this.doc.setFontType('bold');
-    this.doc.text("Observaciones:"+this.transaction.observation+this.movementsOfCashes[0].observation, 10, 246);
+    this.doc.text("Observaciones: "+this.transaction.observation+" "+this.movementsOfCashes[0].observation, 10, 246);
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
 
@@ -1092,6 +1080,11 @@ export class PrintComponent implements OnInit {
       + this.transaction.CAE
       + date
       + checkDigit,'invoice');
+  }
+
+  public calculateBarcodeMX(): void {
+    let cadena = '%3Fre=' + this.config[0].companyIdentificationValue + '%26rr=' + this.company.identificationValue + '%26tt=' + this.transaction.totalPrice.toFixed(6) + '%26id=' + this.transaction.stringSAT.split('||')[1].split('||')[0];
+    this.getBarcode64('qr?value=' + cadena, 'invoice');
   }
 
   public toPrintCashBox(close): void {
@@ -2283,17 +2276,32 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
-    this.doc.setFontType('bold');
     if (this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].observation) {
-      this.doc.text("Observaciones: " + this.movementsOfCashes[0].observation, 10, 246);
+      if(Config.country !== 'MX') {
+        this.doc.setFontType('bold');
+        this.doc.text("Observaciones: ", 10, 246);
+        this.doc.setFontType('normal');
+        this.doc.text(this.movementsOfCashes[0].observation.slice(0, 53) + " -", 37, 246);
+        this.doc.text(this.movementsOfCashes[0].observation.slice(53, 105) + " -", 37, 249);
+        this.doc.text(this.movementsOfCashes[0].observation.slice(105, 157) + " -", 37, 252);
+        this.doc.text(this.movementsOfCashes[0].observation.slice(157, 210), 37, 255);
+      } else {
+        this.doc.setFontType('bold');
+        this.doc.text("Observaciones: ", 35, 246);
+        this.doc.setFontType('normal');
+        this.doc.text(this.movementsOfCashes[0].observation.slice(0, 40) + " -", 62, 246);
+        this.doc.text(this.movementsOfCashes[0].observation.slice(40, 78) + " -", 62, 249);
+        this.doc.text(this.movementsOfCashes[0].observation.slice(78, 122) + " -", 62, 252);
+        this.doc.text(this.movementsOfCashes[0].observation.slice(122, 160), 62, 255);
+      }
     }
 
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
 
     if (Config.country === 'AR' &&
-      this.transaction.CAE &&
-      this.transaction.CAEExpirationDate) {
+        this.transaction.CAE &&
+        this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
       this.doc.text("CAE:", 10, 272);
       this.doc.text("Fecha Vto:", 10, 275);
@@ -2331,9 +2339,9 @@ export class PrintComponent implements OnInit {
                 this.doc.text(this.transaction.stringSAT.slice(390, 500), 10, row);
                 this.doc.setFontSize(this.fontSizes.normal);
 
-        // let imgdata = 'data:image/png;base64,' + this.barcode64;
+        let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-        // this.doc.addImage(imgdata, 'PNG', 10, 250, 125, 15);
+        this.doc.addImage(imgdata, 'PNG', 10, 245, 20, 20);
     }
 
     this.getGreeting();
