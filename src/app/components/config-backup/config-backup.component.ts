@@ -360,7 +360,6 @@ export class ConfigBackupComponent implements OnInit {
     this._vatCondition.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          if(result.message && result.message !== "") this.showMessage(result.message, "info", true);
         } else {
           this.vatConditions = result.vatConditions;
         }
@@ -381,7 +380,6 @@ export class ConfigBackupComponent implements OnInit {
     this._identificationTypeService.getIdentificationTypes().subscribe(
       result => {
         if (!result.identificationTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.identificationTypes = result.identificationTypes;
         }
