@@ -85,7 +85,7 @@ export class LicensePaymentComponent implements OnInit {
     
     switch (method) {
       case 'mp':
-          this._configService.generateLicensePayment(this.payment).subscribe(
+          this._configService.generateLicensePayment(this.paymentTotal).subscribe(
             result => {
               if (!result.paymentLink) {
                 if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
