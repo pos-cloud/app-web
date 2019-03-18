@@ -22,7 +22,6 @@ import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
-import { TestObject } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-list-transactions',
@@ -111,7 +110,7 @@ export class ListTransactionsComponent implements OnInit {
           } else {
             this.timezone = "-03:00"
           }
-          
+
 
           let pathLocation: string[] = this._router.url.split('/');
           this.userType = pathLocation[1];
@@ -129,7 +128,7 @@ export class ListTransactionsComponent implements OnInit {
           }
 
           this.getTransactions();
-          
+
         }
       },
       error => {

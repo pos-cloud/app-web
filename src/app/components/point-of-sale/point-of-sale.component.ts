@@ -328,6 +328,13 @@ export class PointOfSaleComponent implements OnInit {
                 transaction = new Transaction();
                 transaction.type = typeTransaction;
                 transaction.company = result.company;
+                if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
+                  transaction.origin = transaction.type.fixedOrigin;
+                }
+
+                if (transaction.type.fixedLetter && transaction.type.fixedLetter !== '') {
+                  transaction.letter = transaction.type.fixedLetter.toUpperCase();
+                }
                 this.getLastTransactionByType(transaction);
               }
             } else {
@@ -501,6 +508,13 @@ export class PointOfSaleComponent implements OnInit {
               transaction = new Transaction();
               transaction.type = typeTransaction;
               transaction.employeeOpening = result.employee;
+              if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
+                transaction.origin = transaction.type.fixedOrigin;
+              }
+
+              if (transaction.type.fixedLetter && transaction.type.fixedLetter !== '') {
+                transaction.letter = transaction.type.fixedLetter.toUpperCase();
+              }
               this.getLastTransactionByType(transaction);
             }
           } else {

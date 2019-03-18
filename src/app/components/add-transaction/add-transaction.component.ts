@@ -139,7 +139,7 @@ export class AddTransactionComponent implements OnInit {
     this.transactionDate = this.transaction.startDate;
     this.buildForm();
 
-    if (this.transactionId){
+    if (this.transactionId) {
         this.getTransaction();
       } else {
         this.getTransactionType();
@@ -301,11 +301,9 @@ export class AddTransactionComponent implements OnInit {
         ]
       ],
       'letter': [this.transaction.letter, [
-          Validators.required
         ]
       ],
       'origin': [this.transaction.origin, [
-          Validators.required
         ]
       ],
       'number': [this.transaction.number, [
@@ -313,11 +311,9 @@ export class AddTransactionComponent implements OnInit {
         ]
       ],
       'basePrice': [0.00, [
-          Validators.required
         ]
       ],
       'exempt': [this.transaction.exempt, [
-          Validators.required
         ]
       ],
       'totalPrice': [this.transaction.totalPrice, [
@@ -348,7 +344,7 @@ export class AddTransactionComponent implements OnInit {
   public setValuesForm(): void {
 
     if (!this.transaction.origin) this.transaction.origin = 0;
-    if (!this.transaction.letter) this.transaction.letter = "X";
+    if (!this.transaction.letter) this.transaction.letter = "";
     if (!this.transaction.number) this.transaction.number = 1;
     if (!this.transaction.observation) this.transaction.observation = '';
 

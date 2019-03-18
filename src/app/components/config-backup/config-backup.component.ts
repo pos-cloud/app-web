@@ -25,7 +25,6 @@ import { IdentificationTypeService } from 'app/services/identification-type.serv
 })
 export class ConfigBackupComponent implements OnInit {
 
-
   public routeFile:string;
   public filesToUpload: Array<File>;
   public userType: string;
@@ -108,11 +107,9 @@ export class ConfigBackupComponent implements OnInit {
         this.countries = JSON.parse(result["_body"]);
       }
     )
-
   }
 
   public getTimeZone(country : string) {
-
     this._configService.getTimeZone(country).subscribe(
       result => {
         this.timezones = JSON.parse(result["_body"]);

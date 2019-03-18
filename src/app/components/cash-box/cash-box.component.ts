@@ -24,6 +24,8 @@ import { TransactionTypeService } from '../../services/transaction-type.service'
 //Componentes
 import { PrintComponent } from './../../components/print/print.component';
 import { TransactionType } from 'app/models/transaction-type';
+import { IfObservable } from 'rxjs/observable/IfObservable';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-cash-box',
@@ -193,7 +195,11 @@ export class CashBoxComponent implements OnInit {
             if (this.transactionType.fixedLetter) {
               this.transaction.letter = this.transactionType.fixedLetter;
             } else {
-              this.transaction.letter = "X";
+              if(Config.country === "AR") {
+                this.transaction.letter = "X";
+              } else {
+                this.transaction.letter = "";
+              }
             }
             this.getLastTransactionByType();
           } else {

@@ -894,9 +894,6 @@ export class PrintComponent implements OnInit {
     this.getHeader(true);
     this.getClient();
 
-    // Dibujar la linea cortada para la letra
-    this.doc.line(105, 13, 105, 50); //vertical letra
-
     // Numeración de la transacción
     this.doc.setFontSize(this.fontSizes.extraLarge);
 
@@ -925,14 +922,29 @@ export class PrintComponent implements OnInit {
     }
 
     // Letra de transacción
+    // Letra de transacción
     if (this.transaction.letter && this.transaction.letter !== "") {
+      // Dibujar la linea cortada para la letra
+      this.doc.line(105, 16, 105, 50); //vertical letra
       this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
       this.doc.setDrawColor("Black");
       this.doc.rect(100, 3, 10, 10);
       this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-      this.doc.setFontType('normal');
+      if (this.transaction.type.codes && Config.country === 'AR') {
+        for (let i = 0; i < this.transaction.type.codes.length; i++) {
+          if (this.transaction.letter === this.transaction.type.codes[i].letter) {
+            this.doc.setFontSize('8');
+            this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2), 101, 16);
+          }
+        }
+      }
+    } else {
+      // Dibujar la linea cortada para la letra
+      this.doc.line(105, 0, 105, 50); //vertical letra
     }
+    this.doc.setFontType('normal');
+    this.doc.setFontSize(this.fontSizes.normal);
 
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
@@ -1853,6 +1865,8 @@ export class PrintComponent implements OnInit {
 
   public getClient() {
 
+    let margin = 5;
+
     // Lineas divisorias horizontales para el receptor
     this.doc.line(0, 72, 240, 72);
     this.doc.line(0, 80, 240, 80);
@@ -1860,14 +1874,14 @@ export class PrintComponent implements OnInit {
     // Detalle receptor
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.setFontType('bold');
-    this.doc.text("Nombre y Apellido:", 8, 55);
+    this.doc.text("Nombre y Apellido:", margin, 55);
     if (Config.country === 'AR') {
-      this.doc.text("Condición de IVA:", 8, 65);
+      this.doc.text("Condición de IVA:", margin, 65);
     } else {
-      this.doc.text("Régimen Fiscal:", 8, 65);
+      this.doc.text("Régimen Fiscal:", margin, 65);
     }
     if (this.config[0].country === 'AR') {
-      this.doc.text("Ingresos Brutos:", 8, 70);
+      this.doc.text("Ingresos Brutos:", margin, 70);
     }
     this.doc.text("Dirección:", 110, 55);
     this.doc.text("Teléfono:", 110, 60);
@@ -1880,7 +1894,7 @@ export class PrintComponent implements OnInit {
       }
       if (this.company.identificationValue && this.company.identificationValue !== '') {
         this.doc.setFontType('bold');
-        this.doc.text(this.company.identificationType.name + ":", 8, 60);
+        this.doc.text(this.company.identificationType.name + ":", margin, 60);
         this.doc.setFontType('normal');
         this.doc.text(this.company.identificationValue, 42, 60);
       }
@@ -2042,9 +2056,6 @@ export class PrintComponent implements OnInit {
     this.getHeader(true);
     this.getClient();
 
-    // Dibujar la linea cortada para la letra
-    this.doc.line(105, 16, 105, 50); //vertical letra
-
     // Numeración de la transacción
     this.doc.setFontSize(this.fontSizes.extraLarge);
 
@@ -2073,18 +2084,25 @@ export class PrintComponent implements OnInit {
     }
 
     // Letra de transacción
-    this.doc.setFontSize(this.fontSizes.extraLarge);
-    this.doc.setFontType('bold');
-    this.doc.setDrawColor("Black");
-    this.doc.rect(100, 3, 10, 10);
-    this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-    if (this.transaction.type.codes && Config.country === 'AR') {
-      for (let i = 0; i < this.transaction.type.codes.length; i++) {
-        if(this.transaction.letter === this.transaction.type.codes[i].letter){
-          this.doc.setFontSize('8');
-          this.doc.text("Cod:"+this.padString((this.transaction.type.codes[i].code).toString(),2),101,16);
+    if (this.transaction.letter && this.transaction.letter !== "") {
+      // Dibujar la linea cortada para la letra
+      this.doc.line(105, 16, 105, 50); //vertical letra
+      this.doc.setFontSize(this.fontSizes.extraLarge);
+      this.doc.setFontType('bold');
+      this.doc.setDrawColor("Black");
+      this.doc.rect(100, 3, 10, 10);
+      this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+      if (this.transaction.type.codes && Config.country === 'AR') {
+        for (let i = 0; i < this.transaction.type.codes.length; i++) {
+          if(this.transaction.letter === this.transaction.type.codes[i].letter){
+            this.doc.setFontSize('8');
+            this.doc.text("Cod:"+this.padString((this.transaction.type.codes[i].code).toString(),2),101,16);
+          }
         }
       }
+    } else {
+      // Dibujar la linea cortada para la letra
+      this.doc.line(105, 0, 105, 50); //vertical letra
     }
 
     this.doc.setFontType('normal');
