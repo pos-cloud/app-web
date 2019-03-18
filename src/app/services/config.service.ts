@@ -141,13 +141,13 @@ export class ConfigService {
     return this._http.delete(Config.apiURL + "delete-image-company/" + id, { headers: headers }).map(res => res.json());
   }
 
-  generateLicensePayment() {
+  generateLicensePayment(payment) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    return this._http.get(Config.apiURL + 'generar-licencia-payment', { headers: headers }).map(res => res.json());
+    return this._http.get(Config.apiURL + 'generar-licencia-payment/'+ payment, { headers: headers }).map(res => res.json());
 	}
 	
 	getCountry() {

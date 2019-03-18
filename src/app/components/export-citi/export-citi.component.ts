@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
@@ -10,7 +10,6 @@ import { TransactionService } from './../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
 
-import { Config } from './../../app.config';
 import { TransactionMovement } from '../../models/transaction-type';
 
 @Component({
@@ -51,7 +50,6 @@ export class ExportCitiComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
-    public _configService: ConfigService,
     public _userService: UserService
   ) { }
 

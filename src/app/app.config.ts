@@ -33,6 +33,7 @@ export class Config {
     static expirationLicense: string;
     static country : string;
     static timezone : string;
+    static licenseCost : number;
 
     constructor() {
         Config.updateApiURL();
@@ -72,7 +73,7 @@ export class Config {
     }
 
     public static setConfigCompany( companyPicture, companyName, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName,
-                                    country,timezone, companyIdentificationType, companyIdentificationValue): void {
+                                    country,timezone, companyIdentificationType, companyIdentificationValue, companyLicenseCost): void {
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
         Config.companyAddress = companyAddress;
@@ -85,7 +86,8 @@ export class Config {
         Config.country = country,
         Config.timezone = timezone,
         Config.companyIdentificationType = companyIdentificationType,
-        Config.companyIdentificationValue = companyIdentificationValue
+        Config.companyIdentificationValue = companyIdentificationValue,
+        Config.licenseCost = companyLicenseCost
     }
 
     public static setConfigLabel( heightLabel, widthLabel ): void {

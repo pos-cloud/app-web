@@ -147,6 +147,7 @@ import { LoginComponent } from './components/login/login.component';
 import { ClockComponent } from './components/clock/clock.component';
 import { ImportComponent } from './components/import/import.component';
 import { RegisterComponent } from './components/register/register.component';
+import { LicensePaymentComponent } from './components/license-payment/license-payment.component'
 
 // pipes
 import { FilterPipe } from './pipes/filter.pipe';
@@ -216,6 +217,7 @@ import { UpdateCompanyFieldComponent } from './components/update-company-field/u
 import { DeleteCompanyFieldComponent } from './components/delete-company-field/delete-company-field.component';
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 import { AddCompanyFieldsComponent } from './components/add-company-fields/add-company-fields.component';
+import { from } from 'rxjs/observable/from';
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -368,7 +370,8 @@ import { AddCompanyFieldsComponent } from './components/add-company-fields/add-c
     DeleteCompanyFieldComponent,
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
-    PushNotificationComponent
+    PushNotificationComponent,
+    LicensePaymentComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -512,6 +515,7 @@ import { AddCompanyFieldsComponent } from './components/add-company-fields/add-c
     DeleteCompanyFieldComponent,
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
+    LicensePaymentComponent
   ],
   imports: [
     BrowserModule,

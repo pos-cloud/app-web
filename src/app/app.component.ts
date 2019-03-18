@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
     if (config.emailAccount) { Config.setConfigEmail(config.emailAccount, config.emailPassword) }
     if (config.companyName) { Config.setConfigCompany(config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
                                                     config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName,
-                                                    config.country, config.timezone, config.companyIdentificationType, config.companyIdentificationValue);
+                                                    config.country, config.timezone, config.companyIdentificationType, config.companyIdentificationValue, config.licenseCost);
     }
     if (config.modules) {
       Config.setModules(config.modules);

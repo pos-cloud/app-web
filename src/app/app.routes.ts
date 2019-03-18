@@ -54,6 +54,7 @@ import { ListTransactionTypesComponent } from './components/list-transaction-typ
 import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-uses-of-CFDI.component';
 import { ListRelationTypesComponent } from './components/list-relation-types/list-relation-types.component';
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
+import { LicensePaymentComponent } from './components/license-payment/license-payment.component'
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -433,6 +434,12 @@ const _routes: Routes = [
   {
     path: 'admin/update-article-price',
     component: UpdateArticlePriceComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path : 'admin/licence-payment',
+    component : LicensePaymentComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

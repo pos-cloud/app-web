@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Router } from '@angular/router';
 
@@ -16,6 +16,9 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { UserService } from '../../services/user.service';
 import { IdentificationType } from 'app/models/identification-type';
 import { IdentificationTypeService } from 'app/services/identification-type.service';
+
+
+import { LicensePaymentComponent} from 'app/components/license-payment/license-payment.component'
 
 @Component({
   selector: 'app-config-backup',
@@ -79,6 +82,7 @@ export class ConfigBackupComponent implements OnInit {
     public _userService: UserService,
     public _fb: FormBuilder,
     public alertConfig: NgbAlertConfig,
+    public _modalService: NgbModal
   ) {
   }
 
@@ -411,22 +415,9 @@ export class ConfigBackupComponent implements OnInit {
 
   public generateLicensePayment() {
 
-    this.loadingLicense = true;
+    let modalRef
+    modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
 
-    this._configService.generateLicensePayment().subscribe(
-      result => {
-        if (!result.paymentLink) {
-          if (result.message && result.message !== "") this.showMessage(result.message, "info", true);
-        } else {
-          window.open(result.paymentLink, '_blank')
-        }
-        this.loadingLicense = false;
-      },
-      error => {
-        this.showMessage(error._body, "danger", false);
-        this.loadingLicense = false;
-      }
-    )
   }
 
   public updateConfigBackup(): void {
@@ -647,7 +638,7 @@ export class ConfigBackupComponent implements OnInit {
     if (config.pathBackup) Config.setConfigToBackup(config.pathBackup, config.pathMongo, config.backupTime);
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
     if (config.companyName) Config.setConfigCompany(config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
-      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName, config.country, config.timezone, config.companyIdentificationType, config.companyIdentificationValue);
+      config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName, config.country, config.timezone, config.companyIdentificationType, config.companyIdentificationValue, config.companyLicenseCost);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

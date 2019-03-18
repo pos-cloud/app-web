@@ -1,0 +1,116 @@
+<div class="modal-header">
+  <h4 class="modal-title">Pago de Licencia</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content"  *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+    <div class="modal-body">
+
+        <div class="pricing-wrapper clearfix">
+            <!-- Titulo -->
+    
+            <div class="pricing-table">
+                <h3 class="pricing-title">Mensual</h3>
+                <!-- Lista de Caracteristicas / Propiedades -->
+                <ul class="table-list">
+                    <!--<li>10 GB <span>De almacenamiento</span></li>
+                    <li>1 Dominio <span>incluido</span></li>
+                    <li>25 GB <span>De transferencia mensual</span></li>
+                    <li>Base de datos <span class="unlimited">ilimitadas</span></li>
+                    <li>Cuentas de correo <span class="unlimited">ilimitadas</span></li>
+                    <li>CPanel <span>incluido</span></li>-->
+                </ul>
+                <!-- Contratar / Comprar -->
+                <div class="table-buy">
+                    <p>$ {{payment}}<sup>/ mes</sup></p>
+                    <a class="pricing-action" (click)="changePrice('1')">Contratar</a>
+                </div>
+            </div>
+            
+            <div class="pricing-table recommended">
+                <h3 class="pricing-title">Semestral</h3>
+                <ul class="table-list">
+                    <li>18 % <span>De ahorro</span></li>
+                </ul>
+                <!-- Contratar / Comprar -->
+                <div class="table-buy">
+                    <p>$ {{ ( (payment*6) - ((18*(payment*6))/100)) /6 }}<sup>/ mes</sup></p>
+                    <a class="pricing-action" (click)="changePrice('6')">Contratar</a>
+                </div>
+            </div>
+    
+            <div class="pricing-table">
+                <h3 class="pricing-title">Anual</h3>
+                <ul class="table-list">
+                    <li>32 % <span>De ahorro</span></li>
+                </ul>
+                <!-- Contratar / Comprar -->
+                <div class="table-buy">
+                    <p>$ {{ ( (payment*12) - ((32*(payment*12))/100)) /12 }}<sup>/ mes</sup></p>
+                    <a class="pricing-action" (click)="changePrice('12')">Contratar</a>
+                </div>
+            </div>
+        </div>
+
+      
+      <div class ="body">
+
+         <!-- <h6 class="title">Seleccione la los meses que desea abonar:</h6>
+
+          
+
+        <button type="button" class="btn btn-outline-primary" (click)="changePrice('1')">
+            1 Mes 
+            
+        </button>
+        
+          
+        <button type="button" class="btn btn-outline-primary" (click)="changePrice('6')">
+          
+            6 Meses  
+            <span class="badge">18% OFF</span>
+        </button>
+        
+        <button type="button" class="btn btn-outline-primary" (click)="changePrice('12')">
+            
+            12 Meses 
+            <span class="badge">32% OFF</span>
+        </button>-->
+
+        <h6 class="card-price text-center">IMPORTE: $ {{paymentTotal}}<span class="period"></span></h6>
+
+      <div *ngIf="toggleButton">
+            <h6 class="title">Seleccione la forma de pago:</h6>
+            <div class="row">
+                <div class = "col-md-6"  (click)="paymentSelect('mp')">
+                    <img class ="imgPayment" src="./../../../assets/img/mercadopago-logo.png" >
+                </div>
+                <div class = "col-md-6" (click)="paymentSelect('tf')">
+                    <img class ="imgPayment" src="./../../../assets/img/transferencia-bancaria-png-2.png"   height= 130px;                    >
+                </div>
+            </div>
+            <div  *ngIf="wireTransfer" class="row">
+                <h6 class="title"> Datos Bancarios:</h6>
+                <h6 class="text">Banco: HSBC Bank Argentina</h6>
+                <h6 class="text">Titular : Franco Joel Androetto</h6> 
+                <h6 class="text"> CBU : 15006648-00066460563732</h6> 
+                <h6 class="text">Una vez realizado el depósito enviar el comprobante por:</h6>   
+                 <h6 class="text2"> <i class="fa fa-whatsapp" aria-hidden="true"></i> : +54 9 351 615-8848</h6>   
+                  <h6 class="text2"> <i class="fa fa-envelope-o" aria-hidden="true"></i> : ventas@poscloud.com.ar</h6> 
+                
+            </div>
+      </div>
+
+    </div>
+
+    </div>
+    <div class="modal-footer" >
+      
+    </div>
+</section>
