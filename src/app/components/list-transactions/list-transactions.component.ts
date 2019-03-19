@@ -49,6 +49,7 @@ export class ListTransactionsComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: TransactionMovement;
   public allowResto: boolean;
+  public country: string;
   public currentPage: number = 0;
   public displayedColumns = [
       'type.transactionMovement',
@@ -105,6 +106,7 @@ export class ListTransactionsComponent implements OnInit {
         } else {
           this.config = result.configs;
           this.allowResto = this.config[0].modules.sale.resto
+          this.country = this.config[0].country;
 
           if(this.config[0].timezone) {
             this.timezone = this.config[0].timezone.split('C')
