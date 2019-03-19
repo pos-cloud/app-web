@@ -25,6 +25,7 @@ import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Taxes } from '../../models/taxes';
 import { MovementOfArticleService } from '../../services/movement-of-article.service';
 import { CurrentAccount } from 'app/models/transaction-type';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -57,6 +58,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public days: number = 30;
   public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
+  public movementOfArticle: MovementOfArticle;
 
   public formErrors = {
     'paymentMethod': '',
@@ -104,13 +106,14 @@ export class AddMovementOfCashComponent implements OnInit {
     public _movementOfArticleService: MovementOfArticleService
     ) {
       this.movementOfCash = new MovementOfCash();
-    if (this.fastPayment) {
-      this.movementOfCash.type = this.fastPayment;
-    } else {
-      this.movementOfCash.type = new PaymentMethod();
-    }
-    this.paymentMethodSelected = this.movementOfCash.type;
-    this.paymentMethods = new Array();
+      if (this.fastPayment) {
+        this.movementOfCash.type = this.fastPayment;
+      } else {
+        this.movementOfCash.type = new PaymentMethod();
+      }
+      this.paymentMethodSelected = this.movementOfCash.type;
+      this.paymentMethods = new Array();
+      this.movementOfArticle;
   }
 
   ngOnInit() {
@@ -386,7 +389,7 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementsOfCashes = result.movementsOfCashes;
           if (this.isChargedFinished()) {
             if (this.areValidAmounts()) {
-              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes });
+              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
             }
           } else {
             this.updateAmounts();
@@ -873,7 +876,11 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let taxes: Taxes[] = new Array();
     let tax: Taxes = new Taxes();
-    tax.percentage = 21.00;
+    if(Config.country === 'MX') {
+      tax.percentage = 16.00;
+    } else {
+      tax.percentage = 21.00;
+    }
     tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
     tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
 
@@ -909,7 +916,7 @@ export class AddMovementOfCashComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          movementOfArticle = result.movementOfArticle;
+          this.movementOfArticle = result.movementOfArticle;
           this.updateTransaction();
         }
         this.loading = false;
@@ -934,7 +941,7 @@ export class AddMovementOfCashComponent implements OnInit {
             this.getMovementOfCashesByTransaction();
           } else {
             if(this.areValidAmounts()) {
-              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes });
+              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
             }
           }
         }

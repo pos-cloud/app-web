@@ -6,8 +6,9 @@ import { TransactionType, TransactionMovement } from './../models/transaction-ty
 import { Config } from './../app.config';
 import { UserService } from './user.service';
 import { Observable } from "rxjs/Observable";
-import { map, catchError } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { MovementOfArticle } from 'app/models/movement-of-article';
 
 @Injectable()
 export class TransactionService {
@@ -193,14 +194,22 @@ export class TransactionService {
 		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
   }
 
-	validateElectronicTransaction(transaction: Transaction) {
+  validateElectronicTransactionAR(transaction: Transaction) {
 		let headers = new Headers();
 		headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
     let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + this._userService.getDatabase() + '"}';
 
-		return this._http.post(Config.apiURLFE, body, { headers: headers }).map (res => res.json());
-	}
+		return this._http.post(Config.apiURL_FE_AR, body, { headers: headers }).map (res => res.json());
+  }
+
+  validateElectronicTransactionMX(transaction: Transaction, movementsOfArticles: MovementOfArticle[]) {
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","database":"' + this._userService.getDatabase() + '"}';
+    return this._http.post("http://localhost/libs/fe/mx/01_CFDI_fe.php", body, { headers: headers }).map(res => res.json());
+  }
 
   exportCiti(VATPeriod: string, transactionMovement: TransactionMovement) {
 

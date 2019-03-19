@@ -27,7 +27,6 @@ export class DeleteRelationTypeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.relationType);
   }
 
   ngAfterViewInit() {

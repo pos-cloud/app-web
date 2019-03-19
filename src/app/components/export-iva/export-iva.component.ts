@@ -48,7 +48,7 @@ export class ExportIvaComponent implements OnInit {
     },
     'folioNumber':{
       'required':     'Este campo es requerido'
-    }    
+    }
   };
 
   constructor(
@@ -87,7 +87,7 @@ export class ExportIvaComponent implements OnInit {
   }
 
   public onValueChanged(data?: any): void {
-    
+
     if (!this.exportIVAForm) { return; }
     const form = this.exportIVAForm;
 
@@ -105,27 +105,23 @@ export class ExportIvaComponent implements OnInit {
   }
 
   public exportPDF(): void {
-    
+
     let modalRef = this._modalService.open(PrintComponent);
     modalRef.componentInstance.typePrint = "IVA";
     modalRef.componentInstance.params = this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber;
   }
 
   public exportAsXLSX() : void {
-    
+
     this._transactionService.getVATBook(this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber).subscribe(
       result => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-         
+
           } else {
             this.hideMessage();
 
-            console.log(result);
-
-            
-
-            let data: any = [] 
+            let data: any = []
 
             for (let index = 0; index < result.length; index++) {
               data[index] = {};
@@ -138,7 +134,7 @@ export class ExportIvaComponent implements OnInit {
               } else {
                 data[index]['Tipo de Comprobante'] = result[index]['typeName'];
               }
-              
+
               data[index]['Nro Comprobante'] = this.padString(result[index]['origin'],5)  + '-' + result[index]['letter'] + '-' + this.padString( result[index]['number'],8);
               data[index]['Gravado'] = result[index]['GRAVADO'];
               data[index]['Excento'] = result[index]['EXENT_NOGRAV'];
@@ -147,12 +143,12 @@ export class ExportIvaComponent implements OnInit {
               data[index]['PERC. IVA'] = result[index]['IVA_PERCEP'];
               data[index]['PERC. IIBB'] = result[index]['IIBB_PERCEP'];
               data[index]['TOTAL'] = result [index]['TOTAL'];
-              
+
             }
 
 
             this._companyService.exportAsExcelFile(data, this.type + '-'+ this.exportIVAForm.value.year+'-'+this.exportIVAForm.value.month);
-            
+
           }
           this.loading = false;
         },

@@ -83,6 +83,7 @@ export class AddSaleOrderComponent implements OnInit {
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
   @ViewChild('contentChangeDate') contentChangeDate: ElementRef;
+  @ViewChild('containerMovementsOfArticles') containerMovementsOfArticles: ElementRef;
   public paymentAmount: number = 0.00;
   public typeOfOperationToPrint: string;
   public kitchenArticlesToPrint: MovementOfArticle[];
@@ -130,7 +131,6 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.userCountry = Config.country;
     this.quotation();
     this.getUsesOfCFDI();
@@ -318,9 +318,14 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transactions[0];
-          this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          this.table = this.transaction.table;
-          this.getMovementsOfTransaction();
+          if (this.transaction.state === TransactionState.Closed ||
+            this.transaction.state === TransactionState.Canceled) {
+            this.backFinal();
+          } else {
+            this.transactionMovement = '' + this.transaction.type.transactionMovement;
+            this.table = this.transaction.table;
+            this.getMovementsOfTransaction();
+          }
         }
         this.loading = false;
       },
@@ -343,11 +348,16 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
-          this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-            this.getOpenCashBox();
+          if(this.transaction.state === TransactionState.Closed ||
+            this.transaction.state === TransactionState.Canceled) {
+            this.backFinal();
+          } else {
+            this.transactionMovement = '' + this.transaction.type.transactionMovement;
+            if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
+              this.getOpenCashBox();
+            }
+            this.getMovementsOfTransaction();
           }
-          this.getMovementsOfTransaction();
         }
         this.loading = false;
       },
@@ -484,7 +494,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(closed: boolean = false): void {
-    console.log("update " + JSON.stringify(this.transaction.useOfCFDI.description));
+
     this.loading = true;
 
     this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
@@ -847,6 +857,7 @@ export class AddSaleOrderComponent implements OnInit {
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
+          this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
           if (get) {
             this.getMovementsOfTransaction();
           }
@@ -1003,11 +1014,11 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public validateElectronicTransaction(): void {
+  public validateElectronicTransactionAR(): void {
 
     this.showMessage("Validando comprobante con AFIP...", 'info', false);
 
-    this._transactionService.validateElectronicTransaction(this.transaction).subscribe(
+    this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
       result => {
         if (result.status === 'err') {
           let msn = '';
@@ -1032,6 +1043,48 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
           this.transaction.state = TransactionState.Closed;
+          if (Config.modules.stock &&
+            this.transaction.type.modifyStock) {
+            this.updateRealStock();
+          } else {
+            this.finish();
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage("Ha ocurrido un error en el servidor. Comuníquese con Soporte.", 'danger', false);
+        this.loading = false;
+      }
+    )
+  }
+
+  public validateElectronicTransactionMX(): void {
+
+    this.showMessage("Validando comprobante con SAT...", 'info', false);
+
+    this._transactionService.validateElectronicTransactionMX(this.transaction, this.movementsOfArticles).subscribe(
+      result => {
+        if (result.status === 'err') {
+          let msn = '';
+          if (result.code && result.code !== '') {
+            msn += "ERROR " + result.code + ": ";
+          }
+          if (result.message && result.message !== '') {
+            msn += result.message + ". ";
+          }
+          if (msn === '') {
+            msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+          }
+          this.showMessage(msn, 'info', true);
+        } else {
+          this.transaction.state = TransactionState.Closed;
+          this.transaction.stringSAT = result.stringSAT;
+          this.transaction.CFDStamp = result.CFDStamp;
+          this.transaction.SATStamp = result.SATStamp;
+          this.transaction.endDate = result.endDate;
+          this.transaction.totalPrice = result.totalPrice;
+          this.transaction.UUID = result.UUID;
           if (Config.modules.stock &&
             this.transaction.type.modifyStock) {
             this.updateRealStock();
@@ -1129,18 +1182,37 @@ export class AddSaleOrderComponent implements OnInit {
               modalRef.componentInstance.fastPayment = fastPayment;
             }
             modalRef.result.then((result) => {
-
               let movementsOfCashes = result.movementsOfCashes;
 
               if (movementsOfCashes) {
+                if (result.movementOfArticle) {
+                  this.movementsOfArticles.push(result.movementOfArticle);
+                }
+
                 if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                   if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
                     this.transaction.origin = this.transaction.type.fixedOrigin;
                   }
 
                   this.assignLetter();
-                  if (this.transaction.type.electronics && !this.transaction.CAE) {
-                    this.validateElectronicTransaction();
+                  if (this.transaction.type.electronics) {
+                    if(Config.country === 'MX') {
+                      if(!this.transaction.CFDStamp &&
+                        !this.transaction.SATStamp &&
+                        !this.transaction.stringSAT) {
+                        this.validateElectronicTransactionMX();
+                      } else {
+                        this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                      }
+                    } else if (Config.country === 'AR') {
+                      if(!this.transaction.CAE) {
+                        this.validateElectronicTransactionAR();
+                      } else {
+                        this.finish(); //SE FINALIZA POR ERROR EN LA FE
+                      }
+                    } else {
+                      this.showMessage("Facturación electrónica no esta habilitada para tu país.", "info", true);
+                    }
                   } else if (this.transaction.type.electronics && this.transaction.CAE) {
                     this.finish(); //SE FINALIZA POR ERROR EN LA FE
                   } else {
@@ -1161,7 +1233,7 @@ export class AddSaleOrderComponent implements OnInit {
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
               this.assignLetter();
               if (this.transaction.type.electronics && !this.transaction.CAE) {
-                this.validateElectronicTransaction();
+                this.validateElectronicTransactionAR();
               } else if (this.transaction.type.electronics && this.transaction.CAE) {
                 this.finish(); //SE FINALIZA POR ERROR EN LA FE
               } else {
@@ -1356,14 +1428,15 @@ export class AddSaleOrderComponent implements OnInit {
         this.transaction.company.identificationValue === '')
       ) {
       isValidCharge = false;
-      this.showMessage("El cliente ingresado no está identificado", 'info', true);
+      this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
       this.loading = false;
     }
 
     if (isValidCharge &&
       this.transaction.type.fixedOrigin &&
       this.transaction.type.fixedOrigin === 0 &&
-      this.transaction.type.electronics) {
+      this.transaction.type.electronics &&
+      Config.country === 'MX') {
       isValidCharge = false;
       this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
       this.loading = false;
@@ -1439,17 +1512,19 @@ export class AddSaleOrderComponent implements OnInit {
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
-      if (Config.companyVatCondition && Config.companyVatCondition.description === "Responsable Inscripto") {
-        if (this.transaction.company &&
-          this.transaction.company.vatCondition) {
-          this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+      if(Config.country === 'AR') {
+        if (Config.companyVatCondition && Config.companyVatCondition.description === "Responsable Inscripto") {
+          if (this.transaction.company &&
+            this.transaction.company.vatCondition) {
+            this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
+          } else {
+            this.transaction.letter = "B";
+          }
+        } else if (Config.companyVatCondition && Config.companyVatCondition.description === "Monotributista") {
+          this.transaction.letter = "C";
         } else {
-          this.transaction.letter = "B";
+          this.transaction.letter = "X";
         }
-      } else if (Config.companyVatCondition && Config.companyVatCondition.description === "Monotributista") {
-        this.transaction.letter = "C";
-      } else {
-        this.transaction.letter = "X";
       }
     }
 
@@ -1594,6 +1669,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.areMovementsOfArticlesEmpty = false;
           this.movementsOfArticles = result.movementsOfArticles;
+          this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
           this.updatePrices();
         }
         this.loading = false;

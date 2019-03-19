@@ -8,7 +8,8 @@ export class Config {
     public _id: string;
     static apiHost: string = 'localhost';
     static apiURL: string;
-    static apiURLFE: string = 'libs/fe/index.php';
+    static apiURL_FE_AR: string = 'libs/fe/ar/index.php';
+    static apiURL_FE_MX: string = 'libs/fe/mx/01_CFDI_fe.php';
     static apiPort = 300;
     static accessType = "Cloud";
     static modules;

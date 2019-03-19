@@ -154,7 +154,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
   }
 
   public saveChanges(): void {
-    console.log(this.paymentMethod);
+
     this.loading = true;
 
     this._paymentMethodService.updatePaymentMethod(this.paymentMethod).subscribe(
