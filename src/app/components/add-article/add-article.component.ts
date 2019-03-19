@@ -49,6 +49,7 @@ export class AddArticleComponent implements OnInit {
   @Input() operation: string;
   @Input() readonly: boolean;
   public articleStock: ArticleStock;
+  public country: string;
   public articleForm: FormGroup;
   public makes: Make[] = new Array();
   public deposits: Deposit[] = new Array();
@@ -142,6 +143,8 @@ export class AddArticleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.country = Config.country;
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
