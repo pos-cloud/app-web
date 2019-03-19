@@ -56,6 +56,7 @@ export class ListTransactionsComponent implements OnInit {
       'type.requestArticles',
       'type.allowEdit',
       'type.allowDelete',
+      'type.electronics',
       'origin',
       'letter',
       'number',

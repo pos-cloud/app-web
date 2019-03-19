@@ -40,6 +40,7 @@ export class Transaction {
   public stringSAT: string; // MX
   public CFDStamp: string; // MX
   public SATStamp: string; // MX
+  public UUID: string; // MX
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;
