@@ -36,6 +36,7 @@ export class ListCompaniesComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
+  public userCountry: string;
 
   constructor(
     public _companyService: CompanyService,
@@ -51,6 +52,7 @@ export class ListCompaniesComponent implements OnInit {
   ngOnInit(): void {
 
     this.identity = this._userService.getIdentity();
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
 
     if (!this.userType) {

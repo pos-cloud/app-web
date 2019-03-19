@@ -50,6 +50,7 @@ export class ConfigBackupComponent implements OnInit {
   public imageURL: string;
   public countries : any;
   public timezones : any;
+  public userCountry: string;
 
   public formErrors = {
     'backupTime' : '',
@@ -88,6 +89,7 @@ export class ConfigBackupComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
 

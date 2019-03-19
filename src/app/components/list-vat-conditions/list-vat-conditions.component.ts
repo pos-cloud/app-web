@@ -11,6 +11,7 @@ import { VATConditionService } from './../../services/vat-condition.service';
 import { DeleteVATConditionComponent } from './../../components/delete-vat-condition/delete-vat-condition.component';
 import { ImportComponent } from './../../components/import/import.component';
 import { VATConditionComponent } from '../vat-condition/vat-condition.component';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-list-vat-conditions',
@@ -32,6 +33,7 @@ export class ListVATConditionsComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<VATCondition> = new EventEmitter<VATCondition>();
   public itemsPerPage = 10;
   public totalItems = 0;
+  public userCountry: string;
 
   constructor(
     public _vatConditionService: VATConditionService,
@@ -42,6 +44,7 @@ export class ListVATConditionsComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getVATConditions();

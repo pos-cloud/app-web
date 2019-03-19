@@ -8,6 +8,7 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 
 import { AddTransactionTypeComponent } from './../../components/add-transaction-type/add-transaction-type.component';
 import { DeleteTransactionTypeComponent } from './../../components/delete-transaction-type/delete-transaction-type.component';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-list-transaction-types',
@@ -29,6 +30,7 @@ export class ListTransactionTypesComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<TransactionType> = new EventEmitter<TransactionType>();
   public itemsPerPage = 10;
   public totalItems = 0;
+  public userCountry: string;
 
   constructor(
     public _transactionTypeService: TransactionTypeService,
@@ -39,6 +41,7 @@ export class ListTransactionTypesComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getTransactionTypes();

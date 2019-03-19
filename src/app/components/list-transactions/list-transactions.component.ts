@@ -75,6 +75,7 @@ export class ListTransactionsComponent implements OnInit {
   ];
   public filters: any[];
   public filterValue: string;
+  public userCountry: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -93,8 +94,8 @@ export class ListTransactionsComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.userCountry = Config.country;
     this.getConfig();
-
   }
 
   public getConfig(): void {
