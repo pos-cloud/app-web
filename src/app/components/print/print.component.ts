@@ -2294,7 +2294,8 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
-    if (this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].observation) {
+
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].observation) {
       if(Config.country !== 'MX') {
         this.doc.setFontType('bold');
         this.doc.text("Observaciones: ", 10, 246);
