@@ -55,6 +55,7 @@ import { ListUsesOfCFDIComponent } from './components/list-uses-of-CFDI/list-use
 import { ListRelationTypesComponent } from './components/list-relation-types/list-relation-types.component';
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 import { LicensePaymentComponent } from './components/license-payment/license-payment.component'
+import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 
 const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -398,6 +399,12 @@ const _routes: Routes = [
   {
     path: 'admin/campos-de-productos',
     component: ListArticleFieldsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/cancelacion-de-documentos',
+    component: ListCancellationTypeComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },

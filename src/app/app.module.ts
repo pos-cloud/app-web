@@ -218,6 +218,9 @@ import { DeleteCompanyFieldComponent } from './components/delete-company-field/d
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 import { AddCompanyFieldsComponent } from './components/add-company-fields/add-company-fields.component';
 import { from } from 'rxjs/observable/from';
+import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type.component';
+import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
+import { CancellationTypeService } from './services/cancellation-type.service';
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -371,7 +374,9 @@ import { from } from 'rxjs/observable/from';
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
     PushNotificationComponent,
-    LicensePaymentComponent
+    LicensePaymentComponent,
+    CancellationTypeComponent,
+    ListCancellationTypeComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -515,7 +520,8 @@ import { from } from 'rxjs/observable/from';
     DeleteCompanyFieldComponent,
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
-    LicensePaymentComponent
+    LicensePaymentComponent,
+    CancellationTypeComponent
   ],
   imports: [
     BrowserModule,
@@ -578,7 +584,8 @@ import { from } from 'rxjs/observable/from';
     IdentificationTypeService,
     UseOfCFDIService,
     RelationTypeService,
-    CompanyFieldService
+    CompanyFieldService,
+    CancellationTypeService
   ],
   bootstrap: [AppComponent]
 })

@@ -356,11 +356,16 @@
                   [routerLinkActive]="['active']">
             Tipos de Transacciones
           </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','cancelacion-de-documentos']"
+                  [routerLinkActive]="['active']">
+            Cancelación de Documentos
+          </button>
           <button *ngIf="config.country === 'MX'"
                   class="dropdown-item"
                   [routerLink]="['admin','tipos-de-relacion']"
                   [routerLinkActive]="['active']">
-            Tipos de Relactiones
+            Tipos de Relaciones
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-identificacion']"
@@ -449,7 +454,7 @@
               <button class="dropdown-item"
                       (click)="openModal('update-user')"
                       [routerLinkActive]="['active']">
-                Cabiar contraseña
+                Cambiar contraseña
               </button>
             </div>
             <div >

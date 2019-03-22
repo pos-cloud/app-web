@@ -83,6 +83,11 @@
                       (click)="openModal('delete', transaction)"
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
+              <button type="button"
+                      class = "btn btn-danger btn-sm"
+                      (click)= "openModal('cancel', transaction)"
+                      title="Cancelar"><i class="fa fa-ban" aria-hidden="true"></i>
+              </button>
               <button *ngIf="transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
