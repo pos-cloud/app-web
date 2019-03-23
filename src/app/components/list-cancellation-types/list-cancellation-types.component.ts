@@ -121,20 +121,14 @@ export class ListCancellationTypeComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-
         if (result.cancellationTypes) {
-          
           this.loading = false;
           this.cancellationTypes = result.cancellationTypes;
           this.totalItems = result.count;
           this.relationOfCancellationEmpty = false;
-
-
-          } 
+        } 
       },
       error => {
-
-        console.log(error);
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
         this.totalItems = 0;

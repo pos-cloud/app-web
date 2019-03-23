@@ -5,6 +5,9 @@ import { Config } from './app.config';
 import { ConfigService } from './services/config.service';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { UserService } from './services/user.service';
+import { User } from './models/user';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -21,12 +24,15 @@ export class AppComponent implements OnInit {
   public modules: any;
   public allowNotification = false;
   public dias: number;
+  public identity: User;
 
   constructor(
     public _configService: ConfigService,
+    public _userService: UserService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public _router: Router,
   ) {
     this.isAPIConected = true;
     let today = new Date(); 
@@ -34,6 +40,7 @@ export class AppComponent implements OnInit {
       this.dias = 10 - today.getDate()
       this.allowNotification = true
     }
+    this.validateIdentity();
   }
 
   ngOnInit(): void {
@@ -60,6 +67,17 @@ export class AppComponent implements OnInit {
         this.isAPIConected = false;
       }
     );
+  }
+
+  public validateIdentity() {
+    
+    this.identity = this._userService.getIdentity();
+
+    if(this.identity) {
+      this._router.navigate(['/']);
+    } else {
+      this._router.navigate(['/login']);
+    }
   }
 
   public setConfigurationSettings(config) {

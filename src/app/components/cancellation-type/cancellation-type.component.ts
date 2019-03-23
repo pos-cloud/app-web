@@ -253,8 +253,6 @@ export class CancellationTypeComponent implements OnInit {
 
   public deleteCancellationType() {
 
-    console.log("entro")
-    
     this.loading = true;
   
     this._cancelationTypeService.deleteCancellationType(this.cancellationTypeId)
@@ -262,8 +260,6 @@ export class CancellationTypeComponent implements OnInit {
          
       )
       .subscribe(result => {
-
-        console.log(result);
 
         if (result && result['cancellationType']) {
             this.cancellationType = result['cancellationType'];

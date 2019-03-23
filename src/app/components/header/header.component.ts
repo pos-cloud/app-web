@@ -100,6 +100,7 @@ export class HeaderComponent implements OnInit {
 
   public openModal(op: string): void {
 
+    this.makeVisibleReport(false);
     let modalRef;
     switch (op) {
       case 'view-user':
@@ -129,6 +130,7 @@ export class HeaderComponent implements OnInit {
   }
 
   public goToHome(): void {
+    this.makeVisibleReport(false);
     if (this.identity.employee.type.description === "Administrador") {
       this._router.navigate(['/']);
     } else {
@@ -150,6 +152,7 @@ export class HeaderComponent implements OnInit {
   }
 
   public logout(): void {
+    this.makeVisibleReport(false);
     sessionStorage.removeItem("session_token");
     sessionStorage.removeItem("user");
     this.identity = undefined;
