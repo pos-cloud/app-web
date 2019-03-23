@@ -150,13 +150,8 @@ export class AddSaleOrderComponent implements OnInit {
         this.showMessage("No se ha seleccionado ninguna mesa", 'info', false);
       }
     } else {
-      if (op === "agregar-transaccion") {
-        let transactionTypeID = pathLocation[4];
-        this.getTransactionType(transactionTypeID);
-      } else if (op = "editar-transaccion") {
         let transactionId = pathLocation[4];
         this.getTransaction(transactionId);
-      }
     }
     this.getPrinters();
   }
@@ -221,28 +216,6 @@ export class AddSaleOrderComponent implements OnInit {
         }
       },
       error => {
-      }
-    );
-  }
-
-  public getTransactionType(transactionTypeID: string): void {
-
-    this.loading = true;
-
-    this._transactionTypeService.getTransactionType(transactionTypeID).subscribe(
-      result => {
-        if (!result.transactionType) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction.type = result.transactionType;
-          this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          this.getLastTransactionByType();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }

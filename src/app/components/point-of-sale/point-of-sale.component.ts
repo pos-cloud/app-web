@@ -48,7 +48,6 @@ export class PointOfSaleComponent implements OnInit {
   public propertyTerm: string;
   public orderTerm: string[] = ['startDate'];
   public posType: string;
-  public existsCashBoxOpen: boolean = false;
   public alertMessage: string = '';
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -167,7 +166,7 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
 
     this._roomService.getRooms().subscribe(
-        result => {
+        result => { 
           if (!result.rooms) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
@@ -185,7 +184,6 @@ export class PointOfSaleComponent implements OnInit {
                 }
               }
             }
-            this.existsCashBoxOpen = true;
           }
         },
         error => {
@@ -257,11 +255,7 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public addSaleOrder(posType: string): void {
-    this.getDefectOrder(posType);
-  }
-
-  public getDefectOrder(posType: string): void {
+  public getDefectOrder(): void {
 
     this.loading = true;
 
@@ -271,8 +265,9 @@ export class PointOfSaleComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.transactionTypes = null;
         } else {
-          this._router.navigate(['/pos/' + posType + '/agregar-transaccion/' + result.transactionTypes[0]._id]);
-          this.hideMessage();
+          let transaction = new Transaction();
+          transaction.type = result.transactionTypes[0];
+          this.getLastTransactionByType(transaction);
         }
         this.loading = false;
       },
@@ -292,7 +287,9 @@ export class PointOfSaleComponent implements OnInit {
           this.openModal('company', type);
       } else if (type.requestArticles) {
         if (this.transactionMovement !== TransactionMovement.Purchase) {
-          this._router.navigate(['/pos/' + this.posType + '/agregar-transaccion/' + type._id]);
+          let transaction = new Transaction();
+          transaction.type = type;
+          this.getLastTransactionByType(transaction);
         } else {
           this.openModal('transaction', type);
         }
@@ -566,7 +563,8 @@ export class PointOfSaleComponent implements OnInit {
           transaction = result.transaction;
           if (!transaction.employeeOpening &&
               transaction.type.requestEmployee &&
-              transaction.type.requestArticles) {
+              transaction.type.requestArticles &&
+              this.posType !== 'delivery') {
             this.openModal('select-employee', transaction.type, transaction);
           } else if (!transaction.company && transaction.type.requestCompany) {
               this.openModal('company', transaction.type, transaction);
@@ -639,7 +637,8 @@ export class PointOfSaleComponent implements OnInit {
           } else {
             if (!transaction.employeeOpening &&
               transaction.type.requestEmployee &&
-              transaction.type.requestArticles) {
+              transaction.type.requestArticles &&
+              this.posType !== 'delivery') {
               this.openModal('select-employee', transaction.type, transaction);
             } else if (!transaction.company && transaction.type.requestCompany) {
                 this.openModal('company', transaction.type, transaction);
