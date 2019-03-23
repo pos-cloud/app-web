@@ -16,7 +16,7 @@ export class Transaction {
 
 	public _id: string;
 	public origin: number = 0;
-	public letter: string;
+	public letter: string = '';
 	public number: number = 0;
 	public startDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public endDate: string;
