@@ -183,10 +183,10 @@ export class LoginComponent implements OnInit {
             }
             sessionStorage.setItem('user', JSON.stringify(userStorage));
             sessionStorage.setItem('session_token', this.user.token);
-            this.loading = false;
             //this._router.navigate(['/admin/venta/statistics']);
             this._router.navigate(['/']);
             location.reload();
+            this.loading = false;
           }
         },
         error => {
