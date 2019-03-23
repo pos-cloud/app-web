@@ -7,7 +7,7 @@ import { Config } from './../app.config';
 import { UserService } from './user.service';
 
 import { Observable } from "rxjs/Observable";
-import { map, catchError } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 
 @Injectable()

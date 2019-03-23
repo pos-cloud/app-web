@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   public loading = true;
   public modules: any;
   public allowNotification = false;
-  public dias;
+  public dias: number;
 
   constructor(
     public _configService: ConfigService,
@@ -29,23 +29,16 @@ export class AppComponent implements OnInit {
     public _modalService: NgbModal
   ) {
     this.isAPIConected = true;
+    let today = new Date(); 
+    if(today.getDate() < 10) {
+      this.dias = 10 - today.getDate()
+      this.allowNotification = true
+    }
   }
 
   ngOnInit(): void {
     this.setApiConfigurationSettings();
     this.getConfigApi();
-    
-    let today = new Date(); 
-
-    if(today.getDate() < 10) {
-      
-      this.dias = 10 - today.getDate()
-      
-      this.allowNotification = true
-
-
-    }
-
   }
 
   public getConfigApi() {

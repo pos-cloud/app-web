@@ -40,13 +40,17 @@ export class CompanyService {
 		return this._http.get(Config.apiURL + "company/"+id, { headers: headers }).map (res => res.json());
   	}
 
-  	getCompanies () {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
-		});
-		return this._http.get(Config.apiURL + "companies", { headers: headers }).map (res => res.json());
+  	getCompanies (query?: string) {
+			let headers = new Headers({
+				'Content-Type': 'application/json',
+				'Authorization': this._userService.getToken(),
+				'Database': this._userService.getDatabase()
+			});
+			if (query) {
+				return this._http.get(Config.apiURL + "companies/" + query, { headers: headers }).map (res => res.json());
+			} else {
+				return this._http.get(Config.apiURL + "companies", { headers: headers }).map(res => res.json());
+			}
   	}
 
   	getCompaniesByType (type: string) {
