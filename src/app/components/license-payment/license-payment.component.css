@@ -28,14 +28,10 @@
 
 
 .btn {
-    /* ... */
-    /* all browsers: remove the default outline since
-        we are rolling our own focus styles */
     outline: none;
     width: 200px;
 }
-  
-  /* Firefox: removes the inner border shown on focus */
+
 .btn::-moz-focus-inner {
     border: none;
 }
@@ -54,30 +50,12 @@ h6 {
 
     
 }
+
 .card-price {
     font-size: 30px;
-
-        /*color: white;*/
-        font-weight: 800;
-        font-size: 70px;
-        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.42);
-      
-}
-
-
-* {
-    margin: 0;
-    padding: 0;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-body {
-    background: #2e2a2a;
-    color: #FFF;
-    font-size: 62.5%;
-    font-family: 'Roboto', Arial, Helvetica, Sans-serif, Verdana;
+    font-weight: 800;
+    font-size: 70px;
+    text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.42);
 }
 
 ul {
@@ -111,9 +89,7 @@ a {
     width: 0;
     clear: both;
 }
-/** ========================
- * Contenedor
- ============================*/
+
 .pricing-wrapper {
     width: 960px;
     margin: 40px auto 0;
@@ -129,6 +105,7 @@ a {
     -webkit-transition: all 0.25s ease;
     -o-transition: all 0.25s ease;
     transition: all 0.25s ease;
+    height: 350px;
 }
 
 .pricing-table:hover {
