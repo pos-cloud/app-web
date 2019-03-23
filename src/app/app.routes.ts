@@ -1,6 +1,3 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { ListArticlesComponent } from './components/list-articles/list-articles.component';
@@ -56,8 +53,9 @@ import { ListRelationTypesComponent } from './components/list-relation-types/lis
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 import { LicensePaymentComponent } from './components/license-payment/license-payment.component'
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
+import { Routes } from '@angular/router';
 
-const _routes: Routes = [
+export const _routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'inicio', component: HomeComponent },
   { path: 'login', component: LoginComponent },
@@ -481,10 +479,3 @@ const _routes: Routes = [
   },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(_routes)],
-  exports: [RouterModule]
-})
-
-export class RoutingModule { }

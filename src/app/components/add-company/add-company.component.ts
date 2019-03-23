@@ -199,7 +199,6 @@ export class AddCompanyComponent  implements OnInit {
     this._identificationTypeService.getIdentificationTypes().subscribe(
       result => {
         if (!result.identificationTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.identificationTypes = null;
         } else {
@@ -442,7 +441,6 @@ export class AddCompanyComponent  implements OnInit {
     this._vatConditionService.getVATConditions().subscribe(
       result => {
         if (!result.vatConditions) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.vatConditions = result.vatConditions;
           this.company.vatCondition = this.vatConditions[0];

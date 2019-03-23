@@ -15,7 +15,7 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 
 // rutas
-import { RoutingModule } from './app.routes';
+import { _routes } from './app.routes';
 
 // servicios
 import { ArticleService } from './services/article.service';
@@ -221,6 +221,7 @@ import { from } from 'rxjs/observable/from';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type.component';
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 import { CancellationTypeService } from './services/cancellation-type.service';
+import { RouterModule } from '@angular/router';
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -529,7 +530,7 @@ import { CancellationTypeService } from './services/cancellation-type.service';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    RoutingModule,
+    RouterModule.forRoot(_routes, { useHash: true}),
     NgbModule.forRoot(),
     NgxPaginationModule,
     ChartsModule,
