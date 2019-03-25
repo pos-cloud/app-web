@@ -30,6 +30,7 @@ export class UpdateUserComponent implements OnInit {
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
+  public identity: User;
 
   public formErrors = {
     'name': '',
@@ -62,6 +63,7 @@ export class UpdateUserComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
   ) {
     this.user = new User();
+    this.identity = this._userService.getIdentity();
   }
 
   ngOnInit(): void {

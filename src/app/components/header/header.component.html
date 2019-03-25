@@ -443,7 +443,7 @@
                 Mis Datos
               </button>
             </div>
-            <div >
+            <div *ngIf="identity.employee.type.description === 'Administrador'">
               <button class="dropdown-item"
                       [routerLink]="['admin','configuraciones']"
                       [routerLinkActive]="['active']">
