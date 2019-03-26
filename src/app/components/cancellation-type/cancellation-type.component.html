@@ -21,35 +21,33 @@
               <div class="row tab-content">
                 <div class="form-group col-md-12">
                   <div class="row">
-                    <div class="form-group col-md-9">
-                      <div class="row">
-                        <div class="form-group col-md-12">
-                          <label for="origin" class="control-label">Origen</label>
-                          <select  class="form-control" formControlName="origin">
-                            <option *ngFor="let origin of origins"
-                                    [selected]="cancellationType.origin && origin._id===cancellationType.origin._id"
-                                    [value]="origin._id"
-                                    [disabled]="operation === 'delete'">
-                                    {{origin.name}}</option>
-                          </select>
-                          <div *ngIf="formErrors.origin" class="alert alert-danger">
-                            {{ formErrors.origin }}
-                          </div>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label for="destination" class="control-label">Destino</label>
-                            <select class="form-control" formControlName="destination">
-                              <option *ngFor="let destination of destinations"
-                                      [selected]="cancellationType.destination && destination._id===cancellationType.destination._id"
-                                      [value]="destination._id"
-                                      [disabled]="operation === 'delete'">
-                                      {{destination.name}}</option>
-                            </select>
-                            <div *ngIf="formErrors.destination" class="alert alert-danger">
-                              {{ formErrors.destination }}
-                            </div>
-                          </div>
+                    <div class="form-group col-md-12">
+                      <label for="origin" class="control-label">Origen</label>
+                      <select  class="form-control" formControlName="origin">
+                        <option *ngFor="let origin of origins"
+                                [selected]="cancellationType.origin && origin._id===cancellationType.origin._id"
+                                [value]="origin._id"
+                                [disabled]="operation === 'delete'">
+                                {{origin.name}}</option>
+                      </select>
+                      <div *ngIf="formErrors.origin" class="alert alert-danger">
+                        {{ formErrors.origin }}
                       </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="destination" class="control-label">Destino</label>
+                        <select class="form-control" formControlName="destination">
+                          <option *ngFor="let destination of destinations"
+                                  [selected]="cancellationType.destination && destination._id===cancellationType.destination._id"
+                                  [value]="destination._id"
+                                  [disabled]="operation === 'delete'">
+                                  {{destination.name}}</option>
+                        </select>
+                        <div *ngIf="formErrors.destination" class="alert alert-danger">
+                          {{ formErrors.destination }}
+                        </div>
                     </div>
                   </div>
                 </div>
