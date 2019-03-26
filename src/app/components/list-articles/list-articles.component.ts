@@ -160,12 +160,12 @@ export class ListArticlesComponent implements OnInit {
 
   public orderBy(term: string, property?: string): void {
 
-    // if (this.orderTerm[0] === term) {
-    //   this.orderTerm[0] = "-" + term;
-    // } else {
-    //   this.orderTerm[0] = term;
-    // }
-    // this.propertyTerm = property;
+    if (this.orderTerm[0] === term) {
+      this.orderTerm[0] = "-" + term;
+    } else {
+      this.orderTerm[0] = term;
+    }
+    this.propertyTerm = property;
   }
 
   public refresh(): void {

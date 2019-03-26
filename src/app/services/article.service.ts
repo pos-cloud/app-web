@@ -20,7 +20,7 @@ export class ArticleService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'articles/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + 'articles/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
  	getArticle (id) {

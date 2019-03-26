@@ -42,7 +42,8 @@
                           <label for="make" class="control-label">Marca</label>
                           <select class="form-control" formControlName="make">
                             <option *ngFor="let make of makes"
-                                    [selected]="article.make && make._id===article.make._id"
+                                    [selected]="(article.make && article.make._id && make._id===article.make._id) ||
+                                                (article.make && make._id===article.make)"
                                     [value]="make._id"
                                     [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
                                     {{make.description}}</option>
@@ -55,7 +56,8 @@
                         <label for="category" class="control-label">Rubro:</label>
                         <select class="form-control" formControlName="category">
                           <option *ngFor="let category of categories"
-                                  [selected]="article.category && category._id===article.category._id"
+                                  [selected]="(article.category && article.category._id && category._id===article.category._id) ||
+                                              (article.category && category._id===article.category)"
                                   [value]="category._id"
                                   [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
                                   {{category.description}}
@@ -218,7 +220,7 @@
 				</ngb-tab>
 				<ngb-tab title="Stock">
 					<ng-template ngbTabContent>
-						<!--<app-add-article-stock [article]="article" (eventAddStock)="addStock($event)"></app-add-article-stock>-->
+						<app-add-article-stock [article]="article" (eventAddStock)="addStock($event)"></app-add-article-stock>
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
