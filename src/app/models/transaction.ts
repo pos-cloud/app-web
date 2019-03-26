@@ -33,14 +33,14 @@ export class Transaction {
 	public observation: string;
 	public madein: string;
 	public CAE: string; // AR
-  public CAEExpirationDate: string; // AR
-  public expeditionPlace: string; // MX
-  public relationType: RelationType; // MX
-  public useOfCFDI: UseOfCFDI; // MX
-  public stringSAT: string; // MX
-  public CFDStamp: string; // MX
-  public SATStamp: string; // MX
-  public UUID: string; // MX
+	public CAEExpirationDate: string; // AR
+	public expeditionPlace: string; // MX
+	public relationType: RelationType; // MX
+	public useOfCFDI: UseOfCFDI; // MX
+	public stringSAT: string; // MX
+	public CFDStamp: string; // MX
+	public SATStamp: string; // MX
+	public UUID: string; // MX
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;

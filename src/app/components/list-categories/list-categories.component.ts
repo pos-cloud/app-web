@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -16,8 +16,9 @@ import { Config } from './../../app.config';
 @Component({
   selector: 'app-list-categories',
   templateUrl: './list-categories.component.html',
-  styleUrls: ['./list-categories.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-categories.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListCategoriesComponent implements OnInit {

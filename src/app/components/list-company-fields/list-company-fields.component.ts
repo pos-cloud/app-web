@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -14,8 +14,9 @@ import { ImportComponent } from './../../components/import/import.component';
 @Component({
   selector: 'app-list-company-fields',
   templateUrl: './list-company-fields.component.html',
-  styleUrls: ['./list-company-fields.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-company-fields.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListCompanyFieldsComponent implements OnInit {

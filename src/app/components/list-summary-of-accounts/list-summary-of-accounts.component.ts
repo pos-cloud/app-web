@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +13,8 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 @Component({
   selector: 'app-list-summary-of-accounts',
   templateUrl: './list-summary-of-accounts.component.html',
-  styleUrls: ['./list-summary-of-accounts.component.css']
+  styleUrls: ['./list-summary-of-accounts.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListSummaryOfAccountsComponent implements OnInit {

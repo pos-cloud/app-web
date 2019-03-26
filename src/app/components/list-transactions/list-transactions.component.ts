@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { Router } from '@angular/router';
 
@@ -26,8 +26,9 @@ import { AddTransactionComponent } from '../add-transaction/add-transaction.comp
 @Component({
   selector: 'app-list-transactions',
   templateUrl: './list-transactions.component.html',
-  styleUrls: ['./list-transactions.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-transactions.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListTransactionsComponent implements OnInit {

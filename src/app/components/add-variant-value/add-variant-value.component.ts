@@ -108,7 +108,6 @@ export class AddVariantValueComponent implements OnInit {
     this._variantTypeService.getVariantTypes().subscribe(
       result => {
         if (!result.variantTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantTypes = null;
           this.setValueForm();

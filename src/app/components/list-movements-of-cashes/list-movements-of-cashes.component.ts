@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -10,8 +10,9 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 @Component({
   selector: 'app-list-movement-of-cash',
   templateUrl: './list-movements-of-cashes.component.html',
-  styleUrls: ['./list-movements-of-cashes.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-movements-of-cashes.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListMovementOfCashesComponent implements OnInit {

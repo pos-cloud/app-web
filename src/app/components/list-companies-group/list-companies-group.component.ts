@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -14,8 +14,9 @@ import { DeleteCompanyGroupComponent } from "./../../components/delete-company-g
 @Component({
   selector: 'app-list-companies-group',
   templateUrl: './list-companies-group.component.html',
-  styleUrls: ['./list-companies-group.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-companies-group.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 export class ListCompaniesGroupComponent implements OnInit {
 

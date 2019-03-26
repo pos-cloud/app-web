@@ -83,7 +83,8 @@ export class AddArticleComponent implements OnInit {
     'salePrice': '',
     'category': '',
     'deposit' : '',
-    'location': ''
+    'location': '',
+    'barcode': ''
   };
 
   public validationMessages = {
@@ -122,6 +123,9 @@ export class AddArticleComponent implements OnInit {
       'required': 'Este campo es requerido'
     },
     'location': {
+    },
+    'barcode': {
+      'maxlength': 'No puede exceder los 14 dígitos.'
     }
   };
 
@@ -233,6 +237,7 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'barcode': [this.article.barcode, [
+        Validators.maxLength(10)
         ]
       ],
       'printIn': [this.article.printIn, [
@@ -379,7 +384,11 @@ export class AddArticleComponent implements OnInit {
   }
 
   public autocompleteCode() {
-    this.article.code = this.padString(this.articleForm.value.code, 5);
+    if(!isNaN(this.articleForm.value.code)) {
+      this.article.code = this.padString(this.articleForm.value.code, 10);
+    } else {
+      this.article.code = this.articleForm.value.code;
+    }
     this.setValuesForm();
   }
 
@@ -389,14 +398,14 @@ export class AddArticleComponent implements OnInit {
 
     this._articleService.getLastArticle().subscribe(
       result => {
-        let code = '00001';
+        let code = this.padString(1, 10);
         let category: Category = new Category();
         if (result.articles) {
           if (result.articles[0]) {
             if (!isNaN(parseInt(result.articles[0].code))) {
               code = (parseInt(result.articles[0].code) + 1) + '';
             } else {
-              code = '00001';
+              code = this.padString(1, 10);
             }
           }
         }
@@ -730,7 +739,7 @@ export class AddArticleComponent implements OnInit {
   public setValuesForm(): void {
 
     if (!this.article._id) { this.article._id = ''; }
-    if (!this.article.code) { this.article.code = '00001'; }
+    if (!this.article.code) { this.article.code = this.padString(1, 10); }
     if (!this.article.codeSAT) { this.article.codeSAT = ''; }
 
     let make;

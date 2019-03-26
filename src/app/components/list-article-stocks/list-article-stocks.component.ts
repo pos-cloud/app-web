@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -16,8 +16,9 @@ import { PrinterPrintIn, Printer } from '../../models/printer';
 @Component({
   selector: 'app-list-article-stocks',
   templateUrl: './list-article-stocks.component.html',
-  styleUrls: ['./list-article-stocks.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-article-stocks.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListArticleStocksComponent implements OnInit {

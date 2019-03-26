@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { CancellationTypeService } from '../../services/cancellation-type.service'
@@ -9,8 +9,9 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 @Component({
   selector: 'app-list-cancellation-types',
   templateUrl: './list-cancellation-types.component.html',
-  styleUrls: ['./list-cancellation-types.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-cancellation-types.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 export class ListCancellationTypeComponent implements OnInit {
 

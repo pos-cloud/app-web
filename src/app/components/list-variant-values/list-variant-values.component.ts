@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +13,9 @@ import { DeleteVariantValueComponent } from './../../components/delete-variant-v
 @Component({
   selector: 'app-list-variant-values',
   templateUrl: './list-variant-values.component.html',
-  styleUrls: ['./list-variant-values.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-variant-values.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListVariantValuesComponent implements OnInit {

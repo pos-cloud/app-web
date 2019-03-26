@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +13,9 @@ import { DeleteLocationComponent } from './../../components/delete-location/dele
 @Component({
   selector: 'app-list-locations',
   templateUrl: './list-locations.component.html',
-  styleUrls: ['./list-locations.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-locations.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 export class ListLocationsComponent implements OnInit {
 

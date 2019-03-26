@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,8 +20,9 @@ import { TransactionType } from 'app/models/transaction-type';
 @Component({
   selector: 'app-list-tables',
   templateUrl: './list-tables.component.html',
-  styleUrls: ['./list-tables.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-tables.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListTablesComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -16,8 +16,9 @@ import { Config } from 'app/app.config';
 @Component({
   selector: 'app-list-vat-conditions',
   templateUrl: './list-vat-conditions.component.html',
-  styleUrls: ['./list-vat-conditions.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-vat-conditions.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListVATConditionsComponent implements OnInit {

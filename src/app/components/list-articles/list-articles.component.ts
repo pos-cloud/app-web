@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -28,8 +28,9 @@ import { OrderByPipe } from 'app/pipes/order-by.pipe';
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
-  styleUrls: ['./list-articles.component.css'],
-  providers: [NgbAlertConfig, RoundNumberPipe]
+  styleUrls: ['./list-articles.component.scss'],
+  providers: [NgbAlertConfig, RoundNumberPipe],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListArticlesComponent implements OnInit {

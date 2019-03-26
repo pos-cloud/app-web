@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +13,9 @@ import { DeletePrinterComponent } from './../../components/delete-printer/delete
 @Component({
   selector: 'app-list-printers',
   templateUrl: './list-printers.component.html',
-  styleUrls: ['./list-printers.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-printers.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListPrintersComponent implements OnInit {

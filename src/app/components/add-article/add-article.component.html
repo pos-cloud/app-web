@@ -23,23 +23,46 @@
                   <div class="form-group col-md-9">
                     <div class="row">
                       <div class="form-group col-md-6">
-                        <label for="make" class="control-label">Marca</label>
-                        <select class="form-control" formControlName="make">
-                          <option *ngFor="let make of makes"
-                                  [selected]="article.make && make._id===article.make._id"
-                                  [value]="make._id"
-                                  [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
-                                  {{make.description}}</option>
-                        </select>
-                        <div *ngIf="formErrors.make" class="alert alert-danger">
-                          {{ formErrors.make }}
-                        </div>
-                      </div>
-                      <div class="form-group col-md-6">
-                        <label for="code" class="control-label">Código:</label>
+                        <label for="code" class="control-label">Código Interno:</label>
                         <input type="text" class="form-control" formControlName="code" name="code" id="code" (blur)="autocompleteCode()" [focus]="focusEvent" [readonly]="readonly"/>
                         <div *ngIf="formErrors.code" class="alert alert-danger">
                           {{ formErrors.code }}
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="barcode" class="control-label">Código de Barras:</label>
+                        <input type="number" class="form-control" formControlName="barcode" name="barcode" id="barcode" [readonly]="readonly"/>
+                        <div *ngIf="formErrors.barcode" class="alert alert-danger">
+                          {{ formErrors.barcode }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col-md-6">
+                          <label for="make" class="control-label">Marca</label>
+                          <select class="form-control" formControlName="make">
+                            <option *ngFor="let make of makes"
+                                    [selected]="article.make && make._id===article.make._id"
+                                    [value]="make._id"
+                                    [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                                    {{make.description}}</option>
+                          </select>
+                          <div *ngIf="formErrors.make" class="alert alert-danger">
+                            {{ formErrors.make }}
+                          </div>
+                        </div>
+                      <div class="form-group col-md-6">
+                        <label for="category" class="control-label">Rubro:</label>
+                        <select class="form-control" formControlName="category">
+                          <option *ngFor="let category of categories"
+                                  [selected]="article.category && category._id===article.category._id"
+                                  [value]="category._id"
+                                  [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                                  {{category.description}}
+                          </option>
+                        </select>
+                        <div *ngIf="formErrors.category" class="alert alert-danger">
+                          {{ formErrors.category }}
                         </div>
                       </div>
                     </div>
@@ -70,30 +93,6 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="category" class="control-label">Rubro:</label>
-                    <select class="form-control" formControlName="category">
-                      <option *ngFor="let category of categories"
-                              [selected]="article.category && category._id===article.category._id"
-                              [value]="category._id"
-                              [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
-                              {{category.description}}
-                      </option>
-                    </select>
-                    <div *ngIf="formErrors.category" class="alert alert-danger">
-                      {{ formErrors.category }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="printIn" class="control-label">Imprime en:</label>
-                    <select class="form-control" formControlName="printIn">
-                      <option *ngFor="let printIn of printIns"
-                              [ngValue]="printIn"
-                              [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">{{printIn}}</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
                     <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
                     <input type="text" class="form-control" formControlName="quantityPerMeasure" name="quantityPerMeasure" id="quantityPerMeasure"
                       [readonly]="readonly" />
@@ -116,6 +115,16 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="printIn" class="control-label">Imprime en:</label>
+                    <select class="form-control" formControlName="printIn">
+                      <option *ngFor="let printIn of printIns"
+                              [ngValue]="printIn"
+                              [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">{{printIn}}</option>
+                    </select>
+                  </div>
+                </div>
                 <div *ngIf="country === 'mx'" class="row">
                   <div class="form-group col-md-12">
                     <label for="codeSAT" class="control-label">Código SAT:</label>
@@ -125,7 +134,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row" *ngIf="article && article.type && article.type.toString() === 'Final'">
+                <div class="row">
                   <div class="form-group col-md-12 center-content">
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" formControlName="favourite" value="" id="favourite" name="favourite">

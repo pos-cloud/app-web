@@ -1,0 +1,31 @@
+app-list-variants {
+      .btn {
+            cursor: pointer;
+      }
+      
+      .table {
+          cursor: pointer;
+       }
+      
+       .center-content {
+            margin-top: 30px;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-justify-content: center;
+            justify-content: center;
+      }
+}
+
+@media (min-width: 1100px) {
+      .modal-lg {
+            max-width: 1000px;
+      }
+}
+
+@media (min-width: 1400px) {
+      .modal-lg {
+            max-width: 1200px;
+      }
+}

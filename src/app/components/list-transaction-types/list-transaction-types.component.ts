@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +13,9 @@ import { Config } from 'app/app.config';
 @Component({
   selector: 'app-list-transaction-types',
   templateUrl: './list-transaction-types.component.html',
-  styleUrls: ['./list-transaction-types.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-transaction-types.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListTransactionTypesComponent implements OnInit {

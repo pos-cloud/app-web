@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -18,8 +18,9 @@ import { UserService } from 'app/services/user.service';
 @Component({
   selector: 'app-list-companies',
   templateUrl: './list-companies.component.html',
-  styleUrls: ['./list-companies.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-companies.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListCompaniesComponent implements OnInit {

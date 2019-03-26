@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +13,9 @@ import { Printer } from 'app/models/printer';
 @Component({
   selector: 'app-list-cash-boxes',
   templateUrl: './list-cash-boxes.component.html',
-  styleUrls: ['./list-cash-boxes.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./list-cash-boxes.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ListCashBoxesComponent implements OnInit {
