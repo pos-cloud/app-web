@@ -7,7 +7,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Cancelaciones
       <div class="pull-right">
-          <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar Cancelacion</i></button>
+          <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar Cancelación</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -57,7 +57,7 @@
            
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td colspan="16">No se encontraron Relaciones de Cancelacion</td>
+            <td colspan="16">No se encontraron cancelaciones</td>
           </tr>
           <tr align="center" *ngIf="loading">
             <td colspan="16">Cargando...</td>

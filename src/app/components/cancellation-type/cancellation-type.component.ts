@@ -220,7 +220,7 @@ export class CancellationTypeComponent implements OnInit {
               this.cancellationType = result['cancellationType'];
               this.loading = false;
               this.hasChanged = true;
-              this.showMessage('La cancelacion se ha actualizado con éxito.', 'success', false);
+              this.showMessage('La cancelación se ha actualizado con éxito.', 'success', false);
           }
         });
         
@@ -239,7 +239,7 @@ export class CancellationTypeComponent implements OnInit {
         } else {
           
             this.loading = false;
-            this.showMessage('La cancelacion se ha añadido con éxito.', 'success', false);
+            this.showMessage('La cancelación se ha añadido con éxito.', 'success', false);
           
         }
       },
@@ -265,7 +265,7 @@ export class CancellationTypeComponent implements OnInit {
             this.cancellationType = result['cancellationType'];
             this.loading = false;
             this.hasChanged = true;
-            this.showMessage('La cancelacion se ha eliminado con éxito.', 'success', false);
+            this.showMessage('La cancelación se ha eliminado con éxito.', 'success', false);
             this.closeModal();
         }
       });
