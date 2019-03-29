@@ -365,14 +365,7 @@ export class PointOfSaleComponent implements OnInit {
               } else if (transaction.type.requestPaymentMethods) {
                 this.openModal('movement-of-cash', typeTransaction, transaction);
               } else {
-                if (this.posType === "resto" || this.posType === "delivery") {
-                  transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-                  transaction.VATPeriod = moment().format('YYYYMM');
-                }
-                transaction.expirationDate = transaction.endDate;
-                transaction.state = TransactionState.Closed;
                 this.updateBalance(transaction);
-                this.updateTransaction(transaction);
               }
             } else if (result === "change-company") {
               this.openModal('company', typeTransaction, transaction);
@@ -389,21 +382,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.transaction = transaction;
         modalRef.result.then((result) => {
           if (result.movementsOfCashes) {
-            if (this.posType === "resto" || this.posType === "delivery") {
-              transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-              transaction.VATPeriod = moment().format('YYYYMM');
-            }
-            transaction.expirationDate = transaction.endDate;
-            transaction.state = TransactionState.Closed;
             this.updateBalance(transaction);
-            this.updateTransaction(transaction);
-            if (transaction.type.printable) {
-              if (transaction.type.defectPrinter) {
-                this.openModal("print", transaction.type, transaction, transaction.type.defectPrinter);
-              } else {
-                this.openModal("printers", transaction.type, transaction);
-              }
-            }
           } else {
             this.refresh();
           }
@@ -418,7 +397,9 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.printer = printerSelected;
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
+          this.refresh();
         }, (reason) => {
+          this.refresh();
         });
         break;
       case 'printers':
@@ -426,9 +407,11 @@ export class PointOfSaleComponent implements OnInit {
           modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
             if (result !== "cancel" && result !== '') {
               this.openModal("print", transaction.type, transaction, result);
+            } else {
+              this.refresh();
             }
           }, (reason) => {
-
+            this.refresh();
           });
         } else if (this.countPrinters() === 1) {
           this.openModal("print", transaction.type, transaction, this.printers[0]);
@@ -553,12 +536,27 @@ export class PointOfSaleComponent implements OnInit {
 
   public updateBalance(transaction : Transaction){
 
+    this.loading = true;
+
     this._transactionService.updateBalance(transaction).subscribe(
       result => {
-        console.log(result);
+        if (!result.transaction) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          transaction.balance = result.transaction.balance;
+          if (this.posType === "resto" || this.posType === "delivery") {
+            transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+            transaction.VATPeriod = moment().format('YYYYMM');
+          }
+          transaction.expirationDate = transaction.endDate;
+          transaction.state = TransactionState.Closed;
+          this.updateTransaction(transaction);
+        }
+        this.loading = false;
       },
       error => {
-        console.log(error);
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
       }
     )
   }
@@ -647,7 +645,15 @@ export class PointOfSaleComponent implements OnInit {
         } else {
           transaction = result.transaction;
           if(close) {
-            this.refresh();
+            if (transaction.type.printable) {
+              if (transaction.type.defectPrinter) {
+                this.openModal("print", transaction.type, transaction, transaction.type.defectPrinter);
+              } else {
+                this.openModal("printers", transaction.type, transaction);
+              }
+            } else {
+              this.refresh();
+            }
           } else {
             if (!transaction.employeeOpening &&
               transaction.type.requestEmployee &&
