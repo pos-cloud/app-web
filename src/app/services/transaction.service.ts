@@ -273,5 +273,17 @@ export class TransactionService {
         return res;
       })
     );
-  }
+	}
+	
+
+	updateBalance(transactionOriginId : Transaction) {
+		console.log(transactionOriginId);
+
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._userService.getToken(),
+			'Database': this._userService.getDatabase()
+		});
+		return this._http.put(Config.apiURL + "update-balance/" , transactionOriginId, { headers: headers }).map (res => res.json());
+  	}
 }

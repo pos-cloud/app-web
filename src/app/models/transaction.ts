@@ -32,6 +32,7 @@ export class Transaction {
 	public diners: number = 0;
 	public observation: string;
 	public madein: string;
+	public balance : number = 0.00;
 	public CAE: string; // AR
 	public CAEExpirationDate: string; // AR
 	public expeditionPlace: string; // MX

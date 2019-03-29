@@ -792,6 +792,8 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public saveMovementOfCash(): void {
 
+    this.updateTransaction();
+
     this.loading = true;
 
     this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
@@ -835,12 +837,15 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
+    
+
     this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashesToFinance).subscribe(
       result => {
         if (!result.movementsOfCashes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
+         
           this.getMovementOfCashesByTransaction();
         }
       },

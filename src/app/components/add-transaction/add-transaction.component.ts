@@ -28,6 +28,9 @@ import { ListCompaniesComponent } from '../list-companies/list-companies.compone
 import { CashBoxService } from 'app/services/cash-box.service';
 import { UserService } from 'app/services/user.service';
 import { Config } from 'app/app.config';
+import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
+import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
 
 @Component({
   selector: 'app-add-transaction',
@@ -47,6 +50,7 @@ export class AddTransactionComponent implements OnInit {
   public taxes: Taxes[] = new Array();
   public alertMessage: string = '';
   public userType: string;
+  public movementOfCancellation : MovementOfCancellation
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
@@ -118,6 +122,7 @@ export class AddTransactionComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _companyService: CompanyService,
     public _employeeService: EmployeeService,
+    public _movementOfCancellationService : MovementOfCancellationService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -126,6 +131,8 @@ export class AddTransactionComponent implements OnInit {
     public _cashBoxService: CashBoxService,
     public _userService: UserService
   ) {
+
+    this.movementOfCancellation = new MovementOfCancellation
   }
 
   ngOnInit(): void {
@@ -640,6 +647,59 @@ export class AddTransactionComponent implements OnInit {
       }
     );
   }
+
+  public updateBalance(transactionOriginId){
+
+    this._transactionService.updateBalance(transactionOriginId).subscribe(
+      result => {
+        console.log(result);
+      },
+      error => {
+        console.log(error);
+      }
+    )
+  }
+
+
+  public saveMovementOfCancellation() : void {
+    
+    this._movementOfCancellationService.addMovementOfCancellation(this.movementOfCancellation).subscribe(
+      result => {
+        if (!result.movementOfCancellation) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.hideMessage();
+
+          console.log(result.movementOfCancellation)
+          
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public openCancellation() : void {
+    
+    let modalRef
+    modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
+    modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
+    modalRef.result.then((result) => {
+      if(result.transactionsOrigin) {
+        this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
+        this.movementOfCancellation.transactionDestination = this.transaction._id;
+        this.transaction.totalPrice = result.transactionsOrigin[0].balance;
+        this.saveMovementOfCancellation();
+        this.setValuesForm()
+      }
+    }, (reason) => {
+    });
+
+
+  } 
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

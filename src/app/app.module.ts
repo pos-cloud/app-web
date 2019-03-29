@@ -222,6 +222,8 @@ import { CancellationTypeComponent } from './components/cancellation-type/cancel
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 import { CancellationTypeService } from './services/cancellation-type.service';
 import { RouterModule } from '@angular/router';
+import { MovementOfCancellationComponent } from "./components/movement-of-cancellation/movement-of-cancellation.component";
+import { MovementOfCancellationService } from './services/movement-of-cancellation';
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -377,7 +379,8 @@ import { RouterModule } from '@angular/router';
     PushNotificationComponent,
     LicensePaymentComponent,
     CancellationTypeComponent,
-    ListCancellationTypeComponent
+    ListCancellationTypeComponent,
+    MovementOfCancellationComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -522,7 +525,8 @@ import { RouterModule } from '@angular/router';
     ListCompanyFieldsComponent,
     AddCompanyFieldsComponent,
     LicensePaymentComponent,
-    CancellationTypeComponent
+    CancellationTypeComponent,
+    MovementOfCancellationComponent
   ],
   imports: [
     BrowserModule,
@@ -586,7 +590,8 @@ import { RouterModule } from '@angular/router';
     UseOfCFDIService,
     RelationTypeService,
     CompanyFieldService,
-    CancellationTypeService
+    CancellationTypeService,
+    MovementOfCancellationService
   ],
   bootstrap: [AppComponent]
 })

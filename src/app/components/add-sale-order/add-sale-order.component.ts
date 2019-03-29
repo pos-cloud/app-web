@@ -21,6 +21,7 @@ import { Print } from './../../models/print';
 import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Config } from './../../app.config';
 import { CompanyType } from '../../models/company';
+import { MovementOfCancellation } from "../../models/movement-of-cancellation"
 
 //Servicios
 import { MovementOfArticleService } from './../../services/movement-of-article.service';
@@ -54,6 +55,8 @@ import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
 import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { RelationTypeService } from 'app/services/relation-type.service';
 import { RelationType } from 'app/models/relation-type';
+import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -65,12 +68,14 @@ import { RelationType } from 'app/models/relation-type';
 export class AddSaleOrderComponent implements OnInit {
 
   public transaction: Transaction;
+  public movementOfCancellation : MovementOfCancellation;
   public transactionMovement: string;
   public alertMessage: string = '';
   public movementsOfArticles: MovementOfArticle[];
   public usesOfCFDI: UseOfCFDI[];
   public relationTypes: RelationType[];
   public printers: Printer[];
+  public docOrigin : boolean = false;
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public userType: string;
@@ -117,9 +122,11 @@ export class AddSaleOrderComponent implements OnInit {
     private _taxService: TaxService,
     private _cashBoxService: CashBoxService,
     public _useOfCFDIService: UseOfCFDIService,
-    public _relationTypeService: RelationTypeService
+    public _relationTypeService: RelationTypeService,
+    public _movementOfCancellationService : MovementOfCancellationService
   ) {
     this.transaction = new Transaction();
+    this.movementOfCancellation = new MovementOfCancellation();
     this.movementsOfArticles = new Array();
     this.categorySelected = new Category();
     this.printers = new Array();
@@ -466,13 +473,34 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
+  public saveMovementOfCancellation() : void {
+    
+    this._movementOfCancellationService.addMovementOfCancellation(this.movementOfCancellation).subscribe(
+      result => {
+        if (!result.movementOfCancellation) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.hideMessage();
+          this.getMovementsOfTransaction();
+          
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
   public updateTransaction(closed: boolean = false): void {
 
+   
     this.loading = true;
 
     this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
     this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-
+    
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -1134,6 +1162,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then((result) => {
           if (result.company) {
             this.transaction.company = result.company;
+            this.docOrigin = true
             this.updateTransaction(false);
           }
         }, (reason) => {
@@ -1314,6 +1343,13 @@ export class AddSaleOrderComponent implements OnInit {
     }
     this.transaction.expirationDate = this.transaction.endDate;
     this.transaction.state = TransactionState.Closed;
+    this.updateBalance(this.transaction);
+    
+    
+
+    //this.transaction.saldo = this.movementOfCancellation.transactionDestination.totalPrice - this.transaction.totalprice;
+
+
     this.updateTransaction(false);
 
     if (this.transaction.type.printable) {
@@ -1337,6 +1373,18 @@ export class AddSaleOrderComponent implements OnInit {
         this.backFinal();
       }
     }
+  }
+
+  public updateBalance(transaction : Transaction){
+
+    this._transactionService.updateBalance(transaction).subscribe(
+      result => {
+        console.log(result);
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
   public getTaxVAT(movementOfArticle: MovementOfArticle): void {
@@ -1631,6 +1679,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public getMovementsOfTransaction(): void {
 
+
     this.loading = true;
 
     this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
@@ -1653,6 +1702,22 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
+
+  public openCancellation() : void {
+    
+    let modalRef
+    modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
+    modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
+    modalRef.result.then((result) => {
+      if(result.transactionsOrigin) {
+        this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
+        this.movementOfCancellation.transactionDestination = this.transaction._id;
+        this.docOrigin = false;
+        this.saveMovementOfCancellation();
+      }
+    }, (reason) => {
+    });
+  } 
 
   public showCategories(): void {
 

@@ -38,6 +38,9 @@
         <div class="col-md-2" *ngIf="posType!=='resto' && posType!=='delivery' && userCountry==='AR'">
             <b>Dolar: {{dolar}}</b>
         </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-secondary" *ngIf="docOrigin === true" (click)="openCancellation()">Buscar Documento Origen</button>
+        </div>
       </div>
     </div>
   </div>
@@ -290,4 +293,5 @@
     </button>
   </div>
 </ng-template>
+
 

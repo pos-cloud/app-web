@@ -371,6 +371,7 @@ export class PointOfSaleComponent implements OnInit {
                 }
                 transaction.expirationDate = transaction.endDate;
                 transaction.state = TransactionState.Closed;
+                this.updateBalance(transaction);
                 this.updateTransaction(transaction);
               }
             } else if (result === "change-company") {
@@ -394,6 +395,7 @@ export class PointOfSaleComponent implements OnInit {
             }
             transaction.expirationDate = transaction.endDate;
             transaction.state = TransactionState.Closed;
+            this.updateBalance(transaction);
             this.updateTransaction(transaction);
             if (transaction.type.printable) {
               if (transaction.type.defectPrinter) {
@@ -547,6 +549,18 @@ export class PointOfSaleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public updateBalance(transaction : Transaction){
+
+    this._transactionService.updateBalance(transaction).subscribe(
+      result => {
+        console.log(result);
+      },
+      error => {
+        console.log(error);
+      }
+    )
   }
 
   public saveTransaction(transaction: Transaction): void {

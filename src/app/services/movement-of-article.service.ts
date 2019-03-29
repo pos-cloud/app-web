@@ -95,6 +95,16 @@ export class MovementOfArticleService {
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
+
     return this._http.get(Config.apiURL + 'movements-of-articles/where="transaction":"'+transactionId+'"', { headers: headers }).map (res => res.json());
-	}
+  }
+  
+  saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    return this._http.post(Config.apiURL + "movements-of-articles", { movementsOfArticles: movementsOfArticles }, { headers: headers }).map(res => res.json());
+  }
 }
