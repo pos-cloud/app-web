@@ -39,7 +39,7 @@
             <b>Dolar: {{dolar}}</b>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-secondary" *ngIf="docOrigin === true" (click)="openCancellation()">Buscar Documento Origen</button>
+          <button type="button" class="btn btn-secondary" *ngIf="showButtonCancelation" (click)="openModal('list-cancellations')">Buscar Transacción Origen</button>
         </div>
       </div>
     </div>

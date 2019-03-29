@@ -25,7 +25,6 @@ export class MovementOfCancellationComponent implements OnInit {
 
   @Input() transaccionDestinationId: string;
   public transactionDestination: Transaction;
-
   public transactionMovement: TransactionMovement;
   public transactions: Transaction[];
   public movementOfarticles: MovementOfArticle[] = new Array();
@@ -70,64 +69,12 @@ export class MovementOfCancellationComponent implements OnInit {
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
     }
-    
+    this.existingCanceled = new Array();
   }
 
   ngOnInit() {
     
-    this.getCancellation();
-  }
-
-  public getCancellation():void {
-        // ORDENAMOS LA CONSULTA
-        
-        let sortAux = { order: 1 };
-    
-        // FILTRAMOS LA CONSULTA
-        let match = { "operationType": { "$ne": "D" } };
-        
-        // CAMPOS A TRAER
-        let project = {
-          "transactionOrigin": 1,
-          "_id":0
-        };
-    
-        // AGRUPAMOS EL RESULTADO
-        let group = {};
-    
-        let limit = 0;
-    
-        let skip = 0;
-    
-        this._movementOfCancellation.getMovementOfCancellations(
-          project, // PROJECT
-          match, // MATCH
-          sortAux, // SORT
-          group, // GROUP
-          limit, // LIMIT
-          skip // SKIP
-        ).subscribe(result => {
-
-          if (result.movementOfCancellations) {
-            
-           // this.existingCanceled = result.movementOfCancellations;
-
-            for (let index = 0; index < result.movementOfCancellations.length; index++) {
-              
-             // this.existingCanceled.push(result.movementOfCancellations[index].transactionOrigin)
-
-              this.existingCanceled[index] = `"${result.movementOfCancellations[index].transactionOrigin}"`
-
-            }
-
-            this.getTransaction();
-    
-          } else {
-    
-          }
-    
-        });
-
+    this.getTransaction();
   }
 
   public getTransaction(): void {
@@ -138,7 +85,7 @@ export class MovementOfCancellationComponent implements OnInit {
       result => {
         if (!result.transaction) {
           this.showMessage(result.message, 'danger', false);
-          this.loading = false;
+          this.totalItems = 0;
         } else {
           this.hideMessage();
           this.transactionDestination = result.transaction;
@@ -148,12 +95,15 @@ export class MovementOfCancellationComponent implements OnInit {
       },
       error => {
         this.showMessage(error._body, 'danger', false);
+        this.totalItems = 0;
         this.loading = false;
       }
     );
   }
 
   public getCancellationTypes() : void {
+
+    this.loading = true;
 
     // ORDENAMOS LA CONSULTA
     let sortAux = { order: 1 };
@@ -183,21 +133,22 @@ export class MovementOfCancellationComponent implements OnInit {
       limit, // LIMIT
       skip // SKIP
     ).subscribe(result => {
-      if (result.cancellationTypes) {
-        
+      if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
         this.cancellationTypes = result.cancellationTypes;
-
         this.getTransactions();
-
       } else {
-
+        this.totalItems = 0;
       }
-
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.totalItems = 0;
+      this.loading = false;
     });
   }
 
-  public getTransactions(){
-    
+  public getTransactions() {
     
     this.loading = true;
 
@@ -237,13 +188,9 @@ export class MovementOfCancellationComponent implements OnInit {
       match +=  `{ "type._id"  : "${this.cancellationTypes[0].origin._id}"}`
     }
 
-    //, "_id": {"$nin": [${this.existingCanceled}]
-    //"balance": { "$gt": 0 }
-
     match += `"operationType": { "$ne": "D" } , "state" : "Cerrado" , "company._id":  "${this.transactionDestination.company._id}","balance": { "$gt": "0" } }`;
 
     match = JSON.parse(match);
-
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = '{}';
@@ -259,7 +206,6 @@ export class MovementOfCancellationComponent implements OnInit {
         project += '}';
     }
     project = JSON.parse(project);
-
 
     // AGRUPAMOS EL RESULTADO
     let group = {
@@ -285,6 +231,7 @@ export class MovementOfCancellationComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
+        console.log(result);
         if (result && result.transactions) {
             this.transactions = result.transactions;
             this.totalItems = result.count;
@@ -330,7 +277,6 @@ export class MovementOfCancellationComponent implements OnInit {
     }
   }
 
-
   public selectTransaction(transactionSelected: Transaction): void {
     
     this.transactionOrigin.push(transactionSelected);
@@ -338,89 +284,15 @@ export class MovementOfCancellationComponent implements OnInit {
       this.getMovementOfArticles(transactionSelected)
     } else {
       this.activeModal.close({ transactionsOrigin: this.transactionOrigin });
-      //this.getMovementOfCashes(transactionSelected)
     }
-    
-    
-    
-  }
-
-  public getMovementOfCashes(transaccion : Transaction ) {
-    
-    /*this._movementOfCashService.getMovementOfCashesByTransaction(transaccion._id).subscribe(
-      result => {
-        if (!result.movementsOfArticles) {
-          
-        } else {
-
-          for (let index = 0; index < result.movementsOfArticles.length; index++) {
-            
-            let movementOfArticle = new MovementOfArticle();
-
-            movementOfArticle.code = result.movementsOfArticles[index].code;
-            movementOfArticle.article = result.movementsOfArticles[index].article;
-            movementOfArticle.category = result.movementsOfArticles[index].category;
-            movementOfArticle.amount = result.movementsOfArticles[index].amount;
-            movementOfArticle.basePrice = result.movementsOfArticles[index].basePrice;
-            movementOfArticle.costPrice = result.movementsOfArticles[index].costPrice;
-            movementOfArticle.description = result.movementsOfArticles[index].description;
-            movementOfArticle.markupPercentage = result.movementsOfArticles[index].markupPercentage;
-            movementOfArticle.markupPrice = result.movementsOfArticles[index].markupPrice;
-            movementOfArticle.printed = result.movementsOfArticles[index].printed;
-            movementOfArticle.quantityMeasure = result.movementsOfArticles[index].quantityMeasure;
-            movementOfArticle.roundingAmount = result.movementsOfArticles[index].roundingAmount;
-            movementOfArticle.salePrice = result.movementsOfArticles[index].salePrice;
-            movementOfArticle.transactionDiscountAmount = result.movementsOfArticles[index].transactionDiscountAmount;
-            movementOfArticle.unitPrice = result.movementsOfArticles[index].unitPrice;
-            movementOfArticle.transaction = this.transactionDestination;
-
-            
-
-            this.movementOfarticles.push(movementOfArticle)
-            
-          }
-
-          this.saveMovementsOfArticles()
-
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );*/
-  }
-
-  public saveMovementOfCashes( transaccion : Transaction) {
-    
-    /*this.loading = true;
-
-    this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashesToFinance).subscribe(
-      result => {
-        if (!result.movementsOfCashes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.getMovementOfCashesByTransaction();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );*/
   }
 
   public getMovementOfArticles( transaccion : Transaction) {
 
-
     this._movementOfArticleService.getMovementsOfTransaction(transaccion._id).subscribe(
       result => {
         if (!result.movementsOfArticles) {
-          
         } else {
-
           for (let index = 0; index < result.movementsOfArticles.length; index++) {
             
             let movementOfArticle = new MovementOfArticle();
@@ -442,14 +314,9 @@ export class MovementOfCancellationComponent implements OnInit {
             movementOfArticle.unitPrice = result.movementsOfArticles[index].unitPrice;
             movementOfArticle.transaction = this.transactionDestination;
 
-            
-
-            this.movementOfarticles.push(movementOfArticle)
-            
+            this.movementOfarticles.push(movementOfArticle);
           }
-
-          this.saveMovementsOfArticles()
-
+          this.saveMovementsOfArticles();
         }
         this.loading = false;
       },
@@ -459,6 +326,10 @@ export class MovementOfCancellationComponent implements OnInit {
       }
     );
 
+  }
+
+  public refresh(): void {
+    this.getCancellations();
   }
 
   public saveMovementsOfArticles() {
@@ -469,8 +340,7 @@ export class MovementOfCancellationComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-         
-
+          this.loading = false;
           this.activeModal.close({ transactionsOrigin: this.transactionOrigin });
         }
       },
@@ -480,7 +350,6 @@ export class MovementOfCancellationComponent implements OnInit {
       }
     );
   }
-
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

@@ -19,7 +19,7 @@ export class MovementOfCancellationService {
 		public _userService: UserService
 	) { }
 
-    public getMovementOfCancellations(
+    public getMovementsOfCancellations(
         project: {},
         match: {},
         sort: {},
@@ -28,7 +28,7 @@ export class MovementOfCancellationService {
         skip: number = 0
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}/movement-of-cancellations`;
+        const URL = `${Config.apiURL}/movements-of-cancellations`;
 
         const headers = new HttpHeaders()
         .set('Content-Type', 'application/json')

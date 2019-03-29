@@ -75,15 +75,15 @@ export class AddSaleOrderComponent implements OnInit {
   public usesOfCFDI: UseOfCFDI[];
   public relationTypes: RelationType[];
   public printers: Printer[];
-  public docOrigin : boolean = false;
+  public showButtonCancelation : boolean;
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public userType: string;
   public posType: string;
   public table: Table; //Solo se usa si posType es igual a resto
-  public loading: boolean = false;
+  public loading: boolean;
   public areCategoriesVisible: boolean = true;
-  public areArticlesVisible: boolean = false;
+  public areArticlesVisible: boolean;
   public categorySelected: Category;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
@@ -332,6 +332,9 @@ export class AddSaleOrderComponent implements OnInit {
             this.transaction.state === TransactionState.Canceled) {
             this.backFinal();
           } else {
+            if(this.transaction.company) {
+              this.showButtonCancelation = true;
+            }
             this.transactionMovement = '' + this.transaction.type.transactionMovement;
             if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
               this.getOpenCashBox();
@@ -1107,6 +1110,19 @@ export class AddSaleOrderComponent implements OnInit {
     let modalRef;
 
     switch (op) {
+      case 'list-cancellations':
+        modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
+        modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
+        modalRef.result.then((result) => {
+          if(result.transactionsOrigin) {
+            this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
+            this.movementOfCancellation.transactionDestination = this.transaction._id;
+            this.showButtonCancelation = false;
+            this.saveMovementOfCancellation();
+          }
+        }, (reason) => {
+        });
+        break;
       case 'movement_of_article':
         movementOfArticle.transaction = this.transaction;
         modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg' });
@@ -1162,7 +1178,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then((result) => {
           if (result.company) {
             this.transaction.company = result.company;
-            this.docOrigin = true
+            this.showButtonCancelation = true;
             this.updateTransaction(false);
           }
         }, (reason) => {
@@ -1438,7 +1454,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.totalPrice > 5000 &&
       !this.transaction.company) {
       isValidCharge = false;
-      this.showMessage("Debe indentificar al cliente para documentos electrónicos con monto mayor a $5.000,00.", 'info', true);
+      this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
     }
 
     if (isValidCharge &&
@@ -1459,7 +1475,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.type.electronics &&
       Config.country === 'MX') {
       isValidCharge = false;
-      this.showMessage("Debe configurar un punto de venta para documentos electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
+      this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
       this.loading = false;
     }
 
@@ -1702,22 +1718,6 @@ export class AddSaleOrderComponent implements OnInit {
       }
     );
   }
-
-  public openCancellation() : void {
-    
-    let modalRef
-    modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
-    modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
-    modalRef.result.then((result) => {
-      if(result.transactionsOrigin) {
-        this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
-        this.movementOfCancellation.transactionDestination = this.transaction._id;
-        this.docOrigin = false;
-        this.saveMovementOfCancellation();
-      }
-    }, (reason) => {
-    });
-  } 
 
   public showCategories(): void {
 

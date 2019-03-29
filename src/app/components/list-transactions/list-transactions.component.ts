@@ -309,9 +309,6 @@ export class ListTransactionsComponent implements OnInit {
           }
         }
         break;
-      case 'cancel':
-        //cancelacion de documentos
-        break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.op = op;

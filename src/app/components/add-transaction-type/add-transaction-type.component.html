@@ -41,7 +41,7 @@
                     <label for="name">Nombre</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Nombre del documento con el que se realizará las transacciones?">
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Nombre de la transacción?">
                         <b>?</b>
                       </button>
                     </div>
@@ -53,7 +53,7 @@
                     <label for="labelPrint">Impresión</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Como saldrá el nombre del comprobante en la impresión?">
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Como saldrá el nombre de la transacción en la impresión?">
                         <b>?</b>
                       </button>
                     </div>
@@ -97,7 +97,7 @@
                       <button type="button"
                               class="btn btn-secondary"
                               placement="right"
-                              ngbPopover="¿Se valida el documento fiscal?"
+                              ngbPopover="¿Se valida la transacción fiscal?"
                               >
                         <b>?</b>
                       </button>
@@ -275,7 +275,7 @@
                     <label for="fixedOrigin">Punto de venta fijo</label>
                     <div class="input-group">
                       <input type="number" class="form-control" formControlName="fixedOrigin" name="fixedOrigin" id="fixedOrigin" [readonly]="readonly"/>
-                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿El documento siempre va a tener el mismo punto de venta?, ¿Cuál?">
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿La transacción siempre va a tener el mismo punto de venta?, ¿Cuál?">
                         <b>?</b>
                       </button>
                     </div>
@@ -291,7 +291,7 @@
                           {{ letter }}
                         </option>
                       </select>
-                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿El documento siempre va a tener la misma letra?, ¿Cuál?">
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿La transacción siempre va a tener la misma letra?, ¿Cuál?">
                         <b>?</b>
                       </button>
                     </div>

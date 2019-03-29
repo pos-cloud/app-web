@@ -8,7 +8,7 @@
     <div class="card-header bg-primary">Listado de Transacciones
       <div class="pull-right">
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
+        <span>
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
       </div>
@@ -25,16 +25,14 @@
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
             <th (click)="orderBy('balance')">Saldo</th>
-
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Numero..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (input)="getTransactions()" placeholder="Saldo..."></th>
-
           </tr>
         </thead>
         <tbody>
@@ -50,14 +48,14 @@
                       title="Ver"><i class="fa fa-eye"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
-            <td *ngIf="transaction.number">{{transaction.number}}</td> 
-            <td *ngIf="transaction.letter">{{transaction.letter}}</td>
-            <td *ngIf="transaction.totalPrice">{{transaction.totalPrice}}</td>
-            <td *ngIf="transaction.balance">{{transaction.balance}}</td>
-
+            <td *ngIf="!transaction.type"></td>
+            <td>{{transaction.number}}</td> 
+            <td>{{transaction.letter}}</td>
+            <td>{{transaction.totalPrice}}</td>
+            <td>{{transaction.balance}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td colspan="16">No se encontraron Documentos para Cancelar</td>
+            <td colspan="16">No se encontraron transacciones para cancelar</td>
           </tr>
           <tr align="center" *ngIf="loading">
             <td colspan="16">Cargando...</td>

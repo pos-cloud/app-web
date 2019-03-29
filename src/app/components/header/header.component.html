@@ -357,9 +357,9 @@
             Tipos de Transacciones
           </button>
           <button class="dropdown-item"
-                  [routerLink]="['admin','cancelacion-de-documentos']"
+                  [routerLink]="['admin','cancelacion-de-transacciones']"
                   [routerLinkActive]="['active']">
-            Cancelación de Documentos
+            Cancelación de Transacciones
           </button>
           <button *ngIf="config.country === 'MX'"
                   class="dropdown-item"
@@ -429,6 +429,23 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
+      <li class="nav-item"
+          ngbDropdown
+          *ngIf="identity">
+        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
+          <i class="fa fa-bell"></i>
+          <span class="badge badge-danger">1</span>
+        </a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <div>
+            <button class="dropdown-item"
+                    (click)="openModal('view-user')"
+                    [routerLinkActive]="['active']">
+              Quedan asd 5 días de licencia
+            </button>
+          </div>
+        </div>
+      </li>
       <li class="nav-item"
           ngbDropdown
           *ngIf="identity">

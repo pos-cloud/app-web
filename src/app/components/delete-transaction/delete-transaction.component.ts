@@ -71,7 +71,6 @@ export class DeleteTransactionComponent implements OnInit {
   }
 
   public deleteTransaction(): void {
-    console.log("delete");
 
     this.loading = true;
 

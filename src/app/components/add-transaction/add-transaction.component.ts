@@ -648,19 +648,6 @@ export class AddTransactionComponent implements OnInit {
     );
   }
 
-  public updateBalance(transactionOriginId){
-
-    this._transactionService.updateBalance(transactionOriginId).subscribe(
-      result => {
-        console.log(result);
-      },
-      error => {
-        console.log(error);
-      }
-    )
-  }
-
-
   public saveMovementOfCancellation() : void {
     
     this._movementOfCancellationService.addMovementOfCancellation(this.movementOfCancellation).subscribe(
@@ -669,9 +656,7 @@ export class AddTransactionComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-
-          console.log(result.movementOfCancellation)
-          
+          this.setValuesForm();
         }
         this.loading = false;
       },
@@ -693,7 +678,6 @@ export class AddTransactionComponent implements OnInit {
         this.movementOfCancellation.transactionDestination = this.transaction._id;
         this.transaction.totalPrice = result.transactionsOrigin[0].balance;
         this.saveMovementOfCancellation();
-        this.setValuesForm()
       }
     }, (reason) => {
     });
