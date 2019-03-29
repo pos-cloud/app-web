@@ -30,7 +30,9 @@ export class ListCancellationTypeComponent implements OnInit {
   public currentPage: number = 0;
   public displayedColumns = [
     "origin.name",
+    "origin.transactionMovement",
     "destination.name",
+    "destination.transactionMovement"
   ];
   public filters: any[];
   public filterValue: string;

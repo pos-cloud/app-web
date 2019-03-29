@@ -28,7 +28,7 @@
                                 [selected]="cancellationType.origin && origin._id===cancellationType.origin._id"
                                 [value]="origin._id"
                                 [disabled]="operation === 'delete'">
-                                {{origin.name}}</option>
+                                {{origin.transactionMovement}}-{{origin.name}}</option>
                       </select>
                       <div *ngIf="formErrors.origin" class="alert alert-danger">
                         {{ formErrors.origin }}
@@ -43,7 +43,7 @@
                                   [selected]="cancellationType.destination && destination._id===cancellationType.destination._id"
                                   [value]="destination._id"
                                   [disabled]="operation === 'delete'">
-                                  {{destination.name}}</option>
+                                  {{destination.transactionMovement}}-{{destination.name}}</option>
                         </select>
                         <div *ngIf="formErrors.destination" class="alert alert-danger">
                           {{ formErrors.destination }}

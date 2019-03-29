@@ -52,8 +52,8 @@
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
             </td>
-            <td *ngIf="cancellationType.origin">{{cancellationType.origin.name}}</td>
-            <td *ngIf="cancellationType.destination">{{cancellationType.destination.name}}</td>
+            <td *ngIf="cancellationType.origin">{{cancellationType.origin.transactionMovement}}-{{cancellationType.origin.name}}</td>
+            <td *ngIf="cancellationType.destination">{{cancellationType.destination.transactionMovement}}-{{cancellationType.destination.name}}</td>
            
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
