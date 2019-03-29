@@ -530,7 +530,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.getMovementsOfTransaction();
-          
         }
         this.loading = false;
       },
@@ -1160,8 +1159,8 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
         modalRef.result.then((result) => {
           if(result.transactionsOrigin) {
-            this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
-            this.movementOfCancellation.transactionDestination = this.transaction._id;
+            this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0];
+            this.movementOfCancellation.transactionDestination = this.transaction;
             this.showButtonCancelation = false;
             this.saveMovementOfCancellation();
           }
