@@ -419,6 +419,19 @@ export class AddTransactionComponent implements OnInit {
     let modalRef;
 
     switch (op) {
+      case 'list-cancellations':
+        modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
+        modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
+        modalRef.result.then((result) => {
+          if(result.transactionsOrigin) {
+            this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
+            this.movementOfCancellation.transactionDestination = this.transaction._id;
+            this.transaction.totalPrice = result.transactionsOrigin[0].balance;
+            this.saveMovementOfCancellation();
+          }
+        }, (reason) => {
+        });
+        break;
       case 'change-company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
         if (transaction.type.transactionMovement === TransactionMovement.Purchase) {
@@ -666,24 +679,6 @@ export class AddTransactionComponent implements OnInit {
       }
     );
   }
-
-  public openCancellation() : void {
-    
-    let modalRef
-    modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
-    modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
-    modalRef.result.then((result) => {
-      if(result.transactionsOrigin) {
-        this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0]._id;
-        this.movementOfCancellation.transactionDestination = this.transaction._id;
-        this.transaction.totalPrice = result.transactionsOrigin[0].balance;
-        this.saveMovementOfCancellation();
-      }
-    }, (reason) => {
-    });
-
-
-  } 
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
