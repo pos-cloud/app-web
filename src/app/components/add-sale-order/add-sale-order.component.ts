@@ -57,6 +57,7 @@ import { RelationTypeService } from 'app/services/relation-type.service';
 import { RelationType } from 'app/models/relation-type';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { CancellationTypeService } from 'app/services/cancellation-type.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -75,7 +76,7 @@ export class AddSaleOrderComponent implements OnInit {
   public usesOfCFDI: UseOfCFDI[];
   public relationTypes: RelationType[];
   public printers: Printer[];
-  public showButtonCancelation : boolean;
+  public showButtonCancelation: boolean;
   public printerSelected: Printer;
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public userType: string;
@@ -123,7 +124,8 @@ export class AddSaleOrderComponent implements OnInit {
     private _cashBoxService: CashBoxService,
     public _useOfCFDIService: UseOfCFDIService,
     public _relationTypeService: RelationTypeService,
-    public _movementOfCancellationService : MovementOfCancellationService
+    public _movementOfCancellationService : MovementOfCancellationService,
+    public _cancellationTypeService: CancellationTypeService
   ) {
     this.transaction = new Transaction();
     this.movementOfCancellation = new MovementOfCancellation();
@@ -135,13 +137,14 @@ export class AddSaleOrderComponent implements OnInit {
     this.kitchenArticlesToPrint = new Array();
     this.usesOfCFDI = new Array();
     this.relationTypes = new Array();
+    this.quotation();
+    this.getUsesOfCFDI();
+    this.getRelationTypes();
+    this.getPrinters();
   }
 
   ngOnInit(): void {
     this.userCountry = Config.country;
-    this.quotation();
-    this.getUsesOfCFDI();
-    this.getRelationTypes();
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -160,11 +163,55 @@ export class AddSaleOrderComponent implements OnInit {
         let transactionId = pathLocation[4];
         this.getTransaction(transactionId);
     }
-    this.getPrinters();
   }
 
   ngAfterViewInit() {
     this.focusEvent.emit(true);
+  }
+
+  public getCancellationTypes() : void {
+
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      "destination._id": 1,
+      "operationType" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._cancellationTypeService.getCancellationTypes(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
+        this.showButtonCancelation = true;
+      } else {
+        this.showButtonCancelation = false;
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.showButtonCancelation = false;
+      this.loading = false;
+    });
   }
 
   public getUsesOfCFDI(): void {
@@ -328,13 +375,11 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
+          this.getCancellationTypes();
           if(this.transaction.state === TransactionState.Closed ||
             this.transaction.state === TransactionState.Canceled) {
             this.backFinal();
           } else {
-            if(this.transaction.company) {
-              this.showButtonCancelation = true;
-            }
             this.transactionMovement = '' + this.transaction.type.transactionMovement;
             if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
               this.getOpenCashBox();
@@ -1178,7 +1223,6 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then((result) => {
           if (result.company) {
             this.transaction.company = result.company;
-            this.showButtonCancelation = true;
             this.updateTransaction(false);
           }
         }, (reason) => {

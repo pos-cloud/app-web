@@ -31,6 +31,7 @@ import { Config } from 'app/app.config';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { CancellationTypeService } from 'app/services/cancellation-type.service';
 
 @Component({
   selector: 'app-add-transaction',
@@ -71,6 +72,7 @@ export class AddTransactionComponent implements OnInit {
   public companyName: string = "Consumidor Final";
   public transactionDate: string;
   public userCountry: string;
+  public showButtonCancelation: boolean;
 
   public formErrors = {
     'date': '',
@@ -129,7 +131,8 @@ export class AddTransactionComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _cashBoxService: CashBoxService,
-    public _userService: UserService
+    public _userService: UserService,
+    public _cancellationTypeService: CancellationTypeService,
   ) {
 
     this.movementOfCancellation = new MovementOfCancellation
@@ -163,6 +166,7 @@ export class AddTransactionComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction = result.transaction;
+          this.getCancellationTypes();
           if(this.transaction.endDate) {
             this.transactionDate = this.transaction.endDate;
           } else {
@@ -199,6 +203,7 @@ export class AddTransactionComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.transaction.type = result.transactionType;
+          this.getCancellationTypes();
           this.transactionMovement = this.transaction.type.transactionMovement.toString();
           if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
             this.transaction.origin = this.transaction.type.fixedOrigin;
@@ -402,6 +407,51 @@ export class AddTransactionComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getCancellationTypes() : void {
+
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      "destination._id": 1,
+      "operationType" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._cancellationTypeService.getCancellationTypes(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
+        this.showButtonCancelation = true;
+      } else {
+        this.showButtonCancelation = false;
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.showButtonCancelation = false;
+      this.loading = false;
+    });
   }
 
   public changeCompany(): void {
