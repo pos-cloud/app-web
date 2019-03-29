@@ -1350,55 +1350,58 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public finish(): void {
-
-    if (!this.transaction.endDate) {
-      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    }
-    if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-      this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-    }
-    this.transaction.expirationDate = this.transaction.endDate;
-    this.transaction.state = TransactionState.Closed;
+    
     this.updateBalance(this.transaction);
-    
-    
-
-    //this.transaction.saldo = this.movementOfCancellation.transactionDestination.totalPrice - this.transaction.totalprice;
-
-
-    this.updateTransaction(false);
-
-    if (this.transaction.type.printable) {
-
-      if (this.posType === "resto") {
-        this.table.employee = null;
-        this.changeStateOfTable(TableState.Available, false);
-      }
-
-      if (this.transaction.type.defectPrinter) {
-        this.printerSelected = this.transaction.type.defectPrinter;
-        this.distributeImpressions(this.transaction.type.defectPrinter);
-      } else {
-        this.openModal('printers');
-      }
-    } else {
-      if (this.posType === "resto") {
-        this.table.employee = null;
-        this.changeStateOfTable(TableState.Available, true);
-      } else {
-        this.backFinal();
-      }
-    }
   }
 
-  public updateBalance(transaction : Transaction){
+  public updateBalance(transaction: Transaction) {
+
+    this.loading = true;
 
     this._transactionService.updateBalance(transaction).subscribe(
       result => {
-        console.log(result);
+        if (!result.transaction) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.transaction.balance = result.transaction.balance;
+          if (!this.transaction.endDate) {
+            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+          }
+          if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+            this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+          }
+          this.transaction.expirationDate = this.transaction.endDate;
+          this.transaction.state = TransactionState.Closed;
+
+          this.updateTransaction(false);
+
+          if (this.transaction.type.printable) {
+
+            if (this.posType === "resto") {
+              this.table.employee = null;
+              this.changeStateOfTable(TableState.Available, false);
+            }
+
+            if (this.transaction.type.defectPrinter) {
+              this.printerSelected = this.transaction.type.defectPrinter;
+              this.distributeImpressions(this.transaction.type.defectPrinter);
+            } else {
+              this.openModal('printers');
+            }
+          } else {
+            if (this.posType === "resto") {
+              this.table.employee = null;
+              this.changeStateOfTable(TableState.Available, true);
+            } else {
+              this.backFinal();
+            }
+          }
+        }
+        this.loading = false;
       },
       error => {
-        console.log(error);
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
       }
     )
   }
