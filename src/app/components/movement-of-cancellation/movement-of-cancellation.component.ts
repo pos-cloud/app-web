@@ -28,7 +28,7 @@ export class MovementOfCancellationComponent implements OnInit {
   public transactionMovement: TransactionMovement;
   public transactions: Transaction[];
   public movementOfarticles: MovementOfArticle[] = new Array();
-  public transactionOrigin : Transaction[] = new Array();
+  public transactionsOrigin : Transaction[] = new Array();
   public transactionTypes: TransactionType[]
   public cancellationTypes : CancellationType[];
   public alertMessage: string = '';
@@ -72,33 +72,40 @@ export class MovementOfCancellationComponent implements OnInit {
     this.existingCanceled = new Array();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     
-    this.getTransaction();
+    this.transactionDestination = await this.getTransaction(this.transaccionDestinationId);
+    if(this.transactionDestination) {
+      this.getCancellationTypes();
+    }
   }
 
-  public getTransaction(): void {
-
+  public getTransaction(transactionId: string): Promise<Transaction> {
+    
     this.loading = true;
 
-    this._transactionService.getTransaction(this.transaccionDestinationId).subscribe(
-      result => {
-        if (!result.transaction) {
-          this.showMessage(result.message, 'danger', false);
+    return new Promise<Transaction>((resolve, reject) => {
+
+      this._transactionService.getTransaction(transactionId).subscribe(
+        result => {
+          if (!result.transaction) {
+            this.showMessage(result.message, 'danger', false);
+            this.totalItems = 0;
+            reject(null);
+          } else {
+            this.hideMessage();
+            resolve(result.transaction);
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
           this.totalItems = 0;
-        } else {
-          this.hideMessage();
-          this.transactionDestination = result.transaction;
-          this.getCancellationTypes();
+          this.loading = false;
+          reject(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.totalItems = 0;
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public getCancellationTypes() : void {
@@ -231,7 +238,6 @@ export class MovementOfCancellationComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        console.log(result);
         if (result && result.transactions) {
             this.transactions = result.transactions;
             this.totalItems = result.count;
@@ -277,13 +283,14 @@ export class MovementOfCancellationComponent implements OnInit {
     }
   }
 
-  public selectTransaction(transactionSelected: Transaction): void {
+  async selectTransaction(transactionSelected: Transaction) {
     
-    this.transactionOrigin.push(transactionSelected);
+    transactionSelected = await this.getTransaction(transactionSelected._id);
+    this.transactionsOrigin.push(transactionSelected);
     if (this.transactionDestination.type.requestArticles) {
-      this.getMovementOfArticles(transactionSelected)
+      this.getMovementOfArticles(transactionSelected);
     } else {
-      this.activeModal.close({ transactionsOrigin: this.transactionOrigin });
+      this.activeModal.close({ transactionsOrigin: this.transactionsOrigin });
     }
   }
 
@@ -293,26 +300,36 @@ export class MovementOfCancellationComponent implements OnInit {
       result => {
         if (!result.movementsOfArticles) {
         } else {
-          for (let index = 0; index < result.movementsOfArticles.length; index++) {
+          for (let mov of result.movementsOfArticles) {
             
             let movementOfArticle = new MovementOfArticle();
 
-            movementOfArticle.code = result.movementsOfArticles[index].code;
-            movementOfArticle.article = result.movementsOfArticles[index].article;
-            movementOfArticle.category = result.movementsOfArticles[index].category;
-            movementOfArticle.amount = result.movementsOfArticles[index].amount;
-            movementOfArticle.basePrice = result.movementsOfArticles[index].basePrice;
-            movementOfArticle.costPrice = result.movementsOfArticles[index].costPrice;
-            movementOfArticle.description = result.movementsOfArticles[index].description;
-            movementOfArticle.markupPercentage = result.movementsOfArticles[index].markupPercentage;
-            movementOfArticle.markupPrice = result.movementsOfArticles[index].markupPrice;
-            movementOfArticle.printed = result.movementsOfArticles[index].printed;
-            movementOfArticle.quantityMeasure = result.movementsOfArticles[index].quantityMeasure;
-            movementOfArticle.roundingAmount = result.movementsOfArticles[index].roundingAmount;
-            movementOfArticle.salePrice = result.movementsOfArticles[index].salePrice;
-            movementOfArticle.transactionDiscountAmount = result.movementsOfArticles[index].transactionDiscountAmount;
-            movementOfArticle.unitPrice = result.movementsOfArticles[index].unitPrice;
+            movementOfArticle.code = mov.code;
+            movementOfArticle.codeSAT = mov.codeSAT;
+            movementOfArticle.description = mov.description;
+            movementOfArticle.observation = mov.observation;
+            movementOfArticle.basePrice = mov.basePrice;
+            movementOfArticle.otherFields = mov.otherFields;
+            movementOfArticle.taxes = mov.taxes;
+            movementOfArticle.costPrice = mov.costPrice;
+            movementOfArticle.unitPrice = mov.unitPrice;
+            movementOfArticle.markupPercentage = mov.markupPercentage;
+            movementOfArticle.markupPrice = mov.markupPrice;
+            movementOfArticle.transactionDiscountAmount = mov.transactionDiscountAmount;
+            movementOfArticle.salePrice = mov.salePrice;
+            movementOfArticle.roundingAmount = mov.roundingAmount;
+            movementOfArticle.make = mov.make;
+            movementOfArticle.category = mov.category;
+            movementOfArticle.amount = mov.amount;
+            movementOfArticle.quantityForStock = mov.quantityForStock;
+            movementOfArticle.barcode = mov.barcode;
+            movementOfArticle.notes = mov.notes;
+            movementOfArticle.printed = mov.printed;
+            movementOfArticle.printIn = mov.printIn;
+            movementOfArticle.article = mov.article;
             movementOfArticle.transaction = this.transactionDestination;
+            movementOfArticle.measure = mov.measure;
+            movementOfArticle.quantityMeasure = mov.quantityMeasure;
 
             this.movementOfarticles.push(movementOfArticle);
           }
@@ -329,7 +346,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getCancellations();
+    this.getCancellationTypes();
   }
 
   public saveMovementsOfArticles() {
@@ -341,7 +358,7 @@ export class MovementOfCancellationComponent implements OnInit {
           this.loading = false;
         } else {
           this.loading = false;
-          this.activeModal.close({ transactionsOrigin: this.transactionOrigin });
+          this.activeModal.close({ transactionsOrigin: this.transactionsOrigin });
         }
       },
       error => {

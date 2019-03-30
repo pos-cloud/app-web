@@ -26,6 +26,7 @@ export class MovementOfArticle {
     public category: Category;
     public barcode: string;
     public amount: number = 0;
+    public quantityForStock: number = 0;
     public notes: string;
     public printIn: ArticlePrintIn;
     public printed: number = 0;
