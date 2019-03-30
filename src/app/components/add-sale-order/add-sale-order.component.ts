@@ -479,7 +479,13 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.cashBox = result.cashBoxes[0];
           if(this.transaction._id && this.transaction._id !== '') {
-            this.updateTransaction();
+            this.updateTransaction().then(
+              transaction => {
+                if(transaction) {
+                  this.transaction = transaction;
+                }
+              }
+            );
           } else {
             this.addTransaction();
           }
@@ -502,14 +508,15 @@ export class AddSaleOrderComponent implements OnInit {
     this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
 
     this._transactionService.saveTransaction(this.transaction).subscribe(
-      result => {
+      async result => {
         if (!result.transaction) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
           if (this.posType === "resto") {
-            this.changeStateOfTable(TableState.Busy, false);
+            this.table.state = TableState.Busy;
+            await this.updateTable();
           }
         }
         this.loading = false;
@@ -521,15 +528,28 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public saveMovementOfCancellation() : void {
-    
+  async saveMovementOfCancellation() {
+
     this._movementOfCancellationService.addMovementOfCancellation(this.movementOfCancellation).subscribe(
-      result => {
+      async result => {
         if (!result.movementOfCancellation) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.hideMessage();
-          this.getMovementsOfTransaction();
+          this.transaction.origin = this.movementOfCancellation.transactionOrigin.origin;
+          this.transaction.exempt = this.movementOfCancellation.transactionOrigin.exempt;
+          this.transaction.discountAmount = this.movementOfCancellation.transactionOrigin.discountAmount;
+          this.transaction.discountPercent = this.movementOfCancellation.transactionOrigin.discountPercent;
+          this.transaction.taxes = this.movementOfCancellation.transactionOrigin.taxes;
+          this.transaction.totalPrice = this.movementOfCancellation.transactionOrigin.totalPrice;
+          this.transaction.roundingAmount = this.movementOfCancellation.transactionOrigin.roundingAmount;
+          this.updateTransaction().then(
+            transaction => {
+              if(transaction) {
+                this.transaction = transaction;
+                this.getMovementsOfTransaction();
+              }
+            }
+          );
         }
         this.loading = false;
       },
@@ -540,31 +560,31 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public updateTransaction(closed: boolean = false): void {
-
+  public updateTransaction(): Promise<Transaction> {
    
     this.loading = true;
-
+    
     this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
     this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
     
-    this._transactionService.updateTransaction(this.transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          //No anulamos el mensaje para que figuren en el pos, si es que da otro error.
-          if (closed) {
-            this.backFinal();
+    return new Promise<Transaction>((resolve, reject) => {
+      this._transactionService.updateTransaction(this.transaction).subscribe(
+        result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.transaction);
           }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public showArticlesOfCategory(category: Category): void {
@@ -574,7 +594,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = false;
   }
 
-  public close() {
+  async close() {
 
     this.typeOfOperationToPrint = 'item';
 
@@ -596,7 +616,13 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = "kitchen";
       this.openModal('printers');
     } else if (this.posType === "resto") {
-      this.changeStateOfTable(TableState.Busy, true);
+      this.table.state = TableState.Busy;
+      await this.updateTable().then(table => {
+        if(table) {
+          this.table = table;
+          this.backFinal();
+        }
+      });
     } else {
       this.backFinal();
     }
@@ -609,7 +635,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed = this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
 
     this._movementOfArticleService.updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
-      result => {
+      async result => {
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
@@ -618,7 +644,13 @@ export class AddSaleOrderComponent implements OnInit {
             this.updateMovementOfArticlePrinted();
           } else {
             if (this.posType === "resto") {
-              this.changeStateOfTable(TableState.Busy, true);
+              this.table.state = TableState.Busy;
+              await this.updateTable().then(table => {
+                if(table) {
+                  this.table = table;
+                  this.backFinal();
+                }
+              });
             } else {
               this.backFinal();
             }
@@ -633,48 +665,25 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public changeStateOfTable(state: any, closed: boolean): void {
+  public updateTable(): Promise<Table> {
 
-    this.loading = true;
+    return new Promise<Table>((resolve, reject) => {
 
-    this.table.state = state;
-    this._tableService.updateTable(this.table).subscribe(
-      result => {
-        if (!result.table) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.table = result.table;
-          if (closed) {
-            this.backFinal();
+      this._tableService.updateTable(this.table).subscribe(
+        result => {
+          if (!result.table) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.table);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          reject(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public updateTable(): void {
-
-    this.loading = true;
-
-    this._tableService.updateTable(this.table).subscribe(
-      result => {
-        if (!result.table) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.table = result.table;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public addItem(itemData: MovementOfArticle): void {
@@ -925,7 +934,7 @@ export class AddSaleOrderComponent implements OnInit {
     this.areCategoriesVisible = true;
   }
 
-  public updateOthersFields(): void {
+  async updateOthersFields() {
 
     let transactionTaxes: Taxes[] = new Array();
     let transactionTaxesAUX: Taxes[] = new Array();
@@ -972,10 +981,16 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     this.transaction.taxes = transactionTaxes;
-    this.updateTransaction();
+    await this.updateTransaction().then(
+      transaction => {
+        if(transaction) {
+          this.transaction = transaction;
+        }
+      }
+    );
   }
 
-  public updateTaxes(): void {
+  async updateTaxes() {
 
     let transactionTaxes: Taxes[] = new Array();
     let transactionTaxesAUX: Taxes[] = new Array();
@@ -1022,10 +1037,16 @@ export class AddSaleOrderComponent implements OnInit {
     }
 
     this.transaction.taxes = transactionTaxes;
-    this.updateTransaction();
+    await this.updateTransaction().then(
+      transaction => {
+        if(transaction) {
+          this.transaction = transaction;
+        }
+      }
+    );
   }
 
-  public updatePrices(discountPercent?: number): void {
+  async updatePrices(discountPercent?: number) {
 
     this.transaction.totalPrice = 0;
     this.transaction.discountAmount = 0;
@@ -1058,7 +1079,13 @@ export class AddSaleOrderComponent implements OnInit {
       this.updateTaxes();
     } else {
       this.transaction.exempt = this.transaction.totalPrice;
-      this.updateTransaction();
+      await this.updateTransaction().then(
+        transaction => {
+          if(transaction) {
+            this.transaction = transaction;
+          }
+        }
+      );
     }
   }
 
@@ -1158,7 +1185,7 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
         modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
         modalRef.result.then((result) => {
-          if(result.transactionsOrigin) {
+          if(result.transactionsOrigin && result.transactionsOrigin.length > 0) {
             this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0];
             this.movementOfCancellation.transactionDestination = this.transaction;
             this.showButtonCancelation = false;
@@ -1198,11 +1225,17 @@ export class AddSaleOrderComponent implements OnInit {
       case 'cancel':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transaction = this.transaction;
-        modalRef.result.then((result) => {
+        modalRef.result.then(async (result) => {
           if (result === 'delete_close') {
             if (this.posType === "resto") {
               this.table.employee = null;
-              this.changeStateOfTable(TableState.Available, true);
+              this.table.state = TableState.Available;
+              await this.updateTable().then(table => {
+                if(table) {
+                  this.table = table;
+                  this.backFinal();
+                }
+              });
             } else {
               this.backFinal();
             }
@@ -1219,10 +1252,16 @@ export class AddSaleOrderComponent implements OnInit {
         } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
           modalRef.componentInstance.type = CompanyType.Client;
         }
-        modalRef.result.then((result) => {
+        modalRef.result.then(async (result) => {
           if (result.company) {
             this.transaction.company = result.company;
-            this.updateTransaction(false);
+            await this.updateTransaction().then(
+              transaction => {
+                if(transaction) {
+                  this.transaction = transaction;
+                }
+              }
+            );
           }
         }, (reason) => {
 
@@ -1336,13 +1375,19 @@ export class AddSaleOrderComponent implements OnInit {
         });
         break;
       case 'change-date':
-        modalRef = this._modalService.open(this.contentChangeDate).result.then((result) => {
+        modalRef = this._modalService.open(this.contentChangeDate).result.then(async (result) => {
           if (result !== "cancel" && result !== '') {
             if(this.transaction.endDate && moment(this.transaction.endDate, 'YYYY-MM-DD').isValid()) {
               this.transaction.endDate = moment(this.transaction.endDate, 'YYYY-MM-DD').format('YYYY-MM-DDTHH:mm:ssZ');
               this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
               this.transaction.expirationDate = this.transaction.endDate;
-              this.updateTransaction();
+              await this.updateTransaction().then(
+                transaction => {
+                  if(transaction) {
+                    this.transaction = transaction;
+                  }
+                }
+              );
             }
           }
         }, (reason) => {
@@ -1353,13 +1398,25 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.requireLogin = false;
         modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
         modalRef.componentInstance.op = "change-employee";
-        modalRef.result.then((result) => {
+        modalRef.result.then(async (result) => {
           if (result.employee) {
             this.transaction.turnClosing = result.turn;
             this.transaction.employeeClosing = result.employee;
             this.table.employee = result.employee;
-            this.updateTransaction(false);
-            this.updateTable();
+            await this.updateTransaction().then(
+              async transaction => {
+                if(transaction) {
+                  this.transaction = transaction;
+                  await this.updateTable().then(
+                    table => {
+                      if(table) {
+                        this.table = table;
+                      }
+                    }
+                  );
+                }
+              }
+            );
           }
         }, (reason) => {
 
@@ -1392,39 +1449,30 @@ export class AddSaleOrderComponent implements OnInit {
     };
   }
 
-  public finish(): void {
+  async finish() {
+    await this.updateBalance().then(async balance => {
+      if(balance !== null) {
+        this.transaction.balance = balance;
+        if (!this.transaction.endDate) {
+          this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+        }
+        if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+          this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+        }
+        this.transaction.expirationDate = this.transaction.endDate;
+        this.transaction.state = TransactionState.Closed;
     
-    this.updateBalance(this.transaction);
-  }
+        await this.updateTransaction().then(async transaction => {
+          this.transaction = transaction;
 
-  public updateBalance(transaction: Transaction) {
-
-    this.loading = true;
-
-    this._transactionService.updateBalance(transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction.balance = result.transaction.balance;
-          if (!this.transaction.endDate) {
-            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-          }
-          if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-            this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-          }
-          this.transaction.expirationDate = this.transaction.endDate;
-          this.transaction.state = TransactionState.Closed;
-
-          this.updateTransaction(false);
-
-          if (this.transaction.type.printable) {
-
+          if (this.transaction && this.transaction.type.printable) {
+      
             if (this.posType === "resto") {
               this.table.employee = null;
-              this.changeStateOfTable(TableState.Available, false);
+              this.table.state = TableState.Available;
+              this.table = await this.updateTable();
             }
-
+      
             if (this.transaction.type.defectPrinter) {
               this.printerSelected = this.transaction.type.defectPrinter;
               this.distributeImpressions(this.transaction.type.defectPrinter);
@@ -1434,19 +1482,40 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             if (this.posType === "resto") {
               this.table.employee = null;
-              this.changeStateOfTable(TableState.Available, true);
+              this.table.state = TableState.Available;
+              await this.updateTable().then(table => {
+                if(table) {
+                  this.table = table;
+                  this.backFinal();
+                }
+              });
             } else {
               this.backFinal();
             }
           }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+        });
       }
-    )
+    });
+  }
+
+  public updateBalance(): Promise<number> {
+
+    return new Promise<number>((resolve, reject) => {
+      this._transactionService.updateBalance(this.transaction).subscribe(
+        async result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.transaction.balance);  
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          reject(null);
+        }
+      )
+    });
   }
 
   public getTaxVAT(movementOfArticle: MovementOfArticle): void {
