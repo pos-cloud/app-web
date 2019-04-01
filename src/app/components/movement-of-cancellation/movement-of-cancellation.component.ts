@@ -15,6 +15,10 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 import { MovementOfArticle } from 'app/models/movement-of-article';
 import { MovementOfCashService } from 'app/services/movement-of-cash.service';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { ArticleFields } from 'app/models/article-fields';
+import { ArticleFieldType } from 'app/models/article-field';
+import { Taxes } from 'app/models/taxes';
 
 @Component({
   selector: 'app-movement-of-cancellation',
@@ -53,6 +57,7 @@ export class MovementOfCancellationComponent implements OnInit {
   ];
   public filters: any[];
   public filterValue: string;
+  public roundNumber = new RoundNumberPipe();
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -330,6 +335,11 @@ export class MovementOfCancellationComponent implements OnInit {
             movementOfArticle.transaction = this.transactionDestination;
             movementOfArticle.measure = mov.measure;
             movementOfArticle.quantityMeasure = mov.quantityMeasure;
+            if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              this.recalculateSalePrice(movementOfArticle);
+            } else {
+              this.recalculateCostPrice(movementOfArticle);
+            }
 
             this.movementOfarticles.push(movementOfArticle);
           }
@@ -345,10 +355,106 @@ export class MovementOfCancellationComponent implements OnInit {
 
   }
 
+  public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
+
+    movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
+    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
+    movementOfArticle.markupPrice = 0.00;
+    movementOfArticle.markupPercentage = 0.00;
+
+    let taxedAmount = movementOfArticle.basePrice;
+    movementOfArticle.costPrice = 0;
+
+    let fields: ArticleFields[] = new Array();
+    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+      for (const field of movementOfArticle.otherFields) {
+        if (field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+        } else if (field.datatype === ArticleFieldType.Number) {
+          field.amount = parseFloat(field.value);
+        }
+        if (field.articleField.modifyVAT) {
+          taxedAmount += field.amount;
+        } else {
+          movementOfArticle.costPrice += field.amount;
+        }
+        fields.push(field);
+      }
+    }
+    movementOfArticle.otherFields = fields;
+    if (movementOfArticle.transaction.type.requestTaxes) {
+      if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
+        let taxes: Taxes[] = new Array();
+        for (let articleTax of movementOfArticle.article.taxes) {
+          articleTax.taxBase = taxedAmount;
+          articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          taxes.push(articleTax);
+          movementOfArticle.costPrice += articleTax.taxAmount;
+        }
+        movementOfArticle.taxes = taxes;
+      }
+    }
+    movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
+    movementOfArticle.salePrice = movementOfArticle.costPrice + movementOfArticle.roundingAmount;
+
+    return movementOfArticle;
+  }
+
+  // EL IMPUESTO VA SOBRE EL ARTICULO Y NO SOBRE EL MOVIMIENTO
+  public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
+
+    if (movementOfArticle.article) {
+      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
+    }
+
+    let fields: ArticleFields[] = new Array();
+    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+      for (const field of movementOfArticle.otherFields) {
+        if (field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+        } else if (field.datatype === ArticleFieldType.Number) {
+          field.amount = parseFloat(field.value);
+        }
+        fields.push(field);
+      }
+    }
+    movementOfArticle.otherFields = fields;
+
+    if (movementOfArticle.article) {
+      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
+    }
+    movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
+    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
+    movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
+    movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
+
+    if (movementOfArticle.transaction.type.requestTaxes) {
+      let tax: Taxes = new Taxes();
+      let taxes: Taxes[] = new Array();
+      if (movementOfArticle.article && movementOfArticle.article.taxes) {
+        for (let taxAux of movementOfArticle.article.taxes) {
+          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          tax.tax = taxAux.tax;
+          tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
+          tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+          taxes.push(tax);
+        }
+      }
+      movementOfArticle.taxes = taxes;
+    }
+
+    return movementOfArticle;
+  }
+
   public refresh(): void {
     this.getCancellationTypes();
   }
 
+  // EL IMPUESTO VA SOBRE EL ARTICULO Y NO SOBRE EL MOVIMIENTO
   public saveMovementsOfArticles() {
 
     this._movementOfArticleService.saveMovementsOfArticles(this.movementOfarticles).subscribe(
