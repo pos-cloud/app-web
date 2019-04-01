@@ -28,6 +28,8 @@ import { Taxes } from 'app/models/taxes';
 export class MovementOfCancellationComponent implements OnInit {
 
   @Input() transaccionDestinationId: string;
+  @Input() transaccionDestinationViewId: string;
+  @Input() transaccionOriginViewId : string;
   public transactionDestination: Transaction;
   public transactionMovement: TransactionMovement;
   public transactions: Transaction[];
@@ -78,11 +80,79 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+    if(this.transaccionDestinationViewId || this.transaccionOriginViewId) {
+      this.getCancellationsOfMovements();
+    }
     
     this.transactionDestination = await this.getTransaction(this.transaccionDestinationId);
     if(this.transactionDestination) {
       this.getCancellationTypes();
     }
+  }
+
+  public getCancellationsOfMovements() {
+    
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+
+    let match;
+    // FILTRAMOS LA CONSULTA
+    if(this.transaccionOriginViewId) {
+      match = { "transactionOrigin": { $oid: this.transaccionOriginViewId} , "operationType": { "$ne": "D" } };
+    } else {
+      match = { "transactionDestination": { $oid: this.transaccionDestinationViewId} , "operationType": { "$ne": "D" } };
+    }
+    
+    // CAMPOS A TRAER
+    let project = {
+      "transactionOrigin": 1,
+      "transactionDestination": 1,
+      "operationType" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._movementOfCancellation.getMovementsOfCancellations(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(async result => {
+      console.log(result);
+      if (result && result.movementsOfCancellations) {
+
+        for (let index = 0; index < result.movementsOfCancellations.length; index++) {
+          
+          let transaction = new Transaction;
+
+          if(this.transaccionOriginViewId){
+            transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionDestination)
+          } else {
+            transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
+          }
+
+          this.transactions.push(transaction);
+      
+        }
+
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.totalItems = 0;
+      this.loading = false;
+    });
   }
 
   public getTransaction(transactionId: string): Promise<Transaction> {

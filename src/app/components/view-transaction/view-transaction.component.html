@@ -206,6 +206,16 @@
           </div>
         </ng-template>
       </ngb-tab>
+      <ngb-tab title="Transacciones Cancelatorias">
+        <ng-template ngbTabContent>
+          <app-movement-of-cancellation [transaccionOriginViewId]="transaction._id"></app-movement-of-cancellation>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Transacciones Canceladas">
+          <ng-template ngbTabContent>
+            <app-movement-of-cancellation [transaccionDestinationViewId]="transaction._id"></app-movement-of-cancellation>
+          </ng-template>
+        </ngb-tab>
       <ngb-tab title="Auditoría">
         <ng-template ngbTabContent>
           <div class="row tab-content">
