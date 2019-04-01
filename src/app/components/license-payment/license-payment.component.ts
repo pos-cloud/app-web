@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-// service
+// SERVICES
 import { ConfigService } from './../../services/config.service';
 
 import { Config } from 'app/app.config';
@@ -28,7 +28,6 @@ export class LicensePaymentComponent implements OnInit {
   public paymentTotal;
 
   constructor(
-
     public _configService: ConfigService,
     public activeModal: NgbActiveModal,
     public _router: Router,
@@ -53,9 +52,7 @@ export class LicensePaymentComponent implements OnInit {
   ngAfterViewInit() {
   }
 
-
-  public changePrice(month){
-    
+  public changePrice(month) {
     
     this.toggleButton = true;
     
@@ -71,18 +68,14 @@ export class LicensePaymentComponent implements OnInit {
           this.toggleButton = true;
           break;
         case '12':
-          this.paymentTotal = (Config.licenseCost*month) - ((32*(Config.licenseCost*month))/100);
-          
+          this.paymentTotal = (Config.licenseCost*month) - ((32*(Config.licenseCost*month))/100);   
           break;
       }
-
     }
-    
   }
 
   public paymentSelect(method :string ) : void {
 
-    
     switch (method) {
       case 'mp':
           this._configService.generateLicensePayment(this.paymentTotal).subscribe(
@@ -102,12 +95,7 @@ export class LicensePaymentComponent implements OnInit {
         break;
       case 'tf':
             this.wireTransfer = true;
-
         break;
     }
-
-
-
   }
-
 }
