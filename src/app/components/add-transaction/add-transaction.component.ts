@@ -441,7 +441,9 @@ export class AddTransactionComponent implements OnInit {
       skip // SKIP
     ).subscribe(result => {
       if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-        this.showButtonCancelation = true;
+        if(!this.transaction.type.requestArticles) {
+          this.showButtonCancelation = true;
+        }
       } else {
         this.showButtonCancelation = false;
       }
@@ -476,7 +478,6 @@ export class AddTransactionComponent implements OnInit {
           if(result.transactionsOrigin) {
             this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0];
             this.movementOfCancellation.transactionDestination = this.transaction;
-            this.transaction.totalPrice = result.transactionsOrigin[0].balance;
             this.saveMovementOfCancellation();
           }
         }, (reason) => {
@@ -700,6 +701,8 @@ export class AddTransactionComponent implements OnInit {
           this.transaction = result.transaction;
           if(close) {
             this.activeModal.close({ transaction: this.transaction });
+          } else {
+            this.setValuesForm();
           }
         }
         this.loading = false;
@@ -718,8 +721,12 @@ export class AddTransactionComponent implements OnInit {
         if (!result.movementOfCancellation) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.hideMessage();
-          this.setValuesForm();
+          this.movementOfCancellation = result.movementOfCancellation;
+          if(!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0) {
+            this.transaction.origin = this.movementOfCancellation.transactionOrigin.origin;
+          }
+          this.transaction.totalPrice = this.movementOfCancellation.transactionOrigin.balance;
+          this.updateTransaction();
         }
         this.loading = false;
       },

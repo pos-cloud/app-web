@@ -535,9 +535,6 @@ export class AddSaleOrderComponent implements OnInit {
         if (!result.movementOfCancellation) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          if(!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0) {
-            this.transaction.origin = this.movementOfCancellation.transactionOrigin.origin;
-          }
           this.transaction.exempt = this.movementOfCancellation.transactionOrigin.exempt;
           this.transaction.discountAmount = this.movementOfCancellation.transactionOrigin.discountAmount;
           this.transaction.discountPercent = this.movementOfCancellation.transactionOrigin.discountPercent;
