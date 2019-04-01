@@ -134,8 +134,9 @@ export class AddTransactionComponent implements OnInit {
     public _userService: UserService,
     public _cancellationTypeService: CancellationTypeService,
   ) {
-
-    this.movementOfCancellation = new MovementOfCancellation
+    this.movementOfCancellation = new MovementOfCancellation();
+    this.transaction = new Transaction();
+    this.transactionDate = this.transaction.startDate;
   }
 
   ngOnInit(): void {
@@ -144,9 +145,6 @@ export class AddTransactionComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-
-    this.transaction = new Transaction();
-    this.transactionDate = this.transaction.startDate;
     this.buildForm();
 
     if (this.transactionId) {

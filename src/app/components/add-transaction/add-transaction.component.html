@@ -68,7 +68,7 @@
           <label for="letter" class="control-label">Letra:</label>
           <select class="form-control" formControlName="letter">
             <option *ngFor="let letter of letters"
-                    [selected]="!transaction.letter && transaction.company.vatCondition.transactionLetter === letter || transaction.letter === letter"
+                    [selected]="(!transaction.letter && transaction.company && transaction.company.vatCondition && transaction.company.vatCondition.transactionLetter === letter) || transaction.letter === letter"
                     [value]="letter"
                     [disabled]="readonly">
                     {{ letter }}
@@ -121,7 +121,7 @@
                             [articleTaxes]="taxes"
                             *ngIf="transaction && transaction.type && transaction.type.requestTaxes&& !transaction.type.requestArticles">
       </app-add-article-tax>
-      <div class = "row">
+      <div class = "row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles">
         <div class = "col-md-12">
             <label for="totalPrice" class="control-label">Importe Total:</label>
         </div>
@@ -141,7 +141,7 @@
             Buscar Transacción Origen
           </button>
         </div>
-        <div class="form-group col-md-12" *ngIf="!showButtonCancelation">
+        <div class="form-group col-md-12" *ngIf="!showButtonCancelation || !transaction.company || !transaction.type.requestCompany">
             <div class="input-group">
               <span class="input-group-addon">$</span>
               <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
