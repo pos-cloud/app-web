@@ -237,7 +237,7 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'barcode': [this.article.barcode, [
-        Validators.maxLength(10)
+        Validators.maxLength(14)
         ]
       ],
       'printIn': [this.article.printIn, [

@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 
-import { CancellationTypeService } from '../../services/cancellation-type.service'
-import { TransactionTypeService } from '../../services/transaction-type.service'
+import { CancellationTypeService } from '../../services/cancellation-type.service';
+import { TransactionTypeService } from '../../services/transaction-type.service';
 
-import { CancellationType } from '../../models/cancellation-type'
-import { TransactionType } from '../../models/transaction-type'
+import { CancellationType } from '../../models/cancellation-type';
+import { TransactionType } from '../../models/transaction-type';
 
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-cancellation-type',
@@ -31,7 +31,6 @@ export class CancellationTypeComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public hasChanged = false;
 
   public formErrors = {
     'origin': '',
@@ -40,7 +39,6 @@ export class CancellationTypeComponent implements OnInit {
   };
 
   public validationMessages = {
-    
     'origin': {
       'required': 'Este campo es requerido.'
     },
@@ -52,7 +50,7 @@ export class CancellationTypeComponent implements OnInit {
   public cancellationTypeForm: FormGroup;
   public origins: TransactionType[] = new Array();
   public destinations: TransactionType[] = new Array();
-
+  public originSelected: TransactionType;
 
   constructor(
     public alertConfig: NgbAlertConfig,
@@ -60,7 +58,7 @@ export class CancellationTypeComponent implements OnInit {
     public transactionTypeService : TransactionTypeService,
     public _router: Router,
     public _fb: FormBuilder,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
   ) {
     this.cancellationType = new CancellationType();
    }
@@ -68,70 +66,73 @@ export class CancellationTypeComponent implements OnInit {
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getTransactionType();
+    this.getOrigins();
     this.buildForm()
     
     if (this.cancellationTypeId) {
-      this.getCancellationType(this.cancellationTypeId);
+      this.getCancellationType();
     }
   }
 
-  public closeModal() {
-    this.activeModal.close(this.hasChanged);
-  }
+  public getCancellationType() {
 
-  public getCancellationType(id: string) {
+    this.loading = true;
 
-     this._cancelationTypeService.getCancellationType(this.cancellationTypeId).subscribe(result => {
-
-         if (result['cancellationType']) {
-
-          this.cancellationType = result['cancellationType']
+    this._cancelationTypeService.getCancellationType(this.cancellationTypeId).subscribe(
+      result => {
+        if (!result.cancellationType) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.hideMessage();
+          this.cancellationType = result.cancellationType;
+          this.originSelected = this.cancellationType.origin;
           this.setValueForm();
-          
-         } else {
-             
-         }
-     });
+          this.getDestinations();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
-
 
   public setValueForm(): void {
 
-  if (!this.cancellationType._id) { this.cancellationType._id = ''; }
+    if (!this.cancellationType._id) { this.cancellationType._id = ''; }
 
-  let origin;
-  if (!this.cancellationType.origin) {
-    origin = null;
-  } else {
-    if (this.cancellationType.origin._id) {
-      origin = this.cancellationType.origin._id;
+    let origin;
+    if (!this.cancellationType.origin) {
+      origin = null;
     } else {
-      origin = this.cancellationType.origin;
+      if (this.cancellationType.origin._id) {
+        origin = this.cancellationType.origin._id;
+      } else {
+        origin = this.cancellationType.origin;
+      }
     }
-  }
 
-  let destination;
-  if (!this.cancellationType.destination) {
-    destination = null;
-  } else {
-    if (this.cancellationType.destination._id) {
-      destination = this.cancellationType.destination._id;
+    let destination;
+    if (!this.cancellationType.destination) {
+      destination = null;
     } else {
-      destination = this.cancellationType.destination;
+      if (this.cancellationType.destination._id) {
+        destination = this.cancellationType.destination._id;
+      } else {
+        destination = this.cancellationType.destination;
+      }
     }
-  }
 
-  const values = {
-    '_id': this.cancellationType._id,
-    'origin': origin,
-    'destination': destination,
-  };
-
+    const values = {
+      '_id': this.cancellationType._id,
+      'origin': origin,
+      'destination': destination,
+    };
     this.cancellationTypeForm.setValue(values);
   }
 
-  public getTransactionType(): void {
+  public getOrigins(): void {
 
     this.loading = true;
 
@@ -140,28 +141,59 @@ export class CancellationTypeComponent implements OnInit {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          
-          this.origins = result.transactionTypes
-          this.destinations = result.transactionTypes
-
+          this.origins = result.transactionTypes;
         }
         this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-      });
+      }
+    );
   }
 
+  public getDestinations(): void {
+
+    this.loading = true;
+    
+    for(let origin of this.origins) {
+      if (origin._id === this.cancellationTypeForm.value.origin) {
+        this.originSelected = origin;
+      }
+    }
+
+    let query = 'where="transactionMovement":"' + this.originSelected.transactionMovement + '","_id":{"$ne":"' + this.originSelected._id + '"}';
+    
+    this.transactionTypeService.getTransactionTypes(query).subscribe(
+      result => {
+        if (!result.transactionTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.destinations = result.transactionTypes;
+          if(this.cancellationType.origin &&
+            this.cancellationType.destination) {
+            this.setValueForm();
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
   public buildForm(): void {
 
     this.cancellationTypeForm = this._fb.group({
       '_id' : [this.cancellationType._id, []],
       'origin': [this.cancellationType.origin, [
+        Validators.required
         ]
       ],
       'destination': [this.cancellationType.destination, [
+        Validators.required
         ]
       ]
     });
@@ -203,30 +235,33 @@ export class CancellationTypeComponent implements OnInit {
       default:
         break;
     }
-
   }
 
   public updateCancellationType() {
 
-      this.loading = true;
-  
-      this._cancelationTypeService.updateCancellationType(this.cancellationTypeForm.value)
-        .pipe(
-           
-        )
-        .subscribe(result => {
+    this.loading = true;
 
-          if (result && result['cancellationType']) {
-              this.cancellationType = result['cancellationType'];
-              this.loading = false;
-              this.hasChanged = true;
-              this.showMessage('La cancelación se ha actualizado con éxito.', 'success', false);
-          }
-        });
-        
+    this.cancellationType = this.cancellationTypeForm.value;
+
+    this._cancelationTypeService.updateCancellationType(this.cancellationType).subscribe(
+      result => {
+        if (!result.cancellationType) {
+          this.loading = false;
+          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+        } else {
+            this.loading = false;
+            this.showMessage('El tipo de cancelación se ha actualizado con éxito.', 'success', false);
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public saveCancellationType() {
+
     this.loading = true;
 
     this.cancellationType = this.cancellationTypeForm.value;
@@ -237,10 +272,9 @@ export class CancellationTypeComponent implements OnInit {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
-          
             this.loading = false;
-            this.showMessage('La cancelación se ha añadido con éxito.', 'success', false);
-          
+            this.showMessage('El tipo de cancelación se ha añadido con éxito.', 'success', false);
+            this.buildForm();
         }
       },
       error => {
@@ -248,27 +282,29 @@ export class CancellationTypeComponent implements OnInit {
         this.loading = false;
       }
     );
-  
   }
 
   public deleteCancellationType() {
 
     this.loading = true;
-  
-    this._cancelationTypeService.deleteCancellationType(this.cancellationTypeId)
-      .pipe(
-         
-      )
-      .subscribe(result => {
 
-        if (result && result['cancellationType']) {
-            this.cancellationType = result['cancellationType'];
-            this.loading = false;
-            this.hasChanged = true;
-            this.showMessage('La cancelación se ha eliminado con éxito.', 'success', false);
-            this.closeModal();
+    this.cancellationType = this.cancellationTypeForm.value;
+
+    this._cancelationTypeService.deleteCancellationType(this.cancellationType._id).subscribe(
+      result => {
+        if (result && result.ok === 1) {
+          this.loading = false;
+          this.activeModal.close();
+        } else {
+          this.loading = false;
+          if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         }
-      });
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

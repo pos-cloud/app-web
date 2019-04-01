@@ -54,7 +54,7 @@ export class CancellationTypeService {
         );
     }
 
-    addCancellationType( cancellationType: CancellationType,) {
+    public addCancellationType( cancellationType: CancellationType,): Observable<any> {
 		let headers = new Headers({
 		'Content-Type': 'application/json',
 				'Authorization': this._userService.getToken(),
@@ -63,7 +63,7 @@ export class CancellationTypeService {
 		return this._http.post(Config.apiURL + "cancellation-type", cancellationType, { headers: headers }).map (res => res.json());
     }
 
-    updateCancellationType(cancellationType: CancellationType){
+    public updateCancellationType(cancellationType: CancellationType): Observable<any> {
         
         const URL = `${Config.apiURL}cancellation-type`;
 
@@ -85,18 +85,21 @@ export class CancellationTypeService {
         );
     }
 
-    deleteCancellationType(cancellationTypeId: string){
+    public deleteCancellationType(cancellationTypeId: string): Observable<any> {
         
-        const URL = `${Config.apiURL}cancellation-type/`;
+        const URL = `${Config.apiURL}cancellation-type`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._userService.getToken())
             .set('Database', this._userService.getDatabase())
         
+        const params = new HttpParams()
+            .set('id', cancellationTypeId);
 
-        return this.http.delete(URL + cancellationTypeId , {
+        return this.http.delete(URL, {
             headers: headers,
+            params: params
         }).pipe(
             map(res => {
                 return res;
@@ -104,24 +107,25 @@ export class CancellationTypeService {
         );
     }
 
-    getCancellationType(cancellationTypeId: string){
+    public getCancellationType(cancellationTypeId: string): Observable<any> {
         
-        const URL = `${Config.apiURL}cancellation-type/`;
+        const URL = `${Config.apiURL}cancellation-type`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase())
+            .set('Database', this._userService.getDatabase());
         
+        const params = new HttpParams()
+            .set('id', cancellationTypeId);
 
-        return this.http.get(URL + cancellationTypeId , {
+        return this.http.get(URL , {
             headers: headers,
+            params: params
         }).pipe(
             map(res => {
                 return res;
             }),
         );
     }
-
-
 }

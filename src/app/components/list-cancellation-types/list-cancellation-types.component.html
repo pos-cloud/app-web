@@ -5,9 +5,9 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Cancelaciones
+    <div class="card-header bg-primary">Listado de Tipos de Cancelaciones
       <div class="pull-right">
-          <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar Cancelación</i></button>
+          <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar Tipo de Cancelación</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -18,17 +18,25 @@
       <table class="table table-hover">
         <thead>
           <tr>
+            <th></th>
+            <th colspan="2" >Transacción Cancelada</th>
+            <th colspan="2" >Transacción Cancelatoria</th>
+          </tr>
+          <tr>
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('origin.name')">Origen</th>
-            <th (click)="orderBy('destination.name')" >Destino</th>
-           
+            <th (click)="orderBy('origin.transactionMovement')">Tipo</th>
+            <th (click)="orderBy('origin.name')">Nombre</th>
+            <th (click)="orderBy('destination.transactionMovement')" >Tipo</th>
+            <th (click)="orderBy('destination.name')" >Nombre</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.name']" (input)="getCancellationTypes()" placeholder="Origen..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.name']" (input)="getCancellationTypes()" placeholder="Origen..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo de Transacción Cancelada..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin.name']" (input)="getCancellationTypes()" placeholder="Nombre de Transacción Cancelada..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo de Transacción Cancelatoria..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['destination.name']" (input)="getCancellationTypes()" placeholder="Nombre de Transacción Cancelatoria..."></th>
           </tr>
         </thead>
         <tbody>
@@ -52,15 +60,17 @@
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
             </td>
-            <td *ngIf="cancellationType.origin">{{cancellationType.origin.transactionMovement}}-{{cancellationType.origin.name}}</td>
-            <td *ngIf="cancellationType.destination">{{cancellationType.destination.transactionMovement}}-{{cancellationType.destination.name}}</td>
+            <td>{{cancellationType.origin.transactionMovement}}</td>
+            <td>{{cancellationType.origin.name}}</td>
+            <td>{{cancellationType.destination.transactionMovement}}</td>
+            <td>{{cancellationType.destination.name}}</td>
            
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron cancelaciones</td>
           </tr>
           <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+            <td colspan="4">Cargando...</td>
           </tr>
         </tbody>
       </table>

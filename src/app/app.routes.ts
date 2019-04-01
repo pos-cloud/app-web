@@ -401,7 +401,7 @@ export const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path: 'admin/cancelacion-de-transacciones',
+    path: 'admin/tipos-de-cancelaciones',
     component: ListCancellationTypeComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }

@@ -113,8 +113,6 @@ export class ListCancellationTypeComponent implements OnInit {
             (page * this.itemsPerPage) :
                 0 // SKIP
 
-
-
     this.relationService.getCancellationTypes(
         project, // PROJECT
         match, // MATCH
@@ -168,10 +166,9 @@ export class ListCancellationTypeComponent implements OnInit {
         });
         break;
       case 'edit':
-
         modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "edit";
-        modalRef.componentInstance.cancellationTypeId = cancellationType._id
+        modalRef.componentInstance.cancellationTypeId = cancellationType._id;
         modalRef.result.then((result) => {
           this.getCancellationTypes();
         }, (reason) => {
@@ -181,7 +178,8 @@ export class ListCancellationTypeComponent implements OnInit {
       case 'delete':
         modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "delete";
-        modalRef.componentInstance.cancellationTypeId = cancellationType._id
+        modalRef.componentInstance.cancellationTypeId = cancellationType._id;
+        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           this.getCancellationTypes();
         }, (reason) => {
@@ -191,6 +189,8 @@ export class ListCancellationTypeComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "view";
+        modalRef.componentInstance.cancellationTypeId = cancellationType._id;
+        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           this.getCancellationTypes();
         }, (reason) => {
