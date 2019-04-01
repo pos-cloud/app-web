@@ -419,7 +419,7 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transactionId = transaction._id;
         break;
       case 'cancel-transaction':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });

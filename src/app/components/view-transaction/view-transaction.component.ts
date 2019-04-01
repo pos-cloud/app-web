@@ -22,7 +22,8 @@ import { Config } from 'app/app.config';
 
 export class ViewTransactionComponent implements OnInit {
 
-  @Input() transaction: Transaction;
+  @Input() transactionId: string;
+  public transaction: Transaction;
   public alertMessage = '';
   public loading = false;
   public movementsOfArticles: MovementOfArticle[];
@@ -47,7 +48,8 @@ export class ViewTransactionComponent implements OnInit {
     this.userCountry = Config.country;
     this.movementsOfArticles = new Array();
     this.movementsOfCashes = new Array();
-    this.getTransaction(this.transaction._id);
+    this.transaction = new Transaction();
+    this.getTransaction(this.transactionId);
   }
 
   public getTransaction(transactionId): void {

@@ -194,7 +194,7 @@ export class CurrentAccountComponent implements OnInit {
         break;
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transactionId = transaction._id;
         break;
       case 'movement-of-cash':
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });

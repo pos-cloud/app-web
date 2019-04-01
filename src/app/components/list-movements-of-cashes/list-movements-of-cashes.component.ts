@@ -92,9 +92,9 @@ export class ListMovementOfCashesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view' :
-          modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
-          modalRef.componentInstance.transaction = movementOfCash.transaction;
-          modalRef.componentInstance.readonly = true;
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
+        modalRef.componentInstance.readonly = true;
         break;
       default : ;
     }
