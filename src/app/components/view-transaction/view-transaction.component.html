@@ -49,11 +49,24 @@
             </div>
           </div>
           <div class="row">
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-5">
               <label for="totalPrice" class="control-label">Importe:</label>
               <div class="input-group">
                 <span class="input-group-addon">$</span>
                 <input type="number" class="form-control" name="totalPrice" min="0" step="1" value="{{transaction.totalPrice}}" readonly/>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="balance" class="control-label">Saldo:</label>
+              <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="number" class="form-control" name="balance" min="0" step="1" value="{{transaction.balance}}" readonly/>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="action" class="control-label">Acción:</label>
+              <div class="input-group">
+                <button type="button" class="btn btn-secondary" (click)="updateBalance()">Corregir Saldo</button>
               </div>
             </div>
           </div>

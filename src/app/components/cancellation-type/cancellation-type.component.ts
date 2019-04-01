@@ -136,7 +136,7 @@ export class CancellationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this.transactionTypeService.getTransactionTypes().subscribe(
+    this.transactionTypeService.getTransactionTypes('sort="transactionMovement":1').subscribe(
       result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

@@ -121,6 +121,27 @@ export class ViewTransactionComponent implements OnInit {
       );
   }
 
+  public updateBalance(): void {
+
+    this.loading = true;
+
+    this._transactionService.updateBalance(this.transaction).subscribe(
+      async result => {
+        if (!result.transaction) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.transaction.balance = result.transaction.balance;
+          this.showMessage("Saldo actualizado", "success", false);
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
+  }
+
   public orderBy(term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
