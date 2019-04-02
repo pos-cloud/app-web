@@ -16,20 +16,20 @@
         <div class="pricing-table recommended">
             <h3 class="pricing-title">Semestral</h3>
             <ul class="table-list">
-                <li>18 % <span>De ahorro</span></li>
+                <li>10 % <span>De ahorro</span></li>
             </ul>
             <div class="table-buy">
-                <p>$ {{ ( (payment*6) - ((18*(payment*6))/100)) /6 }}<sup>/ mes</sup></p>
+                <p>$ {{ ( (payment*6) - ((10*(payment*6))/100)) /6 }}<sup>/ mes</sup></p>
                 <a class="pricing-action" (click)="changePrice('6')">Contratar</a>
             </div>
         </div>
         <div class="pricing-table">
             <h3 class="pricing-title">Anual</h3>
             <ul class="table-list">
-                <li>32 % <span>De ahorro</span></li>
+                <li>25 % <span>De ahorro</span></li>
             </ul>
             <div class="table-buy">
-                <p>$ {{ ( (payment*12) - ((32*(payment*12))/100)) /12 }}<sup>/ mes</sup></p>
+                <p>$ {{ ( (payment*12) - ((25*(payment*12))/100)) /12 }}<sup>/ mes</sup></p>
                 <a class="pricing-action" (click)="changePrice('12')">Contratar</a>
             </div>
         </div>
