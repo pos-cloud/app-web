@@ -77,17 +77,18 @@ export class MovementOfCancellationComponent implements OnInit {
       this.filters[field] = "";
     }
     this.existingCanceled = new Array();
+    this.transactions = new Array();
   }
 
   async ngOnInit() {
 
     if(this.transaccionDestinationViewId || this.transaccionOriginViewId) {
       this.getCancellationsOfMovements();
-    }
-    
-    this.transactionDestination = await this.getTransaction(this.transaccionDestinationId);
-    if(this.transactionDestination) {
-      this.getCancellationTypes();
+    } else {
+      this.transactionDestination = await this.getTransaction(this.transaccionDestinationId);
+      if(this.transactionDestination) {
+        this.getCancellationTypes();
+      }
     }
   }
 
@@ -128,23 +129,26 @@ export class MovementOfCancellationComponent implements OnInit {
       limit, // LIMIT
       skip // SKIP
     ).subscribe(async result => {
-      console.log(result);
-      if (result && result.movementsOfCancellations) {
-
+      if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
         for (let index = 0; index < result.movementsOfCancellations.length; index++) {
-          
           let transaction = new Transaction;
-
           if(this.transaccionOriginViewId){
             transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionDestination)
           } else {
             transaction = await this.getTransaction(result.movementsOfCancellations[index].transactionOrigin)
           }
-
-          this.transactions.push(transaction);
-      
+          if(transaction){
+            this.transactions.push(transaction);
+          } else {
+            this.showMessage("No se encontraron transacciones relacionadas", 'danger', false);
+            this.totalItems = 0;
+            this.loading = false;
+          }
         }
-
+      } else {
+        this.showMessage("No se encontraron transacciones relacionadas", 'danger', false);
+        this.totalItems = 0;
+        this.loading = false;
       }
       this.loading = false;
     },
@@ -154,6 +158,7 @@ export class MovementOfCancellationComponent implements OnInit {
       this.loading = false;
     });
   }
+  
 
   public getTransaction(transactionId: string): Promise<Transaction> {
     
