@@ -12,7 +12,7 @@
     <i class="fa fa-bars"></i>
   </button>
   <span class="navbar-brand btn" (click)="goToHome()">
-      <img width="100" src="assets/img/logo.png">
+      <img width="50" src="assets/img/logo.png">
   </span>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto" *ngIf="config && config.modules">
@@ -506,10 +506,11 @@
         </div>
       </li>
       <li class="nav-item"
-          (click)="makeVisibleReport(false)"
-          style="margin:0px 20px">
-        <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
-        <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
+          (click)="makeVisibleReport(false)">
+        <i class="fa fa-wifi" *ngIf="isAPIConected && online | async; else blockOffline" style="color: #04B431; margin-top: 10px; margin-left: 10px"></i>
+        <ng-template #blockOffline>
+          <i class="fa fa-wifi" style="color: #FF0000; margin-top: 10px; margin-left: 10px"></i>
+        </ng-template>
       </li>
     </ul>
   </div>

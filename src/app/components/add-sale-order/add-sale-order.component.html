@@ -41,7 +41,10 @@
         <div class="col-md-2">
           <button type="button" 
                   class="btn btn-secondary" 
-                  *ngIf="showButtonCancelation && transaction && transaction.company" 
+                  *ngIf="showButtonCancelation && 
+                        transaction && 
+                        transaction.company &&
+                        transaction.totalPrice === 0" 
                   (click)="openModal('list-cancellations')">
             Buscar Transacción Origen</button>
         </div>

@@ -21,7 +21,8 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type.name')">Nombre</th>
-            <th (click)="orderBy('number')">Numero</th>
+            <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
+            <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('letter')">Letra</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
             <th (click)="orderBy('balance')">Saldo</th>
@@ -29,7 +30,8 @@
           <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Nombre..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Numero..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (input)="getTransactions()" placeholder="Saldo..."></th>
@@ -49,6 +51,7 @@
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>
+            <td  *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>
             <td>{{transaction.number}}</td> 
             <td>{{transaction.letter}}</td>
             <td>{{transaction.totalPrice}}</td>

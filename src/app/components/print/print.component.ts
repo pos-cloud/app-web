@@ -2255,7 +2255,7 @@ export class PrintComponent implements OnInit {
       if (this.transaction.company &&
           this.transaction.company.vatCondition &&
           this.transaction.company.vatCondition.discriminate &&
-          Config.companyVatCondition.description === "Responsable Inscripto") {
+          this.transaction.type.requestTaxes) {
 
             if(this.transaction.taxes && this.transaction.taxes.length > 0) {
               for (let tax of this.transaction.taxes) {
