@@ -158,7 +158,12 @@
           </textarea>
         </div>
       </div>
-      <div class="row" *ngIf="transaction && transaction.type && transaction.type.allowEdit && transaction && transaction._id && transaction._id !== ''">
+      <div class="row" *ngIf="transaction && 
+                              transaction.type && 
+                              transaction.type.allowEdit && 
+                              transaction._id && 
+                              transaction._id !== '' &&
+                              posType === 'admin'">
         <div class="form-group col-md-12">
           <label for="state" class="control-label">Estado</label>
           <select class="form-control" formControlName="state">

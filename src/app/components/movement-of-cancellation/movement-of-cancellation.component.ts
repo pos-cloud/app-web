@@ -19,6 +19,7 @@ import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
 import { Taxes } from 'app/models/taxes';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-movement-of-cancellation',
@@ -60,6 +61,7 @@ export class MovementOfCancellationComponent implements OnInit {
   public filters: any[];
   public filterValue: string;
   public roundNumber = new RoundNumberPipe();
+  public userCountry: string;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -72,6 +74,7 @@ export class MovementOfCancellationComponent implements OnInit {
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
   ) { 
+    this.userCountry = Config.country;
     this.filters = new Array();
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
@@ -389,11 +392,9 @@ export class MovementOfCancellationComponent implements OnInit {
             movementOfArticle.description = mov.description;
             movementOfArticle.observation = mov.observation;
             movementOfArticle.otherFields = mov.otherFields;
+            movementOfArticle.basePrice = mov.basePrice;
             if(this.transactionDestination.type.requestTaxes) {
-              movementOfArticle.basePrice = mov.basePrice;
               movementOfArticle.taxes = mov.taxes;
-            } else {
-              movementOfArticle.basePrice = mov.costPrice;
             }
             movementOfArticle.costPrice = mov.costPrice;
             movementOfArticle.unitPrice = mov.unitPrice;
@@ -514,7 +515,7 @@ export class MovementOfCancellationComponent implements OnInit {
     if (movementOfArticle.transaction.type.requestTaxes) {
       let tax: Taxes = new Taxes();
       let taxes: Taxes[] = new Array();
-      if (movementOfArticle.article && movementOfArticle.article.taxes) {
+      if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
         for (let taxAux of movementOfArticle.article.taxes) {
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
