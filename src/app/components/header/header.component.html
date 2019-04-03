@@ -506,10 +506,11 @@
         </div>
       </li>
       <li class="nav-item"
-          (click)="makeVisibleReport(false)"
-          style="margin:0px 20px">
-        <span class="badge badge-success" *ngIf="isAPIConected && online | async; else elseBlock">Online</span>
-        <ng-template #elseBlock> <span class="badge badge-danger"> Offline </span> </ng-template>
+          (click)="makeVisibleReport(false)">
+        <i class="fa fa-wifi" *ngIf="isAPIConected && online | async; else blockOffline" style="color: #04B431; margin-top: 10px; margin-left: 10px"></i>
+        <ng-template #blockOffline>
+          <i class="fa fa-wifi" style="color: #FF0000; margin-top: 10px; margin-left: 10px"></i>
+        </ng-template>
       </li>
     </ul>
   </div>
