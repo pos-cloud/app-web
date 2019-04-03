@@ -34,6 +34,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
     "count": -1
   };
   public transactionMovement: string;
+  public totalAmount;
+  public totalItem;
 
   constructor(
     public _articleService: ArticleService,
@@ -45,6 +47,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
     this.endDate = moment().format('YYYY-MM-DD');
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
+    this.totalAmount = 0;
+    this.totalItem = 0;
   }
 
   ngOnInit(): void {
@@ -89,6 +93,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
           this.loading = false;
           this.items = result;
           this.areArticlesEmpty = false;
+          this.calculateTotal();
         }
       },
       error => {
@@ -111,6 +116,15 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
   public refresh(): void {
     this.getBestSellingArticle();
+  }
+
+  public calculateTotal() : void {
+
+    for (let index = 0; index < this.items.length; index++) {
+      this.totalItem = this.totalItem + this.items[index]['count'];
+      this.totalAmount = this.totalAmount + this.items[index]['total'];
+
+    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

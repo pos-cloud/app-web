@@ -34,6 +34,8 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     "count": -1
   };
   public transactionMovement: string;
+  public totalItem;
+  public totalAmount;
 
   constructor(
     public _paymentMethodService: PaymentMethodService,
@@ -45,6 +47,8 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
     this.endDate = moment().format('YYYY-MM-DD');
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
+    this.totalItem = 0;
+    this.totalAmount = 0;
   }
 
   ngOnInit(): void {
@@ -87,6 +91,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
           this.loading = false;
           this.items = result;
           this.arePaymentMethodsEmpty = false;
+          this.calculateTotal();
         }
       },
       error => {
@@ -94,6 +99,15 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public calculateTotal() : void {
+
+    for (let index = 0; index < this.items.length; index++) {
+      this.totalItem = this.totalItem + this.items[index]['count'];
+      this.totalAmount = this.totalAmount + this.items[index]['total'];
+
+    }
   }
 
   public orderBy(term: string): void {
