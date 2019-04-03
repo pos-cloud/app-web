@@ -388,9 +388,13 @@ export class MovementOfCancellationComponent implements OnInit {
             movementOfArticle.codeSAT = mov.codeSAT;
             movementOfArticle.description = mov.description;
             movementOfArticle.observation = mov.observation;
-            movementOfArticle.basePrice = mov.basePrice;
             movementOfArticle.otherFields = mov.otherFields;
-            movementOfArticle.taxes = mov.taxes;
+            if(this.transactionDestination.type.requestTaxes) {
+              movementOfArticle.basePrice = mov.basePrice;
+              movementOfArticle.taxes = mov.taxes;
+            } else {
+              movementOfArticle.basePrice = mov.costPrice;
+            }
             movementOfArticle.costPrice = mov.costPrice;
             movementOfArticle.unitPrice = mov.unitPrice;
             movementOfArticle.markupPercentage = mov.markupPercentage;

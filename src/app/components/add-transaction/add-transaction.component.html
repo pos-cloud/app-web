@@ -136,11 +136,11 @@
             {{ formErrors.totalPrice }}
           </div>
         </div>
-        <!--<div class="col-md-3" align="right" *ngIf="showButtonCancelation && transaction && transaction.company">
+        <div class="col-md-3" align="right" *ngIf="showButtonCancelation && transaction && transaction.company">
           <button type="button" class="btn btn-secondary" (click)="openModal('list-cancellations')">
             Buscar Transacción Origen
           </button>
-        </div>-->
+        </div>
         <div class="form-group col-md-12" *ngIf="!showButtonCancelation || !transaction.company || !transaction.type.requestCompany">
             <div class="input-group">
               <span class="input-group-addon">$</span>

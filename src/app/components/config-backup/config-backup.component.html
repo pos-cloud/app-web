@@ -235,34 +235,6 @@
       </form>
     </div>
   </div>
-
-  <!-- Backup -->
-  <!-- <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Respaldo</div>
-    <div class= 'card-block'>
-      <form [formGroup]="configFormBackup" #formAddConfig="ngForm" (ngSubmit)="addConfigBackup()" autocomplete="off">
-        <div class="row">
-          <div class="form-group col-md-12">
-            <label for="backupTime" class="control-label">Hora del Backup:</label>
-            <input type="time" class="form-control" formControlName="backupTime" name="backupTime" id="backupTime"/>
-            <div *ngIf="formErrors.backupTime" class="alert alert-danger">
-              {{ formErrors.backupTime }}
-            </div>
-          </div>
-        </div>
-        <div class= "row">
-          <div class= "form-group col-md-12">
-            <button type="submit" class="btn btn-primary" [disabled]="!configFormBackup.valid || loadingBackup" >
-              <i class="fa" [ngClass]="{'fa-save':!loadingBackup, 'fa-spinner fa-spin':loadingBackup}"></i>
-              <span *ngIf="!loadingBackup">Guardar</span>
-              <span *ngIf="loadingBackup">Espere por favor</span>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div> -->
-
   <!-- AFIP -->
   <div class="card card-outline-primary" *ngIf="userCountry === 'AR'">
     <div class="card-header bg-primary">Generar Certificado para Factura Electrónica</div>
