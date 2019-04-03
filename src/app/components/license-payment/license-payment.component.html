@@ -35,52 +35,27 @@
         </div>
     </div>
     <div class ="body">
-
-        <!-- <h6 class="title">Seleccione la los meses que desea abonar:</h6>
-
-        
-
-        <button type="button" class="btn btn-outline-primary" (click)="changePrice('1')">
-            1 Mes 
-            
-        </button>
-        
-        
-        <button type="button" class="btn btn-outline-primary" (click)="changePrice('6')">
-        
-            6 Meses  
-            <span class="badge">18% OFF</span>
-        </button>
-        
-        <button type="button" class="btn btn-outline-primary" (click)="changePrice('12')">
-            
-            12 Meses 
-            <span class="badge">32% OFF</span>
-        </button>-->
-
         <h6 class="card-price text-center">IMPORTE: $ {{paymentTotal}}<span class="period"></span></h6>
-
-    <div *ngIf="toggleButton">
-            <h6 class="title">Seleccione la forma de pago:</h6>
-            <div class="row">
-                <div class = "col-md-6"  (click)="paymentSelect('mp')">
-                    <img class ="imgPayment" src="./../../../assets/img/mercadopago-logo.png" >
+        <div *ngIf="toggleButton">
+                <h6 class="title">Seleccione la forma de pago:</h6>
+                <div class="row">
+                    <div class = "col-md-6"  (click)="paymentSelect('mp')">
+                        <img class ="imgPayment" src="./../../../assets/img/mercadopago-logo.png" >
+                    </div>
+                    <div class = "col-md-6" (click)="paymentSelect('tf')">
+                        <img class ="imgPayment" src="./../../../assets/img/transferencia-bancaria-png-2.png"   height= 130px;                    >
+                    </div>
                 </div>
-                <div class = "col-md-6" (click)="paymentSelect('tf')">
-                    <img class ="imgPayment" src="./../../../assets/img/transferencia-bancaria-png-2.png"   height= 130px;                    >
+                <div  *ngIf="wireTransfer" class="row">
+                    <h6 class="title"> Datos Bancarios:</h6>
+                    <h6 class="text">Banco: HSBC Bank Argentina</h6>
+                    <h6 class="text">Titular : Franco Joel Androetto</h6> 
+                    <h6 class="text"> CBU : 15006648-00066460563732</h6> 
+                    <h6 class="text">Una vez realizado el depósito enviar el comprobante por:</h6>   
+                    <h6 class="text2"> <i class="fa fa-whatsapp" aria-hidden="true"></i> : +54 9 351 615-8848</h6>   
+                    <h6 class="text2"> <i class="fa fa-envelope-o" aria-hidden="true"></i> : ventas@poscloud.com.ar</h6> 
+                    
                 </div>
-            </div>
-            <div  *ngIf="wireTransfer" class="row">
-                <h6 class="title"> Datos Bancarios:</h6>
-                <h6 class="text">Banco: HSBC Bank Argentina</h6>
-                <h6 class="text">Titular : Franco Joel Androetto</h6> 
-                <h6 class="text"> CBU : 15006648-00066460563732</h6> 
-                <h6 class="text">Una vez realizado el depósito enviar el comprobante por:</h6>   
-                <h6 class="text2"> <i class="fa fa-whatsapp" aria-hidden="true"></i> : +54 9 351 615-8848</h6>   
-                <h6 class="text2"> <i class="fa fa-envelope-o" aria-hidden="true"></i> : ventas@poscloud.com.ar</h6> 
-                
-            </div>
-    </div>
-
+        </div>
     </div>
 </div>

@@ -535,12 +535,14 @@ export class AddSaleOrderComponent implements OnInit {
         if (!result.movementOfCancellation) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.transaction.exempt = this.movementOfCancellation.transactionOrigin.exempt;
           this.transaction.discountAmount = this.movementOfCancellation.transactionOrigin.discountAmount;
           this.transaction.discountPercent = this.movementOfCancellation.transactionOrigin.discountPercent;
-          this.transaction.taxes = this.movementOfCancellation.transactionOrigin.taxes;
-          this.transaction.totalPrice = this.movementOfCancellation.transactionOrigin.totalPrice;
+          if(this.transaction.type.requestTaxes) {
+            this.transaction.exempt = this.movementOfCancellation.transactionOrigin.exempt;
+            this.transaction.taxes = this.movementOfCancellation.transactionOrigin.taxes;
+          }
           this.transaction.roundingAmount = this.movementOfCancellation.transactionOrigin.roundingAmount;
+          this.transaction.totalPrice = this.movementOfCancellation.transactionOrigin.totalPrice;
           this.updateTransaction().then(
             transaction => {
               if(transaction) {

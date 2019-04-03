@@ -11,7 +11,6 @@
         <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus" *ngIf="userCountry === 'AR'"> Agregar Condición de IVA</i></button>
         <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus" *ngIf="userCountry !== 'AR'"> Agregar Régimen Fiscal</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar Condiciones de IVA</button> -->
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
