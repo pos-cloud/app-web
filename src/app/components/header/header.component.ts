@@ -36,6 +36,7 @@ export class HeaderComponent implements OnInit {
   public isReportVisible: boolean;  
   public licenseDays: number;
   public readedNotification: boolean = false;
+  public database: string;
 
   constructor(
     public _userService: UserService,
@@ -47,6 +48,7 @@ export class HeaderComponent implements OnInit {
     public _modalService: NgbModal,
     // private socket: Socket,
   ) {
+    this.database = this._userService.getDatabase();
     this.isReportVisible = false;
     this.online = Observable.merge(
       Observable.of(navigator.onLine),

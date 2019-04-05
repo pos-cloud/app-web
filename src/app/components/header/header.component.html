@@ -358,7 +358,8 @@
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-cancelaciones']"
-                  [routerLinkActive]="['active']">
+                  [routerLinkActive]="['active']"
+                  *ngIf="database !== 'fullrep'">
             Tipos de Cancelaciones
           </button>
           <button *ngIf="config.country === 'MX'"
