@@ -9,6 +9,7 @@ import { CompanyService } from './../../services/company.service';
 import { CompanyType } from '../../models/company';
 
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
@@ -63,9 +64,14 @@ export class ListSummaryOfAccountsComponent implements OnInit {
 
     this.loading = true;
 
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
+    }
+
     let query = {
-      startDate: this.startDate,
-      endDate: this.endDate
+      startDate: this.startDate + " 00:00:00" + timezone,
+      endDate:  this.endDate + " 23:59:59" + timezone
     }
 
     this._companyService.getSummaryOfAccounts(JSON.stringify(query)).subscribe(
