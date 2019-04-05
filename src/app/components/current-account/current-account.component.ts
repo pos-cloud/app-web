@@ -90,12 +90,17 @@ export class CurrentAccountComponent implements OnInit {
 
     this.loading = true;
 
-    let query = {
-      company: this.companySelected._id,
-      startDate: this.startDate,
-      endDate: this.endDate
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
     }
 
+    let query = {
+      company: this.companySelected._id,
+      startDate: this.startDate + " 00:00:00" + timezone,
+      endDate:  this.endDate + " 23:59:59" + timezone
+    }
+    
     this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
       result => {
         if (!result) {
