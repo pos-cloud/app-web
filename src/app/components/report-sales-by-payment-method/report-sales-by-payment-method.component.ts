@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { PaymentMethodService } from './../../services/payment-method.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-report-sales-by-payment-method',
@@ -70,11 +71,16 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
       movement = "Salida";
     }
 
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
+    }
+
     let query = {
       type: this.transactionMovement,
       movement: movement,
-      startDate: this.startDate + " " + this.startTime,
-      endDate: this.endDate + " " + this.endTime,
+      startDate: this.startDate + " " + this.startTime + timezone,
+      endDate: this.endDate + " " + this.endTime + timezone,
       sort: this.sort,
       limit: this.limit
     }

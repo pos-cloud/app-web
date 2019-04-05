@@ -13,6 +13,7 @@ import { ReportSalesByClientComponent } from '../report-sales-by-client/report-s
 import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales-by-make.component';
 import { Router } from '@angular/router';
 import { ReportBirthdayComponent } from '../report-birthday/report-birthday.component';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-statistics',
@@ -107,13 +108,18 @@ export class StatisticsComponent implements OnInit {
       movement = "Salida";
     }
 
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
+    }
+
     let query = {
       type: this.transactionMovement,
       movement: movement,
       currentAccount: "Si",
       modifyStock: true,
-      startDate: this.startDate + " " + this.startTime,
-      endDate: this.endDate + " " + this.endTime,
+      startDate: this.startDate + " " + this.startTime + timezone,
+      endDate: this.endDate + " " + this.endTime + timezone,
     }
 
     this.getTotalTransactionsBetweenDates("Sales", JSON.stringify(query));
@@ -128,13 +134,18 @@ export class StatisticsComponent implements OnInit {
       movement = "Salida";
     }
 
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
+    }
+
     let query = {
       type: this.transactionMovement,
       movement: movement,
       currentAccount: "Cobra",
       modifyStock: false,
-      startDate: this.startDate + " " + this.startTime,
-      endDate: this.endDate + " " + this.endTime,
+      startDate: this.startDate + " " + this.startTime + timezone,
+      endDate: this.endDate + " " + this.endTime + timezone,
     }
 
     this.getTotalTransactionsBetweenDates("Collections", JSON.stringify(query));
@@ -149,14 +160,18 @@ export class StatisticsComponent implements OnInit {
       movement = "Entrada";
     }
 
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
+    }
 
     let query = {
       type: this.transactionMovement,
       movement: movement,
       currentAccount: "Si",
       modifyStock: true,
-      startDate: this.startDate + " " + this.startTime,
-      endDate: this.endDate + " " + this.endTime,
+      startDate: this.startDate + " " + this.startTime + timezone,
+      endDate: this.endDate + " " + this.endTime + timezone,
     }
 
     this.getTotalTransactionsBetweenDates("Returns", JSON.stringify(query));

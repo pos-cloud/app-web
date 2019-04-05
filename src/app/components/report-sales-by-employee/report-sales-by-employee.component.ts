@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 import { EmployeeService } from './../../services/employee.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-report-sales-by-employee',
@@ -71,13 +72,18 @@ export class ReportSalesByEmployeeComponent implements OnInit {
       movement = "Salida";
     }
 
+    let timezone = "-03:00";
+    if(Config.timezone) {
+      timezone = Config.timezone.split('UTC')[0];
+    }
+
     let query = {
       type: this.transactionMovement,
       movement: movement,
       currentAccount: "Si",
       modifyStock: true,
-      startDate: this.startDate + " " + this.startTime,
-      endDate: this.endDate + " " + this.endTime,
+      startDate: this.startDate + " " + this.startTime + timezone,
+      endDate: this.endDate + " " + this.endTime + timezone,
       sort: this.sort,
       limit: this.limit
     }
