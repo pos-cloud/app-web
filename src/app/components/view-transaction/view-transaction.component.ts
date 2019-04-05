@@ -12,6 +12,7 @@ import { TransactionService } from '../../services/transaction.service';
 
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Config } from 'app/app.config';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-view-transaction',
@@ -34,14 +35,17 @@ export class ViewTransactionComponent implements OnInit {
   public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
   public userCountry: string = 'AR';
+  public database: string;
 
   constructor(
     public _transactionService: TransactionService,
     public _movementOfArticleService: MovementOfArticleService,
     public _movementOfCashService: MovementOfCashService,
     public alertConfig: NgbAlertConfig,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
+    public _userService: UserService,
   ) {
+    this.database = this._userService.getDatabase();
   }
 
   ngOnInit() {
