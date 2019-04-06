@@ -423,7 +423,7 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'cancel-transaction':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transactionId = transaction._id;
         modalRef.result.then((result) => {
           if (result === "delete_close") {
             this.refresh();

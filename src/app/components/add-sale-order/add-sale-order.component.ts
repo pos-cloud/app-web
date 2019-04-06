@@ -1225,7 +1225,7 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'cancel':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = this.transaction;
+        modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then(async (result) => {
           if (result === 'delete_close') {
             if (this.posType === "resto") {

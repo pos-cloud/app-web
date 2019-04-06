@@ -16,9 +16,10 @@ import 'moment/locale/es';
   styleUrls: ["./delete-transaction.component.css"],
   providers: [NgbAlertConfig]
 })
-export class DeleteTransactionComponent implements OnInit {
+export class DeleteTransactionComponent {
 
-  @Input() transaction: Transaction;
+  public transaction: Transaction;
+  @Input() transactionId: string;
   @Input() op: string = "cancel";
   public alertMessage: string = "";
   public focusEvent = new EventEmitter<boolean>();
@@ -32,12 +33,39 @@ export class DeleteTransactionComponent implements OnInit {
   ) {
     alertConfig.type = "danger";
     alertConfig.dismissible = true;
+    this.transaction = new Transaction();
   }
 
-  ngOnInit(): void {}
+  public ngOnInit(): void {
+    if(this.transactionId) {
+      this.getTransaction();
+    }
+  }
 
-  ngAfterViewInit() {
+  public ngAfterViewInit(): void {
     this.focusEvent.emit(true);
+  }
+
+  public getTransaction(): void {
+
+    this.loading = true;
+
+    this._transactionService.getTransaction(this.transactionId).subscribe(
+      result => {
+        if (!result.transaction) {
+          this.showMessage(result.message, 'danger', false);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.transaction = result.transaction;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public cancelTransaction(): void {
