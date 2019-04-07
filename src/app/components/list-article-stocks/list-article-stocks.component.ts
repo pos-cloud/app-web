@@ -90,34 +90,8 @@ export class ListArticleStocksComponent implements OnInit {
     );
   }
 
-  public getArticleStocks(): void {
-
-    this.loading = true;
-
-    this._articleStockService.getArticleStocks().subscribe(
-      result => {
-        if (!result.articleStocks || result.articleStocks.length <= 0) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-          this.articleStocks = null;
-          this.areArticleStocksEmpty = true;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.articleStocks = result.articleStocks;
-          this.totalItems = this.articleStocks.length;
-          this.areArticleStocksEmpty = false;
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   public refresh(): void {
-    this.getArticleStocks();
+    this.getArticleStocksV2();
   }
 
   public openModal(op: string, articleStock: ArticleStock): void {
@@ -130,9 +104,9 @@ export class ListArticleStocksComponent implements OnInit {
         break;
       case 'add':
         modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg' }).result.then((result) => {
-          this.getArticleStocks();
+          this.getArticleStocksV2();
         }, (reason) => {
-          this.getArticleStocks();
+          this.getArticleStocksV2();
         });
         break;
       case 'update':
@@ -141,7 +115,7 @@ export class ListArticleStocksComponent implements OnInit {
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           if (result === 'save_close') {
-            this.getArticleStocks();
+            this.getArticleStocksV2();
           }
         }, (reason) => {
 
