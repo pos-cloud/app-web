@@ -68,7 +68,7 @@ export class LicensePaymentComponent implements OnInit {
           this.toggleButton = true;
           break;
         case '12':
-          this.paymentTotal = (Config.licenseCost*month) - ((15*(Config.licenseCost*month))/100);   
+          this.paymentTotal = (Config.licenseCost*month) - ((25*(Config.licenseCost*month))/100);   
           break;
       }
     }
