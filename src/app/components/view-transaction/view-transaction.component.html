@@ -15,9 +15,10 @@
     <ngb-tabset>
       <ngb-tab title="Datos">
         <ng-template ngbTabContent>
-          <div class="row">
+          <div class="row" *ngIf="transaction && transaction.type && transaction.type.transactionMovement !== 'Stock'">
             <div class="form-group col-md-12">
-              <label for="company" class="control-label">Cliente</label>
+              <label for="company" class="control-label" *ngIf="transaction && transaction.type && transaction.type.transactionMovement === 'Venta'">Cliente</label>
+              <label for="company" class="control-label" *ngIf="transaction && transaction.type && transaction.type.transactionMovement === 'Compra'">Proveedor</label>
               <input type="text" class="form-control" name="date" *ngIf="transaction.company" value="{{transaction.company.name}}" readonly/>
               <input type="text" class="form-control" name="date" *ngIf="!transaction.company" value="Consumidor Final" readonly/>
             </div>

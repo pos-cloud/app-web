@@ -51,7 +51,7 @@ export class AddTransactionComponent implements OnInit {
   public taxes: Taxes[] = new Array();
   public alertMessage: string = '';
   public userType: string;
-  public movementOfCancellation : MovementOfCancellation
+  public movementOfCancellation : MovementOfCancellation;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
