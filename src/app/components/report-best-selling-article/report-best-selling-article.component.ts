@@ -72,8 +72,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
     }
 
     let timezone = "-03:00";
-    if(Config.timezone) {
-      timezone = Config.timezone.split('UTC')[0];
+    if(Config.timezone && Config.timezone !== '') {
+      timezone =  Config.timezone.split('UTC')[1];
     }
 
     let query = {

@@ -35,7 +35,6 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public roundNumber = new RoundNumberPipe();
-  public config : Config;
 
   constructor(
     public _companyService: CompanyService,
@@ -61,37 +60,16 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         this.orderTerm = ['-balance'];
       }
     }
-    this.getConfig();
-  }
-
-  public getConfig(): void {
-    this._configService.getConfigApi().subscribe(
-      result => {
-        if(!result.configs){
-          this.showMessage("No se encontro la configuracion", 'danger', false);
-          this.loading = false;
-        } else {
-          this.config = result.configs;
-          this.getSummary();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    )
+    this.getSummary();
   }
 
   public getSummary(): void {
 
     this.loading = true;
 
-    let timezone;
-    if(this.config[0].timezone && this.config[0].timezone != '') {
-      timezone =  this.config[0].timezone.split('C')
-      timezone = timezone[1];
-    } else {
-      timezone = "-03:00";
+    let timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      timezone =  Config.timezone.split('UTC')[1];
     }
 
     let query = {

@@ -57,46 +57,17 @@ export class ReportBirthdayComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
+    let pathLocation: string[] = this._router.url.split('/');
+    this.listType = pathLocation[3];
+    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 
+    this.timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      this.timezone =  Config.timezone.split('UTC')[1];
+    }
 
-
-    this.loading = true;
-
-    this.getConfig();
-
-
-
-  }
-
-  public getConfig(): void {
-    this._configService.getConfigApi().subscribe(
-      result => {
-        if(!result.configs){
-          this.showMessage("No se encontro la configuracion", 'danger', false);
-          this.loading = false;
-        } else {
-          this.config = result.configs;
-
-          if(this.config[0].timezone) {
-            this.timezone = this.config[0].timezone.split('C')
-          } else {
-            this.timezone = "-03:00"
-          }
-
-          let pathLocation: string[] = this._router.url.split('/');
-          this.listType = pathLocation[3];
-          this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-          this.getBirthday();
-
-
-
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    )
+    this.getBirthday();
   }
 
   public getBirthday(): void {
@@ -145,7 +116,7 @@ export class ReportBirthdayComponent implements OnInit {
       project = '{';
       for (let i = 0; i < displayedColumns.length; i++) {
         let field = displayedColumns[i];
-        project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":"${this.timezone[1]}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+        project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y %H:%M:%S","timezone":"${this.timezone}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
         if (i < displayedColumns.length - 1) {
           project += ',';
         }
