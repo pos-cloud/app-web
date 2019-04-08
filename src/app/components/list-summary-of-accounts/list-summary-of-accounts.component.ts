@@ -10,6 +10,7 @@ import { CompanyType } from '../../models/company';
 
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { Config } from 'app/app.config';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
@@ -34,10 +35,12 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public roundNumber = new RoundNumberPipe();
+  public config : Config;
 
   constructor(
     public _companyService: CompanyService,
     public _router: Router,
+    public _configService : ConfigService,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) {
@@ -46,6 +49,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (!this.filterCompanyType) {
@@ -57,16 +61,37 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         this.orderTerm = ['-balance'];
       }
     }
-    this.getSummary();
+    this.getConfig();
+  }
+
+  public getConfig(): void {
+    this._configService.getConfigApi().subscribe(
+      result => {
+        if(!result.configs){
+          this.showMessage("No se encontro la configuracion", 'danger', false);
+          this.loading = false;
+        } else {
+          this.config = result.configs;
+          this.getSummary();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   public getSummary(): void {
 
     this.loading = true;
 
-    let timezone = "-03:00";
-    if(Config.timezone) {
-      timezone = Config.timezone.split('UTC')[0];
+    let timezone;
+    if(this.config[0].timezone && this.config[0].timezone != '') {
+      timezone =  this.config[0].timezone.split('C')
+      timezone = timezone[1];
+    } else {
+      timezone = "-03:00";
     }
 
     let query = {

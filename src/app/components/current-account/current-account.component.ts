@@ -28,6 +28,7 @@ import { PrinterService } from '../../services/printer.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { Config } from 'app/app.config';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-current-account',
@@ -57,12 +58,14 @@ export class CurrentAccountComponent implements OnInit {
   public endDate: string;
   public printers: Printer[];
   public userCountry: string;
+  public config : Config;
 
   constructor(
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService,
     public _movementOfCashService: MovementOfCashService,
     public _companyService: CompanyService,
+    public _configService : ConfigService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
@@ -76,6 +79,7 @@ export class CurrentAccountComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.getConfig();
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -86,18 +90,39 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
+  public getConfig(): void {
+    this._configService.getConfigApi().subscribe(
+      result => {
+        if(!result.configs){
+          this.showMessage("No se encontro la configuracion", 'danger', false);
+          this.loading = false;
+        } else {
+          this.config = result.configs;
+
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
+  }
+
   public getSummary(): void {
 
     this.loading = true;
 
-    let timezone = "-03:00";
-    if(Config.timezone) {
-      timezone = Config.timezone.split('UTC')[0];
+    let timezone;
+    if(this.config[0].timezone && this.config[0].timezone != '') {
+      timezone =  this.config[0].timezone.split('C')
+      timezone = timezone[1];
+    } else {
+      timezone = "-03:00";
     }
 
     let query = {
       company: this.companySelected._id,
-      startDate: this.startDate + " 00:00:00" + timezone,
+      startDate: this.startDate + "00:00:00" + timezone,
       endDate:  this.endDate + " 23:59:59" + timezone
     }
     
