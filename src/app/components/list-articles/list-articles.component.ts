@@ -216,6 +216,13 @@ export class ListArticlesComponent implements OnInit {
         let model: any = new Article();
         model.model = "article";
         model.primaryKey = "code";
+        model.type = '';
+        model.description = '';
+        model.basePrice = '';
+        model.costPrice = '';
+        model.markupPercentage = '';
+        model.markupPrice = '';
+        model.salePrice = '';
         model.relations = new Array();
         model.relations.push("make_relation_description");
         model.relations.push("category_relation_description");
