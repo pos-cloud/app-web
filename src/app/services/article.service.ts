@@ -148,7 +148,7 @@ export class ArticleService {
 			'Database': this._userService.getDatabase()
 		});
 
-		return this._http.put(Config.apiURL + "update-price", query ,{ headers: headers}).map(res => res.json());
+		return this._http.put(Config.apiURL + "update-prices", query ,{ headers: headers}).map(res => res.json());
 	}
 
 

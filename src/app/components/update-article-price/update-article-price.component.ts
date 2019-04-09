@@ -30,7 +30,6 @@ export class UpdateArticlePriceComponent implements OnInit {
   public categories: Category;
   public optionUpdate: string = "make";
 
-
   public formErrors = {
     'optionUpdate': '',
     'make': '',
@@ -78,7 +77,7 @@ export class UpdateArticlePriceComponent implements OnInit {
 
     this.loading = true;
 
-    this._makeService.getMakes().subscribe(
+    this._makeService.getMakes('sort="description":1').subscribe(
       result => {
         if (!result.makes) {
           this.getCategories();
@@ -99,7 +98,7 @@ export class UpdateArticlePriceComponent implements OnInit {
 
     this.loading = true;
 
-    this._categoryService.getCategories().subscribe(
+    this._categoryService.getCategories('sort="description":1').subscribe(
       result => {
         if (!result.categories) {
           this.hideMessage();
@@ -155,39 +154,51 @@ export class UpdateArticlePriceComponent implements OnInit {
 
   public updatePrice(): void {
 
-    this.loading = true;
+    let isValidPercentage: boolean = true;    
+    
+    // if((this.updatePriceForm.value.percentage <= 0 ||
+    //   this.updatePriceForm.value.percentage > 100 &&
+    //   ti) &&
+    // ) {
+    //     isValidPercentage = false;
+    //   this.formErrors['percentage'] += "El procentaje debe ser un valor mayor a 0 y menor o igual 100";
+    // }
 
-    let where;
+    if(isValidPercentage) {
+      
+      this.loading = true;
 
+      let where;
 
-    switch (this.updatePriceForm.value.optionUpdate) {
-      case "make":
-          where = '{"make":"' + this.updatePriceForm.value.make + '"}';
+      switch (this.updatePriceForm.value.optionUpdate) {
+        case "make":
+            where = '{"make":"' + this.updatePriceForm.value.make + '"}';
+          break;
+        case "category":
+            where = '{"category":"' + this.updatePriceForm.value.category + '"}';
         break;
-      case "category":
-          where = '{"category":"' + this.updatePriceForm.value.category + '"}';
-      break;
-      default:where = '{}'
-        break;
-    }
-
-
-    let query = ' { "where":'+where+', "percentage":"'+ this.updatePriceForm.value.percentage +'", "field":"'+ this.updatePriceForm.value.field +'" }'
-
-    this._articleService.updatePrice(query).subscribe(
-      result => {
-        if (result.status === "Error") {
-          this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ".No se actualizaron:" + result.articleFailure, 'info', true);
-        } else {
-          this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.count + " productos", 'success', false);
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+        default:where = '{}'
+          break;
       }
-    );
+
+
+      let query = ' { "where":'+where+', "percentage":'+ this.updatePriceForm.value.percentage +', "field":"'+ this.updatePriceForm.value.field +'" }'
+
+      this._articleService.updatePrice(query).subscribe(
+        result => {
+          if (result.status === "Error") {
+            this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ". No se actualizaron:" + result.articleFailure, 'info', true);
+          } else {
+            this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.count + " productos", 'success', false);
+          }
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
+    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

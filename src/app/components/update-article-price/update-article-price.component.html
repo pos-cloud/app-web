@@ -30,9 +30,7 @@
 						{{ formErrors.make }}
 					</div>
 				</div>
-			</div>
-			<div class="row" >
-				<div *ngIf = "optionUpdate === 'category'" class="form-group col-md-6" >
+				<div *ngIf = "optionUpdate === 'category'" class="form-group col-md-6">
 					<label for="category" class="control-label">Rubro:</label>
 					<select class="form-control" formControlName="category">
 						<option *ngFor="let category of categories" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
@@ -42,9 +40,19 @@
 					</div>
 				</div>
 			</div>
+			<div class ="row">
+				<div class="form-group col-md-12">
+					<label for="field" class="control-label">Valor a actualizar:</label>
+					<select class="form-control" formControlName="field">
+						<option [value]="'basePrice'">Precio Base</option>
+						<option [value]="'markupPercentage'">Margen %</option>
+						<option [value]="'salePrice'">Precio de Venta</option>
+					</select>
+				</div>
+			</div>
 			<div class="row">
 				<div class="form-group col-md-12">
-					<label for="percentage" class="control-label">Porcentaje de Aumento:</label>
+					<label for="percentage" class="control-label">Porcentaje a incrementar:</label>
 					<div class="input-group">
 						<span class="input-group-addon">%</span>
 						<input type="number" class="form-control" formControlName="percentage" name="percentage"/>
@@ -52,16 +60,6 @@
 					<div *ngIf="formErrors.percentage" class="alert alert-danger">
 						{{ formErrors.percentage }}
 					</div>
-				</div>
-			</div>
-			<div class ="row">
-				<div class="form-group col-md-12">
-					<label for="field" class="control-label">Actualiza:</label>
-					<select class="form-control" formControlName="field">
-						<option [value]="'basePrice'" >Precio base </option>
-						<option [value]="'markupPercentage'"> Margen </option>
-						<option [value]="'salePrice'"> Precio de Venta </option>
-					</select>
 				</div>
 			</div>
 		</div>

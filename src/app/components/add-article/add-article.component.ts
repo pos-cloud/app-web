@@ -814,6 +814,12 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
     if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
 
+    this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
+    this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
+    this.article.markupPercentage = this.roundNumber.transform(this.article.markupPercentage);
+    this.article.markupPrice = this.roundNumber.transform(this.article.markupPrice,3);
+    this.article.salePrice = this.roundNumber.transform(this.article.salePrice);
+
     const values = {
       '_id': this.article._id,
       'code': this.article.code,

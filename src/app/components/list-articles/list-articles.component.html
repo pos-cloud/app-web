@@ -8,9 +8,9 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{ listTitle }}
       <div class="pull-right">
-       <!--<button class="btn btn-primary" (click)="openModal('update-price',null)"><i class="fa fa-dollar-sign"> Actualizar Precios</i></button>-->
         <button class="btn btn-primary" (click)="openModal('add', null)" *ngIf="articleType.toString() === 'Final'"><i class="fa fa-plus"> Agregar Producto</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+        <button class="btn btn-primary" (click)="openModal('update-prices',null)"><i class="fa fa-edit"> Actualizar Precios</i></button>
         <button class="btn btn-primary" (click)="openModal('print', null, 'priceList')"><i class="fa fa-print"></i> Imprimir Lista</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
