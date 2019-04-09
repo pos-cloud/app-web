@@ -31,13 +31,18 @@ export class CategoryService {
 		return this._http.get(Config.apiURL + "category/"+id, { headers: headers }).map (res => res.json());
 	}
 
-	getCategories () {
+	getCategories (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "categories", { headers: headers }).map (res => res.json());
+		
+		if(query) {
+			return this._http.get(Config.apiURL + 'categories/' + query, { headers: headers }).map (res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "categories", { headers: headers }).map (res => res.json());
+		}
 	}
 
 	saveCategory (category : Category) {

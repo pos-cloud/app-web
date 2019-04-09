@@ -31,13 +31,17 @@ export class MakeService {
 		return this._http.get(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
 	}
 
-	getMakes () {
+	getMakes (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "makes", { headers: headers }).map (res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + 'makes/' + query, { headers: headers }).map (res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + 'makes', { headers: headers }).map (res => res.json());
+		}
 	}
 
 	saveMake (make : Make) {
