@@ -10,7 +10,7 @@ export class IdentificationType {
 	public name: string = '';
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
-	public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+	public updateDate: string;
 
 	constructor () {}
 }

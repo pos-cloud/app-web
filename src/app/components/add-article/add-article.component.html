@@ -214,6 +214,22 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="currency" class="control-label">Moneda</label>
+                    <select class="form-control" formControlName="currency">
+                      <option *ngFor="let currency of currencies"
+                              [selected]="(article.currency && article.currency._id && currency._id===article.currency._id) ||
+                                          (article.currency && currency._id===article.currency)"
+                              [value]="currency._id"
+                              [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">
+                              {{currency.name}}</option>
+                    </select>
+                    <div *ngIf="formErrors.currency" class="alert alert-danger">
+                      {{ formErrors.currency }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 					</ng-template>

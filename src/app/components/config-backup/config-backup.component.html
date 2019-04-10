@@ -92,13 +92,29 @@
           </div>
         </div>
         <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Moneda</span>
+              <select class="form-control" formControlName="currency" name="currency" id="currency">
+                <option *ngFor="let currency of currencies"
+                        [selected]="(config['currency'] && config['currency']._id && currency._id===config['currency']._id) ||
+                                    (config['currency'] && currency._id===config['currency'])"
+                        [value]="currency._id">
+                  {{currency.name}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="form-group col-md-6">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Tipo de Identificación:</span>
               <select class="form-control" formControlName="companyIdentificationType" name="companyIdentificationType"
                 id="companyIdentificationType">
                 <option *ngFor="let identificationType of identificationTypes"
-                  [selected]="config.companyIdentificationType && identificationType._id === config.companyIdentificationType._id"
+                        [selected]="(config['companyIdentificationType'] && config['companyIdentificationType']._id && identificationType._id===config['companyIdentificationType']._id) ||
+                                    (config['companyIdentificationType'] && identificationType._id===config['companyIdentificationType'])"
                   [value]="identificationType._id">
                   {{identificationType.name}}
                 </option>
@@ -122,7 +138,8 @@
               <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal:</span>
               <select class="form-control" formControlName="companyVatCondition" name="companyVatCondition" id="companyVatCondition">
                 <option *ngFor="let vatCondition of vatConditions"
-                        [selected]="config.companyVatCondition && vatCondition._id === config.companyVatCondition._id"
+                        [selected]="(config['companyVatCondition'] && config['companyVatCondition']._id && vatCondition._id===config['companyVatCondition']._id) ||
+                                    (config['companyVatCondition'] && vatCondition._id===config['companyVatCondition'])"
                         [value]="vatCondition._id">
                   {{vatCondition.description}}
                 </option>
