@@ -34,6 +34,8 @@ import { ArticleFieldType } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { UnitOfMeasurementService } from 'app/services/unit-of-measurement.service';
 import { UnitOfMeasurement } from 'app/models/unit-of-measurement';
+import { Currency } from 'app/models/currency';
+import { CurrencyService } from 'app/services/currency.service';
 
 @Component({
   selector: 'app-add-article',
@@ -51,6 +53,7 @@ export class AddArticleComponent implements OnInit {
   public articleStock: ArticleStock;
   public country: string;
   public articleForm: FormGroup;
+  public currencies: Currency[] = new Array();
   public makes: Make[] = new Array();
   public deposits: Deposit[] = new Array();
   public locations: Location[] = new Array();
@@ -84,7 +87,8 @@ export class AddArticleComponent implements OnInit {
     'category': '',
     'deposit' : '',
     'location': '',
-    'barcode': ''
+    'barcode': '',
+    'currency': ''
   };
 
   public validationMessages = {
@@ -126,6 +130,9 @@ export class AddArticleComponent implements OnInit {
     },
     'barcode': {
       'maxlength': 'No puede exceder los 14 dígitos.'
+    },
+    'currency': {
+      'maxlength': 'No puede exceder los 14 dígitos.'
     }
   };
 
@@ -141,9 +148,11 @@ export class AddArticleComponent implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _currencyService: CurrencyService
   ) {
     this.article = new Article();
+    this.getCurrencies();
   }
 
   ngOnInit(): void {
@@ -184,6 +193,9 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'codeSAT': [this.article.codeSAT, [
+        ]
+      ],
+      'currency': [this.article.currency, [
         ]
       ],
       'make': [this.article.make, [
@@ -284,6 +296,25 @@ export class AddArticleComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getCurrencies(): void {
+
+    this.loading = true;
+
+    this._currencyService.getCurrencies('sort="name":1').subscribe(
+      result => {
+        if (!result.currencies) {
+        } else {
+          this.currencies = result.currencies;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
+        this.loading = false;
+      }
+    );
   }
 
   public getArticle(): void {
@@ -742,6 +773,17 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.code) { this.article.code = this.padString(1, 10); }
     if (!this.article.codeSAT) { this.article.codeSAT = ''; }
 
+    let currency;
+    if (!this.article.currency) {
+      currency = null;
+    } else {
+      if (this.article.currency._id) {
+        currency = this.article.currency._id;
+      } else {
+        currency = this.article.currency;
+      }
+    }
+
     let make;
     if (!this.article.make) {
       make = null;
@@ -824,6 +866,7 @@ export class AddArticleComponent implements OnInit {
       '_id': this.article._id,
       'code': this.article.code,
       'codeSAT': this.article.codeSAT,
+      'currency': currency,
       'make': make,
       'deposit' : deposit,
       'location' : location,

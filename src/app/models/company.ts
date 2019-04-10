@@ -36,7 +36,7 @@ export class Company {
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
-  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public updateDate: string;
 
   constructor() {}
 }

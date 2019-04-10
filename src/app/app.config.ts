@@ -2,6 +2,7 @@ import { VATCondition } from './models/vat-condition';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { IdentificationType } from './models/identification-type';
+import { Currency } from './models/currency';
 
 export class Config {
 
@@ -34,6 +35,7 @@ export class Config {
     static expirationLicense: string;
     static country : string;
     static timezone : string;
+    static currency: Currency;
     static licenseCost : number;
     static showLicenseNotification: boolean = true;
 
@@ -74,8 +76,11 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( companyPicture, companyName, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, companyGrossIncome, footerInvoice, companyFantasyName,
-                                    country,timezone, companyIdentificationType, companyIdentificationValue, companyLicenseCost): void {
+    public static setConfigCompany( 
+        companyPicture, companyName, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, 
+        companyGrossIncome, footerInvoice, companyFantasyName, country, timezone, currency, companyIdentificationType, 
+        companyIdentificationValue, companyLicenseCost): void {
+            
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
         Config.companyAddress = companyAddress;
@@ -85,11 +90,12 @@ export class Config {
         Config.companyStartOfActivity = companyStartOfActivity;
         Config.companyGrossIncome = companyGrossIncome;
         Config.footerInvoice = footerInvoice;
-        Config.country = country,
-        Config.timezone = timezone,
-        Config.companyIdentificationType = companyIdentificationType,
-        Config.companyIdentificationValue = companyIdentificationValue,
-        Config.licenseCost = companyLicenseCost
+        Config.country = country;
+        Config.timezone = timezone;
+        Config.companyIdentificationType = companyIdentificationType;
+        Config.companyIdentificationValue = companyIdentificationValue;
+        Config.licenseCost = companyLicenseCost;
+        Config.currency = currency;
     }
 
     public static setConfigLabel( heightLabel, widthLabel ): void {

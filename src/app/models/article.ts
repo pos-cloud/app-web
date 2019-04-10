@@ -9,6 +9,7 @@ import { UnitOfMeasurement } from './unit-of-measurement';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { Currency } from './currency';
 
 export class Article {
 
@@ -30,6 +31,7 @@ export class Article {
   public markupPercentage: number = 0.00;
   public markupPrice: number = 0.00;
   public salePrice: number = 0.00;
+  public currency: Currency;
   public make: Make;
   public deposit: Deposit;
   public location: Location;
@@ -47,7 +49,7 @@ export class Article {
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
-  public updateDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+  public updateDate: string;
 
   constructor() {}
 }

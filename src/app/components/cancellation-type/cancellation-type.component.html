@@ -98,10 +98,10 @@
                 *ngIf="operation === 'delete'" 
                 [disabled]="!cancellationTypeForm.valid || loading" 
                 (click)="deleteCancellationType()">
-            <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
-            <span *ngIf="!loading">Eliminar</span>
-            <span *ngIf="loading">Espere por favor</span>
-          </button>
+          <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+          <span *ngIf="!loading">Eliminar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
       </div>
     </form>
   </section>

@@ -54,6 +54,8 @@ import { ListCompanyFieldsComponent } from './components/list-company-fields/lis
 import { LicensePaymentComponent } from './components/license-payment/license-payment.component'
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 import { Routes } from '@angular/router';
+import { CurrencyComponent } from './components/currency/currency.component';
+import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
 
 export const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -151,6 +153,12 @@ export const _routes: Routes = [
   {
     path: 'admin/variantes',
     component: ListArticlesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/monedas',
+    component: ListCurrenciesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
