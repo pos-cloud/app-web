@@ -415,11 +415,16 @@ export class ConfigBackupComponent implements OnInit {
     this.updateConfigCompany();
   }
 
-  public generateLicensePayment() {
+  public openModal(op: string): void {
 
-    let modalRef
-    modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
-
+    let modalRef;
+    switch (op) {
+      case 'pay-license':
+        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
+        break;
+      default:
+        break;
+    }
   }
 
   public updateConfigBackup(): void {

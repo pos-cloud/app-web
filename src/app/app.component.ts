@@ -22,8 +22,6 @@ export class AppComponent implements OnInit {
   public isAPIConected: boolean;
   public loading = true;
   public modules: any;
-  public allowNotification = false;
-  public dias: number;
   public identity: User;
 
   constructor(
@@ -35,11 +33,6 @@ export class AppComponent implements OnInit {
     public _router: Router,
   ) {
     this.isAPIConected = true;
-    let today = new Date(); 
-    if(today.getDate() < 10) {
-      this.dias = 10 - today.getDate()
-      this.allowNotification = true
-    }
     this.validateIdentity();
   }
 
@@ -86,6 +79,9 @@ export class AppComponent implements OnInit {
     if (config.companyName) { Config.setConfigCompany(config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
                                                     config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName,
                                                     config.country, config.timezone, config.companyIdentificationType, config.companyIdentificationValue, config.licenseCost);
+    }
+    if (config.showLicenseNotification !== undefined) {
+      Config.setConfigs(config.showLicenseNotification);
     }
     if (config.modules) {
       Config.setModules(config.modules);

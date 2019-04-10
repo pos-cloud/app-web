@@ -35,6 +35,7 @@ export class Config {
     static country : string;
     static timezone : string;
     static licenseCost : number;
+    static showLicenseNotification: boolean = true;
 
     constructor() {
         Config.updateApiURL();
@@ -94,6 +95,10 @@ export class Config {
     public static setConfigLabel( heightLabel, widthLabel ): void {
         Config.heightLabel = heightLabel;
         Config.widthLabel = widthLabel;
+    }
+
+    public static setConfigs(showLicenseNotification: boolean): void {
+        Config.showLicenseNotification = showLicenseNotification;
     }
 
     public static updateApiURL() {

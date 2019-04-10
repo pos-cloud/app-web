@@ -74,3 +74,14 @@ li > a {
 .navbar-toggler-icon {
   color: black;
 }
+
+.notification-menu {
+  height: 80px;
+}
+
+.notification-item {
+  height: 60px;
+  .row {
+    height: 30px;
+  }
+}

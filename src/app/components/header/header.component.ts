@@ -15,11 +15,12 @@ import { Config } from './../../app.config';
 // SERVICES
 import { UserService } from './../../services/user.service';
 import { UpdateUserComponent } from '../update-user/update-user.component';
+import { LicensePaymentComponent } from '../license-payment/license-payment.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.scss']
 })
 
 export class HeaderComponent implements OnInit {
@@ -32,7 +33,9 @@ export class HeaderComponent implements OnInit {
   public pathLocation: string[];
   @Input() isAPIConected: boolean;
   @Input() config: any;
-  public isReportVisible: boolean;
+  public isReportVisible: boolean;  
+  public licenseDays: number;
+  public readedNotification: boolean = false;
 
   constructor(
     public _userService: UserService,
@@ -51,13 +54,26 @@ export class HeaderComponent implements OnInit {
       Observable.fromEvent(window, 'offline').mapTo(false)
     );
     this.accessType = Config.accessType;
+    this.licenseDays = 10 - new Date().getDate();
+    if(this.licenseDays.toString() !== localStorage.getItem('licenseDays')) {
+      this.readedNotification = false;
+      localStorage.setItem('readedNotification', this.readedNotification.toString());
+      localStorage.setItem('licenseDays', this.licenseDays.toString());
+    }
+    if(localStorage.getItem('readedNotification')) {
+      this.readedNotification = (localStorage.getItem('readedNotification') === "true");
+    }
   }
 
   ngOnInit(): void {
-
     if (this.isAPIConected) {
       this.validateIdentity();
     }
+  }
+
+  public readNotification(): void {
+    this.readedNotification = true;
+    localStorage.setItem('readedNotification', this.readedNotification.toString());
   }
 
   public validateIdentity(): void {
@@ -122,7 +138,16 @@ export class HeaderComponent implements OnInit {
 
         });
         break;
-      default: ;
+      case 'pay-license':
+        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
+        modalRef.result.then((result) => {
+
+        }, (reason) => {
+
+        });
+        break;
+      default: 
+        break;
     }
   }
 

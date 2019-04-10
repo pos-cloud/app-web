@@ -432,17 +432,39 @@
       <li class="nav-item"
           ngbDropdown
           *ngIf="identity">
-        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
+        <a  class="nav-link btn" 
+            ngbDropdownToggle 
+            data-toggle="tooltip" 
+            data-placement="top"
+            (click)="readNotification()">
           <i class="fa fa-bell"></i>
-          <span class="badge badge-danger">1</span>
+          <span *ngIf="!readedNotification && config && config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10" class="badge badge-danger">1</span>
         </a>
-        <div class="dropdown-menu" ngbDropdownMenu>
-          <div>
-            <button class="dropdown-item"
-                    (click)="openModal('view-user')"
-                    [routerLinkActive]="['active']">
-              Quedan asd 5 días de licencia
-            </button>
+        <div class="dropdown-menu notification-menu" ngbDropdownMenu>
+          <div class="dropdown-item notification-item" *ngIf="config && config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10">
+            <div class="row">
+              <div class="col-md-12">
+                <span *ngIf="licenseDays > 1">Quedan {{ licenseDays }} días de licencia</span>
+                <span *ngIf="licenseDays === 1">Queda un {{ licenseDays }} día de licencia</span>
+                <span *ngIf="licenseDays === 0">Hoy vence tu licencia</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 center-content">
+                <button
+                  class="btn btn-outline-success btn-sm"
+                  (click)="openModal('pay-license')">
+                  Renovar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown-item notification-item" *ngIf="!config || !config.showLicenseNotification || (licenseDays < 0 || licenseDays > 10)">
+            <div class="row">
+              <div class="col-md-12">
+                No hay notificaciones
+              </div>
+            </div>
           </div>
         </div>
       </li>
