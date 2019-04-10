@@ -43,7 +43,8 @@ export class ListArticleStocksComponent implements OnInit {
     "article.code",
     "article.description",
     "article.make.description",
-    "article.category.description"
+    "article.category.description",
+    "article.operationType"
   ];
   public filters: any[];
   public filterValue: string;
@@ -177,7 +178,7 @@ export class ListArticleStocksComponent implements OnInit {
       }
     }
 
-    match += `"operationType": { "$ne": "D" } }`;
+    match += `"operationType": { "$ne": "D" } , "article.operationType": { "$ne": "D" } }`;
     
     match = JSON.parse(match);
 
