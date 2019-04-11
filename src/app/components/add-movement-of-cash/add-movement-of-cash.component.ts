@@ -910,6 +910,9 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
+    movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+    movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {

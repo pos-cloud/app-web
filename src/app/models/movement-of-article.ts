@@ -34,6 +34,8 @@ export class MovementOfArticle {
     public transaction: Transaction = null;
     public measure: string ;
     public quantityMeasure : number = 1;
+    public modifyStock : boolean;
+	public stockMovement: string;
 
 	constructor () {}
 }

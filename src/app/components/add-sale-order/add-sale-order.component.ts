@@ -9,7 +9,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionMovement, StockMovement } from './../../models/transaction-type';
+import { TransactionMovement, StockMovement, TransactionType } from './../../models/transaction-type';
 import { Taxes } from './../../models/taxes';
 import { ArticlePrintIn } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
@@ -1710,6 +1710,10 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
+
+    movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+    movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+
 
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
     movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
