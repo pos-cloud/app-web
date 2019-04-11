@@ -21,6 +21,7 @@
           <tr>
             <th><i class="fa fa-bars"></i></th>
             <th (click)="orderBy('transactionMovement')">Movimiento</th>
+            <th (click)="orderBy('abbreviation')">Abrev.</th>
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('labelPrint')">Etiqueta</th>
             <th (click)="orderBy('currentAccount')">Afecta CC</th>
@@ -48,12 +49,14 @@
             <th (click)="orderBy('tax')">Afecta Libro IVA</th>
             <th (click)="orderBy('requestCompany')">Pide Empresa</th>
             <th (click)="orderBy('requestEmployee','description')">Pide Empleado</th>
+            <th (click)="orderBy('requestCurrency','name')">Pide Moneda</th>
             <th (click)="orderBy('fastPayment','name')">Pago rápido</th>
             <th (click)="orderBy('allowAPP')">APP</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTransactionMovement" placeholder="Movimiento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAbbreviation" placeholder="Abrev..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterLabelPrint" placeholder="Etiqueta..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCurrentAccount" placeholder="Cuenta Corriente..."></th>
@@ -81,12 +84,14 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterTax" placeholder="Afechta Libro IVA..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestEmployee" placeholder="Pide Empleado..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestCompany" placeholder="Pide Empresa..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterRequestCurrency" placeholder="Pide Moneda..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFastPayment" placeholder="Pago rápido..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowAPP" placeholder="APP..."></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let transactionType of transactionTypes | filter: filterTransactionMovement:'transactionMovement'
+                                                              | filter: filterAbbreviation:'abbreviation'
                                                               | filter: filterName:'name'
                                                               | filter: filterLabelPrint:'labelPrint'
                                                               | filter: filterCurrentAccount:'currentAccount'
@@ -111,6 +116,7 @@
                                                               | filter: filterTax:'tax'
                                                               | filter: filterRequestCompany:'requestCompany'
                                                               | filter: filterRequestEmployee:'description':'requestEmployee'
+                                                              | filter: filterRequestCurrency:'name':'requestCurrency'
                                                               | filter: filterFastPayment:'name':'fastPayment'
                                                               | filter: filterAllowAPP:'allowAPP'
                                                               | orderBy: orderTerm: propertyTerm
@@ -124,6 +130,7 @@
               <button type="button" class="btn btn-danger  btn-sm" (click)="openModal('delete', transactionType)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
             </td>
             <td class="flat">{{transactionType.transactionMovement}}</td>
+            <td class="flat">{{transactionType.abbreviation}}</td>
             <td class="flat">{{transactionType.name}}</td>
             <td class="flat">{{transactionType.labelPrint}}</td>
             <td class="flat">{{transactionType.currentAccount}}</td>
@@ -153,6 +160,8 @@
             <td class="flat">{{transactionType.requestCompany}}</td>
             <td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.name}}</td>
             <td class="flat" *ngIf="!transactionType.requestEmployee"></td>
+            <td class="flat" *ngIf="transactionType.requestCurrency">{{transactionType.requestCurrency.name}}</td>
+            <td class="flat" *ngIf="!transactionType.requestCurrency"></td>
             <td class="flat" *ngIf="transactionType.fastPayment">{{transactionType.fastPayment.name}}</td>
             <td class="flat" *ngIf="!transactionType.fastPayment"></td>
             <td class="flat">{{transactionType.allowAPP}}</td>

@@ -20,7 +20,7 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-3">
+                  <div class="form-group col-md-2">
                     <label for="transactionMovement" class="control-label">Movimiento</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="transactionMovement">
@@ -37,10 +37,22 @@
                       {{ formErrors.transactionMovement }}
                     </div>
                   </div>
-                  <div class="form-group col-md-5">
+                  <div class="form-group col-md-2">
+                    <label for="abbreviation">Abrev.</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="abbreviation" name="abbreviation" id="abbreviation" [focus]="focusEvent" [readonly]="readonly"/>
+                      <button type="button" class="btn btn-secondary" placement="right" ngbPopover="Siglas utilizadas para la alta de transacciones en la aplicación">
+                        <b>?</b>
+                      </button>
+                    </div>
+                    <div *ngIf="formErrors.abbreviation" class="alert alert-danger">
+                      {{ formErrors.abbreviation }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
                     <label for="name">Nombre</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
+                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Nombre de la transacción?">
                         <b>?</b>
                       </button>
@@ -149,7 +161,7 @@
                     </div>
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="tax">Libro de IVA</label>
+                    <label for="tax">Afecta Libro de IVA</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="tax">
                         <option value="true" [selected]="transactionType.tax">Si</option>
@@ -158,7 +170,7 @@
                       <button type="button"
                               class="btn btn-secondary"
                               placement="right"
-                              ngbPopover="¿La transacción se presenta en el libro de IVA?">
+                              ngbPopover="¿La transacción aparece en el Libro de IVA?">
                         <b>?</b>
                       </button>
                     </div>
@@ -210,7 +222,7 @@
                 <b>PERSONALIZADO</b>
                 <hr>
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-3">
                     <label for="requestCompany" class="control-label">Pide empresa</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="requestCompany">
@@ -228,13 +240,14 @@
                         </button>
                       </div>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-3">
                     <label for="requestEmployee" class="control-label">Pide empleado</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="requestEmployee">
                           <option *ngFor="let employeeType of employeeTypes"
                                   [ngValue]="employeeType._id"
-                                  [selected]="transactionType.requestEmployee && transactionType.requestEmployee._id === employeeType._id"
+                                  [selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
+                                              (transactionType.requestEmployee && employeeType._id===transactionType.requestEmployee)"
                                   [disabled]="readonly"
                           >{{ employeeType.description }}</option>
                         </select>
@@ -246,7 +259,26 @@
                         </button>
                       </div>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-3">
+                    <label for="requestCurrency" class="control-label">Pide moneda</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="requestCurrency">
+                          <option *ngFor="let currency of currencies"
+                                  [ngValue]="currency._id"
+                                  [selected]="(transactionType.requestCurrency && transactionType.requestCurrency._id && currency._id===transactionType.requestCurrency._id) ||
+                                              (transactionType.requestCurrency && currency._id===transactionType.requestCurrency)"
+                                  [disabled]="readonly"
+                          >{{ currency.name }}</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="Selecciona el tipo de moneda a solicitar en la carga">
+                          <b>?</b>
+                        </button>
+                      </div>
+                  </div>
+                  <div class="form-group col-md-3">
                     <label for="defectOrders" class="control-label">Defecto como pedido</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="defectOrders">

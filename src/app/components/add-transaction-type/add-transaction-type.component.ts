@@ -15,6 +15,8 @@ import { PaymentMethodService } from 'app/services/payment-method.service';
 import { PaymentMethod } from 'app/models/payment-method';
 import { CompanyType } from 'app/models/company';
 import { Config } from 'app/app.config';
+import { CurrencyService } from 'app/services/currency.service';
+import { Currency } from 'app/models/currency';
 
 @Component({
   selector: 'app-add-transaction-type',
@@ -36,6 +38,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public printers: Printer[];
   public employeeTypes: EmployeeType[];
   public paymentMethods: PaymentMethod[];
+  public currencies: Currency[];
   public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T", "X"];
   @Input() readonly: boolean;
   @Input() operation: string;
@@ -48,12 +51,16 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public formErrors = {
     'transactionMovement': '',
-    'name': ''
+    'abbreviation': '',
+    'name': '',
   };
 
   public validationMessages = {
     'transactionMovement': {
       'required': 'Este campo es requerido.',
+    },
+    'abbreviation': {
+      'maxlength': 'No puede exceder los 2 carácteres.'
     },
     'name': {
       'required': 'Este campo es requerido.',
@@ -69,7 +76,12 @@ export class AddTransactionTypeComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
+    public _currencyService: CurrencyService,
   ) {
+    this.getCurrencies();
+    this.getPaymentMethods();
+    this.getEmployeeTypes();
+    this.getPrinters();
   }
 
   ngOnInit(): void {
@@ -90,10 +102,6 @@ export class AddTransactionTypeComponent implements OnInit {
         this.opStockMovement = this.transactionType.stockMovement.toString();
       }
     }
-
-    this.getPaymentMethods();
-    this.getEmployeeTypes();
-    this.getPrinters();
     this.buildForm();
     this.setValueForm();
   }
@@ -117,6 +125,25 @@ export class AddTransactionTypeComponent implements OnInit {
       },
       error => {
         this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+  
+  public getCurrencies(): void {
+
+    this.loading = true;
+
+    this._currencyService.getCurrencies('sort="name":1').subscribe(
+      result => {
+        if (!result.currencies) {
+        } else {
+          this.currencies = result.currencies;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, "danger", false);
         this.loading = false;
       }
     );
@@ -172,6 +199,10 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'transactionMovement': [this.transactionType.transactionMovement, [
           Validators.required
+        ]
+      ],
+      'abbreviation': [this.transactionType.abbreviation, [,
+        Validators.maxLength(2)
         ]
       ],
       'name': [this.transactionType.name, [
@@ -268,6 +299,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestEmployee': [this.transactionType.requestEmployee, [
         ]
       ],
+      'requestCurrency': [this.transactionType.requestCurrency, [
+        ]
+      ],
       'fastPayment': [this.transactionType.fastPayment, [
         ]
       ],
@@ -322,6 +356,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType._id) this.transactionType._id = '';
     if (!this.transactionType.transactionMovement && this.transactionMovements && this.transactionMovements.length > 0) this.transactionType.transactionMovement = TransactionMovement.Sale;
     if (!this.transactionType.transactionMovement) this.transactionType.transactionMovement = null;
+    if (!this.transactionType.abbreviation) this.transactionType.abbreviation = '';
     if (!this.transactionType.name) this.transactionType.name = '';
     if (!this.transactionType.labelPrint) this.transactionType.labelPrint = '';
     if (!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAccount.No;
@@ -366,6 +401,17 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
 
+    let requestCurrency;
+    if (!this.transactionType.requestCurrency) {
+      requestCurrency = null;
+    } else {
+      if (this.transactionType.requestCurrency._id) {
+        requestCurrency = this.transactionType.requestCurrency._id;
+      } else {
+        requestCurrency = this.transactionType.requestCurrency;
+      }
+    }
+
     let requestEmployee;
     if (!this.transactionType.requestEmployee) {
       requestEmployee = null;
@@ -391,6 +437,7 @@ export class AddTransactionTypeComponent implements OnInit {
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
+      'abbreviation': this.transactionType.abbreviation,
       'name': this.transactionType.name,
       'labelPrint': this.transactionType.labelPrint,
       'currentAccount': this.transactionType.currentAccount,
@@ -420,6 +467,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'entryAmount': this.transactionType.entryAmount,
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,
+      'requestCurrency': requestCurrency,
       'requestEmployee': requestEmployee,
       'fastPayment': fastPayment,
       'requestCompany': this.transactionType.requestCompany

@@ -6,11 +6,13 @@ import { User } from './user';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { Currency } from './currency';
 
 export class TransactionType {
 
 	public _id: string;
 	public transactionMovement: TransactionMovement;
+	public abbreviation: string;
 	public name: string = '';
 	public labelPrint: string;
 	public currentAccount: CurrentAccount = CurrentAccount.No;
@@ -24,8 +26,8 @@ export class TransactionType {
 	public requestPaymentMethods: boolean = true;
 	public defectOrders: boolean = false;
 	public electronics: boolean = false;
-  public codes: CodeAFIP[]; // AR
-  public fiscalCode: string;
+	public codes: CodeAFIP[]; // AR
+	public fiscalCode: string;
 	public fixedOrigin: number;
 	public fixedLetter: string;
 	public resetNumber: boolean = false;
@@ -39,6 +41,7 @@ export class TransactionType {
 	public allowAPP: boolean = false;
 	public allowEdit: boolean = false;
 	public allowDelete: boolean = false;
+	public requestCurrency: Currency;
 	public requestEmployee: EmployeeType;
 	public fastPayment: PaymentMethod;
 	public requestCompany: CompanyType;
