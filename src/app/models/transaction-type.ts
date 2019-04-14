@@ -41,7 +41,7 @@ export class TransactionType {
 	public allowAPP: boolean = false;
 	public allowEdit: boolean = false;
 	public allowDelete: boolean = false;
-	public requestCurrency: Currency;
+	public requestCurrency: boolean = false;
 	public requestEmployee: EmployeeType;
 	public fastPayment: PaymentMethod;
 	public requestCompany: CompanyType;

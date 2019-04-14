@@ -49,7 +49,7 @@
             <th (click)="orderBy('tax')">Afecta Libro IVA</th>
             <th (click)="orderBy('requestCompany')">Pide Empresa</th>
             <th (click)="orderBy('requestEmployee','description')">Pide Empleado</th>
-            <th (click)="orderBy('requestCurrency','name')">Pide Moneda</th>
+            <th (click)="orderBy('requestCurrency')">Pide Moneda</th>
             <th (click)="orderBy('fastPayment','name')">Pago rápido</th>
             <th (click)="orderBy('allowAPP')">APP</th>
           </tr>
@@ -116,7 +116,7 @@
                                                               | filter: filterTax:'tax'
                                                               | filter: filterRequestCompany:'requestCompany'
                                                               | filter: filterRequestEmployee:'description':'requestEmployee'
-                                                              | filter: filterRequestCurrency:'name':'requestCurrency'
+                                                              | filter: filterRequestCurrency:'requestCurrency'
                                                               | filter: filterFastPayment:'name':'fastPayment'
                                                               | filter: filterAllowAPP:'allowAPP'
                                                               | orderBy: orderTerm: propertyTerm
@@ -160,8 +160,7 @@
             <td class="flat">{{transactionType.requestCompany}}</td>
             <td class="flat" *ngIf="transactionType.requestEmployee">{{transactionType.requestEmployee.name}}</td>
             <td class="flat" *ngIf="!transactionType.requestEmployee"></td>
-            <td class="flat" *ngIf="transactionType.requestCurrency">{{transactionType.requestCurrency.name}}</td>
-            <td class="flat" *ngIf="!transactionType.requestCurrency"></td>
+            <td class="flat">{{transactionType.requestCurrency}}</td>
             <td class="flat" *ngIf="transactionType.fastPayment">{{transactionType.fastPayment.name}}</td>
             <td class="flat" *ngIf="!transactionType.fastPayment"></td>
             <td class="flat">{{transactionType.allowAPP}}</td>

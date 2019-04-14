@@ -401,17 +401,7 @@ export class AddTransactionTypeComponent implements OnInit {
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
-
-    let requestCurrency;
-    if (!this.transactionType.requestCurrency) {
-      requestCurrency = null;
-    } else {
-      if (this.transactionType.requestCurrency._id) {
-        requestCurrency = this.transactionType.requestCurrency._id;
-      } else {
-        requestCurrency = this.transactionType.requestCurrency;
-      }
-    }
+    if (this.transactionType.requestCurrency === undefined) this.transactionType.requestCurrency = false;
 
     let requestEmployee;
     if (!this.transactionType.requestEmployee) {
@@ -468,7 +458,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'entryAmount': this.transactionType.entryAmount,
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,
-      'requestCurrency': requestCurrency,
+      'requestCurrency': this.transactionType.requestCurrency,
       'requestEmployee': requestEmployee,
       'fastPayment': fastPayment,
       'requestCompany': this.transactionType.requestCompany

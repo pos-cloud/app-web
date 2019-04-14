@@ -261,22 +261,18 @@
                   </div>
                   <div class="form-group col-md-3">
                     <label for="requestCurrency" class="control-label">Pide moneda</label>
-                      <div class="input-group">
-                        <select class="form-control" formControlName="requestCurrency">
-                          <option *ngFor="let currency of currencies"
-                                  [ngValue]="currency._id"
-                                  [selected]="(transactionType.requestCurrency && transactionType.requestCurrency._id && currency._id===transactionType.requestCurrency._id) ||
-                                              (transactionType.requestCurrency && currency._id===transactionType.requestCurrency)"
-                                  [disabled]="readonly"
-                          >{{ currency.name }}</option>
-                        </select>
-                        <button type="button"
-                                class="btn btn-secondary"
-                                placement="right"
-                                ngbPopover="Selecciona el tipo de moneda a solicitar en la carga">
-                          <b>?</b>
-                        </button>
-                      </div>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="requestCurrency">
+                        <option value="true" [selected]="transactionType.requestCurrency" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.requestCurrency" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Pide tipo de moneda al dar el alta la transacción?">
+                        <b>?</b>
+                      </button>
+                    </div>
                   </div>
                   <div class="form-group col-md-3">
                     <label for="defectOrders" class="control-label">Defecto como pedido</label>
