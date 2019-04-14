@@ -82,13 +82,13 @@ export class ArticleStockService {
 		return this._http.put(Config.apiURL + "article-stock/" + articleStock._id, articleStock, { headers: headers }).map(res => res.json());
 	}
 
-	updateRealStock(article: Article, amount: number, transactionType: string) {
+	updateRealStock(article: Article, amount: number, stockMovement: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.put(Config.apiURL + 'amount-stock-by-article/' + article._id, '{"amount":' + amount + ', "transactionType":"' + transactionType + '"}', { headers: headers }).map(res => res.json());
+		return this._http.put(Config.apiURL + 'amount-stock-by-article/' + article._id, '{"amount":' + amount + ', "stockMovement":"' + stockMovement + '"}', { headers: headers }).map(res => res.json());
 	}
 
 	public getArticleStocksV2(

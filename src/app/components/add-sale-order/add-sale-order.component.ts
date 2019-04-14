@@ -1755,14 +1755,14 @@ export class AddSaleOrderComponent implements OnInit {
 
       let amountToModify;
 
-      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.name === "Inventario") {
+      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount;
       } else {
         amountToModify = this.movementsOfArticles[this.amountModifyStock].amount * -1;
       }
 
       if (this.movementsOfArticles[this.amountModifyStock].article) {
-        this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.name).subscribe(
+        this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.stockMovement.toString()).subscribe(
           result => {
             if (!result.articleStock) {
               if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
