@@ -41,6 +41,7 @@
                       <div class="form-group col-md-6">
                           <label for="make" class="control-label">Marca</label>
                           <select class="form-control" formControlName="make">
+                            <option [ngValue]="null" [selected]="!article || !article.make" [disabled]="readonly"></option>
                             <option *ngFor="let make of makes"
                                     [selected]="(article.make && article.make._id && make._id===article.make._id) ||
                                                 (article.make && make._id===article.make)"
