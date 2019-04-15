@@ -89,6 +89,7 @@
                     <label for="movement" class="control-label">Movimiento de dinero</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="movement">
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.movement"></option>
                         <option value="Entrada" [selected]="opCashMovement === 'Entrada'">Entrada</option>
                         <option value="Salida" [selected]="opCashMovement === 'Salida'">Salida</option>
                       </select>
@@ -226,6 +227,7 @@
                     <label for="requestCompany" class="control-label">Pide empresa</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="requestCompany">
+                          <option [ngValue]="null" [selected]="!transactionType || !transactionType.requestCompany"></option>
                           <option *ngFor="let companyType of companyTypes"
                                   [ngValue]="companyType"
                                   [selected]="transactionType.requestCompany === companyType"
@@ -377,6 +379,7 @@
                     <label for="entryAmount" class="control-label">Monto a editar</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="entryAmount">
+                          <option [ngValue]="null" [selected]="!transactionType || !transactionType.entryAmount" [disabled]="readonly"></option>
                         <option value="Costo sin IVA" [disabled]="readonly">Costo sin IVA</option>
                         <option value="Conto con IVA" [disabled]="readonly">Conto con IVA</option>
                         <option value="Venta sin IVA" [disabled]="readonly">Venta sin IVA</option>
@@ -434,9 +437,11 @@
                     <label for="fastPayment" class="control-label">Botón de Pago Rápido</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="fastPayment">
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.fastPayment"></option>
                         <option
                           *ngFor="let paymentMethod of paymentMethods"
-                          [selected]="transactionType.fastPayment && transactionType.fastPayment._id === paymentMethod._id"
+                          [selected]="(transactionType.fastPayment && transactionType.fastPayment._id && paymentMethod._id===transactionType.fastPayment._id) ||
+                                      (transactionType.fastPayment && paymentMethod._id===transactionType.fastPayment)"
                           [ngValue]="paymentMethod._id"
                           [disabled]="readonly">
                           {{ paymentMethod.name }}
@@ -479,6 +484,7 @@
                     <label for="stockMovement" class="control-label">Movimiento</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="stockMovement">
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.stockMovement"></option>
                         <option value="Entrada" [selected]="opStockMovement === 'Entrada'" [disabled]="readonly">Entrada</option>
                         <option value="Salida" [selected]="opStockMovement === 'Salida'" [disabled]="readonly">Salida</option>
                         <option value="Inventario" [selected]="opStockMovement === 'Inventario'" [disabled]="readonly">Inventario</option>
@@ -575,6 +581,7 @@
                     <label for="defectPrinter" class="control-label">Impresora defecto</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="defectPrinter">
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.defectPrinter"></option>
                         <option *ngFor="let printer of printers"
                                 [selected]="transactionType.defectPrinter && transactionType.defectPrinter._id === printer._id"
                                 [ngValue]="printer._id">
