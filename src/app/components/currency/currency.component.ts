@@ -135,7 +135,6 @@ export class CurrencyComponent implements OnInit {
           this.loading = false;
           this.currency.code = '1';
         } else {
-          this.hideMessage();
           this.loading = false;
           try {
             this.currency.code = (parseInt(result.currencies[0].code) + 1).toString();
