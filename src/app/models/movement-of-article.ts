@@ -22,6 +22,7 @@ export class MovementOfArticle {
     public transactionDiscountAmount: number = 0.00;
     public salePrice: number = 0.00;
     public roundingAmount: number = 0.00;
+    public quotation: number = 1;
     public make: Make;
     public category: Category;
     public barcode: string;
