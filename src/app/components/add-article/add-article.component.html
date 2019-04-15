@@ -215,7 +215,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="currencies && currencies.length > 0">
                   <div class="form-group col-md-12">
                     <label for="currency" class="control-label">Moneda</label>
                     <select class="form-control" formControlName="currency">
