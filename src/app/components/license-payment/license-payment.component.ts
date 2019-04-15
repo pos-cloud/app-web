@@ -8,6 +8,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from './../../services/config.service';
 
 import { Config } from 'app/app.config';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-license-payment',
@@ -32,6 +33,7 @@ export class LicensePaymentComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public _router: Router,
     public alertConfig: NgbAlertConfig,
+    public roundNumber: RoundNumberPipe,
   ) { }
 
   ngOnInit() {
@@ -64,11 +66,11 @@ export class LicensePaymentComponent implements OnInit {
            this.toggleButton = true;
           break;
         case '6':
-          this.paymentTotal = (Config.licenseCost*month) - ((10*(Config.licenseCost*month))/100);
+          this.paymentTotal = this.roundNumber.transform((Config.licenseCost*month) - ((10*(Config.licenseCost*month))/100));
           this.toggleButton = true;
           break;
         case '12':
-          this.paymentTotal = (Config.licenseCost*month) - ((25*(Config.licenseCost*month))/100);   
+          this.paymentTotal = this.roundNumber.transform((Config.licenseCost*month) - ((25*(Config.licenseCost*month))/100));   
           break;
       }
     }
