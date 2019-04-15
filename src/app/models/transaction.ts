@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { UseOfCFDI } from './use-of-CFDI';
 import { RelationType } from './relation-type';
+import { Currency } from './currency';
 
 export class Transaction {
 
@@ -45,6 +46,8 @@ export class Transaction {
 	public type: TransactionType;
 	public company: Company;
 	public cashBox: CashBox;
+	public currency: Currency;
+	public quotation: number;
 	public table: Table;
 	public employeeOpening: Employee;
 	public employeeClosing: Employee;
