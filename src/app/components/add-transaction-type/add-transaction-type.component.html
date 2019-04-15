@@ -26,6 +26,7 @@
                       <select class="form-control" formControlName="transactionMovement">
                         <option *ngFor="let transactionMovement of transactionMovements"
                                 [ngValue]="transactionMovement"
+                                [disabled]="readonly"
                                 [selected]="transactionType.transactionMovement && transactionType.transactionMovement === transactionMovement"
                         >{{transactionMovement}}</option>
                       </select>
@@ -76,9 +77,9 @@
                     <label for="currentAccount" class="control-label">Cuenta Corriente</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="currentAccount">
-                        <option value="Si" [selected]="opCurrentAccount === 'Si'">Si</option>
-                        <option value="No" [selected]="opCurrentAccount === 'No'">No</option>
-                        <option value="Cobra" [selected]="opCurrentAccount === 'Cobra'">Cobra/Paga</option>
+                        <option value="Si" [selected]="opCurrentAccount === 'Si'" [disabled]="readonly">Si</option>
+                        <option value="No" [selected]="opCurrentAccount === 'No'" [disabled]="readonly">No</option>
+                        <option value="Cobra" [selected]="opCurrentAccount === 'Cobra'" [disabled]="readonly">Cobra/Paga</option>
                       </select>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Afecta la cuenta corriente la transacción?">
                         <b>?</b>
@@ -89,9 +90,9 @@
                     <label for="movement" class="control-label">Movimiento de dinero</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="movement">
-                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.movement"></option>
-                        <option value="Entrada" [selected]="opCashMovement === 'Entrada'">Entrada</option>
-                        <option value="Salida" [selected]="opCashMovement === 'Salida'">Salida</option>
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.movement" [disabled]="readonly"></option>
+                        <option value="Entrada" [selected]="opCashMovement === 'Entrada'" [disabled]="readonly">Entrada</option>
+                        <option value="Salida" [selected]="opCashMovement === 'Salida'" [disabled]="readonly">Salida</option>
                       </select>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Qué tipo de movimiento de dinero realiza?">
                         <b>?</b>
@@ -104,8 +105,8 @@
                     <label for="electronics" class="control-label">Transacción Electrónica</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="electronics">
-                        <option value="true" [selected]="transactionType.electronics">Si</option>
-                        <option value="false" [selected]="!transactionType.electronics">No</option>
+                        <option value="true" [selected]="transactionType.electronics" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.electronics" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
                               class="btn btn-secondary"
@@ -150,8 +151,8 @@
                     <label for="requestTaxes" class="control-label">Pide Impuestos</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="requestTaxes">
-                        <option value="true" [selected]="transactionType.requestTaxes">Si</option>
-                        <option value="false" [selected]="!transactionType.requestTaxes">No</option>
+                        <option value="true" [selected]="transactionType.requestTaxes" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.requestTaxes" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
                               class="btn btn-secondary"
@@ -165,8 +166,8 @@
                     <label for="tax">Afecta Libro de IVA</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="tax">
-                        <option value="true" [selected]="transactionType.tax">Si</option>
-                        <option value="false" [selected]="!transactionType.tax">No</option>
+                        <option value="true" [selected]="transactionType.tax" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.tax" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
                               class="btn btn-secondary"
@@ -184,8 +185,8 @@
                     <label for="allowEdit" class="control-label">Permite editar</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="allowEdit">
-                        <option value="true" [selected]="transactionType.allowEdit">Si</option>
-                        <option value="false" [selected]="!transactionType.allowEdit">No</option>
+                        <option value="true" [selected]="transactionType.allowEdit" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.allowEdit" [disabled]="readonly">No</option>
                       </select>
                       <button type="button"
                               class="btn btn-secondary"
@@ -199,8 +200,8 @@
                     <label for="allowDelete" class="control-label">Permite borrar</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="allowDelete">
-                        <option value="true" [selected]="transactionType.allowDelete">Si</option>
-                        <option value="false" [selected]="!transactionType.allowDelete">No</option>
+                        <option value="true" [selected]="transactionType.allowDelete" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.allowDelete" [disabled]="readonly">No</option>
                       </select>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Se puede borrar la transacción?">
                         <b>?</b>
@@ -211,8 +212,8 @@
                     <label for="allowAPP">Permite APP</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="allowAPP">
-                        <option value="true" [selected]="transactionType.allowAPP">Si</option>
-                        <option value="false" [selected]="!transactionType.allowAPP">No</option>
+                        <option value="true" [selected]="transactionType.allowAPP" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.allowAPP" [disabled]="readonly">No</option>
                       </select>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Permitir usar en la aplicación?">
                         <b>?</b>
@@ -227,7 +228,7 @@
                     <label for="requestCompany" class="control-label">Pide empresa</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="requestCompany">
-                          <option [ngValue]="null" [selected]="!transactionType || !transactionType.requestCompany"></option>
+                          <option [ngValue]="null" [selected]="!transactionType || !transactionType.requestCompany" [disabled]="readonly"></option>
                           <option *ngFor="let companyType of companyTypes"
                                   [ngValue]="companyType"
                                   [selected]="transactionType.requestCompany === companyType"
@@ -437,7 +438,7 @@
                     <label for="fastPayment" class="control-label">Botón de Pago Rápido</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="fastPayment">
-                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.fastPayment"></option>
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.fastPayment" [disabled]="readonly"></option>
                         <option
                           *ngFor="let paymentMethod of paymentMethods"
                           [selected]="(transactionType.fastPayment && transactionType.fastPayment._id && paymentMethod._id===transactionType.fastPayment._id) ||
@@ -484,7 +485,7 @@
                     <label for="stockMovement" class="control-label">Movimiento</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="stockMovement">
-                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.stockMovement"></option>
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.stockMovement" [disabled]="readonly"></option>
                         <option value="Entrada" [selected]="opStockMovement === 'Entrada'" [disabled]="readonly">Entrada</option>
                         <option value="Salida" [selected]="opStockMovement === 'Salida'" [disabled]="readonly">Salida</option>
                         <option value="Inventario" [selected]="opStockMovement === 'Inventario'" [disabled]="readonly">Inventario</option>
@@ -581,10 +582,11 @@
                     <label for="defectPrinter" class="control-label">Impresora defecto</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="defectPrinter">
-                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.defectPrinter"></option>
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.defectPrinter" [disabled]="readonly"></option>
                         <option *ngFor="let printer of printers"
                                 [selected]="transactionType.defectPrinter && transactionType.defectPrinter._id === printer._id"
-                                [ngValue]="printer._id">
+                                [ngValue]="printer._id"
+                                [disabled]="readonly">
                         {{printer.name}}</option>
                       </select>
                       <button type="button"
