@@ -115,7 +115,7 @@ export class ListCurrenciesComponent implements OnInit {
               this.getCurrencies();
             }
           }, (reason) => {
-
+            this.getCurrencies();
           });
         break;
       case 'delete' :
