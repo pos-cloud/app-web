@@ -35,18 +35,37 @@
           <a class="btn" (click)="openModal('change-employee')">
             <i class="fa fa-exchange"></i> Cambiar Empleado</a>
         </div>
-        <div class="col-md-2" *ngIf="posType!=='resto' && posType!=='delivery' && userCountry==='AR'">
-            <b>Dolar: {{dolar}}</b>
+        <!-- <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
+          <select class="form-control" [(ngModel)]="transaction.currency" (change)="updateTransaction()">
+            <option [ngValue]="null" [selected]="!transaction || !transaction.currency">Seleccionar Moneda</option>
+            <option *ngFor="let currency of currencies"
+                    [ngValue]="currency"
+                    [selected]="(transaction.currency &&
+                                transaction.currency._id &&
+                                transaction.currency._id === currency._id)">
+              {{ currency.name }} ( {{ currency.sign }} )
+            </option>
+          </select>
+        </div> -->
+        <div class="col-md-3" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary">Cotización: {{ transaction.quotation | currency:'USD':'1.2-2' }}</button>
+            <button type="button" 
+                    class="btn btn-secondary fa fa-pencil" 
+                    (click)="openModal('change-quotation')">
+            </button>
+          </div>
         </div>
         <div class="col-md-2">
           <button type="button" 
                   class="btn btn-secondary" 
-                  *ngIf="showButtonCancelation && 
-                        transaction && 
-                        transaction.company &&
-                        transaction.totalPrice === 0" 
+                  *ngIf=" showButtonCancelation && 
+                          transaction && 
+                          transaction.company &&
+                          transaction.totalPrice === 0" 
                   (click)="openModal('list-cancellations')">
-            Buscar Transacción Origen</button>
+            Buscar Transacción Origen
+          </button>
         </div>
       </div>
     </div>
@@ -301,4 +320,32 @@
   </div>
 </ng-template>
 
-
+<!--MODAL CAMBIAR COTIZACIÓN-->
+<ng-template #contentChangeQuotation let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Cambiar Cotización</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d('close_click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input  type="number"
+                    class="form-control"
+                    [(ngModel)]="transaction.quotation"
+                    placeholder="Cotización"
+                    [focus]="focusEvent">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="c('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" (click)="c('y')">
+        <span>Cambiar</span>
+      </button>
+    </div>
+  </ng-template>

@@ -28,6 +28,9 @@ import { CashBoxComponent } from '../cash-box/cash-box.component';
 import { EmployeeType } from 'app/models/employee-type';
 import { EmployeeTypeService } from 'app/services/employee-type.service';
 import { Company } from 'app/models/company';
+import { Currency } from 'app/models/currency';
+import { CurrencyService } from 'app/services/currency.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -66,18 +69,18 @@ export class PointOfSaleComponent implements OnInit {
     public _employeeTypeService: EmployeeTypeService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _currencyService: CurrencyService
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
+    this.getPrinters();
   }
 
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-
-    this.getPrinters();
 
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
@@ -102,6 +105,26 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
+  public getCurrencies(): Promise<Currency[]> {
+
+    return new Promise<Currency[]>((resolve, reject) => {
+
+      this._currencyService.getCurrencies('sort="name":1').subscribe(
+        result => {
+          if (!result.currencies) {
+            resolve(null);
+          } else {
+            resolve(result.currencies);
+          }
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
   public getPrinters(): void {
 
     this.loading = true;
@@ -111,7 +134,6 @@ export class PointOfSaleComponent implements OnInit {
         if (!result.printers) {
           this.printers = undefined;
         } else {
-          this.hideMessage();
           this.printers = result.printers;
         }
         this.loading = false;
@@ -260,13 +282,32 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
 
     this._transactionTypeService.getDefectOrder().subscribe(
-      result => {
+      async result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.transactionTypes = null;
         } else {
           let transaction = new Transaction();
           transaction.type = result.transactionTypes[0];
+          await this.getCurrencies().then(
+            currencies => {
+              if(currencies) {
+                transaction.currency = Config.currency;
+              }
+              if(transaction.quotation === undefined ||
+                transaction.quotation === null) {
+                if(currencies && currencies.length > 0) {
+                  for(let currency of currencies) {
+                    if(currency._id !== Config.currency._id) {
+                      transaction.quotation = currency.quotation;
+                    }
+                  }
+                } else {
+                  transaction.quotation = 1;
+                }
+              }
+            }
+          );
           this.getLastTransactionByType(transaction);
         }
         this.loading = false;
@@ -278,7 +319,7 @@ export class PointOfSaleComponent implements OnInit {
     );
   }
 
-  public addTransaction(type: TransactionType): void {
+  async addTransaction(type: TransactionType) {
 
     if(!type.cashOpening && !type.cashClosing) {
       if (type.requestEmployee && type.requestArticles) {
@@ -289,6 +330,25 @@ export class PointOfSaleComponent implements OnInit {
         if (this.transactionMovement !== TransactionMovement.Purchase) {
           let transaction = new Transaction();
           transaction.type = type;
+          await this.getCurrencies().then(
+            currencies => {
+              if(currencies) {
+                transaction.currency = Config.currency;
+              }
+              if(transaction.quotation === undefined ||
+                transaction.quotation === null) {
+                if(currencies && currencies.length > 0) {
+                  for(let currency of currencies) {
+                    if(currency._id !== Config.currency._id) {
+                      transaction.quotation = currency.quotation;
+                    }
+                  }
+                } else {
+                  transaction.quotation = 1;
+                }
+              }
+            }
+          );
           this.getLastTransactionByType(transaction);
         } else {
           this.openModal('transaction', type);
@@ -316,7 +376,7 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
         modalRef.componentInstance.type = typeTransaction.requestCompany;
         modalRef.result.then(
-          (result) => {
+          async (result) => {
             if(result.company) {
               if (transaction) {
                 transaction.company = result.company;
@@ -324,6 +384,25 @@ export class PointOfSaleComponent implements OnInit {
               } else {
                 transaction = new Transaction();
                 transaction.type = typeTransaction;
+                await this.getCurrencies().then(
+                  currencies => {
+                    if(currencies) {
+                      transaction.currency = Config.currency;
+                    }
+                    if(transaction.quotation === undefined ||
+                      transaction.quotation === null) {
+                      if(currencies && currencies.length > 0) {
+                        for(let currency of currencies) {
+                          if(currency._id !== Config.currency._id) {
+                            transaction.quotation = currency.quotation;
+                          }
+                        }
+                      } else {
+                        transaction.quotation = 1;
+                      }
+                    }
+                  }
+                );
                 transaction.company = result.company;
                 if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
                   transaction.origin = transaction.type.fixedOrigin;
@@ -475,33 +554,53 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.requireLogin = false;
         modalRef.componentInstance.op = 'select-employee';
         modalRef.componentInstance.typeEmployee = typeTransaction.requestEmployee;
-        modalRef.result.then((result) => {
-          if (result.employee) {
-            if (transaction) {
-              if (this.posType === "delivery") {
-                transaction.state = TransactionState.Sent;
-                transaction.employeeOpening = result.employee;
-                this.updateTransaction(transaction, true);
+        modalRef.result.then(
+          async (result) => {
+            if (result.employee) {
+              if (transaction) {
+                if (this.posType === "delivery") {
+                  transaction.state = TransactionState.Sent;
+                  transaction.employeeOpening = result.employee;
+                  this.updateTransaction(transaction, true);
+                } else {
+                  transaction.employeeOpening = result.employee;
+                  this.updateTransaction(transaction, false);
+                }
               } else {
+                transaction = new Transaction();
+                transaction.type = typeTransaction;
+                await this.getCurrencies().then(
+                  currencies => {
+                    if(currencies) {
+                      transaction.currency = Config.currency;
+                    }
+                    if(transaction.quotation === undefined ||
+                      transaction.quotation === null) {
+                      if(currencies && currencies.length > 0) {
+                        for(let currency of currencies) {
+                          if(currency._id !== Config.currency._id) {
+                            transaction.quotation = currency.quotation;
+                          }
+                        }
+                      } else {
+                        transaction.quotation = 1;
+                      }
+                    }
+                  }
+                );
                 transaction.employeeOpening = result.employee;
-                this.updateTransaction(transaction, false);
+                if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
+                  transaction.origin = transaction.type.fixedOrigin;
+                }
+
+                if (transaction.type.fixedLetter && transaction.type.fixedLetter !== '') {
+                  transaction.letter = transaction.type.fixedLetter.toUpperCase();
+                }
+                this.getLastTransactionByType(transaction);
               }
             } else {
-              transaction = new Transaction();
-              transaction.type = typeTransaction;
-              transaction.employeeOpening = result.employee;
-              if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
-                transaction.origin = transaction.type.fixedOrigin;
-              }
-
-              if (transaction.type.fixedLetter && transaction.type.fixedLetter !== '') {
-                transaction.letter = transaction.type.fixedLetter.toUpperCase();
-              }
-              this.getLastTransactionByType(transaction);
+              this.refresh();
             }
-          } else {
-            this.refresh();
-          }
         }, (reason) => {
           this.refresh();
         });

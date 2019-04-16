@@ -665,7 +665,13 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
-    movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
+    let quotation = 1;
+    
+    if(movementOfArticle.transaction.quotation) {
+      quotation = movementOfArticle.transaction.quotation;
+    }
+    
+    movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
@@ -714,8 +720,20 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     if (movementOfArticle.article) {
 
+      let quotation = 1;
+      if(this.movementOfArticle.transaction.quotation) {
+        quotation = this.movementOfArticle.transaction.quotation;
+      }
+      
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
+      if(movementOfArticle.article &&
+        movementOfArticle.article.currency &&  
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
+        movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+      }
+  
       let fields: ArticleFields[] = new Array();
       if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
         for (const field of movementOfArticle.otherFields) {
@@ -730,7 +748,14 @@ export class AddMovementOfArticleComponent implements OnInit {
       movementOfArticle.otherFields = fields;
 
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-      movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
+
+      if(movementOfArticle.article.currency &&  
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
+          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+      }
+
+      movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
       movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
       movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);

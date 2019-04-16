@@ -24,6 +24,8 @@ import { PrinterService } from '../../services/printer.service';
 import { TransactionMovement } from '../../models/transaction-type';
 import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
+import { ArticleFields } from 'app/models/article-fields';
+import { ArticleFieldType } from 'app/models/article-field';
 
 @Component({
   selector: 'app-list-articles',
@@ -278,16 +280,53 @@ export class ListArticlesComponent implements OnInit {
     movementOfArticle.codeSAT = articleSelected.codeSAT;
     movementOfArticle.description = articleSelected.description;
     movementOfArticle.observation = articleSelected.observation;
-    movementOfArticle.basePrice = articleSelected.basePrice;
-    movementOfArticle.otherFields = articleSelected.otherFields;
-    movementOfArticle.costPrice = articleSelected.costPrice;
+    movementOfArticle.make = articleSelected.make;
+    movementOfArticle.category = articleSelected.category;
+    movementOfArticle.barcode = articleSelected.barcode;
+    movementOfArticle.transaction = this.transaction;
+
+    let quotation = 1;
+    if(this.transaction.quotation) {
+      quotation = this.transaction.quotation;
+    }
+
+    movementOfArticle.basePrice = this.roundNumber.transform(articleSelected.basePrice);
+
+    if(articleSelected.currency &&  
+      Config.currency && 
+      Config.currency._id !== articleSelected.currency._id) {
+      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+    }
+
     if (this.transaction &&
       this.transaction.type &&
       this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+        let fields: ArticleFields[] = new Array();
+        if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+          for (const field of movementOfArticle.otherFields) {
+            if (field.datatype === ArticleFieldType.Percentage) {
+              field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+            } else if (field.datatype === ArticleFieldType.Number) {
+              field.amount = parseFloat(field.value);
+            }
+            fields.push(field);
+          }
+        }
+        movementOfArticle.otherFields = fields;
+        movementOfArticle.costPrice = this.roundNumber.transform(articleSelected.costPrice);
         movementOfArticle.markupPercentage = articleSelected.markupPercentage;
-        movementOfArticle.markupPrice = articleSelected.markupPrice;
-        movementOfArticle.unitPrice = articleSelected.salePrice;
-        movementOfArticle.salePrice = articleSelected.salePrice;
+        movementOfArticle.markupPrice = this.roundNumber.transform(articleSelected.markupPrice);
+        movementOfArticle.unitPrice = this.roundNumber.transform(articleSelected.salePrice);
+        movementOfArticle.salePrice = this.roundNumber.transform(articleSelected.salePrice);
+
+        if(articleSelected.currency &&  
+          Config.currency && 
+          Config.currency._id !== articleSelected.currency._id) {
+            movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+            movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice * quotation);
+            movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+            movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+        }
         if(this.transaction.type.requestTaxes) {
           let tax: Taxes = new Taxes();
           let taxes: Taxes[] = new Array();
@@ -305,17 +344,43 @@ export class ListArticlesComponent implements OnInit {
     } else {
       movementOfArticle.markupPercentage = 0;
       movementOfArticle.markupPrice = 0;
-      if (this.transaction &&
-        this.transaction.type &&
-        this.transaction.type.requestTaxes) {
-        movementOfArticle.taxes = articleSelected.taxes;
+
+      let taxedAmount = movementOfArticle.basePrice;
+      movementOfArticle.costPrice = 0;
+
+      let fields: ArticleFields[] = new Array();
+      if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+        for (const field of movementOfArticle.otherFields) {
+          if (field.datatype === ArticleFieldType.Percentage) {
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+          } else if (field.datatype === ArticleFieldType.Number) {
+            field.amount = parseFloat(field.value);
+          }
+          if (field.articleField.modifyVAT) {
+            taxedAmount += field.amount;
+          } else {
+            movementOfArticle.costPrice += field.amount;
+          }
+          fields.push(field);
+        }
       }
-      movementOfArticle.unitPrice = articleSelected.basePrice;
-      movementOfArticle.salePrice = articleSelected.costPrice;
+      movementOfArticle.otherFields = fields;
+      if (this.transaction && this.transaction.type && this.transaction.type.requestTaxes) {
+        if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
+          let taxes: Taxes[] = new Array();
+          for (let articleTax of movementOfArticle.taxes) {
+            articleTax.taxBase = taxedAmount;
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+            taxes.push(articleTax);
+            movementOfArticle.costPrice += articleTax.taxAmount;
+          }
+          movementOfArticle.taxes = taxes;
+        }
+      }
+      movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
+      movementOfArticle.unitPrice = movementOfArticle.basePrice;
+      movementOfArticle.salePrice = movementOfArticle.costPrice;
     }
-    movementOfArticle.make = articleSelected.make;
-    movementOfArticle.category = articleSelected.category;
-    movementOfArticle.barcode = articleSelected.barcode;
     this.eventAddItem.emit(movementOfArticle);
   }
 
@@ -345,52 +410,8 @@ export class ListArticlesComponent implements OnInit {
             article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
             article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
             article.code === this.filterArticle)) {
-              let movementOfArticle = new MovementOfArticle();
-              movementOfArticle.article = article;
-              movementOfArticle.code = article.code;
-              movementOfArticle.codeSAT = article.codeSAT;
-              movementOfArticle.description = article.description;
-              movementOfArticle.observation = article.observation;
-              movementOfArticle.basePrice = article.basePrice;
-              movementOfArticle.otherFields = article.otherFields;
-              movementOfArticle.costPrice = article.costPrice;
-              if (this.transaction &&
-                this.transaction.type &&
-                this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                  movementOfArticle.markupPercentage = article.markupPercentage;
-                  movementOfArticle.markupPrice = article.markupPrice;
-                  movementOfArticle.unitPrice = article.salePrice;
-                  movementOfArticle.salePrice = article.salePrice;
-                  if (this.transaction.type.requestTaxes) {
-                    let tax: Taxes = new Taxes();
-                    let taxes: Taxes[] = new Array();
-                    if (article.taxes) {
-                      for (let taxAux of article.taxes) {
-                        tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                        tax.tax = taxAux.tax;
-                        tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-                        tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
-                        taxes.push(tax);
-                      }
-                    }
-                    movementOfArticle.taxes = taxes;
-                  }
-              } else {
-                movementOfArticle.markupPercentage = 0;
-                movementOfArticle.markupPrice = 0;
-                if (this.transaction &&
-                  this.transaction.type &&
-                  this.transaction.type.requestTaxes) {
-                  movementOfArticle.taxes = article.taxes;
-                }
-                movementOfArticle.unitPrice = article.basePrice;
-                movementOfArticle.salePrice = article.costPrice;
-              }
-              movementOfArticle.make = article.make;
-              movementOfArticle.category = article.category;
-              movementOfArticle.barcode = article.barcode;
               this.filterArticle = '';
-              this.eventAddItem.emit(movementOfArticle);
+              this.addItem(article);
       }
     }
   }

@@ -416,9 +416,9 @@ export class MovementOfCancellationComponent implements OnInit {
             movementOfArticle.measure = mov.measure;
             movementOfArticle.quantityMeasure = mov.quantityMeasure;
             if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              this.recalculateSalePrice(movementOfArticle);
+              movementOfArticle = this.recalculateSalePrice(movementOfArticle);
             } else {
-              this.recalculateCostPrice(movementOfArticle);
+              movementOfArticle = this.recalculateCostPrice(movementOfArticle);
             }
 
             this.movementOfarticles.push(movementOfArticle);
@@ -437,7 +437,13 @@ export class MovementOfCancellationComponent implements OnInit {
 
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
-    movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
+    let quotation = 1;
+    
+    if(movementOfArticle.transaction.quotation) {
+      quotation = movementOfArticle.transaction.quotation;
+    }
+    
+    movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
@@ -485,8 +491,20 @@ export class MovementOfCancellationComponent implements OnInit {
   // EL IMPUESTO VA SOBRE EL ARTICULO Y NO SOBRE EL MOVIMIENTO
   public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
+    let quotation = 1;
+    if(this.transactionDestination.quotation) {
+      quotation = this.transactionDestination.quotation;
+    }
+
     if (movementOfArticle.article) {
+
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
+
+      if( movementOfArticle.article.currency &&  
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
+          movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+      }
     }
 
     let fields: ArticleFields[] = new Array();
@@ -504,6 +522,12 @@ export class MovementOfCancellationComponent implements OnInit {
 
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
+
+      if( movementOfArticle.article.currency &&  
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
+          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+      }
     }
     movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
