@@ -388,7 +388,6 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.hideMessage();
           this.transaction = result.transaction;
-          console.log(this.transaction.quotation);
           this.transactionMovement = '' + this.transaction.type.transactionMovement;
           if(this.transaction.state === TransactionState.Closed ||
             this.transaction.state === TransactionState.Canceled) {
@@ -415,6 +414,7 @@ export class AddSaleOrderComponent implements OnInit {
               }
             );
             this.lastQuotation = this.transaction.quotation;
+
             this.getCancellationTypes();
             if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
               this.getOpenCashBox();
