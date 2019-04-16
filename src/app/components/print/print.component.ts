@@ -332,7 +332,6 @@ export class PrintComponent implements OnInit {
       let iva = 0;
       let exento = 0;
       if (!this.bookVAT[i].GRAVADO) this.bookVAT[i].GRAVADO = 0;
-      if (!this.bookVAT[i].TOTAL) this.bookVAT[i].TOTAL = 0;
       if (!this.bookVAT[i].IVA_PORCENTAJE) {
         this.bookVAT[i].IVA_PORCENTAJE = 0;
       } else {
@@ -344,24 +343,20 @@ export class PrintComponent implements OnInit {
       if (this.params.split("&")[0].toString() == "Venta") {
         if (this.bookVAT[i].movement === "Entrada") {
           gravado = this.bookVAT[i].GRAVADO;
-          total = this.bookVAT[i].TOTAL;
           iva = this.bookVAT[i].IVA;
           exento = this.bookVAT[i].EXENT_NOGRAV;
         } else {
           gravado = -this.bookVAT[i].GRAVADO;
-          total = -this.bookVAT[i].TOTAL;
           iva = iva -this.bookVAT[i].IVA;
           exento = -this.bookVAT[i].EXENT_NOGRAV;
         }
       } else {
         if (this.bookVAT[i].movement === "Entrada") {
           gravado = -this.bookVAT[i].GRAVADO;
-          total = -this.bookVAT[i].TOTAL;
           iva = -this.bookVAT[i].IVA;
           exento = -this.bookVAT[i].EXENT_NOGRAV;
         } else {
           gravado = +this.bookVAT[i].GRAVADO;
-          total = +this.bookVAT[i].TOTAL;
           iva = +this.bookVAT[i].IVA;
           exento = +this.bookVAT[i].EXENT_NOGRAV;
         }
@@ -370,6 +365,7 @@ export class PrintComponent implements OnInit {
       totalGravado += gravado;
       totalExento += exento;
       totalIVA += iva;
+      total = gravado + iva + exento;
       montoTotal += total;
 
       this.doc.setFontSize(8);
@@ -450,7 +446,6 @@ export class PrintComponent implements OnInit {
         }
       } else if (this.roundNumber.transform(total)) {
         printTotal = total.toLocaleString('de-DE') + ",00";
-
       }
 
       this.doc.text(printGravado, 152, row);
