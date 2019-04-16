@@ -227,6 +227,7 @@ import { MovementOfCancellationService } from './services/movement-of-cancellati
 import { CurrencyComponent } from './components/currency/currency.component';
 import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
 import { CurrencyService } from './services/currency.service';
+import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -386,6 +387,7 @@ import { CurrencyService } from './services/currency.service';
     MovementOfCancellationComponent,
     CurrencyComponent,
     ListCurrenciesComponent,
+    ListMovementOfArticlesComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -534,6 +536,7 @@ import { CurrencyService } from './services/currency.service';
     MovementOfCancellationComponent,
     CurrencyComponent,
     ListCurrenciesComponent,
+    ListMovementOfArticlesComponent
   ],
   imports: [
     BrowserModule,

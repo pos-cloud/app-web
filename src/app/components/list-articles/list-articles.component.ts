@@ -2,7 +2,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticleType } from './../../models/article';
 import { Category } from './../../models/category';
@@ -60,6 +60,7 @@ export class ListArticlesComponent implements OnInit {
     public _articleService: ArticleService,
     public _router: Router,
     public _modalService: NgbModal,
+    public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService
   ) {
@@ -156,6 +157,10 @@ export class ListArticlesComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public selectArticle(articleSelected: Article): void {
+    this.activeModal.close({ article: articleSelected });
   }
 
   public orderBy(term: string, property?: string): void {
