@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
 
 import { TransactionMovement } from '../../models/transaction-type';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-export-citi',
@@ -28,6 +29,7 @@ export class ExportCitiComponent implements OnInit {
   public VATPeriod: string;
   public compURL: string;
   public aliURL: string;
+  public apiURL: string;
   @Input() transactionMovement: TransactionMovement = TransactionMovement.Sale;
 
   public formErrors = {
@@ -54,6 +56,7 @@ export class ExportCitiComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.apiURL = Config.apiURL;
     this.buildForm();
   }
 
