@@ -54,13 +54,13 @@ export class MovementOfCancellationService {
         );
     }
 
-    addMovementOfCancellation( movementOfCancellation: MovementOfCancellation,) {
-		let headers = new Headers({
-		'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
-    });
-		return this._http.post(Config.apiURL + "movement-of-cancellation", movementOfCancellation, { headers: headers }).map (res => res.json());
+    saveMovementOfCancellation (movementOfCancellation: MovementOfCancellation) {
+        let headers = new Headers({
+          'Content-Type': 'application/json',
+          'Authorization': this._userService.getToken(),
+          'Database': this._userService.getDatabase()
+        });
+        return this._http.post(Config.apiURL + "movement-of-cancellation", movementOfCancellation, { headers: headers }).map (res => res.json());
     }
 
     updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation){

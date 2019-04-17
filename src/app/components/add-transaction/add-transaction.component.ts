@@ -714,7 +714,7 @@ export class AddTransactionComponent implements OnInit {
 
   public saveMovementOfCancellation() : void {
     
-    this._movementOfCancellationService.addMovementOfCancellation(this.movementOfCancellation).subscribe(
+    this._movementOfCancellationService.saveMovementOfCancellation(this.movementOfCancellation).subscribe(
       result => {
         if (!result.movementOfCancellation) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

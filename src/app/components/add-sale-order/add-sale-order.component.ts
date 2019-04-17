@@ -565,7 +565,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   async saveMovementOfCancellation() {
 
-    this._movementOfCancellationService.addMovementOfCancellation(this.movementOfCancellation).subscribe(
+    this._movementOfCancellationService.saveMovementOfCancellation(this.movementOfCancellation).subscribe(
       async result => {
         if (!result.movementOfCancellation) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
