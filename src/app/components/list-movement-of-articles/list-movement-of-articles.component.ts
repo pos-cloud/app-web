@@ -41,12 +41,11 @@ export class ListMovementOfArticlesComponent implements OnInit {
   public printers: Printer[];
   public userCountry: string;
 
-  public orderTerm: string[] = ['-updateDate'];
+  public orderTerm: string[] = ['updateDate'];
   public currentPage: number = 0;
   public displayedColumns = [
     "transaction.state",
     "transaction.operationType",
-    "amount",
     "article._id",
     "operationType",
     "updateDate",
@@ -57,7 +56,9 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "transaction._id",
     "modifyStock",
     "stockMovement",
-    "amount"
+    "amount",
+    "costPrice",
+    "salePrice"
   ];
   public filters: any[];
   public filterValue: string;
@@ -113,7 +114,6 @@ export class ListMovementOfArticlesComponent implements OnInit {
       }
     }
 
-
     let timezone = "-03:00";
     if(Config.timezone && Config.timezone !== '') {
       timezone =  Config.timezone.split('UTC')[1];
@@ -123,27 +123,30 @@ export class ListMovementOfArticlesComponent implements OnInit {
               "operationType": { "$ne": "D" },"transaction.operationType" : { "$ne": "D" }, 
               "transaction.state" : "Cerrado","modifyStock" : true,
               "updateDate" : {"$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
-                              "$lte": {"$date": "${this.endDate}T00:00:00${timezone}"}
+                              "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}
                               }
               }`;
     
 
     match = JSON.parse(match);
 
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = '{}';
-    if (this.displayedColumns && this.displayedColumns.length > 0) {
-        project = '{';
-        for (let i = 0; i < this.displayedColumns.length; i++) {
-            let field = this.displayedColumns[i];
-            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-            if (i < this.displayedColumns.length - 1) {
-                project += ',';
-            }
-        }
-        project += '}';
-    }
-    project = JSON.parse(project);
+    let project = {
+        "transaction.state":1,
+        "transaction.operationType":1,
+        "amount":1,
+        "article._id":1,
+        "operationType":1,
+        "updateDate":1,
+        "transaction.type.name":1,
+        "transaction.letter": { $toString : "$transaction.letter"},
+        "transaction.number": { $toString : '$transaction.number'},
+        "transaction.origin": { $toString : '$transaction.origin'},
+        "transaction._id":1,
+        "modifyStock":1,
+        "stockMovement":1,
+        "costPrice":1,
+        "salePrice" : 1
+    };
 
     // AGRUPAMOS EL RESULTADO
     let group = {
@@ -178,7 +181,8 @@ export class ListMovementOfArticlesComponent implements OnInit {
           this.movementsOfArticles = result.movementsOfArticles;
           this.totalItems = result.count;
           this.areTransactionsEmpty = false;
-          //this.getBalance()
+          this.getBalance();
+          console.log(this.movementsOfArticles)
           } 
       },
       error => {
@@ -203,23 +207,17 @@ export class ListMovementOfArticlesComponent implements OnInit {
     this.balance = 0;
 
     for(let i = 0; i < this.movementsOfArticles.length; i++) {
-      
-        console.log(this.movementsOfArticles[i].stockMovement)
-        console.log(this.movementsOfArticles[i].amount);
-        
 
         if(this.movementsOfArticles[i].stockMovement == "Entrada") {
-          this.balance += this.movementsOfArticles[i].amount
+          this.balance += parseFloat(this.movementsOfArticles[i].amount.toString());
         } 
         if( this.movementsOfArticles[i].stockMovement == "Salida") {
-          this.balance -= this.movementsOfArticles[i].amount
+          this.balance -= parseFloat(this.movementsOfArticles[i].amount.toString());
         }
 
         if( this.movementsOfArticles[i].stockMovement == "Inventario" ) {
-          this.balance = this.movementsOfArticles[i].amount
+          this.balance = parseFloat( this.movementsOfArticles[i].amount.toString());
         }
-
-        console.log(this.balance);
         
       }
 

@@ -1,4 +1,4 @@
-<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid" *ngIf="userType=='report'">
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Kardex de Producto
       <div class="pull-right">
@@ -72,7 +72,7 @@
             <tr>
               <th class="th transaction-data"></th>
               <th colspan="6" class="th transaction-data">Datos del Movimiento</th>
-              <th colspan="3" class="th balance-data">Tipo de Movimiento</th>
+              <th colspan="6" class="th balance-data">Tipo de Movimiento</th>
             </tr>
             <tr>
               <th class=""><i class="fa fa-bars"></i></th>
@@ -87,15 +87,16 @@
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
-              <th><input type="date" class="form-control" [(ngModel)]="filters['updateDate']" (input)="getSummary()" placeholder="Fecha..."></th>
+              <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getSummary()" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.origin']" (input)="getSummary()" placeholder="Punto de venta..."  *ngIf="userCountry === 'AR'"></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.letter']" (input)="getSummary()" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getSummary()" placeholder="Número..."></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Entrada..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Salida..."></th>
               <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Salida..."></th>
+              
             </tr>
           </thead>
           <tbody>
@@ -107,7 +108,7 @@
               <td align="left" width="100">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', movementsOfArticle)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
-              <td class="align-center" *ngIf="movementsOfArticle.updateDate">{{movementsOfArticle.updateDate }}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.updateDate">{{movementsOfArticle.updateDate | dateFormat : 'DD/MM/YYYY' }}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].name}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.letter}}</td>
@@ -116,22 +117,22 @@
               <td class="align-center"  *ngIf="movementsOfArticle.stockMovement === 'Entrada'">{{movementsOfArticle.amount }}</td>
               <td></td>
               <td class="align-center"  *ngIf="movementsOfArticle.stockMovement === 'Salida'">{{movementsOfArticle.amount }}</td>
-              <td></td>
+              
             </tr>
             <tr align="center" *ngIf="movementsOfArticles.length === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
             </tr>
           </tbody>
           <tfoot>
-            <!--<td colspan="12" class="align-right">
-              <strong>SALDO TOTAL</strong>
+            <td colspan="12" class="align-right">
+              <strong>CANTIDAD TOTAL</strong>
             </td>
             <td *ngIf="balance>=0" class="align-right">
               <strong>{{balance }}</strong>
             </td>
             <td *ngIf="balance<0" class="align-right">
               <strong>{{balance }}</strong>
-            </td>-->
+            </td>
           </tfoot>
         </table>
       </div>

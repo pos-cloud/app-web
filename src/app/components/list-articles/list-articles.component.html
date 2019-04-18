@@ -1,5 +1,5 @@
 <!--ADMIN-->
-<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid" *ngIf="userType==='admin'">
   <div class="center-content" *ngIf="alertMessage !== '' && !areArticlesEmpty">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -150,4 +150,102 @@
     </div>
   </div>
   {{filterItem(articles | filter: filterArticle)}}
+</section>
+
+<!--KARDEX-->
+<section class="container-fluid" *ngIf="userType==='report'">
+  <div class="center-content" *ngIf="alertMessage !== '' && !areArticlesEmpty">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Listado de Productos
+      <div class="pull-right">
+        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+        </span>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>
+              <i class="fa fa-bars"></i>
+            </th>
+            <th (click)="orderBy('code')">#</th>
+            <th (click)="orderBy('description')">Descripción</th>
+            <th (click)="orderBy('make','description')">Marca</th>
+            <th (click)="orderBy('category','description')">Rubro</th>
+            <th (click)="orderBy('costPrice')">Precio de Costo</th>
+            <th (click)="orderBy('salePrice')">Precio de Venta</th>
+          </tr>
+          <tr *ngIf="areFiltersVisible" class="filters">
+            <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="#..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterMake" placeholder="Marca..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCategory" placeholder="Rubro..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCostPrice" placeholder="Precio de Costo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterSalePrice" placeholder="Precio de Venta..."></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let article of articles | filter: filterCode:'code'
+                                              | filter: filterDescription:'description'
+                                              | filter: filterMake:'description':'make'
+                                              | filter: filterCategory:'description':'category'
+                                              | filter: filterCostPrice:'costPrice'
+                                              | filter: filterSalePrice:'salePrice'
+                                              | orderBy: orderTerm: propertyTerm
+                                              | paginate: { itemsPerPage: itemsPerPage,
+                                                                            currentPage: p,
+                                                                            totalItems: totalItems
+                                                                          }"
+                                              (click)="selectArticle(article)">
+            <td align="left" width="50">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver"><i class="fa fa-eye"></i></button>
+            </td>
+            <td>{{article.code}}</td>
+            <td>{{article.description}}</td>
+            <td *ngIf="article.make">{{article.make.description}}</td>
+            <td *ngIf="!article.make"></td>
+            <td *ngIf="article.category">{{article.category.description}}</td>
+            <td *ngIf="!article.category"></td>
+            <td>{{article.costPrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
+          </tr>
+          <tr align="center" *ngIf="areArticlesEmpty && !loading">
+            <td colspan="9">No se encontraron productos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-primary">
+      <div class="row">
+        <div class="col-md-10">
+          <pagination-controls
+            class="my-pagination"
+            (pageChange)="p=$event"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true">
+          </pagination-controls>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage">
+            <option [value]="5">Mostrar 5 ítems</option>
+            <option [value]="10">Mostrar 10 ítems</option>
+            <option [value]="15">Mostrar 15 ítems</option>
+            <option [value]="20">Mostrar 20 ítems</option>
+            <option [value]="50">Mostrar 50 ítems</option>
+            <option [value]="100">Mostrar 100 ítems</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

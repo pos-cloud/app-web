@@ -326,7 +326,7 @@ export const _routes: Routes = [
     data: { roles: ['Administrador'] }
   },
   {
-    path : 'admin/movement-of-articles',
+    path : 'report/kardex-de-productos',
     component : ListMovementOfArticlesComponent,
     canActivate: [AuthGuard],
     data: { roles : ['Administrador']}
