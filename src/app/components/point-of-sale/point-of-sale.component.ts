@@ -298,7 +298,7 @@ export class PointOfSaleComponent implements OnInit {
                 transaction.quotation === null) {
                 if(currencies && currencies.length > 0) {
                   for(let currency of currencies) {
-                    if(currency._id !== Config.currency._id) {
+                    if(Config.currency && currency._id !== Config.currency._id) {
                       transaction.quotation = currency.quotation;
                     }
                   }
@@ -339,7 +339,7 @@ export class PointOfSaleComponent implements OnInit {
                 transaction.quotation === null) {
                 if(currencies && currencies.length > 0) {
                   for(let currency of currencies) {
-                    if(currency._id !== Config.currency._id) {
+                    if(Config.currency && currency._id !== Config.currency._id) {
                       transaction.quotation = currency.quotation;
                     }
                   }
@@ -393,7 +393,7 @@ export class PointOfSaleComponent implements OnInit {
                       transaction.quotation === null) {
                       if(currencies && currencies.length > 0) {
                         for(let currency of currencies) {
-                          if(currency._id !== Config.currency._id) {
+                          if(Config.currency && currency._id !== Config.currency._id) {
                             transaction.quotation = currency.quotation;
                           }
                         }
@@ -578,7 +578,7 @@ export class PointOfSaleComponent implements OnInit {
                       transaction.quotation === null) {
                       if(currencies && currencies.length > 0) {
                         for(let currency of currencies) {
-                          if(currency._id !== Config.currency._id) {
+                          if(Config.currency && currency._id !== Config.currency._id) {
                             transaction.quotation = currency.quotation;
                           }
                         }

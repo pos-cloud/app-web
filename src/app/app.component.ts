@@ -90,7 +90,8 @@ export class AppComponent implements OnInit {
   }
 
   public setApiConfigurationSettings() {
-    Config.setApiHost(window.location.hostname);
+    //Config.setApiHost("demo.poscloud.com.ar"); // Test con server
+    Config.setApiHost(window.location.hostname); // Prod
     Config.setApiPort(300);
   }
 

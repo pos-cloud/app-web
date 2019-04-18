@@ -403,7 +403,7 @@ export class AddSaleOrderComponent implements OnInit {
                   this.transaction.quotation === null) {
                   if(this.currencies && this.currencies.length > 0) {
                     for(let currency of this.currencies) {
-                      if(currency._id !== Config.currency._id) {
+                      if(Config.currency && currency._id !== Config.currency._id) {
                         this.transaction.quotation = currency.quotation;
                       }
                     }
@@ -625,7 +625,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public changeCurrency(currency: Currency): void {
     this.transaction.currency = currency;
-    if(this.transaction.currency._id !== Config.currency._id) {
+    if(Config.currency && this.transaction.currency._id !== Config.currency._id) {
       for(let currency of this.currencies) {
         if(currency._id !== Config.currency._id) {
           this.transaction.quotation = currency.quotation;
