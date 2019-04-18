@@ -1818,9 +1818,12 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
+    
+    if( this.transaction.type.stockMovement && this.transaction.type.modifyStock ) {
+      movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+    }
 
     movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-    movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
     movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
     movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
