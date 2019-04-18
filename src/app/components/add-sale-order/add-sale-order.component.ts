@@ -1819,7 +1819,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.loading = true;
     
-    if( this.transaction.type.stockMovement && this.transaction.type.modifyStock ) {
+    if( this.transaction.type.stockMovement) {
       movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
     }
 
