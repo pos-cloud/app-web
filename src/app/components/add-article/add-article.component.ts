@@ -367,7 +367,9 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    this._variantService.getVariantsByArticleParent(this.article).subscribe(
+    let query = 'where="articleParent":"'+ this.article._id +'"';
+
+    this._variantService.getVariants(query).subscribe(
       result => {
         if (!result.variants) {
           this.variants = new Array();

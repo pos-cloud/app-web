@@ -32,22 +32,17 @@ export class VariantService {
     return this._http.get(Config.apiURL + "variant/" + id, { headers: headers }).map(res => res.json());
   }
 
-  getVariants() {
+  getVariants(query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    return this._http.get(Config.apiURL + "variants", { headers: headers }).map(res => res.json());
-  }
-
-  getVariantsByArticleParent(article: Article) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
-    });
-    return this._http.get(Config.apiURL + 'variants/where="articleParent":"'+ article._id +'"', { headers: headers }).map(res => res.json());
+    if(query) {
+      return this._http.get(Config.apiURL + "variants/" + query, { headers: headers }).map(res => res.json());
+    } else {
+      return this._http.get(Config.apiURL + "variants", { headers: headers }).map(res => res.json());
+    }
   }
 
   saveVariant(variant: Variant) {

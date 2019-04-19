@@ -195,10 +195,12 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public getVariantsByArticleParent(): void {
-
+    
     this.loading = true;
 
-    this._variantService.getVariantsByArticleParent(this.movementOfArticle.article).subscribe(
+    let query = 'where="articleParent":"'+ this.movementOfArticle.article._id +'"';
+    
+    this._variantService.getVariants(query).subscribe(
       result => {
         if (!result.variants) {
           this.areVariantsEmpty = true;
@@ -234,21 +236,11 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     for (let variant of this.variants) {
       if (variant.type._id === variantType._id) {
-        if (variantsToReturn && variantsToReturn.length > 0) {
-          for (let variantAux of variantsToReturn) {
-            if (variant.value._id !== variantAux.value._id) {
-              variantsToReturn.push(variant);
-            }
-          }
-        } else {
-          variantsToReturn.push(variant);
-        }
+        variantsToReturn.push(variant);
       }
     }
 
-    variantsToReturn = this.getUniqueVariants(variantsToReturn);
-
-    return variantsToReturn;
+    return this.getUniqueVariants(variantsToReturn);
   }
 
   public getUniqueValues(property: string, array: Array<any>): Array<any> {
@@ -297,7 +289,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public selectVariant(type: VariantType, value: VariantValue): void {
-
+    
     let key = type.name;
     if (value.description === this.selectedVariants[key]) {
       this.selectedVariants[key] = null;

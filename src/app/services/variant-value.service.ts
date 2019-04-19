@@ -32,22 +32,17 @@ export class VariantValueService {
     return this._http.get(Config.apiURL + "variant-value/" + id, { headers: headers }).map(res => res.json());
   }
 
-  getVariantValues() {
+  getVariantValues(query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    return this._http.get(Config.apiURL + "variant-values", { headers: headers }).map(res => res.json());
-  }
-
-  getVariantValuesByType(variantType: VariantType) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
-    });
-    return this._http.get(Config.apiURL + 'variant-values/where="type":"' + variantType._id + '"', { headers: headers }).map(res => res.json());
+    if(query) {
+      return this._http.get(Config.apiURL + 'variant-values/' + query, { headers: headers }).map(res => res.json());
+    } else {
+      return this._http.get(Config.apiURL + 'variant-values', { headers: headers }).map(res => res.json());
+    }
   }
 
   saveVariantValue(variantValue: VariantValue) {

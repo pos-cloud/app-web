@@ -175,10 +175,11 @@ export class AddVariantComponent implements OnInit {
 
     this.loading = true;
 
-    this._variantValueService.getVariantValuesByType(variantType).subscribe(
+    let query = 'where="type":"' + variantType._id + '"';
+
+    this._variantValueService.getVariantValues(query).subscribe(
       result => {
         if (!result.variantValues) {
-          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.variantValues = new Array();
         } else {
