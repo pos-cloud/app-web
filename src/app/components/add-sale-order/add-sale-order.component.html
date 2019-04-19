@@ -8,10 +8,9 @@
         <div class="col-md-2" *ngIf="posType==='mostrador' && transaction.type">
           <b>{{transaction.type.name}} {{ transaction.number }}</b>
         </div>
-        <div class="col-md-2" *ngIf="transaction.employeeClosing">
-          <b *ngIf="posType!=='resto'">Empleado:</b>
-          <b *ngIf="posType==='resto'">Mozo:</b>
-          {{transaction.employeeClosing.name}}
+        <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestEmployee">
+          <b>{{ transaction.type.requestEmployee.description }}:</b>
+          <span *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</span>
         </div>
         <div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'">
           <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
@@ -31,9 +30,16 @@
           <b>Fecha:</b>
           {{transaction.endDate | dateFormat:'DD/MM/YYYY'}}
         </div>
-        <div class="col-md-2" *ngIf="posType==='resto'">
-          <a class="btn" (click)="openModal('change-employee')">
-            <i class="fa fa-exchange"></i> Cambiar Empleado</a>
+        <div class="col-md-2" *ngIf="transaction.type && transaction.type.requestEmployee">
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-employee')">
+              Cambiar {{ transaction.type.requestEmployee.description }}
+            </button>
+            <button type="button" 
+                    class="btn btn-outline-secondary fa fa-exchange" 
+                    (click)="openModal('change-employee')">
+            </button>
+          </div>
         </div>
         <!-- <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
           <select class="form-control" [(ngModel)]="transaction.currency" (change)="updateTransaction()">
@@ -49,23 +55,28 @@
         </div> -->
         <div class="col-md-3" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
           <div class="btn-group">
-            <button type="button" class="btn btn-outline-secondary">Cotización: {{ transaction.quotation | currency:'USD':'1.2-2' }}</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-quotation')">
+              Cotización: {{ transaction.quotation | currency:'USD':'1.2-2' }}
+            </button>
             <button type="button" 
                     class="btn btn-secondary fa fa-pencil" 
                     (click)="openModal('change-quotation')">
             </button>
           </div>
         </div>
-        <div class="col-md-2">
-          <button type="button" 
-                  class="btn btn-secondary" 
-                  *ngIf=" showButtonCancelation && 
-                          transaction && 
-                          transaction.company &&
-                          transaction.totalPrice === 0" 
-                  (click)="openModal('list-cancellations')">
-            Buscar Transacción Origen
-          </button>
+        <div class="col-md-3" *ngIf=" showButtonCancelation && 
+                                      transaction && 
+                                      transaction.company &&
+                                      transaction.totalPrice === 0" >
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" (click)="openModal('list-cancellations')">
+                Buscar Transacción Origen
+            </button>
+            <button type="button" 
+                    class="btn btn-secondary fa fa-exchange" 
+                    (click)="openModal('list-cancellations')">
+            </button>
+          </div>
         </div>
       </div>
     </div>

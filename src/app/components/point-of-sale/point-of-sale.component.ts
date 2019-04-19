@@ -558,12 +558,12 @@ export class PointOfSaleComponent implements OnInit {
           async (result) => {
             if (result.employee) {
               if (transaction) {
+                transaction.employeeOpening = result.employee;
+                transaction.employeeClosing = result.employee;
                 if (this.posType === "delivery") {
                   transaction.state = TransactionState.Sent;
-                  transaction.employeeOpening = result.employee;
                   this.updateTransaction(transaction, true);
                 } else {
-                  transaction.employeeOpening = result.employee;
                   this.updateTransaction(transaction, false);
                 }
               } else {
@@ -589,6 +589,7 @@ export class PointOfSaleComponent implements OnInit {
                   }
                 );
                 transaction.employeeOpening = result.employee;
+                transaction.employeeClosing = result.employee;
                 if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
                   transaction.origin = transaction.type.fixedOrigin;
                 }
