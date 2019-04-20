@@ -365,14 +365,14 @@ export class ListArticlesComponent implements OnInit {
         }
       }
       movementOfArticle.otherFields = fields;
-      if (this.transaction && this.transaction.type && this.transaction.type.requestTaxes) {
-        if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
-          let taxes: Taxes[] = new Array();
-          for (let articleTax of movementOfArticle.taxes) {
-            articleTax.taxBase = taxedAmount;
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
-            taxes.push(articleTax);
-            movementOfArticle.costPrice += articleTax.taxAmount;
+      if(this.transaction.type.requestTaxes) {
+        let taxes: Taxes[] = new Array();
+        if (articleSelected.taxes) {
+          for (let taxAux of articleSelected.taxes) {
+            taxAux.taxBase = this.roundNumber.transform(taxedAmount);
+            taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
+            taxes.push(taxAux);
+            movementOfArticle.costPrice += taxAux.taxAmount;
           }
           movementOfArticle.taxes = taxes;
         }
