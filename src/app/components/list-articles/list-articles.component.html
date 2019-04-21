@@ -172,10 +172,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>
-              <i class="fa fa-bars"></i>
-            </th>
-            <th (click)="orderBy('code')">#</th>
+            <th (click)="orderBy('code')">Código</th>
             <th (click)="orderBy('description')">Descripción</th>
             <th (click)="orderBy('make','description')">Marca</th>
             <th (click)="orderBy('category','description')">Rubro</th>
@@ -183,8 +180,8 @@
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
-            <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="#..."></th>
+            
+            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="Código..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterMake" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterCategory" placeholder="Rubro..."></th>
@@ -205,9 +202,6 @@
                                                                             totalItems: totalItems
                                                                           }"
                                               (click)="selectArticle(article)">
-            <td align="left" width="50">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver"><i class="fa fa-eye"></i></button>
-            </td>
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
             <td *ngIf="article.make">{{article.make.description}}</td>
