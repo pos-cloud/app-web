@@ -101,7 +101,7 @@
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getSummary()" placeholder="Número..."></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Entrada..."></th>
-              <th></th>
+              
               <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Salida..."></th>
               
             </tr>
@@ -131,13 +131,10 @@
             </tr>
           </tbody>
           <tfoot>
-            <td colspan="12" class="align-right">
+            <td colspan="8" class="align-right">
               <strong>CANTIDAD TOTAL</strong>
             </td>
-            <td *ngIf="balance>=0" class="align-right">
-              <strong>{{balance }}</strong>
-            </td>
-            <td *ngIf="balance<0" class="align-right">
+            <td class="align-right">
               <strong>{{balance }}</strong>
             </td>
           </tfoot>
