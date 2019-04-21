@@ -41,7 +41,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
   public printers: Printer[];
   public userCountry: string;
 
-  public orderTerm: string[] = ['updateDate'];
+  public orderTerm: string[] = ['endDate'];
   public currentPage: number = 0;
   public displayedColumns = [
     "transaction.state",
@@ -49,6 +49,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "article._id",
     "operationType",
     "updateDate",
+    "transaction.endDate",
     "transaction.type.name",
     "transaction.letter",
     "transaction.number",
