@@ -1041,7 +1041,7 @@ export class AddArticleComponent implements OnInit {
   public makeFileRequest(files: Array<File>) {
 
     const articleId = this.article._id;
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       const formData: any = new FormData();
       const xhr: XMLHttpRequest = new XMLHttpRequest();
 

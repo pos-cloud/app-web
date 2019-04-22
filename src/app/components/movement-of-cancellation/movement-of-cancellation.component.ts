@@ -20,12 +20,14 @@ import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
 import { Taxes } from 'app/models/taxes';
 import { Config } from 'app/app.config';
+import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 
 @Component({
   selector: 'app-movement-of-cancellation',
   templateUrl: './movement-of-cancellation.component.html',
   styleUrls: ['./movement-of-cancellation.component.css']
 })
+
 export class MovementOfCancellationComponent implements OnInit {
 
   @Input() transaccionDestinationId: string;
@@ -33,17 +35,13 @@ export class MovementOfCancellationComponent implements OnInit {
   @Input() transaccionOriginViewId : string;
   public transactionDestination: Transaction;
   public transactionMovement: TransactionMovement;
+  public movementsOfCancellations: MovementOfCancellation[];
   public transactions: Transaction[];
-  public movementOfarticles: MovementOfArticle[] = new Array();
-  public transactionsOrigin : Transaction[] = new Array();
-  public transactionTypes: TransactionType[]
   public cancellationTypes : CancellationType[];
   public alertMessage: string = '';
   public loading: boolean = false;
-  public itemsPerPage: number = 10;
   public totalItems: number = -1;
   public orderTerm: string[] = ['-endDate'];
-  public currentPage: number = 0;
   public existingCanceled = [];
   public displayedColumns = [
       'type.name',
@@ -62,6 +60,7 @@ export class MovementOfCancellationComponent implements OnInit {
   public filterValue: string;
   public roundNumber = new RoundNumberPipe();
   public userCountry: string;
+  public balanceSelected: number = 0;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -81,6 +80,7 @@ export class MovementOfCancellationComponent implements OnInit {
     }
     this.existingCanceled = new Array();
     this.transactions = new Array();
+    this.movementsOfCancellations = new Array();
   }
 
   async ngOnInit() {
@@ -165,27 +165,28 @@ export class MovementOfCancellationComponent implements OnInit {
 
   public getTransaction(transactionId: string): Promise<Transaction> {
     
-    this.loading = true;
-
     return new Promise<Transaction>((resolve, reject) => {
+
+      this.loading = true;
 
       this._transactionService.getTransaction(transactionId).subscribe(
         result => {
           if (!result.transaction) {
             this.showMessage(result.message, 'danger', false);
             this.totalItems = 0;
-            reject(null);
+            this.loading = false;
+            resolve(null);
           } else {
             this.hideMessage();
+            this.loading = false;
             resolve(result.transaction);
           }
-          this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);
           this.totalItems = 0;
           this.loading = false;
-          reject(null);
+          resolve(null);
         }
       );
     });
@@ -304,20 +305,15 @@ export class MovementOfCancellationComponent implements OnInit {
         transactions: { $push: "$$ROOT" }
     };
 
-    let page = 0;
-    if(this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage) :
-                0 // SKIP
+    let skip = 0; // SKIP
+    let limit = 0; // LIMIT
 
     this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        this.itemsPerPage, // LIMIT
+        limit, // LIMIT
         skip // SKIP
     ).subscribe(
       result => {
@@ -337,11 +333,6 @@ export class MovementOfCancellationComponent implements OnInit {
         this.totalItems = 0;
       }
     );
-  }
-
-  public pageChange(page): void {
-    this.currentPage = page;
-    this.getTransactions();
   }
 
   public orderBy(term: string): void {
@@ -369,70 +360,136 @@ export class MovementOfCancellationComponent implements OnInit {
   async selectTransaction(transactionSelected: Transaction) {
     
     transactionSelected = await this.getTransaction(transactionSelected._id);
-    this.transactionsOrigin.push(transactionSelected);
-    if (this.transactionDestination.type.requestArticles) {
-      this.getMovementOfArticles(transactionSelected);
+    if(this.isTransactionSelected(transactionSelected)) {
+      this.deleteTransactionSelected(transactionSelected);
     } else {
-      this.activeModal.close({ transactionsOrigin: this.transactionsOrigin });
+      let movementOfCancellation = new MovementOfCancellation();
+      movementOfCancellation.transactionOrigin = transactionSelected;
+      movementOfCancellation.transactionDestination = this.transactionDestination;
+      movementOfCancellation.balance = transactionSelected.balance;
+      this.balanceSelected += movementOfCancellation.balance;
+      this.movementsOfCancellations.push(movementOfCancellation);
     }
   }
 
-  public getMovementOfArticles( transaccion : Transaction) {
+  public deleteTransactionSelected(transaction: Transaction): void {
+    
+    let movementToDelete: number;
 
-    this._movementOfArticleService.getMovementsOfTransaction(transaccion._id).subscribe(
-      result => {
-        if (!result.movementsOfArticles) {
-        } else {
-          for (let mov of result.movementsOfArticles) {
-            
-            let movementOfArticle = new MovementOfArticle();
-
-            movementOfArticle.code = mov.code;
-            movementOfArticle.codeSAT = mov.codeSAT;
-            movementOfArticle.description = mov.description;
-            movementOfArticle.observation = mov.observation;
-            movementOfArticle.otherFields = mov.otherFields;
-            movementOfArticle.basePrice = mov.basePrice;
-            if(this.transactionDestination.type.requestTaxes) {
-              movementOfArticle.taxes = mov.taxes;
-            }
-            movementOfArticle.costPrice = mov.costPrice;
-            movementOfArticle.unitPrice = mov.unitPrice;
-            movementOfArticle.markupPercentage = mov.markupPercentage;
-            movementOfArticle.markupPrice = mov.markupPrice;
-            movementOfArticle.transactionDiscountAmount = mov.transactionDiscountAmount;
-            movementOfArticle.salePrice = mov.salePrice;
-            movementOfArticle.roundingAmount = mov.roundingAmount;
-            movementOfArticle.make = mov.make;
-            movementOfArticle.category = mov.category;
-            movementOfArticle.amount = mov.amount;
-            movementOfArticle.quantityForStock = mov.quantityForStock;
-            movementOfArticle.barcode = mov.barcode;
-            movementOfArticle.notes = mov.notes;
-            movementOfArticle.printed = mov.printed;
-            movementOfArticle.printIn = mov.printIn;
-            movementOfArticle.article = mov.article;
-            movementOfArticle.transaction = this.transactionDestination;
-            movementOfArticle.measure = mov.measure;
-            movementOfArticle.quantityMeasure = mov.quantityMeasure;
-            if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              movementOfArticle = this.recalculateSalePrice(movementOfArticle);
-            } else {
-              movementOfArticle = this.recalculateCostPrice(movementOfArticle);
-            }
-
-            this.movementOfarticles.push(movementOfArticle);
-          }
-          this.saveMovementsOfArticles();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+    for(let i=0; i < this.movementsOfCancellations.length; i++) {
+      if(this.movementsOfCancellations[i].transactionOrigin._id.toString() === transaction._id.toString()) {
+        movementToDelete = i;
       }
-    );
+    }
+    if(movementToDelete !== undefined) {
+      this.balanceSelected -= this.movementsOfCancellations[movementToDelete].balance;
+      this.movementsOfCancellations.splice(movementToDelete, 1);
+    }
+  }
 
+  public isTransactionSelected(transaction: Transaction) {
+    
+    let isSelected: boolean = false;
+
+    for(let mov of this.movementsOfCancellations) {
+      if(mov.transactionOrigin._id.toString() === transaction._id.toString()) {
+        isSelected = true;
+      }
+    }
+
+    return isSelected;
+  }
+
+  async finish() {
+
+    let endedProcess = true;
+
+    if(this.movementsOfCancellations.length > 0) {
+      for(let mov of this.movementsOfCancellations) {
+        await this.getMovementOfArticles(mov.transactionOrigin).then(
+          async movementsOfArticles => {
+            if(movementsOfArticles && movementsOfArticles.length > 0) {
+              await this.saveMovementsOfArticles(movementsOfArticles).then(
+                movementsOfArticlesSaved => {
+                  if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
+
+                  } else {
+                    endedProcess = false;
+                  }
+                }
+              );
+            }
+          }
+        );
+      }
+      if(endedProcess) {
+        this.closeModal();
+      }
+    } else {  
+      this.closeModal();
+    }
+  }
+
+  public getMovementOfArticles(transaccion : Transaction): Promise<MovementOfArticle[]> {
+
+    return new Promise((resolve, reject) => {
+
+      this._movementOfArticleService.getMovementsOfTransaction(transaccion._id).subscribe(
+        result => {
+          if (!result.movementsOfArticles) {
+            resolve(null);
+          } else {
+            let movements: MovementOfArticle[] = new Array(); 
+
+            for (let mov of result.movementsOfArticles) {
+              
+              let movementOfArticle = new MovementOfArticle();
+
+              movementOfArticle.code = mov.code;
+              movementOfArticle.codeSAT = mov.codeSAT;
+              movementOfArticle.description = mov.description;
+              movementOfArticle.observation = mov.observation;
+              movementOfArticle.otherFields = mov.otherFields;
+              movementOfArticle.basePrice = mov.basePrice;
+              if(this.transactionDestination.type.requestTaxes) {
+                movementOfArticle.taxes = mov.taxes;
+              }
+              movementOfArticle.costPrice = mov.costPrice;
+              movementOfArticle.unitPrice = mov.unitPrice;
+              movementOfArticle.markupPercentage = mov.markupPercentage;
+              movementOfArticle.markupPrice = mov.markupPrice;
+              // movementOfArticle.transactionDiscountAmount = mov.transactionDiscountAmount; SE QUITA DESCUENTO DE TRANSACCION
+              movementOfArticle.salePrice = mov.salePrice;
+              movementOfArticle.roundingAmount = mov.roundingAmount;
+              movementOfArticle.make = mov.make;
+              movementOfArticle.category = mov.category;
+              movementOfArticle.amount = mov.amount;
+              movementOfArticle.quantityForStock = mov.quantityForStock;
+              movementOfArticle.barcode = mov.barcode;
+              movementOfArticle.notes = mov.notes;
+              movementOfArticle.printed = mov.printed;
+              movementOfArticle.printIn = mov.printIn;
+              movementOfArticle.article = mov.article;
+              movementOfArticle.transaction = this.transactionDestination;
+              movementOfArticle.measure = mov.measure;
+              movementOfArticle.quantityMeasure = mov.quantityMeasure;
+              if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                movementOfArticle = this.recalculateSalePrice(movementOfArticle);
+              } else {
+                movementOfArticle = this.recalculateCostPrice(movementOfArticle);
+              }
+
+              movements.push(movementOfArticle);
+            }
+            resolve(movements);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
@@ -443,9 +500,7 @@ export class MovementOfCancellationComponent implements OnInit {
       quotation = movementOfArticle.transaction.quotation;
     }
     
-    movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
-    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    // ADVERTENCIA, EL UNIT PRICE NO SE RECALCULA CON EL DESCUENTO DE LA TRANSACCION PARA QUE EL DESCUENTO DE LA TRANSACCION CANCELADA PASE A LA TRANSACCION CANCELATORIA
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = 0.00;
     movementOfArticle.markupPercentage = 0.00;
@@ -529,9 +584,9 @@ export class MovementOfCancellationComponent implements OnInit {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
     }
-    movementOfArticle.unitPrice += movementOfArticle.transactionDiscountAmount;
-    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
-    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+    
+
+    // ADVERTENCIA, EL UNIT PRICE NO SE RECALCULA CON EL DESCUENTO DE LA TRANSACCION PARA QUE EL DESCUENTO DE LA TRANSACCION CANCELADA PASE A LA TRANSACCION CANCELATORIA
     movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
     movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
@@ -558,24 +613,55 @@ export class MovementOfCancellationComponent implements OnInit {
     this.getCancellationTypes();
   }
 
-  // EL IMPUESTO VA SOBRE EL ARTICULO Y NO SOBRE EL MOVIMIENTO
-  public saveMovementsOfArticles() {
-
-    this._movementOfArticleService.saveMovementsOfArticles(this.movementOfarticles).subscribe(
-      result => {
-        if (!result.movementsOfArticles) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.loading = false;
-          this.activeModal.close({ transactionsOrigin: this.transactionsOrigin });
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+  public closeModal(): void {
+    this.activeModal.close(
+      {
+        movementsOfCancellations: this.movementsOfCancellations
       }
     );
+  }
+
+  public updateBalanceOrigin(transaction: Transaction, balance): void {
+
+    this.balanceSelected = 0;
+
+    if(balance === undefined) {
+      balance = 0;
+    } else {
+      try {
+        balance = parseFloat(balance.toString());
+      } catch (err) {
+        balance = 0;
+      }
+    }
+
+    for(let mov of this.movementsOfCancellations) {
+      if(mov.transactionOrigin._id.toString() === transaction._id.toString()) {
+        mov.balance = balance;
+      }
+      this.balanceSelected += mov.balance;
+    }
+  }
+
+  public saveMovementsOfArticles(movemenstOfarticles: MovementOfArticle[]): Promise<MovementOfArticle[]> {
+
+    return new Promise((resolve, reject) => {
+
+      this._movementOfArticleService.saveMovementsOfArticles(movemenstOfarticles).subscribe(
+        result => {
+          if (!result.movementsOfArticles) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.movementsOfArticles);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

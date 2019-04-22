@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -35,8 +35,9 @@ import { Config } from 'app/app.config';
 @Component({
   selector: 'app-point-of-sale',
   templateUrl: './point-of-sale.component.html',
-  styleUrls: ['./point-of-sale.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./point-of-sale.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class PointOfSaleComponent implements OnInit {

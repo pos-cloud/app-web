@@ -22,9 +22,19 @@
 }
 
 .table {
-  box-shadow: 0px 0px 2px;
-  border-radius: 5px;
-  cursor: pointer;
+    box-shadow: 0px 0px 2px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.row-active {
+    background: #0275D8;
+    color: #fff;
+}
+
+.row-inactive {
+    background: #fff;
+    color: #000;
 }
 
 .pos {
@@ -33,7 +43,7 @@
 }
 
 .my-pagination /deep/ .ngx-pagination {
-  color: white;
+    color: white;
 }
 
 ::placeholder {

@@ -72,7 +72,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   public transaction: Transaction;
   public transactionId: string;
-  public movementOfCancellation : MovementOfCancellation;
   public transactionMovement: string;
   public alertMessage: string = '';
   public movementsOfArticles: MovementOfArticle[];
@@ -134,7 +133,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _currencyService: CurrencyService
   ) {
     this.transaction = new Transaction();
-    this.movementOfCancellation = new MovementOfCancellation();
     this.movementsOfArticles = new Array();
     this.categorySelected = new Category();
     this.printers = new Array();
@@ -563,29 +561,14 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  async saveMovementOfCancellation() {
+  async saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) {
 
-    this._movementOfCancellationService.saveMovementOfCancellation(this.movementOfCancellation).subscribe(
+    this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
       async result => {
-        if (!result.movementOfCancellation) {
+        if (!result.movementsOfCancellations) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.transaction.discountAmount = this.movementOfCancellation.transactionOrigin.discountAmount;
-          this.transaction.discountPercent = this.movementOfCancellation.transactionOrigin.discountPercent;
-          if(this.transaction.type.requestTaxes) {
-            this.transaction.exempt = this.movementOfCancellation.transactionOrigin.exempt;
-            this.transaction.taxes = this.movementOfCancellation.transactionOrigin.taxes;
-          }
-          this.transaction.roundingAmount = this.movementOfCancellation.transactionOrigin.roundingAmount;
-          this.transaction.totalPrice = this.movementOfCancellation.transactionOrigin.totalPrice;
-          this.updateTransaction().then(
-            transaction => {
-              if(transaction) {
-                this.transaction = transaction;
-                this.getMovementsOfTransaction();
-              }
-            }
-          );
+          this.getMovementsOfTransaction();
         }
         this.loading = false;
       },
@@ -910,7 +893,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
-    
+
     let quotation = 1;
     
     if(this.transaction.quotation) {
@@ -1282,11 +1265,9 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
         modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
         modalRef.result.then((result) => {
-          if(result.transactionsOrigin && result.transactionsOrigin.length > 0) {
-            this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0];
-            this.movementOfCancellation.transactionDestination = this.transaction;
+          if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
-            this.saveMovementOfCancellation();
+            this.saveMovementsOfCancellations(result.movementsOfCancellations);
           }
         }, (reason) => {
         });

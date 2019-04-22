@@ -106,7 +106,7 @@ export class ArticleService {
 		xhr.setRequestHeader('Authorization', this._userService.getToken());
 		xhr.setRequestHeader('Database', this._userService.getDatabase());
 
-		return new Promise(function (resolve, reject) {
+		return new Promise((resolve, reject) => {
 			let formData: any = new FormData();
 
 			if(files && files.length > 0) {

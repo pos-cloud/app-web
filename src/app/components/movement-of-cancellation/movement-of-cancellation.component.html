@@ -5,12 +5,9 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Transacciones
+    <div class="card-header bg-primary">Seleccionar Transacciones a Cancelar
       <div class="pull-right">
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span>
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -34,28 +31,31 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (input)="getTransactions()" placeholder="Saldo..."></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
-                                                                      currentPage: currentPage,
-                                                                      totalItems: totalItems
-                                                                    }"
-                                                                    (click)="selectTransaction(transaction)">
+          <tr *ngFor="let transaction of transactions"
+              [ngClass]="{'row-active':isTransactionSelected(transaction), 'row-inactive':!isTransactionSelected(transaction)}">
             <td align="left" width="150">
               <button type="button"
                       class="btn btn-success  btn-sm" 
                       (click)="openModal('view', transaction)" 
                       title="Ver"><i class="fa fa-eye"></i></button>
             </td>
-            <td *ngIf="transaction.type">{{transaction.type.name}}</td>
-            <td *ngIf="!transaction.type"></td>
-            <td  *ngIf="userCountry === 'AR'">{{transaction.origin}}</td>
-            <td>{{transaction.number}}</td> 
-            <td>{{transaction.letter}}</td>
-            <td>{{transaction.totalPrice}}</td>
-            <td>{{transaction.balance}}</td>
+            <td *ngIf="transaction.type" (click)="selectTransaction(transaction, $event)">{{transaction.type.name}}</td>
+            <td *ngIf="!transaction.type" (click)="selectTransaction(transaction, $event)"></td>
+            <td  *ngIf="userCountry === 'AR'" (click)="selectTransaction(transaction, $event)">{{transaction.origin}}</td>
+            <td (click)="selectTransaction(transaction, $event)">{{transaction.number}}</td> 
+            <td (click)="selectTransaction(transaction, $event)">{{transaction.letter}}</td>
+            <td (click)="selectTransaction(transaction, $event)">{{transaction.totalPrice | currency:'USD':'1.2-2' }}</td>
+            <td>
+              <input  type="number" 
+                      class="form-control" 
+                      [(ngModel)]="transaction.balance" 
+                      (blur)="updateBalanceOrigin(transaction, $event.target.value)"
+                      [readonly]="!isTransactionSelected(transaction) || transactionDestination.type.requestArticles">
+            </td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones para cancelar</td>
@@ -65,29 +65,19 @@
           </tr>
         </tbody>
       </table>
-
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <pagination-controls
-            class="my-pagination"
-            (pageChange)="pageChange($event)"
-            #api
-            previousLabel="Ant."
-            nextLabel="Sig."
-            autoHide="true">
-          </pagination-controls>
+          <b>Saldo Seleccionado: {{ balanceSelected | currency:'USD':'1.2-2' }}</b>
         </div>
-        <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getTransactions()">
-            <option [value]="5">Mostrar 5 ítems</option>
-            <option [value]="10">Mostrar 10 ítems</option>
-            <option [value]="15">Mostrar 15 ítems</option>
-            <option [value]="20">Mostrar 20 ítems</option>
-            <option [value]="50">Mostrar 50 ítems</option>
-            <option [value]="100">Mostrar 100 ítems</option>
-          </select>
+        <div class="row">
+          <div class="col-md-2">
+            <button class="btn btn-primary"
+                    (click)="finish()">
+              Aceptar
+            </button>
+          </div>
         </div>
       </div>
     </div>

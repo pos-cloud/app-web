@@ -121,13 +121,20 @@
                             [articleTaxes]="taxes"
                             *ngIf="transaction && transaction.type && transaction.type.requestTaxes&& !transaction.type.requestArticles">
       </app-add-article-tax>
+      <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company">
+        <div class="col-md-12 center-content">
+          <button type="button" class="btn btn-secondary" (click)="openModal('list-cancellations')">
+            Buscar Transacciones a Cancelar
+          </button>
+        </div>
+      </div>
       <div class = "row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles">
         <div class = "col-md-12">
             <label for="totalPrice" class="control-label">Importe Total:</label>
         </div>
       </div>
       <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles">
-        <div class="form-group col-md-9" *ngIf="showButtonCancelation && transaction && transaction.company">
+        <div class="form-group col-md-12" *ngIf="showButtonCancelation && transaction && transaction.company">
           <div class="input-group">
             <span class="input-group-addon">$</span>
             <input type="number" class="form-control" formControlName="totalPrice" name="totalPrice" min="0" step="1" (blur)="updatePrices('totalPrice')" [readonly]="readonly"/>
@@ -135,11 +142,6 @@
           <div *ngIf="formErrors.totalPrice" class="alert alert-danger">
             {{ formErrors.totalPrice }}
           </div>
-        </div>
-        <div class="col-md-3" align="right" *ngIf="showButtonCancelation && transaction && transaction.company">
-          <button type="button" class="btn btn-secondary" (click)="openModal('list-cancellations')">
-            Buscar Transacción Origen
-          </button>
         </div>
         <div class="form-group col-md-12" *ngIf="!showButtonCancelation || !transaction.company || !transaction.type.requestCompany">
             <div class="input-group">

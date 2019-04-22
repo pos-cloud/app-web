@@ -63,6 +63,15 @@ export class MovementOfCancellationService {
         return this._http.post(Config.apiURL + "movement-of-cancellation", movementOfCancellation, { headers: headers }).map (res => res.json());
     }
 
+    saveMovementsOfCancellations (movementsOfCancellations: MovementOfCancellation[]) {
+        let headers = new Headers({
+          'Content-Type': 'application/json',
+          'Authorization': this._userService.getToken(),
+          'Database': this._userService.getDatabase()
+        });
+        return this._http.post(Config.apiURL + "movements-of-cancellations", { movementsOfCancellations: movementsOfCancellations }, { headers: headers }).map (res => res.json());
+    }
+
     updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation){
         
         const URL = `${Config.apiURL}movement-of-cancellation`;

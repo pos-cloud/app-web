@@ -51,7 +51,6 @@ export class AddTransactionComponent implements OnInit {
   public taxes: Taxes[] = new Array();
   public alertMessage: string = '';
   public userType: string;
-  public movementOfCancellation : MovementOfCancellation;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public posType: string;
@@ -134,7 +133,6 @@ export class AddTransactionComponent implements OnInit {
     public _userService: UserService,
     public _cancellationTypeService: CancellationTypeService,
   ) {
-    this.movementOfCancellation = new MovementOfCancellation();
     this.transaction = new Transaction();
     this.transactionDate = this.transaction.startDate;
   }
@@ -473,10 +471,8 @@ export class AddTransactionComponent implements OnInit {
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
         modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
         modalRef.result.then((result) => {
-          if(result.transactionsOrigin) {
-            this.movementOfCancellation.transactionOrigin = result.transactionsOrigin[0];
-            this.movementOfCancellation.transactionDestination = this.transaction;
-            this.saveMovementOfCancellation();
+          if(result.movementsOfCancellations) {
+            this.saveMovementsOfCancellations(result.movementsOfCancellations);
           }
         }, (reason) => {
         });
@@ -712,19 +708,19 @@ export class AddTransactionComponent implements OnInit {
     );
   }
 
-  public saveMovementOfCancellation() : void {
+  public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) : void {
     
-    this._movementOfCancellationService.saveMovementOfCancellation(this.movementOfCancellation).subscribe(
-      result => {
-        if (!result.movementOfCancellation) {
+    this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
+      async result => {
+        if (!result.movementsOfCancellations) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.movementOfCancellation = result.movementOfCancellation;
-          if(!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0) {
-            this.transaction.origin = this.movementOfCancellation.transactionOrigin.origin;
+          let balanceTotal = 0;
+          for(let mov of result.movementsOfCancellations) {
+            balanceTotal += mov.balance;
           }
-          this.transaction.totalPrice = this.movementOfCancellation.transactionOrigin.balance;
-          this.updateTransaction();
+          this.transaction.totalPrice = balanceTotal;
+          this.updateTransaction(false);
         }
         this.loading = false;
       },
