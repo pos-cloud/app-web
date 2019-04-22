@@ -406,25 +406,30 @@ export class MovementOfCancellationComponent implements OnInit {
 
     if(this.movementsOfCancellations.length > 0) {
       for(let mov of this.movementsOfCancellations) {
-        if(mov.balance <= mov.transactionOrigin.balance) {
-          await this.getMovementOfArticles(mov.transactionOrigin).then(
-            async movementsOfArticles => {
-              if(movementsOfArticles && movementsOfArticles.length > 0) {
-                await this.saveMovementsOfArticles(movementsOfArticles).then(
-                  movementsOfArticlesSaved => {
-                    if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-  
-                    } else {
-                      endedProcess = false;
+        if(mov.balance > 0) {
+          if(mov.balance <= mov.transactionOrigin.balance) {
+            await this.getMovementOfArticles(mov.transactionOrigin).then(
+              async movementsOfArticles => {
+                if(movementsOfArticles && movementsOfArticles.length > 0) {
+                  await this.saveMovementsOfArticles(movementsOfArticles).then(
+                    movementsOfArticlesSaved => {
+                      if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
+    
+                      } else {
+                        endedProcess = false;
+                      }
                     }
-                  }
-                );
+                  );
+                }
               }
-            }
-          );
+            );
+          } else {
+            endedProcess = false;
+            this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma ($ " + mov.transactionOrigin.balance + ").", "info", true);
+          }
         } else {
           endedProcess = false;
-          this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma ($ " + mov.transactionOrigin.balance + ").", "info", true);
+          this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " debe ser mayor a 0.", "info", true);
         }
       }
       if(endedProcess) {
