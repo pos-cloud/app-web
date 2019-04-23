@@ -41,7 +41,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
   public printers: Printer[];
   public userCountry: string;
 
-  public orderTerm: string[] = ['endDate'];
+  public orderTerm: string[] = ['transaction.endDate'];
   public currentPage: number = 0;
   public displayedColumns = [
     "transaction.state",
