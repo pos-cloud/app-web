@@ -708,8 +708,10 @@ export class AddTransactionComponent implements OnInit {
     );
   }
 
-  public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) : void {
+  async saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) {
     
+    await this.daleteMovementsOfCancellations();
+
     this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
       async result => {
         if (!result.movementsOfCancellations) {
@@ -729,6 +731,30 @@ export class AddTransactionComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public daleteMovementsOfCancellations(): Promise<boolean> {
+
+    return new Promise((resolve, reject) => {
+
+      let query = '{"transactionDestination":"'+this.transaction._id+'"}';
+
+      this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
+        async result => {
+          this.loading = false;
+          if (!result.movementsOfCancellations) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.movementsOfCancellations);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

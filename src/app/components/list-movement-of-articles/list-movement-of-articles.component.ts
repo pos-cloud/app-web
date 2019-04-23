@@ -183,7 +183,6 @@ export class ListMovementOfArticlesComponent implements OnInit {
           this.totalItems = result.count;
           this.areTransactionsEmpty = false;
           this.getBalance();
-          console.log(this.movementsOfArticles)
           } 
       },
       error => {

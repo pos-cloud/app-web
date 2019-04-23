@@ -45,12 +45,12 @@ export class MovementOfCancellationService {
         .set('skip', skip.toString());
 
         return this.http.get(URL, {
-        headers: headers,
-        params: params
+            headers: headers,
+            params: params
         }).pipe(
-        map(res => {
-            return res;
-        })
+            map(res => {
+                return res;
+            })
         );
     }
 
@@ -72,7 +72,7 @@ export class MovementOfCancellationService {
         return this._http.post(Config.apiURL + "movements-of-cancellations", { movementsOfCancellations: movementsOfCancellations }, { headers: headers }).map (res => res.json());
     }
 
-    updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation){
+    updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation) {
         
         const URL = `${Config.apiURL}movement-of-cancellation`;
 
@@ -94,7 +94,7 @@ export class MovementOfCancellationService {
         );
     }
 
-    deleteMovementOfCancellation(movementOfCancellationId: string){
+    deleteMovementOfCancellation(movementOfCancellationId: string) {
         
         const URL = `${Config.apiURL}movement-of-cancellation/`;
 
@@ -102,7 +102,6 @@ export class MovementOfCancellationService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._userService.getToken())
             .set('Database', this._userService.getDatabase())
-        
 
         return this.http.delete(URL + movementOfCancellationId , {
             headers: headers,
@@ -112,6 +111,15 @@ export class MovementOfCancellationService {
             }),
         );
     }
+
+    deleteMovementsOfCancellations(query: string) {
+        let headers = new Headers({
+          'Content-Type': 'application/json',
+          'Authorization': this._userService.getToken(),
+          'Database': this._userService.getDatabase()
+        });
+        return this._http.delete(Config.apiURL + 'movements-of-cancellations/' + query, { headers: headers }).map(res => res.json());
+      }
 
     getMovementOfCancellation( movementOfCancellationId: string){
         
