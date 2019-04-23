@@ -2168,10 +2168,10 @@ export class PrintComponent implements OnInit {
 
         row += 8;
 
-        if(i == 19) {
+        if((i+1)%19 === 0) {
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
-          this.doc.text(transport.toString(),185, row);
+          this.doc.text(this.roundNumber.transform(transport).toString(),185, row);
           this.getCompanyPicture(10, 5, 80, 40);
           row = 95;
           this.doc.addPage();
@@ -2179,7 +2179,7 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType("bold");
 
           this.doc.text("TRANSPORTE:".toString(),25,85);
-          this.doc.text(transport.toString(),185,85);
+          this.doc.text(this.roundNumber.transform(transport).toString(),185,85);
 
           this.getHeader(true);
           this.getClient();
