@@ -305,7 +305,7 @@ export class AddCompanyComponent  implements OnInit {
         ]
       ],
       'observation': [this.company.observation,[]],
-      'allowCurrentAccount': [this.company.observation,[]],
+      'allowCurrentAccount': [this.company.allowCurrentAccount,[]],
       'group': [this.company.group,[]],
       'employee' : [this.company.employee,[]]
     });
