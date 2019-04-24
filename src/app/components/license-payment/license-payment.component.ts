@@ -8,7 +8,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from './../../services/config.service';
 
 import { Config } from 'app/app.config';
-import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 
 @Component({
   selector: 'app-license-payment',

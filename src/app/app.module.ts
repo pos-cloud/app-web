@@ -602,7 +602,8 @@ import { ListMovementOfArticlesComponent } from './components/list-movement-of-a
     CompanyFieldService,
     CancellationTypeService,
     MovementOfCancellationService,
-    CurrencyService
+    CurrencyService,
+    RoundNumberPipe
   ],
   bootstrap: [AppComponent]
 })
