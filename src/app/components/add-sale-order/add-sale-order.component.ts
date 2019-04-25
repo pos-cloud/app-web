@@ -146,14 +146,16 @@ export class AddSaleOrderComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     this.transactionId = pathLocation[4];
-    this.getUsesOfCFDI();
-    this.getRelationTypes();
-    this.getPrinters();
   }
 
   ngOnInit(): void {
 
     this.userCountry = Config.country;
+
+    if(this.userCountry === 'MX') {
+      this.getUsesOfCFDI();
+      this.getRelationTypes();
+    }
     
     if (this.posType === "resto") {
       this.table = new Table();
@@ -391,6 +393,9 @@ export class AddSaleOrderComponent implements OnInit {
             this.transaction.state === TransactionState.Canceled) {
             this.backFinal();
           } else {
+            if(this.transaction.type.printable) {
+              this.getPrinters();
+            }
             await this.getCurrencies().then(
               currencies => {
                 if(currencies) {
@@ -1289,7 +1294,7 @@ export class AddSaleOrderComponent implements OnInit {
     switch (op) {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
-        modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
+        modalRef.componentInstance.transactionDestinationId = this.transaction._id;
         modalRef.result.then((result) => {
           if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;

@@ -153,7 +153,7 @@ export class PrintComponent implements OnInit {
             }
             this.company = this.transaction.company;
             if (this.typePrint === "turn") {
-              this.getShiftClosingByTransaccion();
+              this.getShiftClosingByTransaction();
             } else if (this.typePrint === "invoice") {
               if (this.transaction.type.requestArticles) {
                 this.getMovementOfArticle();
@@ -204,7 +204,7 @@ export class PrintComponent implements OnInit {
             this.getTransaction(this.transactionId);
           } else {
             if (this.typePrint === "turn") {
-              this.getShiftClosingByTransaccion();
+              this.getShiftClosingByTransaction();
             } else if (this.typePrint === "invoice") {
               if (this.transaction.type.requestArticles) {
                 this.getMovementOfArticle();
@@ -716,11 +716,11 @@ export class PrintComponent implements OnInit {
     );
   }
 
-  public getShiftClosingByTransaccion(): void {
+  public getShiftClosingByTransaction(): void {
 
     this.loading = true;
 
-    this._turnService.getShiftClosingByTransaccion(this.turn._id).subscribe(
+    this._turnService.getShiftClosingByTransaction(this.turn._id).subscribe(
       result => {
         if (!result.shiftClosing) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

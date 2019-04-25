@@ -469,7 +469,7 @@ export class AddTransactionComponent implements OnInit {
     switch (op) {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
-        modalRef.componentInstance.transaccionDestinationId = this.transaction._id;
+        modalRef.componentInstance.transactionDestinationId = this.transaction._id;
         modalRef.result.then((result) => {
           if(result.movementsOfCancellations) {
             this.saveMovementsOfCancellations(result.movementsOfCancellations);

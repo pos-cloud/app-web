@@ -49,7 +49,7 @@ export class TurnService {
     return this._http.get(Config.apiURL + "turns", { headers: headers }).map (res => res.json());
   }
 
-  getShiftClosingByTransaccion(turnId: string) {
+  getShiftClosingByTransaction(turnId: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
