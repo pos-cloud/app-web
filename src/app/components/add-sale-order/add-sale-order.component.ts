@@ -873,9 +873,10 @@ export class AddSaleOrderComponent implements OnInit {
     
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     
-    if(movementOfArticle.article.currency &&
-      Config.currency && 
-      Config.currency._id !== movementOfArticle.article.currency._id) {
+    if( movementOfArticle.article &&
+        movementOfArticle.article.currency &&
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
     
@@ -957,18 +958,18 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-    }
-    
-    if(movementOfArticle.article.currency &&  
-      Config.currency && 
-      Config.currency._id !== movementOfArticle.article.currency._id) {
-        movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+      if(movementOfArticle.article.currency &&  
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
+          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+      }
     }
     
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-    if(movementOfArticle.article.currency &&  
-      Config.currency && 
-      Config.currency._id !== movementOfArticle.article.currency._id) {
+    if( movementOfArticle.article &&
+        movementOfArticle.article.currency &&  
+        Config.currency && 
+        Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
