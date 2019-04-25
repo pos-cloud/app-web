@@ -7,7 +7,7 @@ import { CancellationTypeService } from '../../services/cancellation-type.servic
 import { TransactionTypeService } from '../../services/transaction-type.service';
 
 import { CancellationType } from '../../models/cancellation-type';
-import { TransactionType } from '../../models/transaction-type';
+import { TransactionType, StockMovement } from '../../models/transaction-type';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -225,16 +225,41 @@ export class CancellationTypeComponent implements OnInit {
 
     switch (this.operation) {
       case 'add':
-        this.saveCancellationType();
+        if(this.isValid()){
+          this.saveCancellationType();
+        }
         break;
       case 'edit':
-        this.updateCancellationType();
+        if(this.isValid()){
+          this.updateCancellationType();
+        }
         break;
       case 'delete' :
         this.deleteCancellationType();
       default:
         break;
     }
+  }
+
+  public isValid() {
+    let valid: boolean = true;
+
+    let destinationSelected : TransactionType;
+
+    for(let destination of this.destinations) {
+      if (destination._id === this.cancellationTypeForm.value.destination) {
+        destinationSelected = destination;
+      }
+    }
+    
+    if(this.originSelected.modifyStock && destinationSelected.modifyStock) {
+      if(this.originSelected.stockMovement === destinationSelected.stockMovement){
+        valid = false
+        this.showMessage('No se puede relacionar transacciones con el mismo movimiento de stock','danger',false);
+      }
+    }
+    
+    return valid;
   }
 
   public updateCancellationType() {
