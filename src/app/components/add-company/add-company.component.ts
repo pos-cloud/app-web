@@ -80,7 +80,8 @@ export class AddCompanyComponent  implements OnInit {
     'group':'',
     'employee':'',
     'country' :'',
-    'place':'',
+    'floorNumber':'',
+    'addressNumber' : '',
     'state':'',
   };
 
@@ -117,7 +118,8 @@ export class AddCompanyComponent  implements OnInit {
     'group':{},
     'employee': {},
     'country' : {},
-    'place': {},
+    'addressNumber': {},
+    'floorNumber': {},
     'state': {},
   };
 
@@ -379,9 +381,9 @@ export class AddCompanyComponent  implements OnInit {
       'group': [this.company.group,[]],
       'employee' : [this.company.employee,[]],
       'country' : [this.company.country,[]],
-      'place': [this.company.place,[]],
+      'floorNumber': [this.company.floorNumber,[]],
       'state': [this.company.state,[]],
-      'number': [this.company.number,[]]
+      'addressNumber': [this.company.addressNumber,[]]
     });
 
     this.companyForm.valueChanges
@@ -417,8 +419,8 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.fantasyName) this.company.fantasyName = '';
     if (!this.company.type) CompanyType.Client;
     if (!this.company.country) this.company.country = '';
-    if (!this.company.number) this.company.number = '';
-    if (!this.company.place) this.company.place = '';
+    if (!this.company.addressNumber) this.company.addressNumber = '';
+    if (!this.company.floorNumber) this.company.floorNumber = '';
     if (!this.company.address) this.company.address = '';
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
@@ -486,7 +488,7 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
-    console.log(this.company.state);
+
     let state;
     if (!this.company.state) {
       state = null;
@@ -517,9 +519,9 @@ export class AddCompanyComponent  implements OnInit {
       'observation': this.company.observation,
       'allowCurrentAccount': this.company.allowCurrentAccount,
       'country' : this.company.country,
-      'number' : this.company.number,
+      'addressNumber' : this.company.addressNumber,
       'state' : state,
-      'place' : this.company.place,
+      'floorNumber' : this.company.floorNumber,
       'group': group,
       'employee' : employee
     };
