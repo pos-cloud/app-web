@@ -211,6 +211,7 @@ import { ListRelationTypesComponent } from './components/list-relation-types/lis
 import { AddRelationTypeComponent } from './components/add-relation-type/add-relation-type.component';
 import { DeleteRelationTypeComponent } from './components/delete-relation-type/delete-relation-type.component';
 import { RelationTypeService } from './services/relation-type.service';
+import { StateService } from './services/state.service';
 
 import { AddCompanyFieldComponent } from './components/add-company-field/add-company-field.component';
 import { UpdateCompanyFieldComponent } from './components/update-company-field/update-company-field.component';
@@ -228,6 +229,9 @@ import { CurrencyComponent } from './components/currency/currency.component';
 import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
 import { CurrencyService } from './services/currency.service';
 import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
+import { StateComponent } from './components/state/state.component';
+import { ListStatesComponent } from './components/list-states/list-states.component';
+
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
 @NgModule({
@@ -387,7 +391,9 @@ import { ListMovementOfArticlesComponent } from './components/list-movement-of-a
     MovementOfCancellationComponent,
     CurrencyComponent,
     ListCurrenciesComponent,
-    ListMovementOfArticlesComponent
+    ListMovementOfArticlesComponent,
+    StateComponent,
+    ListStatesComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -536,7 +542,8 @@ import { ListMovementOfArticlesComponent } from './components/list-movement-of-a
     MovementOfCancellationComponent,
     CurrencyComponent,
     ListCurrenciesComponent,
-    ListMovementOfArticlesComponent
+    ListMovementOfArticlesComponent,
+    StateComponent
   ],
   imports: [
     BrowserModule,
@@ -603,7 +610,8 @@ import { ListMovementOfArticlesComponent } from './components/list-movement-of-a
     CancellationTypeService,
     MovementOfCancellationService,
     CurrencyService,
-    RoundNumberPipe
+    RoundNumberPipe,
+    StateService
   ],
   bootstrap: [AppComponent]
 })
