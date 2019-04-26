@@ -26,6 +26,9 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { IdentificationType } from 'app/models/identification-type';
 import { IdentificationTypeService } from 'app/services/identification-type.service';
 import { Config } from 'app/app.config';
+import { ConfigService } from 'app/services/config.service';
+import { StateService } from 'app/services/state.service';
+import { State } from 'app/models/state';
 
 @Component({
   selector: 'app-add-company',
@@ -45,6 +48,7 @@ export class AddCompanyComponent  implements OnInit {
   public vatConditions: VATCondition[];
   public companiesGroup: CompanyGroup[];
   public employees: Employee[];
+  public states : State[];
   public otherFields: CompanyFields[] = new Array();
   public dateFormat = new DateFormatPipe();
   public identificationTypes: IdentificationType[];
@@ -55,6 +59,7 @@ export class AddCompanyComponent  implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
+  public countries : any;
 
   public formErrors = {
     'code': '',
@@ -73,7 +78,10 @@ export class AddCompanyComponent  implements OnInit {
     'observation':'',
     'allowCurrentAccount':'',
     'group':'',
-    'employee':''
+    'employee':'',
+    'country' :'',
+    'place':'',
+    'state':'',
   };
 
   public validationMessages = {
@@ -107,7 +115,10 @@ export class AddCompanyComponent  implements OnInit {
     'observation':{},
     'allowCurrentAccount':{},
     'group':{},
-    'employee': {}
+    'employee': {},
+    'country' : {},
+    'place': {},
+    'state': {},
   };
 
   constructor(
@@ -115,6 +126,8 @@ export class AddCompanyComponent  implements OnInit {
     public _vatConditionService: VATConditionService,
     public _companyGroupService: CompanyGroupService,
     public _employeeService: EmployeeService,
+    public _stateService : StateService,
+    public _configService: ConfigService,
     public _identificationTypeService: IdentificationTypeService,
     public _fb: FormBuilder,
     public _router: Router,
@@ -143,10 +156,12 @@ export class AddCompanyComponent  implements OnInit {
     }
 
     this.buildForm();
+    this.getCountries();
     this.getVATConditions();
     this.getIdentificationTypes();
     this.getCompaniesGroup();
     this.getEmployees();
+    this.getStates();
 
     if(this.companyId) {
       this.getCompany();
@@ -234,6 +249,61 @@ export class AddCompanyComponent  implements OnInit {
     );
   }
 
+  public getStates(): void {
+
+    this.loading = true;
+
+    let orderTerm: string[] = ['name'];
+
+    /// ORDENAMOS LA CONSULTA
+    let sortAux;
+    if (orderTerm[0].charAt(0) === '-') {
+        sortAux = `{ "${orderTerm[0].split('-')[1]}" : -1 }`;
+    } else {
+        sortAux = `{ "${orderTerm[0]}" : 1 }`;
+    }
+    sortAux = JSON.parse(sortAux);
+
+    // FILTRAMOS LA CONSULTA
+
+    let match = `{"operationType": { "$ne": "D" }}`;
+    
+
+    match = JSON.parse(match);
+
+    let project = {
+        "name":1,
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        states: { $push: "$$ROOT" }
+    };
+
+
+    this._stateService.getStates(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      0, // LIMIT
+      1 // SKIP
+  ).subscribe(
+    result => {
+      if (result.states) {
+        this.loading = false;
+        this.states = result.states
+      } 
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    }
+  );
+  }
+
   public getCompaniesGroup(): void {
     this.loading = true;
 
@@ -307,7 +377,11 @@ export class AddCompanyComponent  implements OnInit {
       'observation': [this.company.observation,[]],
       'allowCurrentAccount': [this.company.allowCurrentAccount,[]],
       'group': [this.company.group,[]],
-      'employee' : [this.company.employee,[]]
+      'employee' : [this.company.employee,[]],
+      'country' : [this.company.country,[]],
+      'place': [this.company.place,[]],
+      'state': [this.company.state,[]],
+      'number': [this.company.number,[]]
     });
 
     this.companyForm.valueChanges
@@ -342,6 +416,9 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.name) this.company.name = '';
     if (!this.company.fantasyName) this.company.fantasyName = '';
     if (!this.company.type) CompanyType.Client;
+    if (!this.company.country) this.company.country = '';
+    if (!this.company.number) this.company.number = '';
+    if (!this.company.place) this.company.place = '';
     if (!this.company.address) this.company.address = '';
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
@@ -409,6 +486,18 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    console.log(this.company.state);
+    let state;
+    if (!this.company.state) {
+      state = null;
+    } else {
+      if (this.company.state._id) {
+        state = this.company.state._id;
+      } else {
+        state = this.company.state;
+      }
+    }
+
     const values = {
       '_id': this.company._id,
       'code': this.company.code,
@@ -427,6 +516,10 @@ export class AddCompanyComponent  implements OnInit {
       'birthday': this.company.birthday,
       'observation': this.company.observation,
       'allowCurrentAccount': this.company.allowCurrentAccount,
+      'country' : this.company.country,
+      'number' : this.company.number,
+      'state' : state,
+      'place' : this.company.place,
       'group': group,
       'employee' : employee
     };
@@ -539,6 +632,14 @@ export class AddCompanyComponent  implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getCountries() : void {
+    this._configService.getCountry().subscribe(
+      result => {
+        this.countries = JSON.parse(result["_body"]);
+      }
+    )
   }
 
   public updateCompany(): void {

@@ -90,13 +90,25 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-8">
-                    <label for="address" class="control-label">Dirección:</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="address" name="address" id="address"/>
+                  <div class="form-group col-md-4">
+                    <label for="country" class="control-label">Pais:</label>
+                    <select class="form-control" formControlName="country" name="country" id="country">
+                      <option *ngFor="let country of countries"
+                              [value]="country.alpha2Code">
+                        {{country.name}}
+                      </option>
+                    </select>
+                    <div *ngIf="formErrors.country" class="alert alert-danger">
+                      {{ formErrors.country }}
                     </div>
-                    <div *ngIf="formErrors.address" class="alert alert-danger">
-                      {{ formErrors.address }}
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="state" class="control-label">Estado:</label>
+                    <select class="form-control" formControlName="state">
+                      <option *ngFor="let state of states" [ngValue]="state._id">{{state.name}}</option>
+                    </select>
+                    <div *ngIf="formErrors.state" class="alert alert-danger">
+                      {{ formErrors.state }}
                     </div>
                   </div>
                   <div class="form-group col-md-4">
@@ -106,6 +118,35 @@
                     </div>
                     <div *ngIf="formErrors.city" class="alert alert-danger">
                       {{ formErrors.city }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-8">
+                    <label for="address" class="control-label">Dirección:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="address" name="address" id="address"/>
+                    </div>
+                    <div *ngIf="formErrors.address" class="alert alert-danger">
+                      {{ formErrors.address }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="number" class="control-label">Numero:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="number" name="number" id="number"/>
+                    </div>
+                    <div *ngIf="formErrors.number" class="alert alert-danger">
+                      {{ formErrors.number }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="place" class="control-label">Depto:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="place" name="place" id="place"/>
+                    </div>
+                    <div *ngIf="formErrors.place" class="alert alert-danger">
+                      {{ formErrors.place }}
                     </div>
                   </div>
                 </div>
