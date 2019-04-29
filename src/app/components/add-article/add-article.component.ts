@@ -76,6 +76,7 @@ export class AddArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
   public articleType: string;
+  public allowPurchase;
 
   public formErrors = {
     'code': '',
