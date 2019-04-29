@@ -825,8 +825,6 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
-    console.log(this.article.providers);
-
     let providers;
     if (!this.article.providers || this.article.providers.length === 0) {
       providers = null;
