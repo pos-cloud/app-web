@@ -8,7 +8,7 @@
 			"type": "chrome",
 			"request": "launch",
 			"name": "Lanzar Chrome contra localhost",
-			"url": "http://localhost:4200/admin/productos",
+			"url": "http://localhost:4200",
 			"webRoot": "${workspaceFolder}"
 		}
 	]
