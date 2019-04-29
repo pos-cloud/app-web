@@ -16,6 +16,9 @@ import { Config } from './../../app.config';
 import { Taxes } from '../../models/taxes';
 import { Deposit } from '../../models/deposit';
 import { Location } from '../../models/location';
+import { UnitOfMeasurement } from 'app/models/unit-of-measurement';
+import { Currency } from 'app/models/currency';
+import { Company,CompanyType } from '../../models/company'
 
 // Services
 import { ArticleService } from './../../services/article.service';
@@ -25,6 +28,9 @@ import { CategoryService } from './../../services/category.service';
 import { VariantService } from './../../services/variant.service';
 import { DepositService } from './../../services/deposit.service';
 import { LocationService} from './../../services/location.service';
+import { CurrencyService } from 'app/services/currency.service';
+import { CompanyService } from 'app/services/company.service';
+import { UnitOfMeasurementService } from 'app/services/unit-of-measurement.service';
 
 // Pipes
 import { DecimalPipe } from '@angular/common';
@@ -32,10 +38,6 @@ import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../models/article-fields';
 import { ArticleFieldType } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
-import { UnitOfMeasurementService } from 'app/services/unit-of-measurement.service';
-import { UnitOfMeasurement } from 'app/models/unit-of-measurement';
-import { Currency } from 'app/models/currency';
-import { CurrencyService } from 'app/services/currency.service';
 
 @Component({
   selector: 'app-add-article',
@@ -55,6 +57,7 @@ export class AddArticleComponent implements OnInit {
   public articleForm: FormGroup;
   public currencies: Currency[] = new Array();
   public makes: Make[] = new Array();
+  public companies : Company[] = new Array();
   public deposits: Deposit[] = new Array();
   public locations: Location[] = new Array();
   public categories: Category[] = new Array();
@@ -88,7 +91,8 @@ export class AddArticleComponent implements OnInit {
     'deposit' : '',
     'location': '',
     'barcode': '',
-    'currency': ''
+    'currency': '',
+    'provider' : ''
   };
 
   public validationMessages = {
@@ -144,6 +148,7 @@ export class AddArticleComponent implements OnInit {
     public _locationService: LocationService,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
+    public _companyService : CompanyService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
     public _fb: FormBuilder,
     public _router: Router,
@@ -272,7 +277,8 @@ export class AddArticleComponent implements OnInit {
       ],
       'favourite' : [this.article.favourite, [
         ]
-      ]
+      ],
+      'provider' : [this.article.provider, []]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -573,10 +579,32 @@ export class AddArticleComponent implements OnInit {
     this._categoryService.getCategories().subscribe(
       result => {
         if (!result.categories) {
-          this.getUnitsOfMeasurement();
+          this.getCompany();
         } else {
           this.hideMessage();
           this.categories = result.categories;
+          this.getCompany();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getCompany(): void {
+
+    this.loading = true;
+
+    this._companyService.getCompaniesByType(CompanyType.Provider.toString()).subscribe(
+      result => {
+        if (!result.companies) {
+          this.getUnitsOfMeasurement();
+        } else {
+          this.hideMessage();
+          this.companies = result.companies;
           this.getUnitsOfMeasurement();
         }
         this.loading = false;
@@ -797,6 +825,17 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
+    let provider;
+    if (!this.article.provider) {
+      provider = null;
+    } else {
+      if (this.article.provider[0]._id) {
+        provider = this.article.provider[0]._id;
+      } else {
+        provider = this.article.provider;
+      }
+    }
+
     let deposit;
     if (!this.article.deposit) {
       deposit = null;
@@ -890,7 +929,8 @@ export class AddArticleComponent implements OnInit {
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
       'allowMeasure': this.article.allowMeasure,
       'ecommerceEnabled': this.article.ecommerceEnabled,
-      'favourite': this.article.favourite
+      'favourite': this.article.favourite,
+      'provider' : provider
     };
 
     this.articleForm.setValue(values);

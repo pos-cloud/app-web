@@ -10,6 +10,7 @@ import { UnitOfMeasurement } from './unit-of-measurement';
 import * as moment from 'moment';
 import 'moment/locale/es';
 import { Currency } from './currency';
+import { Company } from './company';
 
 export class Article {
 
@@ -46,6 +47,7 @@ export class Article {
   public favourite: Boolean = false;
   public printed: boolean;
   public picture: string = 'default.jpg';
+  public provider : Company[];
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;

@@ -300,6 +300,22 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-12">
+                  <label for="provider" class="control-label">Proveedor</label>
+                    <select class="form-control" formControlName="provider">
+                      <option [ngValue]="null" [selected]="!article || !article.provider" [disabled]="readonly"></option>
+                      <option *ngFor="let provider of companies"
+                              [selected]="(article.provider && article.provider._id && provider._id===article.provider._id) ||
+                                          (article.provider && provider._id===article.provider)"
+                              [value]="provider._id">
+                              {{provider.name}}</option>
+                    </select>
+                    <div *ngIf="formErrors.provider" class="alert alert-danger">
+                      {{ formErrors.provider }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="allowSale" class="control-label">¿El producto está habilitado para la venta?</label>
                     <select class="form-control" formControlName="allowSale">
                       <option [value]="true" [disabled]="readonly">Si</option>
