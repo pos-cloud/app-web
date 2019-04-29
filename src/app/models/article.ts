@@ -47,7 +47,7 @@ export class Article {
   public favourite: Boolean = false;
   public printed: boolean;
   public picture: string = 'default.jpg';
-  public provider : Company[];
+  public providers : Company[];
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;

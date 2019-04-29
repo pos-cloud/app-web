@@ -76,7 +76,6 @@ export class AddArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
   public articleType: string;
-  public allowPurchase;
 
   public formErrors = {
     'code': '',
@@ -93,7 +92,7 @@ export class AddArticleComponent implements OnInit {
     'location': '',
     'barcode': '',
     'currency': '',
-    'provider' : ''
+    'providers' : ''
   };
 
   public validationMessages = {
@@ -279,7 +278,7 @@ export class AddArticleComponent implements OnInit {
       'favourite' : [this.article.favourite, [
         ]
       ],
-      'provider' : [this.article.provider, []]
+      'providers' : [this.article.providers, []]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -826,14 +825,16 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
-    let provider;
-    if (!this.article.provider) {
-      provider = null;
+    console.log(this.article.providers);
+
+    let providers;
+    if (!this.article.providers || this.article.providers.length === 0) {
+      providers = null;
     } else {
-      if (this.article.provider[0]._id) {
-        provider = this.article.provider[0]._id;
+      if (this.article.providers[0]._id) {
+        providers = this.article.providers[0]._id;
       } else {
-        provider = this.article.provider;
+        providers = this.article.providers;
       }
     }
 
@@ -931,7 +932,7 @@ export class AddArticleComponent implements OnInit {
       'allowMeasure': this.article.allowMeasure,
       'ecommerceEnabled': this.article.ecommerceEnabled,
       'favourite': this.article.favourite,
-      'provider' : provider
+      'providers' : providers
     };
 
     this.articleForm.setValue(values);
