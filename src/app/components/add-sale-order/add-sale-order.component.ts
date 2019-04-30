@@ -103,7 +103,6 @@ export class AddSaleOrderComponent implements OnInit {
   public filterArticle: string;
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber = new RoundNumberPipe();
-  public amountModifyStock = 0; //Saber cuando termina de actualizar el stock
   public areMovementsOfArticlesEmpty: boolean = true;
   public apiURL = Config.apiURL;
   public userCountry: string = 'AR';
@@ -758,7 +757,7 @@ export class AddSaleOrderComponent implements OnInit {
     });
   }
 
-  public addItem(itemData: MovementOfArticle): void {
+  async addItem(itemData: MovementOfArticle) {
 
     if (this.filterArticle && this.filterArticle !== '') {
       this.filterArticle = '';
@@ -770,20 +769,21 @@ export class AddSaleOrderComponent implements OnInit {
       if (!movementOfArticle) {
         movementOfArticle = itemData;
         movementOfArticle.transaction = this.transaction;
-        if (Config.modules.stock &&
-          this.transaction.type &&
-          this.transaction.type.modifyStock) {
-          this.getArticleStock("save", movementOfArticle);
-        } else {
-          this.verifyPermissions("save", movementOfArticle, null);
-        }
+        if(await this.isValidMovementOfArticle(movementOfArticle)) {
+          movementOfArticle._id = '';
+          movementOfArticle.printed = 0;
+          movementOfArticle.transaction = this.transaction;
+          movementOfArticle.amount = 1;
+          this.saveMovementOfArticle(movementOfArticle);
+        } 
       } else {
-        if (Config.modules.stock &&
-          this.transaction.type &&
-          this.transaction.type.modifyStock) {
-          this.getArticleStock("update", movementOfArticle);
-        } else {
-          this.verifyPermissions("update", movementOfArticle, null);
+        if(await this.isValidMovementOfArticle(movementOfArticle)) {
+          movementOfArticle.amount += 1;
+          if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+            this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle));
+          } else {
+            this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle));
+          }
         }
       }
     } else {
@@ -797,70 +797,61 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public getArticleStock(op: string, movementOfArticle: MovementOfArticle): void {
+  public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
 
-    this.loading = true;
-
-    this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
-      result => {
-        if (!result.articleStocks || result.articleStocks.length <= 0) {
-          this.loading = false;
-          this.verifyPermissions(op, movementOfArticle, null);
-        } else {
-          this.loading = false;
-          let articleStock = result.articleStocks[0];
-          this.verifyPermissions(op, movementOfArticle, articleStock);
+    return new Promise<ArticleStock>((resolve, reject) => {
+      this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
+        result => {
+          if (!result.articleStocks || result.articleStocks.length <= 0) {
+            resolve(null);
+          } else {
+            resolve(result.articleStocks[0]);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public verifyPermissions(op: string, movementOfArticle: MovementOfArticle, articleStock: ArticleStock): void {
+  async isValidMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
-    let allowed = true;
+    let isValid = true;
 
-    if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-      !movementOfArticle.article.allowSale) {
-      allowed = false;
-      this.showMessage("El producto no esta habilitado para la venta", 'info', true);
+    if (this.transaction.type && 
+        this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+        movementOfArticle.article &&
+        !movementOfArticle.article.allowSale) {
+        isValid = false;
+        this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
-      !movementOfArticle.article.allowPurchase) {
-      allowed = false;
-      this.showMessage("El producto no esta habilitado para la compra", 'info', true);
+    if (this.transaction.type && 
+        this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+        movementOfArticle.article &&
+        !movementOfArticle.article.allowPurchase) {
+        isValid = false;
+        this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
     }
 
-    if (Config.modules.stock &&
-      this.transaction.type &&
-      this.transaction.type.modifyStock &&
-      this.transaction.type.stockMovement === StockMovement.Outflows &&
-      !movementOfArticle.article.allowSaleWithoutStock &&
-      (!articleStock || (articleStock && ((movementOfArticle.amount + 1) > articleStock.realStock)))) {
-      allowed = false;
-      this.showMessage("No tiene el stock suficiente para la operación solicitada.", 'info', true);
+    if  (movementOfArticle.article &&
+        Config.modules.stock &&
+        this.transaction.type &&
+        this.transaction.type.modifyStock &&
+        this.transaction.type.stockMovement === StockMovement.Outflows &&
+        !movementOfArticle.article.allowSaleWithoutStock) {
+        await this.getArticleStock(movementOfArticle).then(
+          articleStock => {
+            if (!articleStock || movementOfArticle.amount > articleStock.realStock) {
+              isValid = false;
+              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ").", 'info', true);
+            }
+          }
+        );
     }
-
-    if (allowed) {
-      if (op === "save") {
-        movementOfArticle._id = '';
-        movementOfArticle.printed = 0;
-        movementOfArticle.transaction = this.transaction;
-        movementOfArticle.amount = 1;
-        this.saveMovementOfArticle(movementOfArticle);
-      } else if (op === "update") {
-        movementOfArticle.amount += 1;
-        if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle));
-        } else {
-          this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle));
-        }
-      }
-    }
+    return isValid;
   }
 
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
@@ -1230,12 +1221,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.CAE = result.CAE;
           this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
           this.transaction.state = TransactionState.Closed;
-          if (Config.modules.stock &&
-            this.transaction.type.modifyStock) {
-            this.updateRealStock();
-          } else {
-            this.finish();
-          }
+          this.finish();
         }
         this.loading = false;
       },
@@ -1272,12 +1258,7 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.endDate = result.endDate;
           this.transaction.totalPrice = result.totalPrice;
           this.transaction.UUID = result.UUID;
-          if (Config.modules.stock &&
-            this.transaction.type.modifyStock) {
-            this.updateRealStock();
-          } else {
-            this.finish();
-          }
+          this.finish();
         }
         this.loading = false;
       },
@@ -1288,7 +1269,7 @@ export class AddSaleOrderComponent implements OnInit {
     )
   }
 
-  public openModal(op: string, movementOfArticle?: MovementOfArticle, fastPayment?: PaymentMethod): void {
+  async openModal(op: string, movementOfArticle?: MovementOfArticle, fastPayment?: PaymentMethod) {
 
     let modalRef;
 
@@ -1381,7 +1362,7 @@ export class AddSaleOrderComponent implements OnInit {
 
         this.typeOfOperationToPrint = "charge";
 
-        if (this.isValidCharge()) {
+        if (await this.isValidCharge()) {
 
           if (this.transaction.type.requestPaymentMethods ||
              fastPayment) {
@@ -1429,12 +1410,7 @@ export class AddSaleOrderComponent implements OnInit {
                     this.assignTransactionNumber();
                   }
                 } else {
-                  if (Config.modules.stock &&
-                    this.transaction.type.modifyStock) {
-                    this.updateRealStock();
-                  } else {
-                    this.finish();
-                  }
+                  this.finish();
                 }
               }
             }, (reason) => {
@@ -1450,12 +1426,7 @@ export class AddSaleOrderComponent implements OnInit {
                 this.assignTransactionNumber();
               }
             } else {
-              if (Config.modules.stock &&
-                this.transaction.type.modifyStock) {
-                this.updateRealStock();
-              } else {
-                this.finish();
-              }
+              this.finish();
             }
           }
         }
@@ -1571,53 +1542,82 @@ export class AddSaleOrderComponent implements OnInit {
     };
   }
 
-  async finish() {
-    await this.updateBalance().then(async balance => {
-      if(balance !== null) {
-        this.transaction.balance = balance;
-        if (!this.transaction.endDate) {
-          this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-        }
-        if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
-          this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
-        }
-        this.transaction.expirationDate = this.transaction.endDate;
-        this.transaction.state = TransactionState.Closed;
-    
-        await this.updateTransaction().then(async transaction => {
-          this.transaction = transaction;
+  async areValidMovementOfArticle(): Promise<boolean> {
 
-          if (this.transaction && this.transaction.type.printable) {
+    return new Promise<boolean>( async (resolve, reject) => {
       
-            if (this.posType === "resto") {
-              this.table.employee = null;
-              this.table.state = TableState.Available;
-              this.table = await this.updateTable();
-            }
-      
-            if (this.transaction.type.defectPrinter) {
-              this.printerSelected = this.transaction.type.defectPrinter;
-              this.distributeImpressions(this.transaction.type.defectPrinter);
-            } else {
-              this.openModal('printers');
-            }
-          } else {
-            if (this.posType === "resto") {
-              this.table.employee = null;
-              this.table.state = TableState.Available;
-              await this.updateTable().then(table => {
-                if(table) {
-                  this.table = table;
-                  this.backFinal();
-                }
-              });
-            } else {
-              this.backFinal();
-            }
-          }
-        });
+      let areValid: boolean = true;
+  
+      for(let movementOfArticle of this.movementsOfArticles) {
+        if(await this.isValidMovementOfArticle(movementOfArticle)) {
+        } else {
+          areValid = false;
+        }
       }
+  
+      resolve(areValid);
     });
+  }
+
+  async finish() {
+    
+    let isValid: boolean = true;
+
+    if (isValid && 
+        Config.modules.stock &&
+        this.transaction.type.modifyStock) {
+        
+      isValid = await this.processStock();
+    }
+    
+    if(isValid) {
+      await this.updateBalance().then(async balance => {
+        if(balance !== null) {
+          this.transaction.balance = balance;
+          if (!this.transaction.endDate) {
+            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+          }
+          if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+            this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+          }
+          this.transaction.expirationDate = this.transaction.endDate;
+          this.transaction.state = TransactionState.Closed;
+      
+          await this.updateTransaction().then(async transaction => {
+            this.transaction = transaction;
+  
+            if (this.transaction && this.transaction.type.printable) {
+        
+              if (this.posType === "resto") {
+                this.table.employee = null;
+                this.table.state = TableState.Available;
+                this.table = await this.updateTable();
+              }
+        
+              if (this.transaction.type.defectPrinter) {
+                this.printerSelected = this.transaction.type.defectPrinter;
+                this.distributeImpressions(this.transaction.type.defectPrinter);
+              } else {
+                this.openModal('printers');
+              }
+            } else {
+              if (this.posType === "resto") {
+                this.table.employee = null;
+                this.table.state = TableState.Available;
+                await this.updateTable().then(table => {
+                  if(table) {
+                    this.table = table;
+                    this.backFinal();
+                  }
+                });
+              } else {
+                this.backFinal();
+              }
+            }
+          });
+        }
+      });
+    }
   }
 
   public updateBalance(): Promise<number> {
@@ -1670,61 +1670,66 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public isValidCharge(): boolean {
+  async isValidCharge(): Promise<boolean> {
 
-    let isValidCharge = true;
+    let isValid = true;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length <= 0) {
-      isValidCharge = false;
+      isValid = false;
       this.showMessage("No existen productos en la transacción.", 'info', true);
+    } else {
+      if(await this.areValidMovementOfArticle()) {
+      } else {
+        isValid = false;
+      }
     }
 
-    if (isValidCharge &&
+    if (isValid &&
       this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
       !this.transaction.company) {
-      isValidCharge = false;
+      isValid = false;
       this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
     }
 
-    if (isValidCharge &&
+    if (isValid &&
       this.transaction.type.electronics &&
       this.transaction.totalPrice > 5000 &&
       !this.transaction.company) {
-      isValidCharge = false;
+      isValid = false;
       this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
     }
 
-    if (isValidCharge &&
+    if (isValid &&
         this.transaction.type.electronics &&
         this.transaction.company && (
         !this.transaction.company.identificationType ||
         !this.transaction.company.identificationValue ||
         this.transaction.company.identificationValue === '')
       ) {
-      isValidCharge = false;
+      isValid = false;
       this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
       this.loading = false;
     }
 
-    if (isValidCharge &&
+    if (isValid &&
       this.transaction.type.fixedOrigin &&
       this.transaction.type.fixedOrigin === 0 &&
       this.transaction.type.electronics &&
       Config.country === 'MX') {
-      isValidCharge = false;
+      isValid = false;
       this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
       this.loading = false;
     }
 
-    if (isValidCharge &&
+    if (isValid &&
       this.transaction.type.electronics &&
       !Config.modules.sale.electronicTransactions) {
-      isValidCharge = false;
+      isValid = false;
       this.showMessage("No tiene habilitado el módulo de factura electrónica.", 'info', true);
       this.loading = false;
     }
 
-    return isValidCharge;
+    return isValid;
   }
 
   public countPrinters(): number {
@@ -1814,12 +1819,7 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           this.transaction.number = result.transactions[0].number + 1;
         }
-        if (Config.modules.stock &&
-          this.transaction.type.modifyStock) {
-          this.updateRealStock();
-        } else {
-          this.finish();
-        }
+        this.finish();
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -1869,51 +1869,59 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public updateRealStock(): void {
+  async processStock(): Promise<boolean> {
+
+    let endProcess: boolean = true;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-
-      this.loading = true;
-
-      let amountToModify;
-
-      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
-        amountToModify = this.movementsOfArticles[this.amountModifyStock].amount;
-      } else {
-        amountToModify = this.roundNumber.transform(this.movementsOfArticles[this.amountModifyStock].amount * -1);
-      }
-
-      if (this.movementsOfArticles[this.amountModifyStock].article) {
-        this._articleStockService.updateRealStock(this.movementsOfArticles[this.amountModifyStock].article, amountToModify, this.transaction.type.stockMovement.toString()).subscribe(
-          result => {
-            if (!result.articleStock) {
-              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            } else {
-              this.amountModifyStock++;
-              if (this.movementsOfArticles && this.amountModifyStock === this.movementsOfArticles.length) {
-                this.finish();
-              } else {
-                this.updateRealStock();
+      
+      for(let movementOfArticle of this.movementsOfArticles) {
+        if(movementOfArticle.article) {
+          await this.updateRealStock(movementOfArticle).then(
+            articleStock => {
+              if(!articleStock) {
+                endProcess = false;
               }
             }
-            this.loading = false;
-          },
-          error => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
-          }
-        );
-      } else {
-        this.amountModifyStock++;
-        if (this.movementsOfArticles && this.amountModifyStock === this.movementsOfArticles.length) {
-          this.finish();
-        } else {
-          this.updateRealStock();
+          );
         }
       }
     } else {
       this.showMessage("No se encuentran productos en la transacción", 'info', true);
     }
+
+    return endProcess;
+  }
+
+  public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
+
+    return new Promise<boolean>((resolve, reject) => {
+  
+      let amountToModify;
+
+      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
+        amountToModify = movementOfArticle.amount;
+      } else {
+        amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
+      }
+
+      this._articleStockService.updateRealStock(movementOfArticle.article, amountToModify, this.transaction.type.stockMovement.toString()).subscribe(
+        result => {
+          this.loading = false;
+          if (!result.articleStock) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.articleStock);
+          }
+        },
+        error => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public backFinal(): void {
