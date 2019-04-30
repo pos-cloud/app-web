@@ -207,8 +207,8 @@ export class TransactionService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
-    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","database":"' + this._userService.getDatabase() + '"}';
-    return this._http.post(Config.apiURL_FE_MX, body, { headers: headers }).map(res => res.json());
+    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + this._userService.getDatabase() + '"}';
+		return this._http.post(Config.apiURL_FE_MX, body, { headers: headers }).map(res => res.json());
   }
 
   exportCiti(VATPeriod: string, transactionMovement: TransactionMovement) {

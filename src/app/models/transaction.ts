@@ -36,7 +36,6 @@ export class Transaction {
 	public balance : number = 0.00;
 	public CAE: string; // AR
 	public CAEExpirationDate: string; // AR
-	public expeditionPlace: string; // MX
 	public relationType: RelationType; // MX
 	public useOfCFDI: UseOfCFDI; // MX
 	public stringSAT: string; // MX

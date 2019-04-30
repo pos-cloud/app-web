@@ -224,6 +224,9 @@ export class ConfigBackupComponent implements OnInit {
       'companyPhone': [this.config['companyPhone'], [
         ]
       ],
+      'companyPostalCode': [this.config['companyPostalCode'], [
+        ]
+      ],
       'footerInvoice': [this.config['footerInvoice'], [
         ]
       ],
@@ -643,6 +646,7 @@ export class ConfigBackupComponent implements OnInit {
     if (!this.config['companyGrossIncome']) this.config['companyGrossIncome'] = '';
     if (!this.config['companyAddress']) this.config['companyAddress'] = '';
     if (!this.config['companyPhone']) this.config['companyPhone'] = '';
+    if (!this.config['companyPostalCode']) this.config['companyPostalCode'] = '';
     if (!this.config['footerInvoice']) this.config['footerInvoice'] = '';
     if (!this.config['country']) this.config['country'] = 'AR';
     if (!this.config['timezone']) this.config['timezone'] = 'UTC-03:00';
@@ -670,6 +674,7 @@ export class ConfigBackupComponent implements OnInit {
       'companyVatCondition': companyVatCondition,
       'companyStartOfActivity': moment(this.config['companyStartOfActivity'], 'YYYY-MM-DDTHH:mm:ssZ').format('DD/MM/YYYY'),
       'companyGrossIncome': this.config['companyGrossIncome'],
+      'companyPostalCode': this.config['companyPostalCode'],
       'footerInvoice': this.config['footerInvoice'],
       'country': this.config['country'],
       'timezone': this.config['timezone'],
@@ -691,7 +696,7 @@ export class ConfigBackupComponent implements OnInit {
           config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, 
           config.footerInvoice, config.companyFantasyName, config.country, config.timezone, 
           config.companyIdentificationType, config.companyIdentificationValue, config.companyLicenseCost,
-          config.currency);
+          config.currency, config.companyPostalCode);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

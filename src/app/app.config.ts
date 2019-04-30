@@ -29,6 +29,7 @@ export class Config {
     static companyIdentificationValue: string;
     static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     static companyGrossIncome: string;
+    static companyPostalCode: string;
     static heightLabel: number;
     static widthLabel: number;
     static footerInvoice: string;
@@ -79,7 +80,7 @@ export class Config {
     public static setConfigCompany( 
         companyPicture, companyName, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, 
         companyGrossIncome, footerInvoice, companyFantasyName, country, timezone, currency, companyIdentificationType, 
-        companyIdentificationValue, companyLicenseCost): void {
+        companyIdentificationValue, companyLicenseCost, companyPostalCode): void {
             
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
@@ -96,6 +97,7 @@ export class Config {
         Config.companyIdentificationValue = companyIdentificationValue;
         Config.licenseCost = companyLicenseCost;
         Config.currency = currency;
+        Config.companyPostalCode = companyPostalCode;
     }
 
     public static setConfigLabel( heightLabel, widthLabel ): void {

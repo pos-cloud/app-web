@@ -94,6 +94,17 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Código Postal</span>
+              <input type="text" class="form-control" formControlName="companyPostalCode" name="companyPostalCode" id="companyPostalCode" aria-describedby="basic-addon1">
+            </div>
+            <div *ngIf="formErrors.companyPostalCode" class="alert alert-danger">
+              {{ formErrors.companyPostalCode }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Moneda</span>
               <select class="form-control" formControlName="currency" name="currency" id="currency">
                 <option *ngFor="let currency of currencies"

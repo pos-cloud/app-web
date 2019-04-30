@@ -84,13 +84,6 @@
   <div class="row header-mx" *ngIf="userCountry === 'MX'">
     <div class="col-md-12">
       <div class="row">
-        <div class="col-md-3">
-          <label for="expeditionPlace" class="control-label">Lugar de expedición ( C.P. ):</label>
-          <input  type="text"
-                  class="form-control"
-                  [(ngModel)]="transaction.expeditionPlace"
-                  (blur)="updateTransaction()">
-        </div>
         <div class="form-group col-md-3">
           <label for="useOfCFDI" class="control-label">Uso de CFDI:</label>
           <select class="form-control" [(ngModel)]="transaction.useOfCFDI" (change)="updateTransaction()">
