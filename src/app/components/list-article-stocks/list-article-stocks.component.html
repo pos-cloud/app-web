@@ -62,8 +62,8 @@
             <td class="flat">{{articleStock.realStock}}</td>
             <td class="flat">{{articleStock.minStock}}</td>
           </tr>
-          <tr align="center" *ngIf="areArticleStocksEmpty && !loading">
-            <td colspan="7">No se encontró stock</td>
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
+            <td colspan="7">No se encontraron artículos en stock</td>
           </tr>
         </tbody>
       </table>

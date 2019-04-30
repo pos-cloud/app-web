@@ -24,7 +24,6 @@ import { PrinterPrintIn, Printer } from '../../models/printer';
 export class ListArticleStocksComponent implements OnInit {
 
   public articleStocks: ArticleStock[] = new Array();
-  public areArticleStocksEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
   public orderTerm: string[] = ['-realStock'];
@@ -143,17 +142,6 @@ export class ListArticleStocksComponent implements OnInit {
     this.eventAddItem.emit(articleStockSelected);
   }
 
-  public showMessage(message: string, type: string, dismissible: boolean): void {
-    this.alertMessage = message;
-    this.alertConfig.type = type;
-    this.alertConfig.dismissible = dismissible;
-  }
-
-  public hideMessage(): void {
-    this.alertMessage = '';
-  }
-
-
   public getArticleStocksV2() : void {
 
     this.loading = true;
@@ -211,9 +199,6 @@ export class ListArticleStocksComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ?
             (page * this.itemsPerPage) :
                 0 // SKIP
-
-
-
     this._articleStockService.getArticleStocksV2(
         project, // PROJECT
         match, // MATCH
@@ -224,14 +209,10 @@ export class ListArticleStocksComponent implements OnInit {
     ).subscribe(
       result => {
         if (result.articleStocks) {
-
           this.loading = false;
           this.articleStocks = result.articleStocks;
           this.totalItems = result.count;
-          this.areArticleStocksEmpty = false;
-
-
-          } 
+        } 
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -247,12 +228,21 @@ export class ListArticleStocksComponent implements OnInit {
   }
 
   public orderBy(term: string): void {
-
-      if (this.orderTerm[0] === term) {
-        this.orderTerm[0] = "-" + term;
-      } else {
-        this.orderTerm[0] = term;
-      }
-      this.getArticleStocksV2();
+    if (this.orderTerm[0] === term) {
+      this.orderTerm[0] = "-" + term;
+    } else {
+      this.orderTerm[0] = term;
     }
+    this.getArticleStocksV2();
+  }
+
+  public showMessage(message: string, type: string, dismissible: boolean): void {
+    this.alertMessage = message;
+    this.alertConfig.type = type;
+    this.alertConfig.dismissible = dismissible;
+  }
+
+  public hideMessage(): void {
+    this.alertMessage = '';
+  }
 }
