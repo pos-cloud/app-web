@@ -793,9 +793,13 @@ export class AddMovementOfArticleComponent implements OnInit {
       this.movementOfArticle.article &&
       !this.movementOfArticle.article.allowSaleWithoutStock &&
       (!this.articleStock || (this.articleStock && this.movementOfArticle.amount > this.articleStock.realStock))) {
-      allowed = false;
-      this.showMessage("No tiene el stock suficiente para vender la cantidad solicitada.", 'info', true);
-    }
+        allowed = false;
+        let realStock = 0;
+        if(this.articleStock) {
+          realStock = this.articleStock.realStock;
+        }
+        this.showMessage("No tiene el stock suficiente del producto " + this.movementOfArticle.article.description + " (" + this.movementOfArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
+      }
 
     if (allowed) {
       if (op === "update") {
