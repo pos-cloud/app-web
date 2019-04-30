@@ -22,7 +22,7 @@ import { ArticleStockService } from '../../services/article-stock.service';
 
 //Pipes
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
-import { TransactionMovement, EntryAmount } from '../../models/transaction-type';
+import { TransactionMovement, EntryAmount, StockMovement } from '../../models/transaction-type';
 import { Taxes } from '../../models/taxes';
 import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
@@ -309,10 +309,21 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public subtractAmount(): void {
-    if (this.movementOfArticleForm.value.amount > 1) {
-      this.movementOfArticle.amount -= 1;
+
+    if( this.movementOfArticle.transaction.type && 
+        this.movementOfArticle.transaction.type.stockMovement && 
+        this.movementOfArticle.transaction.type.stockMovement === StockMovement.Inventory) {
+      if (this.movementOfArticleForm.value.amount > 0) {
+        this.movementOfArticle.amount -= 1;
+      } else {
+        this.movementOfArticle.amount = 0;
+      }
     } else {
-      this.movementOfArticle.amount = 1;
+      if (this.movementOfArticleForm.value.amount > 1) {
+        this.movementOfArticle.amount -= 1;
+      } else {
+        this.movementOfArticle.amount = 1;
+      }
     }
     this.setValueForm();
   }
@@ -321,12 +332,11 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     if (!this.movementOfArticle._id) this.movementOfArticle._id = '';
     if (!this.movementOfArticle.description) this.movementOfArticle.description = '';
-    if (!this.movementOfArticle.amount) this.movementOfArticle.amount = 1;
+    if (this.movementOfArticle.amount === undefined) this.movementOfArticle.amount = 1;
     if (!this.movementOfArticle.notes) this.movementOfArticle.notes = '';
     if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
     if (!this.movementOfArticle.measure) this.movementOfArticle.measure = "";
     if (!this.movementOfArticle.quantityMeasure) this.movementOfArticle.quantityMeasure = 0;
-    if(!this.movementOfArticle.amount) this.movementOfArticle.amount;
 
     let values = {
       '_id': this.movementOfArticle._id,
@@ -354,66 +364,70 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public addMovementOfArticle(): void {
 
-    if (this.movementOfArticleForm.value.measure) {
-      this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
-      this.movementOfArticle.quantityMeasure = this.movementOfArticleForm.value.quantityMeasure;
-      this.movementOfArticle.amount = this.roundNumber.transform(eval(this.movementOfArticleForm.value.measure) * this.movementOfArticleForm.value.quantityMeasure);
-      this.movementOfArticle.notes = this.movementOfArticleForm.value.measure;
-    } else {
-      this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
-      this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
-    }
-
-    if(this.containsVariants) {
-
-      this.movementOfArticle.article = this.getArticleBySelectedVariants();
-    }
-
-    this.calculateUnitPrice();
-
-    if (this.containsVariants) {
-      if (!this.isValidSelectedVariants()) {
-        if (!this.variants || this.variants.length === 0) {
+    if(this.movementOfArticleForm.value.amount >= 0) {
+      if (this.movementOfArticleForm.value.measure) {
+        this.movementOfArticle.measure = this.movementOfArticleForm.value.measure;
+        this.movementOfArticle.quantityMeasure = this.movementOfArticleForm.value.quantityMeasure;
+        this.movementOfArticle.amount = this.roundNumber.transform(eval(this.movementOfArticleForm.value.measure) * this.movementOfArticleForm.value.quantityMeasure);
+        this.movementOfArticle.notes = this.movementOfArticleForm.value.measure;
+      } else {
+        this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
+        this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
+      }
+  
+      if(this.containsVariants) {
+  
+        this.movementOfArticle.article = this.getArticleBySelectedVariants();
+      }
+  
+      this.calculateUnitPrice();
+  
+      if (this.containsVariants) {
+        if (!this.isValidSelectedVariants()) {
+          if (!this.variants || this.variants.length === 0) {
+            if (Config.modules.stock &&
+              this.movementOfArticle.transaction.type.modifyStock) {
+              if (this.movementOfArticle.article && this.movementOfArticle.article._id) {
+                  this.getArticleStock();
+                } else {
+                  this.showMessage("El producto no existe más en la base de datos y no se puede controlar el stock", "info", true);
+                }
+            } else {
+              this.movementOfArticleExists();
+            }
+          } else {
+            this.errVariant = "Debe seleccionar una variante";
+          }
+        } else {
+          this.errVariant = undefined;
           if (Config.modules.stock &&
             this.movementOfArticle.transaction.type.modifyStock) {
             if (this.movementOfArticle.article && this.movementOfArticle.article._id) {
-                this.getArticleStock();
-              } else {
-                this.showMessage("El artículo no existe más en la base de datos y no se puede controlar el stock", "info", true);
-              }
+              this.getArticleStock();
+            } else {
+              this.showMessage("El producto no existe más en la base de datos y no se puede controlar el stock", "info", true);
+            }
           } else {
             this.movementOfArticleExists();
           }
-        } else {
-          this.errVariant = "Debe seleccionar una variante";
+  
         }
       } else {
-        this.errVariant = undefined;
+        // Si tiene el modulo de stock y la transacción afecta stock verificamos que tenga stock
         if (Config.modules.stock &&
           this.movementOfArticle.transaction.type.modifyStock) {
           if (this.movementOfArticle.article && this.movementOfArticle.article._id) {
             this.getArticleStock();
           } else {
-            this.showMessage("El artículo no existe más en la base de datos y no se puede controlar el stock", "info", true);
+            this.showMessage("El producto no existe más en la base de datos y no se puede controlar el stock", "info", true);
           }
         } else {
+          // Corroboramos si ya existe algún movimiento del producto a agregar
           this.movementOfArticleExists();
         }
-
       }
     } else {
-      // Si tiene el modulo de stock y la transacción afecta stock verificamos que tenga stock
-      if (Config.modules.stock &&
-        this.movementOfArticle.transaction.type.modifyStock) {
-        if (this.movementOfArticle.article && this.movementOfArticle.article._id) {
-          this.getArticleStock();
-        } else {
-          this.showMessage("El artículo no existe más en la base de datos y no se puede controlar el stock", "info", true);
-        }
-      } else {
-        // Corroboramos si ya existe algún movimiento del artículo a agregar
-        this.movementOfArticleExists();
-      }
+      this.showMessage("La cantidad del producto debe ser mayor o igual a 0.", "info", true);
     }
   }
 
@@ -591,7 +605,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         result => {
           if (!result.movementsOfArticles) {
 
-            // Si no existe ningún movimiento del artículo guardamos uno nuevo
+            // Si no existe ningún movimiento del producto guardamos uno nuevo
 
             this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
             this.movementOfArticle.description = this.movementOfArticleForm.value.description;
@@ -770,7 +784,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         movementOfArticle.taxes = taxes;
       }
     } else {
-      this.showMessage("No se puede recalcular el precio ya que el artículo fue eliminado de la base de datos.", "info", true);
+      this.showMessage("No se puede recalcular el precio ya que el producto fue eliminado de la base de datos.", "info", true);
     }
 
     return movementOfArticle;
