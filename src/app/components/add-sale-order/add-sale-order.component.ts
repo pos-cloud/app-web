@@ -769,21 +769,26 @@ export class AddSaleOrderComponent implements OnInit {
       if (!movementOfArticle) {
         movementOfArticle = itemData;
         movementOfArticle.transaction = this.transaction;
+        movementOfArticle.amount += 1;
         if(await this.isValidMovementOfArticle(movementOfArticle)) {
           movementOfArticle._id = '';
           movementOfArticle.printed = 0;
           movementOfArticle.transaction = this.transaction;
           movementOfArticle.amount = 1;
           this.saveMovementOfArticle(movementOfArticle);
-        } 
+        } else {
+          movementOfArticle.amount -= 1;
+        }
       } else {
+        movementOfArticle.amount += 1;
         if(await this.isValidMovementOfArticle(movementOfArticle)) {
-          movementOfArticle.amount += 1;
           if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
             this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle));
           } else {
             this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle));
           }
+        } else {
+          movementOfArticle.amount -= 1;
         }
       }
     } else {
@@ -846,7 +851,11 @@ export class AddSaleOrderComponent implements OnInit {
           articleStock => {
             if (!articleStock || movementOfArticle.amount > articleStock.realStock) {
               isValid = false;
-              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ").", 'info', true);
+              let realStock = 0;
+              if(articleStock) {
+                realStock = articleStock.realStock;
+              }
+              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock, 'info', true);
             }
           }
         );
@@ -1567,7 +1576,11 @@ export class AddSaleOrderComponent implements OnInit {
         Config.modules.stock &&
         this.transaction.type.modifyStock) {
         
-      isValid = await this.processStock();
+          if(await this.areValidMovementOfArticle()) {
+            isValid = await this.processStock();
+          } else {
+            isValid = false;
+          }
     }
     
     if(isValid) {
@@ -1678,8 +1691,7 @@ export class AddSaleOrderComponent implements OnInit {
       isValid = false;
       this.showMessage("No existen productos en la transacción.", 'info', true);
     } else {
-      if(await this.areValidMovementOfArticle()) {
-      } else {
+      if(await !this.areValidMovementOfArticle()) {
         isValid = false;
       }
     }
