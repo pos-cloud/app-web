@@ -147,6 +147,27 @@
                   </div>
                 </div>
                 <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="defectUseOfCFDI">
+                        <option *ngFor="let useOfCFDI of usesOfCFDI"
+                                [ngValue]="employeeType._id"
+                                [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
+                                            (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)"
+                                [disabled]="readonly">
+                            {{ useOfCFDI.description }}</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
                   <div class="form-group col-md-6">
                     <label for="requestTaxes" class="control-label">Pide Impuestos</label>
                     <div class="input-group">
@@ -228,7 +249,6 @@
                     <label for="requestCompany" class="control-label">Pide empresa</label>
                       <div class="input-group">
                         <select class="form-control" formControlName="requestCompany">
-                          <option [ngValue]="null" [selected]="!transactionType || !transactionType.requestCompany" [disabled]="readonly"></option>
                           <option *ngFor="let companyType of companyTypes"
                                   [ngValue]="companyType"
                                   [selected]="transactionType.requestCompany === companyType"
@@ -245,22 +265,23 @@
                   </div>
                   <div class="form-group col-md-3">
                     <label for="requestEmployee" class="control-label">Pide empleado</label>
-                      <div class="input-group">
-                        <select class="form-control" formControlName="requestEmployee">
-                          <option *ngFor="let employeeType of employeeTypes"
-                                  [ngValue]="employeeType._id"
-                                  [selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
-                                              (transactionType.requestEmployee && employeeType._id===transactionType.requestEmployee)"
-                                  [disabled]="readonly"
-                          >{{ employeeType.description }}</option>
-                        </select>
-                        <button type="button"
-                                class="btn btn-secondary"
-                                placement="right"
-                                ngbPopover="Selecciona el tipo de empleado a solicitar en la carga">
-                          <b>?</b>
-                        </button>
-                      </div>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="requestEmployee">
+                        <option [ngValue]="null" [selected]="!transactionType || !transactionType.requestEmployee" [disabled]="readonly"></option>
+                        <option *ngFor="let employeeType of employeeTypes"
+                                [ngValue]="employeeType._id"
+                                [selected]="(transactionType.requestEmployee && transactionType.requestEmployee._id && employeeType._id===transactionType.requestEmployee._id) ||
+                                            (transactionType.requestEmployee && employeeType._id===transactionType.requestEmployee)"
+                                [disabled]="readonly"
+                        >{{ employeeType.description }}</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Selecciona el tipo de empleado a solicitar en la carga">
+                        <b>?</b>
+                      </button>
+                    </div>
                   </div>
                   <div class="form-group col-md-3">
                     <label for="requestCurrency" class="control-label">Pide moneda</label>

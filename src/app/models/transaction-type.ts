@@ -3,10 +3,10 @@ import { EmployeeType } from './employee-type';
 import { PaymentMethod } from './payment-method';
 import { CompanyType } from './company';
 import { User } from './user';
+import { UseOfCFDI } from './use-of-CFDI';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { Currency } from './currency';
 
 export class TransactionType {
 
@@ -34,6 +34,7 @@ export class TransactionType {
 	public showPrices: boolean = true;
 	public printable: boolean = false;
 	public defectPrinter: Printer;
+	public defectUseOfCFDI: UseOfCFDI;
 	public tax: boolean = false;
 	public cashBoxImpact: boolean = true;
 	public cashOpening: boolean = false;

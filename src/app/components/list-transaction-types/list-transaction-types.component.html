@@ -38,9 +38,11 @@
             <th (click)="orderBy('fixedOrigin')" *ngIf="userCountry === 'AR'">Punto de venta fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
             <th (click)="orderBy('electronics')">Electrónico</th>
-            <th>Cídigo A</th>
-            <th>Cídigo B</th>
-            <th>Cídigo C</th>
+            <th *ngIf="userCountry === 'AR'">Cídigo A</th>
+            <th *ngIf="userCountry === 'AR'">Cídigo B</th>
+            <th *ngIf="userCountry === 'AR'">Cídigo C</th>
+            <th *ngIf="userCountry !== 'AR'" (click)="orderBy('fiscalCode')">Código Fiscal</th>
+            <th *ngIf="userCountry === 'MX'" (click)="orderBy('defectUseOfCFDI','description')">Uso de CFDI</th>
             <th (click)="orderBy('allowEdit')">Permite Editar</th>
             <th (click)="orderBy('allowDelete')">Permite Eliminar</th>
             <th (click)="orderBy('printable')">Imprime al finalizar</th>
@@ -73,9 +75,11 @@
             <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..." ></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterElectronics" placeholder="Electrónico..."></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th *ngIf="userCountry === 'AR'"></th>
+            <th *ngIf="userCountry === 'AR'"></th>
+            <th *ngIf="userCountry === 'AR'"></th>
+            <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]="filterFiscalCode" placeholder="Código Fiscal..."></th>
+            <th *ngIf="userCountry === 'MX'"><input type="text" class="form-control" [(ngModel)]="filterDefectUseOfCFDI" placeholder="Uso de CFDI..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Editar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Eliminar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
@@ -108,6 +112,8 @@
                                                               | filter: filterFixedOrigin:'fixedOrigin'
                                                               | filter: filterFixedLetter:'letter'
                                                               | filter: filterElectronics:'electronics'
+                                                              | filter: filterFiscalCode:'fiscalCode'
+                                                              | filter: filterDefectUseOfCFDI:'description':'defectUseOfCFDI'
                                                               | filter: filterAllowEdit:'allowEdit'
                                                               | filter: filterAllowDelete:'allowDelete'
                                                               | filter: filterPrintable:'printable'
@@ -147,9 +153,12 @@
             <td class="flat" *ngIf="userCountry === 'AR'">{{transactionType.fixedOrigin}}</td>
             <td class="flat">{{transactionType.fixedLetter}}</td>
             <td class="flat">{{transactionType.electronics}}</td>
-            <td class="flat">{{getCode(transactionType, "A")}}</td>
-            <td class="flat">{{getCode(transactionType, "B")}}</td>
-            <td class="flat">{{getCode(transactionType, "C")}}</td>
+            <td class="flat" *ngIf="userCountry === 'AR'">{{getCode(transactionType, "A")}}</td>
+            <td class="flat" *ngIf="userCountry === 'AR'">{{getCode(transactionType, "B")}}</td>
+            <td class="flat" *ngIf="userCountry === 'AR'">{{getCode(transactionType, "C")}}</td>
+            <td class="flat" *ngIf="userCountry !== 'AR'">{{transactionType.fiscalCode}}</td>
+            <td class="flat" *ngIf="userCountry === 'MX' && transactionType.defectUseOfCFDI">{{transactionType.defectUseOfCFDI.description}}</td>
+            <td class="flat" *ngIf="userCountry === 'MX' && !transactionType.defectUseOfCFDI"></td>
             <td class="flat">{{transactionType.allowEdit}}</td>
             <td class="flat">{{transactionType.allowDelete}}</td>
             <td class="flat">{{transactionType.printable}}</td>

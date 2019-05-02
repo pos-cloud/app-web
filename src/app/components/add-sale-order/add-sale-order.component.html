@@ -53,7 +53,7 @@
             </option>
           </select>
         </div> -->
-        <div class="col-md-3" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
+        <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-quotation')">
               Cotización: {{ transaction.quotation | currency:'USD':'1.2-2' }}
@@ -63,6 +63,29 @@
                     (click)="openModal('change-quotation')">
             </button>
           </div>
+        </div>
+        <div class="col-md-2" *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics">
+          <select class="form-control" [(ngModel)]="transaction.useOfCFDI" (change)="updateTransaction()">
+            <option [ngValue]="null" [selected]="(!transaction.useOfCFDI) | async">Uso de CFDI:</option>
+            <option *ngFor="let useOfCFDI of usesOfCFDI"
+                    [ngValue]="useOfCFDI"
+                    [selected]="((transaction.useOfCFDI && transaction.useOfCFDI._id && useOfCFDI._id===transaction.useOfCFDI._id) ||
+                                (transaction.useOfCFDI && useOfCFDI._id===transaction.useOfCFDI)) | async">
+              {{ useOfCFDI.description }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2" *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics && cancellationTypes.length > 0">
+          <select class="form-control" [(ngModel)]="transaction.relationType" (change)="updateTransaction()">
+            <option [ngValue]="null" [selected]="(!transaction.relationType)">Tipo de Relación:</option>
+            <option *ngFor="let relationType of relationTypes"
+                    [ngValue]="relationType"
+                    [selected]="(transaction.relationType &&
+                                transaction.relationType._id &&
+                                transaction.relationType._id === relationType._id)">
+              {{ relationType.description }}
+            </option>
+          </select>
         </div>
         <div class="col-md-3" *ngIf=" showButtonCancelation && 
                                       transaction && 
@@ -77,36 +100,6 @@
                     (click)="openModal('list-cancellations')">
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row header-mx" *ngIf="userCountry === 'MX'">
-    <div class="col-md-12">
-      <div class="row">
-        <div class="form-group col-md-3">
-          <label for="useOfCFDI" class="control-label">Uso de CFDI:</label>
-          <select class="form-control" [(ngModel)]="transaction.useOfCFDI" (change)="updateTransaction()">
-            <option *ngFor="let useOfCFDI of usesOfCFDI"
-                    [ngValue]="useOfCFDI"
-                    [selected]="(transaction.useOfCFDI &&
-                                transaction.useOfCFDI._id &&
-                                transaction.useOfCFDI._id === useOfCFDI._id)">
-              {{ useOfCFDI.description }}
-            </option>
-          </select>
-        </div>
-        <div class="form-group col-md-3">
-          <label for="relationType" class="control-label">Tipo de Relación:</label>
-          <select class="form-control" [(ngModel)]="transaction.relationType" (change)="updateTransaction()">
-            <option *ngFor="let relationType of relationTypes"
-                    [ngValue]="relationType"
-                    [selected]="(transaction.relationType &&
-                                transaction.relationType._id &&
-                                transaction.relationType._id === relationType._id)">
-              {{ relationType.description }}
-            </option>
-          </select>
         </div>
       </div>
     </div>

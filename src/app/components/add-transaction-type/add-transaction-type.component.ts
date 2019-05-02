@@ -17,6 +17,8 @@ import { CompanyType } from 'app/models/company';
 import { Config } from 'app/app.config';
 import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
+import { UseOfCFDI } from 'app/models/use-of-CFDI';
+import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
 
 @Component({
   selector: 'app-add-transaction-type',
@@ -40,6 +42,7 @@ export class AddTransactionTypeComponent implements OnInit {
   public employeeTypes: EmployeeType[];
   public paymentMethods: PaymentMethod[];
   public currencies: Currency[];
+  public usesOfCFDI: UseOfCFDI[];
   public letters: string[] = ["", "A", "B", "C", "E", "M", "R", "T", "X"];
   @Input() readonly: boolean;
   @Input() operation: string;
@@ -78,11 +81,13 @@ export class AddTransactionTypeComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
     public _currencyService: CurrencyService,
+    public _useOfCFDIService: UseOfCFDIService
   ) {
     this.getCurrencies();
     this.getPaymentMethods();
     this.getEmployeeTypes();
     this.getPrinters();
+    this.getUsesOfCFDI();
   }
 
   ngOnInit(): void {
@@ -267,6 +272,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'defectPrinter': [this.transactionType.defectPrinter, [
         ]
       ],
+      'defectUseOfCFDI': [this.transactionType.defectUseOfCFDI, [
+        ]
+      ],
       'tax': [this.transactionType.tax, [
         ]
       ],
@@ -335,6 +343,29 @@ export class AddTransactionTypeComponent implements OnInit {
       }
     }
   }
+  
+  public getUsesOfCFDI(): void {
+
+    this.loading = true;
+
+    this._useOfCFDIService.getUsesOfCFDI().subscribe(
+      result => {
+        if (!result.usesOfCFDI) {
+          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+          this.usesOfCFDI = null;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.usesOfCFDI = result.usesOfCFDI;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
   public getCode(transactionType: TransactionType, letter: string): number {
 
@@ -383,6 +414,17 @@ export class AddTransactionTypeComponent implements OnInit {
         defectPrinter = this.transactionType.defectPrinter._id;
       } else {
         defectPrinter = this.transactionType.defectPrinter;
+      }
+    }
+
+    let defectUseOfCFDI;
+    if (!this.transactionType.defectUseOfCFDI) {
+      defectUseOfCFDI = null;
+    } else {
+      if (this.transactionType.defectUseOfCFDI._id) {
+        defectUseOfCFDI = this.transactionType.defectUseOfCFDI._id;
+      } else {
+        defectUseOfCFDI = this.transactionType.defectUseOfCFDI;
       }
     }
 
@@ -450,6 +492,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'fiscalCode': this.transactionType.fiscalCode,
       'printable': this.transactionType.printable,
       'defectPrinter': defectPrinter,
+      'defectUseOfCFDI': defectUseOfCFDI,
       'tax': this.transactionType.tax,
       'cashOpening': this.transactionType.cashOpening,
       'cashClosing': this.transactionType.cashClosing,
