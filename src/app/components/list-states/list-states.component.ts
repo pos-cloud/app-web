@@ -186,7 +186,7 @@ export class ListStatesComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(StateComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "view";
-        modalRef.componentInstance.cancellationTypeId = state._id;
+        modalRef.componentInstance.stateId = state._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           this.getStates();
