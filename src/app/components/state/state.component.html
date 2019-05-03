@@ -24,7 +24,7 @@
                   <div class="form-group col-md-6">
                     <label for="code" class="control-label">Código</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="code" name="code" id="code"/>
+                      <input type="text" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.code" class="alert alert-danger">
                       {{ formErrors.code }}
@@ -33,11 +33,27 @@
                   <div class="form-group col-md-6">
                       <label for="name" class="control-label">Nombre</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" formControlName="name" name="name" id="name"/>
+                        <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
                       </div>
                       <div *ngIf="formErrors.name" class="alert alert-danger">
                         {{ formErrors.name }}
                       </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-12">
+                  <div class="row">
+                          <label for="country" class="control-label">País</label>
+                          <select class="form-control" formControlName="country">
+                              <option *ngFor="let country of countries"
+                                      [selected]="(state.country && state.country._id && country._id===state.country._id) ||
+                                                  (state.country && country._id===state.country)"
+                                      [value]="country._id"
+                                      [disabled]="readonly">
+                                      {{country.name}}</option>
+                            </select>
+                          <div *ngIf="formErrors.country" class="alert alert-danger">
+                            {{ formErrors.country }}
+                          </div>
                   </div>
                 </div>
               </div>

@@ -8,6 +8,8 @@ import { StateService } from '../../services/state.service';
 import { State } from '../../models/state';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Country } from 'app/models/country';
+import { CountryService } from 'app/services/country.service';
 
 @Component({
   selector: 'app-state',
@@ -29,6 +31,7 @@ export class StateComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public countries : Country[]
 
   public formErrors = {
     'code': '',
@@ -49,6 +52,7 @@ export class StateComponent implements OnInit {
   constructor(
     public alertConfig: NgbAlertConfig,
     public _stateService: StateService,
+    public _countryService : CountryService,
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -59,11 +63,59 @@ export class StateComponent implements OnInit {
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.getCountries();
     this.buildForm()
+
+    if(this.operation === "Delete"){
+      this.readonly = true;
+    }
     
     if (this.stateId) {
       this.getState();
     }
+  }
+
+  public getCountries() : void {
+    
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { "operationType": { "$ne": "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      "name": 1,
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._countryService.getCountries(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.countries) {
+        this.countries = result.countries;
+      } else {
+        
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public getState() {
@@ -108,10 +160,22 @@ export class StateComponent implements OnInit {
         name = this.state.name;
     }
 
+    let country;
+    if (!this.state.country) {
+      country = null;
+    } else {
+      if (this.state.country._id) {
+        country = this.state.country._id;
+      } else {
+        country = this.state.country;
+      }
+    }
+
     const values = {
       '_id': this.state._id,
       'code': code,
       'name': name,
+      'country' : country
     };
     this.stateForm.setValue(values);
   }
@@ -125,6 +189,10 @@ export class StateComponent implements OnInit {
         ]
       ],
       'name': [this.state.name, [
+        Validators.required
+        ]
+      ],
+      'country': [this.state.country, [
         Validators.required
         ]
       ]
