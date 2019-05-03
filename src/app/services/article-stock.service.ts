@@ -106,7 +106,6 @@ export class ArticleStockService {
       .set('Content-Type', 'application/json')
       .set('Authorization', this._userService.getToken())
       .set('Database', this._userService.getDatabase());
-    //.set('Authorization', this._authService.getSession()["token"]);
 
     const params = new HttpParams()
       .set('project', JSON.stringify(project))
