@@ -166,97 +166,96 @@ export class ListTransactionsComponent implements OnInit {
 
   public getTransactions(): void {
 
-        this.loading = true;
+    this.loading = true;
 
-        /// ORDENAMOS LA CONSULTA
-        let sortAux;
-        if (this.orderTerm[0].charAt(0) === '-') {
-            sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-        } else {
-            sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+    /// ORDENAMOS LA CONSULTA
+    let sortAux;
+    if (this.orderTerm[0].charAt(0) === '-') {
+        sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
+    } else {
+        sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+    }
+    sortAux = JSON.parse(sortAux);
+
+    // FILTRAMOS LA CONSULTA
+    let match = `{`;
+    for(let i = 0; i < this.displayedColumns.length; i++) {
+      let value = this.filters[this.displayedColumns[i]];
+      if (value && value != "") {
+        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+        if (i < this.displayedColumns.length - 1) {
+          match += ',';
         }
-        sortAux = JSON.parse(sortAux);
+      }
+    }
 
-        // FILTRAMOS LA CONSULTA
-        let match = `{`;
-        for(let i = 0; i < this.displayedColumns.length; i++) {
-          let value = this.filters[this.displayedColumns[i]];
-          if (value && value != "") {
-            match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+    if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
+      match += `,"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
+    } else {
+      match += `"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
+    }
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = '{}';
+    if (this.displayedColumns && this.displayedColumns.length > 0) {
+        project = '{';
+        for (let i = 0; i < this.displayedColumns.length; i++) {
+            let field = this.displayedColumns[i];
+            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"${this.timezone[1]}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
             if (i < this.displayedColumns.length - 1) {
-              match += ',';
+                project += ',';
             }
-          }
         }
+        project += '}';
+    }
+    project = JSON.parse(project);
 
-        if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
-          match += `,"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        transactions: { $push: "$$ROOT" }
+    };
+
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+                0 // SKIP
+
+    this._transactionService.getTransactionsV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        this.itemsPerPage, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (result && result.transactions) {
+            this.transactions = result.transactions;
+            this.totalItems = result.count;
         } else {
-          match += `"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
-        }
-        match = JSON.parse(match);
-
-        // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-        let project = '{}';
-        if (this.displayedColumns && this.displayedColumns.length > 0) {
-            project = '{';
-            for (let i = 0; i < this.displayedColumns.length; i++) {
-                let field = this.displayedColumns[i];
-                project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"${this.timezone[1]}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-                if (i < this.displayedColumns.length - 1) {
-                    project += ',';
-                }
-            }
-            project += '}';
-        }
-        project = JSON.parse(project);
-
-        // AGRUPAMOS EL RESULTADO
-        let group = {
-            _id: null,
-            count: { $sum: 1 },
-            transactions: { $push: "$$ROOT" }
-        };
-
-        let page = 0;
-        if(this.currentPage != 0) {
-          page = this.currentPage - 1;
-        }
-        let skip = !isNaN(page * this.itemsPerPage) ?
-                (page * this.itemsPerPage) :
-                    0 // SKIP
-
-        this._transactionService.getTransactionsV2(
-            project, // PROJECT
-            match, // MATCH
-            sortAux, // SORT
-            group, // GROUP
-            this.itemsPerPage, // LIMIT
-            skip // SKIP
-        ).subscribe(
-          result => {
-            if (result && result.transactions) {
-                this.transactions = result.transactions;
-                this.totalItems = result.count;
-            } else {
-                this.loading = false;
-                this.transactions = null;
-                this.totalItems = 0;
-            }
-            this.loading = false;
-          },
-          error => {
-            this.showMessage(error._body, 'danger', false);
-            this.loading = false;
+            this.transactions = null;
             this.totalItems = 0;
-          }
-        );
-    }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
+  }
 
-    public pageChange(page): void {
-        this.currentPage = page;
-        this.getTransactions();
-    }
+  public pageChange(page): void {
+      this.currentPage = page;
+      this.getTransactions();
+  }
 
   public orderBy(term: string): void {
 

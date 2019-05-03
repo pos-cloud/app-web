@@ -59,6 +59,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
+          </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
                                                                       totalItems: totalItems
@@ -117,9 +120,6 @@
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
-          </tr>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
@@ -203,6 +203,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
+          </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
                                                                       totalItems: totalItems
@@ -236,9 +239,6 @@
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
-          </tr>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
@@ -312,6 +312,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
+          </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
                                                                       totalItems: totalItems
@@ -340,9 +343,6 @@
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
-          </tr>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
