@@ -24,7 +24,7 @@ export class StateComponent implements OnInit {
   public userType: string;
   public state: State;
   public areStateEmpty: boolean = true;
-  public orderTerm: string[] = ['-code'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -62,7 +62,6 @@ export class StateComponent implements OnInit {
     this.buildForm()
     
     if (this.stateId) {
-      console.log(this.stateId)
       this.getState();
     }
   }
@@ -101,7 +100,6 @@ export class StateComponent implements OnInit {
     } else {
         code = this.state.code;
     }
-    
 
     let name;
     if (!this.state.name) {
@@ -177,16 +175,14 @@ export class StateComponent implements OnInit {
 
     this.state = this.stateForm.value;
 
-    console.log(this.state);
-
     this._stateService.updateState(this.state).subscribe(
       result => {
         if (!result.state) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
-            this.loading = false;
-            this.showMessage('El estado se ha actualizado con éxito.', 'success', false);
+          this.loading = false;
+          this.showMessage('El estado se ha actualizado con éxito.', 'success', false);
         }
       },
       error => {
@@ -223,8 +219,6 @@ export class StateComponent implements OnInit {
   public deleteState() {
 
     this.loading = true;
-
-    this.state = this.stateForm.value;
 
     this._stateService.deleteState(this.state._id).subscribe(
       result => {
