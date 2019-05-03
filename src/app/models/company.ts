@@ -3,11 +3,12 @@ import { CompanyGroup } from './company-group';
 import { Employee } from "./employee";
 import { User } from './user';
 import { IdentificationType } from './identification-type';
+import { Country } from './country';
+import { State } from './state';
+import { CompanyFields } from './company-fields';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
-import { CompanyFields } from './company-fields';
-import { State } from './state';
 
 export class Company {
 
@@ -34,7 +35,7 @@ export class Company {
   public group: CompanyGroup;
   public employee : Employee;
   public otherFields: CompanyFields[];
-  public country: string;
+  public country: Country;
   public floorNumber: string;
   public state: State;
   public addressNumber: string;

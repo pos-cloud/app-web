@@ -29,6 +29,8 @@ import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
 import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
+import { CountryService } from 'app/services/country.service';
+import { Country } from 'app/models/country';
 
 @Component({
   selector: 'app-add-company',
@@ -131,6 +133,7 @@ export class AddCompanyComponent  implements OnInit {
     public _stateService : StateService,
     public _configService: ConfigService,
     public _identificationTypeService: IdentificationTypeService,
+    public _countryService : CountryService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -163,7 +166,6 @@ export class AddCompanyComponent  implements OnInit {
     this.getIdentificationTypes();
     this.getCompaniesGroup();
     this.getEmployees();
-    this.getStates();
 
     if(this.companyId) {
       this.getCompany();
@@ -251,7 +253,7 @@ export class AddCompanyComponent  implements OnInit {
     );
   }
 
-  public getStates(): void {
+  public getStates( form? : Boolean): void {
 
     this.loading = true;
 
@@ -268,13 +270,23 @@ export class AddCompanyComponent  implements OnInit {
 
     // FILTRAMOS LA CONSULTA
 
-    let match = `{"operationType": { "$ne": "D" }}`;
-    
+    let match;
 
-    match = JSON.parse(match);
+    if(form){
+      match = { "country._id": { $oid: this.companyForm.value.country } , "operationType": { "$ne": "D" } };
+    } else {
+      if (this.company && this.company.country) {
+        match = { "country._id": { $oid: this.company.country._id } , "operationType": { "$ne": "D" } };
+      } else {
+        match = {"operationType": { "$ne": "D" }};
+      }
+    }
+
+    //match = JSON.parse(match);
 
     let project = {
         "name":1,
+        "country": 1
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -418,7 +430,6 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.name) this.company.name = '';
     if (!this.company.fantasyName) this.company.fantasyName = '';
     if (!this.company.type) CompanyType.Client;
-    if (!this.company.country) this.company.country = '';
     if (!this.company.addressNumber) this.company.addressNumber = '';
     if (!this.company.floorNumber) this.company.floorNumber = '';
     if (!this.company.address) this.company.address = '';
@@ -477,6 +488,17 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    let country;
+    if (!this.company.country) {
+      country = null;
+    } else {
+      if (this.company.country._id) {
+        country = this.company.country._id;
+      } else {
+        country = this.company.country;
+      }
+    }
+
     let identificationType;
     if (!this.company.identificationType) {
       identificationType = null;
@@ -518,7 +540,7 @@ export class AddCompanyComponent  implements OnInit {
       'birthday': this.company.birthday,
       'observation': this.company.observation,
       'allowCurrentAccount': this.company.allowCurrentAccount,
-      'country' : this.company.country,
+      'country' : country,
       'addressNumber' : this.company.addressNumber,
       'state' : state,
       'floorNumber' : this.company.floorNumber,
@@ -637,11 +659,45 @@ export class AddCompanyComponent  implements OnInit {
   }
 
   public getCountries() : void {
-    this._configService.getCountry().subscribe(
-      result => {
-        this.countries = JSON.parse(result["_body"]);
+    
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { "operationType": { "$ne": "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      "name": 1,
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._countryService.getCountries(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.countries) {
+        this.countries = result.countries;
+        this.getStates();
       }
-    )
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public updateCompany(): void {

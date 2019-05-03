@@ -92,9 +92,10 @@
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label for="country" class="control-label">Pais:</label>
-                    <select class="form-control" formControlName="country" name="country" id="country">
+                    <select class="form-control" formControlName="country" name="country" id="country" (change)="getStates('true')">
                       <option *ngFor="let country of countries"
-                              [value]="country.alpha2Code">
+                              [value]="country._id"
+                              >
                         {{country.name}}
                       </option>
                     </select>
