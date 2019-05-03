@@ -231,6 +231,9 @@ import { CurrencyService } from './services/currency.service';
 import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
 import { StateComponent } from './components/state/state.component';
 import { ListStatesComponent } from './components/list-states/list-states.component';
+import { CountryComponent } from './components/country/country.component';
+import { ListCountriesComponent } from './components/list-countries/list-countries.component';
+import { CountryService } from './services/country.service';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -393,7 +396,9 @@ import { ListStatesComponent } from './components/list-states/list-states.compon
     ListCurrenciesComponent,
     ListMovementOfArticlesComponent,
     StateComponent,
-    ListStatesComponent
+    ListStatesComponent,
+    CountryComponent,
+    ListCountriesComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -543,7 +548,8 @@ import { ListStatesComponent } from './components/list-states/list-states.compon
     CurrencyComponent,
     ListCurrenciesComponent,
     ListMovementOfArticlesComponent,
-    StateComponent
+    StateComponent,
+    CountryComponent
   ],
   imports: [
     BrowserModule,
@@ -611,7 +617,8 @@ import { ListStatesComponent } from './components/list-states/list-states.compon
     MovementOfCancellationService,
     CurrencyService,
     RoundNumberPipe,
-    StateService
+    StateService,
+    CountryService
   ],
   bootstrap: [AppComponent]
 })

@@ -57,6 +57,7 @@ import { Routes } from '@angular/router';
 import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
 import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
 import { ListStatesComponent } from './components/list-states/list-states.component';
+import { ListCountriesComponent } from './components/list-countries/list-countries.component';
 
 export const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -166,6 +167,12 @@ export const _routes: Routes = [
   {
     path: 'admin/states',
     component: ListStatesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/countries',
+    component: ListCountriesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
