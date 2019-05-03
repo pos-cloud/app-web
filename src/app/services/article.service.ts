@@ -6,11 +6,16 @@ import { Config } from './../app.config';
 import { UserService } from './user.service';
 import { Variant } from 'app/models/variant';
 
+import { Observable } from "rxjs/Observable";
+import { map } from "rxjs/operators";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+
 @Injectable()
 export class ArticleService {
 
 	constructor(
 		public _http: Http,
+		private http: HttpClient,
 		public _userService: UserService
 	) { }
 
@@ -151,5 +156,37 @@ export class ArticleService {
 		return this._http.put(Config.apiURL + "update-prices", query ,{ headers: headers}).map(res => res.json());
 	}
 
+	public getArticlesV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
 
+	const URL = `${Config.apiURL}v2/articles`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._userService.getToken())
+      .set('Database', this._userService.getDatabase());
+
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
+
+    return this.http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      })
+    );
+  }
 }
