@@ -23,7 +23,7 @@ export class CountryComponent implements OnInit {
   public userType: string;
   public country: Country;
   public areCountryEmpty: boolean = true;
-  public orderTerm: string[] = ['-code'];
+  public orderTerm: string[] = ['-name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -61,6 +61,7 @@ export class CountryComponent implements OnInit {
    }
 
   ngOnInit() {
+    
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm()
@@ -68,9 +69,10 @@ export class CountryComponent implements OnInit {
     if (this.countryId) {
       this.getCountry();
     }
-    if(this.operation === "Delete"){
-      this.readonly = true;
-    }
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   public getCountry() {
@@ -237,8 +239,6 @@ export class CountryComponent implements OnInit {
   public deleteCountry() {
 
     this.loading = true;
-
-    this.country = this.countryForm.value;
 
     this._countryService.deleteCountry(this.country._id).subscribe(
       result => {

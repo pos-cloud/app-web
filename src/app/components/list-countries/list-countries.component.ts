@@ -157,6 +157,7 @@ export class ListCountriesComponent implements OnInit {
       case 'add':
         modalRef = this._modalService.open(CountryComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "add";
+        modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           this.getCountries();
         }, (reason) => {
@@ -167,6 +168,7 @@ export class ListCountriesComponent implements OnInit {
         modalRef = this._modalService.open(CountryComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "edit";
         modalRef.componentInstance.countryId = country._id;
+        modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           this.getCountries();
         }, (reason) => {
