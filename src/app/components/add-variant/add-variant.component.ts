@@ -12,6 +12,7 @@ import { Article } from './../../models/article';
 import { VariantService } from './../../services/variant.service';
 import { VariantValueService } from './../../services/variant-value.service';
 import { VariantTypeService } from './../../services/variant-type.service';
+import { OrderByPipe } from 'app/pipes/order-by.pipe';
 
 @Component({
   selector: 'app-add-variant',
@@ -37,6 +38,8 @@ export class AddVariantComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public areVariantsEmpty: boolean;
   public lastVariant: Variant;
+  public orderByPipe: OrderByPipe = new OrderByPipe();
+
 
   public formErrors = {
     'type': '',
@@ -125,7 +128,9 @@ export class AddVariantComponent implements OnInit {
 
     this.loading = true;
 
-    this._variantTypeService.getVariantTypes().subscribe(
+    let query = 'sort="name":1';
+
+    this._variantTypeService.getVariantTypes(query).subscribe(
       result => {
         if (!result.variantTypes) {
           this.loading = false;
@@ -175,7 +180,7 @@ export class AddVariantComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'where="type":"' + variantType._id + '"';
+    let query = 'where="type":"' + variantType._id + '"&sort="description":1';
 
     this._variantValueService.getVariantValues(query).subscribe(
       result => {
@@ -225,6 +230,7 @@ export class AddVariantComponent implements OnInit {
       if(v.type._id === variant.type._id) {
         exist = true;
         v.value.push(variant.value);
+        v.value = this.orderByPipe.transform(v.value, ['description']);
       }
     }
 
@@ -233,6 +239,7 @@ export class AddVariantComponent implements OnInit {
         type: variant.type,
         value: [variant.value]
       });
+      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
     }
   }
 

@@ -43,6 +43,7 @@ export class ListVariantValuesComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userValue = pathLocation[1];
+    this.orderBy('type', 'name');
     this.getVariantValues();
   }
 

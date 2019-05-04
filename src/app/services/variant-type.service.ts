@@ -31,13 +31,17 @@ export class VariantTypeService {
     return this._http.get(Config.apiURL + "variant-type/" + id, { headers: headers }).map(res => res.json());
   }
 
-  getVariantTypes() {
+  getVariantTypes(query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    return this._http.get(Config.apiURL + "variant-types", { headers: headers }).map(res => res.json());
+    if(query) {
+      return this._http.get(Config.apiURL + 'variant-types/' + query, { headers: headers }).map(res => res.json());
+    } else {
+      return this._http.get(Config.apiURL + 'variant-types', { headers: headers }).map(res => res.json());
+    }
   }
 
   saveVariantType(variantType: VariantType) {

@@ -26,6 +26,7 @@ import { TransactionMovement, EntryAmount, StockMovement } from '../../models/tr
 import { Taxes } from '../../models/taxes';
 import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
+import { OrderByPipe } from 'app/pipes/order-by.pipe';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -51,6 +52,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe;
   public errVariant: string;
   public config: Config;
+  public orderByPipe: OrderByPipe = new OrderByPipe();
 
   public formErrors = {
     'description': '',
@@ -208,6 +210,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         } else {
           this.variants = result.variants;
           this.variantTypes = this.getUniqueValues('type', this.variants);
+          this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['name']);
           this.initializeSelectedVariants();
           this.areVariantsEmpty = false;
         }
@@ -240,7 +243,7 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
     }
 
-    return this.getUniqueVariants(variantsToReturn);
+    return this.orderByPipe.transform(this.getUniqueVariants(variantsToReturn), ['value'], 'description');
   }
 
   public getUniqueValues(property: string, array: Array<any>): Array<any> {
