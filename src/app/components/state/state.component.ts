@@ -10,6 +10,7 @@ import { State } from '../../models/state';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Country } from 'app/models/country';
 import { CountryService } from 'app/services/country.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-state',
@@ -31,7 +32,8 @@ export class StateComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public countries : Country[]
+  public countries : Country[];
+  public userCountry: string;
 
   public formErrors = {
     'code': '',
@@ -61,6 +63,7 @@ export class StateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getCountries();

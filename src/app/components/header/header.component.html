@@ -389,16 +389,10 @@
             Usos de CFDI
           </button>
           <button class="dropdown-item"
-                  *ngIf="config.country === 'AR'"
                   [routerLink]="['admin','condiciones-de-iva']"
                   [routerLinkActive]="['active']">
-            Condiciones de IVA
-          </button>
-          <button class="dropdown-item"
-                  *ngIf="config.country === 'MX'"
-                  [routerLink]="['admin','condiciones-de-iva']"
-                  [routerLinkActive]="['active']">
-            Régimes Fiscales
+            <span *ngIf="config.country === 'AR'">Condiciones de IVA</span>
+            <span *ngIf="config.country !== 'AR'">Régimes Fiscales</span>
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','campos-de-productos']"
@@ -433,12 +427,13 @@
           <button class="dropdown-item"
                   [routerLink]="['admin','states']"
                   [routerLinkActive]="['active']">
-            Estados
+            <span *ngIf="config.country === 'AR'">Provincias</span>
+            <span *ngIf="config.country !== 'AR'">Estados</span>
           </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','countries']"
                   [routerLinkActive]="['active']">
-            Paises
+            Países
           </button>
         </div>
       </li>

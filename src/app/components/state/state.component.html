@@ -1,8 +1,20 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="operation==='add'">Agregar Estado</h4>
-  <h4 class="modal-title" *ngIf="operation==='edit'">Editar Estado</h4>
-  <h4 class="modal-title" *ngIf="operation==='view'">Ver Estado</h4>
-  <h4 class="modal-title" *ngIf="operation==='delete'">Eliminar Estado</h4>
+  <h4 class="modal-title" *ngIf="operation==='add'">
+    <span *ngIf="userCountry === 'AR'">Agregar Provincia</span>
+    <span *ngIf="userCountry !== 'AR'">Agregar Estado</span>
+  </h4>
+  <h4 class="modal-title" *ngIf="operation==='edit'">
+    <span *ngIf="userCountry === 'AR'">Editar Provincia {{state.name}}</span>
+    <span *ngIf="userCountry !== 'AR'">Editar Estado  {{state.name}}</span>
+  </h4>
+  <h4 class="modal-title" *ngIf="operation==='view'">
+      <span *ngIf="userCountry === 'AR'">Provincia {{state.name}}</span>
+      <span *ngIf="userCountry !== 'AR'">Estado {{state.name}}</span>
+  </h4>
+  <h4 class="modal-title" *ngIf="operation==='delete'">
+    <span *ngIf="userCountry === 'AR'">Eliminar Provincia {{state.name}}</span>
+    <span *ngIf="userCountry !== 'AR'">Eliminar Estado {{state.name}}</span>
+  </h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>

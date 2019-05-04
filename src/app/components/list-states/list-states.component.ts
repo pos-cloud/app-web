@@ -5,6 +5,7 @@ import { StateService } from '../../services/state.service'
 import { State } from '../../models/state'
 import { StateComponent } from '../state/state.component'
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-list-states',
@@ -22,6 +23,7 @@ export class ListStatesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  public userCountry: string;
 
   public itemsPerPage = 10;
   public totalItems = 0;
@@ -48,6 +50,7 @@ export class ListStatesComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getStates()
