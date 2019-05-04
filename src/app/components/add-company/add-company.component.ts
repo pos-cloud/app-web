@@ -10,7 +10,6 @@ import { CompanyGroup } from 'app/models/company-group';
 import { Employee } from "app/models/employee";
 import { CompanyFields } from '../../models/company-fields';
 
-
 //Terceros
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -152,12 +151,15 @@ export class AddCompanyComponent  implements OnInit {
     if ( pathLocation[2] === "clientes" ||
       this.companyType && this.companyType === CompanyType.Client) {
       this.types.push(CompanyType.Client);
+      this.company.type = CompanyType.Client;
     } else if (pathLocation[2] === "proveedores" ||
       this.companyType && this.companyType === CompanyType.Provider) {
       this.types.push(CompanyType.Provider);
+      this.company.type = CompanyType.Provider;
     } else {
       this.types.push(CompanyType.Client);
       this.types.push(CompanyType.Provider);
+      this.company.type = CompanyType.Client;
     }
 
     this.buildForm();
