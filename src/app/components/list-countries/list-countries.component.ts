@@ -192,9 +192,7 @@ export class ListCountriesComponent implements OnInit {
         modalRef.componentInstance.countryId = country._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          this.getCountries();
         }, (reason) => {
-          this.getCountries();
         });
         break;
       default:

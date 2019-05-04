@@ -157,6 +157,7 @@ export class ListStatesComponent implements OnInit {
       case 'add':
         modalRef = this._modalService.open(StateComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "add";
+        modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           this.getStates();
         }, (reason) => {
@@ -167,6 +168,7 @@ export class ListStatesComponent implements OnInit {
         modalRef = this._modalService.open(StateComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "edit";
         modalRef.componentInstance.stateId = state._id;
+        modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
           this.getStates();
         }, (reason) => {
@@ -190,9 +192,7 @@ export class ListStatesComponent implements OnInit {
         modalRef.componentInstance.stateId = state._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          this.getStates();
         }, (reason) => {
-          this.getStates();
         });
         break;
       default:

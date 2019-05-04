@@ -58,10 +58,10 @@ export class CountryComponent implements OnInit {
     public activeModal: NgbActiveModal,
   ) {
     this.country = new Country();
-   }
+  }
 
   ngOnInit() {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm()
@@ -226,6 +226,7 @@ export class CountryComponent implements OnInit {
         } else {
             this.loading = false;
             this.showMessage('El país se ha añadido con éxito.', 'success', false);
+            this.country = new Country();
             this.buildForm();
         }
       },

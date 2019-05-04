@@ -58,21 +58,21 @@ export class StateComponent implements OnInit {
     public activeModal: NgbActiveModal,
   ) {
     this.state = new State();
-   }
+  }
 
   ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getCountries();
-    this.buildForm()
-
-    if(this.operation === "Delete"){
-      this.readonly = true;
-    }
+    this.buildForm();
     
     if (this.stateId) {
       this.getState();
     }
+  }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
   }
 
   public getCountries() : void {
@@ -88,6 +88,7 @@ export class StateComponent implements OnInit {
     // CAMPOS A TRAER
     let project = {
       "name": 1,
+      "operationType": 1,
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -276,6 +277,7 @@ export class StateComponent implements OnInit {
         } else {
             this.loading = false;
             this.showMessage('El estado se ha añadido con éxito.', 'success', false);
+            this.state = new State();
             this.buildForm();
         }
       },
