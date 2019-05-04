@@ -14,7 +14,7 @@ export class FilterPipe implements PipeTransform {
     valueAux: any[];
     dateFormat: DateFormatPipe = new DateFormatPipe();
 
-    transform(value: any[], term: string, property: string, subobject?: string): any {
+    transform(value: any[], term: string, property?: string, subobject?: string): any {
 
         if (term === undefined || !(term) || !value) {
             this.result = value;

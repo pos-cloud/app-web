@@ -2130,23 +2130,23 @@ export class PrintComponent implements OnInit {
               this.movementsOfArticles[i].category.visibleInvoice &&
               this.movementsOfArticles[i].make &&
               this.movementsOfArticles[i].make.visibleSale) {
-            if (this.movementsOfArticles[i].category.visibleInvoice === true &&
-                this.movementsOfArticles[i].make.visibleSale === true) {
+            if (this.movementsOfArticles[i].category.visibleInvoice &&
+                this.movementsOfArticles[i].make.visibleSale) {
               this.doc.text((this.movementsOfArticles[i].description + ' - ' +
                             this.movementsOfArticles[i].category.description + ' - ' +
                             this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
-            } else if ( this.movementsOfArticles[i].category.visibleInvoice === true &&
-                        this.movementsOfArticles[i].make.visibleSale === false) {
+            } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
+                        !this.movementsOfArticles[i].make.visibleSale) {
               this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 49), 46, row);
-            } else if (this.movementsOfArticles[i].make.visibleSale === true && this.movementsOfArticles[i].category.visibleInvoice === false) {
+            } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
               this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
             }
           } else {
             if (this.movementsOfArticles[i].category &&
                 this.movementsOfArticles[i].category.visibleInvoice &&
-                this.movementsOfArticles[i].category.visibleInvoice === true){
+                this.movementsOfArticles[i].category.visibleInvoice){
               this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 49), 46, row);
-            }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale === true){
+            }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
               this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
             } else
               this.doc.text((this.movementsOfArticles[i].description).slice(0, 49), 46, row);
