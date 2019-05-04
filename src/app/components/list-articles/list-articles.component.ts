@@ -23,40 +23,55 @@ import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { TransactionMovement } from '../../models/transaction-type';
 import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
-import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
+import { FilterPipe } from 'app/pipes/filter.pipe';
 
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
   styleUrls: ['./list-articles.component.scss'],
   providers: [NgbAlertConfig, RoundNumberPipe],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ListArticlesComponent implements OnInit {
 
   public articles: Article[] = new Array();
-  public areArticlesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string = '';
-  public orderTerm: string[];
+  public orderTerm: string[] = ["description"];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
-  @Input() areArticlesVisible: boolean = true;
+  @Input() areArticlesVisible: boolean = false;
   @Input() filterCategorySelected: Category;
   @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();
-  public printers: Printer[];
-  public totals: string[];
   public articleType: ArticleType;
   public listTitle: string;
+  public currentPage: number = 0;
+  public displayedColumns = [
+      'type',
+      'code',
+      'barcode',
+      'description',
+      'posDescription',
+      'make.description',
+      'category.description',
+      'category.description',
+      'costPrice',
+      'salePrice',
+      'observation',
+      'picture',
+  ];
+  public filters: any[];
+  public totalItems: number = 0;
+  public filterPipe: FilterPipe = new FilterPipe();
 
   constructor(
     public _articleService: ArticleService,
@@ -64,15 +79,16 @@ export class ListArticlesComponent implements OnInit {
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService
+    public _printerService: PrinterService,
   ) {
-    if (this.filterCategorySelected === undefined) {
-      this.filterCategorySelected = new Category();
-      this.filterCategorySelected.description = '';
+    this.filters = new Array();
+    this.articles = new Array();
+    for(let field of this.displayedColumns) {
+      this.filters[field] = "";
     }
-
-    if (this.filterArticle === undefined) {
-      this.filterArticle = '';
+    if(!this.filterCategorySelected) {
+      this.filterCategorySelected = new Category();
+      this.filterCategorySelected._id = '';
     }
   }
 
@@ -81,11 +97,7 @@ export class ListArticlesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    if(this.userType === 'pos') {
-      this.orderTerm = ['posDescription', '-favourite'];
-    } else {
-      this.orderTerm = ['description'];
-    }
+    
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
     } else if ('Ingredientes' === this.listTitle) {
@@ -94,92 +106,160 @@ export class ListArticlesComponent implements OnInit {
       // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
       this.articleType = ArticleType.Final;
     }
-    this.totals = new Array();
-    this.getPrinters();
     this.getArticles();
-  }
-
-  public getPrinters(): void {
-
-    this.loading = true;
-
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.printers = new Array();
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   public getArticles(): void {
 
     this.loading = true;
-    let query = '';
 
-    if (this.userType === 'pos') {
-      query = 'where="$or":[{"type":"' + ArticleType.Final + '"},{"type":"' + ArticleType.Variant +'"}]';
+    /// ORDENAMOS LA CONSULTA
+    let sort = {};
+    if(this.userType === 'pos') {
+      sort = { posDescription: 1, favourite: -1 };
     } else {
-      query = 'where="type":"' + this.articleType + '"';
+      let sortAux;
+      if (this.orderTerm[0].charAt(0) === '-') {
+          sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
+      } else {
+          sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+      }
+      sort = JSON.parse(sortAux);
     }
-    query += '&statistics=true';
 
-    this._articleService.getArticles(query).subscribe(
-      result => {
-        if (!result.articles) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-          this.articles = null;
-          this.areArticlesEmpty = true;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.totals["count"] = result.count;
-          this.totals["basePrice"] = result.basePrice;
-          this.totals["costPrice"] = result.costPrice;
-          this.totals["markupPercentage"] = result.markupPercentage;
-          this.totals["markupPrice"] = result.markupPrice;
-          this.totals["salePrice"] = result.salePrice;
-          let orderBy2 = new OrderByPipe();
-          this.articles = orderBy2.transform(result.articles, ['posDescription']);
-          this.articles = orderBy2.transform(this.articles, ['-favourite']);
-          this.areArticlesEmpty = false;
+    // FILTRAMOS LA CONSULTA
+    let match = `{`;
+    for(let i = 0; i < this.displayedColumns.length; i++) {
+      let value = this.filters[this.displayedColumns[i]];
+      if (value && value != "") {
+        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+        if (i < this.displayedColumns.length - 1) {
+          match += ',';
         }
+      }
+    }
+
+    if(this.userType === 'pos') {
+        match = `{ "$or": [ { "type": "${ArticleType.Final}" }, { "type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
+    } else {
+      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
+        match += `,"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
+      } else {
+        match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
+      }
+    }
+    match = JSON.parse(match);
+
+    let timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
+    }
+
+    let project = {};
+    let group = {};
+    let limit = 0;
+    let skip = 0;
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    if(this.userType === 'pos') {
+      
+      project = {
+        type:1,
+        code:1,
+        barcode:1,
+        description:1,
+        posDescription:1,
+        costPrice:1,
+        salePrice:1,
+        observation:1,
+        picture: 1,
+        category: 1,
+        "make.description": 1,
+        "make.visibleSale": 1
+      }
+    } else {
+      let projectAux = "{}"
+      if (this.displayedColumns && this.displayedColumns.length > 0) {
+          projectAux = '{';
+          for (let i = 0; i < this.displayedColumns.length; i++) {
+              let field = this.displayedColumns[i];
+              projectAux += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"${timezone}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
+              if (i < this.displayedColumns.length - 1) {
+                  projectAux += ',';
+              }
+          }
+          projectAux += '}';
+      }
+      project = JSON.parse(projectAux);
+
+      // AGRUPAMOS EL RESULTADO
+      group = {
+          _id: null,
+          count: { $sum: 1 },
+          articles: { $push: "$$ROOT" }
+      };
+
+      let page = 0;
+      if(this.currentPage != 0) {
+        page = this.currentPage - 1;
+      }
+      skip = !isNaN(page * this.itemsPerPage) ?
+              (page * this.itemsPerPage) :
+              0 // SKIP
+      limit = this.itemsPerPage;
+    }
+    
+    this._articleService.getArticlesV2(
+        project, // PROJECT
+        match, // MATCH
+        sort, // SORT
+        group, // GROUP
+        limit, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (result && result.articles) {
+            this.articles = result.articles;
+            this.totalItems = result.count;
+        } else {
+            this.articles = null;
+            this.totalItems = 0;
+        }
+        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
+        this.totalItems = 0;
       }
     );
+  }
+
+  public pageChange(page): void {
+      this.currentPage = page;
+      this.getArticles();
   }
 
   public selectArticle(articleSelected: Article): void {
     this.activeModal.close({ article: articleSelected });
   }
 
-  public orderBy(term: string, property?: string): void {
+  public orderBy(term: string): void {
 
     if (this.orderTerm[0] === term) {
       this.orderTerm[0] = "-" + term;
     } else {
       this.orderTerm[0] = term;
     }
-    this.propertyTerm = property;
+
+    this.getArticles();
   }
 
   public refresh(): void {
     this.getArticles();
   }
 
-  public openModal(op: string, article?: Article, typeOfOperationToPrint?: string): void {
+  async openModal(op: string, article?: Article, typeOfOperationToPrint?: string) {
 
     let modalRef;
     switch (op) {
@@ -244,175 +324,247 @@ export class ListArticlesComponent implements OnInit {
         });
         break;
       case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        if(article) {
-          modalRef.componentInstance.article = article;
-        } else {
-          modalRef.componentInstance.articles = this.articles;
-        }
-        modalRef.componentInstance.typePrint = typeOfOperationToPrint;
-        if (this.printers && this.printers.length > 0) {
-          for (let printer of this.printers) {
-            if (typeOfOperationToPrint === 'label') {
-              if (printer.printIn === PrinterPrintIn.Label) {
-                modalRef.componentInstance.printer = printer;
-              }
-            } else {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
+      
+        await this.getPrinters().then(
+          printers => {
+            let labelPrinter: Printer;
+            if (printers && printers.length > 0) {
+              for (let printer of printers) {
+                if (typeOfOperationToPrint === 'label') {
+                  if (printer.printIn === PrinterPrintIn.Label) {
+                    labelPrinter = printer;
+                  }
+                }
               }
             }
+            
+            if(labelPrinter) {
+              modalRef = this._modalService.open(PrintComponent);
+              if(article) {
+                modalRef.componentInstance.article = article;
+              } else {
+                modalRef.componentInstance.articles = this.articles;
+              }
+              modalRef.componentInstance.typePrint = typeOfOperationToPrint;
+            } else {
+              this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
+            }
           }
-        }
-          break;
-        case 'update-prices':
-          modalRef = this._modalService.open(UpdateArticlePriceComponent);
-          modalRef.componentInstance.operation = "update-prices";
-          break;
+        );
+        break;
+      case 'update-prices':
+        modalRef = this._modalService.open(UpdateArticlePriceComponent);
+        modalRef.componentInstance.operation = "update-prices";
+        break;
       default: ;
     }
   };
+  
+  public getPrinters(): Promise<Printer[]> {
 
-  public addItem(articleSelected: Article) {
+    return new Promise<Printer[]>( async (resolve, reject) => {
 
-    let movementOfArticle = new MovementOfArticle();
-    movementOfArticle.article = articleSelected;
-    movementOfArticle.code = articleSelected.code;
-    movementOfArticle.codeSAT = articleSelected.codeSAT;
-    movementOfArticle.description = articleSelected.description;
-    movementOfArticle.observation = articleSelected.observation;
-    movementOfArticle.make = articleSelected.make;
-    movementOfArticle.category = articleSelected.category;
-    movementOfArticle.barcode = articleSelected.barcode;
-    movementOfArticle.transaction = this.transaction;
+      this.loading = true;
 
-    let quotation = 1;
-    if(this.transaction.quotation) {
-      quotation = this.transaction.quotation;
-    }
-
-    movementOfArticle.basePrice = this.roundNumber.transform(articleSelected.basePrice);
-
-    if(articleSelected.currency &&  
-      Config.currency && 
-      Config.currency._id !== articleSelected.currency._id) {
-      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
-    }
-
-    if (this.transaction &&
-      this.transaction.type &&
-      this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-        let fields: ArticleFields[] = new Array();
-        if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-          for (const field of movementOfArticle.otherFields) {
-            if (field.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-            } else if (field.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-            fields.push(field);
-          }
-        }
-        movementOfArticle.otherFields = fields;
-        movementOfArticle.costPrice = this.roundNumber.transform(articleSelected.costPrice);
-        movementOfArticle.markupPercentage = articleSelected.markupPercentage;
-        movementOfArticle.markupPrice = this.roundNumber.transform(articleSelected.markupPrice);
-        movementOfArticle.unitPrice = this.roundNumber.transform(articleSelected.salePrice);
-        movementOfArticle.salePrice = this.roundNumber.transform(articleSelected.salePrice);
-
-        if(articleSelected.currency &&  
-          Config.currency && 
-          Config.currency._id !== articleSelected.currency._id) {
-            movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
-            movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice * quotation);
-            movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
-            movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
-        }
-        if(this.transaction.type.requestTaxes) {
-          let tax: Taxes = new Taxes();
-          let taxes: Taxes[] = new Array();
-          if (articleSelected.taxes) {
-            for (let taxAux of articleSelected.taxes) {
-              tax.percentage = this.roundNumber.transform(taxAux.percentage);
-              tax.tax = taxAux.tax;
-              tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
-              taxes.push(tax);
-            }
-          }
-          movementOfArticle.taxes = taxes;
-        }
-    } else {
-      movementOfArticle.markupPercentage = 0;
-      movementOfArticle.markupPrice = 0;
-
-      let taxedAmount = movementOfArticle.basePrice;
-      movementOfArticle.costPrice = 0;
-
-      let fields: ArticleFields[] = new Array();
-      if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-        for (const field of movementOfArticle.otherFields) {
-          if (field.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-          } else if (field.datatype === ArticleFieldType.Number) {
-            field.amount = parseFloat(field.value);
-          }
-          if (field.articleField.modifyVAT) {
-            taxedAmount += field.amount;
+      this._printerService.getPrinters().subscribe(
+        result => {
+          this.loading = false;
+          if (!result.printers) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
           } else {
-            movementOfArticle.costPrice += field.amount;
+            resolve(result.printers);
           }
-          fields.push(field);
+        },
+        error => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      }
-      movementOfArticle.otherFields = fields;
-      if(this.transaction.type.requestTaxes) {
-        let taxes: Taxes[] = new Array();
-        if (articleSelected.taxes) {
-          for (let taxAux of articleSelected.taxes) {
-            taxAux.taxBase = this.roundNumber.transform(taxedAmount);
-            taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
-            taxes.push(taxAux);
-            movementOfArticle.costPrice += taxAux.taxAmount;
-          }
-          movementOfArticle.taxes = taxes;
-        }
-      }
-      movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
-      movementOfArticle.unitPrice = movementOfArticle.basePrice;
-      movementOfArticle.salePrice = movementOfArticle.costPrice;
-    }
-    this.eventAddItem.emit(movementOfArticle);
+      );
+    });
   }
 
-  public filterItem(articles: Article[]) {
+  async addItem(articleSelected: Article) {
 
-    if (articles && articles.length > 0 && this.articles && this.articles.length >= 2) {
+    await this.getArticle(articleSelected._id).then(
+      article => {
+        if(article) {
+          let movementOfArticle = new MovementOfArticle();
+          movementOfArticle.article = article;
+          movementOfArticle.code = article.code;
+          movementOfArticle.codeSAT = article.codeSAT;
+          movementOfArticle.description = article.description;
+          movementOfArticle.observation = article.observation;
+          movementOfArticle.make = article.make;
+          movementOfArticle.category = article.category;
+          movementOfArticle.barcode = article.barcode;
+          movementOfArticle.transaction = this.transaction;
 
-      let article;
-      var count = 1;
-
-      if (articles.length === 1) {
-        article = articles[0];
-      } else if (articles.length > 1) {
-        count = 0;
-        for(let art of articles) {
-          if(art.type === ArticleType.Final) {
-            count++;
-            article = art;
+          let quotation = 1;
+          if(this.transaction.quotation) {
+            quotation = this.transaction.quotation;
           }
+
+          movementOfArticle.basePrice = this.roundNumber.transform(article.basePrice);
+
+          if(article.currency &&  
+            Config.currency && 
+            Config.currency._id !== article.currency._id) {
+            movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+          }
+
+          if (this.transaction &&
+            this.transaction.type &&
+            this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              let fields: ArticleFields[] = new Array();
+              if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+                for (const field of movementOfArticle.otherFields) {
+                  if (field.datatype === ArticleFieldType.Percentage) {
+                    field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                  } else if (field.datatype === ArticleFieldType.Number) {
+                    field.amount = parseFloat(field.value);
+                  }
+                  fields.push(field);
+                }
+              }
+              movementOfArticle.otherFields = fields;
+              movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
+              movementOfArticle.markupPercentage = article.markupPercentage;
+              movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
+              movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice);
+              movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
+
+              if(article.currency &&  
+                Config.currency && 
+                Config.currency._id !== article.currency._id) {
+                  movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+                  movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice * quotation);
+                  movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+                  movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
+              }
+              if(this.transaction.type.requestTaxes) {
+                let tax: Taxes = new Taxes();
+                let taxes: Taxes[] = new Array();
+                if (article.taxes) {
+                  for (let taxAux of article.taxes) {
+                    tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                    tax.tax = taxAux.tax;
+                    tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
+                    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+                    taxes.push(tax);
+                  }
+                }
+                movementOfArticle.taxes = taxes;
+              }
+          } else {
+            movementOfArticle.markupPercentage = 0;
+            movementOfArticle.markupPrice = 0;
+
+            let taxedAmount = movementOfArticle.basePrice;
+            movementOfArticle.costPrice = 0;
+
+            let fields: ArticleFields[] = new Array();
+            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+              for (const field of movementOfArticle.otherFields) {
+                if (field.datatype === ArticleFieldType.Percentage) {
+                  field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                } else if (field.datatype === ArticleFieldType.Number) {
+                  field.amount = parseFloat(field.value);
+                }
+                if (field.articleField.modifyVAT) {
+                  taxedAmount += field.amount;
+                } else {
+                  movementOfArticle.costPrice += field.amount;
+                }
+                fields.push(field);
+              }
+            }
+            movementOfArticle.otherFields = fields;
+            if(this.transaction.type.requestTaxes) {
+              let taxes: Taxes[] = new Array();
+              if (article.taxes) {
+                for (let taxAux of article.taxes) {
+                  taxAux.taxBase = this.roundNumber.transform(taxedAmount);
+                  taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
+                  taxes.push(taxAux);
+                  movementOfArticle.costPrice += taxAux.taxAmount;
+                }
+                movementOfArticle.taxes = taxes;
+              }
+            }
+            movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
+            movementOfArticle.unitPrice = movementOfArticle.basePrice;
+            movementOfArticle.salePrice = movementOfArticle.costPrice;
+          }
+          this.areArticlesVisible = true;
+          this.eventAddItem.emit(movementOfArticle);
         }
       }
+    );
+  }
 
-      if (  count === 1 &&
-            this.filterArticle &&
-          ( article &&
-            article.barcode === this.filterArticle ||
-            article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
-            article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
-            article.code === this.filterArticle)) {
-              this.filterArticle = '';
-              this.addItem(article);
+  public getArticle(articleId: string): Promise<Article> {
+
+    return new Promise<Article> ((resolve, reject) => {
+
+      this._articleService.getArticle(articleId).subscribe(
+        result => {
+          if (!result.article) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.article);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  public filterItem() {
+    
+    if(this.filterArticle && this.filterArticle !== "") {
+
+      let articles: Article[] = this.filterPipe.transform(this.articles, this.filterArticle);
+
+      if (articles && articles.length > 0 && this.articles && this.articles.length >= 2) {
+
+        this.hideMessage();
+  
+        let article;
+        var count = 1;
+  
+        if (articles.length === 1) {
+          article = articles[0];
+        } else if (articles.length > 1) {
+          count = 0;
+          for(let art of articles) {
+            if(art.type === ArticleType.Final) {
+              count++;
+              article = art;
+            }
+          }
+        }
+  
+        if (  count === 1 &&
+              this.filterArticle &&
+            ( article &&
+              article.barcode === this.filterArticle ||
+              article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
+              article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
+              article.code === this.filterArticle)) {
+                this.filterArticle = '';
+                this.addItem(article);
+        } else {
+          this.eventAddItem.emit(null);
+        }
+      } else {
+        this.showMessage("No se encontraron productos.", "info", true);
+        this.eventAddItem.emit(null);
       }
     }
   }

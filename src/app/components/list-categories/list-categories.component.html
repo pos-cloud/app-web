@@ -80,7 +80,7 @@
 
 <!--POS-->
 <section  class="container-fluid" *ngIf="userType=='pos'">
-  <div class="row" *ngIf="areCategoriesVisible">
+  <div class="row" *ngIf="areCategoriesVisible"  class="categories-list">
     <div *ngFor="let category of categories | orderBy: orderTerm: propertyTerm ">
       <div class="icategory" (click)="selectCategory(category)">
         <img *ngIf="category.picture == 'default.jpg' || category.picture == undefined" src="./../../../assets/img/default.jpg"

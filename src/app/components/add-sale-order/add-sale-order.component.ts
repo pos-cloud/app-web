@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit, ElementRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -61,12 +61,15 @@ import { CancellationTypeService } from 'app/services/cancellation-type.service'
 import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
 import { CancellationType } from 'app/models/cancellation-type';
+import { ListArticlesComponent } from '../list-articles/list-articles.component';
+import { ListCategoriesComponent } from '../list-categories/list-categories.component';
 
 @Component({
   selector: 'app-add-sale-order',
   templateUrl: './add-sale-order.component.html',
-  styleUrls: ['./add-sale-order.component.css'],
-  providers: [NgbAlertConfig, DateFormatPipe, RoundNumberPipe]
+  styleUrls: ['./add-sale-order.component.scss'],
+  providers: [NgbAlertConfig, DateFormatPipe, RoundNumberPipe],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class AddSaleOrderComponent implements OnInit {
@@ -88,9 +91,6 @@ export class AddSaleOrderComponent implements OnInit {
   public posType: string;
   public table: Table; //Solo se usa si posType es igual a resto
   public loading: boolean;
-  public areCategoriesVisible: boolean = true;
-  public areArticlesVisible: boolean;
-  public categorySelected: Category;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
   @ViewChild('contentChangeDate') contentChangeDate: ElementRef;
@@ -102,13 +102,16 @@ export class AddSaleOrderComponent implements OnInit {
   public kitchenArticlesPrinted: number = 0;
   public barArticlesToPrint: MovementOfArticle[];
   public printSelected: Print;
-  public filterArticle: string;
+  public filterArticle: string = '';
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber = new RoundNumberPipe();
   public areMovementsOfArticlesEmpty: boolean = true;
   public apiURL = Config.apiURL;
   public userCountry: string = 'AR';
   public lastQuotation: number = 1;
+  @ViewChild(ListArticlesComponent) listArticlesComponent: ListArticlesComponent;
+  @ViewChild(ListCategoriesComponent) listCategoriesComponent: ListCategoriesComponent;
+  public categorySelected: Category;
 
   constructor(
     public _transactionService: TransactionService,
@@ -124,7 +127,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _modalService: NgbModal,
     public _printerService: PrinterService,
     public _userService: UserService,
-    private cdref: ChangeDetectorRef,
     private _taxService: TaxService,
     private _cashBoxService: CashBoxService,
     public _useOfCFDIService: UseOfCFDIService,
@@ -135,7 +137,6 @@ export class AddSaleOrderComponent implements OnInit {
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
-    this.categorySelected = new Category();
     this.printers = new Array();
     this.printersAux = new Array();
     this.barArticlesToPrint = new Array();
@@ -174,7 +175,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.focusEvent.emit(true);
+    setTimeout(() => this.focusEvent.emit(true), 1000);
   }
 
   public getCurrencies(): Promise<Currency[]> {
@@ -316,15 +317,13 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public changeVisibilityArticle(): void {
-    if (this.filterArticle !== '' && this.filterArticle !== undefined) {
-      this.areArticlesVisible = true;
-      this.areCategoriesVisible = false;
-    } else {
-      this.areArticlesVisible = false;
-      this.areCategoriesVisible = true;
+  public filterArticles(): void {
+
+    this.listArticlesComponent.filterArticle = this.filterArticle;
+    this.listArticlesComponent.filterItem();
+    if(!this.filterArticle || this.filterArticle === '') {
+      this.showCategories();
     }
-    this.cdref.detectChanges();
   }
 
   public getPrinters(): void {
@@ -661,13 +660,6 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
-  public showArticlesOfCategory(category: Category): void {
-
-    this.categorySelected = category;
-    this.areArticlesVisible = true;
-    this.areCategoriesVisible = false;
-  }
-
   async close() {
 
     this.typeOfOperationToPrint = 'item';
@@ -762,37 +754,23 @@ export class AddSaleOrderComponent implements OnInit {
 
   async addItem(itemData: MovementOfArticle) {
 
-    if (this.filterArticle && this.filterArticle !== '') {
-      this.filterArticle = '';
-    }
+    if(itemData) {
 
-    if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
-      let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
-
-      if (!movementOfArticle) {
-        movementOfArticle = itemData;
-        movementOfArticle.transaction = this.transaction;
-        movementOfArticle.amount += 1;
-        if(await this.isValidMovementOfArticle(movementOfArticle)) {
-          movementOfArticle._id = '';
-          movementOfArticle.printed = 0;
+      this.showCategories();
+  
+      if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
+        let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
+  
+        if (!movementOfArticle) {
+          movementOfArticle = itemData;
           movementOfArticle.transaction = this.transaction;
-          movementOfArticle.amount = 1;
-          await this.saveMovementOfArticle(movementOfArticle).then(
-            movementOfArticle => {
-              if(movementOfArticle) {
-                this.getMovementsOfTransaction();
-              }
-            }
-          );
-        } else {
-          movementOfArticle.amount -= 1;
-        }
-      } else {
-        movementOfArticle.amount += 1;
-        if(await this.isValidMovementOfArticle(movementOfArticle)) {
-          if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-            await this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle)).then(
+          movementOfArticle.amount += 1;
+          if(await this.isValidMovementOfArticle(movementOfArticle)) {
+            movementOfArticle._id = '';
+            movementOfArticle.printed = 0;
+            movementOfArticle.transaction = this.transaction;
+            movementOfArticle.amount = 1;
+            await this.saveMovementOfArticle(movementOfArticle).then(
               movementOfArticle => {
                 if(movementOfArticle) {
                   this.getMovementsOfTransaction();
@@ -800,26 +778,44 @@ export class AddSaleOrderComponent implements OnInit {
               }
             );
           } else {
-            await this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle)).then(
-              movementOfArticle => {
-                if(movementOfArticle) {
-                  this.getMovementsOfTransaction();
-                }
-              }
-            );
+            movementOfArticle.amount -= 1;
           }
         } else {
-          movementOfArticle.amount -= 1;
+          movementOfArticle.amount += 1;
+          if(await this.isValidMovementOfArticle(movementOfArticle)) {
+            if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              console.log("aca");
+              await this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle)).then(
+                movementOfArticle => {
+                  if(movementOfArticle) {
+                    this.getMovementsOfTransaction();
+                  }
+                }
+              );
+            } else {
+              await this.updateMovementOfArticle(this.recalculateCostPrice(movementOfArticle)).then(
+                movementOfArticle => {
+                  if(movementOfArticle) {
+                    this.getMovementsOfTransaction();
+                  }
+                }
+              );
+            }
+          } else {
+            movementOfArticle.amount -= 1;
+          }
         }
+      } else {
+        let movementOfArticle: MovementOfArticle;
+        movementOfArticle = itemData;
+        movementOfArticle._id = '';
+        movementOfArticle.transaction = this.transaction;
+        movementOfArticle.printed = 0;
+        movementOfArticle.amount = 1;
+        this.openModal("movement_of_article", movementOfArticle);
       }
     } else {
-      let movementOfArticle: MovementOfArticle;
-      movementOfArticle = itemData;
-      movementOfArticle._id = '';
-      movementOfArticle.transaction = this.transaction;
-      movementOfArticle.printed = 0;
-      movementOfArticle.amount = 1;
-      this.openModal("movement_of_article", movementOfArticle);
+      this.showArticles();
     }
   }
 
@@ -1033,7 +1029,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
-
+    console.log("updateMovementOfArticle");
     return new Promise<boolean>( async (resolve, reject) => {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
@@ -1056,12 +1052,6 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     });
-  }
-
-  public cleanFilterArticle(): void {
-    this.filterArticle = '';
-    this.areArticlesVisible = false;
-    this.areCategoriesVisible = true;
   }
 
   async updateOthersFields() {
@@ -1179,14 +1169,14 @@ export class AddSaleOrderComponent implements OnInit {
 
   async updatePrices(discountPercent?: number) {
 
-    this.transaction.totalPrice = 0;
-    this.transaction.discountAmount = 0;
+    let totalPriceAux = 0;
+    let discountAmountAux = 0;
 
     if (discountPercent !== undefined) {
       this.transaction.discountPercent = this.roundNumber.transform(discountPercent, 3);
     } else if (!this.transaction.discountPercent) {
       this.transaction.discountPercent = 0;
-      this.transaction.discountAmount = 0;
+      discountAmountAux = 0;
     }
 
     let isUpdateValid: boolean = true;
@@ -1199,8 +1189,8 @@ export class AddSaleOrderComponent implements OnInit {
         } else {
           movementOfArticle = this.recalculateCostPrice(movementOfArticle);
         }
-        this.transaction.totalPrice += this.roundNumber.transform(movementOfArticle.salePrice);
-        this.transaction.discountAmount += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
+        totalPriceAux += this.roundNumber.transform(movementOfArticle.salePrice);
+        discountAmountAux += this.roundNumber.transform(movementOfArticle.transactionDiscountAmount * movementOfArticle.amount);
         let result = await this.updateMovementOfArticle(movementOfArticle);
         if(!result) {
           isUpdateValid = false;
@@ -1209,12 +1199,14 @@ export class AddSaleOrderComponent implements OnInit {
       }
     } else {
       isUpdateValid = true;
-      this.transaction.totalPrice = 0;
+      totalPriceAux = 0;
       this.transaction.discountPercent = 0;
-      this.transaction.discountAmount = 0;
+      discountAmountAux = 0;
     }
-
+    
     if(isUpdateValid) {
+      this.transaction.totalPrice = totalPriceAux;
+      this.transaction.discountAmount = discountAmountAux;
       if (this.transaction.type.requestTaxes) {
         await this.updateTaxes();
       } else {
@@ -1229,6 +1221,22 @@ export class AddSaleOrderComponent implements OnInit {
         );
       }
     }
+  }
+
+  public hasChangedMovementOfArticle(oldMov, newMov): boolean {
+    
+    let hasChanged: boolean = false;
+    
+    for(let prop of Object.keys(newMov)) {
+      if( oldMov[prop] && 
+          newMov[prop] &&
+          oldMov[prop] !== newMov[prop]
+        ) {
+          hasChanged = true;
+      }
+    }
+
+    return hasChanged;
   }
 
   public validateElectronicTransactionAR(): void {
@@ -1879,6 +1887,7 @@ export class AddSaleOrderComponent implements OnInit {
 
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
+    console.log("saveMovementOfArticle");
     return new Promise<MovementOfArticle>((resolve, reject) => {
     
       if( this.transaction.type.stockMovement) {
@@ -2020,8 +2029,24 @@ export class AddSaleOrderComponent implements OnInit {
 
   public showCategories(): void {
 
-    this.areCategoriesVisible = true;
-    this.areArticlesVisible = false;
+    this.categorySelected = null;
+    this.filterArticle = '';
+    this.listCategoriesComponent.areCategoriesVisible = true;
+    this.listArticlesComponent.areArticlesVisible = false;
+    this.listArticlesComponent.filterArticle = this.filterArticle;
+    this.focusEvent.emit(true);
+  }
+
+  public showArticles(category?: Category): void {
+
+    this.listCategoriesComponent.areCategoriesVisible = false;
+    this.listArticlesComponent.areArticlesVisible = true;
+    if(category) {
+      this.categorySelected = category;
+      this.listArticlesComponent.filterCategorySelected = category;
+      this.listArticlesComponent.hideMessage();
+    }
+    this.focusEvent.emit(true);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

@@ -1,6 +1,6 @@
 <!--ADMIN-->
 <section class="container-fluid" *ngIf="userType==='admin'">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areArticlesEmpty">
+  <div class="center-content" *ngIf="alertMessage !== '' && (articles && articles.length > 0)">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
@@ -27,8 +27,8 @@
             </th>
             <th (click)="orderBy('code')">#</th>
             <th (click)="orderBy('description')">Descripción</th>
-            <th (click)="orderBy('make','description')">Marca</th>
-            <th (click)="orderBy('category','description')">Rubro</th>
+            <th (click)="orderBy('make.description')">Marca</th>
+            <th (click)="orderBy('category.description')">Rubro</th>
             <th (click)="orderBy('costPrice')">Precio de Costo</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
             <th (click)="orderBy('observation')">Observation</th>
@@ -36,35 +36,28 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="#..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterMake" placeholder="Marca..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCategory" placeholder="Rubro..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCostPrice" placeholder="Precio de Costo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterSalePrice" placeholder="Precio de Venta..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTermObservation" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterTermBarcode" placeholder="Código de Barra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (input)="getArticles()" placeholder="#..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (input)="getArticles()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (input)="getArticles()" placeholder="Marca..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (input)="getArticles()" placeholder="Rubro..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['costPrice']" (input)="getArticles()" placeholder="Precio de Costo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (input)="getArticles()" placeholder="Precio de Venta..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getArticles()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (input)="getArticles()" placeholder="Código de Barra..."></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let article of articles | filter: filterCode:'code'
-                                              | filter: filterDescription:'description'
-                                              | filter: filterMake:'description':'make'
-                                              | filter: filterCategory:'description':'category'
-                                              | filter: filterCostPrice:'costPrice'
-                                              | filter: filterSalePrice:'salePrice'
-                                              | filter: filterTermObservation:'observation'
-                                              | filter: filterTermBarcode:'barcode'
-                                              | orderBy: orderTerm: propertyTerm
-                                              | paginate: { itemsPerPage: itemsPerPage,
-                                                                            currentPage: p,
-                                                                            totalItems: totalItems
-                                                                          }"
-                                              (click)="selectArticle(article)">
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
+          </tr>
+          <tr *ngFor="let article of articles | paginate: { itemsPerPage: itemsPerPage,
+                                                            currentPage: currentPage,
+                                                            totalItems: totalItems
+                                                          }">
             <td align="left" width="174">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)" title="Editar"><i class="fa fa-pencil"></i></button>
-              <button type="button" class="btn btn-danger btn-sm" *ngIf="article && article.type && article.type.toString() !== 'Variante'" (click)="openModal('delete', article)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar" *ngIf="article && article.type && article.type.toString() !== 'Variante'" ><i class="fa fa-trash-o"></i></button>
               <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article, 'label')" title="Imprimir Etiqueta"><i class="fa fa-print"></i></button>
             </td>
             <td>{{article.code}}</td>
@@ -78,7 +71,7 @@
             <td>{{article.observation}}</td>
             <td>{{article.barcode}}</td>
           </tr>
-          <tr align="center" *ngIf="areArticlesEmpty && !loading">
+          <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
             <td colspan="9">No se encontraron productos</td>
           </tr>
         </tbody>
@@ -88,8 +81,8 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><b>$ {{totals.costPrice}}</b></td>
-          <td><b>$ {{totals.salePrice}}</b></td>
+          <td></td>
+          <td></td>
           <td></td>
           <td></td>
         </tfoot>
@@ -100,7 +93,7 @@
         <div class="col-md-10">
           <pagination-controls
             class="my-pagination"
-            (pageChange)="p=$event"
+            (pageChange)="pageChange($event)"
             #api
             previousLabel="Ant."
             nextLabel="Sig."
@@ -108,7 +101,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage">
+          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getArticles()">
             <option [value]="5">Mostrar 5 ítems</option>
             <option [value]="10">Mostrar 10 ítems</option>
             <option [value]="15">Mostrar 15 ítems</option>
@@ -124,10 +117,13 @@
 
 <!--POS-->
 <section class="container-fluid" *ngIf="userType==='pos'">
-  <div class="row" *ngIf="areArticlesVisible">
-    <div *ngFor="let article of articles  | filter: filterArticle
-                                          | filter: 'Final':'type'
-                                          | filter: filterCategorySelected._id:'_id':'category'">
+  <div class="row" *ngIf="areArticlesVisible" class="articles-list">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <div *ngFor="let article of articles | filter: filterArticle | filter: filterCategorySelected._id:'category'">
       <div class="iarticle" (click)="addItem(article)">
         <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction.type && transaction.type.showPrices">
           <span class="badge badge-info">
@@ -141,21 +137,15 @@
           height="120" width="120">
         <div *ngIf="article.posDescription" class="image-title">{{article.posDescription}}</div>
         <div *ngIf="!article.posDescription" class="image-title">{{article.description | slice:0:19 }}</div>
-        <div id="make" *ngIf="article.make != undefined && article.make.visibleSale == true" class="image-title">{{article.make.description}}</div>
+        <div id="make" *ngIf="article.make && article.make.visibleSale" class="image-title">{{article.make.description}}</div>
       </div>
     </div>
-    <div class="center-content" *ngIf="areArticlesEmpty && !loading">
-      <ngb-alert (close)="areArticlesEmpty">
-        No se encontraron productos
-      </ngb-alert>
-    </div>
   </div>
-  {{filterItem(articles | filter: filterArticle)}}
 </section>
 
 <!--KARDEX-->
 <section class="container-fluid" *ngIf="userType==='report'">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areArticlesEmpty">
+  <div class="center-content" *ngIf="alertMessage !== '' && (articles && articles.length > 0)">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
@@ -191,12 +181,13 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="16">Cargando...</td>
+          </tr>
           <tr *ngFor="let article of articles | filter: filterCode:'code'
                                               | filter: filterDescription:'description'
                                               | filter: filterMake:'description':'make'
                                               | filter: filterCategory:'description':'category'
-                                              | filter: filterCostPrice:'costPrice'
-                                              | filter: filterSalePrice:'salePrice'
                                               | orderBy: orderTerm: propertyTerm
                                               | paginate: { itemsPerPage: itemsPerPage,
                                                                             currentPage: p,
@@ -212,7 +203,7 @@
             <td>{{article.costPrice | currency:'USD':'1.2-2'}}</td>
             <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
           </tr>
-          <tr align="center" *ngIf="areArticlesEmpty && !loading">
+          <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
             <td colspan="9">No se encontraron productos</td>
           </tr>
         </tbody>

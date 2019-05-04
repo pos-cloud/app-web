@@ -1,0 +1,101 @@
+app-add-sale-order {
+      .center-content {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-justify-content: center;
+            justify-content: center;
+      }
+      
+      .btn {
+            cursor: pointer;
+      }
+      
+      .container-message {
+        margin: 0px;
+      }
+      
+      .articles-container {
+            height:44vh;
+            margin: 0px;
+            padding: 0px;
+      }
+      
+      .header-transaction, .header-mx {
+            padding: 15px;
+            background: #292B2C;
+            color: white;
+            margin: 0px;
+      }
+      
+      .btn-action {
+            width: 100%;
+            border: 1px solid white;
+            padding: 10px;
+            cursor: pointer;
+            background: #0275d8;
+            color: white;
+            height: 40px;
+      }
+      
+      .container-transaction {
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+      }
+      
+      .btn-action:hover {
+            background: #025aa5;
+      }
+      
+      .breadcrumb {
+            cursor: pointer;
+      }
+      
+      .negro {
+            border: 1px solid black;
+      }
+      
+      .ticket {
+            height: 400px;
+      }
+      
+      .btn-large {
+            height: 70px;
+            font-size: 20px;
+            font-weight: 400;
+      }
+      
+      .color-default {
+            background: #ffffff;
+            border: 1px solid #292b2c;
+      }
+      
+      .color-default:hover {
+            background: #e6e6e6;
+      }
+      
+      .color-red {
+            background: #d9534f;
+      }
+      
+      .color-red:hover {
+            background: #c9302c;
+      }
+      
+      .list-group-item {
+            width: 400px;
+      }
+      
+      .filterArticle {
+            margin-bottom: 10px;
+            margin-right: 10px;
+      }
+      
+      .number-amount {
+            height: 20px;
+            position: absolute;
+            right: 0px;
+      }
+}
