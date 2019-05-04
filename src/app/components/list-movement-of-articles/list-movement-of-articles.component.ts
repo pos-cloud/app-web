@@ -51,6 +51,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "updateDate",
     "transaction.endDate",
     "transaction.type.name",
+    "transaction.type.transactionMovement",
     "transaction.letter",
     "transaction.number",
     "transaction.origin",
@@ -139,6 +140,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
         "operationType":1,
         "updateDate":1,
         "transaction.type.name":1,
+        "transaction.type.transactionMovement" : 1,
         "transaction.letter": { $toString : "$transaction.letter"},
         "transaction.number": { $toString : '$transaction.number'},
         "transaction.origin": { $toString : '$transaction.origin'},
@@ -146,7 +148,8 @@ export class ListMovementOfArticlesComponent implements OnInit {
         "modifyStock":1,
         "stockMovement":1,
         "costPrice":1,
-        "salePrice" : 1
+        "salePrice" : 1,
+        "transaction.endDate" : 1
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -183,10 +186,12 @@ export class ListMovementOfArticlesComponent implements OnInit {
           this.totalItems = result.count;
           this.areTransactionsEmpty = false;
           this.getBalance();
-          } 
+          } else {
+            this.showMessage("No se encontraron movimientos", 'danger', false);
+          }
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
+        this.showMessage(error.error.code + ":" + error.error.message, 'danger', false);
         this.loading = false;
         this.totalItems = 0;
       }

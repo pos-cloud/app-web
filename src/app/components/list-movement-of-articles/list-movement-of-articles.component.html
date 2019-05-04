@@ -84,6 +84,7 @@
             <tr>
               <th class=""><i class="fa fa-bars"></i></th>
               <th class="">Fecha</th>
+              <th class="">Movimiento</th>
               <th class="">Tipo</th>
               <th class="" *ngIf="userCountry === 'AR'">Punto de venta</th>
               <th class="">Letra</th>
@@ -95,6 +96,7 @@
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getSummary()" placeholder="Movimiento..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getSummary()" placeholder="Tipo..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.origin']" (input)="getSummary()" placeholder="Punto de venta..."  *ngIf="userCountry === 'AR'"></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.letter']" (input)="getSummary()" placeholder="Letra..."></th>
@@ -116,6 +118,7 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', movementsOfArticle)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
               <td class="align-center" *ngIf="movementsOfArticle.updateDate">{{movementsOfArticle.updateDate | dateFormat : 'DD/MM/YYYY' }}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].transactionMovement}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].name}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.letter}}</td>
