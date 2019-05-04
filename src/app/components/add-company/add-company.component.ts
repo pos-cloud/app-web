@@ -141,6 +141,11 @@ export class AddCompanyComponent  implements OnInit {
     this.company = new Company();
     this.types = new Array();
     this.vatConditions = new Array();
+    this.getVATConditions();
+    this.getIdentificationTypes();
+    this.getCompaniesGroup();
+    this.getEmployees();
+    this.getCountries();
   }
 
   ngOnInit(): void {
@@ -163,11 +168,6 @@ export class AddCompanyComponent  implements OnInit {
     }
 
     this.buildForm();
-    this.getCountries();
-    this.getVATConditions();
-    this.getIdentificationTypes();
-    this.getCompaniesGroup();
-    this.getEmployees();
 
     if(this.companyId) {
       this.getCompany();
@@ -255,68 +255,54 @@ export class AddCompanyComponent  implements OnInit {
     );
   }
 
-  public getStates( form? : Boolean): void {
+  public getStates(): void {
 
     this.loading = true;
 
-    let orderTerm: string[] = ['name'];
-
     /// ORDENAMOS LA CONSULTA
-    let sortAux;
-    if (orderTerm[0].charAt(0) === '-') {
-        sortAux = `{ "${orderTerm[0].split('-')[1]}" : -1 }`;
-    } else {
-        sortAux = `{ "${orderTerm[0]}" : 1 }`;
-    }
-    sortAux = JSON.parse(sortAux);
+    let sort = { name: 1 };
 
     // FILTRAMOS LA CONSULTA
-
     let match;
-
-    if(form){
-      match = { "country._id": { $oid: this.companyForm.value.country } , "operationType": { "$ne": "D" } };
-    } else {
-      if (this.company && this.company.country) {
-        match = { "country._id": { $oid: this.company.country._id } , "operationType": { "$ne": "D" } };
+    if(this.companyForm.value.country) {
+      if(this.companyForm.value.country._id) {
+        match = { "country._id": { $oid: this.companyForm.value.country._id }, operationType: { $ne: "D" } };
       } else {
-        match = {"operationType": { "$ne": "D" }};
+        match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
       }
+    } else {
+      match = { "country._id": { $oid: this.company.country._id }, operationType: { $ne: "D" } };
     }
 
     //match = JSON.parse(match);
 
     let project = {
-        "name":1,
-        "country": 1
+        name: 1,
+        operationType: 1,
+        "country._id": 1
     };
 
     // AGRUPAMOS EL RESULTADO
-    let group = {
-        _id: null,
-        count: { $sum: 1 },
-        states: { $push: "$$ROOT" }
-    };
-
+    let group = {};
 
     this._stateService.getStates(
       project, // PROJECT
       match, // MATCH
-      sortAux, // SORT
+      sort, // SORT
       group, // GROUP
       0, // LIMIT
-      1 // SKIP
-  ).subscribe(
-    result => {
-      if (result.states) {
+      0 // SKIP
+    ).subscribe(
+      result => {
+        if (result.states) {
+          this.loading = false;
+          this.states = result.states
+        } 
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
-        this.states = result.states
-      } 
-    },
-    error => {
-      this.showMessage(error._body, 'danger', false);
-      this.loading = false;
-    }
+      }
   );
   }
 
@@ -396,6 +382,7 @@ export class AddCompanyComponent  implements OnInit {
       'employee' : [this.company.employee,[]],
       'country' : [this.company.country,[]],
       'floorNumber': [this.company.floorNumber,[]],
+      'flat': [this.company.flat,[]],
       'state': [this.company.state,[]],
       'addressNumber': [this.company.addressNumber,[]]
     });
@@ -434,6 +421,7 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.type) CompanyType.Client;
     if (!this.company.addressNumber) this.company.addressNumber = '';
     if (!this.company.floorNumber) this.company.floorNumber = '';
+    if (!this.company.flat) this.company.flat = '';
     if (!this.company.address) this.company.address = '';
     if (!this.company.city) this.company.city = '';
     if (!this.company.phones) this.company.phones = '';
@@ -546,6 +534,7 @@ export class AddCompanyComponent  implements OnInit {
       'addressNumber' : this.company.addressNumber,
       'state' : state,
       'floorNumber' : this.company.floorNumber,
+      'flat' : this.company.flat,
       'group': group,
       'employee' : employee
     };
@@ -668,11 +657,12 @@ export class AddCompanyComponent  implements OnInit {
     let sortAux = { order: 1 };
     
     // FILTRAMOS LA CONSULTA
-    let match = { "operationType": { "$ne": "D" } };
+    let match = { operationType: { $ne: "D" } };
     
     // CAMPOS A TRAER
     let project = {
-      "name": 1,
+      name: 1,
+      operationType: 1
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -690,8 +680,9 @@ export class AddCompanyComponent  implements OnInit {
       limit, // LIMIT
       skip // SKIP
     ).subscribe(result => {
-      if (result && result.countries) {
+      if (result && result.countries && result.countries.length > 0) {
         this.countries = result.countries;
+        this.company.country = this.countries[0];
         this.getStates();
       }
       this.loading = false;

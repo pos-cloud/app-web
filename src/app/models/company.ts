@@ -37,6 +37,7 @@ export class Company {
   public otherFields: CompanyFields[];
   public country: Country;
   public floorNumber: string;
+  public flat: string;
   public state: State;
   public addressNumber: string;
   public creationUser: User;

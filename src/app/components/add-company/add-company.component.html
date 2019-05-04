@@ -90,7 +90,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-8">
+                  <div class="form-group col-md-6">
                     <label for="address" class="control-label">Dirección:</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="address" name="address" id="address"/>
@@ -117,14 +117,22 @@
                       {{ formErrors.floorNumber }}
                     </div>
                   </div>
+                  <div class="form-group col-md-2">
+                    <label for="flat" class="control-label">Dpto:</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="flat" name="flat" id="flat"/>
+                    </div>
+                    <div *ngIf="formErrors.flat" class="alert alert-danger">
+                      {{ formErrors.flat }}
+                    </div>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label for="country" class="control-label">País:</label>
-                    <select class="form-control" formControlName="country" name="country" id="country" (change)="getStates('true')">
+                    <select class="form-control" formControlName="country" name="country" id="country" (change)="getStates()">
                       <option *ngFor="let country of countries"
-                              [value]="country._id"
-                              >
+                              [value]="country._id">
                         {{country.name}}
                       </option>
                     </select>

@@ -31,6 +31,7 @@
               <th (click)="orderBy('identificationValue')">Nro Doc</th>
               <th (click)="orderBy('grossIncome')">Ingresos Brutos</th>
               <th (click)="orderBy('address')">Dirección</th>
+              <th (click)="orderBy('addressNumber')">Número</th>
               <th (click)="orderBy('city')">Ciudad</th>
               <th (click)="orderBy('phones')">Teléfonos</th>
               <th (click)="orderBy('emails')">Emails</th>
@@ -49,6 +50,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Nro Doc..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterGrossIncome" placeholder="Ingresos Brutos..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterAddressNumber" placeholder="Número..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmails" placeholder="Emails..." ></th>
@@ -66,6 +68,7 @@
                                                   | filter: filterIdentificationValue:'identificationValue'
                                                   | filter: filterGrossIncome: 'grossIncome'
                                                   | filter: filterAddress:'address'
+                                                  | filter: filterAddressNumber:'addressNumber'
                                                   | filter: filterCity:'city'
                                                   | filter: filterPhones:'phones'
                                                   | filter: filterEmails:'emails'
@@ -92,6 +95,7 @@
               <td>{{company.identificationValue}}</td>
               <td>{{company.grossIncome}}</td>
               <td>{{company.address}}</td>
+              <td>{{company.addressNumber}}</td>
               <td>{{company.city}}</td>
               <td>{{company.phones}}</td>
               <td>{{company.emails}}</td>
@@ -100,7 +104,7 @@
               <td>{{company.observation}}</td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty && !loading">
-              <td colspan="14">No se encontraron empresas</td>
+              <td colspan="15">No se encontraron empresas</td>
             </tr>
           </tbody>
           <tfoot>
@@ -169,6 +173,7 @@
               <th (click)="orderBy('name')" *ngIf="userCountry !== 'AR'">Régimen Fiscal </th>
               <th (click)="orderBy('identificationValue')">Identificador</th>
               <th (click)="orderBy('address')">Dirección </th>
+              <th (click)="orderBy('addressNumber')">Número </th>
               <th (click)="orderBy('phones')">Teléfonos </th>
             </tr>
             <tr>
@@ -177,6 +182,7 @@
                 <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador" ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterAddressNumber" placeholder="Número..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterPhones" placeholder="Teléfonos..." ></th>
             </tr>
           </thead>
@@ -187,6 +193,7 @@
                                                   | filter: filterVATCondition:'description':'vatCondition'
                                                   | filter: filterIdentificationValue:'identificationValue'
                                                   | filter: filterAddress:'address'
+                                                  | filter: filterAddressNumber:'addressNumber'
                                                   | filter: filterPhones:'phones'
                                                   | paginate: { itemsPerPage: itemsPerPage,
                                                                 currentPage: p,
@@ -198,10 +205,11 @@
               <td *ngIf="!company.vatCondition">Consumidor Final</td>
               <td>{{company.identificationValue}}</td>
               <td>{{company.address}}</td>
+              <td>{{company.addressNumber}}</td>
               <td>{{company.phones}}</td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty && !loading">
-              <td colspan="7">No se encontraron empresas</td>
+              <td colspan="8">No se encontraron empresas</td>
             </tr>
           </tbody>
         </table>
