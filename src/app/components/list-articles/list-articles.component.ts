@@ -68,6 +68,7 @@ export class ListArticlesComponent implements OnInit {
       'salePrice',
       'observation',
       'picture',
+      'operationType'
   ];
   public filters: any[];
   public totalItems: number = 0;
@@ -174,6 +175,7 @@ export class ListArticlesComponent implements OnInit {
         observation:1,
         picture: 1,
         category: 1,
+        operationType: 1,
         "make.description": 1,
         "make.visibleSale": 1
       }
