@@ -109,6 +109,7 @@ export class StateComponent implements OnInit {
         this.countries = result.countries;
       } else {
         this.showMessage("No se encontraron paises", 'danger', false);
+        this.loading = true;
       }
       this.loading = false;
 

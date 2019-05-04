@@ -23,11 +23,13 @@
             </th>
             <th (click)="orderBy('code')">Codigo</th>
             <th (click)="orderBy('name')">Nombre</th>
+            <th (click)="orderBy('country.name')">País</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (input)="getStates()" placeholder="Código..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getStates()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['country.name']" (input)="getStates()" placeholder="País..."></th>
           </tr>
         </thead>
         <tbody>
@@ -53,7 +55,7 @@
             </td>
             <td>{{state.code}}</td>
             <td>{{state.name}}</td>
-           
+            <td>{{state.country.name}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron estados</td>

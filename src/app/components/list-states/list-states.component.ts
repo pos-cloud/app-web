@@ -30,6 +30,7 @@ export class ListStatesComponent implements OnInit {
   public displayedColumns = [
     "code",
     "name",
+    "country.name"
   ];
   public filters: any[];
   public filterValue: string;
