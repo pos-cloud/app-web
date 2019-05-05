@@ -12,7 +12,7 @@
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <button class="btn btn-primary" (click)="openModal('update-prices',null)"><i class="fa fa-edit"> Actualizar Precios</i></button>
         <!-- <button class="btn btn-primary" (click)="openModal('import', null)">Importar productos</button> -->
-        <button class="btn btn-primary" (click)="openModal('print', null, 'priceList')"><i class="fa fa-print"></i> Imprimir Lista</button>
+        <button class="btn btn-primary" (click)="openModal('print-list', null)"><i class="fa fa-print"></i> Imprimir Lista</button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
@@ -58,7 +58,7 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', article)" title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', article)" title="Editar"><i class="fa fa-pencil"></i></button>
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar" *ngIf="article && article.type && article.type.toString() !== 'Variante'" ><i class="fa fa-trash-o"></i></button>
-              <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print', article, 'label')" title="Imprimir Etiqueta"><i class="fa fa-print"></i></button>
+              <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print-label', article)" title="Imprimir Etiqueta"><i class="fa fa-print"></i></button>
             </td>
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>

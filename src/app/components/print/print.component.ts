@@ -12,7 +12,7 @@ import { Company } from './../../models/company';
 import { Config } from './../../app.config';
 import { TransactionType, TransactionMovement } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
-import { Article } from './../../models/article';
+import { Article, ArticleType } from './../../models/article';
 
 
 //Paquetes de terceros
@@ -135,6 +135,58 @@ export class PrintComponent implements OnInit {
     this.getConfig();
   }
 
+  public getConfig(): void {
+
+    this.loading = true;
+    this._configService.getConfigApi().subscribe(
+      result => {
+        if (!result.configs) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.hideMessage();
+          this.config = result.configs;
+          if (this.transactionId) {
+            this.getTransaction(this.transactionId);
+          } else {
+            if (this.typePrint === "turn") {
+              this.getShiftClosingByTransaction();
+            } else if (this.typePrint === "invoice") {
+              if (this.transaction.type.requestArticles) {
+                this.getMovementOfArticle();
+              } else {
+                this.getMovementOfCash();
+              }
+            } else if (this.typePrint === "current-account") {
+              this.toPrintCurrentAccount();
+            } else if (this.typePrint === "cash-box") {
+              this.getClosingCashBox();
+            } else if (this.typePrint === "label") {
+              let code;
+              if (this.articleStock) {
+                code = this.articleStock.article.code;
+              } else if (this.article) {
+                code = this.article.code;
+              }
+              this.getBarcode64('code128?value=' + code, this.typePrint);
+            } else if (this.typePrint === "kitchen") {
+              this.toPrintKitchen();
+            } else if (this.typePrint === "IVA") {
+              this.getVATBook();
+            } else if (this.typePrint === "price-list") {
+              this.getArticles();
+            }
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
   public getTransaction( transactionId : string) : void {
 
     this.loading = true;
@@ -176,8 +228,8 @@ export class PrintComponent implements OnInit {
               this.toPrintKitchen();
             } else if (this.typePrint === "IVA"){
               this.getVATBook();
-            } else if (this.typePrint === "priceList") {
-              this.printPriceList();
+            } else if (this.typePrint === "price-list") {
+              this.getArticles();
             }
         } else {
             this.transaction = null;
@@ -187,58 +239,6 @@ export class PrintComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       });
-  }
-
-  public getConfig(): void {
-
-    this.loading = true;
-    this._configService.getConfigApi().subscribe(
-      result => {
-        if (!result.configs) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          this.config = result.configs;
-          if (this.transactionId) {
-            this.getTransaction(this.transactionId);
-          } else {
-            if (this.typePrint === "turn") {
-              this.getShiftClosingByTransaction();
-            } else if (this.typePrint === "invoice") {
-              if (this.transaction.type.requestArticles) {
-                this.getMovementOfArticle();
-              } else {
-                this.getMovementOfCash();
-              }
-            } else if (this.typePrint === "current-account") {
-              this.toPrintCurrentAccount();
-            } else if (this.typePrint === "cash-box") {
-              this.getClosingCashBox();
-            } else if (this.typePrint === "label") {
-              let code;
-              if (this.articleStock) {
-                code = this.articleStock.article.code;
-              } else if (this.article) {
-                code = this.article.code;
-              }
-              this.getBarcode64('code128?value=' + code, this.typePrint);
-            } else if (this.typePrint === "kitchen") {
-              this.toPrintKitchen();
-            } else if (this.typePrint === "IVA") {
-              this.getVATBook();
-            } else if (this.typePrint === "priceList") {
-              this.printPriceList();
-            }
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   public getVATBook() {
@@ -580,7 +580,7 @@ export class PrintComponent implements OnInit {
   }
 
   public printPriceList(): void {
-
+    
     var row = 15;
     var margin = 5;
     this.doc.setFontType('bold');
@@ -618,19 +618,22 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, row, 400, row);
     row += 5;
 
+    let page = 1;
+
     // // Detalle de productos
     if(this.articles && this.articles.length > 0) {
       for(let article of this.articles) {
+
         if(article.code) {
           this.doc.text(article.code, 5, row);
         }
         if (article.description) {
           this.doc.text(article.description, 25, row);
         }
-        if (article.make) {
+        if (article.make && article.make.description) {
           this.doc.text(article.make.description, 90, row);
         }
-        if (article.category) {
+        if (article.category && article.category.description) {
           this.doc.text(article.category.description, 130, row);
         }
         if (article.salePrice) {
@@ -640,6 +643,9 @@ export class PrintComponent implements OnInit {
 
         if (row >= (this.printer.pageHigh - 20)) {
 
+          if(page === 120) {
+            break;
+          }
           this.doc.addPage();
 
           var row = 15;
@@ -682,6 +688,57 @@ export class PrintComponent implements OnInit {
       }
     }
     this.finishImpression();
+  }
+
+  public getArticles(): void {
+
+    this.loading = true;
+
+    /// ORDENAMOS LA CONSULTA
+    let sort = {};
+
+    // FILTRAMOS LA CONSULTA
+    let match = { type: ArticleType.Final, operationType: { $ne: "D" } };
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      type:1,
+      code:1,
+      description:1,
+      salePrice:1,
+      "category.description": 1,
+      "make.description": 1,
+      operationType: 1,
+    }
+
+    // AGRUPAMOS EL RESULTADO
+    let group = { };
+    let skip = 0;
+    let limit = 0;
+    
+    this._articleService.getArticlesV2(
+        project, // PROJECT
+        match, // MATCH
+        sort, // SORT
+        group, // GROUP
+        limit, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (result && result.articles) {
+            this.articles = result.articles;
+        } else {
+            this.articles = null;
+        }
+        this.loading = false;
+        this.printPriceList();
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.printPriceList();
+      }
+    );
   }
 
   public getClosingCashBox(): void {
@@ -2288,7 +2345,6 @@ export class PrintComponent implements OnInit {
       this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 173, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
     }
-
 
     if (this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].observation) {
       if(Config.country !== 'MX') {

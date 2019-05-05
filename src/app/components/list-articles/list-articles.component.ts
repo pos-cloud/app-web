@@ -261,7 +261,7 @@ export class ListArticlesComponent implements OnInit {
     this.getArticles();
   }
 
-  async openModal(op: string, article?: Article, typeOfOperationToPrint?: string) {
+  async openModal(op: string, article?: Article) {
 
     let modalRef;
     switch (op) {
@@ -325,17 +325,15 @@ export class ListArticlesComponent implements OnInit {
 
         });
         break;
-      case 'print':
+      case 'print-label':
       
         await this.getPrinters().then(
           printers => {
             let labelPrinter: Printer;
             if (printers && printers.length > 0) {
               for (let printer of printers) {
-                if (typeOfOperationToPrint === 'label') {
-                  if (printer.printIn === PrinterPrintIn.Label) {
-                    labelPrinter = printer;
-                  }
+                if (printer.printIn === PrinterPrintIn.Label) {
+                  labelPrinter = printer;
                 }
               }
             }
@@ -347,9 +345,36 @@ export class ListArticlesComponent implements OnInit {
               } else {
                 modalRef.componentInstance.articles = this.articles;
               }
-              modalRef.componentInstance.typePrint = typeOfOperationToPrint;
+              modalRef.componentInstance.typePrint = 'label';
             } else {
               this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
+            }
+          }
+        );
+        break;
+      case 'print-list':
+      
+        await this.getPrinters().then(
+          printers => {
+            let counterPrinter: Printer;
+            if (printers && printers.length > 0) {
+              for (let printer of printers) {
+                if (printer.printIn === PrinterPrintIn.Counter) {
+                  counterPrinter = printer;
+                }
+              }
+            }
+            
+            if(counterPrinter) {
+              modalRef = this._modalService.open(PrintComponent);
+              if(article) {
+                modalRef.componentInstance.article = article;
+              } else {
+                modalRef.componentInstance.articles = this.articles;
+              }
+              modalRef.componentInstance.typePrint = 'price-list';
+            } else {
+              this.showMessage('Debe definir un modelo de impresora como Mostrador en el menu Configuración->Impresoras', "info", true);
             }
           }
         );

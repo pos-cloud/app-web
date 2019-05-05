@@ -784,7 +784,6 @@ export class AddSaleOrderComponent implements OnInit {
           movementOfArticle.amount += 1;
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
             if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              console.log("aca");
               await this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle)).then(
                 movementOfArticle => {
                   if(movementOfArticle) {
@@ -1029,7 +1028,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
-    console.log("updateMovementOfArticle");
+
     return new Promise<boolean>( async (resolve, reject) => {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
@@ -1887,7 +1886,6 @@ export class AddSaleOrderComponent implements OnInit {
 
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
-    console.log("saveMovementOfArticle");
     return new Promise<MovementOfArticle>((resolve, reject) => {
     
       if( this.transaction.type.stockMovement) {
