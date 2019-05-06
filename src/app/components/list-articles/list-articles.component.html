@@ -118,11 +118,6 @@
 <!--POS-->
 <section class="container-fluid" *ngIf="userType==='pos'">
   <div class="row" *ngIf="areArticlesVisible" class="articles-list">
-    <div class="center-content" *ngIf="alertMessage !== ''">
-      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-        {{alertMessage}}
-      </ngb-alert>
-    </div>
     <div *ngFor="let article of articles | filter: filterArticle | filter: filterCategorySelected._id:'category'">
       <div class="iarticle" (click)="addItem(article)">
         <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction.type && transaction.type.showPrices">

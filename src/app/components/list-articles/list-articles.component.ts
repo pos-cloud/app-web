@@ -590,7 +590,6 @@ export class ListArticlesComponent implements OnInit {
           this.eventAddItem.emit(null);
         }
       } else {
-        this.showMessage("No se encontraron productos.", "info", true);
         this.eventAddItem.emit(null);
       }
     }
