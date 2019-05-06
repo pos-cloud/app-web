@@ -4,6 +4,10 @@ app-list-articles {
             border-radius: 5px;
       }
 
+      img {
+            image-rendering: auto;
+      }
+
       table {
             cursor: pointer;
       }

@@ -351,7 +351,6 @@ export class AddTransactionTypeComponent implements OnInit {
     this._useOfCFDIService.getUsesOfCFDI().subscribe(
       result => {
         if (!result.usesOfCFDI) {
-          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
           this.usesOfCFDI = null;
         } else {
@@ -504,7 +503,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestCurrency': this.transactionType.requestCurrency,
       'requestEmployee': requestEmployee,
       'fastPayment': fastPayment,
-      'requestCompany': this.transactionType.requestCompany
+      'requestCompany': this.transactionType.requestCompany,
+      'cashBoxImpact': this.transactionType.cashBoxImpact
     });
   }
 

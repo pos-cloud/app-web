@@ -9,8 +9,6 @@ import { HttpClientModule } from '@angular/common/http';
 // paquetes de terceros
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
-import { ChartsModule } from 'ng2-charts/ng2-charts';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 
@@ -560,13 +558,11 @@ import { CountryService } from './services/country.service';
     RouterModule.forRoot(_routes, { useHash: true}),
     NgbModule.forRoot(),
     NgxPaginationModule,
-    ChartsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    NgxChartsModule,
     HttpClientModule,
     // SocketIoModule.forRoot(config),
   ],

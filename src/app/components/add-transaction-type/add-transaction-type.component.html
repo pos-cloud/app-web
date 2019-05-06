@@ -152,7 +152,7 @@
                     <div class="input-group">
                       <select class="form-control" formControlName="defectUseOfCFDI">
                         <option *ngFor="let useOfCFDI of usesOfCFDI"
-                                [ngValue]="employeeType._id"
+                                [ngValue]="useOfCFDI._id"
                                 [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
                                             (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)"
                                 [disabled]="readonly">
