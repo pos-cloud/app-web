@@ -66,7 +66,9 @@ export class ListCategoriesComponent implements OnInit {
 
     this.loading = true;
 
-    this._categoryService.getCategories().subscribe(
+    let query = 'sort="description":1';
+
+    this._categoryService.getCategories(query).subscribe(
       result => {
         if (!result.categories) {
           if (this.userType !== "pos") {
