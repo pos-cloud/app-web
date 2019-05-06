@@ -117,7 +117,7 @@ export class ListArticlesComponent implements OnInit {
     /// ORDENAMOS LA CONSULTA
     let sort = {};
     if(this.userType === 'pos') {
-      sort = { posDescription: 1, favourite: -1 };
+      sort = { posDescription: 1, description: 1, favourite: -1 };
     } else {
       let sortAux;
       if (this.orderTerm[0].charAt(0) === '-') {
