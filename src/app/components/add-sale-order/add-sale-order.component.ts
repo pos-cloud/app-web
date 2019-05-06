@@ -763,13 +763,11 @@ export class AddSaleOrderComponent implements OnInit {
   
         if (!movementOfArticle) {
           movementOfArticle = itemData;
+          movementOfArticle._id = '';
           movementOfArticle.transaction = this.transaction;
-          movementOfArticle.amount += 1;
+          movementOfArticle.amount = 1;
+          movementOfArticle.printed = 0;
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
-            movementOfArticle._id = '';
-            movementOfArticle.printed = 0;
-            movementOfArticle.transaction = this.transaction;
-            movementOfArticle.amount = 1;
             await this.saveMovementOfArticle(movementOfArticle).then(
               movementOfArticle => {
                 if(movementOfArticle) {
@@ -777,8 +775,6 @@ export class AddSaleOrderComponent implements OnInit {
                 }
               }
             );
-          } else {
-            movementOfArticle.amount -= 1;
           }
         } else {
           movementOfArticle.amount += 1;
