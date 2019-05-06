@@ -65,12 +65,12 @@
           </div>
         </div>
         <div class="col-md-2" *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics">
-          <select class="form-control" [(ngModel)]="transaction.useOfCFDI" (change)="updateTransaction()">
-            <option [ngValue]="null" [selected]="(!transaction.useOfCFDI) | async">Uso de CFDI:</option>
+          <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
+            <option [ngValue]="null" [selected]="!transaction.useOfCFDI">Uso de CFDI:</option>
             <option *ngFor="let useOfCFDI of usesOfCFDI"
-                    [ngValue]="useOfCFDI"
+                    [value]="useOfCFDI._id"
                     [selected]="((transaction.useOfCFDI && transaction.useOfCFDI._id && useOfCFDI._id===transaction.useOfCFDI._id) ||
-                                (transaction.useOfCFDI && useOfCFDI._id===transaction.useOfCFDI)) | async">
+                                (transaction.useOfCFDI && useOfCFDI._id===transaction.useOfCFDI))">
               {{ useOfCFDI.description }}
             </option>
           </select>

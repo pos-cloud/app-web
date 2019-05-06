@@ -267,6 +267,11 @@ export class AddSaleOrderComponent implements OnInit {
     );
   }
 
+  async changeUseOfCFDI(useOfCFDI) {
+    this.transaction.useOfCFDI = useOfCFDI;
+    await this.updateTransaction();
+  }
+
   public getRelationTypes(): void {
 
     this.loading = true;
@@ -418,6 +423,12 @@ export class AddSaleOrderComponent implements OnInit {
               }
             );
             this.lastQuotation = this.transaction.quotation;
+
+            if(this.userCountry === 'MX' &&
+              this.transaction.type.defectUseOfCFDI &&
+              !this.transaction.useOfCFDI) {
+              this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
+            }
 
             this.getCancellationTypes();
             if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
