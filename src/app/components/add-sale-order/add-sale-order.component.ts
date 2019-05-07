@@ -63,6 +63,7 @@ import { Currency } from 'app/models/currency';
 import { CancellationType } from 'app/models/cancellation-type';
 import { ListArticlesComponent } from '../list-articles/list-articles.component';
 import { ListCategoriesComponent } from '../list-categories/list-categories.component';
+import { ImportComponent } from '../import/import.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -1590,6 +1591,24 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then((result) => {
         }, (reason) => {
           this.updateMovementOfArticlePrinted();
+        });
+        break;
+      case 'import':
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef.componentInstance.transaction = this.transaction._id;
+        let model: any = new MovementOfArticle();
+        model.model = "movement-of-article";
+        model.relations = new Array();
+        model.relations.push("article_relation_code");
+        
+        modalRef.componentInstance.model = model;
+        modalRef.result.then((result) => {
+          console.log(result)
+          if (result === 'cancel') {
+            this.getMovementsOfTransaction();
+          }
+        }, (reason) => {
+
         });
         break;
       default: ;

@@ -19,5 +19,15 @@ export class ImportService {
       'Database': this._userService.getDatabase()
     });
     return this._http.post(Config.apiURL + 'import-xlsx', objectToImport, { headers: headers }).map (res => res.json());
+  }
+  
+  importMovement(objectToImport,transaccion) {
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': this._userService.getToken(),
+      'Database': this._userService.getDatabase()
+    });
+    console.log(objectToImport);
+    return this._http.post(Config.apiURL + 'import-movement/'+ transaccion, objectToImport, { headers: headers }).map (res => res.json());
 	}
 }

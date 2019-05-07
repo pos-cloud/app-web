@@ -18,6 +18,7 @@ export class ImportComponent  implements OnInit {
   public filePath: string = ''; //Ruta de archivo a importar
   public modelToImport: Array<String>; //El arreglo donde se guardarán la ruta, el modelo, y las propiedades a importar
   @Input() model: Array<String>; //Recibimos el objeto a importar, con su clave primaria
+  @Input() transaction : string;
   public properties: Array<String>; //Donde guardaremos las propiedades del objeto a importar
   public newProperties: Array<String>; //Donde guardaremos las propiedades del objeto a importar modificando las propiedades delas relaciones
   public importForm: FormGroup;
@@ -121,51 +122,107 @@ export class ImportComponent  implements OnInit {
 
   public import(): void {
 
-    this.loading = true;
-    this.modelToImport = this.importForm.value;
-    this._importService.import(this.modelToImport).subscribe(
-      result => {
-        if (result.message) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          var message = '';
-          if (result.records === 0) {
-            message = "No se encontraron registros para importar.";
-          } else if (result.records === 1) {
-            message = "Se procesó " + result.records + " registro.";
-            if (result.recordSaved === 1) {
-              message += "Se creó " + result.recordSaved + " nuevo registro.";
-            } else if (result.recordSaved > 1) {
-              message += "Se crearon " + result.recordSaved + " nuevos registros.";
-            }
-            if (result.recordUpdated === 1) {
-              message += "Se actualizó " + result.recordUpdated + " registro.";
-            } else if (result.recordUpdated > 1) {
-              message += "Se actualizaron " + result.recordUpdated + " registros.";
-            }
+    if(!this.transaction) {
+      this.loading = true;
+      this.modelToImport = this.importForm.value;
+      this._importService.import(this.modelToImport).subscribe(
+        result => {
+          if (result.message) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
-            this.showMessage("Se han importado con éxito " + result.records + " registros.", 'success', true);
-            message = "Se procesó " + result.records + " registro.";
-            if (result.recordSaved === 1) {
-              message += "Se creó " + result.recordSaved + " nuevo registro.";
-            } else if (result.recordSaved > 1) {
-              message += "Se crearon " + result.recordSaved + " nuevos registros.";
+            var message = '';
+            if (result.records === 0) {
+              message = "No se encontraron registros para importar.";
+            } else if (result.records === 1) {
+              message = "Se procesó " + result.records + " registro.";
+              if (result.recordSaved === 1) {
+                message += "Se creó " + result.recordSaved + " nuevo registro.";
+              } else if (result.recordSaved > 1) {
+                message += "Se crearon " + result.recordSaved + " nuevos registros.";
+              }
+              if (result.recordUpdated === 1) {
+                message += "Se actualizó " + result.recordUpdated + " registro.";
+              } else if (result.recordUpdated > 1) {
+                message += "Se actualizaron " + result.recordUpdated + " registros.";
+              }
+            } else {
+              this.showMessage("Se han importado con éxito " + result.records + " registros.", 'success', true);
+              message = "Se procesó " + result.records + " registro.";
+              if (result.recordSaved === 1) {
+                message += "Se creó " + result.recordSaved + " nuevo registro.";
+              } else if (result.recordSaved > 1) {
+                message += "Se crearon " + result.recordSaved + " nuevos registros.";
+              }
+              if (result.recordUpdated === 1) {
+                message += "Se actualizó " + result.recordUpdated + " registro.";
+              } else if (result.recordUpdated > 1) {
+                message += "Se actualizaron " + result.recordUpdated + " registros.";
+              }
             }
-            if (result.recordUpdated === 1) {
-              message += "Se actualizó " + result.recordUpdated + " registro.";
-            } else if (result.recordUpdated > 1) {
-              message += "Se actualizaron " + result.recordUpdated + " registros.";
-            }
+            this.showMessage(message, 'success', true);
+            this.activeModal.close({ message: "ok" });
           }
-          this.showMessage(message, 'success', true);
+          this.loading = false;
+        },
+        error => {
+          this.showMessage(error._body, 'danger', true);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', true);
-        this.loading = false;
+      );
+    } else {
+      this.loading = true;
+      this.modelToImport = this.importForm.value;
+      this._importService.importMovement(this.modelToImport, this.transaction).subscribe(
+          result => {
+            if (result.message) {
+              if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            } else {
+              var message = '';
+              if (result.records === 0) {
+                message = "No se encontraron registros para importar.";
+              } else if (result.records === 1) {
+                message = "Se procesó " + result.records + " registro.";
+                if (result.recordSaved === 1) {
+                  message += "Se creó " + result.recordSaved + " nuevo registro.";
+                } else if (result.recordSaved > 1) {
+                  message += "Se crearon " + result.recordSaved + " nuevos registros.";
+                }
+                if (result.recordUpdated === 1) {
+                  message += "Se actualizó " + result.recordUpdated + " registro.";
+                } else if (result.recordUpdated > 1) {
+                  message += "Se actualizaron " + result.recordUpdated + " registros.";
+                }
+              } else {
+                this.showMessage("Se han importado con éxito " + result.records + " registros.", 'success', true);
+                message = "Se procesó " + result.records + " registro.";
+                if (result.recordSaved === 1) {
+                  message += "Se creó " + result.recordSaved + " nuevo registro.";
+                } else if (result.recordSaved > 1) {
+                  message += "Se crearon " + result.recordSaved + " nuevos registros.";
+                }
+                if (result.recordUpdated === 1) {
+                  message += "Se actualizó " + result.recordUpdated + " registro.";
+                } else if (result.recordUpdated > 1) {
+                  message += "Se actualizaron " + result.recordUpdated + " registros.";
+                }
+              }
+              this.showMessage(message, 'success', true);
+            }
+            this.loading = false;
+          },
+          error => {
+            this.showMessage(error._body, 'danger', true);
+            this.loading = false;
+          }
+        );
       }
-    );
+
+    
+  }
+
+  public handleFileInput(files: File) {
+    
+    console.log(files);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
