@@ -2063,13 +2063,13 @@ export class AddSaleOrderComponent implements OnInit {
 
   public showArticles(category?: Category): void {
 
-    this.listCategoriesComponent.areCategoriesVisible = false;
-    this.listArticlesComponent.areArticlesVisible = true;
     if(category) {
       this.categorySelected = category;
-      this.listArticlesComponent.filterCategorySelected = category;
+      this.listArticlesComponent.filterItem(category);
       this.listArticlesComponent.hideMessage();
     }
+    this.listCategoriesComponent.areCategoriesVisible = false;
+    this.listArticlesComponent.areArticlesVisible = true;
     this.focusEvent.emit(true);
   }
 

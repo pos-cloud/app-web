@@ -46,7 +46,6 @@ export class ListArticlesComponent implements OnInit {
   public loading: boolean = false;
   @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = false;
-  @Input() filterCategorySelected: Category;
   @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
   public apiURL = Config.apiURL;
@@ -73,6 +72,7 @@ export class ListArticlesComponent implements OnInit {
   public filters: any[];
   public totalItems: number = 0;
   public filterPipe: FilterPipe = new FilterPipe();
+  public filteredArticles: Article[];
 
   constructor(
     public _articleService: ArticleService,
@@ -84,12 +84,9 @@ export class ListArticlesComponent implements OnInit {
   ) {
     this.filters = new Array();
     this.articles = new Array();
+    this.filteredArticles = new Array();
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
-    }
-    if(!this.filterCategorySelected) {
-      this.filterCategorySelected = new Category();
-      this.filterCategorySelected._id = '';
     }
   }
 
@@ -553,24 +550,26 @@ export class ListArticlesComponent implements OnInit {
     });
   }
 
-  public filterItem() {
+  public filterItem(category?: Category) {
     
-    if(this.filterArticle && this.filterArticle !== "") {
+    if(category) {
+      this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+    } else if(this.filterArticle && this.filterArticle !== "") {
 
-      let articles: Article[] = this.filterPipe.transform(this.articles, this.filterArticle);
+      this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
 
-      if (articles && articles.length > 0 && this.articles && this.articles.length >= 2) {
+      if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
 
         this.hideMessage();
   
         let article;
         var count = 1;
   
-        if (articles.length === 1) {
-          article = articles[0];
-        } else if (articles.length > 1) {
+        if (this.filteredArticles.length === 1) {
+          article = this.filteredArticles[0];
+        } else if (this.filteredArticles.length > 1) {
           count = 0;
-          for(let art of articles) {
+          for(let art of this.filteredArticles) {
             if(art.type === ArticleType.Final) {
               count++;
               article = art;
@@ -581,10 +580,10 @@ export class ListArticlesComponent implements OnInit {
         if (  count === 1 &&
               this.filterArticle &&
             ( article &&
-              article.barcode === this.filterArticle ||
-              article.description.toUpperCase() === this.filterArticle.toUpperCase() ||
-              article.posDescription.toUpperCase() === this.filterArticle.toUpperCase() ||
-              article.code === this.filterArticle)) {
+              (article.barcode && article.barcode === this.filterArticle) ||
+              (article.description && article.description.toUpperCase() === this.filterArticle.toUpperCase()) ||
+              (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
+              (article.code && article.code === this.filterArticle))) {
                 this.filterArticle = '';
                 this.addItem(article);
         } else {
