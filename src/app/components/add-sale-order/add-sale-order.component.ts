@@ -777,6 +777,10 @@ export class AddSaleOrderComponent implements OnInit {
           movementOfArticle = itemData;
           movementOfArticle._id = '';
           movementOfArticle.transaction = this.transaction;
+          movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+          if(this.transaction.type.stockMovement) {
+            movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+          }
           movementOfArticle.amount = 1;
           movementOfArticle.printed = 0;
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
@@ -817,6 +821,10 @@ export class AddSaleOrderComponent implements OnInit {
         movementOfArticle = itemData;
         movementOfArticle._id = '';
         movementOfArticle.transaction = this.transaction;
+        movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+        if(this.transaction.type.stockMovement) {
+          movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+        }
         movementOfArticle.printed = 0;
         movementOfArticle.amount = 1;
         this.openModal("movement_of_article", movementOfArticle);
@@ -1341,6 +1349,10 @@ export class AddSaleOrderComponent implements OnInit {
         break;
       case 'movement_of_article':
         movementOfArticle.transaction = this.transaction;
+        movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+        if(this.transaction.type.stockMovement) {
+          movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+        }
         modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg' });
         modalRef.componentInstance.movementOfArticle = movementOfArticle;
         modalRef.result.then((result) => {
@@ -1603,7 +1615,6 @@ export class AddSaleOrderComponent implements OnInit {
         
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
-          console.log(result)
           if (result === 'cancel') {
             this.getMovementsOfTransaction();
           }
@@ -1914,11 +1925,6 @@ export class AddSaleOrderComponent implements OnInit {
 
     return new Promise<MovementOfArticle>((resolve, reject) => {
     
-      if( this.transaction.type.stockMovement) {
-        movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-      }
-
-      movementOfArticle.modifyStock = this.transaction.type.modifyStock;
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);

@@ -867,6 +867,10 @@ export class AddMovementOfCashComponent implements OnInit {
     movementOfArticle.markupPrice = 0.00;
     movementOfArticle.markupPercentage = 0.00;
     movementOfArticle.transaction = this.transaction;
+    movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+    if(this.transaction.type.stockMovement) {
+      movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+    }
     this.getTaxVAT(movementOfArticle);
   }
 
@@ -909,13 +913,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
-
-    movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-    if(this.transaction.type.stockMovement) {
-     movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString(); 
-    }
     
-
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {

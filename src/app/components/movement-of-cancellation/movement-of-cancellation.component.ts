@@ -471,7 +471,10 @@ export class MovementOfCancellationComponent implements OnInit {
               movementOfArticle.article = mov.article;
               movementOfArticle.transaction = this.transactionDestination;
               movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
-              movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
+              if(this.transactionDestination.type.stockMovement) {
+                movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
+              }
+    
               movementOfArticle.measure = mov.measure;
               movementOfArticle.quantityMeasure = mov.quantityMeasure;
 

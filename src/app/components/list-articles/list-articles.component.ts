@@ -425,6 +425,10 @@ export class ListArticlesComponent implements OnInit {
           movementOfArticle.category = article.category;
           movementOfArticle.barcode = article.barcode;
           movementOfArticle.transaction = this.transaction;
+          movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+          if(this.transaction.type.stockMovement) {
+            movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
+          }
 
           let quotation = 1;
           if(this.transaction.quotation) {
