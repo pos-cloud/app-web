@@ -7,7 +7,8 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de paises
       <div class="pull-right">
-          <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar País</i></button>
+        <button class="btn btn-primary fa fa-file-import" (click)="importCountry()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Importar Países</span></button>
+        <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar País</i></button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -21,11 +22,13 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
+            <th>Bandera</th>
             <th (click)="orderBy('code')">Codigo</th>
             <th (click)="orderBy('name')">Nombre</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (input)="getCountries()" placeholder="Código..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getCountries()" placeholder="Nombre..."></th>
           </tr>
@@ -54,6 +57,7 @@
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
             </td>
+            <td> <img src={{country.flag}} width="50px" height="30px" alt="Imagen no disponible"></td>
             <td>{{country.code}}</td>
             <td>{{country.name}}</td>
            

@@ -5,7 +5,7 @@ import { CountryService } from '../../services/country.service'
 import { Country } from '../../models/country'
 import { CountryComponent } from '../country/country.component'
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-list-countries',
@@ -31,6 +31,7 @@ export class ListCountriesComponent implements OnInit {
   public displayedColumns = [
     "code",
     "name",
+    "flag"
   ];
   public filters: any[];
   public filterValue: string;
@@ -38,6 +39,7 @@ export class ListCountriesComponent implements OnInit {
   constructor(
     public alertConfig: NgbAlertConfig,
     public countryService: CountryService,
+    public _configService : ConfigService,
     public _router: Router,
     public _modalService: NgbModal,
   ) {
@@ -51,6 +53,66 @@ export class ListCountriesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getCountries()
+  }
+
+  public async importCountry() {
+
+    let countryImport = 0;
+
+    this._configService.getCountry().subscribe(
+      async result => {
+        let countries = JSON.parse(result["_body"]);
+
+        for (let index = 0; index < countries.length; index++) {
+          
+          let country = new Country();
+
+          country.code = countries[index]['alpha2Code'];
+          country.alpha2Code = countries[index]['alpha2Code'];
+          country.alpha3Code = countries[index]['alpha3Code'];
+          country.flag = countries[index]['flag'];
+          country.name = countries[index]['name'];
+          country.callingCodes = countries[index]['callingCodes'][0];
+          country.timezones = countries[index]['timezones'][0];
+
+          let result = await this.saveCountry(country)
+
+          if(result){
+            countryImport ++;
+          }
+
+          this.loading = true;
+          
+        }
+        this.loading = false;
+        this.refresh();
+      }
+    )
+    
+  }
+
+  public async saveCountry(country:Country){
+
+    return new Promise((resolve, reject) => { 
+
+      this.countryService.addCountry(country).subscribe(
+        result => {
+          if (!result.country) {
+            this.loading = false;
+            if (result.message && result.message !== '') { 
+              this.showMessage(result.message, 'info', true); 
+            }
+          } else {
+              this.loading = false;
+              resolve(result.country);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
+    })
   }
 
   public getCountries() : void {

@@ -151,7 +151,7 @@ export class ConfigService {
 	}
 	
 	getCountry() {
-		return this._http.get("https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones")
+		return this._http.get("https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones;alpha3Code;flag;callingCodes")
 	}
 
 	getTimeZone(country : string) {
