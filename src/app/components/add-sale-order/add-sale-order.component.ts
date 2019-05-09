@@ -405,7 +405,7 @@ export class AddSaleOrderComponent implements OnInit {
             }
             await this.getCurrencies().then(
               currencies => {
-                if(currencies) {
+                if(currencies && Config.currency) {
                   this.currencies = currencies;
                   this.transaction.currency = Config.currency;
                 }
@@ -1559,21 +1559,29 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
         modalRef.componentInstance.op = "change-employee";
         modalRef.result.then(async (result) => {
-          if (result.employee) {
-            this.transaction.turnClosing = result.turn;
-            this.transaction.employeeClosing = result.employee;
-            this.table.employee = result.employee;
+          if (result) {
+            if(result.turn) {
+              this.transaction.turnClosing = result.turn;
+            }
+            if(result.employee) {
+              this.transaction.employeeClosing = result.employee;
+              if(this.table) {
+                this.table.employee = result.employee;
+              }
+            }
             await this.updateTransaction().then(
               async transaction => {
                 if(transaction) {
                   this.transaction = transaction;
-                  await this.updateTable().then(
-                    table => {
-                      if(table) {
-                        this.table = table;
+                  if(this.table) {
+                    await this.updateTable().then(
+                      table => {
+                        if(table) {
+                          this.table = table;
+                        }
                       }
-                    }
-                  );
+                    );
+                  }
                 }
               }
             );
@@ -1676,7 +1684,7 @@ export class AddSaleOrderComponent implements OnInit {
   
             if (this.transaction && this.transaction.type.printable) {
         
-              if (this.posType === "resto") {
+              if (this.table) {
                 this.table.employee = null;
                 this.table.state = TableState.Available;
                 this.table = await this.updateTable();

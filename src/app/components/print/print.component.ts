@@ -1497,7 +1497,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA MONTO ENTRADA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
           if (inputAmounts[close[i]['movement-of-cash']['type']['name']]) {
             inputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
@@ -1506,7 +1506,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA MONTO SALIDA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
           if (outputAmounts[close[i]['movement-of-cash']['type']['name']]) {
             outputAmounts[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
@@ -1515,7 +1515,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA CANTIDAD ENTRADA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Entrada' && close[i].state === 'Cerrado') {
           if (amountsInput[close[i]['movement-of-cash']['type']['name']]) {
             amountsInput[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
@@ -1524,7 +1524,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA CANTIDAD SALIDA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Salida' && close[i].state === 'Cerrado') {
           if (amountsOutput[close[i]['movement-of-cash']['type']['name']]) {
             amountsOutput[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
@@ -1533,7 +1533,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA MONTO ANULADO ENTRADA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
           if (amountsInputCanceled[close[i]['movement-of-cash']['type']['name']]) {
             amountsInputCanceled[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
@@ -1542,7 +1542,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA MONTO ANULADO SALIDA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
           if (amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']]) {
             amountsOutputCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
@@ -1551,7 +1551,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA CANTIDAD ANULADO ENTRADA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Entrada' && close[i].state === 'Anulado') {
           if (inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
             inputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += close[i]['movement-of-cash']['amountPaid'];
           } else {
@@ -1560,7 +1560,7 @@ export class PrintComponent implements OnInit {
         }
 
         // SUMA CANTIDAD ANULADO SALIDA
-        if (!close[i].type.cashClosing && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
+        if (!close[i].type.cashClosing && !close[i].type.cashOpening && close[i].type.movement === 'Salida' && close[i].state === 'Anulado') {
           if (outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']]) {
             outputAmountsCanceled[close[i]['movement-of-cash']['type']['name']] += 1;
           } else {
@@ -1746,11 +1746,11 @@ export class PrintComponent implements OnInit {
     if (this.turn.employee) { this.doc.text('Mozo: ' + this.turn.employee.name, 15, row) };
     if (this.turn.startDate) { this.doc.text('Apertura: ' + this.dateFormat.transform(this.turn.startDate, 'DD/MM/YYYY HH:mm'), 15, row += 8) };
     if (this.turn.endDate) { this.doc.text('Cierre: ' + this.dateFormat.transform(this.turn.endDate, 'DD/MM/YYYY HH:mm'), 15, row += 8) };
-    if (this.shiftClosingTransaction) { this.doc.text('Facturado: ' + decimalPipe.transform(this.shiftClosingTransaction.inputAmount, '1.2-2'), 15, row += 8) };
+    if (this.shiftClosingTransaction) { this.doc.text('Facturado: $ ' + decimalPipe.transform(this.shiftClosingTransaction.invoicedAmount, '1.2-2'), 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Facturado: $0.00', 15, row += 8) };
-    if (this.shiftClosingTransaction) { this.doc.text('Tickets: ' + this.shiftClosingTransaction.amountInput, 15, row += 8) };
+    if (this.shiftClosingTransaction) { this.doc.text('Tickets: ' + this.shiftClosingTransaction.amountOrders, 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Tickets: 0', 15, row += 8) };
-    if (this.shiftClosingTransaction) { this.doc.text('Tiques Anulados: ' + this.shiftClosingTransaction.amountInputCanceled, 15, row += 8) };
+    if (this.shiftClosingTransaction) { this.doc.text('Tiques Anulados: ' + this.shiftClosingTransaction.amountOrdersCanceled, 15, row += 8) };
     if (!this.shiftClosingTransaction) { this.doc.text('Tickets Anulados: 0', 15, row += 8) };
     if (this.shiftClosingTransaction && this.shiftClosingTransaction.detailCanceled && this.shiftClosingTransaction.detailCanceled.length > 0) {
       this.doc.text('Detalle de Tickets Anulados:', 15, row += 8)

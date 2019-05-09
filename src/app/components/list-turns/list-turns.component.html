@@ -45,8 +45,8 @@
                   <i class="fa fa-print"></i>
                 </button>
               </td>
-              <td>{{turn.startDate }}</td>
-              <td *ngIf="turn.endDate">{{turn.endDate }}</td>
+              <td>{{turn.startDate | dateFormat:'DD/MM/YYYY hh:mm:ss' }}</td>
+              <td *ngIf="turn.endDate">{{turn.endDate | dateFormat:'DD/MM/YYYY hh:mm:ss'  }}</td>
               <td *ngIf="!turn.endDate"></td>
               <td>
                 <h6>

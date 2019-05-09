@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title">Seleccionar {{ typeEmployee.description }}</h4>
+  <h4 class="modal-title" *ngIf="!typeEmployee">Seleccionar Empleado</h4>
+  <h4 class="modal-title" *ngIf="typeEmployee">Seleccionar {{ typeEmployee.description }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -13,7 +14,7 @@
   <div class="modal-body">
     <div class="row">
       <div class="form-group col-md-12">
-        <label for="employee" class="control-label">{{ typeEmployee.description }}:</label>
+        <label for="employee" class="control-label" *ngIf="typeEmployee">{{ typeEmployee.description }}:</label>
         <div class="center-content">
           <div class="btn-group-vertical">
             <button type="button" *ngFor="let employee of employees" class="btn btn-employee" [ngClass]="{'btn-primary':employee._id===employeeSelected._id,

@@ -34,7 +34,7 @@ export class CashBoxService {
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + 'cash-boxes/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL + 'cash-boxes/sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
 
   getCashBox (id) {

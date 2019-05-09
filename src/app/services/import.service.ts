@@ -27,7 +27,6 @@ export class ImportService {
       'Authorization': this._userService.getToken(),
       'Database': this._userService.getDatabase()
     });
-    console.log(objectToImport);
     return this._http.post(Config.apiURL + 'import-movement/'+ transaccion, objectToImport, { headers: headers }).map (res => res.json());
 	}
 }

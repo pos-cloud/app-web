@@ -31,13 +31,17 @@ export class PaymentMethodService {
 		return this._http.get(Config.apiURL + "payment-method/"+id, { headers: headers }).map (res => res.json());
   }
 
-  getPaymentMethods () {
+  getPaymentMethods (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
 			'Authorization': this._userService.getToken(),
 			'Database': this._userService.getDatabase()
 		});
-		return this._http.get(Config.apiURL + "payment-methods", { headers: headers }).map (res => res.json());
+		if(query) {
+			return this._http.get(Config.apiURL + 'payment-methods/' + query, { headers: headers }).map (res => res.json());
+		} else {
+			return this._http.get(Config.apiURL + "payment-methods", { headers: headers }).map (res => res.json());
+		}
   }
 
   savePaymentMethod (paymentMethod : PaymentMethod) {

@@ -27,10 +27,12 @@ import { ViewTransactionComponent } from './../../components/view-transaction/vi
 import { CashBoxComponent } from '../cash-box/cash-box.component';
 import { EmployeeType } from 'app/models/employee-type';
 import { EmployeeTypeService } from 'app/services/employee-type.service';
-import { Company } from 'app/models/company';
 import { Currency } from 'app/models/currency';
 import { CurrencyService } from 'app/services/currency.service';
 import { Config } from 'app/app.config';
+import { CashBox } from 'app/models/cash-box';
+import { CashBoxService } from 'app/services/cash-box.service';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -59,6 +61,9 @@ export class PointOfSaleComponent implements OnInit {
   public totalItems = 0;
   public printers: Printer[];
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
+  public transaction: Transaction;
+  public printerSelected: Printer;
+  public employeeTypeSelected: EmployeeType;
 
   constructor(
     public _turnService: TurnService,
@@ -71,14 +76,16 @@ export class PointOfSaleComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
-    public _currencyService: CurrencyService
+    public _currencyService: CurrencyService,
+    public _cashBoxService: CashBoxService,
+    public _userService: UserService,
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
     this.getPrinters();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -87,7 +94,13 @@ export class PointOfSaleComponent implements OnInit {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
     } else if (this.posType === "delivery") {
-      this.getTransactionTypesOfCashBox();
+      await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]').then(
+        transactionTypes => {
+          if (transactionTypes) {
+            this.transactionTypes = transactionTypes;
+          }
+        }
+      );
       this.getOpenTransactions();
     } else if (this.posType === "mostrador") {
       if (pathLocation[3] === "venta") {
@@ -99,7 +112,13 @@ export class PointOfSaleComponent implements OnInit {
       } else if (pathLocation[3] === "fondo") {
         this.transactionMovement = TransactionMovement.Money;
       }
-      this.getTransactionTypesByMovement();
+      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '"').then(
+        transactionTypes => {
+          if (transactionTypes) {
+            this.transactionTypes = transactionTypes;
+          }
+        }
+      );
       this.getOpenTransactionsByMovement(this.transactionMovement);
     } else {
       this._router.navigate(['/']);
@@ -128,8 +147,6 @@ export class PointOfSaleComponent implements OnInit {
 
   public getPrinters(): void {
 
-    this.loading = true;
-
     this._printerService.getPrinters().subscribe(
       result => {
         if (!result.printers) {
@@ -137,18 +154,14 @@ export class PointOfSaleComponent implements OnInit {
         } else {
           this.printers = result.printers;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
 
   public getTransactionTypesByMovement(): void {
-
-    this.loading = true;
 
     this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
       result => {
@@ -156,32 +169,35 @@ export class PointOfSaleComponent implements OnInit {
         } else {
           this.transactionTypes = result.transactionTypes;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
 
-  public getTransactionTypesOfCashBox(): void {
+  public getTransactionTypes(query?: string): Promise<TransactionType[]> {
 
-    this.loading = true;
+    return new Promise<TransactionType[]>((resolve, reject) => {
 
-    this._transactionTypeService.getTransactionTypesOfCashBox().subscribe(
-      result => {
-        if (!result.transactionTypes) {
-        } else {
-          this.transactionTypes = result.transactionTypes;
+      this.loading = true;
+  
+      this._transactionTypeService.getTransactionTypes(query).subscribe(
+        result => {
+          this.loading = false;
+          if (!result.transactionTypes) {
+            resolve(null);
+          } else {
+            resolve(result.transactionTypes);
+          }
+        },
+        error => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public getRooms(): void {
@@ -280,140 +296,196 @@ export class PointOfSaleComponent implements OnInit {
 
   public getDefectOrder(): void {
 
-    this.loading = true;
-
     this._transactionTypeService.getDefectOrder().subscribe(
       async result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.transactionTypes = null;
         } else {
-          let transaction = new Transaction();
-          transaction.type = result.transactionTypes[0];
-          await this.getCurrencies().then(
-            currencies => {
-              if(currencies) {
-                transaction.currency = Config.currency;
-              }
-              if(transaction.quotation === undefined ||
-                transaction.quotation === null) {
-                if(currencies && currencies.length > 0) {
-                  for(let currency of currencies) {
-                    if(Config.currency && currency._id !== Config.currency._id) {
-                      transaction.quotation = currency.quotation;
-                    }
-                  }
-                } else {
-                  transaction.quotation = 1;
-                }
-              }
-            }
-          );
-          this.getLastTransactionByType(transaction);
+          this.addTransaction(result.transactionTypes[0]);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
 
   async addTransaction(type: TransactionType) {
 
+    this.transaction = new Transaction();
+    this.transaction.type = type;
+        
+    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+      this.transaction.origin = this.transaction.type.fixedOrigin;
+    }
+
+    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
+      this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+    }
+
     if(!type.cashOpening && !type.cashClosing) {
-      if (type.requestEmployee && type.requestArticles) {
-        this.openModal('select-employee', type);
-      } else if (type.requestCompany) {
-          this.openModal('company', type);
-      } else if (type.requestArticles) {
-        if (this.transactionMovement !== TransactionMovement.Purchase) {
-          let transaction = new Transaction();
-          transaction.type = type;
-          await this.getCurrencies().then(
-            currencies => {
-              if(currencies) {
-                transaction.currency = Config.currency;
-              }
-              if(transaction.quotation === undefined ||
-                transaction.quotation === null) {
-                if(currencies && currencies.length > 0) {
-                  for(let currency of currencies) {
-                    if(Config.currency && currency._id !== Config.currency._id) {
-                      transaction.quotation = currency.quotation;
-                    }
+
+      if(Config.modules.money && this.transaction.type.cashBoxImpact) {
+        await this.getOpenCashBox().then(
+          async cashBox => {
+            if(cashBox) {
+              this.transaction.cashBox = cashBox;
+              this.nextStepTransaction();
+            } else {
+              await this.getTransactionTypes('where="cashOpening":true').then(
+                transactionTypes => {
+                  if(transactionTypes && transactionTypes.length > 0) {
+                    this.transaction.type = transactionTypes[0];
+                    this.openModal('cash-box');
+                  } else {
+                    this.showMessage("Debe configurar un tipo de transacción para realizar la apertura de caja.", "info", true);
                   }
-                } else {
-                  transaction.quotation = 1;
                 }
-              }
+              );
             }
-          );
-          this.getLastTransactionByType(transaction);
-        } else {
-          this.openModal('transaction', type);
-        }
+          }
+        );
       } else {
-        this.openModal('transaction', type);
+        this.nextStepTransaction();
       }
     } else {
-      this.openModal('cash-box', type);
+      this.openModal('cash-box');
     }
   }
 
-  public openModal(
-    op: string,
-    typeTransaction?: TransactionType,
-    transaction?: Transaction,
-    printerSelected?: Printer,
-    employeeType?: EmployeeType,
-    company?: Company): void {
+  async assignCurrency(): Promise<boolean> {
+
+    return new Promise<boolean>(async (resolve, reject) => {
+
+      await this.getCurrencies().then(
+        currencies => {
+          if(currencies && Config.currency) {
+            this.transaction.currency = Config.currency;
+          }
+          if(this.transaction.quotation === undefined ||
+            this.transaction.quotation === null) {
+            if(currencies && currencies.length > 0) {
+              for(let currency of currencies) {
+                if(Config.currency && currency._id !== Config.currency._id) {
+                  this.transaction.quotation = currency.quotation;
+                }
+              }
+            } else {
+              this.transaction.quotation = 1;
+            }
+          }
+          resolve(true);
+        }
+      );
+    });
+  }
+
+  public getOpenCashBox(): Promise<CashBox> {
+
+    return new Promise<CashBox>((resolve, reject) => {    
+
+      this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
+        result => {
+          if (!result.cashBoxes) {
+            resolve(null);
+          } else {
+            resolve(result.cashBoxes[0]);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  async nextStepTransaction() {
+
+    if(this.transaction && 
+      (!this.transaction._id || this.transaction._id === "")) {
+      await this.getLastTransactionByType().then(
+        async transaction => {
+          if(transaction) {
+            this.transaction.number = transaction.number + 1;
+          } else {
+            this.transaction.number = 1;
+          }
+          await this.assignCurrency().then(
+            async result => {
+              if(result) {
+                await this.saveTransaction().then(
+                  async transaction => {
+                    if(transaction) {
+                      this.transaction = transaction;
+                    }
+                  })
+                ;
+              }
+            }
+          );
+        }
+      );
+    } else {
+      await this.updateTransaction().then(
+        transaction => {
+          if(transaction) {
+            this.transaction = transaction;
+          }
+        }
+      );
+    }
+
+    if (!this.transaction.employeeClosing &&
+        this.transaction.type.requestEmployee && 
+        this.transaction.type.requestArticles &&
+        this.posType !== 'delivery') {
+      this.openModal('select-employee');
+    } else if (!this.transaction.company &&
+                this.transaction.type.requestCompany) {
+      this.openModal('company');
+    } else if (this.transaction.type.requestArticles && this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
+    } else {
+      this.openModal('transaction');
+    }
+  }
+
+  public cancelTransaction(transaction: Transaction): void {
+    this.transaction = transaction;
+    this.openModal('cancel-transaction');
+  }
+
+  public viewTransaction(transaction: Transaction): void {
+    this.transaction = transaction;
+    this.openModal('view-transaction');
+  }
+
+  public chargeTransaction(transaction: Transaction): void {
+    this.transaction = transaction;
+    this.openModal('charge');
+  }
+
+  public openTransaction(transaction: Transaction): void {
+    
+    this.transaction = transaction;
+    this.nextStepTransaction();
+  }
+
+  async openModal(op: string) {
 
     let modalRef;
 
     switch (op) {
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
-        modalRef.componentInstance.type = typeTransaction.requestCompany;
+        modalRef.componentInstance.type = this.transaction.type.requestCompany;
         modalRef.result.then(
           async (result) => {
             if(result.company) {
-              if (transaction) {
-                transaction.company = result.company;
-                this.updateTransaction(transaction, false);
-              } else {
-                transaction = new Transaction();
-                transaction.type = typeTransaction;
-                await this.getCurrencies().then(
-                  currencies => {
-                    if(currencies) {
-                      transaction.currency = Config.currency;
-                    }
-                    if(transaction.quotation === undefined ||
-                      transaction.quotation === null) {
-                      if(currencies && currencies.length > 0) {
-                        for(let currency of currencies) {
-                          if(Config.currency && currency._id !== Config.currency._id) {
-                            transaction.quotation = currency.quotation;
-                          }
-                        }
-                      } else {
-                        transaction.quotation = 1;
-                      }
-                    }
-                  }
-                );
-                transaction.company = result.company;
-                if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
-                  transaction.origin = transaction.type.fixedOrigin;
-                }
-
-                if (transaction.type.fixedLetter && transaction.type.fixedLetter !== '') {
-                  transaction.letter = transaction.type.fixedLetter.toUpperCase();
-                }
-                this.getLastTransactionByType(transaction);
-              }
+              this.transaction.company = result.company;
+              this.nextStepTransaction();
             } else {
               this.refresh();
             }
@@ -425,30 +497,20 @@ export class PointOfSaleComponent implements OnInit {
       case 'transaction':
 
         modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
-
-        if ( !transaction ) {
-          modalRef.componentInstance.transactionTypeId = typeTransaction._id;
-        } else {
-          modalRef.componentInstance.transactionId = transaction._id;
-        }
-
-        if(company) {
-          modalRef.componentInstance.companyId = company._id;
-        }
-
+        modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then(
-          (result) => {
-            transaction = result.transaction;
-            if (transaction) {
-              if (transaction.type && transaction.type.requestArticles) {
-                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
-              } else if (transaction.type.requestPaymentMethods) {
-                this.openModal('movement-of-cash', typeTransaction, transaction);
+          async (result) => {
+            this.transaction = result.transaction;
+            if (this.transaction) {
+              if (this.transaction.type && this.transaction.type.requestArticles) {
+                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
+              } else if (this.transaction.type.requestPaymentMethods) {
+                this.openModal('charge');
               } else {
-                this.updateBalance(transaction);
+                this.finishTransaction();
               }
             } else if (result === "change-company") {
-              this.openModal('company', typeTransaction, transaction);
+              this.openModal('company');
             } else {
               this.refresh();
             }
@@ -457,12 +519,14 @@ export class PointOfSaleComponent implements OnInit {
           }
         );
         break;
-      case 'movement-of-cash':
+      case 'charge':
+
+      if (await this.isValidCharge()) {
         modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = transaction;
+        modalRef.componentInstance.transaction = this.transaction;
         modalRef.result.then((result) => {
           if (result.movementsOfCashes) {
-            this.updateBalance(transaction);
+            this.finishTransaction();
           } else {
             this.refresh();
           }
@@ -470,11 +534,12 @@ export class PointOfSaleComponent implements OnInit {
           this.refresh();
         });
         break;
+      }
       case 'print':
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = transaction._id;
-        modalRef.componentInstance.company = transaction.company;
-        modalRef.componentInstance.printer = printerSelected;
+        modalRef.componentInstance.transactionId = this.transaction._id;
+        modalRef.componentInstance.company = this.transaction.company;
+        modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
           this.refresh();
@@ -486,7 +551,8 @@ export class PointOfSaleComponent implements OnInit {
         if (this.countPrinters() > 1) {
           modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
             if (result !== "cancel" && result !== '') {
-              this.openModal("print", transaction.type, transaction, result);
+              this.printerSelected = result;
+              this.openModal("print");
             } else {
               this.refresh();
             }
@@ -494,16 +560,17 @@ export class PointOfSaleComponent implements OnInit {
             this.refresh();
           });
         } else if (this.countPrinters() === 1) {
-          this.openModal("print", transaction.type, transaction, this.printers[0]);
+          this.printerSelected = this.printers[0];
+          this.openModal("print");
         }
         break;
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.componentInstance.transactionId = this.transaction._id;
         break;
       case 'cancel-transaction':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then((result) => {
           if (result === "delete_close") {
             this.refresh();
@@ -515,7 +582,7 @@ export class PointOfSaleComponent implements OnInit {
       case 'open-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
-        modalRef.componentInstance.typeEmployee = employeeType;
+        modalRef.componentInstance.typeEmployee = this.employeeTypeSelected;
         modalRef.componentInstance.op = 'open-turn';
         modalRef.result.then((result) => {
           if (result.turn) {
@@ -528,7 +595,7 @@ export class PointOfSaleComponent implements OnInit {
       case 'close-turn':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
-        modalRef.componentInstance.typeEmployee = employeeType;
+        modalRef.componentInstance.typeEmployee = this.employeeTypeSelected;
         modalRef.componentInstance.op = 'close-turn';
         modalRef.result.then((result) => {
           if (result.turn) {
@@ -540,7 +607,7 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'cash-box':
         modalRef = this._modalService.open(CashBoxComponent, { size: 'lg' });
-        modalRef.componentInstance.transactionType = typeTransaction;
+        modalRef.componentInstance.transactionType = this.transaction.type;
         modalRef.result.then((result) => {
           if (result && result.cashBox) {
           } else {
@@ -554,51 +621,24 @@ export class PointOfSaleComponent implements OnInit {
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
         modalRef.componentInstance.op = 'select-employee';
-        modalRef.componentInstance.typeEmployee = typeTransaction.requestEmployee;
+        modalRef.componentInstance.typeEmployee = this.transaction.type.requestEmployee;
         modalRef.result.then(
           async (result) => {
             if (result.employee) {
-              if (transaction) {
-                transaction.employeeOpening = result.employee;
-                transaction.employeeClosing = result.employee;
-                if (this.posType === "delivery") {
-                  transaction.state = TransactionState.Sent;
-                  this.updateTransaction(transaction, true);
-                } else {
-                  this.updateTransaction(transaction, false);
-                }
-              } else {
-                transaction = new Transaction();
-                transaction.type = typeTransaction;
-                await this.getCurrencies().then(
-                  currencies => {
-                    if(currencies) {
-                      transaction.currency = Config.currency;
-                    }
-                    if(transaction.quotation === undefined ||
-                      transaction.quotation === null) {
-                      if(currencies && currencies.length > 0) {
-                        for(let currency of currencies) {
-                          if(Config.currency && currency._id !== Config.currency._id) {
-                            transaction.quotation = currency.quotation;
-                          }
-                        }
-                      } else {
-                        transaction.quotation = 1;
-                      }
+              this.transaction.employeeOpening = result.employee;
+              this.transaction.employeeClosing = result.employee;
+              if (this.posType === "delivery") {
+                this.transaction.state = TransactionState.Sent;
+                await this.updateTransaction().then(
+                  transaction => {
+                    if(transaction) {
+                      this.transaction = transaction;
+                      this.refresh();
                     }
                   }
                 );
-                transaction.employeeOpening = result.employee;
-                transaction.employeeClosing = result.employee;
-                if (transaction.type.fixedOrigin && transaction.type.fixedOrigin !== 0) {
-                  transaction.origin = transaction.type.fixedOrigin;
-                }
-
-                if (transaction.type.fixedLetter && transaction.type.fixedLetter !== '') {
-                  transaction.letter = transaction.type.fixedLetter.toUpperCase();
-                }
-                this.getLastTransactionByType(transaction);
+              } else {
+                this.nextStepTransaction();
               }
             } else {
               this.refresh();
@@ -611,93 +651,159 @@ export class PointOfSaleComponent implements OnInit {
     }
   }
 
-  public getLastTransactionByType(transaction: Transaction): void {
+  async isValidCharge(): Promise<boolean> {
 
-    this.loading = true;
+    let isValid = true;
 
-    this._transactionService.getLastTransactionByTypeAndOrigin(transaction.type, 0, transaction.letter).subscribe(
-      result => {
-        if (!result.transactions) {
-          transaction.origin = 0;
-          transaction.number = 1;
-          this.saveTransaction(transaction);
-        } else {
-          transaction.origin = result.transactions[0].origin;
-          transaction.number = result.transactions[0].number + 1;
-          this.saveTransaction(transaction);
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+    if (isValid &&
+      this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+      !this.transaction.company) {
+      isValid = false;
+      this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
+    }
+
+    if (isValid &&
+      this.transaction.type.electronics &&
+      this.transaction.totalPrice > 5000 &&
+      !this.transaction.company) {
+      isValid = false;
+      this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
+    }
+
+    if (isValid &&
+        this.transaction.type.electronics &&
+        this.transaction.company && (
+        !this.transaction.company.identificationType ||
+        !this.transaction.company.identificationValue ||
+        this.transaction.company.identificationValue === '')
+      ) {
+      isValid = false;
+      this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
+      this.loading = false;
+    }
+
+    if (isValid &&
+      this.transaction.type.fixedOrigin &&
+      this.transaction.type.fixedOrigin === 0 &&
+      this.transaction.type.electronics &&
+      Config.country === 'MX') {
+      isValid = false;
+      this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
+      this.loading = false;
+    }
+
+    if (isValid &&
+      this.transaction.type.electronics &&
+      !Config.modules.sale.electronicTransactions) {
+      isValid = false;
+      this.showMessage("No tiene habilitado el módulo de factura electrónica.", 'info', true);
+      this.loading = false;
+    }
+
+    return isValid;
   }
 
-  public updateBalance(transaction : Transaction){
+  async finishTransaction() {
 
-    this.loading = true;
-
-    this._transactionService.updateBalance(transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          transaction.balance = result.transaction.balance;
+    await this.updateBalance().then(
+      async balance => {
+        if(balance !== null) {
+          this.transaction.balance = balance;
           if (this.posType === "resto" || this.posType === "delivery") {
-            transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-            transaction.VATPeriod = moment().format('YYYYMM');
+            this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+            this.transaction.VATPeriod = moment().format('YYYYMM');
+          } else {
+            if (!this.transaction.endDate) {
+              this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+            }
+            if (this.transaction.type.transactionMovement !== TransactionMovement.Purchase || !this.transaction.VATPeriod) {
+              this.transaction.VATPeriod = moment(this.transaction.endDate, 'YYYY-MM-DDTHH:mm:ssZ').format('YYYYMM');
+            }
           }
-          transaction.expirationDate = transaction.endDate;
-          transaction.state = TransactionState.Closed;
-          this.updateTransaction(transaction);
+          this.transaction.expirationDate = this.transaction.endDate;
+          this.transaction.state = TransactionState.Closed;
+          await this.updateTransaction().then(
+            transaction => {
+              if(transaction) {
+                if (this.transaction.type.printable) {
+                  if (this.transaction.type.defectPrinter) {
+                    this.printerSelected = this.printerSelected;
+                    this.openModal("print");
+                  } else {
+                    this.openModal("printers");
+                  }
+                } else {
+                  this.refresh();
+                }
+              }
+            }
+          );
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    )
+    });
   }
 
-  public saveTransaction(transaction: Transaction): void {
+  public getLastTransactionByType(): Promise<Transaction> {
 
-    this.loading = true;
-    transaction.madein = this.posType;
+    return new Promise<Transaction>((resolve, reject) => {
 
-    this._transactionService.saveTransaction(transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.hideMessage();
-          transaction = result.transaction;
-          if (!transaction.employeeOpening &&
-              transaction.type.requestEmployee &&
-              transaction.type.requestArticles &&
-              this.posType !== 'delivery') {
-            this.openModal('select-employee', transaction.type, transaction);
-          } else if (!transaction.company && transaction.type.requestCompany) {
-              this.openModal('company', transaction.type, transaction);
-          } else if (transaction.type.requestArticles) {
-            if (this.transactionMovement !== TransactionMovement.Purchase) {
-              this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
-            } else {
-              this.openModal('transaction', transaction.type, transaction);
-            }
+      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+        result => {
+          if (!result.transactions) {
+            resolve(null);
           } else {
-            this.openModal('transaction', transaction.type, transaction);
+            resolve(result.transactions[0]);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
+  }
+
+  public updateBalance(): Promise<number> {
+
+    return new Promise<number>((resolve, reject) => {
+      this._transactionService.updateBalance(this.transaction).subscribe(
+        async result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.transaction.balance);  
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          reject(null);
+        }
+      )
+    });
+  }
+
+  public saveTransaction(): Promise<Transaction> {
+
+    return new Promise<Transaction>((resolve, reject) => {
+
+      this.transaction.madein = this.posType;
+  
+      this._transactionService.saveTransaction(this.transaction).subscribe(
+        result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            this.hideMessage();
+            resolve(result.transaction);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public countPrinters(): number {
@@ -721,112 +827,75 @@ export class PointOfSaleComponent implements OnInit {
     return numberOfPrinters;
   }
 
-  public openTransaction(transaction: Transaction): void {
+  public updateTransaction(): Promise<Transaction> {
+    
+    return new Promise<Transaction>((resolve, reject) => {
 
-    if (transaction.type && transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-      if (transaction.type.requestArticles) {
-        this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
-      } else {
-        this.openModal('transaction', transaction.type, transaction);
-      }
-    } else {
-      this.openModal('transaction', transaction.type, transaction);
-    }
+      this._transactionService.updateTransaction(this.transaction).subscribe(
+        result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.transaction);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
-  public updateTransaction(transaction: Transaction, close: boolean = true): void {
+  async changeStateOfTransaction(transaction: Transaction, state: string) {
+    
+    this.transaction = transaction;
 
-    this.loading = true;
-
-    this._transactionService.updateTransaction(transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
+    if(this.transaction.totalPrice > 0) {
+      if (state === "Enviado") {
+        if(this.transaction.type.requestEmployee) {
+          this.openModal('select-employee');
         } else {
-          transaction = result.transaction;
-          if(close) {
-            if (transaction.type.printable) {
-              if (transaction.type.defectPrinter) {
-                this.openModal("print", transaction.type, transaction, transaction.type.defectPrinter);
-              } else {
-                this.openModal("printers", transaction.type, transaction);
-              }
-            } else {
-              this.refresh();
-            }
-          } else {
-            if (!transaction.employeeOpening &&
-              transaction.type.requestEmployee &&
-              transaction.type.requestArticles &&
-              this.posType !== 'delivery') {
-              this.openModal('select-employee', transaction.type, transaction);
-            } else if (!transaction.company && transaction.type.requestCompany) {
-                this.openModal('company', transaction.type, transaction);
-            } else if (transaction.type.requestArticles) {
-              if (this.transactionMovement !== TransactionMovement.Purchase) {
-                this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + transaction._id]);
-              } else {
-                this.openModal('transaction', transaction.type, transaction);
-              }
-            } else {
-              this.openModal('transaction', transaction.type, transaction);
-            }
+          this.transaction.state = TransactionState.Sent;
+        }
+      } else if (state === "Entregado") {
+        this.transaction.state = TransactionState.Delivered;
+      }
+  
+      this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+      this.transaction.VATPeriod = moment().format('YYYYMM');
+      this.transaction.expirationDate = this.transaction.endDate;
+  
+      await this.updateTransaction().then(
+        transaction => {
+          if(this.transaction) {
+            this.transaction = transaction;
+            this.refresh();
           }
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public changeStateOfTransaction(transaction: Transaction, state: string): void {
-
-    this.loading = true;
-
-    if (state === "Enviado") {
-      if(transaction.type.requestEmployee) {
-        this.openModal('select-employee', transaction.type, transaction, null, transaction.type.requestEmployee);
-      } else {
-        transaction.state = TransactionState.Sent;
-      }
-    } else if (state === "Entregado") {
-      transaction.state = TransactionState.Delivered;
+      );
+    } else {
+      this.showMessage("No se puede cambiar de estado una transacción con monto menor o igual $0,00.", "info", true);
     }
-
-    transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    transaction.VATPeriod = moment().format('YYYYMM');
-    transaction.expirationDate = transaction.endDate;
-
-    this.updateTransaction(transaction);
   }
 
-  public getEmployeeType(op: string, employeeType: string, transaction?: Transaction): void {
-
-    this.loading = true;
+  public getEmployeeType(op: string, employeeType: string): void {
 
     let query = 'where="description":"' + employeeType + '"';
 
     this._employeeTypeService.getEmployeeTypes(query).subscribe(
       result => {
         if (!result.employeeTypes) {
-          this.showMessage("No existen empleados de tipo Repartidor", "info", true);
+          this.showMessage("No existen empleados de tipo " + employeeType, "info", true);
         } else {
           this.hideMessage();
-          if(transaction) {
-            this.openModal(op, transaction.type, transaction, null, result.employeeTypes[0]);
-          } else {
-            this.openModal(op, null, null, null, result.employeeTypes[0]);
-          }
+          this.employeeTypeSelected = result.employeeTypes[0];
+          this.openModal(op);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }

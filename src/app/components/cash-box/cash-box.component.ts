@@ -297,7 +297,9 @@ export class CashBoxComponent implements OnInit {
 
     this.loading = true;
 
-    this._paymentMethodService.getPaymentMethods().subscribe(
+    let query = 'where="cashBoxImpact":true';
+
+    this._paymentMethodService.getPaymentMethods(query).subscribe(
       result => {
         if (!result.paymentMethods) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

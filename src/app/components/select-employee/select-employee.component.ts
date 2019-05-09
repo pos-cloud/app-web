@@ -58,7 +58,10 @@ export class SelectEmployeeComponent implements OnInit {
   ngOnInit() {
 
     this.employeeSelected = new Employee();
-    this.getEmployees('where="type":"' + this.typeEmployee._id + '"');
+    
+    if(this.typeEmployee) {
+      this.getEmployees('where="type":"' + this.typeEmployee._id + '"');
+    }
 
     if(this.table) {
       this.chair = this.table.chair;
