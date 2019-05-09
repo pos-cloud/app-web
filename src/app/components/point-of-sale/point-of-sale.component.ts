@@ -181,7 +181,7 @@ export class PointOfSaleComponent implements OnInit {
     return new Promise<TransactionType[]>((resolve, reject) => {
 
       this.loading = true;
-  
+
       this._transactionTypeService.getTransactionTypes(query).subscribe(
         result => {
           this.loading = false;
@@ -205,7 +205,7 @@ export class PointOfSaleComponent implements OnInit {
     this.loading = true;
 
     this._roomService.getRooms().subscribe(
-        result => { 
+        result => {
           if (!result.rooms) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
@@ -315,7 +315,7 @@ export class PointOfSaleComponent implements OnInit {
 
     this.transaction = new Transaction();
     this.transaction.type = type;
-        
+
     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
       this.transaction.origin = this.transaction.type.fixedOrigin;
     }
@@ -383,7 +383,7 @@ export class PointOfSaleComponent implements OnInit {
 
   public getOpenCashBox(): Promise<CashBox> {
 
-    return new Promise<CashBox>((resolve, reject) => {    
+    return new Promise<CashBox>((resolve, reject) => {
 
       this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
         result => {
@@ -403,7 +403,7 @@ export class PointOfSaleComponent implements OnInit {
 
   async nextStepTransaction() {
 
-    if(this.transaction && 
+    if(this.transaction &&
       (!this.transaction._id || this.transaction._id === "")) {
       await this.getLastTransactionByType().then(
         async transaction => {
@@ -437,18 +437,20 @@ export class PointOfSaleComponent implements OnInit {
       );
     }
 
-    if (!this.transaction.employeeClosing &&
-        this.transaction.type.requestEmployee && 
-        this.transaction.type.requestArticles &&
-        this.posType !== 'delivery') {
-      this.openModal('select-employee');
-    } else if (!this.transaction.company &&
-                this.transaction.type.requestCompany) {
-      this.openModal('company');
-    } else if (this.transaction.type.requestArticles && this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
-      this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
-    } else {
-      this.openModal('transaction');
+    if(this.transaction && this.transaction._id && this.transaction._id !== "") {
+      if (!this.transaction.employeeClosing &&
+          this.transaction.type.requestEmployee &&
+          this.transaction.type.requestArticles &&
+          this.posType !== 'delivery') {
+        this.openModal('select-employee');
+      } else if (!this.transaction.company &&
+                  this.transaction.type.requestCompany) {
+        this.openModal('company');
+      } else if (this.transaction.type.requestArticles && this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+        this._router.navigate(['/pos/' + this.posType + '/editar-transaccion/' + this.transaction._id]);
+      } else {
+        this.openModal('transaction');
+      }
     }
   }
 
@@ -468,7 +470,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public openTransaction(transaction: Transaction): void {
-    
+
     this.transaction = transaction;
     this.nextStepTransaction();
   }
@@ -746,7 +748,7 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
         result => {
           if (!result.transactions) {
             resolve(null);
@@ -771,7 +773,7 @@ export class PointOfSaleComponent implements OnInit {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
-            resolve(result.transaction.balance);  
+            resolve(result.transaction.balance);
           }
         },
         error => {
@@ -787,7 +789,7 @@ export class PointOfSaleComponent implements OnInit {
     return new Promise<Transaction>((resolve, reject) => {
 
       this.transaction.madein = this.posType;
-  
+
       this._transactionService.saveTransaction(this.transaction).subscribe(
         result => {
           if (!result.transaction) {
@@ -828,7 +830,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   public updateTransaction(): Promise<Transaction> {
-    
+
     return new Promise<Transaction>((resolve, reject) => {
 
       this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -849,7 +851,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   async changeStateOfTransaction(transaction: Transaction, state: string) {
-    
+
     this.transaction = transaction;
 
     if(this.transaction.totalPrice > 0) {
@@ -862,11 +864,11 @@ export class PointOfSaleComponent implements OnInit {
       } else if (state === "Entregado") {
         this.transaction.state = TransactionState.Delivered;
       }
-  
+
       this.transaction.endDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
       this.transaction.VATPeriod = moment().format('YYYYMM');
       this.transaction.expirationDate = this.transaction.endDate;
-  
+
       await this.updateTransaction().then(
         transaction => {
           if(this.transaction) {

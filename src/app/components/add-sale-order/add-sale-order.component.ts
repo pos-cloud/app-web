@@ -159,7 +159,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
     if (this.posType === "resto") {
       this.table = new Table();
       this.transaction.table = this.table;
@@ -205,10 +205,10 @@ export class AddSaleOrderComponent implements OnInit {
 
     // ORDENAMOS LA CONSULTA
     let sortAux = { order: 1 };
-    
+
     // FILTRAMOS LA CONSULTA
     let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
-    
+
     // CAMPOS A TRAER
     let project = {
       "destination._id": 1,
@@ -384,7 +384,7 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   async getTransaction() {
-    
+
     this.loading = true;
 
     this._transactionService.getTransaction(this.transactionId).subscribe(
@@ -582,7 +582,7 @@ export class AddSaleOrderComponent implements OnInit {
   async saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) {
 
     await this.daleteMovementsOfCancellations();
-    
+
     this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
       async result => {
         if (!result.movementsOfCancellations) {
@@ -624,12 +624,12 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(): Promise<Transaction> {
-   
+
     this.loading = true;
-    
+
     this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
     this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-    
+
     return new Promise<Transaction>((resolve, reject) => {
       this._transactionService.updateTransaction(this.transaction).subscribe(
         result => {
@@ -769,10 +769,10 @@ export class AddSaleOrderComponent implements OnInit {
     if(itemData) {
 
       this.showCategories();
-  
+
       if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
         let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
-  
+
         if (!movementOfArticle) {
           movementOfArticle = itemData;
           movementOfArticle._id = '';
@@ -857,7 +857,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     let isValid = true;
 
-    if (this.transaction.type && 
+    if (this.transaction.type &&
         this.transaction.type.transactionMovement === TransactionMovement.Sale &&
         movementOfArticle.article &&
         !movementOfArticle.article.allowSale) {
@@ -865,7 +865,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.transaction.type && 
+    if (this.transaction.type &&
         this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
         movementOfArticle.article &&
         !movementOfArticle.article.allowPurchase) {
@@ -898,20 +898,20 @@ export class AddSaleOrderComponent implements OnInit {
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-    
+
     if(this.transaction.quotation) {
       quotation = this.transaction.quotation;
     }
-    
+
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-    
+
     if( movementOfArticle.article &&
         movementOfArticle.article.currency &&
-        Config.currency && 
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
-    
+
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
@@ -959,7 +959,7 @@ export class AddSaleOrderComponent implements OnInit {
   public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-    
+
     if(this.transaction.quotation) {
       quotation = this.transaction.quotation;
     }
@@ -968,8 +968,8 @@ export class AddSaleOrderComponent implements OnInit {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
-      if(movementOfArticle.article.currency &&  
-        Config.currency && 
+      if(movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
@@ -990,17 +990,17 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-      if(movementOfArticle.article.currency &&  
-        Config.currency && 
+      if(movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
     }
-    
+
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     if( movementOfArticle.article &&
-        movementOfArticle.article.currency &&  
-        Config.currency && 
+        movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
@@ -1218,7 +1218,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.discountPercent = 0;
       discountAmountAux = 0;
     }
-    
+
     if(isUpdateValid) {
       this.transaction.totalPrice = totalPriceAux;
       this.transaction.discountAmount = discountAmountAux;
@@ -1239,11 +1239,11 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public hasChangedMovementOfArticle(oldMov, newMov): boolean {
-    
+
     let hasChanged: boolean = false;
-    
+
     for(let prop of Object.keys(newMov)) {
-      if( oldMov[prop] && 
+      if( oldMov[prop] &&
           newMov[prop] &&
           oldMov[prop] !== newMov[prop]
         ) {
@@ -1474,7 +1474,11 @@ export class AddSaleOrderComponent implements OnInit {
                   } else if (this.transaction.type.electronics && this.transaction.CAE) {
                     this.finish(); //SE FINALIZA POR ERROR EN LA FE
                   } else {
-                    this.assignTransactionNumber();
+                    if (this.transaction.type.fixedLetter !== this.transaction.letter) {
+                      this.assignTransactionNumber();
+                    } else {
+                      this.finish();
+                    }
                   }
                 } else {
                   this.finish();
@@ -1490,7 +1494,11 @@ export class AddSaleOrderComponent implements OnInit {
               } else if (this.transaction.type.electronics && this.transaction.CAE) {
                 this.finish(); //SE FINALIZA POR ERROR EN LA FE
               } else {
-                this.assignTransactionNumber();
+                if (this.transaction.type.fixedLetter !== this.transaction.letter) {
+                  this.assignTransactionNumber();
+                } else {
+                  this.finish();
+                }
               }
             } else {
               this.finish();
@@ -1541,7 +1549,7 @@ export class AddSaleOrderComponent implements OnInit {
         }, (reason) => {
         });
         break;
-        
+
       case 'change-quotation':
         modalRef = this._modalService.open(this.contentChangeQuotation).result.then(async (result) => {
           if (result !== "cancel" && result !== '') {
@@ -1620,7 +1628,7 @@ export class AddSaleOrderComponent implements OnInit {
         model.model = "movement-of-article";
         model.relations = new Array();
         model.relations.push("article_relation_code");
-        
+
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'cancel') {
@@ -1637,35 +1645,35 @@ export class AddSaleOrderComponent implements OnInit {
   async areValidMovementOfArticle(): Promise<boolean> {
 
     return new Promise<boolean>( async (resolve, reject) => {
-      
+
       let areValid: boolean = true;
-  
+
       for(let movementOfArticle of this.movementsOfArticles) {
         if(await this.isValidMovementOfArticle(movementOfArticle)) {
         } else {
           areValid = false;
         }
       }
-  
+
       resolve(areValid);
     });
   }
 
   async finish() {
-    
+
     let isValid: boolean = true;
 
-    if (isValid && 
+    if (isValid &&
         Config.modules.stock &&
         this.transaction.type.modifyStock) {
-        
+
           if(await this.areValidMovementOfArticle()) {
             isValid = await this.processStock();
           } else {
             isValid = false;
           }
     }
-    
+
     if(isValid) {
       await this.updateBalance().then(async balance => {
         if(balance !== null) {
@@ -1678,18 +1686,18 @@ export class AddSaleOrderComponent implements OnInit {
           }
           this.transaction.expirationDate = this.transaction.endDate;
           this.transaction.state = TransactionState.Closed;
-      
+
           await this.updateTransaction().then(async transaction => {
             this.transaction = transaction;
-  
+
             if (this.transaction && this.transaction.type.printable) {
-        
+
               if (this.table) {
                 this.table.employee = null;
                 this.table.state = TableState.Available;
                 this.table = await this.updateTable();
               }
-        
+
               if (this.transaction.type.defectPrinter) {
                 this.printerSelected = this.transaction.type.defectPrinter;
                 this.distributeImpressions(this.transaction.type.defectPrinter);
@@ -1725,7 +1733,7 @@ export class AddSaleOrderComponent implements OnInit {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
-            resolve(result.transaction.balance);  
+            resolve(result.transaction.balance);
           }
         },
         error => {
@@ -1932,7 +1940,7 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
     return new Promise<MovementOfArticle>((resolve, reject) => {
-    
+
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
@@ -1971,7 +1979,7 @@ export class AddSaleOrderComponent implements OnInit {
     let endProcess: boolean = true;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-      
+
       for(let movementOfArticle of this.movementsOfArticles) {
         if(movementOfArticle.article) {
           await this.updateRealStock(movementOfArticle).then(
@@ -1993,7 +2001,7 @@ export class AddSaleOrderComponent implements OnInit {
   public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
     return new Promise<boolean>((resolve, reject) => {
-  
+
       let amountToModify;
 
       if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
