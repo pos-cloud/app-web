@@ -2572,6 +2572,7 @@ export class PrintComponent implements OnInit {
     var row = 5;
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.large);
       this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
@@ -2591,7 +2592,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.text("Pedido Nº: " + this.transaction.number, margin, row);
     this.doc.setFontType('normal');
-   this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/1.6), row);
+    this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM hh:ss'), (this.printer.pageWidth/1.6), row);
     this.doc.setFontType('normal');
 
     if(this.transaction.company) {
@@ -2650,10 +2651,12 @@ export class PrintComponent implements OnInit {
         row += 5;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
         if (movementOfArticle.article) {
-          this.doc.text(movementOfArticle.article.posDescription.slice(0, 18), 13, row);
-        } else {
+          if(movementOfArticle.article.posDescription){
+            this.doc.text(movementOfArticle.article.posDescription.slice(0, 18), 13, row);
+          } else {
           this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
-        }
+          }
+        } 
 
         this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.3, row);
 
