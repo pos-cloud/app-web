@@ -33,7 +33,8 @@ export class ListBankComponent implements OnInit {
   public displayedColumns = [
     "code",
     "agency",
-    "name"
+    "name",
+    "account"
   ];
   public filters: any[];
   public filterValue: string;

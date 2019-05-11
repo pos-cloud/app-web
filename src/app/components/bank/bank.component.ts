@@ -199,8 +199,6 @@ export class BankComponent implements OnInit {
 
     this.bank = this.bankForm.value;
 
-    console.log(this.bank);
-
     this._bankService.addBank(this.bank).subscribe(
       result => {
         if (!result.bank) {

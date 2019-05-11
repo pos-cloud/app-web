@@ -32,7 +32,7 @@
                   <div class="form-group col-md-6">
                     <label for="code" class="control-label">Código</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly" [focus]="focusEvent"/>
+                      <input type="number" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly" [focus]="focusEvent"/>
                     </div>
                     <div *ngIf="formErrors.code" class="alert alert-danger">
                       {{ formErrors.code }}
@@ -41,7 +41,7 @@
                   <div class="form-group col-md-6">
                       <label for="agency" class="control-label">Sucursal</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" formControlName="agency" name="agency" id="agency" [readonly]="readonly"/>
+                        <input type="number" class="form-control" formControlName="agency" name="agency" id="agency" [readonly]="readonly"/>
                       </div>
                       <div *ngIf="formErrors.agency" class="alert alert-danger">
                         {{ formErrors.agency }}
@@ -52,7 +52,7 @@
                   <div class="form-group col-md-6">
                     <label for="name" class="control-label">Nombre</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" [focus]="focusEvent"/>
+                      <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly" />
                     </div>
                     <div *ngIf="formErrors.name" class="alert alert-danger">
                       {{ formErrors.name }}
@@ -61,7 +61,7 @@
                   <div class="form-group col-md-6">
                     <label for="account" class="control-label">Cuenta</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="account" name="account" id="account" [readonly]="readonly" [focus]="focusEvent"/>
+                      <input type="text" class="form-control" formControlName="account" name="account" id="account" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.account" class="alert alert-danger">
                       {{ formErrors.account }}
