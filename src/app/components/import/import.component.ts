@@ -217,12 +217,10 @@ export class ImportComponent  implements OnInit {
         );
       }
 
-    
+
   }
 
   public handleFileInput(files: File) {
-    
-    console.log(files);
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

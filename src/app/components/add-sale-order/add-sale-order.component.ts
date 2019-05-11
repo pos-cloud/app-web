@@ -326,7 +326,7 @@ export class AddSaleOrderComponent implements OnInit {
   public filterArticles(): void {
 
     this.listArticlesComponent.filterArticle = this.filterArticle;
-    this.listArticlesComponent.filterItem();
+    this.listArticlesComponent.filterItem(this.categorySelected);
     if(!this.filterArticle || this.filterArticle === '') {
       this.showCategories();
     }
@@ -2087,7 +2087,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     if(category) {
       this.categorySelected = category;
-      this.listArticlesComponent.filterItem(category);
+      this.listArticlesComponent.filterItem(this.categorySelected);
       this.listArticlesComponent.hideMessage();
     }
     this.listCategoriesComponent.areCategoriesVisible = false;

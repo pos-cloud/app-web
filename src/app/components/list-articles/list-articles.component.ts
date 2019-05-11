@@ -95,7 +95,7 @@ export class ListArticlesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    
+
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
     } else if ('Ingredientes' === this.listTitle) {
@@ -160,7 +160,7 @@ export class ListArticlesComponent implements OnInit {
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     if(this.userType === 'pos') {
-      
+
       project = {
         type:1,
         code:1,
@@ -207,7 +207,7 @@ export class ListArticlesComponent implements OnInit {
               0 // SKIP
       limit = this.itemsPerPage;
     }
-    
+
     this._articleService.getArticlesV2(
         project, // PROJECT
         match, // MATCH
@@ -324,7 +324,7 @@ export class ListArticlesComponent implements OnInit {
         });
         break;
       case 'print-label':
-      
+
         await this.getPrinters().then(
           printers => {
             let labelPrinter: Printer;
@@ -335,7 +335,7 @@ export class ListArticlesComponent implements OnInit {
                 }
               }
             }
-            
+
             if(labelPrinter) {
               modalRef = this._modalService.open(PrintComponent);
               if(article) {
@@ -351,7 +351,7 @@ export class ListArticlesComponent implements OnInit {
         );
         break;
       case 'print-list':
-      
+
         await this.getPrinters().then(
           printers => {
             let counterPrinter: Printer;
@@ -362,7 +362,7 @@ export class ListArticlesComponent implements OnInit {
                 }
               }
             }
-            
+
             if(counterPrinter) {
               modalRef = this._modalService.open(PrintComponent);
               if(article) {
@@ -384,7 +384,7 @@ export class ListArticlesComponent implements OnInit {
       default: ;
     }
   };
-  
+
   public getPrinters(): Promise<Printer[]> {
 
     return new Promise<Printer[]>( async (resolve, reject) => {
@@ -437,8 +437,8 @@ export class ListArticlesComponent implements OnInit {
 
           movementOfArticle.basePrice = this.roundNumber.transform(article.basePrice);
 
-          if(article.currency &&  
-            Config.currency && 
+          if(article.currency &&
+            Config.currency &&
             Config.currency._id !== article.currency._id) {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
           }
@@ -464,8 +464,8 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice);
               movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
 
-              if(article.currency &&  
-                Config.currency && 
+              if(article.currency &&
+                Config.currency &&
                 Config.currency._id !== article.currency._id) {
                   movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
                   movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice * quotation);
@@ -555,9 +555,12 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public filterItem(category?: Category) {
-    
+
     if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+      if (this.filterArticle && this.filterArticle !== "") {
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
+      }
     } else if(this.filterArticle && this.filterArticle !== "") {
 
       this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
@@ -565,10 +568,10 @@ export class ListArticlesComponent implements OnInit {
       if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
 
         this.hideMessage();
-  
+
         let article;
         var count = 1;
-  
+
         if (this.filteredArticles.length === 1) {
           article = this.filteredArticles[0];
         } else if (this.filteredArticles.length > 1) {
@@ -580,7 +583,7 @@ export class ListArticlesComponent implements OnInit {
             }
           }
         }
-  
+
         if (  count === 1 &&
               this.filterArticle &&
             ( article &&
