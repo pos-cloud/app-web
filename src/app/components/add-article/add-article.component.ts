@@ -442,7 +442,7 @@ export class AddArticleComponent implements OnInit {
         if (result.articles) {
           if (result.articles[0]) {
             if (!isNaN(parseInt(result.articles[0].code))) {
-              code = (parseInt(result.articles[0].code) + 1) + '';
+              code = ((parseInt(result.articles[0].code) + 1) + '').slice(0, 10);
             } else {
               code = this.padString(1, 10);
             }
@@ -452,7 +452,7 @@ export class AddArticleComponent implements OnInit {
           category = this.categories[0];
         }
 
-        this.article.code = this.padString(code, 5);
+        this.article.code = this.padString(code, 10);
         this.article.category = category;
         this.setValuesForm();
         this.loading = false;
