@@ -112,10 +112,12 @@ export class ReportSalesByClientComponent implements OnInit {
 
   public calculateTotal() : void {
 
+    this.totalItem = 0;
+    this.totalAmount = 0;
+
     for (let index = 0; index < this.items.length; index++) {
       this.totalItem = this.totalItem + this.items[index]['count'];
       this.totalAmount = this.totalAmount + this.items[index]['total'];
-
     }
   }
 

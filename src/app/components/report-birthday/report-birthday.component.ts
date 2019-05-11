@@ -10,7 +10,6 @@ import { ConfigService } from './../../services/config.service'
 
 import { Company, CompanyType } from 'app/models/company';
 import { Config } from './../../app.config';
-import { AddArticleComponent } from '../add-article/add-article.component';
 import { AddCompanyComponent } from '../add-company/add-company.component';
 
 @Component({
@@ -57,7 +56,7 @@ export class ReportBirthdayComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.listType = pathLocation[3];
     this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
