@@ -50,7 +50,8 @@ import { CompanyNewsService } from './services/company-news.service';
 import { ArticleFieldService } from './services/article-field.service';
 import { CompanyGroupService } from "./services/company-group.service";
 import { CompanyContactService } from "./services/company-contact.service";
-import { CompanyFieldService } from './services/company-field.service'
+import { CompanyFieldService } from './services/company-field.service';
+import { BankService } from './services/bank.service';
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -232,6 +233,8 @@ import { ListStatesComponent } from './components/list-states/list-states.compon
 import { CountryComponent } from './components/country/country.component';
 import { ListCountriesComponent } from './components/list-countries/list-countries.component';
 import { CountryService } from './services/country.service';
+import { BankComponent } from './components/bank/bank.component';
+import { ListBankComponent } from './components/list-bank/list-bank.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -396,7 +399,9 @@ import { CountryService } from './services/country.service';
     StateComponent,
     ListStatesComponent,
     CountryComponent,
-    ListCountriesComponent
+    ListCountriesComponent,
+    BankComponent,
+    ListBankComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -547,7 +552,8 @@ import { CountryService } from './services/country.service';
     ListCurrenciesComponent,
     ListMovementOfArticlesComponent,
     StateComponent,
-    CountryComponent
+    CountryComponent,
+    BankComponent
   ],
   imports: [
     BrowserModule,
@@ -614,7 +620,8 @@ import { CountryService } from './services/country.service';
     CurrencyService,
     RoundNumberPipe,
     StateService,
-    CountryService
+    CountryService,
+    BankService
   ],
   bootstrap: [AppComponent]
 })

@@ -58,6 +58,7 @@ import { ListCurrenciesComponent } from './components/list-currencies/list-curre
 import { ListMovementOfArticlesComponent } from './components/list-movement-of-articles/list-movement-of-articles.component';
 import { ListStatesComponent } from './components/list-states/list-states.component';
 import { ListCountriesComponent } from './components/list-countries/list-countries.component';
+import { ListBankComponent } from './components/list-bank/list-bank.component'
 
 export const _routes: Routes = [
   { path: '', component: HomeComponent },
@@ -389,6 +390,12 @@ export const _routes: Routes = [
   {
     path: 'admin/impuestos',
     component: ListTaxesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
+    path: 'admin/banks',
+    component: ListBankComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
   },
