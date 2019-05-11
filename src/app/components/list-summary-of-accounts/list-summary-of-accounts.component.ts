@@ -86,6 +86,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
           } else {
             this.hideMessage();
             this.items = result;
+            console.log(this.items);
             this.totalItems = this.items.length;
           }
           this.loading = false;
