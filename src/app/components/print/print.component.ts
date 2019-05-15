@@ -2707,37 +2707,32 @@ export class PrintComponent implements OnInit {
 
     if (this.articleStock) {
 
-      this.doc.setFontSize(30);
-      this.doc.text(1,10,this.articleStock.article.description);
+      this.doc.text(this.articleStock.article.description, 0 , 5);
 
-     
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 1, 12, this.printer.pageHigh - 10, this.printer.pageWidth - 10);
+      this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
 
       for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
 
 
         this.doc.addPage();
 
-        this.doc.setFontSize(30);
-        this.doc.text(1,10,this.articleStock.article.description);
+        this.doc.text(this.articleStock.article.description, 0 , 5);
 
         let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-        this.doc.addImage(imgdata, 'PNG', 1, 12, this.printer.pageHigh - 10, this.printer.pageWidth - 10);
+        this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
 
       }
       this.finishImpression();
     }  else if (this.article) {
 
-      this.doc.setFontSize(30);
-
-      this.doc.text (1,10,this.article.description);
+      this.doc.text(this.article.description, 0 , 5);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 1, 12, this.printer.pageHigh - 10, this.printer.pageWidth - 10);
+      this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
       this.finishImpression();
     }
   }

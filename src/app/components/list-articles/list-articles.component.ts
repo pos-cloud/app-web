@@ -344,6 +344,7 @@ export class ListArticlesComponent implements OnInit {
                 modalRef.componentInstance.articles = this.articles;
               }
               modalRef.componentInstance.typePrint = 'label';
+              modalRef.componentInstance.printer = labelPrinter;
             } else {
               this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
             }
