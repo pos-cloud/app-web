@@ -490,6 +490,10 @@ export const _routes: Routes = [
     path: 'pos/resto/salones/:id/mesas/:id/agregar-transaccion/:type',
     component: AddSaleOrderComponent
   },
+  {
+    path: 'pos/resto/salones/:id/mesas/:id/editar-transaccion/:id',
+    component: AddSaleOrderComponent
+  },
   { path: 'pos/articles', component: ListArticlesComponent },
   { path: 'pos/delivery', component: PointOfSaleComponent },
   {

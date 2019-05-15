@@ -88,7 +88,10 @@ export class HeaderComponent implements OnInit {
           let pathLocation: string[] = event.url.split('/');
           if (pathLocation[3] === "agregar-transaccion" ||
               pathLocation[3] === "editar-transaccion" ||
-              pathLocation[7] === "agregar-transaccion") {
+              pathLocation[7] === "agregar-transaccion" ||
+              pathLocation[7] === "editar-transaccion" ||
+              pathLocation[8] === "agregar-transaccion" ||
+              pathLocation[8] === "editar-transaccion") {
             this.hideMenu = true;
           } else {
             this.hideMenu = false;

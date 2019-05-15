@@ -2,6 +2,9 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from "rxjs";
 import {ClockService} from "./../../services/clock.service";
 
+import * as moment from 'moment';
+import 'moment/locale/es';
+
 @Component({
   selector: 'app-clock',
   templateUrl: './clock.component.html',
@@ -10,25 +13,28 @@ import {ClockService} from "./../../services/clock.service";
 export class ClockComponent implements OnInit, OnDestroy {
 
   public _clockSubscription: Subscription;
-  public endTime: Date;
-  @Input() startTime: Date;
-  public difference: Number;
+  @Input() startTime: string;
+  @Input() endTime: string;
+  @Input() format: string;
+  public difference: any;
 
-  constructor(public clockSubscription: ClockService) {
-    // if (this.startTime === undefined) {
-    //   this.startTime = new Date();
-    //   console.log(this.startTime);
-    // }
-    // this.endTime = new Date();
+  constructor(
+    public clockSubscription: ClockService
+  ) {
+    if (!this.startTime) {
+      this.startTime = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    }
+    if (!this.endTime) {
+      this.endTime = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+    }
   }
 
   ngOnInit() {
     this._clockSubscription = this.clockSubscription.getClock().subscribe(
-      time =>
-        {
-          this.endTime = time;
-          this.calcularDiasDiferencia();
-        }
+      time => {
+        this.endTime = time;
+        this.calculateDiff();
+      }
     );
   }
 
@@ -36,19 +42,8 @@ export class ClockComponent implements OnInit, OnDestroy {
     this._clockSubscription.unsubscribe();
   }
 
-  // public calc() {
-  //   // this.difference = this.endTime.getMilliseconds() - this.startTime.getMilliseconds();
-  //   this.endTime.diff(this.startTime, 'h');
-  //   console.log("hora");
-  //   console.log(this.difference);
-  // }
-
-  public calcularDiasDiferencia() {
-
-    let horasDif = this.endTime.getTime() - this.startTime.getTime();
-    let horas = Math.round(horasDif/(1000 * 60 * 60));
-
-    this.difference = horas + 1;
+  public calculateDiff() {
+    let secs = moment(this.endTime).diff(this.startTime, "seconds");
+    this.difference = moment.utc(secs*1000).format(this.format);
   }
-
 }
