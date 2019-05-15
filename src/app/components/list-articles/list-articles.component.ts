@@ -138,7 +138,7 @@ export class ListArticlesComponent implements OnInit {
     }
 
     if(this.userType === 'pos') {
-        match = `{ "$or": [ { "type": "${ArticleType.Final}" }, { "type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
+        match = `{ "$or": [ { "type": "${ArticleType.Final}" } ] , "operationType": { "$ne": "D" } }`;
     } else {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
         match += `,"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
