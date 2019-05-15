@@ -72,7 +72,7 @@ export class MovementOfCancellationComponent implements OnInit {
     public _modalService: NgbModal,
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
-  ) { 
+  ) {
     this.userCountry = Config.country;
     this.filters = new Array();
     for(let field of this.displayedColumns) {
@@ -96,7 +96,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   public getCancellationsOfMovements() {
-    
+
     this.loading = true;
 
     // ORDENAMOS LA CONSULTA
@@ -109,7 +109,7 @@ export class MovementOfCancellationComponent implements OnInit {
     } else {
       match = { "transactionDestination": { $oid: this.transactionDestinationViewId} , "operationType": { "$ne": "D" } };
     }
-    
+
     // CAMPOS A TRAER
     let project = {
       "transactionOrigin": 1,
@@ -161,10 +161,10 @@ export class MovementOfCancellationComponent implements OnInit {
       this.loading = false;
     });
   }
-  
+
 
   public getTransaction(transactionId: string): Promise<Transaction> {
-    
+
     return new Promise<Transaction>((resolve, reject) => {
 
       this.loading = true;
@@ -198,10 +198,10 @@ export class MovementOfCancellationComponent implements OnInit {
 
     // ORDENAMOS LA CONSULTA
     let sortAux = { order: 1 };
-    
+
     // FILTRAMOS LA CONSULTA
     let match = { "destination._id": { $oid: this.transactionDestination.type._id} , "operationType": { "$ne": "D" } };
-    
+
     // CAMPOS A TRAER
     let project = {
       "origin": 1,
@@ -240,7 +240,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   public getTransactions() {
-    
+
     this.loading = true;
 
     /// ORDENAMOS LA CONSULTA
@@ -263,7 +263,7 @@ export class MovementOfCancellationComponent implements OnInit {
     }
 
     if(this.cancellationTypes.length != 0) {
-      
+
       match += `"$or": [`
       for (let index = 0; index < this.cancellationTypes.length; index++) {
         match +=  `{ "type._id"  : "${this.cancellationTypes[index].origin._id}"}`;
@@ -271,9 +271,9 @@ export class MovementOfCancellationComponent implements OnInit {
           match += ','
         }
       }
-  
+
       match = match.slice(0, -1);
-  
+
       match += `],`
     } else {
       match +=  `{ "type._id"  : "${this.cancellationTypes[0].origin._id}"}`
@@ -358,7 +358,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   async selectTransaction(transactionSelected: Transaction) {
-    
+
     transactionSelected = await this.getTransaction(transactionSelected._id);
     if(this.isTransactionSelected(transactionSelected)) {
       this.deleteTransactionSelected(transactionSelected);
@@ -373,7 +373,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   public deleteTransactionSelected(transaction: Transaction): void {
-    
+
     let movementToDelete: number;
 
     for(let i=0; i < this.movementsOfCancellations.length; i++) {
@@ -388,7 +388,7 @@ export class MovementOfCancellationComponent implements OnInit {
   }
 
   public isTransactionSelected(transaction: Transaction) {
-    
+
     let isSelected: boolean = false;
 
     for(let mov of this.movementsOfCancellations) {
@@ -414,7 +414,7 @@ export class MovementOfCancellationComponent implements OnInit {
                   await this.saveMovementsOfArticles(movementsOfArticles).then(
                     movementsOfArticlesSaved => {
                       if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-    
+
                       } else {
                         endedProcess = false;
                       }
@@ -435,7 +435,7 @@ export class MovementOfCancellationComponent implements OnInit {
       if(endedProcess) {
         this.closeModal();
       }
-    } else {  
+    } else {
       this.closeModal();
     }
   }
@@ -449,10 +449,10 @@ export class MovementOfCancellationComponent implements OnInit {
           if (!result.movementsOfArticles) {
             resolve(null);
           } else {
-            let movements: MovementOfArticle[] = new Array(); 
+            let movements: MovementOfArticle[] = new Array();
 
             for (let mov of result.movementsOfArticles) {
-              
+
               let movementOfArticle = new MovementOfArticle();
 
               movementOfArticle.code = mov.code;
@@ -474,12 +474,12 @@ export class MovementOfCancellationComponent implements OnInit {
               if(this.transactionDestination.type.stockMovement) {
                 movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
               }
-    
+
               movementOfArticle.measure = mov.measure;
               movementOfArticle.quantityMeasure = mov.quantityMeasure;
 
               movementOfArticle.basePrice = mov.basePrice;
-              
+
               if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
 
                 movementOfArticle.costPrice = mov.costPrice;
@@ -490,8 +490,10 @@ export class MovementOfCancellationComponent implements OnInit {
                   for (let taxAux of movementOfArticle.article.taxes) {
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     tax.tax = taxAux.tax;
-                    tax.taxBase = this.roundNumber.transform(movementOfArticle.salePrice);
-                    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+                    tax.taxBase = movementOfArticle.salePrice;
+                    tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    tax.taxBase = this.roundNumber.transform(tax.taxBase);
+                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
                     movementOfArticle.salePrice += tax.taxAmount;
                     taxes.push(tax);
                   }
@@ -535,11 +537,11 @@ export class MovementOfCancellationComponent implements OnInit {
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-    
+
     if(movementOfArticle.transaction.quotation) {
       quotation = movementOfArticle.transaction.quotation;
     }
-    
+
     // ADVERTENCIA, EL UNIT PRICE NO SE RECALCULA CON EL DESCUENTO DE LA transaction PARA QUE EL DESCUENTO DE LA transaction CANCELADA PASE A LA transaction CANCELATORIA
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = 0.00;
@@ -595,8 +597,8 @@ export class MovementOfCancellationComponent implements OnInit {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
-      if( movementOfArticle.article.currency &&  
-        Config.currency && 
+      if( movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
@@ -618,8 +620,8 @@ export class MovementOfCancellationComponent implements OnInit {
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
 
-      if( movementOfArticle.article.currency &&  
-        Config.currency && 
+      if( movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
@@ -637,8 +639,10 @@ export class MovementOfCancellationComponent implements OnInit {
         for (let taxAux of movementOfArticle.article.taxes) {
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-          tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+          tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+          tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          tax.taxBase = this.roundNumber.transform(tax.taxBase);
+          tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);
         }
       }

@@ -197,11 +197,11 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public getVariantsByArticleParent(): void {
-    
+
     this.loading = true;
 
     let query = 'where="articleParent":"'+ this.movementOfArticle.article._id +'"';
-    
+
     this._variantService.getVariants(query).subscribe(
       result => {
         if (!result.variants) {
@@ -292,7 +292,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   }
 
   public selectVariant(type: VariantType, value: VariantValue): void {
-    
+
     let key = type.name;
     if (value.description === this.selectedVariants[key]) {
       this.selectedVariants[key] = null;
@@ -313,8 +313,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
   public subtractAmount(): void {
 
-    if( this.movementOfArticle.transaction.type && 
-        this.movementOfArticle.transaction.type.stockMovement && 
+    if( this.movementOfArticle.transaction.type &&
+        this.movementOfArticle.transaction.type.stockMovement &&
         this.movementOfArticle.transaction.type.stockMovement === StockMovement.Inventory) {
       if (this.movementOfArticleForm.value.amount > 0) {
         this.movementOfArticle.amount -= 1;
@@ -377,14 +377,14 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.movementOfArticle.amount = this.movementOfArticleForm.value.amount;
         this.movementOfArticle.notes = this.movementOfArticleForm.value.notes;
       }
-  
+
       if(this.containsVariants) {
-  
+
         this.movementOfArticle.article = this.getArticleBySelectedVariants();
       }
-  
+
       this.calculateUnitPrice();
-  
+
       if (this.containsVariants) {
         if (!this.isValidSelectedVariants()) {
           if (!this.variants || this.variants.length === 0) {
@@ -485,8 +485,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     this.movementOfArticle.basePrice = this.roundNumber.transform(articleSelected.basePrice);
 
-    if(articleSelected.currency &&  
-      Config.currency && 
+    if(articleSelected.currency &&
+      Config.currency &&
       Config.currency._id !== articleSelected.currency._id) {
       this.movementOfArticle.basePrice = this.roundNumber.transform(this.movementOfArticle.basePrice * quotation);
     }
@@ -514,8 +514,8 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.movementOfArticle.unitPrice = this.roundNumber.transform(articleSelected.salePrice);
         this.movementOfArticle.salePrice = this.roundNumber.transform(articleSelected.salePrice);
 
-        if(articleSelected.currency &&  
-          Config.currency && 
+        if(articleSelected.currency &&
+          Config.currency &&
           Config.currency._id !== articleSelected.currency._id) {
             this.movementOfArticle.costPrice = this.roundNumber.transform(this.movementOfArticle.costPrice * quotation);
             this.movementOfArticle.markupPrice = this.roundNumber.transform(this.movementOfArticle.markupPrice * quotation);
@@ -529,8 +529,10 @@ export class AddMovementOfArticleComponent implements OnInit {
             for (let taxAux of articleSelected.taxes) {
               tax.percentage = this.roundNumber.transform(taxAux.percentage);
               tax.tax = taxAux.tax;
-              tax.taxBase = this.roundNumber.transform((this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-              tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+              tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+              tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+              tax.taxBase = this.roundNumber.transform(tax.taxBase);
+              tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
               taxes.push(tax);
             }
           }
@@ -583,7 +585,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     let isValid = true;
 
-    if (this.movementOfArticle.transaction.type && 
+    if (this.movementOfArticle.transaction.type &&
         this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
         this.movementOfArticle.article &&
         !this.movementOfArticle.article.allowSale) {
@@ -591,7 +593,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.showMessage("El producto " + this.movementOfArticle.article.description + " (" + this.movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.movementOfArticle.transaction.type && 
+    if (this.movementOfArticle.transaction.type &&
         this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Purchase &&
         this.movementOfArticle.article &&
         !this.movementOfArticle.article.allowPurchase) {
@@ -766,11 +768,11 @@ export class AddMovementOfArticleComponent implements OnInit {
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-    
+
     if(movementOfArticle.transaction.quotation) {
       quotation = movementOfArticle.transaction.quotation;
     }
-    
+
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
@@ -824,16 +826,16 @@ export class AddMovementOfArticleComponent implements OnInit {
       if(this.movementOfArticle.transaction.quotation) {
         quotation = this.movementOfArticle.transaction.quotation;
       }
-      
+
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
       if(movementOfArticle.article &&
-        movementOfArticle.article.currency &&  
-        Config.currency && 
+        movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
-  
+
       let fields: ArticleFields[] = new Array();
       if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
         for (const field of movementOfArticle.otherFields) {
@@ -850,8 +852,8 @@ export class AddMovementOfArticleComponent implements OnInit {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
 
       if( movementOfArticle.article &&
-          movementOfArticle.article.currency &&  
-          Config.currency && 
+          movementOfArticle.article.currency &&
+          Config.currency &&
           Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
@@ -870,8 +872,10 @@ export class AddMovementOfArticleComponent implements OnInit {
           for (let taxAux of movementOfArticle.taxes) {
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
             tax.tax = taxAux.tax;
-            tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-            tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+            tax.taxBase = this.roundNumber.transform(tax.taxBase);
+            tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
             taxes.push(tax);
           }
         }

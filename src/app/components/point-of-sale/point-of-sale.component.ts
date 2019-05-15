@@ -667,7 +667,8 @@ export class PointOfSaleComponent implements OnInit {
     if (isValid &&
       this.transaction.type.electronics &&
       this.transaction.totalPrice > 5000 &&
-      !this.transaction.company) {
+      !this.transaction.company &&
+      Config.country === 'AR') {
       isValid = false;
       this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
     }

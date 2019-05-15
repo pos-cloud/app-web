@@ -64,6 +64,7 @@ import { CancellationType } from 'app/models/cancellation-type';
 import { ListArticlesComponent } from '../list-articles/list-articles.component';
 import { ListCategoriesComponent } from '../list-categories/list-categories.component';
 import { ImportComponent } from '../import/import.component';
+import { MovementOfCash } from 'app/models/movement-of-cash';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -80,6 +81,7 @@ export class AddSaleOrderComponent implements OnInit {
   public transactionMovement: string;
   public alertMessage: string = '';
   public movementsOfArticles: MovementOfArticle[];
+  public movementsOfCashes: MovementOfCash[];
   public usesOfCFDI: UseOfCFDI[];
   public relationTypes: RelationType[];
   public printers: Printer[];
@@ -1017,8 +1019,10 @@ export class AddSaleOrderComponent implements OnInit {
         for (let taxAux of movementOfArticle.taxes) {
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-          tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+          tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+          tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          tax.taxBase = this.roundNumber.transform(tax.taxBase);
+          tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);
         }
       }
@@ -1298,7 +1302,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     this.showMessage("Validando comprobante con SAT...", 'info', false);
 
-    this._transactionService.validateElectronicTransactionMX(this.transaction, this.movementsOfArticles).subscribe(
+    this._transactionService.validateElectronicTransactionMX(this.transaction, this.movementsOfArticles, this.movementsOfCashes).subscribe(
       result => {
         if (result.status === 'err') {
           let msn = '';
@@ -1440,9 +1444,9 @@ export class AddSaleOrderComponent implements OnInit {
               modalRef.componentInstance.fastPayment = fastPayment;
             }
             modalRef.result.then((result) => {
-              let movementsOfCashes = result.movementsOfCashes;
+              this.movementsOfCashes = result.movementsOfCashes;
 
-              if (movementsOfCashes) {
+              if (this.movementsOfCashes) {
                 if (result.movementOfArticle) {
                   this.movementsOfArticles.push(result.movementOfArticle);
                 }
@@ -1803,7 +1807,8 @@ export class AddSaleOrderComponent implements OnInit {
     if (isValid &&
       this.transaction.type.electronics &&
       this.transaction.totalPrice > 5000 &&
-      !this.transaction.company) {
+      !this.transaction.company &&
+      Config.country === 'AR') {
       isValid = false;
       this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
     }
