@@ -48,7 +48,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (!this.filterCompanyType) {
@@ -86,7 +86,6 @@ export class ListSummaryOfAccountsComponent implements OnInit {
           } else {
             this.hideMessage();
             this.items = result;
-            console.log(this.items);
             this.totalItems = this.items.length;
           }
           this.loading = false;

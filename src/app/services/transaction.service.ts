@@ -9,6 +9,7 @@ import { Observable } from "rxjs/Observable";
 import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { MovementOfArticle } from 'app/models/movement-of-article';
+import { MovementOfCash } from 'app/models/movement-of-cash';
 
 @Injectable()
 export class TransactionService {
@@ -203,12 +204,20 @@ export class TransactionService {
 		return this._http.post(Config.apiURL_FE_AR, body, { headers: headers }).map (res => res.json());
   }
 
-  validateElectronicTransactionMX(transaction: Transaction, movementsOfArticles: MovementOfArticle[]) {
+  validateElectronicTransactionMX(
+    transaction: Transaction,
+    movementsOfArticles: MovementOfArticle[],
+    movementsOfCashes: MovementOfCash[]
+  ) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
-    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + this._userService.getDatabase() + '"}';
-		return this._http.post(Config.apiURL_FE_MX, body, { headers: headers }).map(res => res.json());
+    let body =      'transaction=' + JSON.stringify(transaction) + '&' +
+                    'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' +
+                    'movementsOfCashes=' + JSON.stringify(movementsOfCashes) + '&' +
+                    'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + this._userService.getDatabase() + '"}';
+
+    return this._http.post(Config.apiURL_FE_MX, body, { headers: headers }).map(res => res.json());
   }
 
   exportCiti(VATPeriod: string, transactionMovement: TransactionMovement) {
@@ -274,7 +283,7 @@ export class TransactionService {
       })
     );
 	}
-	
+
 
 	updateBalance(transactionOriginId : Transaction) {
 		let headers = new Headers({

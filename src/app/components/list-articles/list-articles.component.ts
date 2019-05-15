@@ -344,6 +344,7 @@ export class ListArticlesComponent implements OnInit {
                 modalRef.componentInstance.articles = this.articles;
               }
               modalRef.componentInstance.typePrint = 'label';
+              modalRef.componentInstance.printer = labelPrinter;
             } else {
               this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
             }
@@ -472,15 +473,17 @@ export class ListArticlesComponent implements OnInit {
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }
-              if(this.transaction.type.requestTaxes) {
+              if (this.transaction.type.requestTaxes) {
                 let tax: Taxes = new Taxes();
                 let taxes: Taxes[] = new Array();
                 if (article.taxes) {
                   for (let taxAux of article.taxes) {
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     tax.tax = taxAux.tax;
-                    tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
-                    tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
+                    tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+                    tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    tax.taxBase = this.roundNumber.transform(tax.taxBase);
+                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
                     taxes.push(tax);
                   }
                 }
