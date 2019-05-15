@@ -1322,7 +1322,6 @@ export class AddSaleOrderComponent implements OnInit {
           this.transaction.CFDStamp = result.CFDStamp;
           this.transaction.SATStamp = result.SATStamp;
           this.transaction.endDate = result.endDate;
-          this.transaction.totalPrice = result.totalPrice;
           this.transaction.UUID = result.UUID;
           this.finish();
         }
