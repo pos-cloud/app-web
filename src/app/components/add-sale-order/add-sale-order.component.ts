@@ -74,7 +74,7 @@ import { MovementOfCash } from 'app/models/movement-of-cash';
   encapsulation: ViewEncapsulation.None
 })
 
-export class AddSaleOrderComponent implements OnInit {
+export class AddSaleOrderComponent {
 
   public transaction: Transaction;
   public transactionId: string;
@@ -92,7 +92,6 @@ export class AddSaleOrderComponent implements OnInit {
   public printersAux: Printer[];  //Variable utilizada para guardar las impresoras de una operación determinada (Cocina, mostrador, Bar)
   public userType: string;
   public posType: string;
-  public table: Table; //Solo se usa si posType es igual a resto
   public loading: boolean;
   @ViewChild('contentPrinters') contentPrinters: ElementRef;
   @ViewChild('contentMessage') contentMessage: ElementRef;
@@ -131,7 +130,6 @@ export class AddSaleOrderComponent implements OnInit {
     public _printerService: PrinterService,
     public _userService: UserService,
     private _taxService: TaxService,
-    private _cashBoxService: CashBoxService,
     public _useOfCFDIService: UseOfCFDIService,
     public _relationTypeService: RelationTypeService,
     public _movementOfCancellationService : MovementOfCancellationService,
@@ -151,29 +149,66 @@ export class AddSaleOrderComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-    this.transactionId = pathLocation[4];
+    if (this.posType !== 'resto') {
+      this.transactionId = pathLocation[4];
+    } else {
+      this.transactionId = pathLocation[8];
+    }
 
     this.userCountry = Config.country;
     if(this.userCountry === 'MX') {
-      this.getUsesOfCFDI();
-      this.getRelationTypes();
+      this.getUsesOfCFDI().then(
+        usesOfCFDI => {
+          if(usesOfCFDI) {
+            this.usesOfCFDI = usesOfCFDI;
+          }
+        }
+      );
+      this.getRelationTypes().then(
+        relationTypes => {
+          if(relationTypes) {
+            this.relationTypes = relationTypes;
+          }
+        }
+      );
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
-    if (this.posType === "resto") {
-      this.table = new Table();
-      this.transaction.table = this.table;
-      let pathLocation: string[] = this._router.url.split('/');
-      let tableId = pathLocation[6];
-      if (tableId) {
-        this.getOpenTransactionByTable(tableId);
-      } else {
-        this.showMessage("No se ha seleccionado ninguna mesa", 'info', false);
-      }
-    } else if(this.transactionId) {
-      this.getTransaction();
+    if(this.transactionId) {
+      await this.getTransaction().then(
+        async transaction => {
+          if(transaction) {
+            this.transaction = transaction;
+            if(this.transaction.state === TransactionState.Closed ||
+              this.transaction.state === TransactionState.Canceled) {
+              this.backFinal();
+            } else {
+              this.transactionMovement = '' + this.transaction.type.transactionMovement;
+              this.lastQuotation = this.transaction.quotation;
+  
+              if(this.userCountry === 'MX' &&
+                this.transaction.type.defectUseOfCFDI &&
+                !this.transaction.useOfCFDI) {
+                this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
+              }
+  
+              this.getCancellationTypes().then(
+                cancellationTypes => {
+                  if(cancellationTypes) {
+                    this.cancellationTypes = cancellationTypes;
+                    this.showButtonCancelation = true;
+                  } else {
+                    this.showButtonCancelation = false;
+                  }
+                }
+              );
+              this.getMovementsOfTransaction();
+            }
+          }
+        }
+      );
     }
   }
 
@@ -201,73 +236,66 @@ export class AddSaleOrderComponent implements OnInit {
     });
   }
 
-  public getCancellationTypes() : void {
+  public getCancellationTypes(): Promise<CancellationType[]> {
 
-    this.loading = true;
+    return new Promise<CancellationType[]>((resolve, reject) => {
 
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
+      // ORDENAMOS LA CONSULTA
+      let sortAux = { order: 1 };
+      
+      // FILTRAMOS LA CONSULTA
+      let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
+      
+      // CAMPOS A TRAER
+      let project = {
+        "destination._id": 1,
+        "operationType" : 1
+      };
 
-    // FILTRAMOS LA CONSULTA
-    let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
+      // AGRUPAMOS EL RESULTADO
+      let group = {};
+      let limit = 0;
+      let skip = 0;
 
-    // CAMPOS A TRAER
-    let project = {
-      "destination._id": 1,
-      "operationType" : 1
-    };
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
-    this._cancellationTypeService.getCancellationTypes(
-      project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
-    ).subscribe(result => {
-      if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
-        this.cancellationTypes = result.cancellationTypes;
-        this.showButtonCancelation = true;
-      } else {
-        this.showButtonCancelation = false;
-      }
-      this.loading = false;
-    },
-    error => {
-      this.showMessage(error._body, 'danger', false);
-      this.showButtonCancelation = false;
-      this.loading = false;
-    });
-  }
-
-  public getUsesOfCFDI(): void {
-
-    this.loading = true;
-
-    this._useOfCFDIService.getUsesOfCFDI().subscribe(
-      result => {
-        if (!result.usesOfCFDI) {
-          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-          this.usesOfCFDI = null;
+      this._cancellationTypeService.getCancellationTypes(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        limit, // LIMIT
+        skip // SKIP
+      ).subscribe(result => {
+        if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
+          resolve(result.cancellationTypes);
         } else {
-          this.hideMessage();
-          this.loading = false;
-          this.usesOfCFDI = result.usesOfCFDI;
+          resolve(null);
         }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+        resolve(null);
+      });
+    });
+  }
+
+  public getUsesOfCFDI(): Promise<UseOfCFDI[]> {
+
+    return new Promise<UseOfCFDI[]>((resolve, reject) => {
+
+      this._useOfCFDIService.getUsesOfCFDI().subscribe(
+        result => {
+          if (!result.usesOfCFDI) {
+            resolve(null);
+          } else {
+            resolve(result.usesOfCFDI);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   async changeUseOfCFDI(useOfCFDI) {
@@ -275,54 +303,44 @@ export class AddSaleOrderComponent implements OnInit {
     await this.updateTransaction();
   }
 
-  public getRelationTypes(): void {
+  public getRelationTypes(): Promise<RelationType[]> {
 
-    this.loading = true;
+    return new Promise<RelationType[]>((resolve, reject) => {
 
-    this._relationTypeService.getRelationTypes().subscribe(
-      result => {
-        if (!result.relationTypes) {
-          // if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-          this.relationTypes = null;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this.relationTypes = result.relationTypes;
+      this._relationTypeService.getRelationTypes().subscribe(
+        result => {
+          if (!result.relationTypes) {
+            resolve(null);
+          } else {
+            resolve(result.relationTypes);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public getLastTransactionByType(): void {
+  public getLastTransactionByType(): Promise<Transaction> {
 
-    this.loading = true;
+    return new Promise<Transaction>((resolve, reject) => {
 
-    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.transaction.origin = 0;
-          this.transaction.number = 1;
-        } else {
-          this.transaction.origin = result.transactions[0].origin;
-          this.transaction.number = result.transactions[0].number + 1;
+      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+        async result => {
+          if (!result.transactions) {
+            resolve(null);
+          } else {
+            resolve(result.transactions[0]);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-          this.getOpenCashBox();
-        } else {
-          this.addTransaction();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public filterArticles(): void {
@@ -334,282 +352,75 @@ export class AddSaleOrderComponent implements OnInit {
     }
   }
 
-  public getPrinters(): void {
+  public getPrinters(): Promise<Printer[]> {
 
-    this.loading = true;
+    return new Promise<Printer[]>( async (resolve, reject) => {
 
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.printers = undefined;
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getOpenTransactionByTable(tableId): void {
-
-    this.loading = true;
-
-    this._transactionService.getOpenTransactionByTable(tableId).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.hideMessage();
-          this.getTable(tableId);
-        } else {
-          this.hideMessage();
-          this.transaction = result.transactions[0];
-          if (this.transaction.state === TransactionState.Closed ||
-            this.transaction.state === TransactionState.Canceled) {
-            this.backFinal();
+      this._printerService.getPrinters().subscribe(
+        result => {
+          if (!result.printers) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
           } else {
-            this.transactionMovement = '' + this.transaction.type.transactionMovement;
-            this.table = this.transaction.table;
-            this.getMovementsOfTransaction();
+            resolve(result.printers);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  async getTransaction() {
+  async getTransaction(): Promise<Transaction> {
+    
+    return new Promise<Transaction>((resolve, reject) => {
 
-    this.loading = true;
-
-    this._transactionService.getTransaction(this.transactionId).subscribe(
-      async result => {
-        if (!result.transaction) {
-          this.showMessage(result.message, 'danger', false);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          this.transaction = result.transaction;
-          this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          if(this.transaction.state === TransactionState.Closed ||
-            this.transaction.state === TransactionState.Canceled) {
-            this.backFinal();
+      this._transactionService.getTransaction(this.transactionId).subscribe(
+        async result => {
+          if (!result.transaction) {
+            this.showMessage(result.message, 'danger', false);
+            resolve(null);
           } else {
-            if(this.transaction.type.printable) {
-              this.getPrinters();
-            }
-            await this.getCurrencies().then(
-              currencies => {
-                if(currencies && Config.currency) {
-                  this.currencies = currencies;
-                  this.transaction.currency = Config.currency;
-                }
-                if(this.transaction.quotation === undefined ||
-                  this.transaction.quotation === null) {
-                  if(this.currencies && this.currencies.length > 0) {
-                    for(let currency of this.currencies) {
-                      if(Config.currency && currency._id !== Config.currency._id) {
-                        this.transaction.quotation = currency.quotation;
-                      }
-                    }
-                  } else {
-                    this.transaction.quotation = 1;
-                  }
-                }
-              }
-            );
-            this.lastQuotation = this.transaction.quotation;
-
-            if(this.userCountry === 'MX' &&
-              this.transaction.type.defectUseOfCFDI &&
-              !this.transaction.useOfCFDI) {
-              this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
-            }
-
-            this.getCancellationTypes();
-            if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-              this.getOpenCashBox();
-            }
-            this.getMovementsOfTransaction();
+            resolve(result.transaction);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public getTable(id: string): void {
+  public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
 
-    this.loading = true;
-
-    this._tableService.getTable(id).subscribe(
-      result => {
-        if (!result.table) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.hideMessage();
-          this.table = result.table;
-          this.transaction.table = this.table;
-          this.transaction.diners = this.table.diners;
-          this.transaction.employeeOpening = this.table.employee;
-          this.transaction.employeeClosing = this.table.employee;
-          this.getOpenTurn(this.table.employee);
-          this.getDefectOrder();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getDefectOrder(): void {
-
-    this.loading = true;
-
-    this._transactionTypeService.getDefectOrder().subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction.type = result.transactionTypes[0];
-          this.transactionMovement = '' + this.transaction.type.transactionMovement;
-          this.getLastTransactionByType();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getOpenTurn(employee: Employee): void {
-
-    this.loading = true;
-
-    this._turnService.getOpenTurn(employee._id).subscribe(
-      result => {
-        if (!result.turns) {
-          this.openModal("change-employee");
-        } else {
-          this.transaction.turnOpening = result.turns[0];
-          this.transaction.turnClosing = result.turns[0];
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getOpenCashBox(): void {
-
-    this.loading = true;
-
-    this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
-      result => {
-        if (!result.cashBoxes) {
-          if(!this.transaction._id || this.transaction._id === '') {
-            this.addTransaction();
-          }
-        } else {
-          this.transaction.cashBox = result.cashBoxes[0];
-          if(this.transaction._id && this.transaction._id !== '') {
-            this.updateTransaction().then(
-              transaction => {
-                if(transaction) {
-                  this.transaction = transaction;
-                }
-              }
-            );
+    return new Promise<MovementOfCancellation[]>((resolve, reject) => {
+    
+      this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
+        async result => {
+          if (!result.movementsOfCancellations) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
           } else {
-            this.addTransaction();
+            resolve(result.movementsOfCancellations);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public addTransaction(): void {
-
-    this.loading = true;
-    this.transaction.madein = this.posType;
-
-    this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
-    this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-
-    this._transactionService.saveTransaction(this.transaction).subscribe(
-      async result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.hideMessage();
-          this.transaction = result.transaction;
-          if (this.posType === "resto") {
-            this.table.state = TableState.Busy;
-            await this.updateTable();
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  async saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) {
-
-    await this.daleteMovementsOfCancellations();
-
-    this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
-      async result => {
-        if (!result.movementsOfCancellations) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.getMovementsOfTransaction();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public daleteMovementsOfCancellations(): Promise<boolean> {
+  public daleteMovementsOfCancellations(query: string): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
-
-      let query = '{"transactionDestination":"'+this.transaction._id+'"}';
-
+      
       this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
         async result => {
-          this.loading = false;
           if (!result.movementsOfCancellations) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
@@ -626,13 +437,9 @@ export class AddSaleOrderComponent implements OnInit {
   }
 
   public updateTransaction(): Promise<Transaction> {
-
-    this.loading = true;
-
-    this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
-    this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
-
+    
     return new Promise<Transaction>((resolve, reject) => {
+
       this._transactionService.updateTransaction(this.transaction).subscribe(
         result => {
           if (!result.transaction) {
@@ -641,11 +448,9 @@ export class AddSaleOrderComponent implements OnInit {
           } else {
             resolve(result.transaction);
           }
-          this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);
-          this.loading = false;
           resolve(null);
         }
       );
@@ -696,10 +501,10 @@ export class AddSaleOrderComponent implements OnInit {
       this.typeOfOperationToPrint = "kitchen";
       this.openModal('printers');
     } else if (this.posType === "resto") {
-      this.table.state = TableState.Busy;
+      this.transaction.table.state = TableState.Busy;
       await this.updateTable().then(table => {
         if(table) {
-          this.table = table;
+          this.transaction.table = table;
           this.backFinal();
         }
       });
@@ -724,10 +529,10 @@ export class AddSaleOrderComponent implements OnInit {
             this.updateMovementOfArticlePrinted();
           } else {
             if (this.posType === "resto") {
-              this.table.state = TableState.Busy;
+              this.transaction.table.state = TableState.Busy;
               await this.updateTable().then(table => {
                 if(table) {
-                  this.table = table;
+                  this.transaction.table = table;
                   this.backFinal();
                 }
               });
@@ -749,7 +554,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     return new Promise<Table>((resolve, reject) => {
 
-      this._tableService.updateTable(this.table).subscribe(
+      this._tableService.updateTable(this.transaction.table).subscribe(
         result => {
           if (!result.table) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -771,10 +576,10 @@ export class AddSaleOrderComponent implements OnInit {
     if(itemData) {
 
       this.showCategories();
-
+  
       if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
         let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
-
+  
         if (!movementOfArticle) {
           movementOfArticle = itemData;
           movementOfArticle._id = '';
@@ -839,6 +644,7 @@ export class AddSaleOrderComponent implements OnInit {
   public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
 
     return new Promise<ArticleStock>((resolve, reject) => {
+
       this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
         result => {
           if (!result.articleStocks || result.articleStocks.length <= 0) {
@@ -859,7 +665,7 @@ export class AddSaleOrderComponent implements OnInit {
 
     let isValid = true;
 
-    if (this.transaction.type &&
+    if (this.transaction.type && 
         this.transaction.type.transactionMovement === TransactionMovement.Sale &&
         movementOfArticle.article &&
         !movementOfArticle.article.allowSale) {
@@ -867,7 +673,7 @@ export class AddSaleOrderComponent implements OnInit {
         this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.transaction.type &&
+    if (this.transaction.type && 
         this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
         movementOfArticle.article &&
         !movementOfArticle.article.allowPurchase) {
@@ -900,20 +706,20 @@ export class AddSaleOrderComponent implements OnInit {
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-
+    
     if(this.transaction.quotation) {
       quotation = this.transaction.quotation;
     }
-
+    
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-
+    
     if( movementOfArticle.article &&
         movementOfArticle.article.currency &&
-        Config.currency &&
+        Config.currency && 
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
-
+    
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
@@ -961,7 +767,7 @@ export class AddSaleOrderComponent implements OnInit {
   public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-
+    
     if(this.transaction.quotation) {
       quotation = this.transaction.quotation;
     }
@@ -970,8 +776,8 @@ export class AddSaleOrderComponent implements OnInit {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
-      if(movementOfArticle.article.currency &&
-        Config.currency &&
+      if(movementOfArticle.article.currency &&  
+        Config.currency && 
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
@@ -992,17 +798,17 @@ export class AddSaleOrderComponent implements OnInit {
 
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-      if(movementOfArticle.article.currency &&
-        Config.currency &&
+      if(movementOfArticle.article.currency &&  
+        Config.currency && 
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
     }
-
+    
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     if( movementOfArticle.article &&
-        movementOfArticle.article.currency &&
-        Config.currency &&
+        movementOfArticle.article.currency &&  
+        Config.currency && 
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
@@ -1071,62 +877,6 @@ export class AddSaleOrderComponent implements OnInit {
         }
       );
     });
-  }
-
-  async updateOthersFields() {
-
-    let transactionTaxes: Taxes[] = new Array();
-    let transactionTaxesAUX: Taxes[] = new Array();
-
-    this.transaction.exempt = 0;
-
-    if (this.movementsOfArticles) {
-      for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
-          let transactionTax: Taxes = new Taxes();
-          for (let taxesAux of movementOfArticle.taxes) {
-            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              transactionTax.percentage = taxesAux.percentage;
-              transactionTax.tax = taxesAux.tax;
-              transactionTax.taxBase = taxesAux.taxBase;
-              transactionTax.taxAmount = taxesAux.taxAmount;
-            } else {
-              transactionTax = taxesAux;
-            }
-          }
-          transactionTaxesAUX.push(transactionTax);
-        } else {
-          this.transaction.exempt += movementOfArticle.salePrice;
-        }
-      }
-    }
-
-    if (transactionTaxesAUX) {
-      for (let transactionTaxAux of transactionTaxesAUX) {
-        let exists: boolean = false;
-        for (let transactionTax of transactionTaxes) {
-          if (transactionTaxAux.tax.name === transactionTax.tax.name &&
-            transactionTaxAux.percentage === transactionTax.percentage) {
-            transactionTax.taxAmount += transactionTaxAux.taxAmount;
-            transactionTax.taxBase += transactionTaxAux.taxBase;
-            exists = true;
-          }
-        }
-
-        if (!exists) {
-          transactionTaxes.push(transactionTaxAux);
-        }
-      }
-    }
-
-    this.transaction.taxes = transactionTaxes;
-    await this.updateTransaction().then(
-      transaction => {
-        if(transaction) {
-          this.transaction = transaction;
-        }
-      }
-    );
   }
 
   async updateTaxes() {
@@ -1222,7 +972,7 @@ export class AddSaleOrderComponent implements OnInit {
       this.transaction.discountPercent = 0;
       discountAmountAux = 0;
     }
-
+    
     if(isUpdateValid) {
       this.transaction.totalPrice = totalPriceAux;
       this.transaction.discountAmount = discountAmountAux;
@@ -1240,22 +990,6 @@ export class AddSaleOrderComponent implements OnInit {
         );
       }
     }
-  }
-
-  public hasChangedMovementOfArticle(oldMov, newMov): boolean {
-
-    let hasChanged: boolean = false;
-
-    for(let prop of Object.keys(newMov)) {
-      if( oldMov[prop] &&
-          newMov[prop] &&
-          oldMov[prop] !== newMov[prop]
-        ) {
-          hasChanged = true;
-      }
-    }
-
-    return hasChanged;
   }
 
   public validateElectronicTransactionAR(): void {
@@ -1342,10 +1076,23 @@ export class AddSaleOrderComponent implements OnInit {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
-        modalRef.result.then((result) => {
+        modalRef.result.then(async (result) => {
           if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
             this.showButtonCancelation = false;
-            this.saveMovementsOfCancellations(result.movementsOfCancellations);
+
+            await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
+              async movementsOfCancellations => {
+                if(movementsOfCancellations) {
+                  await this.saveMovementsOfCancellations(result.movementsOfCancellations).then(
+                    movementsOfCancellations => {
+                      if(movementsOfCancellations) {
+                        this.getMovementsOfTransaction();
+                      }
+                    }
+                  );
+                }
+              }
+            );
           }
         }, (reason) => {
         });
@@ -1388,11 +1135,11 @@ export class AddSaleOrderComponent implements OnInit {
         modalRef.result.then(async (result) => {
           if (result === 'delete_close') {
             if (this.posType === "resto") {
-              this.table.employee = null;
-              this.table.state = TableState.Available;
+              this.transaction.table.employee = null;
+              this.transaction.table.state = TableState.Available;
               await this.updateTable().then(table => {
                 if(table) {
-                  this.table = table;
+                  this.transaction.table = table;
                   this.backFinal();
                 }
               });
@@ -1498,10 +1245,10 @@ export class AddSaleOrderComponent implements OnInit {
                 this.finish(); //SE FINALIZA POR ERROR EN LA FE
               } else {
                 if (this.transaction.type.fixedLetter !== this.transaction.letter) {
-                  this.assignTransactionNumber();
-                } else {
-                  this.finish();
-                }
+                      this.assignTransactionNumber();
+                    } else {
+                      this.finish();
+                    }
               }
             } else {
               this.finish();
@@ -1552,7 +1299,7 @@ export class AddSaleOrderComponent implements OnInit {
         }, (reason) => {
         });
         break;
-
+        
       case 'change-quotation':
         modalRef = this._modalService.open(this.contentChangeQuotation).result.then(async (result) => {
           if (result !== "cancel" && result !== '') {
@@ -1576,19 +1323,17 @@ export class AddSaleOrderComponent implements OnInit {
             }
             if(result.employee) {
               this.transaction.employeeClosing = result.employee;
-              if(this.table) {
-                this.table.employee = result.employee;
-              }
             }
             await this.updateTransaction().then(
               async transaction => {
                 if(transaction) {
                   this.transaction = transaction;
-                  if(this.table) {
+                  if(this.transaction.table) {
+                    this.transaction.table.employee = result.employee;
                     await this.updateTable().then(
                       table => {
                         if(table) {
-                          this.table = table;
+                          this.transaction.table = table;
                         }
                       }
                     );
@@ -1631,7 +1376,7 @@ export class AddSaleOrderComponent implements OnInit {
         model.model = "movement-of-article";
         model.relations = new Array();
         model.relations.push("article_relation_code");
-
+        
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'cancel') {
@@ -1648,35 +1393,35 @@ export class AddSaleOrderComponent implements OnInit {
   async areValidMovementOfArticle(): Promise<boolean> {
 
     return new Promise<boolean>( async (resolve, reject) => {
-
+      
       let areValid: boolean = true;
-
+  
       for(let movementOfArticle of this.movementsOfArticles) {
         if(await this.isValidMovementOfArticle(movementOfArticle)) {
         } else {
           areValid = false;
         }
       }
-
+  
       resolve(areValid);
     });
   }
 
   async finish() {
-
+    
     let isValid: boolean = true;
 
-    if (isValid &&
+    if (isValid && 
         Config.modules.stock &&
         this.transaction.type.modifyStock) {
-
+        
           if(await this.areValidMovementOfArticle()) {
             isValid = await this.processStock();
           } else {
             isValid = false;
           }
     }
-
+    
     if(isValid) {
       await this.updateBalance().then(async balance => {
         if(balance !== null) {
@@ -1689,38 +1434,55 @@ export class AddSaleOrderComponent implements OnInit {
           }
           this.transaction.expirationDate = this.transaction.endDate;
           this.transaction.state = TransactionState.Closed;
+      
+          await this.updateTransaction().then(
+            async transaction => {
+              if(transaction) {
+                this.transaction = transaction;
+      
+                if (this.transaction && this.transaction.type.printable) {
+            
+                  if (this.transaction.table) {
+                    this.transaction.table.employee = null;
+                    this.transaction.table.state = TableState.Available;
+                    await this.updateTable().then(
+                      table => {
+                        if(table) {
+                          this.transaction.table = table;
+                        }
+                      }
+                    );
+                  }
 
-          await this.updateTransaction().then(async transaction => {
-            this.transaction = transaction;
-
-            if (this.transaction && this.transaction.type.printable) {
-
-              if (this.table) {
-                this.table.employee = null;
-                this.table.state = TableState.Available;
-                this.table = await this.updateTable();
-              }
-
-              if (this.transaction.type.defectPrinter) {
-                this.printerSelected = this.transaction.type.defectPrinter;
-                this.distributeImpressions(this.transaction.type.defectPrinter);
-              } else {
-                this.openModal('printers');
-              }
-            } else {
-              if (this.posType === "resto") {
-                this.table.employee = null;
-                this.table.state = TableState.Available;
-                await this.updateTable().then(table => {
-                  if(table) {
-                    this.table = table;
+                  await this.getPrinters().then(
+                    printers => {
+                      if(printers) {
+                        this.printers = printers;
+                      }
+                    }
+                  );
+            
+                  if (this.transaction.type.defectPrinter) {
+                    this.printerSelected = this.transaction.type.defectPrinter;
+                    this.distributeImpressions(this.transaction.type.defectPrinter);
+                  } else {
+                    this.openModal('printers');
+                  }
+                } else {
+                  if (this.posType === "resto") {
+                    this.transaction.table.employee = null;
+                    this.transaction.table.state = TableState.Available;
+                    await this.updateTable().then(table => {
+                      if(table) {
+                        this.transaction.table = table;
+                        this.backFinal();
+                      }
+                    });
+                  } else {
                     this.backFinal();
                   }
-                });
-              } else {
-                this.backFinal();
+                }
               }
-            }
           });
         }
       });
@@ -1736,7 +1498,7 @@ export class AddSaleOrderComponent implements OnInit {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
-            resolve(result.transaction.balance);
+            resolve(result.transaction.balance);  
           }
         },
         error => {
@@ -1944,7 +1706,7 @@ export class AddSaleOrderComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
     return new Promise<MovementOfArticle>((resolve, reject) => {
-
+    
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
@@ -1983,7 +1745,7 @@ export class AddSaleOrderComponent implements OnInit {
     let endProcess: boolean = true;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-
+      
       for(let movementOfArticle of this.movementsOfArticles) {
         if(movementOfArticle.article) {
           await this.updateRealStock(movementOfArticle).then(
@@ -2005,7 +1767,7 @@ export class AddSaleOrderComponent implements OnInit {
   public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
     return new Promise<boolean>((resolve, reject) => {
-
+  
       let amountToModify;
 
       if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
@@ -2036,7 +1798,11 @@ export class AddSaleOrderComponent implements OnInit {
   public backFinal(): void {
 
     if (this.posType === "resto") {
-      this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
+      if(this.transaction.table.room && this.transaction.table.room._id) {
+        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room._id + '/mesas']);
+      } else {
+        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
+      }
     } else if (this.posType === "mostrador") {
       if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
         this._router.navigate(['/pos/' + this.posType + '/compra']);

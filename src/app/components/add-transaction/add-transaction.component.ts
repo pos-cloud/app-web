@@ -32,6 +32,7 @@ import { MovementOfCancellationComponent } from '../movement-of-cancellation/mov
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
 import { CancellationTypeService } from 'app/services/cancellation-type.service';
+import { resolve } from 'q';
 
 @Component({
   selector: 'app-add-transaction',
@@ -45,8 +46,6 @@ export class AddTransactionComponent implements OnInit {
   public transactionForm: FormGroup;
   public companies: Company[];
   @Input() transactionId: string;
-  @Input() transactionTypeId: string;
-  @Input() companyId: string;
   public transaction: Transaction;
   public taxes: Taxes[] = new Array();
   public alertMessage: string = '';
@@ -146,9 +145,7 @@ export class AddTransactionComponent implements OnInit {
     this.buildForm();
 
     if (this.transactionId) {
-        this.getTransaction();
-      } else {
-        this.getTransactionType();
+      this.getTransaction();
     }
   }
 
@@ -174,9 +171,6 @@ export class AddTransactionComponent implements OnInit {
             this.companyName = this.transaction.company.name;
           }
           this.setValuesForm();
-          if(this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-            this.getOpenCashBox();
-          }
           if (this.transaction.type.requestEmployee) {
             this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
           }
@@ -187,110 +181,6 @@ export class AddTransactionComponent implements OnInit {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       });
-  }
-
-  public getTransactionType(): void {
-
-    this.loading = true;
-
-    this._transactionTypeService.getTransactionType(this.transactionTypeId).subscribe(
-      result => {
-        if (!result.transactionType) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction.type = result.transactionType;
-          this.getCancellationTypes();
-          this.transactionMovement = this.transaction.type.transactionMovement.toString();
-          if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-            this.transaction.origin = this.transaction.type.fixedOrigin;
-          }
-
-          if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
-            this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
-          }
-
-          this.setValuesForm();
-
-          if (this.transaction.type.transactionMovement === TransactionMovement.Purchase ||
-            this.transaction.type.transactionMovement === TransactionMovement.Money) {
-            this.getLastTransactionByType(false);
-          }
-
-          if (this.transaction.type.requestEmployee) {
-            this.getEmployees('where="type":"' + this.transaction.type.requestEmployee._id + '"');
-          }
-
-          if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-            this.getOpenCashBox();
-          }
-
-          if(this.companyId) {
-            this.getCompany();
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      });
-  }
-
-  public getCompany(): void {
-
-    this.loading = true;
-
-    this._companyService.getCompany(this.companyId).subscribe(
-      result => {
-        if (!result.company) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction.company = result.company;
-          this.companyName = this.transaction.company.name;
-          this.setValuesForm();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      });
-  }
-
-  public getOpenCashBox(toSave: boolean = false): void {
-
-    this.loading = true;
-
-    this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
-      result => {
-        if (!result.cashBoxes) {
-          if (toSave) {
-            this.saveTransaction();
-          } else {
-            this.setValuesForm();
-          }
-        } else {
-          this.transaction.cashBox = result.cashBoxes[0];
-          if (toSave) {
-            if(!this.transaction._id || this.transaction._id === '') {
-              this.saveTransaction();
-            } else {
-              this.updateTransaction(false);
-            }
-          } else {
-            this.setValuesForm();
-            if (this.transaction._id && this.transaction._id !== '') {
-              this.updateTransaction(false);
-            }
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   ngAfterViewInit() {
@@ -460,9 +350,9 @@ export class AddTransactionComponent implements OnInit {
     }
   }
 
-  public openModal(
+  async openModal(
     op: string,
-    transaction?: Transaction): void {
+    transaction?: Transaction) {
 
     let modalRef;
 
@@ -470,9 +360,33 @@ export class AddTransactionComponent implements OnInit {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
-        modalRef.result.then((result) => {
+        modalRef.result.then(async (result) => {
           if(result.movementsOfCancellations) {
-            this.saveMovementsOfCancellations(result.movementsOfCancellations);
+            await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
+              async movementsOfCancellations => {
+                if(movementsOfCancellations) {
+                  await this.saveMovementsOfCancellations(result.movementsOfCancellations).then(
+                    movementsOfCancellations => {
+                      if(movementsOfCancellations) {
+                        let balanceTotal = 0;
+                        for(let mov of result.movementsOfCancellations) {
+                          balanceTotal += mov.balance;
+                        }
+                        this.transaction.totalPrice = balanceTotal;
+                        this.updateTransaction().then(
+                          transaction => {
+                            if(transaction) {
+                              this.transaction = transaction;
+                              this.setValuesForm();
+                            }
+                          }
+                        );
+                      }
+                    }
+                  );
+                }
+              }
+            );
           }
         }, (reason) => {
         });
@@ -525,6 +439,47 @@ export class AddTransactionComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  async addTransaction() {
+
+    this.transaction.observation = this.transactionForm.value.observation;
+    this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
+    this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
+
+    if ((this.transaction.type.requestEmployee &&
+      this.transaction.employeeOpening) ||
+      !this.transaction.type.requestEmployee) {
+
+      this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
+      this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
+      this.transaction.VATPeriod = this.transactionForm.value.VATPeriod;
+      this.transaction.expirationDate = this.transaction.endDate;
+      this.transaction.origin = this.transactionForm.value.origin;
+      this.transaction.letter = this.transactionForm.value.letter;
+      this.transaction.number = this.transactionForm.value.number;
+      this.transaction.totalPrice = this.transactionForm.value.totalPrice;
+      if (this.transaction.type.requestArticles ||
+        (this.transaction.totalPrice > 0 &&
+        !this.transaction.type.requestArticles)) {
+        if (this.transactionForm.value.state) {
+          this.transaction.state = this.transactionForm.value.state;
+        }
+
+        await this.updateTransaction().then(
+          transaction => {
+            if(transaction) {
+              this.transaction = transaction;
+              this.activeModal.close({ transaction: this.transaction });
+            }
+          }
+        );
+      } else {
+        this.showMessage("El monto ingresado debe ser mayor a 0.", "info", true);
+      }
+    } else {
+      this.showMessage("Debe asignar el empleado " + this.transaction.type.requestEmployee.description, "info", true);
+    }
   }
 
   public addTransactionTaxes(taxes: Taxes[]): void {
@@ -585,163 +540,53 @@ export class AddTransactionComponent implements OnInit {
     this.transaction.taxes = transactionTaxes;
   }
 
-  public addTransaction(): void {
+  public updateTransaction(): Promise<Transaction> {
 
-    this.transaction.observation = this.transactionForm.value.observation;
-    this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
-    this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
-
-    if ((this.transaction.type.requestEmployee &&
-      this.transaction.employeeOpening) ||
-      !this.transaction.type.requestEmployee) {
-
-      this.transaction.startDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
-      this.transaction.endDate = this.datePipe.transform(this.transactionForm.value.date + " " + moment().format('HH:mm:ss'), 'YYYY-MM-DDTHH:mm:ssZ', 'YYYY-MM-DD HH:mm:ss');
-      this.transaction.VATPeriod = this.transactionForm.value.VATPeriod;
-      this.transaction.expirationDate = this.transaction.endDate;
-      this.transaction.origin = this.transactionForm.value.origin;
-      this.transaction.letter = this.transactionForm.value.letter;
-      this.transaction.number = this.transactionForm.value.number;
-      this.transaction.totalPrice = this.transactionForm.value.totalPrice;
-      if (this.transaction.type.requestArticles ||
-        (this.transaction.totalPrice > 0 &&
-        !this.transaction.type.requestArticles)) {
-        if (this.transactionForm.value.state) {
-          this.transaction.state = this.transactionForm.value.state;
-        }
-
-        if (this.transaction._id && this.transaction._id !== '') {
-          this.updateTransaction();
-        } else {
-          if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-            this.getLastTransactionByType();
+    return new Promise<Transaction>((resolve, reject) => {
+      this._transactionService.updateTransaction(this.transaction).subscribe(
+        result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
           } else {
-            this.transaction.number = this.transactionForm.value.number;
-            this.saveTransaction();
+            resolve(result.transaction);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      } else {
-        this.showMessage("El monto ingresado debe ser mayor a 0.", "info", true);
-      }
-    } else {
-      this.showMessage("Debe asignar el empleado " + this.transaction.type.requestEmployee.description, "info", true);
-    }
+      );
+    });
   }
 
-  public getLastTransactionByType(toSave: boolean = true): void {
+  public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
 
-    this.loading = true;
-
-    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.transaction.number = 1;
-        } else {
-          this.transaction.number = result.transactions[0].number + 1;
-        }
-        if (this.transaction.type.cashBoxImpact && !this.transaction.cashBox) {
-          this.getOpenCashBox(toSave);
-        } else {
-          if (toSave) {
-            this.saveTransaction();
-          } else {
-            this.setValuesForm();
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public saveTransaction(): void {
-
-    this.loading = true;
-    if (this.posType === "cuentas-corrientes") {
-      this.posType = "mostrador";
-    }
-    this.transaction.madein = this.posType;
-
-    this._transactionService.saveTransaction(this.transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction = result.transaction;
-          this.showMessage("La transacción se ha añadido con éxito.", 'success', true);
-          this.activeModal.close({ transaction: this.transaction });
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public updateTransaction(close: boolean = true): void {
-
-    this.loading = true;
-
-    this._transactionService.updateTransaction(this.transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction = result.transaction;
-          if(close) {
-            this.activeModal.close({ transaction: this.transaction });
-          } else {
-            this.setValuesForm();
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  async saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]) {
+    return new Promise<MovementOfCancellation[]>((resolve, reject) => {
     
-    await this.daleteMovementsOfCancellations();
-
-    this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
-      async result => {
-        if (!result.movementsOfCancellations) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          let balanceTotal = 0;
-          for(let mov of result.movementsOfCancellations) {
-            balanceTotal += mov.balance;
+      this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
+        async result => {
+          if (!result.movementsOfCancellations) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.movementsOfCancellations);
           }
-          this.transaction.totalPrice = balanceTotal;
-          this.updateTransaction(false);
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public daleteMovementsOfCancellations(): Promise<boolean> {
+  public daleteMovementsOfCancellations(query: string): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
 
-      let query = '{"transactionDestination":"'+this.transaction._id+'"}';
-
       this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
         async result => {
-          this.loading = false;
           if (!result.movementsOfCancellations) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,7 +14,6 @@ import { UserService } from './../../services/user.service';
 import { AddTableComponent } from './../../components/add-table/add-table.component';
 import { UpdateTableComponent } from './../../components/update-table/update-table.component';
 import { DeleteTableComponent } from './../../components/delete-table/delete-table.component';
-import { SelectEmployeeComponent } from './../../components/select-employee/select-employee.component';
 import { TransactionType } from 'app/models/transaction-type';
 
 @Component({
@@ -39,6 +38,7 @@ export class ListTablesComponent implements OnInit {
   public amountOfDiners: number = 0;
   public loading: boolean = false;
   @Input() filterRoom: string;
+  @Output() eventTableSelected: EventEmitter<Table> = new EventEmitter<Table>();
   public itemsPerPage = 10;
   public totalItems = 0;
   public transactionTypeDefectOrder: TransactionType;
@@ -96,6 +96,10 @@ export class ListTablesComponent implements OnInit {
         }
       }
     );
+  }
+
+  public selectTable(table: Table): void {
+    this.eventTableSelected.emit(table);
   }
 
   public calculateAmountOfDiners() {
@@ -168,77 +172,9 @@ export class ListTablesComponent implements OnInit {
 
         });
         break;
-      case 'select-employee':
-        if (this.tableSelected.state !== TableState.Disabled &&
-            this.tableSelected.state !== TableState.Reserved) {
-                if (!this.tableSelected.employee) {
-                  modalRef = this._modalService.open(SelectEmployeeComponent);
-                  modalRef.componentInstance.table = this.tableSelected;
-                  modalRef.componentInstance.requireLogin = false;
-                  modalRef.componentInstance.typeEmployee = this.transactionTypeDefectOrder.requestEmployee;
-                  modalRef.componentInstance.op = "open-table";
-                  modalRef.result.then((result) => {
-                    if (result.employee) {
-                      this.tableSelected.employee = result.employee;
-                      this.tableSelected.diners = result.diners;
-                      this.assignEmployee();
-                    }
-                  }, (reason) => {
-                  });
-                } else {
-                  this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + this.transactionTypeDefectOrder._id]);
-                }
-        } else {
-          this.showMessage("La mesa seleccionada se encuentra " + this.tableSelected.state, 'info', true);
-        }
-        break;
       default: ;
     }
   };
-
-  public assignEmployee(): void {
-
-    this.loading = true;
-
-    this._tableService.updateTable(this.tableSelected).subscribe(
-      result => {
-        if (!result.table) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/agregar-transaccion/' + this.transactionTypeDefectOrder._id]);
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getDefectOrder(table: Table): void {
-
-    this.loading = true;
-
-    this._transactionTypeService.getDefectOrder().subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.hideMessage();
-          this.transactionTypeDefectOrder = result.transactionTypes[0];
-          this.openModal('select-employee', table);
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

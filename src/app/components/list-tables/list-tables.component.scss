@@ -24,8 +24,8 @@ app-list-tables {
     
     .itable {
         background: #d9534f;
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         margin: 25px;
         float: left;
         text-align: center;
@@ -55,7 +55,12 @@ app-list-tables {
         font-size: 30px;
         font: bold;
         color: white;
-    } 
+    }
+
+    .table-time {
+        font: bold;
+        color: white;
+    }
     
     .number-diners {
         height: 20px;

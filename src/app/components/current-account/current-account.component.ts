@@ -87,6 +87,7 @@ export class CurrentAccountComponent implements OnInit {
       this.openModal('company');
     }
   }
+
   public getSummary(): void {
 
     this.loading = true;
@@ -174,48 +175,9 @@ export class CurrentAccountComponent implements OnInit {
 
     let modalRef;
     switch (op) {
-      case 'transaction':
-        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
-        if(this.balance < 0) {
-          transaction.totalPrice = this.balance * (-1);
-        }
-        if (transaction && transaction._id) {
-          modalRef.componentInstance.transactionId = transaction._id;
-        }
-        if (transaction.type) {
-          modalRef.componentInstance.transactionTypeId = transaction.type._id;
-        }
-        if (transaction.company) {
-          modalRef.componentInstance.companyId = transaction.company._id;
-        }
-        modalRef.result.then(
-          (result) => {
-            if (result.transaction) {
-              this.openModal('movement-of-cash', result.transaction);
-            }
-          }, (reason) => {
-
-          }
-        );
-        break;
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transactionId = transaction._id;
-        break;
-      case 'movement-of-cash':
-        modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
-        modalRef.componentInstance.transaction = transaction;
-        modalRef.result.then((result) => {
-          if (typeof result == 'object') {
-            if (result.amountPaid > transaction.totalPrice && result.type.name === "Tarjeta de Crédito") {
-              transaction.totalPrice = result.amountPaid;
-            }
-            transaction.state = TransactionState.Closed;
-            this.updateTransaction(transaction);
-          }
-        }, (reason) => {
-
-        });
         break;
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
@@ -277,82 +239,6 @@ export class CurrentAccountComponent implements OnInit {
         } else {
           this.hideMessage();
           this.printers = result.printers;
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public getTransaction(transactionId: string, op: string): void {
-
-    this.loading = true;
-
-    this._transactionService.getTransaction(transactionId).subscribe(
-      result => {
-        if (!result.transaction) {
-          this.showMessage(result.message, 'danger', false);
-          this.loading = false;
-        } else {
-          this.hideMessage();
-          if (op === 'view'){
-            this.openModal('view-transaction', result.transaction);
-          } else if (op === 'print'){
-            this.openModal('printTransaction',result.transaction);
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public addTransaction(type: string): void {
-    if (this.companySelected) {
-      this.getTransactionTypeByName(type);
-    } else {
-      this.showMessage("Debe seleccionar una empresa", 'info', true);
-    }
-  }
-
-  public getTransactionTypeByName(name: string): void {
-
-    this._transactionTypeService.getTransactionTypeByName(name).subscribe(
-      result => {
-        if (!result.transactionTypes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          let transaction = new Transaction();
-          transaction.type = result.transactionTypes[0];
-          transaction.company = this.companySelected;
-          this.openModal('transaction', transaction);
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public updateTransaction(transaction: Transaction): void {
-
-    this.loading = true;
-
-    this._transactionService.updateTransaction(transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.refresh();
         }
         this.loading = false;
       },

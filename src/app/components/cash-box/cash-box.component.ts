@@ -24,7 +24,6 @@ import { TransactionTypeService } from '../../services/transaction-type.service'
 //Componentes
 import { PrintComponent } from './../../components/print/print.component';
 import { TransactionType } from 'app/models/transaction-type';
-import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Config } from 'app/app.config';
 
 @Component({
@@ -63,19 +62,42 @@ export class CashBoxComponent implements OnInit {
   ) {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
-    this.transaction = new Transaction();
-    this.transaction.type = this.transactionType;
     this.movementOfCash = new MovementOfCash();
     this.movementsOfCashes = new Array();
+    this.transaction = new Transaction();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+    this.transaction.type = this.transactionType;
     this.buildForm();
-    this.getPaymentMethods();
+    await this.getPaymentMethods('where="cashBoxImpact":true').then(
+      async paymentMethods => {
+        if(paymentMethods) {
+          this.paymentMethods = paymentMethods;
+          this.setValueForm();
+          await this.getCashBoxes('where="state":"' + CashBoxState.Open + '"&sort="number":-1&limit=1').then(
+            cashBoxes => {
+              if(cashBoxes) {
+                this.cashBox = cashBoxes[0];
+                if (this.transactionType.cashOpening) {
+                  this.showMessage("La caja ya se encuentra abierta.", 'info', true);
+                }
+              } else {
+                if (this.transactionType.cashOpening) {
+                  this.cashBox.employee = this._userService.getIdentity().employee;
+                } else if (this.transactionType.cashClosing) {
+                  this.showMessage("No se encuentran cajas abiertas.", 'info', true);
+                }
+              }
+            }
+          );
+        }
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -148,120 +170,150 @@ export class CashBoxComponent implements OnInit {
     this.cashBoxForm.setValue(values);
   }
 
-  public getOpenCashBox(): void {
+  public getCashBoxes(query?: string): Promise<CashBox[]> {
 
-    this.loading = true;
-
-    this._cashBoxService.getOpenCashBox(this._userService.getIdentity().employee._id).subscribe(
-      result => {
-        if (!result.cashBoxes) {
-          if (this.transactionType.cashOpening) {
-            this.cashBox.employee = this._userService.getIdentity().employee;
-          } else if (this.transactionType.cashClosing) {
-            this.showMessage("No se encuentran cajas abiertas.", 'info', true);
-          }
-        } else {
-          this.cashBox = result.cashBoxes[0];
-          if (this.transactionType.cashOpening) {
-            this.showMessage("La caja ya se encuentra abierta.", 'info', true);
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
-  public saveCashBox(): void {
-
-    this.loading = true;
-
-    this._cashBoxService.saveCashBox(this.cashBox).subscribe(
-      result => {
-        if (!result.cashBox) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.cashBox = result.cashBox;
-          if (this.cashBoxForm.value.amount && this.cashBoxForm.value.amount > 0) {
-            if (this.transactionType.fixedOrigin) {
-              this.transaction.origin = this.transactionType.fixedOrigin;
-            } else {
-              this.transaction.origin = 0;
-            }
-            if (this.transactionType.fixedLetter) {
-              this.transaction.letter = this.transactionType.fixedLetter;
-            } else {
-              if(Config.country === "AR") {
-                this.transaction.letter = "X";
-              } else {
-                this.transaction.letter = "";
-              }
-            }
-            this.getLastTransactionByType();
+    return new Promise<CashBox[]>((resolve, reject) => {
+    
+      this._cashBoxService.getCashBoxes(query).subscribe(
+        result => {
+          if (!result.cashBoxes) {
+            resolve(null);
           } else {
-            this.activeModal.close({ cashBox: this.cashBox });
+            resolve(result.cashBoxes);
           }
-        }
-        this.loading = false;
-      },
-      error => {
+        },
         error => {
-          this.showMessage(error._body, 'danger', true);
-          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      }
-    );
+      );
+    });
   }
 
-  public openCashBox(): void {
+  public saveCashBox(): Promise<CashBox> {
+
+    return new Promise<CashBox>((resolve, reject) => {
+      this._cashBoxService.saveCashBox(this.cashBox).subscribe(
+        result => {
+          if (!result.cashBox) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.cashBox);
+          }
+        },
+        error => {
+          error => {
+            this.showMessage(error._body, 'danger', true);
+            resolve(null);
+          }
+        }
+      );
+    });
+  }
+
+  async openCashBox() {
 
     if (!this.cashBox || !this.cashBox._id) {
-      this.saveCashBox();
+      await this.getCashBoxes('sort="number":-1&limit=1').then(
+        async cashBoxes => {
+          if(cashBoxes) {
+            this.cashBox.number = cashBoxes[0].number + 1;
+          } else {
+            this.cashBox.number = 1;
+          }
+          await this.saveCashBox().then(
+            async cashBox => {
+              if(cashBox) {
+                this.cashBox = cashBox;
+                if (this.cashBoxForm.value.amount && this.cashBoxForm.value.amount > 0) {
+                  if (this.transactionType.fixedOrigin) {
+                    this.transaction.origin = this.transactionType.fixedOrigin;
+                  } else {
+                    this.transaction.origin = 0;
+                  }
+                  if (this.transactionType.fixedLetter) {
+                    this.transaction.letter = this.transactionType.fixedLetter;
+                  } else {
+                    if(Config.country === "AR") {
+                      this.transaction.letter = "X";
+                    } else {
+                      this.transaction.letter = "";
+                    }
+                  }
+                  await this.getLastTransactionByType().then(
+                    transaction => {
+                      if(transaction) {
+                        this.transaction.number = transaction.number + 1;
+                      } else {
+                        this.transaction.number = 1;
+                      }
+                      this.addTransaction();
+                    }
+                  );
+                } else {
+                  this.activeModal.close({ cashBox: this.cashBox });
+                }
+              }
+            }
+          );
+        }
+      );
     } else {
       this.showMessage("La caja ya se encuentra abierta.", 'info', true);
     }
   }
 
-  public closeCashBox(): void {
+  async closeCashBox() {
 
     if (this.cashBox && this.cashBox._id) {
       if (this.cashBox.state === CashBoxState.Closed) {
         this.openModal("print");
       } else {
-        this.getOpenTransactionsByCashBox();
+        let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
+        await this.getTransactions(query).then(
+          async transactions => {
+            if(transactions) {
+              this.showMessage("No puede cerrar la caja con transacciones abiertas.", 'info', true);
+            } else {
+              await this.getLastTransactionByType().then(
+                transaction => {
+                  if(transaction) {
+                    this.transaction.number = transaction.number + 1;
+                  } else {
+                    this.transaction.number = 1;
+                  }
+                  this.addTransaction();
+                }
+              );
+            }
+          }
+        );
       }
     } else {
       this.showMessage("No se encuentran cajas abiertas.", 'info', true);
     }
   }
 
-  public updateCashBox(): void {
+  public updateCashBox(): Promise<CashBox> {
 
-    this.loading = true;
-    this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-    this.cashBox.state = CashBoxState.Closed;
-
-    this._cashBoxService.updateCashBox(this.cashBox).subscribe(
-      result => {
-        if (!result.cashBox) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.cashBox = result.cashBox;
-          this.openModal("print");
-        }
-        this.loading = false;
-      },
-      error => {
+    return new Promise<CashBox>((resolve, reject) => {
+  
+      this._cashBoxService.updateCashBox(this.cashBox).subscribe(
+        result => {
+          if (!result.cashBox) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.cashBox);
+          }
+        },
         error => {
           this.showMessage(error._body, 'danger', true);
-          this.loading = false;
+          resolve(null);
         }
-      }
-    );
+      );
+    });
   }
 
   public openModal(op: string, movement?: MovementOfCash): void {
@@ -293,28 +345,25 @@ export class CashBoxComponent implements OnInit {
     }
   };
 
-  public getPaymentMethods(): void {
+  async getPaymentMethods(query?: string): Promise<PaymentMethod[]> {
 
-    this.loading = true;
-
-    let query = 'where="cashBoxImpact":true';
-
-    this._paymentMethodService.getPaymentMethods(query).subscribe(
-      result => {
-        if (!result.paymentMethods) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.paymentMethods = result.paymentMethods;
-          this.setValueForm();
-          this.getOpenCashBox();
+    return new Promise<PaymentMethod[]>((resolve, reject) => {
+  
+      this._paymentMethodService.getPaymentMethods(query).subscribe(
+        result => {
+          if (!result.paymentMethods) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.paymentMethods);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public addMovementOfCash(): void {
@@ -346,48 +395,46 @@ export class CashBoxComponent implements OnInit {
     }
   }
 
-  public getOpenTransactionsByCashBox(): void {
+  public getTransactions(query?: string): Promise<Transaction[]> {
 
-    this.loading = true;
+    return new Promise<Transaction[]>((resolve, reject) => {
 
-    this._transactionService.getOpenTransactionsByCashBox(this.cashBox._id).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.getLastTransactionByType();
-        } else {
-          this.showMessage("No puede cerrar la caja con transacciones abiertas.", 'info', true);
+      this._transactionService.getTransactions(query).subscribe(
+        result => {
+          if (!result.transactions) {
+            resolve(null);
+          } else {
+            resolve(result.transactions);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public getLastTransactionByType(): void {
+  public getLastTransactionByType(): Promise<Transaction> {
 
-    this.loading = true;
-
-    this._transactionService.getLastTransactionByTypeAndOrigin(this.transactionType, this.transaction.origin, this.transaction.letter).subscribe(
-      result => {
-        if (!result.transactions) {
-          this.transaction.number = 1;
-        } else {
-          this.transaction.number = result.transactions[0].number + 1;
+    return new Promise<Transaction>((resolve, reject) => {
+      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+        result => {
+          if (!result.transactions) {
+            resolve(null);
+          } else {
+            resolve(result.transactions[0]);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-        this.addTransaction();
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public addTransaction(): void {
+  async addTransaction() {
 
     this.loading = true;
     this.transaction.madein = this.posType;
@@ -404,76 +451,99 @@ export class CashBoxComponent implements OnInit {
       this.transaction.cashBox = this.cashBox;
       this.transaction.type = this.transactionType;
 
-      this._transactionService.saveTransaction(this.transaction).subscribe(
-        result => {
-          if (!result.transaction) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          } else {
-            this.hideMessage();
-            this.transaction = result.transaction;
+      await this.saveTransaction().then(
+        async transaction => {
+          if(transaction) {
+            this.transaction = transaction;
             for (let movementOfCash of this.movementsOfCashes) {
               movementOfCash.transaction = this.transaction;
             }
-            this.saveMovementsOfCashes();
+            await this.saveMovementsOfCashes().then(
+              async movementsOfCashes => {
+                if(movementsOfCashes) {
+                  if(this.transactionType.cashOpening) {
+                    this.activeModal.close({ cashBox: this.cashBox });
+                  } else {
+                    this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+                    this.cashBox.state = CashBoxState.Closed;
+        
+                    await this.updateCashBox().then(
+                      cashBox => {
+                        if(cashBox) {
+                          this.cashBox = cashBox;
+                          this.openModal("print");
+                        }
+                      }
+                    );
+                  }
+                }
+              }
+            );
           }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
         }
       );
     } else {
       if (this.transactionType.cashOpening) {
         this.activeModal.close({ cashBox: this.cashBox });
       } else {
-        this.updateCashBox();
+
+        this.cashBox.closingDate = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+        this.cashBox.state = CashBoxState.Closed;
+
+        await this.updateCashBox().then(
+          cashBox => {
+            if(cashBox) {
+              this.cashBox = cashBox;
+              this.openModal("print");
+            }
+          }
+        );
       }
     }
   }
 
-  public saveMovementsOfCashes(): void {
+  public saveTransaction(): Promise<Transaction> {
 
-    this.loading = true;
+    return new Promise<Transaction>((resolve, reject) => {
 
-    this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashes).subscribe(
-      result => {
-        if (!result.movementsOfCashes) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          if(this.transactionType.cashOpening) {
-            this.activeModal.close({ cashBox: this.cashBox });
+      this.transaction.madein = this.posType;
+  
+      this._transactionService.saveTransaction(this.transaction).subscribe(
+        result => {
+          if (!result.transaction) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
           } else {
-            this.updateCashBox();
+            resolve(result.transaction);
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
-  public updateTransaction(): void {
+  async saveMovementsOfCashes(): Promise<MovementOfCash[]> {
 
-    this.loading = true;
+    return new Promise<MovementOfCash[]>((resolve, reject) => {
 
-    this._transactionService.updateTransaction(this.transaction).subscribe(
-      result => {
-        if (!result.transaction) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.transaction = result.transaction;
+      this._movementOfCashService.saveMovementsOfCashes(this.movementsOfCashes).subscribe(
+        async result => {
+          if (!result.movementsOfCashes) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.movementsOfCashes);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

@@ -1,5 +1,6 @@
 import { Room } from './room';
 import { Employee } from './employee';
+import { Transaction } from './transaction';
 
 export class Table {
 	
@@ -10,6 +11,7 @@ export class Table {
 	public diners: number;
 	public state: TableState = TableState.Available;
 	public employee: Employee = null;
+	public lastTransaction: Transaction;
 
 	constructor () {}
 }
