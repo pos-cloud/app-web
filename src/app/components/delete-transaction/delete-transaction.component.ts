@@ -102,7 +102,10 @@ export class DeleteTransactionComponent {
 
     this.loading = true;
 
-    if(!this.transaction.CAE) {
+    if (!this.transaction.CAE &&
+      !this.transaction.SATStamp && 
+      !this.transaction.stringSAT &&
+      !this.transaction.CFDStamp) {
       this._transactionService.deleteTransaction(this.transaction._id).subscribe(
         result => {
           this.activeModal.close("delete_close");
