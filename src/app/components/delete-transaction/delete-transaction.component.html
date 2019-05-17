@@ -11,8 +11,11 @@
 			{{alertMessage}}
 		</ngb-alert>
   </div>
-  <p *ngIf="op === 'cancel' && transaction && transaction.type">¿Está seguro de anular la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
-  <p *ngIf="op === 'delete' && transaction && transaction.type">¿Está seguro de eliminar la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
+	<p *ngIf="op === 'cancel' && transaction && transaction.type">¿Está seguro de anular la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
+	<p *ngIf="op === 'delete' && transaction && transaction.type">¿Está seguro de eliminar la transacción <b>{{transaction.type.name}} Nro {{transaction.number}}</b>?</p>
+	<p *ngIf="op === 'delete' && transaction && transaction.type && transaction.type.modifyStock">
+		<b>Recuerde realizar el ajuste de stock necesario al eliminar la transacción.</b>
+	</p>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="activeModal.close('close_click')">Cancelar</button>

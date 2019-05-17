@@ -336,7 +336,18 @@ export class PointOfSaleComponent implements OnInit {
     this.transaction = new Transaction();
     this.transaction.type = type;
     this.transaction.table = this.tableSelected;
-    this.transaction.totalPrice = this.totalPrice;
+
+    if(this.posType === 'cuentas-corrientes') {
+      if(this.transactionMovement === TransactionMovement.Sale) {
+        this.totalPrice *= -1;
+      }
+      
+      if(this.totalPrice < 0) {
+        this.totalPrice = 0;
+      }
+  
+      this.transaction.totalPrice = this.totalPrice;
+    }
         
     if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
       this.transaction.origin = this.transaction.type.fixedOrigin;

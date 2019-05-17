@@ -8,8 +8,8 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
-        <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="country === 'AR'">Exportar IVA</button>
-        <button class="btn btn-primary" (click)="exportCiti()" *ngIf="country === 'AR'">Exportar Régimen de Información</button>
+        <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
+        <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -69,18 +69,18 @@
             <td align="left" width="150">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button"
-                      *ngIf="transaction.type.allowEdit === 'true' &&
-                            (transaction.type.electronics === 'false' ||
-                            (transaction.type.electronics === 'true' &&
+                      *ngIf="transaction.type.allowEdit &&
+                            (!transaction.type.electronics ||
+                            (transaction.type.electronics &&
                             transaction.state.toString() !== 'Cerrado'))"
                             class="btn btn-primary btn-sm"
                             (click)="openModal('edit', transaction)"
                             title="Editar"><i class="fa fa-pencil"></i>
               </button>
               <button type="button"
-                      *ngIf="transaction.type.allowDelete === 'true' &&
-                            (transaction.type.electronics === 'false' ||
-                            (transaction.type.electronics === 'true' &&
+                      *ngIf="transaction.type.allowDelete &&
+                            (!transaction.type.electronics ||
+                            (transaction.type.electronics &&
                             transaction.state.toString() !== 'Cerrado'))"
                       class="btn btn-danger btn-sm"
                       (click)="openModal('delete', transaction)"
@@ -212,8 +212,8 @@
                                                                     }">
             <td align="left" width="150">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
-              <button type="button" *ngIf="transaction.type.allowEdit === 'true'" class="btn btn-primary btn-sm" (click)="openModal('edit', transaction)" title="Editar"><i class="fa fa-pencil"></i></button>
-              <button type="button" *ngIf="transaction.type.allowDelete === 'true'" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <button type="button" *ngIf="transaction.type.allowEdit" class="btn btn-primary btn-sm" (click)="openModal('edit', transaction)" title="Editar"><i class="fa fa-pencil"></i></button>
+              <button type="button" *ngIf="transaction.type.allowDelete" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               <button *ngIf="transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
@@ -321,8 +321,8 @@
                                                                     }">
             <td align="left" width="150">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
-              <button type="button" *ngIf="transaction.type.allowEdit === 'true'" class="btn btn-primary btn-sm" (click)="openModal('edit', transaction)" title="Editar"><i class="fa fa-pencil"></i></button>
-              <button type="button" *ngIf="transaction.type.allowDelete === 'true'" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+              <button type="button" *ngIf="transaction.type.allowEdit" class="btn btn-primary btn-sm" (click)="openModal('edit', transaction)" title="Editar"><i class="fa fa-pencil"></i></button>
+              <button type="button" *ngIf="transaction.type.allowDelete" class="btn btn-danger btn-sm" (click)="openModal('delete', transaction)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               <button *ngIf="transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>

@@ -35,7 +35,6 @@ export class ListTransactionsComponent implements OnInit {
 
   public transactions: Transaction[] = new Array();
   public config: Config;
-  public timezone;
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
@@ -50,7 +49,6 @@ export class ListTransactionsComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public transactionMovement: TransactionMovement;
   public allowResto: boolean;
-  public country: string;
   public currentPage: number = 0;
   public displayedColumns = [
       'type.transactionMovement',
@@ -107,15 +105,7 @@ export class ListTransactionsComponent implements OnInit {
           this.loading = false;
         } else {
           this.config = result.configs;
-          this.allowResto = this.config[0].modules.sale.resto
-          this.country = this.config[0].country;
-
-          if(this.config[0].timezone) {
-            this.timezone = this.config[0].timezone.split('C')
-          } else {
-            this.timezone = "-03:00"
-          }
-
+          this.allowResto = this.config[0].modules.sale.resto;
 
           let pathLocation: string[] = this._router.url.split('/');
           this.userType = pathLocation[1];
@@ -133,7 +123,6 @@ export class ListTransactionsComponent implements OnInit {
           }
 
           this.getTransactions();
-
         }
       },
       error => {
@@ -196,26 +185,40 @@ export class ListTransactionsComponent implements OnInit {
     }
     match = JSON.parse(match);
 
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = '{}';
-    if (this.displayedColumns && this.displayedColumns.length > 0) {
-        project = '{';
-        for (let i = 0; i < this.displayedColumns.length; i++) {
-            let field = this.displayedColumns[i];
-            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"${this.timezone[1]}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-            if (i < this.displayedColumns.length - 1) {
-                project += ',';
-            }
-        }
-        project += '}';
+    let timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
     }
-    project = JSON.parse(project);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      'type.transactionMovement': 1,
+      'type.name': 1,
+      'type.requestArticles': 1,
+      'type.allowEdit': 1,
+      'type.allowDelete': 1,
+      'type.electronics': 1,
+      origin: { $toString : "$origin" },
+      letter: 1,
+      number: { $toString : "$number" },
+      endDate: { $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
+      'company.name': 1,
+      'employeeClosing.name': 1,
+      'turnClosing.endDate': { $dateToString: { date: "$turnClosing.endDate", format: "%d/%m/%Y", timezone: timezone }},
+      madein: 1,
+      state: 1,
+      observation: 1,
+      discountAmount: { $toString : '$discountAmount' },
+      totalPrice: { $toString : '$totalPrice' },
+      operationType: 1,
+      CAE: 1
+    }
 
     // AGRUPAMOS EL RESULTADO
     let group = {
         _id: null,
         count: { $sum: 1 },
-        transactions: { $push: "$$ROOT" }
+        transactions: { $push: '$$ROOT' }
     };
 
     let page = 0;
@@ -225,7 +228,7 @@ export class ListTransactionsComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ?
             (page * this.itemsPerPage) :
                 0 // SKIP
-
+    
     this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH

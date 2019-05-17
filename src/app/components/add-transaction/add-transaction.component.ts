@@ -475,7 +475,7 @@ export class AddTransactionComponent implements OnInit {
           }
         );
       } else {
-        this.showMessage("El monto ingresado debe ser mayor a 0.", "info", true);
+        this.showMessage("El importe total ingresado debe ser mayor a 0.", "info", true);
       }
     } else {
       this.showMessage("Debe asignar el empleado " + this.transaction.type.requestEmployee.description, "info", true);
