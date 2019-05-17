@@ -318,7 +318,7 @@
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..." *ngIf="transactionMovement === 'Venta'"></th>
+              <th *ngIf="transactionMovement === 'Venta'"><input type="text" class="form-control" [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
             </tr>
@@ -411,6 +411,7 @@
     </div>
   </ng-template>
   
+  <!-- BOTON CTA CTE -->
   <div class="btn-group" ngbDropdown *ngIf="posType=='cuentas-corrientes' && transactionTypes && transactionTypes.length > 0">
     <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">
       <i class="fa fa-plus"> Nuevo 
