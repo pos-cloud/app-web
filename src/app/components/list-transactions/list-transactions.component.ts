@@ -64,6 +64,7 @@ export class ListTransactionsComponent implements OnInit {
       'company.name',
       'employeeClosing.name',
       'turnClosing.endDate',
+      'cashBox.number',
       'madein',
       'state',
       'observation',
@@ -94,42 +95,24 @@ export class ListTransactionsComponent implements OnInit {
   ngOnInit(): void {
 
     this.userCountry = Config.country;
-    this.getConfig();
-  }
+    this.allowResto = Config.modules.sale.resto;
+    
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.modules = Observable.of(Config.modules);
+    this.getPrinters();
+    if (this.listType === "Compras") {
+      this.transactionMovement = TransactionMovement.Purchase;
+    } else if (this.listType === "Ventas") {
+      this.transactionMovement = TransactionMovement.Sale;
+    } else if (this.listType === "Stock") {
+      this.transactionMovement = TransactionMovement.Stock;
+    } else if (this.listType === "Fondos") {
+      this.transactionMovement = TransactionMovement.Money;
+    }
 
-  public getConfig(): void {
-    this._configService.getConfigApi().subscribe(
-      result => {
-        if(!result.configs){
-          this.showMessage("No se encontro la configuracion", 'danger', false);
-          this.loading = false;
-        } else {
-          this.config = result.configs;
-          this.allowResto = this.config[0].modules.sale.resto;
-
-          let pathLocation: string[] = this._router.url.split('/');
-          this.userType = pathLocation[1];
-          this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-          this.modules = Observable.of(Config.modules);
-          this.getPrinters();
-          if (this.listType === "Compras") {
-            this.transactionMovement = TransactionMovement.Purchase;
-          } else if (this.listType === "Ventas") {
-            this.transactionMovement = TransactionMovement.Sale;
-          } else if (this.listType === "Stock") {
-            this.transactionMovement = TransactionMovement.Stock;
-          } else if (this.listType === "Fondos") {
-            this.transactionMovement = TransactionMovement.Money;
-          }
-
-          this.getTransactions();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    )
+    this.getTransactions();
   }
 
   public getPrinters(): void {
@@ -205,6 +188,7 @@ export class ListTransactionsComponent implements OnInit {
       'company.name': 1,
       'employeeClosing.name': 1,
       'turnClosing.endDate': { $dateToString: { date: "$turnClosing.endDate", format: "%d/%m/%Y", timezone: timezone }},
+      'cashBox.number': { $toString : "$cashBox.number" },
       madein: 1,
       state: 1,
       observation: 1,
