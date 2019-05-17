@@ -493,7 +493,7 @@ export class AddSaleOrderComponent {
         }
       }
     }
-
+    
     if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
@@ -1257,6 +1257,14 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'printers':
+
+        await this.getPrinters().then(
+          printers => {
+            if(printers) {
+              this.printers = printers;
+            }
+          }
+        );
 
         if (this.countPrinters() > 1) {
           modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
