@@ -2,7 +2,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Cuenta Corriente
       <div class="pull-right">
-        <app-point-of-sale [company]="companySelected" [totalPrice]="balance"></app-point-of-sale>
+        <app-point-of-sale (eventRefreshCurrentAccount)="refresh()" [company]="companySelected" [totalPrice]="balance"></app-point-of-sale>
         <!-- <button *ngIf="companySelected && companySelected.type === 'Cliente'" class="btn btn-primary" (click)="addTransaction('Cobro')">Cobrar</button>
         <button *ngIf="companySelected && companySelected.type === 'Proveedor'" class="btn btn-primary" (click)="addTransaction('Pago')">Pagar</button> -->
         <button class="btn btn-primary" (click)="openModal('print')"><i class="fa fa-print"></i> Imprimir</button>
