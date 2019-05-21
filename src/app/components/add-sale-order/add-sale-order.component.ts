@@ -187,13 +187,13 @@ export class AddSaleOrderComponent {
             } else {
               this.transactionMovement = '' + this.transaction.type.transactionMovement;
               this.lastQuotation = this.transaction.quotation;
-  
+
               if(this.userCountry === 'MX' &&
                 this.transaction.type.defectUseOfCFDI &&
                 !this.transaction.useOfCFDI) {
                 this.transaction.useOfCFDI = this.transaction.type.defectUseOfCFDI;
               }
-  
+
               this.getCancellationTypes().then(
                 cancellationTypes => {
                   if(cancellationTypes) {
@@ -242,10 +242,10 @@ export class AddSaleOrderComponent {
 
       // ORDENAMOS LA CONSULTA
       let sortAux = { order: 1 };
-      
+
       // FILTRAMOS LA CONSULTA
       let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
-      
+
       // CAMPOS A TRAER
       let project = {
         "destination._id": 1,
@@ -373,8 +373,8 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async getTransaction(): Promise<Transaction> {
-    
+  public getTransaction(): Promise<Transaction> {
+
     return new Promise<Transaction>((resolve, reject) => {
 
       this._transactionService.getTransaction(this.transactionId).subscribe(
@@ -397,7 +397,7 @@ export class AddSaleOrderComponent {
   public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
 
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
-    
+
       this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
         async result => {
           if (!result.movementsOfCancellations) {
@@ -418,7 +418,7 @@ export class AddSaleOrderComponent {
   public daleteMovementsOfCancellations(query: string): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
-      
+
       this._movementOfCancellationService.deleteMovementsOfCancellations(query).subscribe(
         async result => {
           if (!result.movementsOfCancellations) {
@@ -437,7 +437,7 @@ export class AddSaleOrderComponent {
   }
 
   public updateTransaction(): Promise<Transaction> {
-    
+
     return new Promise<Transaction>((resolve, reject) => {
 
       this._transactionService.updateTransaction(this.transaction).subscribe(
@@ -493,7 +493,7 @@ export class AddSaleOrderComponent {
         }
       }
     }
-    
+
     if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
       this.typeOfOperationToPrint = "bar";
       this.openModal('printers');
@@ -576,10 +576,10 @@ export class AddSaleOrderComponent {
     if(itemData) {
 
       this.showCategories();
-  
+
       if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
         let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
-  
+
         if (!movementOfArticle) {
           movementOfArticle = itemData;
           movementOfArticle._id = '';
@@ -665,7 +665,7 @@ export class AddSaleOrderComponent {
 
     let isValid = true;
 
-    if (this.transaction.type && 
+    if (this.transaction.type &&
         this.transaction.type.transactionMovement === TransactionMovement.Sale &&
         movementOfArticle.article &&
         !movementOfArticle.article.allowSale) {
@@ -673,7 +673,7 @@ export class AddSaleOrderComponent {
         this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.transaction.type && 
+    if (this.transaction.type &&
         this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
         movementOfArticle.article &&
         !movementOfArticle.article.allowPurchase) {
@@ -706,20 +706,20 @@ export class AddSaleOrderComponent {
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-    
+
     if(this.transaction.quotation) {
       quotation = this.transaction.quotation;
     }
-    
+
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-    
+
     if( movementOfArticle.article &&
         movementOfArticle.article.currency &&
-        Config.currency && 
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
-    
+
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
     movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
     movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
@@ -767,7 +767,7 @@ export class AddSaleOrderComponent {
   public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
-    
+
     if(this.transaction.quotation) {
       quotation = this.transaction.quotation;
     }
@@ -776,8 +776,8 @@ export class AddSaleOrderComponent {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
-      if(movementOfArticle.article.currency &&  
-        Config.currency && 
+      if(movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
@@ -798,17 +798,17 @@ export class AddSaleOrderComponent {
 
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-      if(movementOfArticle.article.currency &&  
-        Config.currency && 
+      if(movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
     }
-    
+
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     if( movementOfArticle.article &&
-        movementOfArticle.article.currency &&  
-        Config.currency && 
+        movementOfArticle.article.currency &&
+        Config.currency &&
         Config.currency._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
@@ -972,7 +972,7 @@ export class AddSaleOrderComponent {
       this.transaction.discountPercent = 0;
       discountAmountAux = 0;
     }
-    
+
     if(isUpdateValid) {
       this.transaction.totalPrice = totalPriceAux;
       this.transaction.discountAmount = discountAmountAux;
@@ -1307,7 +1307,7 @@ export class AddSaleOrderComponent {
         }, (reason) => {
         });
         break;
-        
+
       case 'change-quotation':
         modalRef = this._modalService.open(this.contentChangeQuotation).result.then(async (result) => {
           if (result !== "cancel" && result !== '') {
@@ -1384,7 +1384,7 @@ export class AddSaleOrderComponent {
         model.model = "movement-of-article";
         model.relations = new Array();
         model.relations.push("article_relation_code");
-        
+
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'cancel') {
@@ -1401,35 +1401,35 @@ export class AddSaleOrderComponent {
   async areValidMovementOfArticle(): Promise<boolean> {
 
     return new Promise<boolean>( async (resolve, reject) => {
-      
+
       let areValid: boolean = true;
-  
+
       for(let movementOfArticle of this.movementsOfArticles) {
         if(await this.isValidMovementOfArticle(movementOfArticle)) {
         } else {
           areValid = false;
         }
       }
-  
+
       resolve(areValid);
     });
   }
 
   async finish() {
-    
+
     let isValid: boolean = true;
 
-    if (isValid && 
+    if (isValid &&
         Config.modules.stock &&
         this.transaction.type.modifyStock) {
-        
+
           if(await this.areValidMovementOfArticle()) {
             isValid = await this.processStock();
           } else {
             isValid = false;
           }
     }
-    
+
     if(isValid) {
       await this.updateBalance().then(async balance => {
         if(balance !== null) {
@@ -1442,14 +1442,14 @@ export class AddSaleOrderComponent {
           }
           this.transaction.expirationDate = this.transaction.endDate;
           this.transaction.state = TransactionState.Closed;
-      
+
           await this.updateTransaction().then(
             async transaction => {
               if(transaction) {
                 this.transaction = transaction;
-      
+
                 if (this.transaction && this.transaction.type.printable) {
-            
+
                   if (this.transaction.table) {
                     this.transaction.table.employee = null;
                     this.transaction.table.state = TableState.Available;
@@ -1469,7 +1469,7 @@ export class AddSaleOrderComponent {
                       }
                     }
                   );
-            
+
                   if (this.transaction.type.defectPrinter) {
                     this.printerSelected = this.transaction.type.defectPrinter;
                     this.distributeImpressions(this.transaction.type.defectPrinter);
@@ -1506,7 +1506,7 @@ export class AddSaleOrderComponent {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
-            resolve(result.transaction.balance);  
+            resolve(result.transaction.balance);
           }
         },
         error => {
@@ -1714,7 +1714,7 @@ export class AddSaleOrderComponent {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
     return new Promise<MovementOfArticle>((resolve, reject) => {
-    
+
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
@@ -1753,7 +1753,7 @@ export class AddSaleOrderComponent {
     let endProcess: boolean = true;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-      
+
       for(let movementOfArticle of this.movementsOfArticles) {
         if(movementOfArticle.article) {
           await this.updateRealStock(movementOfArticle).then(
@@ -1775,7 +1775,7 @@ export class AddSaleOrderComponent {
   public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
     return new Promise<boolean>((resolve, reject) => {
-  
+
       let amountToModify;
 
       if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {

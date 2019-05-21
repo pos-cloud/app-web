@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 
 //Modelos
-import { Transaction, TransactionState } from './../../models/transaction';
+import { Transaction } from './../../models/transaction';
 import { Company } from './../../models/company';
 import { MovementOfCash } from './../../models/movement-of-cash';
 
@@ -19,8 +19,6 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 
 //Componentes
-import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
-import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
 import { PrintComponent } from 'app/components/print/print.component';
 import { Printer, PrinterPrintIn } from '../../models/printer';
@@ -56,7 +54,6 @@ export class CurrentAccountComponent implements OnInit {
   public roundNumber: RoundNumberPipe;
   public startDate: string;
   public endDate: string;
-  public printers: Printer[];
   public userCountry: string;
 
   constructor(
@@ -102,7 +99,7 @@ export class CurrentAccountComponent implements OnInit {
       startDate: this.startDate + " 00:00:00" + timezone,
       endDate:  this.endDate + " 23:59:59" + timezone
     }
-    
+
     this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
       result => {
         if (!result) {
@@ -171,13 +168,13 @@ export class CurrentAccountComponent implements OnInit {
     }
   }
 
-  public openModal(op: string, transaction?: Transaction): void {
+  async openModal(op: string, transactionId?: string) {
 
     let modalRef;
     switch (op) {
       case 'view-transaction':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
-        modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.componentInstance.transactionId = transactionId;
         break;
       case 'company':
         modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
@@ -206,47 +203,76 @@ export class CurrentAccountComponent implements OnInit {
           this.showMessage("Debe seleccionar una empresa",'info', true);
         }
         break;
-      case 'printTransaction':
+      case 'print-transaction':
 
         modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.componentInstance.transactionId = transactionId;
         modalRef.componentInstance.company = this.companySelected;
         modalRef.componentInstance.typePrint = 'invoice';
-        if (transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = transaction.type.defectPrinter;
-        } else {
-          if (this.printers && this.printers.length > 0) {
-            for(let printer of this.printers) {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
+        await this.getTransaction(transactionId).then(
+          async transaction => {
+            if (transaction) {
+              if (transaction.type.defectPrinter) {
+                modalRef.componentInstance.printer = transaction.type.defectPrinter;
+              } else {
+                await this.getPrinters().then(
+                  printers => {
+                    if (printers) {
+                      for (let printer of printers) {
+                        if (printer.printIn === PrinterPrintIn.Counter) {
+                          modalRef.componentInstance.printer = printer;
+                        }
+                      }
+                    }
+                  }
+                );
               }
             }
           }
-        }
+        );
        break;
       default: ;
     }
   }
 
-  public getPrinters(): void {
+  public getTransaction(transactionId: string): Promise<Transaction> {
 
-    this.loading = true;
+    return new Promise<Transaction>((resolve, reject) => {
 
-    this._printerService.getPrinters().subscribe(
-      result => {
-        if (!result.printers) {
-          this.printers = new Array();
-        } else {
-          this.hideMessage();
-          this.printers = result.printers;
+      this._transactionService.getTransaction(transactionId).subscribe(
+        async result => {
+          if (!result.transaction) {
+            this.showMessage(result.message, 'danger', false);
+            resolve(null);
+          } else {
+            resolve(result.transaction);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    });
+  }
+
+  public getPrinters(): Promise<Printer[]> {
+
+    return new Promise<Printer[]>(async (resolve, reject) => {
+
+      this._printerService.getPrinters().subscribe(
+        result => {
+          if (!result.printers) {
+            resolve(null);
+          } else {
+            resolve(result.printers);
+          }
+        },
+        error => {
+          resolve(null);
+        }
+      );
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
