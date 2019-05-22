@@ -17,7 +17,7 @@ import { MovementOfCash, MovementOfCashState } from './../../models/movement-of-
 import { PaymentMethodService } from './../../services/payment-method.service';
 import { MovementOfCashService } from '../../services/movement-of-cash.service';
 import { CashBoxService } from '../../services/cash-box.service';
-import { UserService } from '../../services/user.service';
+import { AuthService } from 'app/services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
 import { TransactionTypeService } from '../../services/transaction-type.service';
 
@@ -56,7 +56,7 @@ export class CashBoxComponent implements OnInit {
     public _paymentMethodService: PaymentMethodService,
     public _movementOfCashService: MovementOfCashService,
     public _cashBoxService: CashBoxService,
-    public _userService: UserService,
+    public _authService: AuthService,
     public _transactionService: TransactionService,
     public _transactionTypeService: TransactionTypeService
   ) {
@@ -88,7 +88,11 @@ export class CashBoxComponent implements OnInit {
                 }
               } else {
                 if (this.transactionType.cashOpening) {
-                  this.cashBox.employee = this._userService.getIdentity().employee;
+                  this._authService.getIdentity.subscribe(
+                    identity => {
+                      this.cashBox.employee = identity.employee;
+                    }
+                  );
                 } else if (this.transactionType.cashClosing) {
                   this.showMessage("No se encuentran cajas abiertas.", 'info', true);
                 }

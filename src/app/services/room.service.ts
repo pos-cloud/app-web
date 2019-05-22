@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Room } from './../models/room';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class RoomService {
 
   constructor(
     public _http: Http,
-    public _userService: UserService
+    public _authService: AuthService
   ) { }
 
   getLastRoom () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'rooms/sort="description":-1&limit=1', { headers: headers }).map (res => res.json());
   }
@@ -25,8 +24,7 @@ export class RoomService {
   getRoom (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "room/"+id, { headers: headers }).map (res => res.json());
   }
@@ -34,8 +32,7 @@ export class RoomService {
   getRooms () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "rooms", { headers: headers }).map (res => res.json());
   }
@@ -43,8 +40,7 @@ export class RoomService {
   saveRoom (room : Room) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "room",room, { headers: headers }).map (res => res.json());
   }
@@ -52,8 +48,7 @@ export class RoomService {
   deleteRoom (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "room/"+id, { headers: headers }).map (res => res.json());
   }
@@ -61,8 +56,7 @@ export class RoomService {
   updateRoom (room: Room){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "room/"+room._id, room, { headers: headers }).map (res => res.json());
   }

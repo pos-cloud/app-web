@@ -235,6 +235,7 @@ import { ListCountriesComponent } from './components/list-countries/list-countri
 import { CountryService } from './services/country.service';
 import { BankComponent } from './components/bank/bank.component';
 import { ListBankComponent } from './components/list-bank/list-bank.component';
+import { AuthService } from './services/auth.service';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -596,7 +597,6 @@ import { ListBankComponent } from './components/list-bank/list-bank.component';
     PaymentMethodService,
     MovementOfCashService,
     PrintService,
-    AuthGuard,
     MailService,
     VATConditionService,
     ArticleStockService,
@@ -621,7 +621,9 @@ import { ListBankComponent } from './components/list-bank/list-bank.component';
     RoundNumberPipe,
     StateService,
     CountryService,
-    BankService
+    BankService,
+    AuthGuard,
+    AuthService,
   ],
   bootstrap: [AppComponent]
 })

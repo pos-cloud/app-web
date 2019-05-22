@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { ArticleField } from './../models/article-field';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class ArticleFieldService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastArticleField () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'article-fields/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class ArticleFieldService {
 	getArticleField (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "article-field/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -34,8 +32,7 @@ export class ArticleFieldService {
 	getArticleFields () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "article-fields", { headers: headers }).map (res => res.json());
 	}
@@ -43,8 +40,7 @@ export class ArticleFieldService {
 	saveArticleField (articleField : ArticleField) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "article-field",articleField, { headers: headers }).map (res => res.json());
 	}
@@ -52,8 +48,7 @@ export class ArticleFieldService {
 	deleteArticleField (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "article-field/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -61,8 +56,7 @@ export class ArticleFieldService {
 	updateArticleField (articleField: ArticleField){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "article-field/"+articleField._id, articleField, { headers: headers }).map (res => res.json());
 	}

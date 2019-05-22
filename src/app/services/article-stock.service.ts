@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import { ArticleStock } from './../models/article-stock';
 import { Article } from './../models/article';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 import { Observable } from "rxjs/Observable";
 import { map } from "rxjs/operators";
@@ -16,14 +16,13 @@ export class ArticleStockService {
 	constructor(
 		public _http: Http,
 		private http: HttpClient,
-    public _userService: UserService
+    public _authService: AuthService
   ) { }
 
 	getLastArticleStock() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'article-stocks/sort="code":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -31,8 +30,7 @@ export class ArticleStockService {
 	getArticleStock(id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "article-stock/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -40,8 +38,7 @@ export class ArticleStockService {
 	getArticleStocks() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "article-stocks", { headers: headers }).map(res => res.json());
 	}
@@ -49,8 +46,7 @@ export class ArticleStockService {
 	getStockByArticle(articleId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'article-stocks/where="article": "' + articleId +  '"', { headers: headers }).map(res => res.json());
 	}
@@ -58,8 +54,7 @@ export class ArticleStockService {
 	saveArticleStock(articleStock: ArticleStock) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "article-stock", articleStock, { headers: headers }).map(res => res.json());
 	}
@@ -67,8 +62,7 @@ export class ArticleStockService {
 	deleteArticleStock(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "article-stock/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -76,8 +70,7 @@ export class ArticleStockService {
 	updateArticleStock(articleStock: ArticleStock) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "article-stock/" + articleStock._id, articleStock, { headers: headers }).map(res => res.json());
 	}
@@ -85,8 +78,7 @@ export class ArticleStockService {
 	updateRealStock(article: Article, amount: number, stockMovement: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + 'amount-stock-by-article/' + article._id, '{"amount":' + amount + ', "stockMovement":"' + stockMovement + '"}', { headers: headers }).map(res => res.json());
 	}
@@ -104,8 +96,7 @@ export class ArticleStockService {
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
-      .set('Authorization', this._userService.getToken())
-      .set('Database', this._userService.getDatabase());
+      .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
       .set('project', JSON.stringify(project))

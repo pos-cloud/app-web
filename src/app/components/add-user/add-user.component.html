@@ -24,6 +24,17 @@
         </div>
       </div>
       <div class="row">
+        <div class="form-group col-md-12">
+          <label for="email" class="control-label">Email:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="email" name="email" id="email"/>
+          </div>
+          <div *ngIf="formErrors.email" class="alert alert-danger">
+            {{ formErrors.email }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
 				<div class="form-group col-md-12">
 					<label for="password" class="control-label">Contraseña:</label>
 					<input type="password" class="form-control" formControlName="password" name="password" id="password"/>

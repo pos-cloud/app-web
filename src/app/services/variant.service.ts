@@ -4,21 +4,20 @@ import 'rxjs/add/operator/map';
 import { Variant } from './../models/variant';
 import { Article } from './../models/article';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class VariantService {
 
   constructor(
     public _http: Http,
-    public _userService: UserService
+    public _authService: AuthService
   ) { }
 
   getLastVariant() {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + 'variants/sort="name":-1&limit=1', { headers: headers }).map(res => res.json());
   }
@@ -26,8 +25,7 @@ export class VariantService {
   getVariant(id) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + "variant/" + id, { headers: headers }).map(res => res.json());
   }
@@ -35,8 +33,7 @@ export class VariantService {
   getVariants(query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     if(query) {
       return this._http.get(Config.apiURL + "variants/" + query, { headers: headers }).map(res => res.json());
@@ -48,8 +45,7 @@ export class VariantService {
   saveVariant(variant: Variant) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.post(Config.apiURL + "variant", variant, { headers: headers }).map(res => res.json());
   }
@@ -57,8 +53,7 @@ export class VariantService {
   deleteVariant(id: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.delete(Config.apiURL + "variant/" + id, { headers: headers }).map(res => res.json());
   }
@@ -66,8 +61,7 @@ export class VariantService {
   updateVariant(variant: Variant) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.put(Config.apiURL + "variant/" + variant._id, variant, { headers: headers }).map(res => res.json());
   }

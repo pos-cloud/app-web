@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Config } from '../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 import { Observable } from "rxjs/Observable";
-import { map, catchError } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { State } from './../models/state';
 
@@ -16,7 +16,7 @@ export class StateService {
 	constructor(
         public _http: Http,
         private http: HttpClient,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
     public getStates(
@@ -32,8 +32,7 @@ export class StateService {
 
         const headers = new HttpHeaders()
         .set('Content-Type', 'application/json')
-        .set('Authorization', this._userService.getToken())
-        .set('Database', this._userService.getDatabase());
+        .set('Authorization', this._authService.getToken());
         //.set('Authorization', this._authService.getSession()["token"]);
 
         const params = new HttpParams()
@@ -57,8 +56,7 @@ export class StateService {
     public addState( state: State): Observable<any> {
 		let headers = new Headers({
 		'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
     });
 		return this._http.post(Config.apiURL + "state", state, { headers: headers }).map (res => res.json());
     }
@@ -69,8 +67,7 @@ export class StateService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase())
+            .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
             .set('id', state._id);
@@ -91,8 +88,7 @@ export class StateService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase())
+            .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
             .set('id', stateId);
@@ -113,8 +109,7 @@ export class StateService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase());
+            .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
             .set('id', stateId);

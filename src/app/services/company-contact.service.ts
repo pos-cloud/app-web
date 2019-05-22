@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { CompanyContact } from './../models/company-contact';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class CompanyContactService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastCompanyContact() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'contact/sort="code":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -25,8 +24,7 @@ export class CompanyContactService {
 	getCompanyContact(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "company-contact/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -34,8 +32,7 @@ export class CompanyContactService {
 	getCompaniesContact(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if (query) {
 			return this._http.get(Config.apiURL + "contact/"+query, { headers: headers }).map(res => res.json());
@@ -47,8 +44,7 @@ export class CompanyContactService {
 	saveCompanyContact(companyContact: CompanyContact) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "company-contact", companyContact, { headers: headers }).map(res => res.json());
 	}
@@ -56,8 +52,7 @@ export class CompanyContactService {
 	deleteCompanyContact(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "company-contact/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -65,8 +60,7 @@ export class CompanyContactService {
 	updateCompanyContact(companyContact: CompanyContact) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "company-contact/" + companyContact._id, companyContact, { headers: headers }).map(res => res.json());
 	}

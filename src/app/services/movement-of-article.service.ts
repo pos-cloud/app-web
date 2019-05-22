@@ -3,7 +3,7 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { MovementOfArticle } from './../models/movement-of-article';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 
 import { Observable } from "rxjs/Observable";
@@ -16,14 +16,13 @@ export class MovementOfArticleService {
   constructor(
     public _http: Http,
 		private http: HttpClient,
-    public _userService: UserService
+    public _authService: AuthService
   ) { }
 
   getLastMovementOfArticle() {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + 'movements-of-articles/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -31,8 +30,7 @@ export class MovementOfArticleService {
   getMovementOfArticle (id) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + "movement-of-article/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -40,8 +38,7 @@ export class MovementOfArticleService {
   getMovementsOfArticles (query?: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     if (query) {
       return this._http.get(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map (res => res.json());
@@ -53,8 +50,7 @@ export class MovementOfArticleService {
   movementOfArticleExists(articleId: string, transactionId: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + 'movements-of-articles/where="article":"' + articleId + '","transaction":"' + transactionId + '"', { headers: headers }).map(res => res.json());
   }
@@ -62,8 +58,7 @@ export class MovementOfArticleService {
   saveMovementOfArticle (movementOfArticle: MovementOfArticle) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.post(Config.apiURL + "movement-of-article", movementOfArticle, { headers: headers }).map (res => res.json());
 	}
@@ -71,8 +66,7 @@ export class MovementOfArticleService {
   deleteMovementOfArticle(id: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.delete(Config.apiURL + "movement-of-article/"+id, { headers: headers }).map (res => res.json());
   }
@@ -80,8 +74,7 @@ export class MovementOfArticleService {
   deleteMovementsOfArticles(query: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.delete(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map(res => res.json());
   }
@@ -89,8 +82,7 @@ export class MovementOfArticleService {
   updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.put(Config.apiURL + "movement-of-article/" + movementOfArticle._id, movementOfArticle, { headers: headers }).map (res => res.json());
   }
@@ -98,8 +90,7 @@ export class MovementOfArticleService {
   getMovementsOfTransaction (transactionId: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
 
     return this._http.get(Config.apiURL + 'movements-of-articles/where="transaction":"'+transactionId+'"', { headers: headers }).map (res => res.json());
@@ -108,8 +99,7 @@ export class MovementOfArticleService {
   saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.post(Config.apiURL + "movements-of-articles", { movementsOfArticles: movementsOfArticles }, { headers: headers }).map(res => res.json());
   }
@@ -127,9 +117,7 @@ export class MovementOfArticleService {
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
-      .set('Authorization', this._userService.getToken())
-      .set('Database', this._userService.getDatabase());
-    //.set('Authorization', this._authService.getSession()["token"]);
+      .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
       .set('project', JSON.stringify(project))

@@ -13,7 +13,7 @@ import { DeleteCompanyComponent } from './../../components/delete-company/delete
 import { SendMailComponent } from './../../components/send-mail/send-mail.component';
 import { ImportComponent } from '../import/import.component';
 import { User } from 'app/models/user';
-import { UserService } from 'app/services/user.service';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-list-companies',
@@ -45,14 +45,18 @@ export class ListCompaniesComponent implements OnInit {
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _userService: UserService
+    public _authService: AuthService
   ) {
     this.companies = new Array();
   }
 
   ngOnInit(): void {
 
-    this.identity = this._userService.getIdentity();
+    this._authService.getIdentity.subscribe(
+      identity => {
+        this.identity = identity;
+      }
+    );
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
 

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Config } from '../app.config';
-import { UserService } from './user.service';
 import { Observable } from "rxjs/Observable";
-import { map, catchError } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { CancellationType } from './../models/cancellation-type';
 
 import { Http, Headers } from '@angular/http';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class MovementOfCancellationService {
@@ -16,7 +15,7 @@ export class MovementOfCancellationService {
 	constructor(
         public _http: Http,
         private http: HttpClient,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
     public getMovementsOfCancellations(
@@ -32,9 +31,7 @@ export class MovementOfCancellationService {
 
         const headers = new HttpHeaders()
         .set('Content-Type', 'application/json')
-        .set('Authorization', this._userService.getToken())
-        .set('Database', this._userService.getDatabase());
-        //.set('Authorization', this._authService.getSession()["token"]);
+        .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
         .set('project', JSON.stringify(project))
@@ -57,8 +54,7 @@ export class MovementOfCancellationService {
     saveMovementOfCancellation (movementOfCancellation: MovementOfCancellation) {
         let headers = new Headers({
           'Content-Type': 'application/json',
-          'Authorization': this._userService.getToken(),
-          'Database': this._userService.getDatabase()
+          'Authorization': this._authService.getToken()
         });
         return this._http.post(Config.apiURL + "movement-of-cancellation", movementOfCancellation, { headers: headers }).map (res => res.json());
     }
@@ -66,8 +62,7 @@ export class MovementOfCancellationService {
     saveMovementsOfCancellations (movementsOfCancellations: MovementOfCancellation[]) {
         let headers = new Headers({
           'Content-Type': 'application/json',
-          'Authorization': this._userService.getToken(),
-          'Database': this._userService.getDatabase()
+          'Authorization': this._authService.getToken()
         });
         return this._http.post(Config.apiURL + "movements-of-cancellations", { movementsOfCancellations: movementsOfCancellations }, { headers: headers }).map (res => res.json());
     }
@@ -78,8 +73,7 @@ export class MovementOfCancellationService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase())
+            .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
             .set('id', movementOfCancellation._id);
@@ -100,8 +94,7 @@ export class MovementOfCancellationService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase())
+            .set('Authorization', this._authService.getToken());
 
         return this.http.delete(URL + movementOfCancellationId , {
             headers: headers,
@@ -115,8 +108,7 @@ export class MovementOfCancellationService {
     deleteMovementsOfCancellations(query: string) {
         let headers = new Headers({
           'Content-Type': 'application/json',
-          'Authorization': this._userService.getToken(),
-          'Database': this._userService.getDatabase()
+          'Authorization': this._authService.getToken()
         });
         return this._http.delete(Config.apiURL + 'movements-of-cancellations/' + query, { headers: headers }).map(res => res.json());
       }
@@ -127,8 +119,7 @@ export class MovementOfCancellationService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._userService.getToken())
-            .set('Database', this._userService.getDatabase())
+            .set('Authorization', this._authService.getToken());
         
 
         return this.http.get(URL +  movementOfCancellationId , {

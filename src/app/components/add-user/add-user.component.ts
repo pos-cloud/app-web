@@ -30,6 +30,7 @@ export class AddUserComponent  implements OnInit {
 
   public formErrors = {
     'name': '',
+    'email': '',
     'password': '',
     'state': '',
     'employee': ''
@@ -38,6 +39,8 @@ export class AddUserComponent  implements OnInit {
   public validationMessages = {
     'name': {
       'required':       'Este campo es requerido.'
+    },
+    'email': {
     },
     'password': {
       'required':       'Este campo es requerido.'
@@ -77,6 +80,9 @@ export class AddUserComponent  implements OnInit {
     this.userForm = this._fb.group({
       'name': [this.user.name, [
           Validators.required
+        ]
+      ],
+      'email': [this.user.email, [
         ]
       ],
       'password': [this.user.password, [

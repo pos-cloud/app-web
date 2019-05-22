@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,10 +7,10 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserState } from './../../models/user';
 import { Employee } from './../../models/employee';
 
-import { UserService } from './../../services/user.service';
 import { EmployeeService } from './../../services/employee.service';
 import { EmployeeTypeService } from './../../services/employee-type.service';
 import { CompanyService } from './../../services/company.service';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -59,7 +59,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     public _companyService: CompanyService,
-    public _userService: UserService,
+    public _authService: AuthService,
     public _employeeService: EmployeeService,
     public _employeeTypeService: EmployeeTypeService,
     public _fb: FormBuilder,
@@ -215,7 +215,7 @@ export class RegisterComponent implements OnInit {
 
       this.loading = true;
       
-      this._userService.register(this.registerForm.value).subscribe(
+      this._authService.register(this.registerForm.value).subscribe(
         result => {
           if (!result.user) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

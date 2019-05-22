@@ -2,21 +2,31 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class ConfigService {
 
+  private config: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
+
+	setConfig(config: any) {
+    this.config.next(config);
+	}
+
+	get getConfig() {
+    return this.config.asObservable();
+  }
 
 	getConfigApi() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "config", { headers: headers }).map (res => res.json());
 	}
@@ -24,8 +34,7 @@ export class ConfigService {
 	getlicense() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "/download-license", { headers: headers }).map (res => res.json());
 	}
@@ -33,8 +42,7 @@ export class ConfigService {
 	saveConfigApi(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "config", config, { headers: headers }).map (res => res.json());
 	}
@@ -42,8 +50,7 @@ export class ConfigService {
 	updateConfig(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "config/" + config._id, config, { headers: headers }).map (res => res.json());
 	}
@@ -51,8 +58,7 @@ export class ConfigService {
 	updateConfigBackup(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "config-backup/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
@@ -60,8 +66,7 @@ export class ConfigService {
 	updateConfigEmail(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "config-email/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
@@ -69,8 +74,7 @@ export class ConfigService {
 	updateConfigCompany(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "config-company/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
@@ -78,8 +82,7 @@ export class ConfigService {
 	updateConfigLabel(config: Config) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "config-label/" + config._id, config, { headers: headers }).map(res => res.json());
 	}
@@ -87,8 +90,7 @@ export class ConfigService {
 	generateCRS (config: Config){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "generate-crs", config, {headers: headers}).map(res => res.json());
   }
@@ -97,8 +99,7 @@ export class ConfigService {
 
     let xhr: XMLHttpRequest = new XMLHttpRequest();
     xhr.open('POST', Config.apiURL + 'upload-image-company/' + config._id, true);
-    xhr.setRequestHeader('Authorization', this._userService.getToken());
-    xhr.setRequestHeader('Database', this._userService.getDatabase());
+    xhr.setRequestHeader('Authorization', this._authService.getToken());
 
     return new Promise((resolve, reject) => {
       let formData: any = new FormData();
@@ -126,8 +127,7 @@ export class ConfigService {
   getCompanyPicture(picture: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + 'get-image-base64-company/' + picture, { headers: headers }).map(res => res.json());
   }
@@ -135,8 +135,7 @@ export class ConfigService {
   deletePicture(id: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.delete(Config.apiURL + "delete-image-company/" + id, { headers: headers }).map(res => res.json());
   }
@@ -144,8 +143,7 @@ export class ConfigService {
   generateLicensePayment(payment) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + 'generar-licencia-payment/'+ payment, { headers: headers }).map(res => res.json());
 	}

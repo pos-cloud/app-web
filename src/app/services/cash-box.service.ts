@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { CashBox } from './../models/cash-box';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class CashBoxService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
   	getCashBox (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'cash-box/' + id, { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class CashBoxService {
   	getCashBoxes (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if(query) {
 			return this._http.get(Config.apiURL + 'cash-boxes/' + query, { headers: headers }).map (res => res.json());
@@ -38,8 +36,7 @@ export class CashBoxService {
   	saveCashBox (cashBox: CashBox) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "cash-box", cashBox, { headers: headers }).map (res => res.json());
 	}
@@ -47,8 +44,7 @@ export class CashBoxService {
 	deleteCashBox (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "cash-box/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -56,8 +52,7 @@ export class CashBoxService {
   	updateCashBox (cashBox: CashBox){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "cash-box/"+cashBox._id, cashBox, { headers: headers }).map (res => res.json());
 	}
@@ -65,8 +60,7 @@ export class CashBoxService {
 	getClosingCashBox(id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "get-closing-cash-box/" + id, { headers: headers }).map(res => res.json());
 	}

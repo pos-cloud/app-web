@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Deposit } from './../models/deposit';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class DepositService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastDeposit() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'deposits/sort="description":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -25,8 +24,7 @@ export class DepositService {
 	getDeposit(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "deposit/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -34,8 +32,7 @@ export class DepositService {
 	getDeposits(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if (query) {
 			return this._http.get(Config.apiURL + 'deposits/' + query, { headers: headers }).map(res => res.json());
@@ -47,8 +44,7 @@ export class DepositService {
 	saveDeposit(deposit: Deposit) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "deposit", deposit, { headers: headers }).map(res => res.json());
 	}
@@ -56,8 +52,7 @@ export class DepositService {
 	deleteDeposit(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "deposit/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -65,8 +60,7 @@ export class DepositService {
 	updateDeposit(deposit: Deposit) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "deposit/" + deposit._id, deposit, { headers: headers }).map(res => res.json());
 	}

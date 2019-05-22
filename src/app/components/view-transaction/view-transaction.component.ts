@@ -35,7 +35,6 @@ export class ViewTransactionComponent implements OnInit {
   public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
   public userCountry: string = 'AR';
-  public database: string;
 
   constructor(
     public _transactionService: TransactionService,
@@ -45,7 +44,6 @@ export class ViewTransactionComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public _userService: UserService,
   ) {
-    this.database = this._userService.getDatabase();
   }
 
   ngOnInit() {

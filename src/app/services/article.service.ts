@@ -3,7 +3,7 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Article, ArticleType } from './../models/article';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 import { Variant } from 'app/models/variant';
 
 import { Observable } from "rxjs/Observable";
@@ -16,14 +16,13 @@ export class ArticleService {
 	constructor(
 		public _http: Http,
 		private http: HttpClient,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastArticle () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'articles/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -31,8 +30,7 @@ export class ArticleService {
  	getArticle (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -40,8 +38,7 @@ export class ArticleService {
   	getArticles (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if (query) {
 			return this._http.get(Config.apiURL + "articles/" + query, { headers: headers }).map(res => res.json());
@@ -53,8 +50,7 @@ export class ArticleService {
 	getFinalArticles() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'articles/where="type":"' + ArticleType.Final + '"', { headers: headers }).map(res => res.json());
 	}
@@ -62,8 +58,7 @@ export class ArticleService {
   saveArticle(article: Article, variants: Variant[]) {
 		let headers = new Headers({
 		'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
     });
 		return this._http.post(Config.apiURL + "article", { "article": article, "variants": variants }, { headers: headers }).map (res => res.json());
 	}
@@ -71,8 +66,7 @@ export class ArticleService {
 	deleteArticle (id: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
 			return this._http.delete(Config.apiURL + "article/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -80,8 +74,7 @@ export class ArticleService {
   updateArticle(article: Article, variants: Variant[]){
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
     return this._http.put(Config.apiURL + "article/" + article._id, { "article": article, "variants": variants }, { headers: headers }).map (res => res.json());
 	}
@@ -89,8 +82,7 @@ export class ArticleService {
   	getArticlesByCategory (categoryId: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'articles/where="category":"'+categoryId+'"', { headers: headers }).map (res => res.json());
 	}
@@ -98,8 +90,7 @@ export class ArticleService {
   	uploadImagen (id : string){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "upload-image/"+id,'', { headers: headers }).map (res => res.json());
 	}
@@ -108,8 +99,7 @@ export class ArticleService {
 
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-image-article/' + idArticle, true);
-		xhr.setRequestHeader('Authorization', this._userService.getToken());
-		xhr.setRequestHeader('Database', this._userService.getDatabase());
+		xhr.setRequestHeader('Authorization', this._authService.getToken());
 
 		return new Promise((resolve, reject) => {
 			let formData: any = new FormData();
@@ -138,8 +128,7 @@ export class ArticleService {
 
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 
 		return this._http.get(Config.apiURL + "get-best-selling-article/" + query, { headers: headers }).map(res => res.json());
@@ -149,8 +138,7 @@ export class ArticleService {
 
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 
 		return this._http.put(Config.apiURL + "update-prices", query ,{ headers: headers}).map(res => res.json());
@@ -169,8 +157,7 @@ export class ArticleService {
 
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json')
-      .set('Authorization', this._userService.getToken())
-      .set('Database', this._userService.getDatabase());
+      .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
       .set('project', JSON.stringify(project))

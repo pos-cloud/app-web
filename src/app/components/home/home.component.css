@@ -1,5 +1,6 @@
 .fondo {
   display:block;
-  height: 400px;
+  max-width: 60%;
+  height: auto;
   margin: auto;
 }

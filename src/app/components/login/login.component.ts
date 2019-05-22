@@ -1,17 +1,19 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from './../../models/user';
 import { Employee } from './../../models/employee';
-import { EmployeeType } from './../../models/employee-type';
 
 import { UserService } from './../../services/user.service';
 import { TurnService } from './../../services/turn.service';
 import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
+import { Config } from 'app/app.config';
+import { AuthService } from 'app/services/auth.service';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-login',
@@ -22,20 +24,25 @@ import { TableService } from './../../services/table.service';
 
 export class LoginComponent implements OnInit {
 
-  public user: User;
-  public database: string;
   public loginForm: FormGroup;
   public alertMessage: string;
   public loading: boolean = false;
   public employees: Employee[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
+  public company: string;
+  public user: string;
+  public password: string;
 
   public formErrors = {
+    'company': '',
     'name': '',
     'password': ''
   };
 
   public validationMessages = {
+    'company': {
+      'required':       'Este campo es requerido.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
     },
@@ -46,20 +53,22 @@ export class LoginComponent implements OnInit {
 
   constructor(
     public _userService: UserService,
+    private _authService: AuthService,
     public _employeeService: EmployeeService,
     public _turnService: TurnService,
     public _tableService: TableService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _router: Router
+    public _router: Router,
+    private _configService: ConfigService,
+    private _route: ActivatedRoute
     ) {
       this.alertMessage = '';
-      this.database = this._userService.getDatabase();
     }
 
   ngOnInit() {
-    this.user = new User();
+    this.company = Config.database;
     this.buildForm();
   }
 
@@ -70,17 +79,16 @@ export class LoginComponent implements OnInit {
   public buildForm(): void {
 
     this.loginForm = this._fb.group({
-      '_id': [this.user._id, [
-        ]
-      ],
-      'name': [this.user.name, [
-        ]
-      ],
-      'password': [this.user.password, [
+      'company': [ this.company, [
         Validators.required
         ]
       ],
-      'state': [this.user.state, [
+      'user': [this.user, [
+        Validators.required
+        ]
+      ],
+      'password': [this.password, [
+        Validators.required
         ]
       ]
     });
@@ -109,95 +117,77 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  public isDatabaseValid(): boolean {
+  async login() {
 
-    let isValid: boolean = true;
+    this.user = this.loginForm.value.user;
+    this.password = this.loginForm.value.password;
+    this.company = this.loginForm.value.company;
+    Config.setDatabase(this.company);
+    this.showMessage("Comprobando usuario...", 'info', false);
+    this.loading = true;
 
-    if (this.database || this.loginForm.value.name.indexOf('@') !== -1) {
-      if (this.loginForm.value.name.indexOf('@') !== -1 &&
-          this.loginForm.value.name.split("@")[1] !== '') {
-        let dbName = this.loginForm.value.name.split("@")[1];
-            if (this.isDBNameValid(dbName)) {
-              localStorage.setItem('database', this.loginForm.value.name.split("@")[1].toLowerCase());
-            } else {
-              isValid = false;
-              this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
+    //Obtener el token del usuario
+    this._authService.login(this.company, this.user, this.password).subscribe(
+      async result => {
+        this.loading = false;
+        if (!result.user) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.showMessage("Ingresando...", 'success', false);
+          this._authService.loginStorage(result.user);
+          await this.getConfigApi().then(
+            config => {
+              this._configService.setConfig(config);
+              this.setConfigurationSettings(config);
             }
-      } else if (!this.database) {
-        isValid = false;
-        this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
-      }
-    } else {
-      isValid = false;
-      this.showMessage("El usuario y/o contraseña son incorrectos", 'info', true);
-    }
+          );
 
-    return isValid;
+          let returnURL = '/';
+          this._route.queryParams.subscribe(params => returnURL = params['return'] || '/forums');
+          this._router.navigateByUrl(returnURL);
+        }
+      },
+      error => {
+        if (error.status === 0) {
+          this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
+        } else {
+          this.showMessage(error._body, 'danger', false);
+        }
+        this.loading = false;
+      }
+    );
   }
 
-  public isDBNameValid(dbName: string): boolean {
+  public getConfigApi(): Promise<Config> {
 
-    let isValid: boolean = false;
-
-    if ( dbName.indexOf('.') === -1 &&
-        dbName.indexOf('&') === -1 &&
-        dbName.indexOf('@') === -1) {
-          isValid = true;
-    }
-
-    return isValid;
-  }
-
-  public login(): void {
-
-    if (this.isDatabaseValid()) {
-      if (this.database && this.loginForm.value.name.indexOf('@') === -1) {
-        this.user.name = this.loginForm.value.name;
-      } else {
-        this.user.name = this.loginForm.value.name.split("@")[0];
-      }
-      this.user.password = this.loginForm.value.password;
-
-      this.showMessage("Comprobando usuario...", 'info', false);
-      this.loading = true;
-
-      //Obtener el token del usuario
-      this._userService.login(this.user).subscribe(
+    return new Promise<Config>((resolve, reject) => {
+      this._configService.getConfigApi().subscribe(
         result => {
-          if (!result.user) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
+          if (!result.configs) {
+            resolve(null);
           } else {
-            this.showMessage("Ingresando...", 'success', false);
-            this.user = result.user;
-            let userStorage = new User();
-            userStorage._id = this.user._id;
-            userStorage.name = this.user.name;
-            if (this.user.employee) {
-              userStorage.employee = new Employee();
-              userStorage.employee._id = this.user.employee._id;
-              userStorage.employee.name = this.user.employee.name;
-              userStorage.employee.type = new EmployeeType();
-              userStorage.employee.type._id = this.user.employee.type._id;
-              userStorage.employee.type.description = this.user.employee.type.description;
-            }
-            sessionStorage.setItem('user', JSON.stringify(userStorage));
-            sessionStorage.setItem('session_token', this.user.token);
-            //this._router.navigate(['/admin/venta/statistics']);
-            this._router.navigate(['/']);
-            location.reload();
-            this.loading = false;
+            resolve(result.configs[0]);
           }
         },
         error => {
-          if (error.status === 0) {
-            this.showMessage("Error de conexión con el servidor. Comunicarse con Soporte.", 'danger', false);
-          } else {
-            this.showMessage(error._body, 'danger', false);
-          }
-          this.loading = false;
+          resolve(null);
         }
       );
+    });
+  }
+
+  public setConfigurationSettings(config) {
+    if (config.emailAccount) { Config.setConfigEmail(config.emailAccount, config.emailPassword) }
+    if (config.companyName) { Config.setConfigCompany(config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
+                                                    config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName,
+                                                    config.country, config.timezone, config.currency, config.companyIdentificationType, config.companyIdentificationValue, config.licenseCost,
+                                                    config.companyPostalCode);
+    }
+    if (config.showLicenseNotification !== undefined) {
+      Config.setConfigs(config.showLicenseNotification);
+    }
+    if (config.modules) {
+      Config.setModules(config.modules);
     }
   }
 

@@ -3,7 +3,7 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Company } from './../models/company';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,15 +18,14 @@ export class CompanyService {
 
 	constructor(
 		public _http: Http,
-    public _userService: UserService,
+    public _authService: AuthService,
     private http: HttpClient,
 	) { }
 
   	getLastCompany () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'companies/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
   	}
@@ -34,8 +33,7 @@ export class CompanyService {
   	getCompany (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "company/"+id, { headers: headers }).map (res => res.json());
   	}
@@ -43,8 +41,7 @@ export class CompanyService {
   	getCompanies (query?: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
 			if (query) {
 				return this._http.get(Config.apiURL + "companies/" + query, { headers: headers }).map (res => res.json());
@@ -56,8 +53,7 @@ export class CompanyService {
   	getCompaniesByType (type: string) {
 	  	let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'companies/where="type":"' + type + '"', { headers: headers }).map (res => res.json());
 		}
@@ -65,8 +61,7 @@ export class CompanyService {
 		saveCompany (company : Company) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
 		return this._http.post(Config.apiURL + "company",company, { headers: headers }).map (res => res.json());
 		}
@@ -74,8 +69,7 @@ export class CompanyService {
 		deleteCompany (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "company/"+id, { headers: headers }).map (res => res.json());
 		}
@@ -83,8 +77,7 @@ export class CompanyService {
   	updateCompany (company: Company){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "company/"+company._id, company, { headers: headers }).map (res => res.json());
 		}
@@ -92,8 +85,7 @@ export class CompanyService {
 		getQuantityOfCompaniesByType(type: string, startDate: string, endDate: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
 			var query = '{"type":"' + type +'","startDate":"' + startDate + '", "endDate":"' + endDate + '"}';
 			return this._http.get(Config.apiURL + "quantity-of-companies-by-type/" + query, { headers: headers }).map(res => res.json());
@@ -102,8 +94,7 @@ export class CompanyService {
 		getSalesByCompany(query: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
 			return this._http.get(Config.apiURL + 'sales-by-company/' + query, { headers: headers }).map(res => res.json());
 		}
@@ -111,8 +102,7 @@ export class CompanyService {
   	getSummaryOfAccountsByCompany(query: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
     return this._http.get(Config.apiURL + "summary-of-accounts-by-company/" + query, { headers: headers }).map(res => res.json());
   	}
@@ -120,8 +110,7 @@ export class CompanyService {
   	getSummaryOfAccounts(query: string) {
 			let headers = new Headers({
 				'Content-Type': 'application/json',
-				'Authorization': this._userService.getToken(),
-				'Database': this._userService.getDatabase()
+				'Authorization': this._authService.getToken()
 			});
 			return this._http.get(Config.apiURL + "summary-of-accounts/" + query, { headers: headers }).map(res => res.json());
   	}
@@ -140,9 +129,7 @@ export class CompanyService {
 
 				const headers = new HttpHeaders()
 					.set('Content-Type', 'application/json')
-					.set('Authorization', this._userService.getToken())
-					.set('Database', this._userService.getDatabase());
-				//.set('Authorization', this._authService.getSession()["token"]);
+					.set('Authorization', this._authService.getToken());
 
 				const params = new HttpParams()
 					.set('project', JSON.stringify(project))
@@ -174,8 +161,7 @@ export class CompanyService {
 
 				const headers = new HttpHeaders()
 					.set('Content-Type', 'application/json')
-					.set('Authorization', this._userService.getToken())
-					.set('Database', this._userService.getDatabase());
+					.set('Authorization', this._authService.getToken());
 				//.set('Authorization', this._authService.getSession()["token"]);
 
 				const params = new HttpParams()

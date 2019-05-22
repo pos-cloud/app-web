@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Make } from './../models/make';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class MakeService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastMake () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'makes/sort="description":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class MakeService {
 	getMake (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -34,8 +32,7 @@ export class MakeService {
 	getMakes (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if(query) {
 			return this._http.get(Config.apiURL + 'makes/' + query, { headers: headers }).map (res => res.json());
@@ -47,8 +44,7 @@ export class MakeService {
 	saveMake (make : Make) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "make",make, { headers: headers }).map (res => res.json());
 	}
@@ -56,8 +52,7 @@ export class MakeService {
 	deleteMake (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -65,8 +60,7 @@ export class MakeService {
 	updateMake (make: Make){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "make/"+make._id, make, { headers: headers }).map (res => res.json());
 	}
@@ -74,8 +68,7 @@ export class MakeService {
 	getSalesByMake(query: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "sales-by-make/" + query, { headers: headers }).map(res => res.json());
 	}

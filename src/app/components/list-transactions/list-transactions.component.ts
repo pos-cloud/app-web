@@ -95,7 +95,13 @@ export class ListTransactionsComponent implements OnInit {
   ngOnInit(): void {
 
     this.userCountry = Config.country;
-    this.allowResto = Config.modules.sale.resto;
+    this._configService.getConfig.subscribe(
+      config => {
+        if(config && config.modules) {
+          this.allowResto = config.modules.sale.resto;
+        }
+      }
+    );
     
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];

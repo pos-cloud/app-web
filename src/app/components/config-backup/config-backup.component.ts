@@ -171,7 +171,7 @@ export class ConfigBackupComponent implements OnInit {
         } else {
           this.cert = true;
           this.showMessage("Los archivos se generaron correctamente.", "success", false);
-          this.routeFile = '-' + this._userService.getDatabase()+ '-certificados-keys-poscloud.csr';
+          this.routeFile = '-' + Config.database + '-certificados-keys-poscloud.csr';
           this.hideMessage();
 
         }

@@ -1,30 +1,23 @@
-<nav class="navbar navbar-toggleable-md bg-faded"
-      *ngIf="!hideMenu && identity">
+<nav class="navbar navbar-toggleable-md bg-faded" *ngIf="(identity$ | async) as identity">
   <button class="navbar-toggler navbar-toggler-right"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          (click)="makeVisibleReport(false)"
-          style="font-size: 30px;margin-top:10px;">
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+    (click)="makeVisibleReport(false)"
+    style="font-size: 30px;margin-top:10px;">
     <i class="fa fa-bars"></i>
   </button>
   <span class="navbar-brand btn" (click)="goToHome()">
-      <img width="50" src="assets/img/logo.png">
+    <img width="50" src="assets/img/logo.png">
   </span>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto" *ngIf="config && config.modules">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent" *ngIf="(config$ | async) as config">
+    <ul class="navbar-nav mr-auto">
       <!-- MENU VENDEDOR -->
       <li class="nav-item navbar-inverse"
-          *ngIf=" identity &&
-                  identity.employee &&
-                  identity.employee.type.description !== 'Administrador' &&
-                  config &&
-                  config.modules &&
-                  config.modules.sale &&
-                  config.modules.sale.resto"
+          *ngIf="config.modules.sale.resto"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','resto']"
@@ -32,12 +25,8 @@
           <i class="fa fa-cutlery"></i> Resto</a>
       </li>
       <li class="nav-item"
-          *ngIf="identity &&
-                identity.employee &&
+          *ngIf="identity.employee &&
                 identity.employee.type.description !== 'Administrador' &&
-                config &&
-                config.modules &&
-                config.modules.sale &&
                 config.modules.sale.counter"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
@@ -46,12 +35,8 @@
           <i class="fa fa-handshake-o"></i> Mostrador</a>
       </li>
       <li class="nav-item"
-          *ngIf="identity &&
-                identity.employee &&
+          *ngIf="identity.employee &&
                 identity.employee.type.description !== 'Administrador' &&
-                config &&
-                config.modules &&
-                config.modules.sale &&
                 config.modules.sale.delivery"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
@@ -62,42 +47,28 @@
       <!-- MENU ADMINISTRADOR -->
       <li class="nav-item"
           ngbDropdown
-          *ngIf="(identity &&
-                  identity.employee &&
+          *ngIf="(identity.employee &&
                   identity.employee.type.description === 'Administrador') &&
-                  config &&
-                  config.modules &&
-                  config.modules.sale &&
-                  (config.modules.sale.resto || config.modules.sale.delivery || config.modules.sale.counter)
-                  "
+                  (config.modules.sale.resto || config.modules.sale.delivery || config.modules.sale.counter)"
           (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-fax"></i> Ventas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngIf="config &&
-                      config.modules &&
-                      config.modules.sale &&
-                      config.modules.sale.resto">
+          <div *ngIf="config.modules.sale.resto">
             <button class="dropdown-item"
                     [routerLink]="['pos','resto']"
                     [routerLinkActive]="['active']">
               Resto
             </button>
           </div>
-          <div *ngIf="config &&
-                      config.modules &&
-                      config.modules.sale &&
-                      config.modules.sale.counter">
+          <div *ngIf="config.modules.sale.counter">
             <button class="dropdown-item"
                     [routerLink]="['pos','mostrador','venta']"
                     [routerLinkActive]="['active']">
               Mostrador
             </button>
           </div>
-          <div *ngIf="config &&
-                      config.modules &&
-                      config.modules.sale &&
-                      config.modules.sale.delivery">
+          <div *ngIf="config.modules.sale.delivery">
             <button class="dropdown-item"
                     [routerLink]="['pos','delivery']"
                     [routerLinkActive]="['active']">
@@ -107,20 +78,18 @@
         </div>
       </li>
       <li class="nav-item"
-          *ngIf="identity &&
-                identity.employee &&
-                identity.employee.type.description === 'Administrador' &&
-                config && config.modules && config.modules.purchase"
+          *ngIf=" identity.employee &&
+                  identity.employee.type.description === 'Administrador' && 
+                  config.modules.purchase"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','mostrador','compra']"
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-clipboard"></i> Compras</a>
       </li>
-      <li class="nav-item" ngbDropdown *ngIf="(identity &&
-                                              identity.employee &&
+      <li class="nav-item" ngbDropdown *ngIf="(identity.employee &&
                                               identity.employee.type.description === 'Administrador' &&
-                                              config && config.modules && config.modules.money)"
+                                              config.modules.money)"
         (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-money"></i> Fondos</a>
@@ -142,10 +111,9 @@
         </div>
       </li>
       <li class="nav-item"
-          *ngIf="identity &&
-                identity.employee &&
-                identity.employee.type.description === 'Administrador' &&
-                config && config.modules && config.modules.stock"
+          *ngIf="identity.employee &&
+                identity.employee.type.description === 'Administrador' && 
+                config.modules.stock"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','mostrador','stock']"
@@ -154,8 +122,7 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          *ngIf="(identity &&
-                  identity.employee &&
+          *ngIf="(identity.employee &&
                   identity.employee.type.description === 'Administrador')"
                   (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
@@ -196,17 +163,13 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          *ngIf="(identity &&
-                  identity.employee &&
+          *ngIf="(identity.employee &&
                   identity.employee.type.description === 'Administrador')"
           (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-male"></i> Empresas</a>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngIf="config &&
-                      config.modules &&
-                      config.modules.sale &&
-                      (config.modules.sale.resto ||
+          <div *ngIf="(config.modules.sale.resto ||
                       config.modules.sale.counter ||
                       config.modules.sale.delivery)">
             <button class="dropdown-item"
@@ -214,7 +177,7 @@
                     [routerLinkActive]="['active']">
                     Clientes
             </button>
-            <div *ngIf="config && config.modules.currentAccount">
+            <div *ngIf="config.modules.currentAccount">
               <button class="dropdown-item"
                       [routerLink]="['admin','resumenes-de-cuentas','cliente']"
                       [routerLinkActive]="['active']">
@@ -226,17 +189,15 @@
                 Cuentas Corrientes
               </button>
             </div>
-            <div *ngIf="config && config.modules && config.modules.purchase"class="dropdown-divider"></div>
+            <div *ngIf="config.modules.purchase"class="dropdown-divider"></div>
           </div>
-          <div *ngIf="config &&
-                      config.modules &&
-                      config.modules.purchase">
+          <div *ngIf="config.modules.purchase">
             <button class="dropdown-item"
                     [routerLink]="['admin','proveedores']"
                     [routerLinkActive]="['active']">
               Proveedores
             </button>
-            <div *ngIf="config && config.modules.currentAccount">
+            <div *ngIf="config.modules.currentAccount">
               <button class="dropdown-item"
                       [routerLink]="['admin','resumenes-de-cuentas','proveedor']"
                       [routerLinkActive]="['active']">
@@ -261,8 +222,7 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          *ngIf="(identity &&
-                  identity.employee &&
+          *ngIf="(identity.employee &&
                   identity.employee.type.description === 'Administrador')"
           (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
@@ -278,14 +238,14 @@
                   [routerLinkActive]="['active']">
             Tipos de Empleado
           </button>
-          <div *ngIf="config && config.modules && config.modules.sale && config.modules.sale.resto">
+          <div *ngIf="config.modules.sale.resto">
             <button class="dropdown-item"
                     [routerLink]="['admin','turnos']"
                     [routerLinkActive]="['active']">
               Turnos
             </button>
           </div>
-          <div *ngIf="config && config.modules && config.modules.money">
+          <div *ngIf="config.modules.money">
             <button class="dropdown-item" [routerLink]="['admin','cajas']" [routerLinkActive]="['active']">
               Cajas
             </button>
@@ -294,12 +254,8 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          *ngIf="identity &&
-                identity.employee &&
+          *ngIf="identity.employee &&
                 identity.employee.type.description === 'Administrador' &&
-                config &&
-                config.modules &&
-                config.modules.sale &&
                 config.modules.sale.resto"
           (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
@@ -319,8 +275,7 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          *ngIf="(identity &&
-                  identity.employee &&
+          *ngIf="(identity.employee &&
                   identity.employee.type.description === 'Administrador')"
                   (click)="makeVisibleReport(true)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
@@ -329,8 +284,7 @@
       </li>
       <li class="nav-item"
           ngbDropdown
-          *ngIf="(identity &&
-                  identity.employee &&
+          *ngIf="(identity.employee &&
                   identity.employee.type.description === 'Administrador')"
           (click)="makeVisibleReport(false)">
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
@@ -445,18 +399,17 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="nav-item"
-          ngbDropdown
-          *ngIf="identity">
+          ngbDropdown>
         <a  class="nav-link btn" 
             ngbDropdownToggle 
             data-toggle="tooltip" 
             data-placement="top"
             (click)="readNotification()">
           <i class="fa fa-bell"></i>
-          <span *ngIf="!readedNotification && config && config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10" class="badge badge-danger">1</span>
+          <span *ngIf="!readedNotification && config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10" class="badge badge-danger">1</span>
         </a>
         <div class="dropdown-menu notification-menu" ngbDropdownMenu>
-          <div class="dropdown-item notification-item" *ngIf="config && config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10">
+          <div class="dropdown-item notification-item" *ngIf="config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10">
             <div class="row">
               <div class="col-md-12">
                 <span *ngIf="licenseDays > 1">Quedan {{ licenseDays }} días de licencia</span>
@@ -474,7 +427,7 @@
               </div>
             </div>
           </div>
-          <div class="dropdown-item notification-item" *ngIf="!config || !config.showLicenseNotification || (licenseDays < 0 || licenseDays > 10)">
+          <div class="dropdown-item notification-item" *ngIf="!config.showLicenseNotification || (licenseDays < 0 || licenseDays > 10)">
             <div class="row">
               <div class="col-md-12">
                 No hay notificaciones
@@ -484,8 +437,7 @@
         </div>
       </li>
       <li class="nav-item"
-          ngbDropdown
-          *ngIf="identity">
+          ngbDropdown>
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-user"></i> {{ identity.employee.name }}
         </a>
@@ -522,7 +474,7 @@
       </li>
       <li class="nav-item"
           (click)="makeVisibleReport(false)">
-        <i class="fa fa-wifi" *ngIf="isAPIConected && online | async; else blockOffline" style="color: #04B431; margin-top: 10px; margin-left: 10px"></i>
+        <i class="fa fa-wifi" *ngIf="online | async; else blockOffline" style="color: #04B431; margin-top: 10px; margin-left: 10px"></i>
         <ng-template #blockOffline>
           <i class="fa fa-wifi" style="color: #FF0000; margin-top: 10px; margin-left: 10px"></i>
         </ng-template>
@@ -532,11 +484,9 @@
 </nav>
 
 <!-- MENU DE REPORTES -->
-<div class="center-content">
+<div class="center-content" *ngIf="(config$ | async) as config">
   <div class="row mega-dropdown-menu" *ngIf="isReportVisible">
-    <div class="col-md-3" style="width: 300px" *ngIf="config &&
-                                                      config.modules &&
-                                                      config.modules.sale &&
+    <div class="col-md-3" style="width: 300px" *ngIf="config.modules.sale &&
                                                       (config.modules.sale.resto ||
                                                       config.modules.sale.counter ||
                                                       config.modules.sale.delivery)">
@@ -589,13 +539,11 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3"  style="width: 300px" *ngIf="config &&
-                                                config.modules &&
-                                                !config.modules.sale ||
-                                                (config.modules.sale &&
-                                                !config.modules.sale.resto &&
-                                                !config.modules.sale.delivery &&
-                                                !config.modules.sale.counter)">
+    <div class="col-md-3"  style="width: 300px" *ngIf="!config.modules.sale ||
+                                                      (config.modules.sale &&
+                                                      !config.modules.sale.resto &&
+                                                      !config.modules.sale.delivery &&
+                                                      !config.modules.sale.counter)">
       <ul>
         <li class="dropdown-header">Ventas</li>
         <li class="btn-li">
@@ -607,9 +555,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" style="width: 300px" *ngIf="config &&
-                                                      config.modules &&
-                                                      config.modules.purchase">
+    <div class="col-md-3" style="width: 300px" *ngIf="config.modules.purchase">
       <ul>
         <li class="dropdown-header">Compras</li>
         <li>
@@ -659,9 +605,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" style="width: 300px" *ngIf="config &&
-                                                      config.modules &&
-                                                      !config.modules.purchase">
+    <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.purchase">
       <ul>
         <li class="dropdown-header">Compras</li>
         <li class="btn-li">
@@ -673,8 +617,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" style="width: 300px" *ngIf="config.modules &&
-                                                      config.modules.stock">
+    <div class="col-md-3" style="width: 300px" *ngIf="config.modules.stock">
       <ul>
         <li class="dropdown-header">Stock</li>
         <li>
@@ -694,9 +637,7 @@
         </li> -->
       </ul>
     </div>
-    <div class="col-md-3" style="width: 300px" *ngIf="config &&
-                                                      config.modules &&
-                                                      !config.modules.stock">
+    <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.stock">
       <ul>
         <li class="dropdown-header">Stock</li>
         <li class="btn-li">
@@ -708,9 +649,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" style="width: 300px" *ngIf="config &&
-                                                      config.modules &&
-                                                      config.modules.money">
+    <div class="col-md-3" style="width: 300px" *ngIf="config.modules.money">
       <ul>
         <li class="dropdown-header">Fondos</li>
         <li>
@@ -725,9 +664,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-3" style="width: 300px" *ngIf="config &&
-                                                      config.modules &&
-                                                      !config.modules.money">
+    <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.money">
       <ul>
         <li class="dropdown-header">Fondos</li>
         <li class="btn-li">

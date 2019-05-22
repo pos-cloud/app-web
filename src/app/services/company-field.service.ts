@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { CompanyField } from './../models/company-field';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class CompanyFieldService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastCompanyField () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'company-fields/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class CompanyFieldService {
 	getCompanyField (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "company-field/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -34,8 +32,7 @@ export class CompanyFieldService {
 	getCompanyFields () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "company-fields", { headers: headers }).map (res => res.json());
 	}
@@ -43,8 +40,7 @@ export class CompanyFieldService {
 	saveCompanyField (companyField : CompanyField) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "company-field",companyField, { headers: headers }).map (res => res.json());
 	}
@@ -52,8 +48,7 @@ export class CompanyFieldService {
 	deleteCompanyField (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "company-field/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -61,8 +56,7 @@ export class CompanyFieldService {
 	updateCompanyField (companyField: CompanyField){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "company-field/"+companyField._id, companyField, { headers: headers }).map (res => res.json());
 	}

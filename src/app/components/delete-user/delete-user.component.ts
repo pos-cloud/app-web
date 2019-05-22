@@ -5,6 +5,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from './../../models/user';
 
 import { UserService } from './../../services/user.service';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-delete-user',
@@ -22,6 +23,7 @@ export class DeleteUserComponent implements OnInit {
 
   constructor(
     public _userService: UserService,
+    public _authService: AuthService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _router: Router
@@ -40,13 +42,17 @@ export class DeleteUserComponent implements OnInit {
 
     this._userService.deleteUser(this.user._id).subscribe(
       result => {
-        if (this._userService.getIdentity()._id === this.user._id) {
-            sessionStorage.removeItem("session_token");
-            sessionStorage.removeItem("user");
-            this._router.navigate(['/']);
-        }
-        this.activeModal.close('delete_close');
-        this.loading = false;
+        this._authService.getIdentity.subscribe(
+          identity => {
+            if (identity._id === this.user._id) {
+              sessionStorage.removeItem("session_token");
+              sessionStorage.removeItem("user");
+              this._router.navigate(['/']);
+            }
+            this.activeModal.close('delete_close');
+            this.loading = false;
+          }
+        );
       },
       error => {
         this.showMessage(error._body, 'danger', false);

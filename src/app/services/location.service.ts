@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Location } from './../models/location';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class LocationService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
   ) { }
   
   getLastLocation() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'locations/sort="description":-1&limit=1', { headers: headers }).map(res => res.json());
 	}
@@ -25,8 +24,7 @@ export class LocationService {
 	getLocation(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "location/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -34,8 +32,7 @@ export class LocationService {
 	getLocations(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if (query) {
 			return this._http.get(Config.apiURL + 'locations/' + query, { headers: headers }).map(res => res.json());
@@ -47,8 +44,7 @@ export class LocationService {
 	saveLocation(location: Location) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "location", location, { headers: headers }).map(res => res.json());
 	}
@@ -56,8 +52,7 @@ export class LocationService {
 	deleteLocation(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "location/" + id, { headers: headers }).map(res => res.json());
 	}
@@ -65,8 +60,7 @@ export class LocationService {
 	updateLocation(location: Location) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "location/" + location._id, location, { headers: headers }).map(res => res.json());
 	}

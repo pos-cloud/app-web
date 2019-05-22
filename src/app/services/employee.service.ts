@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Employee } from './../models/employee';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class EmployeeService {
 
   constructor(
     public _http: Http,
-    public _userService: UserService
+    public _authService: AuthService
   ) { }
 
   getLastEmployee () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'employees/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class EmployeeService {
   getEmployee (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -34,8 +32,7 @@ export class EmployeeService {
   getEmployees (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		if (query) {
 			return this._http.get(Config.apiURL + "employees/" + query, { headers: headers }).map (res => res.json());
@@ -47,8 +44,7 @@ export class EmployeeService {
   getWaiters () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "employees", { headers: headers }).map (res => res.json());
 	}
@@ -56,8 +52,7 @@ export class EmployeeService {
   saveEmployee(employee: Employee) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
     });
     return this._http.post(Config.apiURL + "employee", employee, { headers: headers }).map(res => res.json());
 	}
@@ -65,8 +60,7 @@ export class EmployeeService {
   deleteEmployee (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
   }
@@ -74,8 +68,7 @@ export class EmployeeService {
   updateEmployee (employee: Employee){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "employee/"+employee._id, employee, { headers: headers }).map (res => res.json());
 	}
@@ -83,8 +76,7 @@ export class EmployeeService {
 	getSalesByEmployee(query: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'sales-by-employee/' + query, { headers: headers }).map(res => res.json());
 	}

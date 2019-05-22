@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Printer } from './../models/printer';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class PrinterService {
 
   constructor(
     public _http: Http,
-    public _userService: UserService
+    public _authService: AuthService
   ) { }
 
   getLastPrinter () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'printers/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
   }
@@ -25,8 +24,7 @@ export class PrinterService {
   getPrinter (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "printer/"+id, { headers: headers }).map (res => res.json());
   }
@@ -34,8 +32,7 @@ export class PrinterService {
   getPrinters () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "printers", { headers: headers }).map (res => res.json());
   }
@@ -43,8 +40,7 @@ export class PrinterService {
   savePrinter (printer : Printer) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "printer",printer, { headers: headers }).map (res => res.json());
   }
@@ -52,8 +48,7 @@ export class PrinterService {
   deletePrinter (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "printer/"+id, { headers: headers }).map (res => res.json());
   }
@@ -61,8 +56,7 @@ export class PrinterService {
   updatePrinter (printer: Printer){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "printer/"+printer._id, printer, { headers: headers }).map (res => res.json());
   }

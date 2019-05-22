@@ -35,7 +35,7 @@
         </thead>
         <tbody>
           <tr align="center" *ngIf="loading">
-            <td colspan="3">Cargando...</td>
+            <td colspan="4">Cargando...</td>
           </tr>
           <tr *ngFor="let country of countries | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -63,7 +63,7 @@
            
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td colspan="3">No se encontraron paises</td>
+            <td colspan="4">No se encontraron paises</td>
           </tr>
         </tbody>
       </table>

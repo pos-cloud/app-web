@@ -20,29 +20,35 @@
     <form [formGroup]="loginForm" #formLogin="ngForm" (ngSubmit)="login()" autocomplete="off">
       <div class="row">
         <div class="center-content">
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="name" class="control-label">Usuario</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
-                  <span class="input-group-addon" [hidden]="!database">@{{database}}</span>
-                </div>
-                <div *ngIf="formErrors.name" class="alert alert-danger">
-                  {{ formErrors.name }}
-                </div>
+          <div class="row" *ngIf="!company">
+            <div class="form-group col-md-12">
+              <label for="company" class="control-label">Negocio:</label>
+              <input type="text" class="form-control" formControlName="company" name="company" id="company" [focus]="focusEvent"/>
+              <div *ngIf="formErrors.company" class="alert alert-danger">
+                {{ formErrors.company }}
               </div>
             </div>
-            <div class="row">
-              <div class="form-group col-md-12">
-                <label for="password" class="control-label">Password:</label>
-                <div class="input-group">
-                  <input type="password" class="form-control" formControlName="password" name="password" id="password"/>
-                </div>
-                <div *ngIf="formErrors.password" class="alert alert-danger">
-                  {{ formErrors.password }}
-                </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="user" class="control-label">Usuario o Email:</label>
+              <input type="text" class="form-control" formControlName="user" name="user" id="user" [focus]="focusEvent"/>
+              <div *ngIf="formErrors.user" class="alert alert-danger">
+                {{ formErrors.user }}
               </div>
             </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="password" class="control-label">Password:</label>
+              <div class="input-group">
+                <input type="password" class="form-control" formControlName="password" name="password" id="password"/>
+              </div>
+              <div *ngIf="formErrors.password" class="alert alert-danger">
+                {{ formErrors.password }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <hr>

@@ -20,6 +20,7 @@
             <tr>
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Nombre</th>
+              <th (click)="orderBy('email')">Email</th>
               <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('tokenExpiration')">Minutos de sesión</th>
 	            <th (click)="orderBy('employee','name')">Empleado</th>
@@ -27,6 +28,7 @@
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterEmail" placeholder="Email..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterTokenExpiration" placeholder="Minutos de sesión..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
@@ -34,6 +36,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let user of users | filter: filterName:'name'
+                                          | filter: filterEmail:'email'
+                                          | filter: filterState:'state'
+                                          | filter: filterTokenExpiration:'tokenExpiration'
+                                          | filter: filterEmployee:'name':'employee'
                                           | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
@@ -45,6 +51,7 @@
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', user)" title="Eliminar"  *ngIf="user.name !== 'soporte'"><i class="fa fa-trash-o"></i></button>
               </td>
               <td>{{user.name}}</td>
+              <td>{{user.email}}</td>
               <td>
                 <h6>
                   <span class="badge" [ngClass]="{'badge-danger':user.state==='No Habilitado',

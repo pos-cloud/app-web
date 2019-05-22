@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { UnitOfMeasurement } from './../models/unit-of-measurement';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class UnitOfMeasurementService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastUnitOfMeasurement () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'units-of-measurement/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class UnitOfMeasurementService {
 	getUnitOfMeasurement (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "unit-of-measurement/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -34,8 +32,7 @@ export class UnitOfMeasurementService {
 	getUnitsOfMeasurement () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
     return this._http.get(Config.apiURL + 'units-of-measurement/sort="name":1', { headers: headers }).map (res => res.json());
 	}
@@ -43,8 +40,7 @@ export class UnitOfMeasurementService {
 	saveUnitOfMeasurement (unitOfMeasurement : UnitOfMeasurement) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "unit-of-measurement",unitOfMeasurement, { headers: headers }).map (res => res.json());
 	}
@@ -52,8 +48,7 @@ export class UnitOfMeasurementService {
 	deleteUnitOfMeasurement (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "unit-of-measurement/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -61,8 +56,7 @@ export class UnitOfMeasurementService {
 	updateUnitOfMeasurement (unitOfMeasurement: UnitOfMeasurement){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "unit-of-measurement/"+unitOfMeasurement._id, unitOfMeasurement, { headers: headers }).map (res => res.json());
 	}

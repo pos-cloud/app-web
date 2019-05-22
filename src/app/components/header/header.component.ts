@@ -1,6 +1,6 @@
 // ANGULAR
-import { Component, OnInit, Input, ElementRef, Renderer2 } from '@angular/core';
-import { Router, NavigationStart, Event as NavigationEvent, NavigationEnd } from '@angular/router';
+import { Component, ElementRef, Renderer2 } from '@angular/core';
+import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 
@@ -10,12 +10,12 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 
 // MODELS
 import { User } from './../../models/user';
-import { Config } from './../../app.config';
 
 // SERVICES
-import { UserService } from './../../services/user.service';
 import { UpdateUserComponent } from '../update-user/update-user.component';
 import { LicensePaymentComponent } from '../license-payment/license-payment.component';
+import { AuthService } from 'app/services/auth.service';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-header',
@@ -23,23 +23,21 @@ import { LicensePaymentComponent } from '../license-payment/license-payment.comp
   styleUrls: ['./header.component.scss']
 })
 
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
-  public identity: User;
+  public config$: any;
+  public identity$: Observable<User>;
   public online: Observable<boolean>;
-  public accessType: string;
   public hideMenu: boolean;
   public sessionTimer: any;
   public pathLocation: string[];
-  @Input() isAPIConected: boolean;
-  @Input() config: any;
   public isReportVisible: boolean;  
   public licenseDays: number;
   public readedNotification: boolean = false;
-  public database: string;
 
   constructor(
-    public _userService: UserService,
+    private _authService: AuthService,
+    public _configService: ConfigService,
     public _router: Router,
     public elementRef: ElementRef,
     public renderer: Renderer2,
@@ -48,14 +46,17 @@ export class HeaderComponent implements OnInit {
     public _modalService: NgbModal,
     // private socket: Socket,
   ) {
-    this.database = this._userService.getDatabase();
+    // OCULTAR MENU REPORTE
     this.isReportVisible = false;
+
+    // REVISAR INTERNET
     this.online = Observable.merge(
       Observable.of(navigator.onLine),
       Observable.fromEvent(window, 'online').mapTo(true),
       Observable.fromEvent(window, 'offline').mapTo(false)
     );
-    this.accessType = Config.accessType;
+
+    // REVISAR NOTIFICACION LICENCIA
     this.licenseDays = 10 - new Date().getDate();
     if(this.licenseDays.toString() !== localStorage.getItem('licenseDays')) {
       this.readedNotification = false;
@@ -65,39 +66,29 @@ export class HeaderComponent implements OnInit {
     if(localStorage.getItem('readedNotification')) {
       this.readedNotification = (localStorage.getItem('readedNotification') === "true");
     }
-  }
 
-  ngOnInit(): void {
-    if (this.isAPIConected) {
-      this.validateIdentity();
-    }
-  }
+    // VERIFICAR LOGUEO Y CARGAR DATOS DE USUARIO
+    this.config$ = this._configService.getConfig;
+    this.identity$ = this._authService.getIdentity;
 
-  public readNotification(): void {
-    this.readedNotification = true;
-    localStorage.setItem('readedNotification', this.readedNotification.toString());
-  }
-
-  public validateIdentity(): void {
-
-    this.identity = this._userService.getIdentity();
-
-    if (this.identity) {
-      this._router.events.forEach((event: NavigationEvent) => {
-        if (event instanceof NavigationStart) {
-          let pathLocation: string[] = event.url.split('/');
-          if (pathLocation[3] === "agregar-transaccion" ||
-              pathLocation[3] === "editar-transaccion" ||
-              pathLocation[7] === "agregar-transaccion" ||
-              pathLocation[7] === "editar-transaccion" ||
-              pathLocation[8] === "agregar-transaccion" ||
-              pathLocation[8] === "editar-transaccion") {
-            this.hideMenu = true;
-          } else {
-            this.hideMenu = false;
-          }
+    this._router.events.forEach((event: NavigationEvent) => {
+      if (event instanceof NavigationStart) {
+        let pathLocation: string[] = event.url.split('/');
+        if (pathLocation[1] === "login" ||
+            pathLocation[1] === "registrar" ||
+            pathLocation[3] === "agregar-transaccion" ||
+            pathLocation[3] === "editar-transaccion" ||
+            pathLocation[7] === "agregar-transaccion" ||
+            pathLocation[7] === "editar-transaccion" ||
+            pathLocation[8] === "agregar-transaccion" ||
+            pathLocation[8] === "editar-transaccion") {
+          this.hideMenu = true;
+        } else {
+          this.hideMenu = false;
         }
-      });
+      }
+    });
+
       // this.sessionTimer = setTimeout(this.logout(), this.identity.tokenExpiration);
       // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
       //   this.sessionCount();
@@ -107,16 +98,11 @@ export class HeaderComponent implements OnInit {
       //   identity: this.identity,
       //   database: this._userService.getDatabase()
       // });
-    } else {
-      // this.socket.emit('clear');
-      this._router.events.filter(e => e instanceof NavigationEnd).first().subscribe(() => {
-        if (this._userService.getDatabase() && this._router.url !== "/registrar") {
-          this._router.navigate(['/login']);
-        } else {
-          this._router.navigate(['/registrar']);
-        }
-      });
-    }
+  }
+
+  public readNotification(): void {
+    this.readedNotification = true;
+    localStorage.setItem('readedNotification', this.readedNotification.toString());
   }
 
   public openModal(op: string): void {
@@ -126,7 +112,11 @@ export class HeaderComponent implements OnInit {
     switch (op) {
       case 'view-user':
         modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
-        modalRef.componentInstance.userId = this.identity._id;
+        this._authService.getIdentity.subscribe(
+          identity => {
+            modalRef.componentInstance.userId = identity._id;
+          },
+        );
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
 
@@ -136,7 +126,11 @@ export class HeaderComponent implements OnInit {
         break;
       case 'update-user':
         modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
-        modalRef.componentInstance.userId = this.identity._id;
+        this._authService.getIdentity.subscribe(
+          identity => {
+            modalRef.componentInstance.userId = identity._id;
+          },
+        );
         modalRef.result.then((result) => {
 
         }, (reason) => {
@@ -161,11 +155,15 @@ export class HeaderComponent implements OnInit {
 
   public goToHome(): void {
     this.makeVisibleReport(false);
-    if (this.identity.employee.type.description === "Administrador") {
-      this._router.navigate(['/']);
-    } else {
-      this._router.navigate(['/']);
-    }
+    this._authService.getIdentity.subscribe(
+      identity => {
+        if (identity.employee.type.description === "Administrador") {
+          this._router.navigate(['/']);
+        } else {
+          this._router.navigate(['/']);
+        }
+      },
+    );
   }
 
   public makeVisibleReport(visible: boolean): void {
@@ -183,9 +181,6 @@ export class HeaderComponent implements OnInit {
 
   public logout(): void {
     this.makeVisibleReport(false);
-    sessionStorage.removeItem("session_token");
-    sessionStorage.removeItem("user");
-    this.identity = undefined;
-    this._router.navigate(['/login']);
+    this._authService.logoutStorage();
   }
 }

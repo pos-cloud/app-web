@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Category } from './../models/category';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class CategoryService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastCategory () {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'categories/sort="order":-1&limit=1', { headers: headers }).map (res => res.json());
 	}
@@ -25,8 +24,7 @@ export class CategoryService {
 	getCategory (id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "category/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -34,8 +32,7 @@ export class CategoryService {
 	getCategories (query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		
 		if(query) {
@@ -48,8 +45,7 @@ export class CategoryService {
 	saveCategory (category : Category) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "category",category, { headers: headers }).map (res => res.json());
 	}
@@ -57,8 +53,7 @@ export class CategoryService {
 	deleteCategory (id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "category/"+id, { headers: headers }).map (res => res.json());
 	}
@@ -66,8 +61,7 @@ export class CategoryService {
 	updateCategory (category: Category){
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "category/"+category._id, category, { headers: headers }).map (res => res.json());
 	}
@@ -76,8 +70,7 @@ export class CategoryService {
 
 		let xhr: XMLHttpRequest = new XMLHttpRequest();
 		xhr.open('POST', Config.apiURL + 'upload-image-category/' + idCategory, true);
-		xhr.setRequestHeader('Authorization', this._userService.getToken());
-		xhr.setRequestHeader('Database', this._userService.getDatabase());
+		xhr.setRequestHeader('Authorization', this._authService.getToken());
 
 		return new Promise((resolve, reject) => {
 			let formData: any = new FormData();
@@ -105,8 +98,7 @@ export class CategoryService {
   getSalesByCategory(query: string) {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + "sales-by-category/" + query, { headers: headers }).map(res => res.json());
   }

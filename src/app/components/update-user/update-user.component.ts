@@ -8,8 +8,9 @@ import { User, UserState } from './../../models/user';
 import { Employee } from './../../models/employee';
 import { EmployeeType } from './../../models/employee-type';
 
-import { UserService } from './../../services/user.service';
 import { EmployeeService } from './../../services/employee.service';
+import { AuthService } from 'app/services/auth.service';
+import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'app-update-user',
@@ -34,6 +35,7 @@ export class UpdateUserComponent implements OnInit {
 
   public formErrors = {
     'name': '',
+    'email': '',
     'password': '',
     'state': '',
     'employee': ''
@@ -42,6 +44,8 @@ export class UpdateUserComponent implements OnInit {
   public validationMessages = {
     'name': {
       'required':       'Este campo es requerido.'
+    },
+    'email': {
     },
     'password': {
       'required':       'Este campo es requerido.'
@@ -55,6 +59,7 @@ export class UpdateUserComponent implements OnInit {
   };
 
   constructor(
+    public _authService: AuthService,
     public _userService: UserService,
     public _employeeService: EmployeeService,
     public _fb: FormBuilder,
@@ -63,7 +68,11 @@ export class UpdateUserComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
   ) {
     this.user = new User();
-    this.identity = this._userService.getIdentity();
+    this._authService.getIdentity.subscribe(
+      identity => {
+        this.identity = identity;
+      }
+    );
   }
 
   ngOnInit(): void {
@@ -104,13 +113,21 @@ export class UpdateUserComponent implements OnInit {
 
   public setValueForm(): void {
 
+    if(!this.user._id) this.user._id = "";
+    if(!this.user.name) this.user.name = "";
+    if(!this.user.email) this.user.email = "";
+    if(!this.user.password) this.user.password = "";
+    if(!this.user.state) this.user.state = UserState.Enabled;
+
     let employeeId: string = undefined;
     if (this.user.employee !== null) {
       employeeId = this.user.employee._id;
     }
+
     this.userForm.setValue({
       '_id': this.user._id,
       'name': this.user.name,
+      'email': this.user.email,
       'password': this.user.password,
       'state': this.user.state,
       'employee': employeeId
@@ -125,6 +142,9 @@ export class UpdateUserComponent implements OnInit {
       ],
       'name': [this.user.name, [
           Validators.required
+        ]
+      ],
+      'email': [this.user.email, [
         ]
       ],
       'password': [this.user.password, [
@@ -230,10 +250,11 @@ export class UpdateUserComponent implements OnInit {
         } else {
           this.user = result.user;
           this.showMessage("El usuario se ha actualizado con éxito.", 'success', false);
-          if (this._userService.getIdentity()._id === this.user._id){
+          if (this.identity._id === this.user._id){
             let userStorage = new User();
             userStorage._id = result.user._id;
             userStorage.name = result.user.name;
+            userStorage.email = result.user.email;
             if (result.user.employee) {
               userStorage.employee = new Employee();
               userStorage.employee._id = result.user.employee._id;

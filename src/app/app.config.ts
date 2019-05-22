@@ -7,12 +7,12 @@ import { Currency } from './models/currency';
 export class Config {
 
     public _id: string;
+    static database: string;
     static apiHost: string = 'localhost';
     static apiURL: string;
     static apiURL_FE_AR: string = 'libs/fe/ar/index.php';
     static apiURL_FE_MX: string = 'libs/fe/mx/01_CFDI_fe.php';
     static apiPort = 300;
-    static accessType = "Cloud";
     static modules;
     static pathMongo: string;
     static pathBackup: string;
@@ -54,12 +54,12 @@ export class Config {
         Config.updateApiURL();
     }
 
-    public static setAccessType(accessType: string): void {
-        Config.accessType = accessType;
-    }
-
     public static setModules(modules): void {
         Config.modules = modules;
+    }
+
+    public static setDatabase(database: string): void {
+        Config.database = database;
     }
 
     public static setExpirationLicense(expirationLicense: string): void {

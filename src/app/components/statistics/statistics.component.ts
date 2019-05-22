@@ -6,7 +6,6 @@ import 'moment/locale/es';
 
 import { CompanyService } from './../../services/company.service';
 import { TransactionService } from '../../services/transaction.service';
-import { UserService } from '../../services/user.service';
 import { ReportBestSellingArticleComponent } from '../report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByPaymentMethodComponent } from '../report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByClientComponent } from '../report-sales-by-client/report-sales-by-client.component';
@@ -14,6 +13,7 @@ import { ReportSalesByMakeComponent } from '../report-sales-by-make/report-sales
 import { Router } from '@angular/router';
 import { ReportBirthdayComponent } from '../report-birthday/report-birthday.component';
 import { Config } from 'app/app.config';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-statistics',
@@ -44,7 +44,7 @@ export class StatisticsComponent implements OnInit {
     public _companyService: CompanyService,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
-    public _userService: UserService,
+    public _authService: AuthService,
     public _router: Router
   ) {
     let pathLocation: string[] = this._router.url.split('/');
@@ -62,10 +62,13 @@ export class StatisticsComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    let indentity = this._userService.getIdentity;
-    if (indentity) {
-      this.showStatistics = true;
-    }
+    this._authService.getIdentity.subscribe(
+      identity => {
+        if (identity) {
+          this.showStatistics = true;
+        }
+      }
+    );
   }
 
   public loadStatistics(): void {

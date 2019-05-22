@@ -108,8 +108,6 @@ export class PrintComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log(this.printer);
-
     if (!this.printer) {
       this.printer = new Printer();
       this.printer.name = "PDF";

@@ -3,21 +3,20 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class TransactionTypeService {
 
 	constructor(
 		public _http: Http,
-		public _userService: UserService
+		public _authService: AuthService
 	) { }
 
 	getLastTransactionType() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'transactions/sort="_id":-1&limit=1', {headers: headers}).map(res => res.json());
 	}
@@ -25,8 +24,7 @@ export class TransactionTypeService {
 	getTransactionType(id) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + "transaction-type/" + id, {headers: headers}).map(res => res.json());
 	}
@@ -34,8 +32,7 @@ export class TransactionTypeService {
 	getTransactionTypes(query?: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 
 		if (query) {
@@ -48,8 +45,7 @@ export class TransactionTypeService {
 	getTransactionTypesByMovement(transactionMovement: TransactionMovement) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'transaction-types/where="transactionMovement":"' + transactionMovement + '"', { headers: headers }).map(res => res.json());
   }
@@ -57,8 +53,7 @@ export class TransactionTypeService {
   getTransactionTypesOfCashBox() {
     let headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': this._userService.getToken(),
-      'Database': this._userService.getDatabase()
+      'Authorization': this._authService.getToken()
     });
     return this._http.get(Config.apiURL + 'transaction-types/where="$or":[{"cashOpening":true},{"cashClosing":true}]', { headers: headers }).map(res => res.json());
   }
@@ -66,8 +61,7 @@ export class TransactionTypeService {
 	getDefectOrder() {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'transaction-types/where="defectOrders":' + true + '', { headers: headers }).map(res => res.json());
 	}
@@ -75,8 +69,7 @@ export class TransactionTypeService {
 	getTransactionByType(type: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'transaction-types/where="name":"' + type + '"', {headers: headers}).map(res => res.json());
 	}
@@ -84,8 +77,7 @@ export class TransactionTypeService {
 	getTransactionTypeByName(name: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.get(Config.apiURL + 'transaction-types/where="name":"' + name + '"', {headers: headers}).map(res => res.json());
 	}
@@ -93,8 +85,7 @@ export class TransactionTypeService {
 	saveTransactionType(transactionType: TransactionType) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.post(Config.apiURL + "transaction-type", transactionType, {headers: headers}).map(res => res.json());
 	}
@@ -102,8 +93,7 @@ export class TransactionTypeService {
 	deleteTransactionType(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.delete(Config.apiURL + "transaction-type/" + id, {headers: headers}).map(res => res.json());
 	}
@@ -111,8 +101,7 @@ export class TransactionTypeService {
 	updateTransactionType(transactionType: TransactionType) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',
-			'Authorization': this._userService.getToken(),
-			'Database': this._userService.getDatabase()
+			'Authorization': this._authService.getToken()
 		});
 		return this._http.put(Config.apiURL + "transaction-type/" + transactionType._id, transactionType, {headers: headers}).map(res => res.json());
 	}

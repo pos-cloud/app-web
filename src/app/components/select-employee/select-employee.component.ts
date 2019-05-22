@@ -15,11 +15,13 @@ import { EmployeeService } from './../../services/employee.service';
 import { EmployeeTypeService } from './../../services/employee-type.service';
 import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
-import { UserService } from './../../services/user.service';
 import { TransactionService } from './../../services/transaction.service';
 
 import { PrintComponent } from './../../components/print/print.component';
 import { EmployeeType } from 'app/models/employee-type';
+import { AuthService } from 'app/services/auth.service';
+import { UserService } from 'app/services/user.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-select-employee',
@@ -48,11 +50,12 @@ export class SelectEmployeeComponent implements OnInit {
     public _employeeTypeService: EmployeeTypeService,
     public _tableService: TableService,
     public _turnService: TurnService,
-    public _userService: UserService,
+    public _authService: AuthService,
     public _transactionService: TransactionService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _modalService: NgbModal
+    public _modalService: NgbModal,
+    public _userService: UserService
   ) { }
 
   ngOnInit() {
@@ -312,7 +315,7 @@ export class SelectEmployeeComponent implements OnInit {
     user.password = this.password;
 
     //Obtener el token del usuario
-    this._userService.login(user).subscribe(
+    this._authService.login(Config.database, user.name, user.password).subscribe(
       result => {
         if (!result.user) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
