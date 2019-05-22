@@ -66,7 +66,6 @@ export class UpdateArticlePriceComponent implements OnInit {
     this.userType = pathLocation[1];
     this.getMakes();
     this.buildForm();
-
   }
 
   ngAfterViewInit() {
@@ -120,12 +119,23 @@ export class UpdateArticlePriceComponent implements OnInit {
 
     this.updatePriceForm = this._fb.group({
       'optionUpdate': [this.optionUpdate, [
+          Validators.required
         ]
       ],
-      'make': [,[]],
-      'category': [, []],
-      'percentage': [,[]],
-      'field':[,[]]
+      'make': [, [
+        ]
+      ],
+      'category': [, [
+        ]
+      ],
+      'percentage': [, [
+          Validators.required
+        ]
+      ],
+      'field':[, [
+          Validators.required
+        ]
+      ]
     });
 
     this.updatePriceForm.valueChanges
@@ -154,44 +164,59 @@ export class UpdateArticlePriceComponent implements OnInit {
 
   public updatePrice(): void {
 
-    let isValidPercentage: boolean = true;    
-    
-    // if((this.updatePriceForm.value.percentage <= 0 ||
-    //   this.updatePriceForm.value.percentage > 100 &&
-    //   ti) &&
-    // ) {
-    //     isValidPercentage = false;
-    //   this.formErrors['percentage'] += "El procentaje debe ser un valor mayor a 0 y menor o igual 100";
-    // }
+    let areValidData: boolean = true;
 
-    if(isValidPercentage) {
-      
-      this.loading = true;
+    let where: string;
 
-      let where;
-
-      switch (this.updatePriceForm.value.optionUpdate) {
-        case "make":
-            where = '{"make":"' + this.updatePriceForm.value.make + '"}';
-          break;
-        case "category":
-            where = '{"category":"' + this.updatePriceForm.value.category + '"}';
+    switch (this.updatePriceForm.value.optionUpdate) {
+      case "make":
+        if(this.updatePriceForm.value.make) {
+          where = '{"operationType": { "$ne": "D" }, "make":"' + this.updatePriceForm.value.make + '"}';
+        } else {
+          areValidData = false;
+          this.showMessage("Debe cargar la marca a actualizar.", "info", true);
+        }
         break;
-        default:where = '{}'
-          break;
-      }
+      case "category":
+          if(this.updatePriceForm.value.category) {
+            where = '{"operationType": { "$ne": "D" }, "category":"' + this.updatePriceForm.value.category + '"}';
+          } else {
+            areValidData = false;
+            this.showMessage("Debe cargar la categoría a actualizar.", "info", true);
+          }
+      break;
+      case "make-category":
+          if(this.updatePriceForm.value.category && this.updatePriceForm.value.make) {
+            where = '{"operationType": { "$ne": "D" }, "category":"' + this.updatePriceForm.value.category + '", "make":"' + this.updatePriceForm.value.make + '"}';
+          } else {
+            areValidData = false;
+            this.showMessage("Debe cargar la categoría a actualizar.", "info", true);
+          }
+      break;
+      default:where = '{}'
+        break;
+    }
 
 
-      let query = ' { "where":'+where+', "percentage":'+ this.updatePriceForm.value.percentage +', "field":"'+ this.updatePriceForm.value.field +'" }'
+    let query = `{ 
+                  "where": ${where}, 
+                  "percentage": ${this.updatePriceForm.value.percentage}, 
+                  "field":"${this.updatePriceForm.value.field}" 
+                }`;
 
+
+    if(areValidData) {
+
+      this.loading = true;
+      
       this._articleService.updatePrice(query).subscribe(
         result => {
+          this.loading = false;
           if (result.status === "Error") {
             this.showMessage("Hubo uno error en la actualización. Se actualizaron correctamente " + result.count + ". No se actualizaron:" + result.articleFailure, 'info', true);
           } else {
-            this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.count + " productos", 'success', false);
+            this.showMessage("La lista se actualizo con éxito. Se actualizaron " + result.countFinal + " productos y " + result.countVariants + " variantes.", 'success', false);
           }
-          this.loading = false;
         },
         error => {
           this.showMessage(error._body, 'danger', false);

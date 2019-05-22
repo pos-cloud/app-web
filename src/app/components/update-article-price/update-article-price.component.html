@@ -13,15 +13,18 @@
 	<form [formGroup]="updatePriceForm" #formUpdateArticle="ngForm" (ngSubmit)="updatePrice()" autocomplete="off">	
 		<div class="modal-body">
 			<div class ="row">
-				<div class="form-group col-md-6">
+				<div class="form-group col-md-12">
 					<label for="make" class="control-label">Actualizar por:</label>
 					<select [(ngModel)]= "optionUpdate" class="form-control" formControlName="optionUpdate">
 						<option [value]="'make'" [selected]="'make'">Marca </option>
 						<option [value]="'category'"> Rubro </option>
+						<option [value]="'make-category'"> Marca y Rubro </option>
 						<option [value]="'all'"> Todos los productos</option>
 					</select>
 				</div>
-				<div *ngIf = "optionUpdate === 'make'" class="form-group col-md-6">
+			</div>
+			<div class="row" *ngIf = "optionUpdate === 'make' || optionUpdate === 'make-category'">
+				<div class="form-group col-md-12">
 					<label for="make" class="control-label">Marca</label>
 					<select class="form-control" formControlName="make">
 						<option *ngFor="let make of makes" [value]="make._id" [disabled]="readonly">{{make.description}}</option>
@@ -30,7 +33,9 @@
 						{{ formErrors.make }}
 					</div>
 				</div>
-				<div *ngIf = "optionUpdate === 'category'" class="form-group col-md-6">
+			</div>
+			<div class="row" *ngIf = "optionUpdate === 'category' || optionUpdate === 'make-category'">
+				<div class="form-group col-md-12">
 					<label for="category" class="control-label">Rubro:</label>
 					<select class="form-control" formControlName="category">
 						<option *ngFor="let category of categories" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
