@@ -17,7 +17,9 @@
     <ul class="navbar-nav mr-auto">
       <!-- MENU VENDEDOR -->
       <li class="nav-item navbar-inverse"
-          *ngIf="config.modules.sale.resto"
+          *ngIf="identity.employee &&
+                  identity.employee.type.description !== 'Administrador' &&
+                  config.modules.sale.resto"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
             [routerLink]="['pos','resto']"
