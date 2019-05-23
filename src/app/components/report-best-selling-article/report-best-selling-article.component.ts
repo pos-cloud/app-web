@@ -37,6 +37,13 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public transactionMovement: string;
   public totalAmount;
   public totalItem;
+  public filters: any[];
+  public displayedColumns = [
+      'article.code',
+      'article.description',
+      'article.category.description',
+      'article.make.description'
+  ];
 
   constructor(
     public _articleService: ArticleService,
@@ -50,6 +57,10 @@ export class ReportBestSellingArticleComponent implements OnInit {
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
     this.totalAmount = 0;
     this.totalItem = 0;
+    this.filters = new Array();
+    for(let field of this.displayedColumns) {
+      this.filters[field] = "";
+    }
   }
 
   ngOnInit(): void {
@@ -76,6 +87,22 @@ export class ReportBestSellingArticleComponent implements OnInit {
       timezone =  Config.timezone.split('UTC')[1];
     }
 
+    // FILTRAMOS LA CONSULTA
+    let match = `{`;
+    for(let i = 0; i < this.displayedColumns.length; i++) {
+      let value = this.filters[this.displayedColumns[i]];
+      if (value && value != "") {
+        if(match.charAt(match.length - 1) === "}") {
+          if (i < this.displayedColumns.length - 1) {
+            match += ',';
+          }
+        }
+        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+      }
+    }
+    match += '}';
+    match = JSON.parse(match);
+
     let query = {
       type: this.transactionMovement,
       movement: movement,
@@ -83,6 +110,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime + timezone,
       endDate: this.endDate + " " + this.endTime + timezone,
+      match: match,
       sort: this.sort,
       limit: this.limit
     }

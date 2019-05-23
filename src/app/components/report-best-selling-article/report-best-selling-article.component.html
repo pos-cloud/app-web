@@ -1,7 +1,9 @@
 <!--ESTADISTICAS GENERALES-->
 <div class="card card-outline-primary" *ngIf="listType === 'statistics'">
-  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Productos más vendidos</div>
-  <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Productos más comprados</div>
+  <div class="card-header bg-primary">
+    <span *ngIf="transactionMovement === 'Venta'">Productos más vendidos</span>
+    <span *ngIf="transactionMovement === 'Compra'">Productos más comprados</span>
+  </div>
   <div class="card-block table-responsive">
     <table class="table table-hover">
       <thead>
@@ -71,8 +73,15 @@
     </div>
   </div>
   <div class="card card-outline-primary card-large">
-    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Productos más vendidos</div>
-    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Productos más comprados</div>
+    <div class="card-header bg-primary">
+      <span *ngIf="transactionMovement === 'Venta'">Productos más vendidos</span>
+      <span *ngIf="transactionMovement === 'Compra'">Productos más comprados</span>
+      <div class="pull-right">
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+        </span>
+      </div>
+    </div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
@@ -83,6 +92,14 @@
             <th (click)="orderBy('article.make.description')">Marca</th>
             <th (click)="orderBy('count')">Ítems</th>
             <th (click)="orderBy('total')">Monto Total</th>
+          </tr>
+          <tr *ngIf="areFiltersVisible" class="filters">
+            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.code']" placeholder="Código..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.description']" placeholder="Producto..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.category.description']" placeholder="Categoría..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
+            <th><input type="text" class="form-control" [(ngModel)]= "filters['article.make.description']" placeholder="Marca..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
