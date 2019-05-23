@@ -414,7 +414,6 @@ export class MovementOfCancellationComponent implements OnInit {
                   await this.saveMovementsOfArticles(movementsOfArticles).then(
                     movementsOfArticlesSaved => {
                       if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-
                       } else {
                         endedProcess = false;
                       }
@@ -444,7 +443,9 @@ export class MovementOfCancellationComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
 
-      this._movementOfArticleService.getMovementsOfTransaction(transaction._id).subscribe(
+      let query = 'where="transaction":"'+transaction._id+'"';
+
+      this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
         result => {
           if (!result.movementsOfArticles) {
             resolve(null);
@@ -460,16 +461,29 @@ export class MovementOfCancellationComponent implements OnInit {
               movementOfArticle.description = mov.description;
               movementOfArticle.observation = mov.observation;
               movementOfArticle.otherFields = mov.otherFields;
-              movementOfArticle.make = mov.make;
-              movementOfArticle.category = mov.category;
+              if(mov.make && mov.make._id && mov.make._id !== "") {
+                movementOfArticle.make = mov.make._id;
+              } else {
+                movementOfArticle.make = mov.make._id;
+              }
+              if(mov.category && mov.category._id && mov.category._id !== "") {
+                movementOfArticle.category = mov.category._id;
+              } else {
+                movementOfArticle.category = mov.category._id;
+              }
               movementOfArticle.amount = mov.amount;
               movementOfArticle.quantityForStock = mov.quantityForStock;
               movementOfArticle.barcode = mov.barcode;
               movementOfArticle.notes = mov.notes;
               movementOfArticle.printed = mov.printed;
               movementOfArticle.printIn = mov.printIn;
-              movementOfArticle.article = mov.article;
-              movementOfArticle.transaction = this.transactionDestination;
+              if(mov.article && mov.article._id && mov.article._id !== "") {
+                movementOfArticle.article = mov.article._id;
+              } else {
+                movementOfArticle.article = mov.article._id;
+              }
+              movementOfArticle.transaction = new Transaction();
+              movementOfArticle.transaction._id = this.transactionDestination._id;
               movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
               if(this.transactionDestination.type.stockMovement) {
                 movementOfArticle.stockMovement = this.transactionDestination.type.stockMovement.toString();
@@ -481,7 +495,7 @@ export class MovementOfCancellationComponent implements OnInit {
               movementOfArticle.basePrice = mov.basePrice;
 
               if (this.transactionDestination.type.requestTaxes && !transaction.type.requestTaxes) {
-
+        
                 movementOfArticle.costPrice = mov.costPrice;
                 movementOfArticle.salePrice = mov.salePrice;
                 let tax: Taxes = new Taxes();
@@ -515,7 +529,7 @@ export class MovementOfCancellationComponent implements OnInit {
                 movementOfArticle.salePrice = mov.salePrice;
                 movementOfArticle.roundingAmount = mov.roundingAmount;
               }
-              if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              if (this.transactionDestination.type.transactionMovement === TransactionMovement.Sale) {
                 movementOfArticle = this.recalculateSalePrice(movementOfArticle);
               } else {
                 movementOfArticle = this.recalculateCostPrice(movementOfArticle);
@@ -538,7 +552,7 @@ export class MovementOfCancellationComponent implements OnInit {
 
     let quotation = 1;
 
-    if(movementOfArticle.transaction.quotation) {
+    if(this.transactionDestination.quotation) {
       quotation = movementOfArticle.transaction.quotation;
     }
 
@@ -567,7 +581,7 @@ export class MovementOfCancellationComponent implements OnInit {
       }
     }
     movementOfArticle.otherFields = fields;
-    if (movementOfArticle.transaction.type.requestTaxes) {
+    if (this.transactionDestination.type.requestTaxes) {
       if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.article.taxes) {
@@ -632,7 +646,7 @@ export class MovementOfCancellationComponent implements OnInit {
     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
     movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
 
-    if (movementOfArticle.transaction.type.requestTaxes) {
+    if (this.transactionDestination.type.requestTaxes) {
       let tax: Taxes = new Taxes();
       let taxes: Taxes[] = new Array();
       if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {

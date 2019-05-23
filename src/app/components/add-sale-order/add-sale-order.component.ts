@@ -395,7 +395,16 @@ export class AddSaleOrderComponent {
   }
 
   public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Promise<MovementOfCancellation[]> {
-
+    
+    for (let mov of movementsOfCancellations) {
+      let transOrigin = new Transaction();
+      transOrigin._id = mov.transactionOrigin._id;
+      let transDestino = new Transaction();
+      transDestino._id = mov.transactionDestination._id;
+      mov.transactionOrigin = transOrigin;
+      mov.transactionDestination = transDestino;
+    }
+    
     return new Promise<MovementOfCancellation[]>((resolve, reject) => {
 
       this._movementOfCancellationService.saveMovementsOfCancellations(movementsOfCancellations).subscribe(
