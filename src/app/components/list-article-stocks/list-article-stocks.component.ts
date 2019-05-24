@@ -177,24 +177,25 @@ export class ListArticleStocksComponent implements OnInit {
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = '{}';
-    if (this.displayedColumns && this.displayedColumns.length > 0) {
-        project = '{';
-        for (let i = 0; i < this.displayedColumns.length; i++) {
-            let field = this.displayedColumns[i];
-            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-            if (i < this.displayedColumns.length - 1) {
-                project += ',';
-            }
-        }
-        project += '}';
+    let project = {
+      "realStock" : 1,
+      "minStock" : 1,
+      "article.code" : 1,
+      "article.description" : 1,
+      "article.costPrice" : 1,
+      "article.make.description" : 1,
+      "article.category.description" : 1,
+      "article.operationType" : 1,
+      "operationType" : 1,
     }
-    project = JSON.parse(project);
 
     // AGRUPAMOS EL RESULTADO
     let group = {
         _id: null,
         count: { $sum: 1 },
+        totalCostArticle : { $sum : "$article.costPrice" },
+        totalRealStock : { $sum : "$realStock" },
+        totalStockValued : { $sum : { $multiply: [ "$article.costPrice", "$realStock" ] } },
         articleStocks: { $push: "$$ROOT" },
     };
 
@@ -205,21 +206,31 @@ export class ListArticleStocksComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ?
             (page * this.itemsPerPage) :
                 0 // SKIP
+
+    
+                console.log(this.itemsPerPage);
+                console.log(skip);
     this._articleStockService.getArticleStocksV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        this.itemsPerPage, // LIMIT
-        skip // SKIP
+        //this.itemsPerPage, // LIMIT
+        //skip // SKIP
     ).subscribe(
       result => {
+
+        
+        console.log(result);
+          
+        this.totalCost = result.totalCostArticle;
+        this.totalRealStock = result.totalRealStock;
+        this.totalTotal = result.totalStockValued;
+
         if (result.articleStocks) {
           this.loading = false;
           this.articleStocks = result.articleStocks;
           this.totalItems = result.count;
-          
-          this.calculateTotals()
         } 
       },
       error => {
@@ -228,64 +239,6 @@ export class ListArticleStocksComponent implements OnInit {
         this.totalItems = 0;
       }
     );
-  }
-
-  public calculateTotals(){
-
-    this.loading = true;
-
-    let sortAux = { order: 1 };
-
-    let match = {"operationType": { "$ne": "D" } , "article.operationType": { "$ne": "D" } };
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = {
-      "realStock" : 1,
-      "operationType" : 1,
-      "article.costPrice" : 1,
-      "article.operationType" : 1
-    }
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {
-      _id: null,
-      count: { $sum: 1 },
-      totalCostArticle : { $sum : "$article.costPrice" },
-      totalRealStock : { $sum : "$realStock" },
-      totalStockValued : { $sum : { $multiply: [ "$article.costPrice", "$realStock" ] } },
-      articleStocks: { $push: "$$ROOT" }
-    };
-
-    let limit = 0;
-
-    let skip = 0;
-    
-    this._articleStockService.getArticleStocksV2(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
-    ).subscribe(
-      result => {
-        if (result) {
-            
-          this.totalCost = result.totalCostArticle;
-          this.totalRealStock = result.totalRealStock;
-          this.totalTotal = result.totalStockValued;
-
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-        this.totalItems = 0;
-      }
-    );
-
-    
   }
 
 
