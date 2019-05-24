@@ -35,15 +35,21 @@ export class ListArticleStocksComponent implements OnInit {
   public totalItems = 0;
   public printers: Printer[];
 
+  public totalRealStock = 0;
+  public totalCost = 0;
+  public totalTotal = 0;
+
   public currentPage: number = 0;
   public displayedColumns = [
     "realStock",
     "minStock",
     "article.code",
     "article.description",
+    "article.costPrice",
     "article.make.description",
     "article.category.description",
-    "article.operationType"
+    "article.operationType",
+    "operationType"
   ];
   public filters: any[];
   public filterValue: string;
@@ -189,7 +195,7 @@ export class ListArticleStocksComponent implements OnInit {
     let group = {
         _id: null,
         count: { $sum: 1 },
-        articleStocks: { $push: "$$ROOT" }
+        articleStocks: { $push: "$$ROOT" },
     };
 
     let page = 0;
@@ -212,6 +218,8 @@ export class ListArticleStocksComponent implements OnInit {
           this.loading = false;
           this.articleStocks = result.articleStocks;
           this.totalItems = result.count;
+          
+          this.calculateTotals()
         } 
       },
       error => {
@@ -221,6 +229,65 @@ export class ListArticleStocksComponent implements OnInit {
       }
     );
   }
+
+  public calculateTotals(){
+
+    this.loading = true;
+
+    let sortAux = { order: 1 };
+
+    let match = {"operationType": { "$ne": "D" } , "article.operationType": { "$ne": "D" } };
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      "realStock" : 1,
+      "operationType" : 1,
+      "article.costPrice" : 1,
+      "article.operationType" : 1
+    }
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+      _id: null,
+      count: { $sum: 1 },
+      totalCostArticle : { $sum : "$article.costPrice" },
+      totalRealStock : { $sum : "$realStock" },
+      totalStockValued : { $sum : { $multiply: [ "$article.costPrice", "$realStock" ] } },
+      articleStocks: { $push: "$$ROOT" }
+    };
+
+    let limit = 0;
+
+    let skip = 0;
+    
+    this._articleStockService.getArticleStocksV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        limit, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (result) {
+            
+          this.totalCost = result.totalCostArticle;
+          this.totalRealStock = result.totalRealStock;
+          this.totalTotal = result.totalStockValued;
+
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
+
+    
+  }
+
 
   public pageChange(page): void {
     this.currentPage = page;

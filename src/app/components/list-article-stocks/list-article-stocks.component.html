@@ -26,7 +26,8 @@
             <th (click)="orderBy('article.description')">Descripción </th>
             <th (click)="orderBy('article.category.description')">Rubro </th>
             <th (click)="orderBy('realStock')">Stock Actual </th>
-            <th (click)="orderBy('minStock')">Stock Mínimo </th>
+            <th (click)="orderBy('article.costPrice')">Costo </th>
+            <th> Total </th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
@@ -35,7 +36,8 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['article.description']" (input)="getArticleStocksV2()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['article.category.description']" (input)="getArticleStocksV2()" placeholder="Rubro..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['realStock']" (input)="getArticleStocksV2()" placeholder="Stock Actual..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['minStock']" (input)="getArticleStocksV2()" placeholder="Stock Mínimo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['article.costPrice']" (input)="getArticleStocksV2()" placeholder="Costo..."></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -60,12 +62,25 @@
             <td class="flat" *ngIf="articleStock.article.category && articleStock.article.category[0]">{{articleStock.article.category[0].description}}</td>
             <td class="flat" *ngIf="!articleStock.article.category || !articleStock.article.category[0]"></td>
             <td class="flat">{{articleStock.realStock}}</td>
-            <td class="flat">{{articleStock.minStock}}</td>
+            <td class="flat">{{articleStock.article.costPrice | currency:'USD':'1.2-2' }}</td>
+            <td class="flat">{{articleStock.article.costPrice * articleStock.realStock | currency:'USD':'1.2-2' }}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="7">No se encontraron artículos en stock</td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <th >Total</th>
+            <th ></th>
+            <th ></th>
+            <th></th>
+            <th></th>
+            <th>{{totalRealStock}}</th>
+            <th>{{totalCost | currency:'USD':'1.2-2'}}</th>
+            <th>{{totalTotal | currency:'USD':'1.2-2'}}</th>
+          </tr>
+        </tfoot>
       </table>
     </div>
     <div class="card-footer bg-primary">
