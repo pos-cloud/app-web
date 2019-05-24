@@ -206,10 +206,6 @@ export class ListArticleStocksComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ?
             (page * this.itemsPerPage) :
                 0 // SKIP
-
-    
-                console.log(this.itemsPerPage);
-                console.log(skip);
     this._articleStockService.getArticleStocksV2(
         project, // PROJECT
         match, // MATCH
@@ -219,10 +215,6 @@ export class ListArticleStocksComponent implements OnInit {
         //skip // SKIP
     ).subscribe(
       result => {
-
-        
-        console.log(result);
-          
         this.totalCost = result.totalCostArticle;
         this.totalRealStock = result.totalRealStock;
         this.totalTotal = result.totalStockValued;
