@@ -13,14 +13,6 @@ export class TaxService {
 		public _authService: AuthService
 	) { }
 
-	getLastTax() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'taxes/sort="description":-1&limit=1', { headers: headers }).map(res => res.json());
-	}
-
 	getTax(id: string) {
 		let headers = new Headers({
 			'Content-Type': 'application/json',

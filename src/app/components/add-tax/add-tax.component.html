@@ -13,12 +13,86 @@
   <form [formGroup]="taxForm" #formAddTax="ngForm" (ngSubmit)="addTax()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-4">
+          <label for="code" class="control-label">Código:</label>
+          <input type="text" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent" [readonly]="readonly"/>
+          <div *ngIf="formErrors.code" class="alert alert-danger">
+            {{ formErrors.code }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
           <label for="name" class="control-label">Nombre:</label>
-          <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"
-          />
+          <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="classification" class="control-label">Clasificación:</label>
+          <select class="form-control" formControlName="classification">
+            <option *ngFor="let classification of taxClassifications"
+                    [selected]="tax.classification && classification===tax.classification"
+                    [value]="classification"
+                    [disabled]="readonly">
+                    {{classification}}</option>
+          </select>
+          <div *ngIf="formErrors.classification" class="alert alert-danger">
+            {{ formErrors.classification }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="type" class="control-label">Tipo:</label>
+          <select class="form-control" formControlName="type">
+            <option *ngFor="let type of taxTypes"
+                    [selected]="tax.type && type===tax.type"
+                    [value]="type"
+                    [disabled]="readonly">
+                    {{type}}
+            </option>
+          </select>
+          <div *ngIf="formErrors.taxType" class="alert alert-danger">
+            {{ formErrors.taxType }}
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="taxBase" class="control-label">Calculado sobre:</label>
+          <select class="form-control" formControlName="taxBase">
+            <option *ngFor="let taxBase of taxBases"
+                    [selected]="tax.taxBase && taxBase===tax.taxBase"
+                    [value]="taxBase"
+                    [disabled]="readonly">
+                    {{taxBase}}
+            </option>
+          </select>
+          <div *ngIf="formErrors.taxBase" class="alert alert-danger">
+            {{ formErrors.taxBase }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="percentage" class="control-label">Porcentaje:</label>
+          <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" [readonly]="readonly"/>
+          <div *ngIf="formErrors.percentage" class="alert alert-danger">
+            {{ formErrors.percentage }}
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="amount" class="control-label">Monto:</label>
+          <input type="number" class="form-control" formControlName="amount" name="amount" id="amount" [readonly]="readonly"/>
+          <div *ngIf="formErrors.amount" class="alert alert-danger">
+            {{ formErrors.amount }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="lastNumber" class="control-label">Último Número:</label>
+          <input type="text" class="form-control" formControlName="lastNumber" name="lastNumber" id="lastNumber" [readonly]="readonly"/>
+          <div *ngIf="formErrors.lastNumber" class="alert alert-danger">
+            {{ formErrors.lastNumber }}
           </div>
         </div>
       </div>

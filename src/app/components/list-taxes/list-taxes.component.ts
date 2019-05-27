@@ -7,7 +7,6 @@ import { Tax } from './../../models/tax';
 import { TaxService } from './../../services/tax.service';
 
 import { AddTaxComponent } from './../../components/add-tax/add-tax.component';
-import { UpdateTaxComponent } from './../../components/update-tax/update-tax.component';
 import { DeleteTaxComponent } from './../../components/delete-tax/delete-tax.component';
 import { ImportComponent } from './../../components/import/import.component';
 
@@ -92,26 +91,30 @@ export class ListTaxesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateTaxComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
         modalRef.componentInstance.tax = tax;
         modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'view';
         break;
       case 'add':
-        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then((result) => {
           this.getTaxes();
         }, (reason) => {
           this.getTaxes();
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateTaxComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
         modalRef.componentInstance.tax = tax;
+        modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getTaxes();
-          }
+          this.getTaxes();
         }, (reason) => {
+          this.getTaxes();
 
         });
         break;
