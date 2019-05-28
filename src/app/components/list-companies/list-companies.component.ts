@@ -121,7 +121,7 @@ export class ListCompaniesComponent implements OnInit {
     switch(op) {
       case 'view' :
           modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
-          modalRef.componentInstance.company = company;
+          modalRef.componentInstance.companyId = company._id;
           modalRef.componentInstance.readonly = true;
           modalRef.componentInstance.operation = 'view';
         break;
