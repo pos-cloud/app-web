@@ -139,7 +139,7 @@ export class ListCompaniesComponent implements OnInit {
         break;
       case 'update' :
           modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
-          modalRef.componentInstance.company = company;
+          modalRef.componentInstance.companyId = company._id;
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.operation = 'update';
           modalRef.result.then((result) => {
@@ -170,7 +170,7 @@ export class ListCompaniesComponent implements OnInit {
         model.type = CompanyType.Client;
         model.relations = new Array();
         model.relations.push("vat-condition_relation_description");
-        model.relations.push("identification-type_relation_description");
+        model.relations.push("identification-type_relation_name");
         model.identificationValue = '';
         model.address = '';
         model.city = '';

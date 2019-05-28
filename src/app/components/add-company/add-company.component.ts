@@ -435,17 +435,17 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
     if (!this.company.gender) this.company.gender = null;
 
-    let vatCondition: VATCondition = null;
-
+    let vatCondition;
     if (!this.company.vatCondition) {
-      if (!this.vatConditions || this.vatConditions.length === 0) {
-        vatCondition = null;
-      } else {
-        vatCondition = this.vatConditions[0];
-      }
+      vatCondition = null;
     } else {
-      vatCondition = this.company.vatCondition;
+      if (this.company.vatCondition._id) {
+        vatCondition = this.company.vatCondition._id;
+      } else {
+        vatCondition = this.company.vatCondition;
+      }
     }
+
     if(!this.company.observation) this.company.observation = '';
     if(this.company.allowCurrentAccount === undefined) {
       if(this.company.type === CompanyType.Client) {
