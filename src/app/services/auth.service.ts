@@ -66,7 +66,17 @@ export class AuthService {
     sessionStorage.removeItem("session_token");
     sessionStorage.removeItem("user");
     this.identity.next(null);
-    Config.database = '';
+    let hostname = window.location.hostname;
+    let subdominio = '';
+    if(hostname.includes('.poscloud.com.ar')) {
+      subdominio = hostname.split('.poscloud.com.ar')[0]
+                          .replace(/\//g, "")
+                          .replace(/:/g, "")
+                          .replace(/http/g, "")
+                          .replace(/www./g, "")
+                          .replace(/https/g, "");
+    }
+    Config.setDatabase(subdominio);
     this._router.navigate(['/login']);
   }
 
