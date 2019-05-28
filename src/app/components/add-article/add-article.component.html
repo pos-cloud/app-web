@@ -170,7 +170,7 @@
                   </div>
                 </div>
                 <app-add-article-fields (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"></app-add-article-fields>
-                <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [articleTaxes]="taxes"></app-add-article-tax>
+                <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article" [otherFields]="otherFields" [articleTaxes]="taxes" [filterTaxClassification]="filterTaxClassification"></app-add-article-tax>
                 <div class="row">
                   <div class="form-group col-md-12">
                     <label for="costPrice" class="control-label">Precio de costo:</label>

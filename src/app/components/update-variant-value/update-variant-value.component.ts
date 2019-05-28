@@ -21,7 +21,6 @@ export class UpdateVariantValueComponent implements OnInit {
   @Input() readonly: boolean;
   public variantValueForm: FormGroup;
   public alertMessage: string = '';
-  public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
@@ -45,8 +44,6 @@ export class UpdateVariantValueComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userValue = pathLocation[1];
     this.buildForm();
     this.variantValueForm.setValue({
       '_id': this.variantValue._id,

@@ -2,12 +2,16 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Taxes } from './../../models/taxes';
-import { Tax } from './../../models/tax';
+import { Tax, TaxClassification, TaxBase } from './../../models/tax';
 
 import { TaxService } from './../../services/tax.service';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { Article } from 'app/models/article';
+import { ArticleFields } from 'app/models/article-fields';
+import { ArticleFieldType } from 'app/models/article-field';
 
 @Component({
   selector: 'app-add-article-tax',
@@ -20,32 +24,28 @@ export class AddArticleTaxComponent implements OnInit {
 
   public articleTax: Taxes;
   public taxes: Tax[];
-  @Input() articleTaxes: Taxes[] = new Array();
   public articleTaxForm: FormGroup;
   public alertMessage: string = '';
-  public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public roundNumber: RoundNumberPipe = new RoundNumberPipe();
+  @Input() article: Article;
+  @Input() otherFields: ArticleFields[];
+  @Input() articleTaxes: Taxes[] = new Array();
+  @Input() filterTaxClassification: TaxClassification;
   @Output() eventAddArticleTax: EventEmitter<Taxes[]> = new EventEmitter<Taxes[]>();
 
   public formErrors = {
-    'article': '',
     'tax': '',
     'percentage': '',
-    'taxBase': '',
     'taxAmount': ''
   };
 
   public validationMessages = {
-    'article': {
-    },
     'tax': {
       'required': 'Este campo es requerido.'
     },
     'percentage': {
-      'required': 'Este campo es requerido.'
-    },
-    'taxBase': {
     },
     'taxAmount': {
     }
@@ -57,19 +57,26 @@ export class AddArticleTaxComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
-
-  ngOnInit(): void {
-
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userValue = pathLocation[1];
+  ) {
     this.articleTax = new Taxes();
     this.taxes = new Array();
-    if(!this.articleTaxes) {
-      this.articleTaxes = new Array();
-    }
-    this.getTaxes();
+  }
+
+  async ngOnInit() {
+
     this.buildForm();
+
+    let query;
+    if(this.filterTaxClassification) {
+      query = `where="classification":"${this.filterTaxClassification.toString()}"`;
+    }
+    await this.getTaxes(query).then(
+      taxes => {
+        if(taxes) {
+          this.taxes = taxes;
+        }
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -84,10 +91,6 @@ export class AddArticleTaxComponent implements OnInit {
         ]
       ],
       'percentage': [this.articleTax.percentage, [
-          Validators.required
-        ]
-      ],
-      'taxBase': [this.articleTax.taxBase, [
         ]
       ],
       'taxAmount': [this.articleTax.taxAmount, [
@@ -123,47 +126,84 @@ export class AddArticleTaxComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.articleTax.tax) this.articleTax.tax = null;
-    if (!this.articleTax.percentage) this.articleTax.percentage = 21;
-    if (!this.articleTax.taxBase) this.articleTax.taxBase = 0;
+    if (!this.articleTax.percentage) this.articleTax.percentage = 0;
     if (!this.articleTax.taxAmount) this.articleTax.taxAmount = 0;
 
     const values = {
       'tax': this.articleTax.tax,
       'percentage': this.articleTax.percentage,
-      'taxBase': this.articleTax.taxBase,
       'taxAmount': this.articleTax.taxAmount
     };
 
     this.articleTaxForm.setValue(values);
   }
 
-  public getTaxes(): void {
+  public getTaxes(query?: string): Promise<Tax[]> {
 
-    this.loading = true;
+    return new Promise<Tax[]>((resolve, reject) => {
 
-    this._taxService.getTaxes().subscribe(
-      result => {
-        if (!result.taxes) {
-          this.hideMessage();
-        } else {
-          this.hideMessage();
-          this.taxes = result.taxes;
+      this._taxService.getTaxes(query).subscribe(
+        result => {
+          if (!result.taxes) {
+            resolve(null);
+          } else {
+            resolve(result.taxes);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+      );
+    });
+  }
+
+  public changeTax(op: string): void {
+
+    let taxedAmount = this.article.basePrice;
+
+    if(this.otherFields && this.otherFields.length > 0) {
+      for (const field of this.otherFields) {
+        if(field.datatype === ArticleFieldType.Percentage) {
+          field.amount = this.roundNumber.transform((this.article.basePrice * parseFloat(field.value) / 100));
+        } else if(field.datatype === ArticleFieldType.Number) {
+          field.amount = parseFloat(field.value);
+        }
+        if (field.articleField.modifyVAT) {
+          taxedAmount += field.amount;
+        }
       }
-    );
+    }
+
+    switch(op) {
+      case 'tax':
+        this.articleTax.tax = this.articleTaxForm.value.tax;
+        this.articleTax.percentage = this.articleTax.tax.percentage;
+        this.articleTax.taxAmount = this.articleTax.tax.amount;
+        if( this.articleTax.percentage &&  this.articleTax.percentage !== 0) {
+          if(this.articleTax.tax.taxBase === TaxBase.Neto) {
+            this.articleTax.taxBase = taxedAmount;
+            this.articleTax.taxAmount = this.roundNumber.transform(this.articleTax.taxBase * this.articleTax.percentage / 100);
+          }
+        }
+        break;
+      case 'percentage':
+        break;
+      case 'taxAmount':
+        break;
+      default:
+        break;
+    }
+
+    this.setValueForm();
   }
 
   public addArticleTax(): void {
 
-    this.articleTax = this.articleTaxForm.value;
     if (!this.taxExists()) {
       this.articleTaxes.push(this.articleTax);
     }
+    this.articleTax = new Taxes();
     this.eventAddArticleTax.emit(this.articleTaxes);
   }
 

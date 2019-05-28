@@ -23,7 +23,6 @@ export class AddArticleFieldsComponent implements OnInit {
   @Input() fields: ArticleFields[];
   public articleFieldsForm: FormGroup;
   public alertMessage: string = '';
-  public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   @Output() eventAddArticleFields: EventEmitter<ArticleFields[]> = new EventEmitter<ArticleFields[]>();
@@ -60,8 +59,6 @@ export class AddArticleFieldsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userValue = pathLocation[1];
     this.field = new ArticleFields();
     this.articleFields = new Array();
     if(!this.fields) {

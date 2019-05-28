@@ -38,6 +38,7 @@ import { SlicePipe } from '@angular/common';
 import { ArticleFields } from '../../models/article-fields';
 import { ArticleFieldType } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
+import { TaxClassification } from 'app/models/tax';
 
 @Component({
   selector: 'app-add-article',
@@ -76,6 +77,7 @@ export class AddArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
   public articleType: string;
+  public filterTaxClassification: TaxClassification = TaxClassification.Tax;
 
   public formErrors = {
     'code': '',
@@ -672,8 +674,6 @@ export class AddArticleComponent implements OnInit {
 
         if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
-            articleTax.taxBase = taxedAmount;
-            articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
             this.articleForm.value.costPrice += (articleTax.taxAmount);
           }
         }

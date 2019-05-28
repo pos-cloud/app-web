@@ -79,7 +79,13 @@ export class AddTaxComponent implements OnInit {
     this.userType = pathLocation[1];
     this.buildForm();
     if(this.taxId) {
-      await this.getTax(this.taxId).then;
+      await this.getTax(this.taxId).then(
+        tax => {
+          if(tax) {
+            this.tax = tax;
+          }
+        }
+      );
     } else {
       await this.getTaxes('sort="code":-1&limit=1').then(
         taxes => {
