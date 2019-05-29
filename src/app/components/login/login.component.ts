@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
 
   public formErrors = {
     'company': '',
-    'name': '',
+    'user': '',
     'password': ''
   };
 
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     'company': {
       'required':       'Este campo es requerido.'
     },
-    'name': {
+    'user': {
       'required':       'Este campo es requerido.'
     },
     'password': {
