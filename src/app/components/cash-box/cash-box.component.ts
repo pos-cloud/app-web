@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { CashBox, CashBoxState } from './../../models/cash-box';
 import { PaymentMethod } from './../../models/payment-method';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { MovementOfCash, MovementOfCashState } from './../../models/movement-of-cash';
+import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
@@ -375,14 +375,14 @@ export class CashBoxComponent implements OnInit {
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
     if(this.movementOfCash.type.cashBoxImpact) {
       this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
-      this.movementOfCash.state = MovementOfCashState.Closed;
+      //this.movementOfCash.state = MovementOfCashState.Closed;
       let mov = new MovementOfCash();
       mov.date = this.movementOfCash.date;
       mov.quota = this.movementOfCash.quota;
       mov.expirationDate = this.movementOfCash.expirationDate;
       mov.discount = this.movementOfCash.discount;
       mov.surcharge = this.movementOfCash.surcharge;
-      mov.state = this.movementOfCash.state;
+      //mov.state = this.movementOfCash.state;
       mov.amountPaid = this.movementOfCash.amountPaid;
       mov.observation = this.movementOfCash.observation;
       mov.type = this.movementOfCash.type;

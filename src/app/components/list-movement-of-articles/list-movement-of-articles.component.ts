@@ -156,6 +156,8 @@ export class ListMovementOfArticlesComponent implements OnInit {
     let group = {
         _id: null,
         count: { $sum: 1 },
+        totalEntrada : {$sum: {$cond: [{$eq: ["$stockMovement", "Entrada"]}, "$amount", 0]}},
+        totalSalida : {$sum: {$cond: [{$eq: ["$stockMovement", "Salida"]}, "$amount", 0]}},
         movementsOfArticles: { $push: "$$ROOT" }
     };
 
@@ -174,8 +176,8 @@ export class ListMovementOfArticlesComponent implements OnInit {
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        this.itemsPerPage, // LIMIT
-        skip // SKIP
+        //this.itemsPerPage, // LIMIT
+        //skip // SKIP
     ).subscribe(
       result => {
 

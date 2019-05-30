@@ -900,6 +900,8 @@ export class PrintComponent implements OnInit {
   public getMovementOfCash(): void {
     this.loading = true;
 
+    console.log(this.transactionId);
+
     this._movementOfCash.getMovementOfCashesByTransaction(this.transactionId).subscribe(
       result => {
         if (!result.movementsOfCashes) {

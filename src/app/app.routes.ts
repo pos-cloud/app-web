@@ -402,6 +402,12 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path : 'checks/fondos/movimientos-de-medios',
+    component: ListMovementOfCashesComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Administrador'] }
+  },
+  {
     path: 'admin/campos-de-empresas',
     component: ListCompanyFieldsComponent,
     canActivate: [AuthGuard]
