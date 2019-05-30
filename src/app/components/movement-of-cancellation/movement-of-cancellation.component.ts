@@ -464,12 +464,12 @@ export class MovementOfCancellationComponent implements OnInit {
               if(mov.make && mov.make._id && mov.make._id !== "") {
                 movementOfArticle.make = mov.make._id;
               } else {
-                movementOfArticle.make = mov.make._id;
+                movementOfArticle.make = null;
               }
               if(mov.category && mov.category._id && mov.category._id !== "") {
                 movementOfArticle.category = mov.category._id;
               } else {
-                movementOfArticle.category = mov.category._id;
+                movementOfArticle.category = null;
               }
               movementOfArticle.amount = mov.amount;
               movementOfArticle.quantityForStock = mov.quantityForStock;
