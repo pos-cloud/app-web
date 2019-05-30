@@ -180,7 +180,7 @@ export class AddArticleTaxComponent implements OnInit {
         this.articleTax.tax = this.articleTaxForm.value.tax;
         this.articleTax.percentage = this.articleTax.tax.percentage;
         this.articleTax.taxAmount = this.articleTax.tax.amount;
-        if( this.articleTax.percentage &&  this.articleTax.percentage !== 0) {
+        if(this.articleTax.percentage &&  this.articleTax.percentage !== 0) {
           if(this.articleTax.tax.taxBase === TaxBase.Neto) {
             this.articleTax.taxBase = taxedAmount;
             this.articleTax.taxAmount = this.roundNumber.transform(this.articleTax.taxBase * this.articleTax.percentage / 100);

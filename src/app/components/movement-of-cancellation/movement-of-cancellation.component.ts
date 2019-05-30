@@ -505,7 +505,11 @@ export class MovementOfCancellationComponent implements OnInit {
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     tax.tax = taxAux.tax;
                     tax.taxBase = movementOfArticle.salePrice;
-                    tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    if(tax.percentage && tax.percentage !== 0) {
+                      tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    } else {
+                      tax.taxAmount = taxAux.taxAmount;
+                    }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);
                     tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
                     movementOfArticle.salePrice += tax.taxAmount;
@@ -586,7 +590,9 @@ export class MovementOfCancellationComponent implements OnInit {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.article.taxes) {
           articleTax.taxBase = taxedAmount;
-          articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          if(articleTax.percentage && articleTax.percentage !== 0) {
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
         }
@@ -653,8 +659,12 @@ export class MovementOfCancellationComponent implements OnInit {
           let tax: Taxes = new Taxes();
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-          tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          if(tax.percentage && tax.percentage !== 0) {
+            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          } else {
+            tax.taxAmount = taxAux.taxAmount;
+          }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);

@@ -479,10 +479,14 @@ export class ListArticlesComponent implements OnInit {
                 if (article.taxes) {
                   for (let taxAux of article.taxes) {
                     let tax: Taxes = new Taxes();
-                    tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     tax.tax = taxAux.tax;
-                    tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-                    tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    tax.percentage = this.roundNumber.transform(taxAux.percentage);
+                    if(tax.percentage && tax.percentage !== 0) {
+                      tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+                      tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                    } else {
+                      tax.taxAmount = taxAux.taxAmount;
+                    }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);
                     tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
                     taxes.push(tax);
@@ -519,7 +523,9 @@ export class ListArticlesComponent implements OnInit {
               if (article.taxes) {
                 for (let taxAux of article.taxes) {
                   taxAux.taxBase = this.roundNumber.transform(taxedAmount);
-                  taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
+                  if(taxAux.percentage && taxAux.percentage !== 0) {
+                    taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
+                  }
                   taxes.push(taxAux);
                   movementOfArticle.costPrice += taxAux.taxAmount;
                 }
@@ -531,7 +537,6 @@ export class ListArticlesComponent implements OnInit {
             movementOfArticle.salePrice = movementOfArticle.costPrice;
           }
           this.areArticlesVisible = true;
-          console.log(movementOfArticle.taxes);
           this.eventAddItem.emit(movementOfArticle);
         }
       }

@@ -760,7 +760,9 @@ export class AddSaleOrderComponent {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
           articleTax.taxBase = taxedAmount;
-          articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          if(articleTax.percentage && articleTax.percentage !== 0) {
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
         }
@@ -831,10 +833,14 @@ export class AddSaleOrderComponent {
       if (movementOfArticle.taxes) {
         for (let taxAux of movementOfArticle.taxes) {
           let tax: Taxes = new Taxes();
-          tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-          tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          if(taxAux.percentage && taxAux.percentage !== 0) {
+            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          } else {
+            tax.taxAmount = taxAux.taxAmount;
+          }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);
