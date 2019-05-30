@@ -464,12 +464,12 @@ export class MovementOfCancellationComponent implements OnInit {
               if(mov.make && mov.make._id && mov.make._id !== "") {
                 movementOfArticle.make = mov.make._id;
               } else {
-                movementOfArticle.make = null;
+                movementOfArticle.make = mov.make;
               }
               if(mov.category && mov.category._id && mov.category._id !== "") {
                 movementOfArticle.category = mov.category._id;
               } else {
-                movementOfArticle.category = null;
+                movementOfArticle.category = mov.category;
               }
               movementOfArticle.amount = mov.amount;
               movementOfArticle.quantityForStock = mov.quantityForStock;
@@ -480,7 +480,7 @@ export class MovementOfCancellationComponent implements OnInit {
               if(mov.article && mov.article._id && mov.article._id !== "") {
                 movementOfArticle.article = mov.article._id;
               } else {
-                movementOfArticle.article = mov.article._id;
+                movementOfArticle.article = mov.article;
               }
               movementOfArticle.transaction = new Transaction();
               movementOfArticle.transaction._id = this.transactionDestination._id;
