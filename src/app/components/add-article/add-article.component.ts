@@ -671,7 +671,7 @@ export class AddArticleComponent implements OnInit {
             }
           }
         }
-
+        
         if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
             this.articleForm.value.costPrice += (articleTax.taxAmount);
@@ -705,8 +705,6 @@ export class AddArticleComponent implements OnInit {
 
           if (this.taxes && this.taxes.length > 0) {
             for (const articleTax of this.taxes) {
-              articleTax.taxBase = taxedAmount;
-              articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
               this.articleForm.value.costPrice += (articleTax.taxAmount);
             }
           }
@@ -739,8 +737,6 @@ export class AddArticleComponent implements OnInit {
 
         if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
-            articleTax.taxBase = taxedAmount;
-            articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
             this.articleForm.value.costPrice += (articleTax.taxAmount);
           }
         }

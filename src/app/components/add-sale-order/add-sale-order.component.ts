@@ -826,12 +826,11 @@ export class AddSaleOrderComponent {
     movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
     movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
-
     if (movementOfArticle.transaction.type.requestTaxes) {
-      let tax: Taxes = new Taxes();
       let taxes: Taxes[] = new Array();
       if (movementOfArticle.taxes) {
         for (let taxAux of movementOfArticle.taxes) {
+          let tax: Taxes = new Taxes();
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
           tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
@@ -898,8 +897,8 @@ export class AddSaleOrderComponent {
     if (this.movementsOfArticles) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
-          let transactionTax: Taxes = new Taxes();
           for (let taxesAux of movementOfArticle.taxes) {
+            let transactionTax: Taxes = new Taxes();
             if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
               transactionTax.percentage = taxesAux.percentage;
               transactionTax.tax = taxesAux.tax;
@@ -908,8 +907,8 @@ export class AddSaleOrderComponent {
             } else {
               transactionTax = taxesAux;
             }
+            transactionTaxesAUX.push(transactionTax);
           }
-          transactionTaxesAUX.push(transactionTax);
         } else {
           this.transaction.exempt += movementOfArticle.salePrice;
         }

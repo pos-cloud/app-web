@@ -523,10 +523,10 @@ export class AddMovementOfArticleComponent implements OnInit {
             this.movementOfArticle.salePrice = this.roundNumber.transform(this.movementOfArticle.salePrice * quotation);
         }
         if(this.movementOfArticle.transaction.type.requestTaxes) {
-          let tax: Taxes = new Taxes();
           let taxes: Taxes[] = new Array();
           if (articleSelected.taxes) {
             for (let taxAux of articleSelected.taxes) {
+              let tax: Taxes = new Taxes();
               tax.percentage = this.roundNumber.transform(taxAux.percentage);
               tax.tax = taxAux.tax;
               tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
@@ -866,10 +866,10 @@ export class AddMovementOfArticleComponent implements OnInit {
       movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
 
       if (movementOfArticle.transaction.type.requestTaxes) {
-        let tax: Taxes = new Taxes();
         let taxes: Taxes[] = new Array();
         if (movementOfArticle.taxes) {
           for (let taxAux of movementOfArticle.taxes) {
+            let tax: Taxes = new Taxes();
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
             tax.tax = taxAux.tax;
             tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));

@@ -416,6 +416,7 @@ export class ListArticlesComponent implements OnInit {
     await this.getArticle(articleSelected._id).then(
       article => {
         if(article) {
+          console.log(article.taxes);
           let movementOfArticle = new MovementOfArticle();
           movementOfArticle.article = article;
           movementOfArticle.code = article.code;
@@ -474,10 +475,10 @@ export class ListArticlesComponent implements OnInit {
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }
               if (this.transaction.type.requestTaxes) {
-                let tax: Taxes = new Taxes();
                 let taxes: Taxes[] = new Array();
                 if (article.taxes) {
                   for (let taxAux of article.taxes) {
+                    let tax: Taxes = new Taxes();
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     tax.tax = taxAux.tax;
                     tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
@@ -530,6 +531,7 @@ export class ListArticlesComponent implements OnInit {
             movementOfArticle.salePrice = movementOfArticle.costPrice;
           }
           this.areArticlesVisible = true;
+          console.log(movementOfArticle.taxes);
           this.eventAddItem.emit(movementOfArticle);
         }
       }

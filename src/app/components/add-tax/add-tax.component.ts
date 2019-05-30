@@ -109,7 +109,6 @@ export class AddTaxComponent implements OnInit {
 
     this.taxForm = this._fb.group({
       '_id': [this.tax._id, [
-          Validators.required
         ]
       ],
       'code': [this.tax.code, [

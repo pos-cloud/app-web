@@ -159,7 +159,7 @@ export class AddArticleTaxComponent implements OnInit {
   }
 
   public changeTax(op: string): void {
-
+    
     let taxedAmount = this.article.basePrice;
 
     if(this.otherFields && this.otherFields.length > 0) {
