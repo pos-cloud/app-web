@@ -2575,7 +2575,11 @@ export class PrintComponent implements OnInit {
       
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.large);
-      this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
+      if(this.config[0].companyFantasyName)  {
+        this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyFantasyName);
+      } else {
+        this.centerText(margin, margin, this.printer.pageWidth, 0, row, this.config[0].companyName);
+      }
       this.doc.setFontType('normal');
       this.doc.setFontSize(this.fontSizes.normal);
       row +=5;
