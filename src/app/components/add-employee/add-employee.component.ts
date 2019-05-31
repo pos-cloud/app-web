@@ -157,9 +157,9 @@ export class AddEmployeeComponent  implements OnInit {
       const control = form.get(field);
 
       if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
+        const npm  = this.validationMessages[field];
         for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
+          this.formErrors[field] += npm [key] + ' ';
         }
       }
     }

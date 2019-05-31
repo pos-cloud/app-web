@@ -1,9 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewEncapsulation, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { MovementOfCash } from './../../models/movement-of-cash';
+import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
@@ -17,10 +17,11 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 
 export class ListMovementOfCashesComponent implements OnInit {
 
+  @Input() userType : string;
   public movementsOfCashes: MovementOfCash[] = new Array();
   public areMovementOfCashesEmpty = true;
   public alertMessage = '';
-  public userType: string;
+  //public userType: string;
   public orderTerm: string[] = ['-expirationDate'];
   public propertyTerm: string;
   public areFiltersVisible = false;
@@ -30,19 +31,104 @@ export class ListMovementOfCashesComponent implements OnInit {
   public totalItems = 0;
   public transactionMovement: string;
 
+  public currentPage: number = 0;
+  public displayedColumns = [
+    "number",
+    "bank",
+    "amountPaid"
+  ];
+  public filters: any[];
+  public filterValue: string;
+
   constructor(
     public _movementOfCashService: MovementOfCashService,
     public _router: Router,
     public _modalService: NgbModal,
+    public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) { 
+    this.filters = new Array();
+    for(let field of this.displayedColumns) {
+      this.filters[field] = "";
+    }
+  }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
+    if(!this.userType){
+      this.userType = pathLocation[1];
+    }
     this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.getMovementOfCashes();
+    if(this.userType === "admin"){
+      this.getMovementOfCashes();
+    } else {
+      this.getMovementOfCashesV2();
+    }
+    
+  }
+
+  public getMovementOfCashesV2() : void {
+    
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = {"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" };
+    
+    // CAMPOS A TRAER
+    let project = {
+      "_id" : 1,
+      "number": 1,
+      "bank._id" : 1 ,
+      "bank.name" : 1 ,
+      "amountPaid" :1 ,
+      "operationType": 1,
+      "expirationDate2": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
+      "expirationDate": 1,
+      "transaction._id":1,
+      "date": 1,
+      "statusCheck": 1,
+      "titular" : 1,
+      "receiver" : 1,
+      "quota" : 1 ,
+      "type" : 1,
+      "deliveredBy" : 1,
+      "CUIT" : 1,
+      "observation" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._movementOfCashService.getMovementsOfCashesV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        this.itemsPerPage, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (result.movementsOfCashes) {
+          this.loading = false;
+          this.movementsOfCashes = result.movementsOfCashes;
+          this.totalItems = result.count;
+          this.areMovementOfCashesEmpty = false;
+        } 
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
   }
 
   public getMovementOfCashes(): void {
@@ -73,6 +159,11 @@ export class ListMovementOfCashesComponent implements OnInit {
     );
   }
 
+  public selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
+    console.log(movementOfCashSelected);
+    this.activeModal.close(movementOfCashSelected);
+  }
+
   public orderBy (term: string, property?: string): void {
 
     if (this.orderTerm[0] === term) {
@@ -85,7 +176,13 @@ export class ListMovementOfCashesComponent implements OnInit {
 
   public refresh(): void {
     this.getMovementOfCashes();
+    
   }
+
+  public refreshV2() : void {
+    this.getMovementOfCashesV2();
+  }
+
 
   public openModal(op: string, movementOfCash: MovementOfCash): void {
 

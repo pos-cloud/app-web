@@ -132,31 +132,31 @@ export class ImportComponent  implements OnInit {
           } else {
             var message = '';
             if (result.records === 0) {
-              message = "No se encontraron registros para importar.";
+              message = "No se encontraron Registross para importar.";
             } else if (result.records === 1) {
-              message = "Se procesó " + result.records + " registro.";
+              message = "Se procesó " + result.records + " Registros.";
               if (result.recordSaved === 1) {
-                message += "Se creó " + result.recordSaved + " nuevo registro.";
+                message += "Se creó " + result.recordSaved + " nuevo Registros.";
               } else if (result.recordSaved > 1) {
-                message += "Se crearon " + result.recordSaved + " nuevos registros.";
+                message += "Se crearon " + result.recordSaved + " nuevos Registross.";
               }
               if (result.recordUpdated === 1) {
-                message += "Se actualizó " + result.recordUpdated + " registro.";
+                message += "Se actualizó " + result.recordUpdated + " Registros.";
               } else if (result.recordUpdated > 1) {
-                message += "Se actualizaron " + result.recordUpdated + " registros.";
+                message += "Se actualizaron " + result.recordUpdated + " Registross.";
               }
             } else {
-              this.showMessage("Se han importado con éxito " + result.records + " registros.", 'success', true);
-              message = "Se procesó " + result.records + " registro.";
+              this.showMessage("Se han importado con éxito " + result.records + " Registross.", 'success', true);
+              message = "Se procesó " + result.records + " Registros.";
               if (result.recordSaved === 1) {
-                message += "Se creó " + result.recordSaved + " nuevo registro.";
+                message += "Se creó " + result.recordSaved + " nuevo Registros.";
               } else if (result.recordSaved > 1) {
-                message += "Se crearon " + result.recordSaved + " nuevos registros.";
+                message += "Se crearon " + result.recordSaved + " nuevos Registross.";
               }
               if (result.recordUpdated === 1) {
-                message += "Se actualizó " + result.recordUpdated + " registro.";
+                message += "Se actualizó " + result.recordUpdated + " Registros.";
               } else if (result.recordUpdated > 1) {
-                message += "Se actualizaron " + result.recordUpdated + " registros.";
+                message += "Se actualizaron " + result.recordUpdated + " Registross.";
               }
             }
             this.showMessage(message, 'success', true);
@@ -179,31 +179,31 @@ export class ImportComponent  implements OnInit {
             } else {
               var message = '';
               if (result.records === 0) {
-                message = "No se encontraron registros para importar.";
+                message = "No se encontraron Registross para importar.";
               } else if (result.records === 1) {
-                message = "Se procesó " + result.records + " registro.";
+                message = "Se procesó " + result.records + " Registros.";
                 if (result.recordSaved === 1) {
-                  message += "Se creó " + result.recordSaved + " nuevo registro.";
+                  message += "Se creó " + result.recordSaved + " nuevo Registros.";
                 } else if (result.recordSaved > 1) {
-                  message += "Se crearon " + result.recordSaved + " nuevos registros.";
+                  message += "Se crearon " + result.recordSaved + " nuevos Registross.";
                 }
                 if (result.recordUpdated === 1) {
-                  message += "Se actualizó " + result.recordUpdated + " registro.";
+                  message += "Se actualizó " + result.recordUpdated + " Registros.";
                 } else if (result.recordUpdated > 1) {
-                  message += "Se actualizaron " + result.recordUpdated + " registros.";
+                  message += "Se actualizaron " + result.recordUpdated + " Registross.";
                 }
               } else {
-                this.showMessage("Se han importado con éxito " + result.records + " registros.", 'success', true);
-                message = "Se procesó " + result.records + " registro.";
+                this.showMessage("Se han importado con éxito " + result.records + " Registross.", 'success', true);
+                message = "Se procesó " + result.records + " Registros.";
                 if (result.recordSaved === 1) {
-                  message += "Se creó " + result.recordSaved + " nuevo registro.";
+                  message += "Se creó " + result.recordSaved + " nuevo Registros.";
                 } else if (result.recordSaved > 1) {
-                  message += "Se crearon " + result.recordSaved + " nuevos registros.";
+                  message += "Se crearon " + result.recordSaved + " nuevos Registross.";
                 }
                 if (result.recordUpdated === 1) {
-                  message += "Se actualizó " + result.recordUpdated + " registro.";
+                  message += "Se actualizó " + result.recordUpdated + " Registros.";
                 } else if (result.recordUpdated > 1) {
-                  message += "Se actualizaron " + result.recordUpdated + " registros.";
+                  message += "Se actualizaron " + result.recordUpdated + " Registross.";
                 }
               }
               this.showMessage(message, 'success', true);

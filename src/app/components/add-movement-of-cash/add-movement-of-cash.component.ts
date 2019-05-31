@@ -9,7 +9,7 @@ import 'moment/locale/es';
 
 //Modelos
 import { PaymentMethod } from './../../models/payment-method';
-import { MovementOfCash, MovementOfCashState } from './../../models/movement-of-cash';
+import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 import { Transaction } from './../../models/transaction';
 
 //Servicios
@@ -26,6 +26,10 @@ import { Taxes } from '../../models/taxes';
 import { MovementOfArticleService } from '../../services/movement-of-article.service';
 import { CurrentAccount } from 'app/models/transaction-type';
 import { Config } from 'app/app.config';
+import { BankService } from 'app/services/bank.service';
+import { Bank } from 'app/models/bank';
+import { ListMovementOfCashesComponent } from '../list-movements-of-cashes/list-movements-of-cashes.component';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -59,6 +63,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
   public movementOfArticle: MovementOfArticle;
+  public banks: Bank[];
 
   public formErrors = {
     'paymentMethod': '',
@@ -98,6 +103,7 @@ export class AddMovementOfCashComponent implements OnInit {
     public _paymentMethodService: PaymentMethodService,
     public _movementOfCashService: MovementOfCashService,
     public _transactionService: TransactionService,
+    public _bankService : BankService,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
@@ -120,6 +126,7 @@ export class AddMovementOfCashComponent implements OnInit {
     this.transactionAmount = this.transaction.totalPrice;
     this.buildForm();
     this.getPaymentMethods();
+    this.getBanks();
   }
 
   ngAfterViewInit() {
@@ -134,6 +141,7 @@ export class AddMovementOfCashComponent implements OnInit {
         ]
       ],
       'paymentMethod': [this.movementOfCash.type, [
+        Validators.required
         ]
       ],
       'amountToPay': [this.amountToPay, [
@@ -203,7 +211,6 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.movementOfCash.surcharge) this.movementOfCash.surcharge = 0.00;
     if (!this.movementOfCash.receiver) this.movementOfCash.receiver = '';
     if (!this.movementOfCash.number) this.movementOfCash.number = '';
-    if (!this.movementOfCash.bank) this.movementOfCash.bank = '';
     if (!this.movementOfCash.titular) this.movementOfCash.titular = '';
     if (!this.movementOfCash.CUIT) this.movementOfCash.CUIT = '';
     if (!this.movementOfCash.deliveredBy) this.movementOfCash.deliveredBy = '';
@@ -222,6 +229,17 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
+    let bank;
+    if (!this.movementOfCash.bank) {
+      bank = null;
+    } else {
+      if (this.movementOfCash.bank._id) {
+        bank = this.movementOfCash.bank._id;
+      } else {
+        bank = this.movementOfCash.bank;
+      }
+    }
+
     const values = {
       'transactionAmount': parseFloat(this.transactionAmount.toFixed(2)),
       'paymentMethod': type,
@@ -235,7 +253,7 @@ export class AddMovementOfCashComponent implements OnInit {
       'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
       'receiver': this.movementOfCash.receiver,
       'number': this.movementOfCash.number,
-      'bank': this.movementOfCash.bank,
+      'bank': bank,
       'titular': this.movementOfCash.titular,
       'CUIT': this.movementOfCash.CUIT,
       'deliveredBy': this.movementOfCash.deliveredBy,
@@ -269,13 +287,65 @@ export class AddMovementOfCashComponent implements OnInit {
       this.paymentChange = '0.00';
     }
 
-    this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+    //console.log(this.movementOfCashForm.value.paymentMethod)
+   //this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     for(let type of this.paymentMethods) {
-      if (type._id.toString() === this.movementOfCash.type.toString()) {
+      if (type._id.toString() === this.movementOfCashForm.value.paymentMethod) {
         this.paymentMethodSelected = type;
+        this.movementOfCash.type = type;
       }
     }
+
+    //this.paymentMethodSelected =  this.movementOfCashForm.value.paymentMethod;
+    
     this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
+  }
+
+  public getBanks() {
+    
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { order: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { "operationType": { "$ne": "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      "_id" : 1,
+      "name": 1,
+      "operationType": 1,
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._bankService.getBanks(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.banks) {
+        this.banks = result.banks;
+      } else {
+        this.showMessage("No se encontraron paises", 'danger', false);
+        this.loading = true;
+      }
+      this.loading = false;
+
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public calculateQuotas(field: string, newValue?: any, movement?: MovementOfCash): void {
@@ -292,7 +362,7 @@ export class AddMovementOfCashComponent implements OnInit {
           mov.transaction = this.transaction;
           mov.type = this.paymentMethodSelected;
           mov.observation = this.movementOfCash.observation;
-          mov.state = MovementOfCashState.Closed;
+          //mov.state = MovementOfCashState.Closed;
           mov.quota = i + 1;
           mov.expirationDate = moment(moment(this.movementOfCash.expirationDate, 'YYYY-MM-DD').format('YYYY-MM-DD')).add(expirationDate, 'days').format('YYYY-MM-DD').toString();
           expirationDate = (this.days * (i + 1)) + 1;
@@ -432,7 +502,7 @@ export class AddMovementOfCashComponent implements OnInit {
       case 'delete':
           modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg' });
           modalRef.componentInstance.movementOfCash = movement;
-          modalRef.result.then((result) => {
+          modalRef.result.then(async (result) => {
             if (result === 'delete_close') {
               if (this.transaction.type.requestArticles) {
                 this.getMovementOfArticle(movement);
@@ -442,6 +512,17 @@ export class AddMovementOfCashComponent implements OnInit {
                 } else if (movement.surcharge && movement.surcharge !== 0) {
                   this.transaction.totalPrice -= movement.amountPaid * movement.surcharge / 100;
                 }
+
+                //tendria que buscar el el cheque con el mismo numero pero que no esta eliminado y ponerlo habilitado
+                
+
+                if(movement.type.checkDetail){
+                  let check;
+                  check = await this.getChecks(movement.number);
+                  //console.log(checkId);
+                  this.updateCheck(check,StatusCheck.Available)
+                }
+                
                 this.updateTransaction();
               }
             }
@@ -449,9 +530,85 @@ export class AddMovementOfCashComponent implements OnInit {
 
           });
         break;
+      case 'checks':
+          modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg'});
+          modalRef.componentInstance.userType = "checks";
+          modalRef.result.then((result) => {
+
+            console.log(result);
+
+            this.updateCheck(result,StatusCheck.Closed,result.amountPaid);
+           
+            this.movementOfCash.titular = result.titular;
+            this.movementOfCash.amountPaid = result.amountPaid;
+            this.movementOfCash.expirationDate = result.expirationDate;
+            this.movementOfCash.date = this.movementOfCashForm.value.date;
+            this.movementOfCash.observation = result.observation;
+            this.movementOfCash.deliveredBy = result.deliveredBy;
+            this.movementOfCash.CUIT = result.CUIT;
+            this.movementOfCash.bank = result.bank;
+            this.movementOfCash.quota = result.quota;
+            this.movementOfCash.transaction = this.transaction;
+            this.movementOfCash.number = result.number;
+            this.movementOfCash.receiver = result.receiver;
+            this.movementOfCash.type = result.type;
+            this.movementOfCash.statusCheck = StatusCheck.Closed;
+            this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+
+
+            if(this.isValidAmount()){
+              this.saveMovementOfCash();
+            }
+
+
+          }, (reason) => {
+            console.log(reason);
+          });
+        break;
       default : ;
     }
   };
+
+  public getChecks(number) {
+
+    console.log(number);
+
+    return new Promise((resolve, reject) => {
+    
+
+      this._movementOfCashService.getCheck(number).subscribe(
+        async result => {
+          console.log(result)
+          resolve(result.movementsOfCashes[0]);
+        },
+        error => {
+          console.log(error)
+          resolve(null);
+        }
+      )
+  
+    });
+
+   
+  }
+
+  public updateCheck(movementOfCash : MovementOfCash, statusCheck : StatusCheck, amount? : number) {
+    
+   // let movementOfCash = new MovementOfCash()
+
+    //movementOfCash._id = id;
+    movementOfCash.statusCheck = statusCheck;
+    movementOfCash.amountPaid = amount;
+
+    this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
+        result => {
+          console.log(result)
+        },
+        error => {
+          console.log(error);
+        }
+      )
+  }
 
   public getMovementOfArticle(movementOfCash: MovementOfCash): void {
 
@@ -588,6 +745,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public isValidAmount(): boolean {
 
     let isValid: boolean = true;
+   
 
     if (this.amountToPay <= 0) {
       isValid = false;
@@ -717,6 +875,8 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public addMovementOfCash(): void {
 
+    
+
     if (!this.fastPayment) {
       if (this.isValidAmount()) {
         if (!this.paymentMethodSelected.allowToFinance) {
@@ -738,15 +898,15 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
             this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
             // this.movementOfCash.state = MovementOfCashState.InPortafolio;
-            this.movementOfCash.state = MovementOfCashState.Closed;
+            this.movementOfCash.statusCheck = StatusCheck.Available;
           } else {
             this.movementOfCash.receiver = '';
             this.movementOfCash.number = '';
-            this.movementOfCash.bank = '';
+            //this.movementOfCash.bank = '';
             this.movementOfCash.titular = '';
             this.movementOfCash.CUIT = '';
             this.movementOfCash.deliveredBy = '';
-            this.movementOfCash.state = MovementOfCashState.Closed;
+            this.movementOfCash.statusCheck = StatusCheck.Closed;
           }
 
           this.saveMovementOfCash();
@@ -761,11 +921,11 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.expirationDate = moment(this.movementOfCash.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");
       this.movementOfCash.receiver = '';
       this.movementOfCash.number = '';
-      this.movementOfCash.bank = '';
+      //this.movementOfCash.bank = '';
       this.movementOfCash.titular = '';
       this.movementOfCash.CUIT = '';
       this.movementOfCash.deliveredBy = '';
-      this.movementOfCash.state = MovementOfCashState.Closed;
+      //this.movementOfCash.state = MovementOfCashState.Closed;
       this.movementOfCash.discount = this.movementOfCash.type.discount;
       this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
 
@@ -794,41 +954,48 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
-    this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
-      result => {
-        if (!result.movementOfCash) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
-        } else {
-          this.movementOfCash = result.movementOfCash;
-          this.movementOfCash.number = '';
-          if (this.transactionAmount !== this.transaction.totalPrice) {
-            this.transaction.totalPrice = this.transactionAmount;
-            if (this.transaction.type.requestArticles) {
-              this.addMovementOfArticle();
-            } else {
-              this.updateTransaction();
-            }
+
+      this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
+        result => {
+          if (!result.movementOfCash) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
           } else {
-            this.movementsOfCashes = new Array();
-            this.movementsOfCashes.push(this.movementOfCash);
-            if(!this.fastPayment) {
-              this.getMovementOfCashesByTransaction();
-            } else {
-              if(this.amountDiscount && this.amountDiscount !== 0) {
+            this.movementOfCash = result.movementOfCash;
+            this.movementOfCash.number = '';
+            if (this.transactionAmount !== this.transaction.totalPrice) {
+              this.transaction.totalPrice = this.transactionAmount;
+              if (this.transaction.type.requestArticles) {
                 this.addMovementOfArticle();
               } else {
                 this.updateTransaction();
               }
+            } else {
+              this.movementsOfCashes = new Array();
+              this.movementsOfCashes.push(this.movementOfCash);
+              this.paymentMethodSelected = this.movementOfCash.type;
+              this.movementOfCash = new MovementOfCash();
+              this.movementOfCash.type = this.paymentMethodSelected;
+              
+              if(!this.fastPayment) {
+                this.getMovementOfCashesByTransaction();
+              } else {
+                if(this.amountDiscount && this.amountDiscount !== 0) {
+                  this.addMovementOfArticle();
+                } else {
+                  this.updateTransaction();
+                }
+              }
             }
           }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    
+    
   }
 
   public saveMovementsOfCashes(): void {
@@ -946,6 +1113,8 @@ export class AddMovementOfCashComponent implements OnInit {
           } else {
             if(this.areValidAmounts()) {
               this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+            } else {
+              this.getMovementOfCashesByTransaction();
             }
           }
         }
@@ -956,6 +1125,29 @@ export class AddMovementOfCashComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public updateChecks(movementsOfCashes : MovementOfCash[], statusCheck : StatusCheck) : void {
+
+   
+    for (let index = 0; index < movementsOfCashes.length; index++) {
+      
+      movementsOfCashes[index].statusCheck = statusCheck
+
+      this._movementOfCashService.updateMovementOfCash(movementsOfCashes[index]).subscribe(
+        result => {
+          if(result) {
+            this.getMovementOfCashesByTransaction();
+          }
+        },
+        error => {
+          console.log(error);
+        }
+      )
+      
+    }
+
+    
   }
 
   public orderBy(term: string, property?: string): void {

@@ -85,7 +85,10 @@ export class AddPaymentMethodComponent implements OnInit {
         ]
       ],'cashBoxImpact': [this.paymentMethod.cashBoxImpact, [
         ]
-      ]
+      ],'company': [this.paymentMethod.company, [
+        ]
+      ],'bankReconciliation': [this.paymentMethod.bankReconciliation, [
+      ]]
     });
 
     this.paymentMethodForm.valueChanges

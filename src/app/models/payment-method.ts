@@ -1,7 +1,9 @@
 import { User } from './user';
+import { Company } from './company';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+
 
 export class PaymentMethod {
 
@@ -17,6 +19,8 @@ export class PaymentMethod {
   public cardDetail: boolean;
   public allowToFinance: boolean;
 	public cashBoxImpact: boolean;
+	public bankReconciliation: boolean;
+	public company : Company;
 	public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
