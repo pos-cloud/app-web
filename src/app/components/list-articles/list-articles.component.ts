@@ -416,7 +416,6 @@ export class ListArticlesComponent implements OnInit {
     await this.getArticle(articleSelected._id).then(
       article => {
         if(article) {
-          console.log(article.taxes);
           let movementOfArticle = new MovementOfArticle();
           movementOfArticle.article = article;
           movementOfArticle.code = article.code;

@@ -48,7 +48,12 @@
           <tbody>
             <tr *ngFor="let articleTaxAux of articleTaxes">
               <td align="left" width="130">
-                <button type="button" class="btn btn-danger btn-sm" title="Eliminar" (click)="deleteArticleTax(articleTaxAux)">
+                <button 
+                  *ngIf="!transaction || (transaction && articleTaxAux.tax.classification !== 'Impuesto')"
+                  type="button" 
+                  class="btn btn-danger btn-sm" 
+                  title="Eliminar" 
+                  (click)="deleteArticleTax(articleTaxAux)">
                   <i class="fa fa-trash-o"></i>
                 </button>
               </td>

@@ -508,7 +508,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     if(tax.percentage && tax.percentage !== 0) {
                       tax.taxAmount = (tax.taxBase * tax.percentage / 100);
                     } else {
-                      tax.taxAmount = taxAux.taxAmount;
+                      tax.taxAmount = tax.tax.amount * movementOfArticle.amount;
                     }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);
                     tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -592,6 +592,8 @@ export class MovementOfCancellationComponent implements OnInit {
           articleTax.taxBase = taxedAmount;
           if(articleTax.percentage && articleTax.percentage !== 0) {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          } else {
+            articleTax.taxAmount = articleTax.tax.amount * movementOfArticle.amount;
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -663,7 +665,7 @@ export class MovementOfCancellationComponent implements OnInit {
             tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           } else {
-            tax.taxAmount = taxAux.taxAmount;
+            tax.taxAmount = tax.tax.amount * movementOfArticle.amount;
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);

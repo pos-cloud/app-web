@@ -24,6 +24,7 @@ export class Transaction {
 	public expirationDate: string;
 	public VATPeriod: string = moment().format('YYYYMM');
 	public state: TransactionState = TransactionState.Open;
+	public basePrice: number = 0.00;
 	public exempt: number = 0.00;
 	public taxes: Taxes[];
 	public discountAmount: number = 0.00;

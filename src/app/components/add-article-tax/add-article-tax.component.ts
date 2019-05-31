@@ -12,6 +12,7 @@ import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { Article } from 'app/models/article';
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
+import { Transaction } from 'app/models/transaction';
 
 @Component({
   selector: 'app-add-article-tax',
@@ -33,6 +34,7 @@ export class AddArticleTaxComponent implements OnInit {
   @Input() otherFields: ArticleFields[];
   @Input() articleTaxes: Taxes[] = new Array();
   @Input() filterTaxClassification: TaxClassification;
+  @Input() transaction: Transaction;
   @Output() eventAddArticleTax: EventEmitter<Taxes[]> = new EventEmitter<Taxes[]>();
 
   public formErrors = {
@@ -160,19 +162,25 @@ export class AddArticleTaxComponent implements OnInit {
 
   public changeTax(op: string): void {
     
-    let taxedAmount = this.article.basePrice;
+    let taxedAmount = 0;
 
-    if(this.otherFields && this.otherFields.length > 0) {
-      for (const field of this.otherFields) {
-        if(field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((this.article.basePrice * parseFloat(field.value) / 100));
-        } else if(field.datatype === ArticleFieldType.Number) {
-          field.amount = parseFloat(field.value);
-        }
-        if (field.articleField.modifyVAT) {
-          taxedAmount += field.amount;
+    if(this.article) {
+      taxedAmount = this.article.basePrice;
+  
+      if(this.otherFields && this.otherFields.length > 0) {
+        for (const field of this.otherFields) {
+          if(field.datatype === ArticleFieldType.Percentage) {
+            field.amount = this.roundNumber.transform((this.article.basePrice * parseFloat(field.value) / 100));
+          } else if(field.datatype === ArticleFieldType.Number) {
+            field.amount = parseFloat(field.value);
+          }
+          if (field.articleField.modifyVAT) {
+            taxedAmount += field.amount;
+          }
         }
       }
+    } else if (this.transaction) {
+      taxedAmount = this.transaction.basePrice;
     }
 
     switch(op) {
@@ -210,17 +218,14 @@ export class AddArticleTaxComponent implements OnInit {
   public taxExists(): boolean {
 
     var exists: boolean = false;
-
     if (this.articleTaxes && this.articleTaxes.length > 0) {
       for (var taxArticleAux of this.articleTaxes) {
-        if (taxArticleAux.tax.name === this.articleTax.tax.name &&
-          taxArticleAux.percentage === this.articleTax.percentage) {
+        if (taxArticleAux.tax._id === this.articleTax.tax._id) {
           exists = true;
           this.showMessage("El impuesto " + this.articleTax.tax.name + " con porcentaje " + this.articleTax.percentage + " ya existe", 'info', true);
         }
       }
     }
-
     return exists;
   }
 
@@ -231,8 +236,7 @@ export class AddArticleTaxComponent implements OnInit {
 
     if (this.articleTaxes && this.articleTaxes.length > 0) {
       for (var articleTaxAux of this.articleTaxes) {
-        if (articleTax.tax.name === articleTaxAux.tax.name &&
-            articleTax.percentage === articleTaxAux.percentage) {
+        if (articleTax.tax._id === articleTaxAux.tax._id) {
           articleTaxToDelete = i;
         }
         i++;
