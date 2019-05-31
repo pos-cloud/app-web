@@ -451,9 +451,7 @@ export class MovementOfCancellationComponent implements OnInit {
             resolve(null);
           } else {
             let movements: MovementOfArticle[] = new Array();
-
             for (let mov of result.movementsOfArticles) {
-
               let movementOfArticle = new MovementOfArticle();
 
               movementOfArticle.code = mov.code;
@@ -464,12 +462,12 @@ export class MovementOfCancellationComponent implements OnInit {
               if(mov.make && mov.make._id && mov.make._id !== "") {
                 movementOfArticle.make = mov.make._id;
               } else {
-                movementOfArticle.make = mov.make._id;
+                movementOfArticle.make = mov.make;
               }
               if(mov.category && mov.category._id && mov.category._id !== "") {
                 movementOfArticle.category = mov.category._id;
               } else {
-                movementOfArticle.category = mov.category._id;
+                movementOfArticle.category = mov.category;
               }
               movementOfArticle.amount = mov.amount;
               movementOfArticle.quantityForStock = mov.quantityForStock;
@@ -477,11 +475,7 @@ export class MovementOfCancellationComponent implements OnInit {
               movementOfArticle.notes = mov.notes;
               movementOfArticle.printed = mov.printed;
               movementOfArticle.printIn = mov.printIn;
-              if(mov.article && mov.article._id && mov.article._id !== "") {
-                movementOfArticle.article = mov.article._id;
-              } else {
-                movementOfArticle.article = mov.article._id;
-              }
+              movementOfArticle.article = mov.article;
               movementOfArticle.transaction = new Transaction();
               movementOfArticle.transaction._id = this.transactionDestination._id;
               movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
@@ -538,7 +532,6 @@ export class MovementOfCancellationComponent implements OnInit {
               } else {
                 movementOfArticle = this.recalculateCostPrice(movementOfArticle);
               }
-
               movements.push(movementOfArticle);
             }
             resolve(movements);
