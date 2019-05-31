@@ -451,9 +451,7 @@ export class MovementOfCancellationComponent implements OnInit {
             resolve(null);
           } else {
             let movements: MovementOfArticle[] = new Array();
-
             for (let mov of result.movementsOfArticles) {
-
               let movementOfArticle = new MovementOfArticle();
 
               movementOfArticle.code = mov.code;
@@ -477,11 +475,7 @@ export class MovementOfCancellationComponent implements OnInit {
               movementOfArticle.notes = mov.notes;
               movementOfArticle.printed = mov.printed;
               movementOfArticle.printIn = mov.printIn;
-              if(mov.article && mov.article._id && mov.article._id !== "") {
-                movementOfArticle.article = mov.article._id;
-              } else {
-                movementOfArticle.article = mov.article;
-              }
+              movementOfArticle.article = mov.article;
               movementOfArticle.transaction = new Transaction();
               movementOfArticle.transaction._id = this.transactionDestination._id;
               movementOfArticle.modifyStock = this.transactionDestination.type.modifyStock;
@@ -534,7 +528,6 @@ export class MovementOfCancellationComponent implements OnInit {
               } else {
                 movementOfArticle = this.recalculateCostPrice(movementOfArticle);
               }
-
               movements.push(movementOfArticle);
             }
             resolve(movements);
