@@ -190,14 +190,32 @@ export class AddArticleTaxComponent implements OnInit {
         this.articleTax.taxAmount = this.articleTax.tax.amount;
         if(this.articleTax.percentage &&  this.articleTax.percentage !== 0) {
           if(this.articleTax.tax.taxBase === TaxBase.Neto) {
-            this.articleTax.taxBase = taxedAmount;
+            this.articleTax.taxBase = this.roundNumber.transform(taxedAmount);
             this.articleTax.taxAmount = this.roundNumber.transform(this.articleTax.taxBase * this.articleTax.percentage / 100);
           }
         }
         break;
       case 'percentage':
+        this.articleTax.tax = this.articleTaxForm.value.tax;
+        this.articleTax.percentage = this.articleTaxForm.value.percentage;
+        this.articleTax.taxAmount = this.articleTax.tax.amount;
+        if(this.articleTax.percentage &&  this.articleTax.percentage !== 0) {
+          if(this.articleTax.tax.taxBase === TaxBase.Neto) {
+            this.articleTax.taxBase = this.roundNumber.transform(taxedAmount);
+            this.articleTax.taxAmount = this.roundNumber.transform(this.articleTax.taxBase * this.articleTax.percentage / 100);
+          }
+        }
         break;
       case 'taxAmount':
+        this.articleTax.tax = this.articleTaxForm.value.tax;
+        this.articleTax.taxAmount = this.articleTaxForm.value.taxAmount;
+        if(this.articleTax.percentage &&  this.articleTax.percentage !== 0) {
+          if(this.articleTax.tax.taxBase === TaxBase.Neto) {
+            this.articleTax.taxBase = this.roundNumber.transform(taxedAmount);
+            this.articleTaxForm.value.percentage = this.roundNumber.transform(this.articleTax.taxAmount * 100 / this.articleTax.taxBase);
+            this.articleTax.percentage = this.articleTaxForm.value.percentage;
+          }
+        }
         break;
       default:
         break;
