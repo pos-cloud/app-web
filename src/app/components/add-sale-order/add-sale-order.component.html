@@ -152,7 +152,7 @@
           <tbody>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
                 (click)="openModal('change-taxes')"
-                class="pointer">
+                class="pointer totals">
               <td align="right">
                 <strong>Impuestos</strong>
               </td>
@@ -160,7 +160,8 @@
                 <strong>({{totalTaxesAmount | currency:'USD':'1.2-2'}})</strong>
               </td>
             </tr>
-            <tr *ngIf="transactionMovement !== 'Stock'">
+            <tr class="totals"
+                *ngIf="transactionMovement !== 'Stock'">
               <td align="right">
                 <strong>Descuento</strong>
               </td>
