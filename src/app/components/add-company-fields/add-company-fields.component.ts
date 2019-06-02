@@ -23,7 +23,6 @@ export class AddCompanyFieldsComponent implements OnInit {
   @Input() fields: CompanyFields[];
   public companyFieldsForm: FormGroup;
   public alertMessage: string = '';
-  public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   @Output() eventAddCompanyFields: EventEmitter<CompanyFields[]> = new EventEmitter<CompanyFields[]>();
@@ -60,8 +59,6 @@ export class AddCompanyFieldsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userValue = pathLocation[1];
     this.field = new CompanyFields();
     this.companyFields = new Array();
     if(!this.fields) {

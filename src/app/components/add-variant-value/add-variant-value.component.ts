@@ -23,7 +23,6 @@ export class AddVariantValueComponent implements OnInit {
   public variantTypes: VariantType[];
   public variantValueForm: FormGroup;
   public alertMessage: string = '';
-  public userValue: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
@@ -53,7 +52,6 @@ export class AddVariantValueComponent implements OnInit {
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
-    this.userValue = pathLocation[1];
     this.variantValue = new VariantValue();
     this.getVariantTypes();
     this.buildForm();

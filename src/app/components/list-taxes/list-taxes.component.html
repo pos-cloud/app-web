@@ -22,19 +22,41 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('name')">Nombre </th>
+            <th (click)="orderBy('code')">Código</th>
+            <th (click)="orderBy('name')">Nombre</th>
+            <th (click)="orderBy('taxBase')">Calculado sobre</th>
+            <th (click)="orderBy('percentage')">Porcentaje</th>
+            <th (click)="orderBy('amount')">Monto</th>
+            <th (click)="orderBy('classification')">Clasificación</th>
+            <th (click)="orderBy('type')">Tipo</th>
+            <th (click)="orderBy('lastNumber')">Último Número</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre...">
-            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="Código..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterTaxBase" placeholder="Calculado sobre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterPercentage" placeholder="Porcentaje..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAmount" placeholder="Monto..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterClassification" placeholder="Clasificación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterLastNumber" placeholder="Último Número..."></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let tax of taxes | filter: filterName:'name'
-                                          | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage,
+          <tr align="center" *ngIf="loading">
+            <td colspan="9">Cargando...</td>
+          </tr>
+          <tr *ngFor="let tax of taxes  | filter: filterCode:'code'
+                                        | filter: filterName:'name'
+                                        | filter: filterTaxBase:'taxBase'
+                                        | filter: filterPercentage:'percentage'
+                                        | filter: filterAmount:'amount'
+                                        | filter: filterClassification:'classification'
+                                        | filter: filterType:'type'
+                                        | filter: filterLastNumber:'lastNumber'
+                                        | orderBy: orderTerm: propertyTerm
+                                        | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
                                                         totalItems: totalItems
                                                       }">
@@ -43,10 +65,17 @@
               <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', tax)" title="Modificar"><i class="fa fa-pencil"></i></button>
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', tax)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
             </td>
+            <td class="flat">{{tax.code}}</td>
             <td class="flat">{{tax.name}}</td>
+            <td class="flat">{{tax.taxBase}}</td>
+            <td class="flat">{{tax.percentage}}</td>
+            <td class="flat">{{tax.amount}}</td>
+            <td class="flat">{{tax.classification}}</td>
+            <td class="flat">{{tax.type}}</td>
+            <td class="flat">{{tax.lastNumber}}</td>
           </tr>
           <tr align="center" *ngIf="areTaxesEmpty && !loading">
-            <td colspan="2">No se encontraron impuestos</td>
+            <td colspan="9">No se encontraron impuestos</td>
           </tr>
         </tbody>
       </table>

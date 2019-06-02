@@ -2304,7 +2304,7 @@ export class PrintComponent implements OnInit {
       this.doc.text("Descuento:", 140, rowTotals);
       this.doc.setFontType('normal');
       this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 173, rowTotals);
-      let subtotal = 0;
+      let subtotal = this.transaction.totalPrice;
 
       if (this.transaction.company &&
           this.transaction.company.vatCondition &&
@@ -2315,10 +2315,10 @@ export class PrintComponent implements OnInit {
               for (let tax of this.transaction.taxes) {
                 rowTotals += 8;
                 this.doc.setFontType('bold');
-                this.doc.text(tax.tax.name + " " + this.roundNumber.transform(tax.percentage) + "%:", 140, rowTotals);
+                this.doc.text(tax.tax.name + ":", 140, rowTotals);
                 this.doc.setFontType('normal');
                 this.doc.text("$ " + this.roundNumber.transform(tax.taxAmount), 173, rowTotals);
-                subtotal += this.roundNumber.transform(tax.taxBase);
+                subtotal -= this.roundNumber.transform(tax.taxAmount);
               }
             }
 
@@ -2328,10 +2328,8 @@ export class PrintComponent implements OnInit {
               this.doc.text("Exento:", 140, rowTotals);
               this.doc.setFontType('normal');
               this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 173, rowTotals);
-              subtotal += this.transaction.exempt;
+              subtotal -= this.transaction.exempt;
             }
-      } else {
-        subtotal = this.transaction.totalPrice;
       }
 
       if (this.transaction.discountAmount) {

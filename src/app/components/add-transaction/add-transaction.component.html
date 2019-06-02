@@ -122,7 +122,9 @@
       </div>
       <app-add-article-tax  (eventAddArticleTax)="addTransactionTaxes($event)"
                             [articleTaxes]="taxes"
-                            *ngIf="transaction && transaction.type && transaction.type.requestTaxes&& !transaction.type.requestArticles">
+                            [transaction]="transaction"
+                            [filterTaxClassification]="filterTaxClassification"
+                            *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
       </app-add-article-tax>
       <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company">
         <div class="col-md-12 center-content">

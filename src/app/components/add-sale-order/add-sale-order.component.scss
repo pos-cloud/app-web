@@ -7,13 +7,21 @@ app-add-sale-order {
             -webkit-justify-content: center;
             justify-content: center;
       }
+
+      .table {
+            margin-bottom: 0px;
+      }
       
-      .btn {
+      .btn, .pointer {
             cursor: pointer;
       }
       
       .container-message {
         margin: 0px;
+      }
+
+      .totals {
+            font-size: 15px;
       }
       
       .articles-container {
@@ -40,8 +48,6 @@ app-add-sale-order {
       }
       
       .container-transaction {
-        margin-top: 10px;
-        margin-left: 0px;
         margin-right: 0px;
       }
       

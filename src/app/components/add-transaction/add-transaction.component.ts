@@ -32,7 +32,7 @@ import { MovementOfCancellationComponent } from '../movement-of-cancellation/mov
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
 import { CancellationTypeService } from 'app/services/cancellation-type.service';
-import { resolve } from 'q';
+import { TaxClassification } from 'app/models/tax';
 
 @Component({
   selector: 'app-add-transaction',
@@ -71,6 +71,7 @@ export class AddTransactionComponent implements OnInit {
   public transactionDate: string;
   public userCountry: string;
   public showButtonCancelation: boolean;
+  public filterTaxClassification: TaxClassification = TaxClassification.Perception;
 
   public formErrors = {
     'date': '',
@@ -208,7 +209,7 @@ export class AddTransactionComponent implements OnInit {
           Validators.required
         ]
       ],
-      'basePrice': [0.00, [
+      'basePrice': [this.transaction.basePrice, [
         ]
       ],
       'exempt': [this.transaction.exempt, [
@@ -267,7 +268,7 @@ export class AddTransactionComponent implements OnInit {
       'origin': this.transaction.origin,
       'letter': this.transaction.letter,
       'number': this.transaction.number,
-      'basePrice': this.transactionForm.value.basePrice,
+      'basePrice': this.transaction.basePrice,
       'exempt': this.transaction.exempt,
       'totalPrice': this.transaction.totalPrice,
       'observation': this.transaction.observation,
@@ -458,6 +459,7 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.origin = this.transactionForm.value.origin;
       this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.number = this.transactionForm.value.number;
+      this.transaction.basePrice = this.transactionForm.value.basePrice;
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
       if (this.transaction.type.requestArticles ||
         (this.transaction.totalPrice > 0 &&
@@ -490,11 +492,9 @@ export class AddTransactionComponent implements OnInit {
   public updatePrices(op: string): void {
     switch(op) {
       case "basePrice":
-        this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice + this.transactionForm.value.exempt;
         this.updateTaxes();
         break;
       case "exempt":
-        this.transactionForm.value.totalPrice = this.transactionForm.value.basePrice + this.transactionForm.value.exempt;
         this.updateTaxes();
         break;
       case "taxes":
@@ -505,12 +505,9 @@ export class AddTransactionComponent implements OnInit {
         break;
     }
 
-    this.transactionForm.value.basePrice = this.roundNumber.transform(this.transactionForm.value.basePrice);
-    this.transactionForm.value.exempt = this.roundNumber.transform(this.transactionForm.value.exempt);
-    this.transactionForm.value.totalPrice = this.roundNumber.transform(this.transactionForm.value.totalPrice);
-
-    this.transaction.exempt = this.transactionForm.value.exempt;
-    this.transaction.totalPrice = this.transactionForm.value.totalPrice;
+    this.transaction.basePrice = this.roundNumber.transform(this.transactionForm.value.basePrice);
+    this.transaction.exempt = this.roundNumber.transform(this.transactionForm.value.exempt);
+    this.transaction.totalPrice = this.roundNumber.transform(this.transactionForm.value.totalPrice);
     this.transaction.origin = this.transactionForm.value.origin;
     if (this.transactionMovement && (this.transactionMovement !== TransactionMovement.Sale.toString())) {
       this.transaction.letter = this.transactionForm.value.letter;
@@ -525,18 +522,23 @@ export class AddTransactionComponent implements OnInit {
 
     let transactionTaxes: Taxes[] = new Array();
 
-    if (this.taxes && this.taxes.length > 0 && this.transactionForm.value.basePrice !== 0) {
-      let transactionTax: Taxes = new Taxes();
+    this.transactionForm.value.totalPrice = this.transactionForm.value.exempt + this.transactionForm.value.basePrice;
+
+    if (this.taxes && this.taxes.length > 0 && this.transaction.basePrice !== 0) {
       for (let taxesAux of this.taxes) {
+        let transactionTax: Taxes = new Taxes();
         transactionTax.percentage = taxesAux.percentage;
         transactionTax.tax = taxesAux.tax;
-        transactionTax.taxBase = this.transactionForm.value.basePrice;
-        transactionTax.taxAmount = this.roundNumber.transform((transactionTax.taxBase * taxesAux.percentage / 100));
+        transactionTax.taxBase = this.transaction.basePrice;
+        if(transactionTax.percentage && transactionTax.percentage !== 0) {
+          transactionTax.taxAmount = this.roundNumber.transform((transactionTax.taxBase * transactionTax.percentage / 100));
+        } else {
+          transactionTax.taxAmount = taxesAux.taxAmount;
+        }
         this.transactionForm.value.totalPrice += transactionTax.taxAmount;
+        transactionTaxes.push(transactionTax);
       }
-      transactionTaxes.push(transactionTax);
     }
-    this.transactionForm.value.totalPrice += this.transactionForm.value.exempt;
     this.transaction.taxes = transactionTaxes;
   }
 

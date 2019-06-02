@@ -15,7 +15,6 @@ import { ArticlePrintIn } from './../../models/article';
 import { ArticleStock } from './../../models/article-stock';
 import { MovementOfArticle } from './../../models/movement-of-article';
 import { Table, TableState } from './../../models/table';
-import { Employee } from './../../models/employee';
 import { Category } from './../../models/category';
 import { Print } from './../../models/print';
 import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
@@ -34,7 +33,6 @@ import { UserService } from './../../services/user.service';
 import { PrintService } from './../../services/print.service';
 import { ArticleStockService } from '../../services/article-stock.service';
 import { TaxService } from '../../services/tax.service';
-import { CashBoxService } from '../../services/cash-box.service';
 
 //Componentes
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
@@ -65,6 +63,7 @@ import { ListArticlesComponent } from '../list-articles/list-articles.component'
 import { ListCategoriesComponent } from '../list-categories/list-categories.component';
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
+import { TaxClassification } from 'app/models/tax';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -98,6 +97,7 @@ export class AddSaleOrderComponent {
   @ViewChild('contentChangeDate') contentChangeDate: ElementRef;
   @ViewChild('contentChangeQuotation') contentChangeQuotation: ElementRef;
   @ViewChild('containerMovementsOfArticles') containerMovementsOfArticles: ElementRef;
+  @ViewChild('containerTaxes') containerTaxes: ElementRef;
   public paymentAmount: number = 0.00;
   public typeOfOperationToPrint: string;
   public kitchenArticlesToPrint: MovementOfArticle[];
@@ -114,6 +114,8 @@ export class AddSaleOrderComponent {
   @ViewChild(ListArticlesComponent) listArticlesComponent: ListArticlesComponent;
   @ViewChild(ListCategoriesComponent) listCategoriesComponent: ListCategoriesComponent;
   public categorySelected: Category;
+  public totalTaxesAmount: number = 0;
+  public filterTaxClassification: TaxClassification;
 
   constructor(
     public _transactionService: TransactionService,
@@ -186,6 +188,11 @@ export class AddSaleOrderComponent {
               this.backFinal();
             } else {
               this.transactionMovement = '' + this.transaction.type.transactionMovement;
+              if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                this.filterTaxClassification = TaxClassification.Withholding;
+              } else {
+                this.filterTaxClassification = TaxClassification.Perception;
+              }
               this.lastQuotation = this.transaction.quotation;
 
               if(this.userCountry === 'MX' &&
@@ -343,26 +350,17 @@ export class AddSaleOrderComponent {
     });
   }
 
-  public filterArticles(): void {
+  public getTransaction(): Promise<Transaction> {
 
-    this.listArticlesComponent.filterArticle = this.filterArticle;
-    this.listArticlesComponent.filterItem(this.categorySelected);
-    if(!this.filterArticle || this.filterArticle === '') {
-      this.showCategories();
-    }
-  }
+    return new Promise<Transaction>((resolve, reject) => {
 
-  public getPrinters(): Promise<Printer[]> {
-
-    return new Promise<Printer[]>( async (resolve, reject) => {
-
-      this._printerService.getPrinters().subscribe(
-        result => {
-          if (!result.printers) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+      this._transactionService.getTransaction(this.transactionId).subscribe(
+        async result => {
+          if (!result.transaction) {
+            this.showMessage(result.message, 'danger', false);
             resolve(null);
           } else {
-            resolve(result.printers);
+            resolve(result.transaction);
           }
         },
         error => {
@@ -373,14 +371,14 @@ export class AddSaleOrderComponent {
     });
   }
 
-  public getTransaction(): Promise<Transaction> {
+  public updateTransaction(): Promise<Transaction> {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      this._transactionService.getTransaction(this.transactionId).subscribe(
-        async result => {
+      this._transactionService.updateTransaction(this.transaction).subscribe(
+        result => {
           if (!result.transaction) {
-            this.showMessage(result.message, 'danger', false);
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
             resolve(result.transaction);
@@ -445,27 +443,6 @@ export class AddSaleOrderComponent {
     });
   }
 
-  public updateTransaction(): Promise<Transaction> {
-
-    return new Promise<Transaction>((resolve, reject) => {
-
-      this._transactionService.updateTransaction(this.transaction).subscribe(
-        result => {
-          if (!result.transaction) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.transaction);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
   public changeCurrency(currency: Currency): void {
     this.transaction.currency = currency;
     if(Config.currency && this.transaction.currency._id !== Config.currency._id) {
@@ -484,77 +461,6 @@ export class AddSaleOrderComponent {
         if(transaction) {
           this.transaction = transaction;
         }
-      }
-    );
-  }
-
-  async close() {
-
-    this.typeOfOperationToPrint = 'item';
-
-    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-      for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
-          this.barArticlesToPrint.push(movementOfArticle);
-        }
-        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
-          this.kitchenArticlesToPrint.push(movementOfArticle);
-        }
-      }
-    }
-
-    if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
-      this.typeOfOperationToPrint = "bar";
-      this.openModal('printers');
-    } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
-      this.typeOfOperationToPrint = "kitchen";
-      this.openModal('printers');
-    } else if (this.posType === "resto") {
-      this.transaction.table.state = TableState.Busy;
-      await this.updateTable().then(table => {
-        if(table) {
-          this.transaction.table = table;
-          this.backFinal();
-        }
-      });
-    } else {
-      this.backFinal();
-    }
-  }
-
-  public updateMovementOfArticlePrinted(): void {
-
-    this.loading = true;
-
-    this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed = this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
-
-    this._movementOfArticleService.updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
-      async result => {
-        if (!result.movementOfArticle) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.kitchenArticlesPrinted++;
-          if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
-            this.updateMovementOfArticlePrinted();
-          } else {
-            if (this.posType === "resto") {
-              this.transaction.table.state = TableState.Busy;
-              await this.updateTable().then(table => {
-                if(table) {
-                  this.transaction.table = table;
-                  this.backFinal();
-                }
-              });
-            } else {
-              this.backFinal();
-            }
-          }
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
       }
     );
   }
@@ -578,6 +484,31 @@ export class AddSaleOrderComponent {
         }
       );
     });
+  }
+
+  public getMovementsOfTransaction(): void {
+
+    this.loading = true;
+
+    this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
+      result => {
+        if (!result.movementsOfArticles) {
+          this.areMovementsOfArticlesEmpty = true;
+          this.movementsOfArticles = new Array();
+          this.updatePrices();
+        } else {
+          this.areMovementsOfArticlesEmpty = false;
+          this.movementsOfArticles = result.movementsOfArticles;
+          this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
+          this.updatePrices();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   async addItem(itemData: MovementOfArticle) {
@@ -650,16 +581,23 @@ export class AddSaleOrderComponent {
     }
   }
 
-  public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
+  public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
-    return new Promise<ArticleStock>((resolve, reject) => {
+    return new Promise<MovementOfArticle>((resolve, reject) => {
 
-      this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
+      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
+      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
+      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
+
+      this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
         result => {
-          if (!result.articleStocks || result.articleStocks.length <= 0) {
+          if (!result.movementOfArticle) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
-            resolve(result.articleStocks[0]);
+            this.hideMessage();
+            movementOfArticle = result.movementOfArticle;
+            resolve(movementOfArticle);
           }
         },
         error => {
@@ -712,6 +650,26 @@ export class AddSaleOrderComponent {
     return isValid;
   }
 
+  public getArticleStock(movementOfArticle: MovementOfArticle): Promise<ArticleStock> {
+
+    return new Promise<ArticleStock>((resolve, reject) => {
+
+      this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
+        result => {
+          if (!result.articleStocks || result.articleStocks.length <= 0) {
+            resolve(null);
+          } else {
+            resolve(result.articleStocks[0]);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
   public recalculateCostPrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
 
     let quotation = 1;
@@ -760,7 +718,11 @@ export class AddSaleOrderComponent {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
           articleTax.taxBase = taxedAmount;
-          articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          if(articleTax.percentage && articleTax.percentage !== 0) {
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          } else {
+            articleTax.taxAmount = articleTax.tax.amount * movementOfArticle.amount;
+          }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
         }
@@ -826,16 +788,19 @@ export class AddSaleOrderComponent {
     movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
     movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
     movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
-
     if (movementOfArticle.transaction.type.requestTaxes) {
-      let tax: Taxes = new Taxes();
       let taxes: Taxes[] = new Array();
       if (movementOfArticle.taxes) {
         for (let taxAux of movementOfArticle.taxes) {
-          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          let tax: Taxes = new Taxes();
           tax.tax = taxAux.tax;
-          tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-          tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          tax.percentage = this.roundNumber.transform(taxAux.percentage);
+          if(taxAux.percentage && taxAux.percentage !== 0) {
+            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+          } else {
+            tax.taxAmount = taxAux.tax.amount * movementOfArticle.amount;
+          }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);
@@ -888,61 +853,9 @@ export class AddSaleOrderComponent {
     });
   }
 
-  async updateTaxes() {
-
-    let transactionTaxes: Taxes[] = new Array();
-    let transactionTaxesAUX: Taxes[] = new Array();
-
-    this.transaction.exempt = 0;
-
-    if (this.movementsOfArticles) {
-      for (let movementOfArticle of this.movementsOfArticles) {
-        if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
-          let transactionTax: Taxes = new Taxes();
-          for (let taxesAux of movementOfArticle.taxes) {
-            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              transactionTax.percentage = taxesAux.percentage;
-              transactionTax.tax = taxesAux.tax;
-              transactionTax.taxBase = taxesAux.taxBase;
-              transactionTax.taxAmount = taxesAux.taxAmount;
-            } else {
-              transactionTax = taxesAux;
-            }
-          }
-          transactionTaxesAUX.push(transactionTax);
-        } else {
-          this.transaction.exempt += movementOfArticle.salePrice;
-        }
-      }
-    }
-
-    if (transactionTaxesAUX) {
-      for (let transactionTaxAux of transactionTaxesAUX) {
-        let exists: boolean = false;
-        for (let transactionTax of transactionTaxes) {
-          if (transactionTaxAux.tax.name === transactionTax.tax.name &&
-            transactionTaxAux.percentage === transactionTax.percentage) {
-            transactionTax.taxAmount += transactionTaxAux.taxAmount;
-            transactionTax.taxBase += transactionTaxAux.taxBase;
-            exists = true;
-          }
-        }
-
-        if (!exists) {
-          transactionTaxes.push(transactionTaxAux);
-        }
-      }
-    }
-
-    this.transaction.taxes = transactionTaxes;
-    await this.updateTransaction().then(
-      transaction => {
-        if(transaction) {
-          this.transaction = transaction;
-          this.lastQuotation = this.transaction.quotation;
-        }
-      }
-    );
+  async addTransactionTaxes(taxes: Taxes[]) {
+    this.transaction.taxes = taxes;
+    this.updateTaxes();
   }
 
   async updatePrices(discountPercent?: number) {
@@ -999,6 +912,81 @@ export class AddSaleOrderComponent {
         );
       }
     }
+  }
+
+  async updateTaxes() {
+
+    let oldTaxes: Taxes[] = this.transaction.taxes;
+    let totalPriceAux = 0;
+    
+    let transactionTaxes: Taxes[] = new Array();
+    let transactionTaxesAUX: Taxes[] = new Array();
+
+    this.transaction.exempt = 0;
+    this.totalTaxesAmount = 0;
+
+    if (this.movementsOfArticles) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
+          for (let taxesAux of movementOfArticle.taxes) {
+            let transactionTax: Taxes = new Taxes();
+            if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+              transactionTax.percentage = taxesAux.percentage;
+              transactionTax.tax = taxesAux.tax;
+              transactionTax.taxBase = taxesAux.taxBase;
+              transactionTax.taxAmount = taxesAux.taxAmount;
+            } else {
+              transactionTax = taxesAux;
+            }
+            transactionTaxesAUX.push(transactionTax);
+          }
+        } else {
+          this.transaction.exempt += movementOfArticle.salePrice;
+        }
+        totalPriceAux += movementOfArticle.salePrice;
+      }
+    }
+
+    if (transactionTaxesAUX) {
+      for (let transactionTaxAux of transactionTaxesAUX) {
+        let exists: boolean = false;
+        for (let transactionTax of transactionTaxes) {
+          if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
+            transactionTax.taxAmount += transactionTaxAux.taxAmount;
+            transactionTax.taxBase += transactionTaxAux.taxBase;
+            exists = true;
+          }
+        }
+        this.totalTaxesAmount += transactionTaxAux.taxAmount;
+        if (!exists) {
+          transactionTaxes.push(transactionTaxAux);
+        }
+      }
+    }
+
+    this.transaction.taxes = transactionTaxes;
+    
+    if(oldTaxes && oldTaxes.length > 0) {
+      for(let oldTax of oldTaxes) {
+        if(oldTax.tax.classification !== TaxClassification.Tax) {
+          this.transaction.taxes.push(oldTax);
+          this.totalTaxesAmount += oldTax.taxAmount;
+          // SUMAMOS AL TOTAL DE LA TRANSACCION LOS IMPUESTOS CARGADOS MANUALMENTE COMO PERCEPCIONES Y RETENCIONES
+          totalPriceAux += oldTax.taxAmount;
+        }
+      }
+    }
+
+    this.transaction.totalPrice = totalPriceAux;
+    this.transaction.basePrice = this.transaction.totalPrice - this.transaction.discountAmount - this.totalTaxesAmount;
+    await this.updateTransaction().then(
+      transaction => {
+        if(transaction) {
+          this.transaction = transaction;
+          this.lastQuotation = this.transaction.quotation;
+        }
+      }
+    );
   }
 
   public validateElectronicTransactionAR(): void {
@@ -1316,7 +1304,6 @@ export class AddSaleOrderComponent {
         }, (reason) => {
         });
         break;
-
       case 'change-quotation':
         modalRef = this._modalService.open(this.contentChangeQuotation).result.then(async (result) => {
           if (result !== "cancel" && result !== '') {
@@ -1326,6 +1313,11 @@ export class AddSaleOrderComponent {
           }
         }, (reason) => {
           this.transaction.quotation = this.lastQuotation;
+        });
+        break;
+      case 'change-taxes':
+        modalRef = this._modalService.open(this.containerTaxes, { size: 'lg' }).result.then(async (result) => {
+        }, (reason) => {
         });
         break;
       case 'change-employee':
@@ -1405,6 +1397,89 @@ export class AddSaleOrderComponent {
         break;
       default: ;
     };
+  }
+
+  async isValidCharge(): Promise<boolean> {
+
+    let isValid = true;
+
+    if (this.movementsOfArticles && this.movementsOfArticles.length <= 0) {
+      isValid = false;
+      this.showMessage("No existen productos en la transacción.", 'info', true);
+    } else {
+      if(await !this.areValidMovementOfArticle()) {
+        isValid = false;
+      }
+    }
+
+    if (isValid &&
+      this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
+      !this.transaction.company) {
+      isValid = false;
+      this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
+    }
+
+    if (isValid &&
+      this.transaction.type.electronics &&
+      this.transaction.totalPrice > 5000 &&
+      !this.transaction.company &&
+      Config.country === 'AR') {
+      isValid = false;
+      this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
+    }
+
+    if (isValid &&
+        this.transaction.type.electronics &&
+        this.transaction.company && (
+        !this.transaction.company.identificationType ||
+        !this.transaction.company.identificationValue ||
+        this.transaction.company.identificationValue === '')
+      ) {
+      isValid = false;
+      this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
+      this.loading = false;
+    }
+
+    if (isValid &&
+      this.transaction.type.fixedOrigin &&
+      this.transaction.type.fixedOrigin === 0 &&
+      this.transaction.type.electronics &&
+      Config.country === 'MX') {
+      isValid = false;
+      this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
+      this.loading = false;
+    }
+
+    if (isValid &&
+      this.transaction.type.electronics &&
+      !Config.modules.sale.electronicTransactions) {
+      isValid = false;
+      this.showMessage("No tiene habilitado el módulo de factura electrónica.", 'info', true);
+      this.loading = false;
+    }
+
+    return isValid;
+  }
+
+  public getPrinters(): Promise<Printer[]> {
+
+    return new Promise<Printer[]>( async (resolve, reject) => {
+
+      this._printerService.getPrinters().subscribe(
+        result => {
+          if (!result.printers) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.printers);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   async areValidMovementOfArticle(): Promise<boolean> {
@@ -1526,6 +1601,118 @@ export class AddSaleOrderComponent {
     });
   }
 
+  async processStock(): Promise<boolean> {
+
+    let endProcess: boolean = true;
+
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+
+      for(let movementOfArticle of this.movementsOfArticles) {
+        if(movementOfArticle.article) {
+          await this.updateRealStock(movementOfArticle).then(
+            articleStock => {
+              if(!articleStock) {
+                endProcess = false;
+              }
+            }
+          );
+        }
+      }
+    } else {
+      this.showMessage("No se encuentran productos en la transacción", 'info', true);
+    }
+
+    return endProcess;
+  }
+
+  public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
+
+    return new Promise<boolean>((resolve, reject) => {
+
+      let amountToModify;
+
+      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
+        amountToModify = movementOfArticle.amount;
+      } else {
+        amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
+      }
+
+      this._articleStockService.updateRealStock(movementOfArticle.article, amountToModify, this.transaction.type.stockMovement.toString()).subscribe(
+        result => {
+          this.loading = false;
+          if (!result.articleStock) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.articleStock);
+          }
+        },
+        error => {
+          this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  async close() {
+
+    this.typeOfOperationToPrint = 'item';
+
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Bar && movementOfArticle.printed < movementOfArticle.amount) {
+          this.barArticlesToPrint.push(movementOfArticle);
+        }
+        if (movementOfArticle.article && movementOfArticle.article.printIn === ArticlePrintIn.Kitchen && movementOfArticle.printed < movementOfArticle.amount) {
+          this.kitchenArticlesToPrint.push(movementOfArticle);
+        }
+      }
+    }
+
+    if (this.barArticlesToPrint && this.barArticlesToPrint.length !== 0) {
+      this.typeOfOperationToPrint = "bar";
+      this.openModal('printers');
+    } else if (this.kitchenArticlesToPrint && this.kitchenArticlesToPrint.length !== 0) {
+      this.typeOfOperationToPrint = "kitchen";
+      this.openModal('printers');
+    } else if (this.posType === "resto") {
+      this.transaction.table.state = TableState.Busy;
+      await this.updateTable().then(table => {
+        if(table) {
+          this.transaction.table = table;
+          this.backFinal();
+        }
+      });
+    } else {
+      this.backFinal();
+    }
+  }
+
+  public backFinal(): void {
+
+    if (this.posType === "resto") {
+      if(this.transaction.table.room && this.transaction.table.room._id) {
+        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room._id + '/mesas']);
+      } else {
+        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
+      }
+    } else if (this.posType === "mostrador") {
+      if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+        this._router.navigate(['/pos/' + this.posType + '/compra']);
+      } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+        this._router.navigate(['/pos/' + this.posType + '/venta']);
+      } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Stock) {
+        this._router.navigate(['/pos/' + this.posType + '/stock']);
+      } else {
+        this._router.navigate(['/pos/' + this.posType]);
+      }
+    } else {
+      this._router.navigate(['/pos/' + this.posType]);
+    }
+  }
+
   async getTaxVAT(movementOfArticle: MovementOfArticle) {
 
     this.loading = true;
@@ -1562,66 +1749,41 @@ export class AddSaleOrderComponent {
     );
   }
 
-  async isValidCharge(): Promise<boolean> {
+  public updateMovementOfArticlePrinted(): void {
 
-    let isValid = true;
+    this.loading = true;
 
-    if (this.movementsOfArticles && this.movementsOfArticles.length <= 0) {
-      isValid = false;
-      this.showMessage("No existen productos en la transacción.", 'info', true);
-    } else {
-      if(await !this.areValidMovementOfArticle()) {
-        isValid = false;
+    this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].printed = this.kitchenArticlesToPrint[this.kitchenArticlesPrinted].amount;
+
+    this._movementOfArticleService.updateMovementOfArticle(this.kitchenArticlesToPrint[this.kitchenArticlesPrinted]).subscribe(
+      async result => {
+        if (!result.movementOfArticle) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.kitchenArticlesPrinted++;
+          if (this.kitchenArticlesPrinted < this.kitchenArticlesToPrint.length) {
+            this.updateMovementOfArticlePrinted();
+          } else {
+            if (this.posType === "resto") {
+              this.transaction.table.state = TableState.Busy;
+              await this.updateTable().then(table => {
+                if(table) {
+                  this.transaction.table = table;
+                  this.backFinal();
+                }
+              });
+            } else {
+              this.backFinal();
+            }
+          }
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
       }
-    }
-
-    if (isValid &&
-      this.transaction.type.transactionMovement === TransactionMovement.Purchase &&
-      !this.transaction.company) {
-      isValid = false;
-      this.showMessage("Debe seleccionar un proveedor para la transacción.", 'info', true);
-    }
-
-    if (isValid &&
-      this.transaction.type.electronics &&
-      this.transaction.totalPrice > 5000 &&
-      !this.transaction.company &&
-      Config.country === 'AR') {
-      isValid = false;
-      this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
-    }
-
-    if (isValid &&
-        this.transaction.type.electronics &&
-        this.transaction.company && (
-        !this.transaction.company.identificationType ||
-        !this.transaction.company.identificationValue ||
-        this.transaction.company.identificationValue === '')
-      ) {
-      isValid = false;
-      this.showMessage("El cliente ingresado no tiene nro de identificación", 'info', true);
-      this.loading = false;
-    }
-
-    if (isValid &&
-      this.transaction.type.fixedOrigin &&
-      this.transaction.type.fixedOrigin === 0 &&
-      this.transaction.type.electronics &&
-      Config.country === 'MX') {
-      isValid = false;
-      this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
-      this.loading = false;
-    }
-
-    if (isValid &&
-      this.transaction.type.electronics &&
-      !Config.modules.sale.electronicTransactions) {
-      isValid = false;
-      this.showMessage("No tiene habilitado el módulo de factura electrónica.", 'info', true);
-      this.loading = false;
-    }
-
-    return isValid;
+    );
   }
 
   public countPrinters(): number {
@@ -1720,33 +1882,6 @@ export class AddSaleOrderComponent {
     );
   }
 
-  public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
-
-    return new Promise<MovementOfArticle>((resolve, reject) => {
-
-      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
-      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
-      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice);
-
-      this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
-        result => {
-          if (!result.movementOfArticle) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            this.hideMessage();
-            movementOfArticle = result.movementOfArticle;
-            resolve(movementOfArticle);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
   public setPrintBill(): void {
     if (this.movementsOfArticles && this.movementsOfArticles.length !== 0) {
       this.typeOfOperationToPrint = 'bill';
@@ -1757,107 +1892,13 @@ export class AddSaleOrderComponent {
     }
   }
 
-  async processStock(): Promise<boolean> {
+  public filterArticles(): void {
 
-    let endProcess: boolean = true;
-
-    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-
-      for(let movementOfArticle of this.movementsOfArticles) {
-        if(movementOfArticle.article) {
-          await this.updateRealStock(movementOfArticle).then(
-            articleStock => {
-              if(!articleStock) {
-                endProcess = false;
-              }
-            }
-          );
-        }
-      }
-    } else {
-      this.showMessage("No se encuentran productos en la transacción", 'info', true);
+    this.listArticlesComponent.filterArticle = this.filterArticle;
+    this.listArticlesComponent.filterItem(this.categorySelected);
+    if(!this.filterArticle || this.filterArticle === '') {
+      this.showCategories();
     }
-
-    return endProcess;
-  }
-
-  public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
-
-    return new Promise<boolean>((resolve, reject) => {
-
-      let amountToModify;
-
-      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
-        amountToModify = movementOfArticle.amount;
-      } else {
-        amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-      }
-
-      this._articleStockService.updateRealStock(movementOfArticle.article, amountToModify, this.transaction.type.stockMovement.toString()).subscribe(
-        result => {
-          this.loading = false;
-          if (!result.articleStock) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.articleStock);
-          }
-        },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
-  public backFinal(): void {
-
-    if (this.posType === "resto") {
-      if(this.transaction.table.room && this.transaction.table.room._id) {
-        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room._id + '/mesas']);
-      } else {
-        this._router.navigate(['/pos/resto/salones/' + this.transaction.table.room + '/mesas']);
-      }
-    } else if (this.posType === "mostrador") {
-      if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
-        this._router.navigate(['/pos/' + this.posType + '/compra']);
-      } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-        this._router.navigate(['/pos/' + this.posType + '/venta']);
-      } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Stock) {
-        this._router.navigate(['/pos/' + this.posType + '/stock']);
-      } else {
-        this._router.navigate(['/pos/' + this.posType]);
-      }
-    } else {
-      this._router.navigate(['/pos/' + this.posType]);
-    }
-  }
-
-  public getMovementsOfTransaction(): void {
-
-    this.loading = true;
-
-    this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
-      result => {
-        if (!result.movementsOfArticles) {
-          this.areMovementsOfArticlesEmpty = true;
-          this.movementsOfArticles = new Array();
-          this.updatePrices();
-        } else {
-          this.areMovementsOfArticlesEmpty = false;
-          this.movementsOfArticles = result.movementsOfArticles;
-          this.containerMovementsOfArticles.nativeElement.scrollTop = this.containerMovementsOfArticles.nativeElement.scrollHeight;
-          this.updatePrices();
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
   }
 
   public showCategories(): void {

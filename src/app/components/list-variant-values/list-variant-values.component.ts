@@ -23,7 +23,6 @@ export class ListVariantValuesComponent implements OnInit {
   public variantValues: VariantValue[] = new Array();
   public areVariantValuesEmpty: boolean = true;
   public alertMessage: string = '';
-  public userValue: string;
   public orderTerm: string[] = ['description'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -41,8 +40,6 @@ export class ListVariantValuesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userValue = pathLocation[1];
     this.orderBy('type', 'name');
     this.getVariantValues();
   }

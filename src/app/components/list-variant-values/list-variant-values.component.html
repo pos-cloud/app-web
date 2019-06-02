@@ -1,5 +1,4 @@
-<!--ADMIN-->
-<section class="container-fluid" *ngIf="userValue=='admin'">
+<section class="container-fluid">
   <div class="center-content" *ngIf="alertMessage !== '' && !areVariantValuesEmpty">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}

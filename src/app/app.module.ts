@@ -133,7 +133,6 @@ import { AddVariantValueComponent } from './components/add-variant-value/add-var
 import { AddMovementOfArticleComponent } from './components/add-movement-of-article/add-movement-of-article.component';
 import { AddArticleTaxComponent } from './components/add-article-tax/add-article-tax.component';
 import { AddTaxComponent } from './components/add-tax/add-tax.component';
-import { UpdateTaxComponent } from './components/update-tax/update-tax.component';
 import { DeleteTaxComponent } from './components/delete-tax/delete-tax.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
@@ -331,7 +330,6 @@ import { AuthService } from './services/auth.service';
     AddMovementOfArticleComponent,
     AddArticleTaxComponent,
     AddTaxComponent,
-    UpdateTaxComponent,
     DeleteTaxComponent,
     ListTaxesComponent,
     ApplyDiscountComponent,
@@ -488,7 +486,6 @@ import { AuthService } from './services/auth.service';
     AddMovementOfArticleComponent,
     AddArticleTaxComponent,
     AddTaxComponent,
-    UpdateTaxComponent,
     DeleteTaxComponent,
     ListTaxesComponent,
     ApplyDiscountComponent,
