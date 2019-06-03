@@ -154,7 +154,8 @@ export class HeaderComponent {
   }
 
   public goToHome(): void {
-    this._router.navigate(['/']);/*
+    this._router.navigate(['/']);
+    /*
     this.makeVisibleReport(false);
     this._authService.getIdentity.subscribe(
       identity => {
