@@ -154,6 +154,7 @@ export class HeaderComponent {
   }
 
   public goToHome(): void {
+    this._router.navigate(['/']);/*
     this.makeVisibleReport(false);
     this._authService.getIdentity.subscribe(
       identity => {
@@ -163,7 +164,7 @@ export class HeaderComponent {
           this._router.navigate(['/']);
         }
       },
-    );
+    );*/
   }
 
   public makeVisibleReport(visible: boolean): void {
