@@ -1,5 +1,4 @@
 import { User } from './user';
-import { Company } from './company';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -20,7 +19,7 @@ export class PaymentMethod {
   public allowToFinance: boolean;
 	public cashBoxImpact: boolean;
 	public bankReconciliation: boolean;
-	public company : Company;
+	public company : CompanyType;
 	public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
@@ -28,3 +27,10 @@ export class PaymentMethod {
 
 	constructor () {}
 }
+
+export enum CompanyType {
+  None = <any> null,
+  Client = <any> "Cliente",
+  Provider = <any> "Proveedor",
+}
+

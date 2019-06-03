@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { PaymentMethod } from './../../models/payment-method';
+import { PaymentMethod, CompanyType } from './../../models/payment-method';
 
 import { PaymentMethodService } from './../../services/payment-method.service';
 
@@ -23,6 +23,8 @@ export class AddPaymentMethodComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
+
 
   public formErrors = {
     'code': '',
