@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { PaymentMethod } from './../../models/payment-method';
+import { PaymentMethod, CompanyType } from './../../models/payment-method';
 
 import { PaymentMethodService } from './../../services/payment-method.service';
 
@@ -24,6 +24,8 @@ export class UpdatePaymentMethodComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
+
 
   public formErrors = {
     'code': '',
@@ -87,7 +89,11 @@ export class UpdatePaymentMethodComponent implements OnInit {
         ]
       ],'cashBoxImpact': [this.paymentMethod.cashBoxImpact, [
         ]
+      ],'company': [this.paymentMethod.company, [
+        ]
+      ],'bankReconciliation': [this.paymentMethod.bankReconciliation, [
       ]
+        ]
     });
 
     this.paymentMethodForm.valueChanges
@@ -128,6 +134,10 @@ export class UpdatePaymentMethodComponent implements OnInit {
     if (this.paymentMethod.cardDetail === undefined) this.paymentMethod.cardDetail = false;
     if (this.paymentMethod.allowToFinance === undefined) this.paymentMethod.allowToFinance = false;
     if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
+    if (this.paymentMethod.bankReconciliation === undefined) this.paymentMethod.bankReconciliation = false;
+    if (!this.paymentMethod.company) this.paymentMethod.company = null;
+
+
 
     this.paymentMethodForm.setValue({
       '_id': this.paymentMethod._id,
@@ -141,7 +151,9 @@ export class UpdatePaymentMethodComponent implements OnInit {
       'checkDetail': this.paymentMethod.checkDetail,
       'cardDetail': this.paymentMethod.cardDetail,
       'allowToFinance': this.paymentMethod.allowToFinance,
-      'cashBoxImpact': this.paymentMethod.cashBoxImpact
+      'cashBoxImpact': this.paymentMethod.cashBoxImpact,
+      'bankReconciliation' :this.paymentMethod.bankReconciliation,
+      'company' : this.paymentMethod.company
     });
   }
 

@@ -72,7 +72,8 @@ export class AddMovementOfCashComponent implements OnInit {
     'paymentChange': '',
     'observation': '',
     'surcharge': '',
-    'CUIT': ''
+    'CUIT': '',
+    'number' : ''
   };
 
   public validationMessages = {
@@ -96,6 +97,11 @@ export class AddMovementOfCashComponent implements OnInit {
       'minlength': 'El CUIT debe contener 13 díguitos.',
       'maxlength': 'El CUIT debe contener 13 díguitos.',
       'pattern': ' Ingrese el CUIT con formato con guiones'
+    },
+    'number' : {
+      'minlength': 'El numero debe contener 29 díguitos.',
+      'maxlength': 'El numero debe contener 29 díguitos.',
+      'pattern': ' Ingrese solo números '
     }
   };
 
@@ -172,6 +178,9 @@ export class AddMovementOfCashComponent implements OnInit {
         ]
       ],
       'number': [this.movementOfCash.number, [
+          Validators.minLength(29),
+          Validators.maxLength(29),
+          Validators.pattern("^[0-9]*$")
         ]
       ],
       'bank': [this.movementOfCash.bank, [

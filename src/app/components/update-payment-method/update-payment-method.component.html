@@ -111,6 +111,29 @@
                 </select>
               </div>
             </div>
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="company" class="control-label">Pide empresa</label>
+                  <div class="input-group">
+                    <select class="form-control" formControlName="company">
+                      <option *ngFor="let companyType of companyTypes"
+                              [ngValue]="companyType"
+                              [selected]="paymentMethod.company === companyType"
+                              [disabled]="readonly"
+                      >{{ companyType }}</option>
+                    </select>
+                  </div>
+              </div>
+          </div>
+          <div class="row">
+                <div class="form-group col-md-12">
+                  <label for="bankReconciliation" class="control-label">¿Tiene conciliación?</label>
+                  <select class="form-control" formControlName="bankReconciliation">
+                    <option value="true">Si</option>
+                    <option value="false" selected>No</option>
+                  </select>
+              </div>
+          </div>
           </ng-template>
         </ngb-tab>
         <ngb-tab title="Auditoría">
