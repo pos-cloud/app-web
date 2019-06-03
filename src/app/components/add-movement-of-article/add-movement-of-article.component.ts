@@ -609,7 +609,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     let isValid = true;
 
-    if (this.movementOfArticle.transaction.type &&
+    if (isValid && 
+        this.movementOfArticle.transaction.type &&
         this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale &&
         this.movementOfArticle.article &&
         !this.movementOfArticle.article.allowSale) {
@@ -617,7 +618,8 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.showMessage("El producto " + this.movementOfArticle.article.description + " (" + this.movementOfArticle.article.code + ") no esta habilitado para la venta", 'info', true);
     }
 
-    if (this.movementOfArticle.transaction.type &&
+    if (isValid && 
+        this.movementOfArticle.transaction.type &&
         this.movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Purchase &&
         this.movementOfArticle.article &&
         !this.movementOfArticle.article.allowPurchase) {
@@ -625,7 +627,27 @@ export class AddMovementOfArticleComponent implements OnInit {
         this.showMessage("El producto " + this.movementOfArticle.article.description + " (" + this.movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
     }
 
-    if  (this.movementOfArticle.article &&
+    if(isValid &&
+      this.movementOfArticle.article &&
+      this.movementOfArticle.article.taxes &&
+      this.movementOfArticle.article.taxes.length > 0 &&
+      this.movementOfArticle.taxes &&
+      this.movementOfArticle.taxes.length > 0) {
+        let taxAmount = 0;
+        for(let tax of this.movementOfArticle.article.taxes) {
+          if(tax.percentage === 0 && 
+            tax.taxAmount > 0) {
+              taxAmount += tax.taxAmount;
+          }
+        }
+        if(taxAmount > this.movementOfArticle.unitPrice) {
+          isValid = false;
+          this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
+        }
+    }
+
+    if  (isValid && 
+        this.movementOfArticle.article &&
         Config.modules.stock &&
         this.movementOfArticle.transaction.type &&
         this.movementOfArticle.transaction.type.modifyStock &&
