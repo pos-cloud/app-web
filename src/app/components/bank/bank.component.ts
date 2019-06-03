@@ -35,10 +35,14 @@ export class BankComponent implements OnInit {
   public formErrors = {
     'code': '',
     'name': '',
+    'agency' : ''
   };
 
   public validationMessages = {
     'code': {
+      'required': 'Este campo es requerido.'
+    },
+    'agency': {
       'required': 'Este campo es requerido.'
     },
     'name': {
@@ -127,7 +131,10 @@ export class BankComponent implements OnInit {
         Validators.required
         ]
       ],
-      'agency': [this.bank.agency, []],
+      'agency': [this.bank.agency, [
+        Validators.required
+        ]
+      ],
       'account' : [this.bank.account,[]]
     });
 

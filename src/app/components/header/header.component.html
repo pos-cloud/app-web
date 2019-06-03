@@ -292,21 +292,22 @@
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-gears"></i> Configuración</a>
         <div class="dropdown-menu" ngbDropdownMenu>
+            <button class="dropdown-item"
+                  [routerLink]="['admin','configuraciones']"
+                  [routerLinkActive]="['active']">
+            Generales
+          </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','usuarios']"
                   [routerLinkActive]="['active']">
             Usuarios
           </button>
           <button class="dropdown-item"
-                  [routerLink]="['admin','configuraciones']"
-                  [routerLinkActive]="['active']">
-            Generales
-          </button>
-          <button class="dropdown-item"
                   [routerLink]="['admin','impresoras']"
                   [routerLinkActive]="['active']">
             Impresoras
           </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-transacciones']"
                   [routerLinkActive]="['active']">
@@ -317,6 +318,7 @@
                   [routerLinkActive]="['active']">
             Tipos de Cancelaciones
           </button>
+          <div class="dropdown-divider"></div>
           <button *ngIf="config.country === 'MX'"
                   class="dropdown-item"
                   [routerLink]="['admin','tipos-de-relacion']"
@@ -328,6 +330,13 @@
                   [routerLinkActive]="['active']">
             Tipos de Identificación
           </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','condiciones-de-iva']"
+                  [routerLinkActive]="['active']">
+            <span *ngIf="config.country === 'AR'">Condiciones de IVA</span>
+            <span *ngIf="config.country !== 'AR'">Régimes Fiscales</span>
+          </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','metodos-de-pago']"
                   [routerLinkActive]="['active']">
@@ -345,11 +354,16 @@
             Usos de CFDI
           </button>
           <button class="dropdown-item"
-                  [routerLink]="['admin','condiciones-de-iva']"
+                  [routerLink]="['admin','banks']"
                   [routerLinkActive]="['active']">
-            <span *ngIf="config.country === 'AR'">Condiciones de IVA</span>
-            <span *ngIf="config.country !== 'AR'">Régimes Fiscales</span>
+            Bancos
           </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','monedas']"
+                  [routerLinkActive]="['active']">
+            Monedas
+          </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','campos-de-productos']"
                   [routerLinkActive]="['active']">
@@ -359,12 +373,13 @@
                   [routerLink]="['admin','campos-de-empresas']"
                   [routerLinkActive]="['active']">
             Campos de empresas
-          </button>	
+          </button>
           <button class="dropdown-item"
                   [routerLink]="['admin','unidades-de-medida']"
                   [routerLinkActive]="['active']">
             Unidades de Medida
           </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-variantes']"
                   [routerLinkActive]="['active']">
@@ -375,11 +390,7 @@
                   [routerLinkActive]="['active']">
             Valores de Variantes
           </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','monedas']"
-                  [routerLinkActive]="['active']">
-            Monedas
-          </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','states']"
                   [routerLinkActive]="['active']">
@@ -390,11 +401,6 @@
                   [routerLink]="['admin','countries']"
                   [routerLinkActive]="['active']">
             Países
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','banks']"
-                  [routerLinkActive]="['active']">
-            Bancos
           </button>
         </div>
       </li>
