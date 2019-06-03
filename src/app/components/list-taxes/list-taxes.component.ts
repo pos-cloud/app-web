@@ -92,7 +92,7 @@ export class ListTaxesComponent implements OnInit {
     switch (op) {
       case 'view':
         modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
-        modalRef.componentInstance.tax = tax;
+        modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
@@ -108,7 +108,7 @@ export class ListTaxesComponent implements OnInit {
         break;
       case 'update':
         modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
-        modalRef.componentInstance.tax = tax;
+        modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {

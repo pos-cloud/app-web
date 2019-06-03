@@ -74,7 +74,6 @@ export class AddTaxComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
@@ -83,6 +82,7 @@ export class AddTaxComponent implements OnInit {
         tax => {
           if(tax) {
             this.tax = tax;
+            this.setValuesForm();
           }
         }
       );
