@@ -165,7 +165,7 @@ export class AddArticleTaxComponent implements OnInit {
     if(this.articleTaxForm.value.tax) {
       
       let taxedAmount = 0;
-  
+      
       if(this.article) {
         taxedAmount = this.article.basePrice;
     
@@ -184,7 +184,7 @@ export class AddArticleTaxComponent implements OnInit {
       } else if (this.transaction) {
         taxedAmount = this.transaction.basePrice;
       }
-  
+   
       switch(op) {
         case 'tax':
           this.articleTax.tax = this.articleTaxForm.value.tax;
@@ -233,6 +233,7 @@ export class AddArticleTaxComponent implements OnInit {
       this.articleTaxes.push(this.articleTax);
     }
     this.articleTax = new Taxes();
+    this.buildForm();
     this.eventAddArticleTax.emit(this.articleTaxes);
   }
 
