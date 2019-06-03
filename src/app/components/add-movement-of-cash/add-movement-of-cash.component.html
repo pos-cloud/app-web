@@ -167,6 +167,9 @@
             <div class="form-group col-md-6">
               <label for="number" class="control-label">Comprobante:</label>
               <input type="text" class="form-control" name="number" formControlName="number"/>
+              <div *ngIf="formErrors.number" class="alert alert-danger">
+                {{ formErrors.number }}
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label for="expirationDate" class="control-label">Fecha Vencimiento:</label>
