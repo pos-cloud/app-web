@@ -157,7 +157,7 @@
             </textarea>
           </div>
         </div>
-        <div *ngIf="transaction.type.movement === 'Entrada'">
+        <div>
           <div class="row" *ngIf="paymentMethodSelected && paymentMethodSelected.checkDetail">
             <div class="form-group col-md-6">
               <b>Datos del cheque:</b>
@@ -216,7 +216,7 @@
             </div>
           </div>
         </div>
-          <div *ngIf="paymentMethodSelected && paymentMethodSelected !== 'null' && paymentMethodSelected.checkDetail && transaction.type.currentAccount === 'Cobra' && transaction.type.movement === 'Salida'" class="form-group col-md-6">
+          <div *ngIf="paymentMethodSelected && paymentMethodSelected !== 'null' && paymentMethodSelected.inputAndOuput && transaction.type.currentAccount === 'Cobra' && transaction.type.movement === 'Salida'" class="form-group col-md-6">
             <button type="button" class="btn btn-outline-secondary" (click)="openModal('checks',null)">Buscar en Cartera</button>
           </div>
         <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">
