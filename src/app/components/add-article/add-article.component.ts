@@ -674,6 +674,10 @@ export class AddArticleComponent implements OnInit {
         
         if (this.taxes && this.taxes.length > 0) {
           for (const articleTax of this.taxes) {
+            if(articleTax.tax.percentage && articleTax.tax.percentage != 0) {
+              articleTax.taxBase = taxedAmount;
+              articleTax.taxAmount = this.roundNumber.transform((taxedAmount * articleTax.percentage / 100));
+            }
             this.articleForm.value.costPrice += (articleTax.taxAmount);
           }
         }

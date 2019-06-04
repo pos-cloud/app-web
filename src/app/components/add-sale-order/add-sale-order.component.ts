@@ -855,7 +855,7 @@ export class AddSaleOrderComponent {
 
   async addTransactionTaxes(taxes: Taxes[]) {
     this.transaction.taxes = taxes;
-    this.updateTaxes();
+    this.updatePrices();
   }
 
   async updatePrices(discountPercent?: number) {
@@ -924,7 +924,7 @@ export class AddSaleOrderComponent {
 
     this.transaction.exempt = 0;
     this.totalTaxesAmount = 0;
-
+    this.transaction.basePrice = 0;
     if (this.movementsOfArticles) {
       for (let movementOfArticle of this.movementsOfArticles) {
         if (movementOfArticle.taxes && movementOfArticle.taxes.length !== 0) {
@@ -939,6 +939,7 @@ export class AddSaleOrderComponent {
               transactionTax = taxesAux;
             }
             transactionTaxesAUX.push(transactionTax);
+            this.transaction.basePrice += transactionTax.taxBase;
           }
         } else {
           this.transaction.exempt += movementOfArticle.salePrice;
@@ -946,7 +947,7 @@ export class AddSaleOrderComponent {
         totalPriceAux += movementOfArticle.salePrice;
       }
     }
-
+    
     if (transactionTaxesAUX) {
       for (let transactionTaxAux of transactionTaxesAUX) {
         let exists: boolean = false;
@@ -977,8 +978,8 @@ export class AddSaleOrderComponent {
       }
     }
 
-    this.transaction.totalPrice = totalPriceAux;
-    this.transaction.basePrice = this.transaction.totalPrice - this.transaction.discountAmount - this.totalTaxesAmount;
+    this.transaction.totalPrice = this.roundNumber.transform(totalPriceAux);
+    
     await this.updateTransaction().then(
       transaction => {
         if(transaction) {

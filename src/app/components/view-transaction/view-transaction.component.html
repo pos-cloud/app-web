@@ -120,6 +120,29 @@
               </div>
         </ng-template>
       </ngb-tab>
+      <ngb-tab [disabled]="!transaction.taxes || transaction.taxes.length === 0">
+        <ng-template ngbTabTitle>Impuestos</ng-template>
+        <ng-template ngbTabContent>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Impuesto</th>
+                      <th>Porcentaje</th>
+                      <th>Monto</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let tax of transaction.taxes">
+                      <td>{{tax.tax.name}}</td>
+                      <td>{{tax.percentage}}</td>
+                      <td>{{tax.taxAmount | currency:'USD':'1.2-2'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </ng-template>
+      </ngb-tab>
       <ngb-tab title="Métodos de Pago" [disabled]="areMovementsOfCashesEmpty">
           <ng-template ngbTabContent>
               <div class="table-responsive">
