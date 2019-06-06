@@ -158,45 +158,36 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th (click)="orderBy('code')">Código</th>
+            <th (click)="orderBy('code')">#</th>
             <th (click)="orderBy('description')">Descripción</th>
-            <th (click)="orderBy('make','description')">Marca</th>
-            <th (click)="orderBy('category','description')">Rubro</th>
-            <th (click)="orderBy('costPrice')">Precio de Costo</th>
-            <th (click)="orderBy('salePrice')">Precio de Venta</th>
+            <th (click)="orderBy('make.description')">Marca</th>
+            <th (click)="orderBy('category.description')">Rubro</th>
+            <th (click)="orderBy('barcode')">Código de Barra</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
-            
-            <th><input type="text" class="form-control" [(ngModel)]="filterCode" placeholder="Código..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterMake" placeholder="Marca..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCategory" placeholder="Rubro..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterCostPrice" placeholder="Precio de Costo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filterSalePrice" placeholder="Precio de Venta..."></th>
+          <tr class="filters">
+            <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (input)="getArticles()" placeholder="#..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (input)="getArticles()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (input)="getArticles()" placeholder="Marca..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (input)="getArticles()" placeholder="Rubro..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (input)="getArticles()" placeholder="Código de Barra..."></th>
           </tr>
         </thead>
         <tbody>
           <tr align="center" *ngIf="loading">
             <td colspan="16">Cargando...</td>
           </tr>
-          <tr *ngFor="let article of articles | filter: filterCode:'code'
-                                              | filter: filterDescription:'description'
-                                              | filter: filterMake:'description':'make'
-                                              | filter: filterCategory:'description':'category'
-                                              | orderBy: orderTerm: propertyTerm
-                                              | paginate: { itemsPerPage: itemsPerPage,
-                                                                            currentPage: p,
-                                                                            totalItems: totalItems
-                                                                          }"
-                                              (click)="selectArticle(article)">
+          <tr *ngFor="let article of articles |   paginate: { itemsPerPage: itemsPerPage,
+                                                  currentPage: currentPage,
+                                                  totalItems: totalItems
+                                                }"
+            (click)="selectArticle(article)">
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
             <td *ngIf="article.make">{{article.make.description}}</td>
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
             <td *ngIf="!article.category"></td>
-            <td>{{article.costPrice | currency:'USD':'1.2-2'}}</td>
-            <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
             <td colspan="9">No se encontraron productos</td>
@@ -209,7 +200,7 @@
         <div class="col-md-10">
           <pagination-controls
             class="my-pagination"
-            (pageChange)="p=$event"
+            (pageChange)="pageChange($event)"
             #api
             previousLabel="Ant."
             nextLabel="Sig."
@@ -217,7 +208,7 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage">
+          <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getArticles()">
             <option [value]="5">Mostrar 5 Registros</option>
             <option [value]="10">Mostrar 10 Registros</option>
             <option [value]="15">Mostrar 15 Registros</option>

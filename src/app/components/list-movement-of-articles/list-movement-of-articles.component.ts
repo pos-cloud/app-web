@@ -15,7 +15,7 @@ import { ArticleService } from 'app/services/article.service';
 import { ListArticlesComponent } from '../list-articles/list-articles.component';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
-import { PrintComponent } from '../print/print.component';
+import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 
 @Component({
   selector: 'app-list-movement-of-articles',
@@ -24,7 +24,6 @@ import { PrintComponent } from '../print/print.component';
 })
 export class ListMovementOfArticlesComponent implements OnInit {
 
-  public movementsOfArticles: MovementOfArticle[];
   public articleSelected: Article;
   public areTransactionsEmpty: boolean = true;
   public alertMessage: string = '';
@@ -34,12 +33,13 @@ export class ListMovementOfArticlesComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
-  public items: any[] = new Array();
+  public items: any[];
   public balance: number;
   public startDate: string;
   public endDate: string;
   public printers: Printer[];
   public userCountry: string;
+  public roundNumber: RoundNumberPipe;
 
   public orderTerm: string[] = ['transaction.endDate'];
   public currentPage: number = 0;
@@ -48,7 +48,6 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "transaction.operationType",
     "article._id",
     "operationType",
-    "updateDate",
     "transaction.endDate",
     "transaction.type.name",
     "transaction.type.transactionMovement",
@@ -59,12 +58,9 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "modifyStock",
     "stockMovement",
     "amount",
-    "costPrice",
-    "salePrice"
   ];
   public filters: any[];
   public filterValue: string;
-
 
   constructor(
     public _transactionService: TransactionService,
@@ -75,7 +71,8 @@ export class ListMovementOfArticlesComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) {
-    this.movementsOfArticles = new Array();
+    this.roundNumber = new RoundNumberPipe();
+    this.items = new Array();
     this.filters = new Array();
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
@@ -90,10 +87,10 @@ export class ListMovementOfArticlesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.openModal('article');
-    
   }
-  public getSummary(): void {
 
+  public getSummary(): void {
+    
     this.loading = true;
 
     /// ORDENAMOS LA CONSULTA
@@ -124,76 +121,62 @@ export class ListMovementOfArticlesComponent implements OnInit {
     match += `"article._id" : { "$oid" : "${this.articleSelected._id}"},
               "operationType": { "$ne": "D" },"transaction.operationType" : { "$ne": "D" }, 
               "transaction.state" : "Cerrado","modifyStock" : true,
-              "updateDate" : {"$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
+              "transaction.endDate" : {"$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
                               "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}
                               }
               }`;
-    
 
     match = JSON.parse(match);
 
     let project = {
-        "transaction.state":1,
-        "transaction.operationType":1,
-        "amount":1,
-        "article._id":1,
-        "operationType":1,
-        "updateDate":1,
-        "transaction.type.name":1,
+        "transaction.state": 1,
+        "transaction.operationType": 1,
+        "article._id": 1,
+        "operationType": 1,
+        "transaction.endDate": { $dateFromString: { dateString: { $dateToString: { date: "$transaction.endDate", timezone: timezone } }}},
+        "transaction.type.name": 1,
         "transaction.type.transactionMovement" : 1,
         "transaction.letter": { $toString : "$transaction.letter"},
         "transaction.number": { $toString : '$transaction.number'},
         "transaction.origin": { $toString : '$transaction.origin'},
-        "transaction._id":1,
-        "modifyStock":1,
-        "stockMovement":1,
-        "costPrice":1,
-        "salePrice" : 1,
-        "transaction.endDate" : 1
+        "transaction._id": 1,
+        "modifyStock": 1,
+        "stockMovement": 1,
+        "amount": 1
     };
 
     // AGRUPAMOS EL RESULTADO
     let group = {
         _id: null,
         count: { $sum: 1 },
-        totalEntrada : {$sum: {$cond: [{$eq: ["$stockMovement", "Entrada"]}, "$amount", 0]}},
-        totalSalida : {$sum: {$cond: [{$eq: ["$stockMovement", "Salida"]}, "$amount", 0]}},
         movementsOfArticles: { $push: "$$ROOT" }
     };
 
-    let page = 0;
-    if(this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage) :
-                0 // SKIP
-
-
-
+    let limit = 0;
+    let skip = 0;
+                
     this._movementsOfArticle.getMovementsOfArticlesV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        //this.itemsPerPage, // LIMIT
-        //skip // SKIP
+        limit, // LIMIT
+        skip // SKIP
     ).subscribe(
       result => {
-
-        if (result.movementsOfArticles) {
-
-          this.loading = false;
-          this.movementsOfArticles = result.movementsOfArticles;
+        if (!result.movementsOfArticles) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.items = result.movementsOfArticles;
           this.totalItems = result.count;
           this.areTransactionsEmpty = false;
+          this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
           this.getBalance();
-          } else {
-            this.showMessage("No se encontraron movimientos", 'danger', false);
-          }
+        }
+        this.loading = false;
       },
       error => {
-        this.showMessage(error.error.code + ":" + error.error.message, 'danger', false);
+        this.showMessage(error._body, 'danger', false);
         this.loading = false;
         this.totalItems = 0;
       }
@@ -213,21 +196,20 @@ export class ListMovementOfArticlesComponent implements OnInit {
 
     this.balance = 0;
 
-    for(let i = 0; i < this.movementsOfArticles.length; i++) {
-
-        if(this.movementsOfArticles[i].stockMovement == "Entrada") {
-          this.balance += parseFloat(this.movementsOfArticles[i].amount.toString());
-        } 
-        if( this.movementsOfArticles[i].stockMovement == "Salida") {
-          this.balance -= parseFloat(this.movementsOfArticles[i].amount.toString());
-        }
-
-        if( this.movementsOfArticles[i].stockMovement == "Inventario" ) {
-          this.balance = parseFloat( this.movementsOfArticles[i].amount.toString());
-        }
-        
+    let i = 0;
+    for(let movementOfArticle of this.items) {
+      if(movementOfArticle.stockMovement == "Entrada") {
+        this.balance += movementOfArticle.amount;
+      } 
+      if( movementOfArticle.stockMovement == "Salida") {
+        this.balance -= movementOfArticle.amount;
       }
-
+      if( movementOfArticle.stockMovement == "Inventario" ) {
+        this.balance = movementOfArticle.amount;
+      }
+      this.items[i].balance = this.balance;
+      i++;
+    }
   }
 
   public openModal(op: string, movementsOfArticle?: MovementOfArticle): void {
@@ -255,20 +237,15 @@ export class ListMovementOfArticlesComponent implements OnInit {
     }
   }
 
-  public pageChange(page): void {
-    this.currentPage = page;
-    this.getSummary();
-  }
-
   public orderBy(term: string): void {
 
-      if (this.orderTerm[0] === term) {
-        this.orderTerm[0] = "-" + term;
-      } else {
-        this.orderTerm[0] = term;
-      }
-      this.getSummary();
+    if (this.orderTerm[0] === term) {
+      this.orderTerm[0] = "-" + term;
+    } else {
+      this.orderTerm[0] = term;
     }
+    this.getSummary();
+  }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;
