@@ -550,7 +550,6 @@ export class PrintComponent implements OnInit {
     this.doc.line(10, rowInitial, 10, rowFinal);
     // LINEA VERTICAL DERECHA
     this.doc.line(105, rowInitial, 105, rowFinal);
-    console.log(row);
 
     this.finishImpression();
   }

@@ -110,7 +110,7 @@ export class CurrentAccountComponent implements OnInit {
           this.hideMessage();
           this.items = result;
           this.totalItems = this.items.length;
-          this.currentPage = this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0);
+          this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
           this.getBalance();
         }
         this.loading = false;

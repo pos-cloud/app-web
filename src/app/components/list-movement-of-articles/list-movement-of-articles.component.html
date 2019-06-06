@@ -78,8 +78,9 @@
           <thead>
             <tr>
               <th class="th transaction-data"></th>
-              <th colspan="6" class="th transaction-data">Datos del Movimiento</th>
-              <th colspan="6" class="th balance-data">Tipo de Movimiento</th>
+              <th *ngIf="userCountry === 'AR'" colspan="6" class="th transaction-data">Datos de la transacción</th>
+              <th *ngIf="userCountry !== 'AR'" colspan="5" class="th transaction-data">Datos de la transacción</th>
+              <th colspan="3" class="th balance-data">Movimientos</th>
             </tr>
             <tr>
               <th class=""><i class="fa fa-bars"></i></th>
@@ -89,53 +90,48 @@
               <th class="" *ngIf="userCountry === 'AR'">Punto de venta</th>
               <th class="">Letra</th>
               <th class="">Número</th>
-              <th></th>
               <th class="">Entrada</th>
               <th class="">Salida</th>
+              <th class="">Stock</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getSummary()" placeholder="Movimiento..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getSummary()" placeholder="Tipo..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.origin']" (input)="getSummary()" placeholder="Punto de venta..."  *ngIf="userCountry === 'AR'"></th>
+              <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['transaction.origin']" (input)="getSummary()" placeholder="Punto de venta..."  *ngIf="userCountry === 'AR'"></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.letter']" (input)="getSummary()" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getSummary()" placeholder="Número..."></th>
               <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Entrada..."></th>
-              
-              <th><input type="text" class="form-control" [(ngModel)]="filters['amount']" (input)="getSummary()" placeholder="Salida..."></th>
-              
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let movementsOfArticle of movementsOfArticles 
-                                          | paginate: { itemsPerPage: itemsPerPage,
-                                                        currentPage: currentPage,
-                                                        totalItems: totalItems
-                                                      }">
+            <tr *ngFor="let movementsOfArticle of items | paginate: { itemsPerPage: itemsPerPage,
+                                                                        currentPage: currentPage,
+                                                                        totalItems: totalItems
+                                                                      }">
               <td align="left" width="100">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', movementsOfArticle)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', movementsOfArticle)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
-              <td class="align-center" *ngIf="movementsOfArticle.updateDate">{{movementsOfArticle.updateDate | dateFormat : 'DD/MM/YYYY' }}</td>
-              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].transactionMovement}}</td>
-              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].name}}</td>
-              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.endDate">{{movementsOfArticle.transaction.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
+              <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].transactionMovement}}</td>
+              <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].name}}</td>
+              <td class="align-center" *ngIf="userCountry === 'AR' && movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.letter}}</td>
-              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.number}}</td>
-              
-              <td class="align-center"  *ngIf="movementsOfArticle.stockMovement === 'Entrada'">{{movementsOfArticle.amount }}</td>
-              <td></td>
-              <td class="align-center"  *ngIf="movementsOfArticle.stockMovement === 'Salida'">{{movementsOfArticle.amount }}</td>
-              
+              <td class="align-right" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.number}}</td>
+              <td class="align-right" *ngIf="movementsOfArticle.stockMovement === 'Entrada'">{{movementsOfArticle.amount}}</td>
+              <td class="align-right" *ngIf="movementsOfArticle.stockMovement !== 'Entrada'"></td>
+              <td class="align-right" *ngIf="movementsOfArticle.stockMovement === 'Salida'">{{movementsOfArticle.amount}}</td>
+              <td class="align-right" *ngIf="movementsOfArticle.stockMovement !== 'Salida'"></td>
+              <td class="align-right">{{movementsOfArticle.balance}}</td>
             </tr>
-            <tr align="center" *ngIf="movementsOfArticles.length === 0 && !loading">
-              <td colspan="13">No se encontraron movimientos</td>
+            <tr align="center" *ngIf="!items || items.length === 0 && !loading">
+              <td colspan="11">No se encontraron movimientos</td>
             </tr>
           </tbody>
           <tfoot>
             <td colspan="8" class="align-right">
-              <strong>CANTIDAD TOTAL</strong>
+              <strong>Stock Real</strong>
             </td>
             <td class="align-right">
               <strong>{{balance }}</strong>
@@ -149,7 +145,7 @@
         <div class="col-md-10">
           <pagination-controls
             class="my-pagination"
-            (pageChange)="pageChange($event)"
+            (pageChange)="currentPage=$event"
             #api
             previousLabel="Ant."
             nextLabel="Sig."
@@ -157,13 +153,13 @@
           </pagination-controls>
         </div>
         <div class="form-group col-md-2">
-          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getSummary()">
-            <option [value]="5">Mostrar 5 Registros</option>
-            <option [value]="10">Mostrar 10 Registros</option>
-            <option [value]="15">Mostrar 15 Registros</option>
-            <option [value]="20">Mostrar 20 Registros</option>
-            <option [value]="50">Mostrar 50 Registros</option>
-            <option [value]="100">Mostrar 100 Registros</option>
+          <select class="form-control" [(ngModel)]="itemsPerPage">
+            <option [value]="5">Mostrar 5 ítems</option>
+            <option [value]="10">Mostrar 10 ítems</option>
+            <option [value]="15">Mostrar 15 ítems</option>
+            <option [value]="20">Mostrar 20 ítems</option>
+            <option [value]="50">Mostrar 50 ítems</option>
+            <option [value]="100">Mostrar 100 ítems</option>
           </select>
         </div>
       </div>
