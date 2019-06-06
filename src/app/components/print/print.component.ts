@@ -37,6 +37,8 @@ import { DateFormatPipe } from './../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { CashBox } from '../../models/cash-box';
 import { CashBoxService } from '../../services/cash-box.service';
+import { TaxClassification } from 'app/models/tax';
+import { Taxes } from 'app/models/taxes';
 
 @Component({
   selector: 'app-print',
@@ -67,7 +69,6 @@ export class PrintComponent implements OnInit {
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
   public shiftClosingMovementOfCash;
-  public bookVAT;
   public companyName: string = Config.companyName;
   public movementsOfArticles2: MovementOfArticle[];
   public movementsOfCashes: MovementOfCash[];
@@ -243,16 +244,12 @@ export class PrintComponent implements OnInit {
 
   public getVATBook() {
 
-
     this._transactionService.getVATBook(this.params).subscribe(
       result => {
         if (!result) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.getShiftClosingByMovementOfArticle();
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           } else {
-            this.hideMessage();
-            this.bookVAT = result;
-
+            this.transactions = result;
             this.toPrintVAT();
           }
           this.loading = false;
@@ -262,12 +259,14 @@ export class PrintComponent implements OnInit {
           this.loading = false;
         }
     );
-
   }
 
   public toPrintVAT() {
 
     this.doc = new jsPDF('l', 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
+
+    // ENCABEZADO
+
     var folio = 1;
 
     if (this.params.split("&")[2] && !isNaN(this.params.split("&")[2])) {
@@ -298,6 +297,7 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, row, 400, row);
     row += 5;
 
+    // TITULOS TABLA
     this.doc.setFontSize(9);
     this.doc.text("FECHA", 5, row);
     this.doc.text("RAZÓN SOCIAL", 25, row);
@@ -306,10 +306,9 @@ export class PrintComponent implements OnInit {
     this.doc.text("NRO COMP.", 120, row);
     this.doc.text("GRAV.", 150, row);
     this.doc.text("EXENTO", 170, row);
-    this.doc.text("% IVA", 190, row);
-    this.doc.text("IVA", 210, row);
-    this.doc.text("PERC. IVA", 230, row);
-    this.doc.text("PERC. IIBB", 250, row);
+    this.doc.text("IMPUESTO", 195, row);
+    this.doc.text("% IMP.", 225, row);
+    this.doc.text("MONTO IMP.", 245, row);
     this.doc.text("TOTAL", 270, row);
     this.doc.setFontSize(8);
     this.doc.setFontType('normal');
@@ -318,145 +317,97 @@ export class PrintComponent implements OnInit {
     this.doc.line(0, row, 400, row);
     row += 5;
 
+    // CUERPO TABLA
+    let totalTaxBase = 0;
+    let totalExempt = 0;
+    let totalTaxAmount = 0;
+    let totalAmount = 0;
+    let totalTaxes: Taxes[] = new Array();
 
-    let montoTotal = 0
-    let totalGravado = 0;
-    let totalIVA = 0;
-    let totalExento = 0;
+    for (let transaction of this.transactions) {
+      
+      totalExempt += transaction.exempt;
+      totalAmount += transaction.totalPrice;
 
-    for (let i = 0; i < this.bookVAT.length; i++) {
+      if(transaction.taxes && transaction.taxes.length > 0) {
+        for(let transactionTax of transaction.taxes) {
 
-      let total = 0
-      let gravado = 0;
-      let porcentajeIVA = 0;
-      let iva = 0;
-      let exento = 0;
-      if (!this.bookVAT[i].GRAVADO) this.bookVAT[i].GRAVADO = 0;
-      if (!this.bookVAT[i].IVA_PORCENTAJE) {
-        this.bookVAT[i].IVA_PORCENTAJE = 0;
-      } else {
-        porcentajeIVA = this.bookVAT[i].IVA_PORCENTAJE;
-      }
-      if (!this.bookVAT[i].IVA) this.bookVAT[i].IVA = 0;
-      if (!this.bookVAT[i].EXENT_NOGRAV) this.bookVAT[i].EXENT_NOGRAV = 0;
+          //DATOS PRINCIPALES
+          this.doc.text(this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY'), 5, row);
+          if(transaction.company) {
+            this.doc.text(transaction.company.name.toUpperCase().slice(0, 22), 25, row);
+            this.doc.text(transaction.company.identificationValue.replace(/-/g, ""), 65, row);
+          } else {
+            this.doc.text('CONSUMIDOR FINAL', 25, row);
+            this.doc.text('00000000000', 65, row);
+          }
+          if(transaction.type.labelPrint && transaction.type.labelPrint !== "") {
+            this.doc.text(transaction.type.labelPrint, 95, row);
+          } else {
+            this.doc.text(transaction.type.name, 95, row);
+          }
+          this.doc.text(
+            this.padString(transaction.origin, 4) + "-" +
+            transaction.letter + "-" +
+            this.padString(transaction.number, 8)
+            , 120, row);
 
-      if (this.params.split("&")[0].toString() == "Venta") {
-        if (this.bookVAT[i].movement === "Entrada") {
-          gravado = this.bookVAT[i].GRAVADO;
-          iva = this.bookVAT[i].IVA;
-          exento = this.bookVAT[i].EXENT_NOGRAV;
-        } else {
-          gravado = -this.bookVAT[i].GRAVADO;
-          iva = iva -this.bookVAT[i].IVA;
-          exento = -this.bookVAT[i].EXENT_NOGRAV;
+          // DATOS NUMÉRICOS
+          let exists: boolean = false;
+          for (let transactionTaxAux of totalTaxes) {
+            if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
+              transactionTaxAux.taxAmount += transactionTax.taxAmount;
+              transactionTaxAux.taxBase += transactionTax.taxBase;
+              exists = true;
+            }
+          }
+          if (!exists) {
+            totalTaxes.push(transactionTax);
+          }
+
+          if(transactionTax.tax.classification === TaxClassification.Tax) {
+            totalTaxBase += transactionTax.taxBase;
+          }
+          totalTaxAmount += transactionTax.taxAmount;
+          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.taxBase).toLocaleString('de-DE')).toFixed(2), 150, row);
+          this.doc.text(parseFloat(this.roundNumber.transform(transaction.exempt).toLocaleString('de-DE')).toFixed(2), 170, row);
+          this.doc.text(transactionTax.tax.name, 195, row);
+          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.percentage).toLocaleString('de-DE')).toFixed(2), 225, row);
+          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.taxAmount).toLocaleString('de-DE')).toFixed(2), 245, row);
+          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt).toLocaleString('de-DE')).toFixed(2), 270, row);
+
+          row += 5;
         }
       } else {
-        if (this.bookVAT[i].movement === "Entrada") {
-          gravado = -this.bookVAT[i].GRAVADO;
-          iva = -this.bookVAT[i].IVA;
-          exento = -this.bookVAT[i].EXENT_NOGRAV;
+        this.doc.text(this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY'), 5, row);
+        if(transaction.company) {
+          this.doc.text(transaction.company.name.toUpperCase().slice(0, 22), 25, row);
+          this.doc.text(transaction.company.identificationValue.replace(/-/g, ""), 65, row);
         } else {
-          gravado = +this.bookVAT[i].GRAVADO;
-          iva = +this.bookVAT[i].IVA;
-          exento = +this.bookVAT[i].EXENT_NOGRAV;
+          this.doc.text('CONSUMIDOR FINAL', 25, row);
+          this.doc.text('00-00000000-0', 65, row);
         }
-      }
-
-      totalGravado += gravado;
-      totalExento += exento;
-      totalIVA += iva;
-      total = gravado + iva + exento;
-      montoTotal += total;
-
-      this.doc.setFontSize(8);
-      this.doc.setFontType('normal');
-
-      this.doc.text(this.dateFormat.transform(this.bookVAT[i].endDate, 'DD/MM/YYYY'), 5, row);
-
-      if (this.bookVAT[i].nameCompany) {
-        this.doc.text(this.bookVAT[i].nameCompany.substr(0,25), 25, row);
-      } else {
-        this.doc.text("CONSUMIDOR FINAL".substr(0, 25), 25, row);
-      }
-
-      if(this.bookVAT[i].identificationValue && this.bookVAT.identificationValue != '' ) {
-        this.doc.text(this.bookVAT[i].identificationValue.toString(), 70, row);
-      } else {
-        this.doc.text("00000000000", 70, row);
-      }
-
-      if (this.bookVAT[i].labelPrint && this.bookVAT[i].labelPrint !== "") {
-         this.doc.text((this.bookVAT[i].labelPrint).toString(), 95, row);
-      } else {
-        this.doc.text((this.bookVAT[i].typeName).toString(), 95, row);
-      }
-
-      this.doc.text(this.padString((this.bookVAT[i].origin).toString(), 5)+"-"+this.bookVAT[i].letter+"-"+this.padString((this.bookVAT[i].number).toString(), 8), 120, row);
-
-      let printGravado = "0,00";
-      let printExento = "0,00";
-      let printPorcentajeIVA = "0,00";
-      let printIVA = "0,00";
-      let printTotal = "0,00";
-      if ((this.roundNumber.transform(gravado)).toString().split(".")[1]) {
-        if (this.roundNumber.transform(gravado).toString().split(".")[1].length === 1) {
-          printGravado = gravado.toLocaleString('de-DE') + "0";
+        if(transaction.type.labelPrint && transaction.type.labelPrint !== "") {
+          this.doc.text(transaction.type.labelPrint, 95, row);
         } else {
-          printGravado = gravado.toLocaleString('de-DE');
+          this.doc.text(transaction.type.name, 95, row);
         }
-      } else if (this.roundNumber.transform(gravado)) {
-        printGravado = gravado.toLocaleString('de-DE') + ",00";
+        this.doc.text(
+          this.padString(transaction.origin, 4) + "-" +
+          transaction.letter + "-" +
+          this.padString(transaction.number, 8)
+          , 120, row);
+
+        // IMPRIMIR MONTOS
+        this.doc.text(parseFloat(this.roundNumber.transform(0).toLocaleString('de-DE')).toFixed(2), 150, row);
+        this.doc.text(parseFloat(this.roundNumber.transform(transaction.exempt).toLocaleString('de-DE')).toFixed(2), 170, row);
+        this.doc.text("", 195, row);
+        this.doc.text(parseFloat(this.roundNumber.transform(0).toLocaleString('de-DE')).toFixed(2), 225, row);
+        this.doc.text(parseFloat(this.roundNumber.transform(0).toLocaleString('de-DE')).toFixed(2), 245, row);
+        this.doc.text(parseFloat(this.roundNumber.transform(transaction.totalPrice).toLocaleString('de-DE')).toFixed(2), 270, row);
+
+        row += 5;
       }
-
-      if ((this.roundNumber.transform(exento)).toString().split(".")[1]) {
-        if (this.roundNumber.transform(exento).toString().split(".")[1].length === 1) {
-          printExento = exento.toLocaleString('de-DE') + "0";
-        } else {
-          printExento = exento.toLocaleString('de-DE');
-        }
-      } else if (this.roundNumber.transform(exento)) {
-        printExento = exento.toLocaleString('de-DE') + ",00";
-      }
-
-      if ((this.roundNumber.transform(porcentajeIVA)).toString().split(".")[1]) {
-        if (this.roundNumber.transform(porcentajeIVA).toString().split(".")[1].length === 1) {
-          printPorcentajeIVA = porcentajeIVA.toLocaleString('de-DE') + "0";
-        } else {
-          printPorcentajeIVA = porcentajeIVA.toLocaleString('de-DE');
-        }
-      } else if (this.roundNumber.transform(porcentajeIVA)) {
-        printPorcentajeIVA = porcentajeIVA.toLocaleString('de-DE') + ",00";
-      }
-
-      if ((this.roundNumber.transform(iva)).toString().split(".")[1]) {
-        if (this.roundNumber.transform(iva).toString().split(".")[1].length === 1) {
-          printIVA = iva.toLocaleString('de-DE') + "0";
-        } else {
-          printIVA = iva.toLocaleString('de-DE');
-        }
-      } else if (this.roundNumber.transform(iva)) {
-        printIVA = iva.toLocaleString('de-DE') + ",00";
-      }
-
-      if ((this.roundNumber.transform(total)).toString().split(".")[1]) {
-        if (this.roundNumber.transform(total).toString().split(".")[1].length === 1) {
-          printTotal = total.toLocaleString('de-DE') + "0";
-        } else {
-          printTotal = total.toLocaleString('de-DE');
-        }
-      } else if (this.roundNumber.transform(total)) {
-        printTotal = total.toLocaleString('de-DE') + ",00";
-      }
-
-      this.doc.text(printGravado, 152, row);
-      this.doc.text(printExento, 172, row);
-      this.doc.text(printPorcentajeIVA, 192, row);
-      this.doc.text(printIVA, 212, row);
-      this.doc.text("0,00", 232, row);
-      this.doc.text("0,00", 252, row);
-      this.doc.text(printTotal, 272, row);
-
-      row += 5;
 
       if (row >= 190 ) {
 
@@ -498,10 +449,9 @@ export class PrintComponent implements OnInit {
         this.doc.text("NRO COMP.", 120, row);
         this.doc.text("GRAV.", 150, row);
         this.doc.text("EXENTO", 170, row);
-        this.doc.text("% IVA", 190, row);
-        this.doc.text("IVA", 210, row);
-        this.doc.text("PERC. IVA", 230, row);
-        this.doc.text("PERC. IIBB", 250, row);
+        this.doc.text("IMPUESTO", 195, row);
+        this.doc.text("% IMP.", 225, row);
+        this.doc.text("MONTO IMP.", 245, row);
         this.doc.text("TOTAL", 270, row);
         this.doc.setFontSize(8);
         this.doc.setFontType('normal');
@@ -512,70 +462,96 @@ export class PrintComponent implements OnInit {
       }
     }
 
-
     this.doc.line(0, row, 400, row);
     row += 5;
     this.doc.setFontType('bold');
 
-    let printGravado = "0,00";
-    let printExento = "0,00";
-    let printIVA = "0,00";
-    let printTotal = "0,00";
-    if ((this.roundNumber.transform(totalGravado)).toString().split(".")[1]) {
-      if (this.roundNumber.transform(totalGravado).toString().split(".")[1].length === 1) {
-        printGravado = this.roundNumber.transform(totalGravado).toLocaleString('de-DE') + "0";
-      } else {
-        printGravado = this.roundNumber.transform(totalGravado).toLocaleString('de-DE');
-      }
-    } else if (this.roundNumber.transform(totalGravado)) {
-      printGravado = this.roundNumber.transform(totalGravado).toLocaleString('de-DE') + ",00";
-    }
-
-    if ((this.roundNumber.transform(totalExento)).toString().split(".")[1]) {
-      if (this.roundNumber.transform(totalExento).toString().split(".")[1].length === 1) {
-        printExento = this.roundNumber.transform(totalExento).toLocaleString('de-DE') + "0";
-      } else {
-        printExento = this.roundNumber.transform(totalExento).toLocaleString('de-DE');
-      }
-    } else if (this.roundNumber.transform(totalExento)) {
-      printExento = this.roundNumber.transform(totalExento).toLocaleString('de-DE') + ",00";
-    }
-
-    if ((this.roundNumber.transform(totalIVA)).toString().split(".")[1]) {
-      if (this.roundNumber.transform(totalIVA).toString().split(".")[1].length === 1) {
-        printIVA = this.roundNumber.transform(totalIVA) + "0";
-      } else {
-        printIVA = this.roundNumber.transform(totalIVA).toLocaleString('de-DE');
-      }
-    } else if (this.roundNumber.transform(totalIVA)) {
-      printIVA = this.roundNumber.transform(totalIVA).toLocaleString('de-DE') + ",00";
-    }
-
-    if ((this.roundNumber.transform(montoTotal)).toString().split(".")[1]) {
-      if (this.roundNumber.transform(montoTotal).toString().split(".")[1].length === 1) {
-
-        printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE') + "0";
-      } else {
-
-        printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE');
-
-      }
-    } else if (this.roundNumber.transform(montoTotal)) {
-
-      printTotal = this.roundNumber.transform(montoTotal).toLocaleString('de-DE') + ",00";
-    }
-
-    this.doc.text(printGravado, 152, row);
-    this.doc.text(printExento, 172, row);
-    this.doc.text(printIVA, 212, row);
-    this.doc.text("0,00", 232, row);
-    this.doc.text("0,00", 252, row);
-    this.doc.text(printTotal, 272, row);
-
+    this.doc.text(parseFloat(this.roundNumber.transform(totalTaxBase).toLocaleString('de-DE')).toFixed(2), 152, row);
+    this.doc.text(parseFloat(this.roundNumber.transform(totalExempt).toLocaleString('de-DE')).toFixed(2), 172, row);
+    this.doc.text(parseFloat(this.roundNumber.transform(totalTaxAmount).toLocaleString('de-DE')).toFixed(2), 245, row);
+    this.doc.text(parseFloat(this.roundNumber.transform(totalAmount).toLocaleString('de-DE')).toFixed(2), 272, row);
 
     this.doc.setFontType('normal');
     row += 3;
     this.doc.line(0, row, 400, row);
+
+    // IMPRIMIR CUADRO DE IMPUESTOS
+    if(row + 56 > 190) {
+
+      this.doc.addPage();
+
+      var row = 10;
+      this.doc.setFontType('bold');
+
+      this.doc.setFontSize(12);
+      if (this.companyName) {
+        this.doc.text(this.companyName, 5, row);
+      }
+
+      this.doc.setFontType('normal');
+      row += 5;
+      if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+        this.doc.text(this.config[0].companyIdentificationType.name + ":", 5, row);
+        this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+      }
+
+      this.doc.setFontType('bold');
+      folio = folio + 1;
+      this.doc.text("N° DE FOLIO:"+folio.toString(),240,row);
+      this.centerText(5, 5, 300, 0, row, "LIBRO DE IVA " + this.params.split("&")[0].toString().toUpperCase() + "S - PERÍODO " + this.params.split("&")[1].toString().toUpperCase());
+      this.doc.setFontType('normal');
+
+      row += 3;
+      this.doc.line(0, row, 400, row);
+      row += 5;
+    }
+    row += 10;
+    let rowInitial = row;
+    let rowFinal;
+    // LINEA HORIZONTAL ARRIBA ENCABEZADO
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(9);
+    this.doc.text("TOTALES POR IMPUESTO", 35, row);
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    // LINEA HORIZONTAL DEBAJO ENCABEZADO
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(9);
+    this.doc.text("IMPUESTO", 15, row);
+    this.doc.text("GRAVADO", 55, row);
+    this.doc.text("MONTO", 85, row);
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    // LINEA HORIZONTAL DEBAJO ENCABEZADO
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    for(let tax of totalTaxes) {
+      this.doc.text(tax.tax.name, 15, row);
+      this.doc.text(parseFloat(this.roundNumber.transform(tax.taxBase).toLocaleString('de-DE')).toFixed(2), 55, row);
+      this.doc.text(parseFloat(this.roundNumber.transform(tax.taxAmount).toLocaleString('de-DE')).toFixed(2), 85, row);
+      row += 5;
+    }
+    
+    // LINEA HORIZONTAL FINAL
+    this.doc.line(10, row, 105, row);
+    // LINEA VERTICAL IZQUIERDA
+    rowFinal = row;
+    this.doc.line(10, rowInitial, 10, rowFinal);
+    // LINEA VERTICAL DERECHA
+    this.doc.line(105, rowInitial, 105, rowFinal);
+    console.log(row);
+
     this.finishImpression();
   }
 
@@ -898,9 +874,8 @@ export class PrintComponent implements OnInit {
   }
 
   public getMovementOfCash(): void {
-    this.loading = true;
 
-    console.log(this.transactionId);
+    this.loading = true;
 
     this._movementOfCash.getMovementOfCashesByTransaction(this.transactionId).subscribe(
       result => {
