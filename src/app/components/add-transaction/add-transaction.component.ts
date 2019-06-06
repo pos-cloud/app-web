@@ -522,7 +522,9 @@ export class AddTransactionComponent implements OnInit {
 
     let transactionTaxes: Taxes[] = new Array();
 
-    this.transactionForm.value.totalPrice = this.transactionForm.value.exempt + this.transactionForm.value.basePrice;
+    if(this.transactionForm.value.exempt > 0 && this.transactionForm.value.basePrice > 0) {
+      this.transactionForm.value.totalPrice = this.transactionForm.value.exempt + this.transactionForm.value.basePrice;
+    }
 
     if (this.taxes && this.taxes.length > 0 && this.transaction.basePrice !== 0) {
       for (let taxesAux of this.taxes) {

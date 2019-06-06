@@ -109,10 +109,10 @@ export class MovementOfCashService {
 
 	getCheck(number: string) {
 		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "check/" + number, { headers: headers }).map(res => res.json());
+      'Content-Type': 'application/json',
+      'Authorization': this._authService.getToken()
+    });
+    return this._http.get(Config.apiURL + 'movements-of-cashes/where="number":"' + number + '"' , { headers: headers }).map(res => res.json());
 	}
 
 	public getMovementsOfCashesV2(
