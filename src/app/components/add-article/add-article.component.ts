@@ -534,26 +534,6 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getLocations(): void {
-    this.loading = true;
-
-    this._locationService.getLocations().subscribe(
-      result => {
-        if (!result.locations) {
-          this.getCategories();
-        } else {
-          this.hideMessage();
-          this.locations = result.locations;
-          this.getCategories();
-        }
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   public getDeposits(): void {
     this.loading = true;
 
@@ -565,6 +545,26 @@ export class AddArticleComponent implements OnInit {
           this.hideMessage();
           this.deposits = result.deposits;
           this.getLocations();
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getLocations(): void {
+    this.loading = true;
+
+    this._locationService.getLocations().subscribe(
+      result => {
+        if (!result.locations) {
+          this.getCategories();
+        } else {
+          this.hideMessage();
+          this.locations = result.locations;
+          this.getCategories();
         }
       },
       error => {
