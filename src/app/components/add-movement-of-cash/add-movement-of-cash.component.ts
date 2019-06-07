@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 //Paquetes de terceros
@@ -29,13 +29,13 @@ import { Config } from 'app/app.config';
 import { BankService } from 'app/services/bank.service';
 import { Bank } from 'app/models/bank';
 import { ListMovementOfCashesComponent } from '../list-movements-of-cashes/list-movements-of-cashes.component';
-import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-add-movement-of-cash',
   templateUrl: './add-movement-of-cash.component.html',
-  styleUrls: ['./add-movement-of-cash.component.css'],
-  providers: [NgbAlertConfig, RoundNumberPipe]
+  styleUrls: ['./add-movement-of-cash.component.scss'],
+  providers: [NgbAlertConfig, RoundNumberPipe],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class AddMovementOfCashComponent implements OnInit {
@@ -540,11 +540,9 @@ export class AddMovementOfCashComponent implements OnInit {
           });
         break;
       case 'checks':
-          modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg'});
+          modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg' });
           modalRef.componentInstance.userType = "checks";
           modalRef.result.then((result) => {
-
-            console.log(result);
 
             this.updateCheck(result,StatusCheck.Closed,result.amountPaid);
            
@@ -564,10 +562,13 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.statusCheck = StatusCheck.Closed;
             this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
 
+            
 
             if(this.isValidAmount()){
               this.saveMovementOfCash();
             }
+
+            
 
 
           }, (reason) => {

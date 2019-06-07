@@ -1,0 +1,39 @@
+app-add-movement-of-cash{
+      
+      .modal .modal-open .modal-header .fade { 
+            overflow-y: auto !important; 
+      }
+      .center-content {
+            margin-top: 30px;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-justify-content: center;
+            justify-content: center;
+      }
+
+      
+
+      .fade.show {
+            opacity: 1;
+            overflow-y: auto;
+        }
+      
+      .btn {
+            cursor: pointer;
+      }
+      
+      .modal-header .container-fluid {
+            overflow: hidden !important;
+            overflow-y: auto !important; 
+      }
+      .box-finance {
+        border: 1px solid #A4A4A4;
+        border-radius: 5px;
+        background-color: #F2F2F2;
+      }
+}      
+      ngb-modal-window.modal.fade.show.d-block {
+            overflow-y: auto !important ; 
+        }

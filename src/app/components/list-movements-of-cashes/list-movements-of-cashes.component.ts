@@ -45,7 +45,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
   ) { 
     this.filters = new Array();
     for(let field of this.displayedColumns) {

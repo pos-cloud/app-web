@@ -6,6 +6,10 @@
   .card-header {
     color: white;
   }
+
+  .modal {
+    overflow-y: auto !important;
+  }
   
   .btn, .cursor-pointer {
     cursor: pointer;
