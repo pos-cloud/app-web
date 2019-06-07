@@ -2618,7 +2618,8 @@ export class PrintComponent implements OnInit {
     row += 5;
     this.doc.text("Cant.", margin, row);
     this.doc.text("Desc.", this.printer.pageWidth/3, row);
-    this.doc.text("Monto", this.printer.pageWidth/1.3, row);
+    this.doc.text("Precio", this.printer.pageWidth/1.4, row);
+    this.doc.text("Total", this.printer.pageWidth/1.17, row);
     row += 3;
     this.doc.line(0, row, this.printer.pageWidth, row);
 
@@ -2635,8 +2636,8 @@ export class PrintComponent implements OnInit {
           this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
           }
         } 
-
-        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.3, row);
+        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), this.printer.pageWidth/1.4, row);
+        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.2, row);
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
