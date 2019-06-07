@@ -71,7 +71,8 @@ export class ListTransactionsComponent implements OnInit {
       'discountAmount',
       'totalPrice',
       'operationType',
-      'CAE'
+      'CAE',
+      'balance'
   ];
   public filters: any[];
   public filterValue: string;
@@ -201,7 +202,8 @@ export class ListTransactionsComponent implements OnInit {
       discountAmount: { $toString : '$discountAmount' },
       totalPrice: { $toString : '$totalPrice' },
       operationType: 1,
-      CAE: 1
+      CAE: 1,
+      balance : 1
     }
 
     // AGRUPAMOS EL RESULTADO
