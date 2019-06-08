@@ -194,6 +194,7 @@ export class AddCompanyComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
+          this.getCountries();
 
           this.otherFields = this.company.otherFields;
 
@@ -265,14 +266,16 @@ export class AddCompanyComponent  implements OnInit {
     // FILTRAMOS LA CONSULTA
     let match;
     if(this.companyForm.value.country) {
-      if(this.companyForm.value.country._id) {
-        match = { "country._id": { $oid: this.companyForm.value.country._id }, operationType: { $ne: "D" } };
+      if(this.companyForm.value.country) {
+        match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
       } else {
         match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
       }
     } else {
-      match = { "country._id": { $oid: this.company.country._id }, operationType: { $ne: "D" } };
+      match = { "country._id": { $oid: this.company.country }, operationType: { $ne: "D" } };
     }
+
+    
 
     //match = JSON.parse(match);
 
@@ -290,13 +293,14 @@ export class AddCompanyComponent  implements OnInit {
       match, // MATCH
       sort, // SORT
       group, // GROUP
-      0, // LIMIT
-      0 // SKIP
+      //0, // LIMIT
+      //0 // SKIP
     ).subscribe(
       result => {
         if (result.states) {
           this.loading = false;
-          this.states = result.states
+          this.states = result.states;
+          
         } 
       },
       error => {
@@ -500,7 +504,6 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
-
     let state;
     if (!this.company.state) {
       state = null;
@@ -511,6 +514,7 @@ export class AddCompanyComponent  implements OnInit {
         state = this.company.state;
       }
     }
+
 
     const values = {
       '_id': this.company._id,
@@ -654,7 +658,7 @@ export class AddCompanyComponent  implements OnInit {
     this.loading = true;
 
     // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
+    let sortAux = { name: 1 };
     
     // FILTRAMOS LA CONSULTA
     let match = { operationType: { $ne: "D" } };
@@ -682,7 +686,7 @@ export class AddCompanyComponent  implements OnInit {
     ).subscribe(result => {
       if (result && result.countries && result.countries.length > 0) {
         this.countries = result.countries;
-        this.company.country = this.countries[0];
+        //this.company.country = this.countries[0];
         this.getStates();
       }
       this.loading = false;

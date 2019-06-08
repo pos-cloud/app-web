@@ -138,10 +138,14 @@
                   <div class="form-group col-md-4">
                     <label for="country" class="control-label">País:</label>
                     <select class="form-control" formControlName="country" name="country" id="country" (change)="getStates()">
-                      <option *ngFor="let country of countries"
-                              [value]="country._id">
-                        {{country.name}}
-                      </option>
+                      <option [ngValue]="null" [selected]="!company || !company.country" [disabled]="readonly"></option>
+                            <option *ngFor="let country of countries"
+                                    [selected]="(company.country && company.country._id && country._id===company.country._id) ||
+                                                (company.country && country._id===company.country)"
+                                    [value]="country._id"
+                                    [disabled]="readonly">
+                                    {{country.name}}</option>
+
                     </select>
                     <div *ngIf="formErrors.country" class="alert alert-danger">
                       {{ formErrors.country }}
@@ -151,7 +155,14 @@
                     <label for="state" class="control-label" *ngIf="userCountry !== 'AR'">Estado:</label>
                     <label for="state" class="control-label" *ngIf="userCountry === 'AR'">Provincia:</label>
                     <select class="form-control" formControlName="state">
-                      <option *ngFor="let state of states" [ngValue]="state._id">{{state.name}}</option>
+                      <option [ngValue]="null" [selected]="!company || !company.state" [disabled]="readonly"></option>
+                            <option *ngFor="let state of states"
+                                    [selected]="(company.state && company.state._id && state._id===company.state._id) ||
+                                                (company.state && state._id===company.state)"
+                                    [value]="state._id"
+                                    [disabled]="readonly">
+                                    {{state.name}}</option>
+
                     </select>
                     <div *ngIf="formErrors.state" class="alert alert-danger">
                       {{ formErrors.state }}
