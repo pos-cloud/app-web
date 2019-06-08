@@ -216,7 +216,11 @@
             </div>
           </div>
         </div>
-          <div *ngIf="paymentMethodSelected && paymentMethodSelected !== 'null' && paymentMethodSelected.inputAndOuput && transaction.type.currentAccount === 'Cobra' && transaction.type.movement === 'Salida'" class="form-group col-md-6">
+          <div *ngIf="paymentMethodSelected && 
+                      paymentMethodSelected.inputAndOuput && 
+                      transaction.type.currentAccount.toString() === 'Cobra' && 
+                      transaction.type.movement.toString() === 'Salida'" 
+                class="form-group col-md-6">
             <button type="button" class="btn btn-outline-primary" (click)="openModal('checks',null)" >Buscar en Cartera</button>
           </div>
         <div class="row table-responsive" *ngIf="movementsOfCashes && movementsOfCashes.length > 0">

@@ -30,6 +30,9 @@ export class ListVariantValuesComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<VariantValue> = new EventEmitter<VariantValue>();
   public itemsPerPage = 10;
   public totalItems = 0;
+  public filterType;
+  public filterDescription;
+  public p;
 
   constructor(
     public _variantValueService: VariantValueService,
