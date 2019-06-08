@@ -138,7 +138,7 @@ export class ListArticlesComponent implements OnInit {
     }
 
     if(this.userType === 'pos') {
-        match = `{ "$or": [ { "type": "${ArticleType.Final}" } ] , "operationType": { "$ne": "D" } }`;
+        match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
     } else {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
         match += `,"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
@@ -567,6 +567,7 @@ export class ListArticlesComponent implements OnInit {
 
     if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
       if (this.filterArticle && this.filterArticle !== "") {
         this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
       }
@@ -603,9 +604,11 @@ export class ListArticlesComponent implements OnInit {
                 this.filterArticle = '';
                 this.addItem(article);
         } else {
+          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
           this.eventAddItem.emit(null);
         }
       } else {
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
         this.eventAddItem.emit(null);
       }
     }
