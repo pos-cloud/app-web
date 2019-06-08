@@ -164,11 +164,11 @@ export class ListMovementOfArticlesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (!result.movementsOfArticles) {
+        if (!result[0].movementsOfArticles) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.items = result.movementsOfArticles;
-          this.totalItems = result.count;
+          this.items = result[0].movementsOfArticles;
+          this.totalItems = result[0].count;
           this.areTransactionsEmpty = false;
           this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
           this.getBalance();
