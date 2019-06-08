@@ -34,8 +34,10 @@ export class AppComponent {
         if(identity) {
           await this.getConfigApi().then(
             config => {
-              this._configService.setConfig(config);
-              this.setConfigurationSettings(config);
+              if(config) {
+                this._configService.setConfig(config);
+                this.setConfigurationSettings(config);
+              }
             }
           );
         }
