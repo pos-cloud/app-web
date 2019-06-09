@@ -127,13 +127,24 @@ export class ListArticleStocksComponent implements OnInit {
 
         });
         break;
-      case 'print':
+      case 'print-label':
         modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.articleStock = articleStock;
         modalRef.componentInstance.typePrint = 'label';
         if (this.printers && this.printers.length > 0) {
           for (let printer of this.printers) {
             if (printer.printIn === PrinterPrintIn.Label) {
+              modalRef.componentInstance.printer = printer;
+            }
+          }
+        }
+        break;
+      case 'print-inventario':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.typePrint = 'inventario';
+        if (this.printers && this.printers.length > 0) {
+          for (let printer of this.printers) {
+            if (printer.printIn === PrinterPrintIn.Counter) {
               modalRef.componentInstance.printer = printer;
             }
           }
@@ -232,7 +243,6 @@ export class ListArticleStocksComponent implements OnInit {
       }
     );
   }
-
 
   public pageChange(page): void {
     this.currentPage = page;
