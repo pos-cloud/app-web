@@ -10,7 +10,9 @@ import 'moment/locale/es';
 //Modelos
 import { PaymentMethod } from './../../models/payment-method';
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
-import { Transaction } from './../../models/transaction';
+import { Transaction  } from './../../models/transaction';
+import { TransactionType, Movements  } from './../../models/transaction-type';
+
 
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
@@ -786,6 +788,19 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.movementOfCash || !this.paymentMethodSelected) {
       isValid = false;
       this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
+    }
+
+    if(this.transaction.type.movement === Movements.Inflows  && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number){
+      isValid = false;
+      this.showMessage('Debe completar el numero de comprobante', 'info', true);
+    }
+
+    if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && this.movementOfCashForm.value.number){
+      let checks = this.getChecks(this.movementOfCashForm.value.number)
+      if(checks) {
+        isValid = false;
+        this.showMessage('El numero de comprobante ya existe', 'info', true);
+      }
     }
 
     /*if ((moment(this.movementOfCash.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
