@@ -27,6 +27,7 @@ import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
+import { User } from 'app/models/user';
 
 @Component({
   selector: 'app-list-articles',
