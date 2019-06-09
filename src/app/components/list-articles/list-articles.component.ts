@@ -26,6 +26,8 @@ import { UpdateArticlePriceComponent } from '../update-article-price/update-arti
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
+import { AuthService } from 'app/services/auth.service';
+import { User } from 'app/models/user';
 
 @Component({
   selector: 'app-list-articles',
@@ -37,6 +39,7 @@ import { FilterPipe } from 'app/pipes/filter.pipe';
 
 export class ListArticlesComponent implements OnInit {
 
+  public identity: User;
   public articles: Article[] = new Array();
   public alertMessage: string = '';
   public userType: string = '';
@@ -81,6 +84,7 @@ export class ListArticlesComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
+    public _authService: AuthService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -95,6 +99,12 @@ export class ListArticlesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+
+    this._authService.getIdentity.subscribe(
+      identity => {
+        this.identity = identity;
+      }
+    );
 
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
@@ -138,7 +148,7 @@ export class ListArticlesComponent implements OnInit {
     }
 
     if(this.userType === 'pos') {
-        match = `{ "$or": [ { "type": "${ArticleType.Final}" } ] , "operationType": { "$ne": "D" } }`;
+        match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
     } else {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
         match += `,"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
@@ -567,6 +577,7 @@ export class ListArticlesComponent implements OnInit {
 
     if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
       if (this.filterArticle && this.filterArticle !== "") {
         this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
       }
@@ -603,9 +614,11 @@ export class ListArticlesComponent implements OnInit {
                 this.filterArticle = '';
                 this.addItem(article);
         } else {
+          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
           this.eventAddItem.emit(null);
         }
       } else {
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
         this.eventAddItem.emit(null);
       }
     }

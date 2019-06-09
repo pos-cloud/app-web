@@ -29,7 +29,6 @@ import { ConfigService } from 'app/services/config.service';
 import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
-import { Country } from 'app/models/country';
 
 @Component({
   selector: 'app-add-company',
@@ -45,6 +44,7 @@ export class AddCompanyComponent  implements OnInit {
   @Input() companyType: CompanyType;
   @Input() operation: string;
   @Input() readonly: boolean;
+  public config: Config;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
   public companiesGroup: CompanyGroup[];
@@ -59,7 +59,6 @@ export class AddCompanyComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public userCountry: string;
   public countries : any;
 
   public formErrors = {
@@ -146,11 +145,7 @@ export class AddCompanyComponent  implements OnInit {
     this.getCompaniesGroup();
     this.getEmployees();
     this.getCountries();
-  }
 
-  ngOnInit(): void {
-
-    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if ( pathLocation[2] === "clientes" ||
@@ -166,8 +161,18 @@ export class AddCompanyComponent  implements OnInit {
       this.types.push(CompanyType.Provider);
       this.company.type = CompanyType.Client;
     }
+  }
+
+  async ngOnInit() {
 
     this.buildForm();
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+        this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
+      }
+    );
 
     if(this.companyId) {
       this.getCompany();

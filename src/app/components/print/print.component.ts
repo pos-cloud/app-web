@@ -385,7 +385,7 @@ export class PrintComponent implements OnInit {
           this.doc.text(transaction.company.identificationValue.replace(/-/g, ""), 65, row);
         } else {
           this.doc.text('CONSUMIDOR FINAL', 25, row);
-          this.doc.text('00-00000000-0', 65, row);
+          this.doc.text('00000000000', 65, row);
         }
         if(transaction.type.labelPrint && transaction.type.labelPrint !== "") {
           this.doc.text(transaction.type.labelPrint, 95, row);

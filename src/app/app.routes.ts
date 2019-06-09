@@ -15,7 +15,7 @@ import { ListPrintersComponent } from './components/list-printers/list-printers.
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { ImportComponent } from './components/import/import.component';
-import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
+import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -308,7 +308,7 @@ export const _routes: Routes = [
   },
   {
     path: 'admin/configuraciones',
-    component: ConfigBackupComponent,
+    component: ConfigComponent,
     canActivate: [AuthGuard]
   },
   {
