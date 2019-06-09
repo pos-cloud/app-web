@@ -7,6 +7,7 @@ import { ConfigService } from './services/config.service';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
 
+  public config$: any;
   public config: Config;
   public alertMessage = '';
   public loading = true;
@@ -29,6 +31,10 @@ export class AppComponent {
     public _router: Router,
   ) {
     this.setApiConfigurationSettings();
+    this.config$ = this._configService.getConfig;
+  }
+
+  async ngOnInit() {
     this._authService.getIdentity.subscribe(
       async identity => {
         if(identity) {
@@ -39,6 +45,10 @@ export class AppComponent {
                 this.setConfigurationSettings(config);
               }
             }
+          );
+        } else {
+          this.config$ = Observable.merge(
+            Observable.of(true)
           );
         }
       }

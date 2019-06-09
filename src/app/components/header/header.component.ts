@@ -27,7 +27,7 @@ export class HeaderComponent {
 
   public config$: any;
   public identity$: Observable<User>;
-  public online: Observable<boolean>;
+  public online$: Observable<boolean>;
   public hideMenu: boolean;
   public sessionTimer: any;
   public pathLocation: string[];
@@ -50,7 +50,7 @@ export class HeaderComponent {
     this.isReportVisible = false;
 
     // REVISAR INTERNET
-    this.online = Observable.merge(
+    this.online$ = Observable.merge(
       Observable.of(navigator.onLine),
       Observable.fromEvent(window, 'online').mapTo(true),
       Observable.fromEvent(window, 'offline').mapTo(false)

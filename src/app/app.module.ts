@@ -105,7 +105,7 @@ import { UpdatePrinterComponent } from './components/update-printer/update-print
 import { ListPrintersComponent } from './components/list-printers/list-printers.component';
 import { AddMovementOfCashComponent } from './components/add-movement-of-cash/add-movement-of-cash.component';
 import { AddArticleStockComponent } from './components/add-article-stock/add-article-stock.component';
-import { ConfigBackupComponent } from './components/config-backup/config-backup.component';
+import { ConfigComponent } from './components/config/config.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendMailComponent } from './components/send-mail/send-mail.component';
@@ -300,7 +300,7 @@ import { AuthService } from './services/auth.service';
     ListPrintersComponent,
     AddMovementOfCashComponent,
     ImportComponent,
-    ConfigBackupComponent,
+    ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
     SendMailComponent,
@@ -456,7 +456,7 @@ import { AuthService } from './services/auth.service';
     ListPrintersComponent,
     AddMovementOfCashComponent,
     ImportComponent,
-    ConfigBackupComponent,
+    ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
     SendMailComponent,

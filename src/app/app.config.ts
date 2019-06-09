@@ -14,9 +14,6 @@ export class Config {
     static apiURL_FE_MX: string = 'libs/fe/mx/01_CFDI_fe.php';
     static apiPort = 300;
     static modules;
-    static pathMongo: string;
-    static pathBackup: string;
-    static backupTime: string;
     static emailAccount: string;
     static emailPassword: string;
     static companyPicture: string;
@@ -30,8 +27,6 @@ export class Config {
     static companyStartOfActivity: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     static companyGrossIncome: string;
     static companyPostalCode: string;
-    static heightLabel: number;
-    static widthLabel: number;
     static footerInvoice: string;
     static expirationLicense: string;
     static country : string;
@@ -39,6 +34,13 @@ export class Config {
     static currency: Currency;
     static licenseCost : number;
     static showLicenseNotification: boolean = true;
+    public article: {
+		code: {
+			validators: {
+				maxLength: number
+			}
+		}
+	};
 
     constructor() {
         Config.updateApiURL();
@@ -64,12 +66,6 @@ export class Config {
 
     public static setExpirationLicense(expirationLicense: string): void {
       Config.expirationLicense = expirationLicense;
-    }
-
-    public static setConfigToBackup(pathBackup, pathMongo, backupTime): void {
-        Config.pathBackup = pathBackup;
-        Config.pathMongo = pathMongo;
-        Config.backupTime = backupTime;
     }
 
     public static setConfigEmail(emailAccount, emailPassword): void {
@@ -98,11 +94,6 @@ export class Config {
         Config.licenseCost = companyLicenseCost;
         Config.currency = currency;
         Config.companyPostalCode = companyPostalCode;
-    }
-
-    public static setConfigLabel( heightLabel, widthLabel ): void {
-        Config.heightLabel = heightLabel;
-        Config.widthLabel = widthLabel;
     }
 
     public static setConfigs(showLicenseNotification: boolean): void {

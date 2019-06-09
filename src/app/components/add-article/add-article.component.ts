@@ -39,6 +39,7 @@ import { ArticleFields } from '../../models/article-fields';
 import { ArticleFieldType } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TaxClassification } from 'app/models/tax';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-add-article',
@@ -54,7 +55,7 @@ export class AddArticleComponent implements OnInit {
   @Input() operation: string;
   @Input() readonly: boolean;
   public articleStock: ArticleStock;
-  public country: string;
+  public config: Config;
   public articleForm: FormGroup;
   public currencies: Currency[] = new Array();
   public makes: Make[] = new Array();
@@ -99,8 +100,7 @@ export class AddArticleComponent implements OnInit {
 
   public validationMessages = {
     'code': {
-      'required': 'Este campo es requerido.',
-      'maxlength': 'No puede exceder los 10 carácteres.'
+      'required': 'Este campo es requerido.'
     },
     'make': {
       'required': 'Este campo es requerido.'
@@ -156,15 +156,11 @@ export class AddArticleComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _currencyService: CurrencyService
+    public _currencyService: CurrencyService,
+    public _configService: ConfigService
   ) {
     this.article = new Article();
     this.getCurrencies();
-  }
-
-  ngOnInit(): void {
-
-    this.country = Config.country;
 
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -175,7 +171,22 @@ export class AddArticleComponent implements OnInit {
       this.article.type = ArticleType.Variant;
       this.articleType = "Variante";
     }
+  }
+
+  async ngOnInit() {
+    
     this.buildForm();
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+
+        // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
+        this.validationMessages.code['maxlength'] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
+        this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
+      }
+    );
+    
     if(this.articleId) {
       this.getArticle();
     } else {
@@ -189,14 +200,12 @@ export class AddArticleComponent implements OnInit {
   }
 
   public buildForm(): void {
-
     this.articleForm = this._fb.group({
       '_id': [this.article._id, [
         ]
       ],
       'code': [this.article.code, [
-        Validators.required,
-        Validators.maxLength(10)
+        Validators.required
         ]
       ],
       'codeSAT': [this.article.codeSAT, [
@@ -426,7 +435,7 @@ export class AddArticleComponent implements OnInit {
 
   public autocompleteCode() {
     if(!isNaN(this.articleForm.value.code)) {
-      this.article.code = this.padString(this.articleForm.value.code, 10);
+      this.article.code = this.padString(this.articleForm.value.code, this.config.article.code.validators.maxLength);
     } else {
       this.article.code = this.articleForm.value.code;
     }
@@ -439,14 +448,14 @@ export class AddArticleComponent implements OnInit {
 
     this._articleService.getLastArticle().subscribe(
       result => {
-        let code = this.padString(1, 10);
+        let code = this.padString(1, this.config.article.code.validators.maxLength);
         let category: Category = new Category();
         if (result.articles) {
           if (result.articles[0]) {
             if (!isNaN(parseInt(result.articles[0].code))) {
-              code = ((parseInt(result.articles[0].code) + 1) + '').slice(0, 10);
+              code = ((parseInt(result.articles[0].code) + 1) + '').slice(0, this.config.article.code.validators.maxLength);
             } else {
-              code = this.padString(1, 10);
+              code = this.padString(1, this.config.article.code.validators.maxLength);
             }
           }
         }
@@ -454,7 +463,7 @@ export class AddArticleComponent implements OnInit {
           category = this.categories[0];
         }
 
-        this.article.code = this.padString(code, 10);
+        this.article.code = this.padString(code, this.config.article.code.validators.maxLength);
         this.article.category = category;
         this.setValuesForm();
         this.loading = false;
@@ -800,7 +809,7 @@ export class AddArticleComponent implements OnInit {
   public setValuesForm(): void {
 
     if (!this.article._id) { this.article._id = ''; }
-    if (!this.article.code) { this.article.code = this.padString(1, 10); }
+    if (!this.article.code) { this.article.code = this.padString(1, this.config.article.code.validators.maxLength); }
     if (!this.article.codeSAT) { this.article.codeSAT = ''; }
 
     let currency;

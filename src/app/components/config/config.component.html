@@ -1,15 +1,16 @@
-<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid" *ngIf="config">
   <div class="center-content" *ngIf="alertMessage !== ''">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <!--license-->
+  
+  <!-- LICENSE -->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Licencia</div>
     <div class= 'card-block'>
         <div class= "row">
-          <div class="form-group col-md-3" *ngIf="config">
+          <div class="form-group col-md-3">
             <b>Vence {{ config.expirationLicense | dateFormat:'DD/MM/YYYY' }}</b>
           </div>
           <div class= "form-group col-md-9">
@@ -22,7 +23,7 @@
     </div>
   </div>
 
-  <!--Company-->
+  <!-- COMPANY -->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Datos de la Empresa</div>
     <div class="card-block">
@@ -224,11 +225,11 @@
     </div>
   </div>
 
-  <!-- Email -->
+  <!-- EMAIL -->
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Email</div>
     <div class='card-block'>
-      <form [formGroup]="configFormEmail" #formAddConfig="ngForm" (ngSubmit)="addConfigEmail()" autocomplete="off">
+      <form [formGroup]="configFormEmail" #formAddEmail="ngForm" (ngSubmit)="addConfigEmail()" autocomplete="off">
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
@@ -263,8 +264,9 @@
       </form>
     </div>
   </div>
+
   <!-- AFIP -->
-  <div class="card card-outline-primary" *ngIf="userCountry === 'AR'">
+  <div class="card card-outline-primary" *ngIf="config.country === 'AR'">
     <div class="card-header bg-primary">Generar Certificado para Factura Electrónica</div>
     <div class='card-block'>
       <form (ngSubmit)="generateCRS()" autocomplete="off">
@@ -288,5 +290,30 @@
       </form>
     </div>
   </div>
-
+  
+  <!-- SYSTEM -->
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Sistema</div>
+    <div class='card-block'>
+      <form [formGroup]="configFormSystem" #formAddConfigSystem="ngForm" (ngSubmit)="addConfigSystem()" autocomplete="off">
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Longitud de código interno en artículo</span>
+              <input type="text" class="form-control" formControlName="article.code.validators.maxLength" name="article.code.validators.maxLength" id="article.code.validators.maxLength" aria-describedby="basic-addon1">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <button type="submit" class="btn btn-primary" [disabled]="!configFormSystem.valid || loadingSystem">
+              <i class="fa" [ngClass]="{'fa-save':!loadingSystem, 'fa-spinner fa-spin':loadingSystem}"></i>
+              <span *ngIf="!loadingSystem">Guardar</span>
+              <span *ngIf="loadingSystem">Espere por favor</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </section>
