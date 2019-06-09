@@ -8,6 +8,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de Stock
       <div class="pull-right">
+          <button class="btn btn-primary" (click)="openModal('print-inventario', null)"><i class="fa fa-print"></i> Imprimir Inventario</button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
         <span (click)="areFiltersVisible = !areFiltersVisible">
           <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
@@ -50,17 +51,17 @@
 
             <td align="left" width="100">
 
-              <button type="button" class="btn btn-secondary btn-sm" title="Imprimir" *ngIf="'articleStock.realStock' >= '0'"  (click)= "openModal('print', articleStock )">
+              <button type="button" class="btn btn-secondary btn-sm" title="Imprimir" *ngIf="'articleStock.realStock' >= '0'"  (click)= "openModal('print-label', articleStock )">
                 <i class="fa fa-print"></i>
               </button>
 
             </td>
-            <td class="flat" *ngIf="articleStock.article.make && articleStock.article.make[0]">{{articleStock.article.make[0].description}}</td>
-            <td class="flat" *ngIf="!articleStock.article.make || !articleStock.article.make[0]"></td>
+            <td class="flat" *ngIf="articleStock.article.make && articleStock.article.make">{{articleStock.article.make.description}}</td>
+            <td class="flat" *ngIf="!articleStock.article.make || !articleStock.article.make"></td>
             <td class="flat">{{articleStock.article.code}}</td>
             <td class="flat">{{articleStock.article.description}}</td>
-            <td class="flat" *ngIf="articleStock.article.category && articleStock.article.category[0]">{{articleStock.article.category[0].description}}</td>
-            <td class="flat" *ngIf="!articleStock.article.category || !articleStock.article.category[0]"></td>
+            <td class="flat" *ngIf="articleStock.article.category && articleStock.article.category">{{articleStock.article.category.description}}</td>
+            <td class="flat" *ngIf="!articleStock.article.category || !articleStock.article.category"></td>
             <td class="flat">{{articleStock.realStock}}</td>
             <td class="flat">{{articleStock.article.costPrice | currency:'USD':'1.2-2' }}</td>
             <td class="flat">{{articleStock.article.costPrice * articleStock.realStock | currency:'USD':'1.2-2' }}</td>

@@ -176,10 +176,61 @@ export class PrintComponent implements OnInit {
               this.getVATBook();
             } else if (this.typePrint === "price-list") {
               this.getArticles();
+            } else if (this.typePrint === "inventario") {
+              this.getArticleStocksV2();
             }
           }
         }
         this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getArticleStocksV2() : void {
+
+    this.loading = true;
+
+    /// ORDENAMOS LA CONSULTA
+    let sortAux = { description: 1 };
+
+    // FILTRAMOS LA CONSULTA
+
+    let match = `{"operationType": { "$ne": "D" } , "article.operationType": { "$ne": "D" } }`;
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      "realStock" : 1,
+      "article.code" : 1,
+      "article.description" : 1,
+      "article.make.description" : 1,
+      "article.category.description" : 1,
+      "article.operationType" : 1,
+      "operationType" : 1,
+    }
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let skip = 0; // SKIP
+    let limit = 0;
+
+    this._articleStockService.getArticleStocksV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        skip, // LIMIT
+        limit // SKIP
+    ).subscribe(
+      result => {
+        if (result.articleStocks) {
+          this.toPrintInventario(result.articleStocks);
+        } 
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -583,10 +634,10 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Código", 5, row);
-    this.doc.text("Descripción", 25, row);
-    this.doc.text("Marca", 90, row);
-    this.doc.text("Rubro", 130, row);
-    this.doc.text("Precio", 185, row);
+    this.doc.text("Descripción", 30, row);
+    this.doc.text("Marca", 100, row);
+    this.doc.text("Rubro", 145, row);
+    this.doc.text("Precio", 190, row);
     this.doc.setFontType('normal');
 
     row += 3;
@@ -603,16 +654,16 @@ export class PrintComponent implements OnInit {
           this.doc.text(article.code, 5, row);
         }
         if (article.description) {
-          this.doc.text(article.description, 25, row);
+          this.doc.text(article.description.slice(0, 30), 30, row);
         }
         if (article.make && article.make.description) {
-          this.doc.text(article.make.description, 90, row);
+          this.doc.text(article.make.description.slice(0, 18), 100, row);
         }
         if (article.category && article.category.description) {
-          this.doc.text(article.category.description, 130, row);
+          this.doc.text(article.category.description.slice(0, 18), 145, row);
         }
         if (article.salePrice) {
-          this.doc.text("$" + article.salePrice.toString(), 185, row);
+          this.doc.text("$" + this.roundNumber.transform(article.salePrice).toString(), 190, row);
         }
         row += 5;
 
@@ -650,10 +701,120 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType('bold');
           this.doc.setFontSize(this.fontSizes.normal);
           this.doc.text("Código", 5, row);
-          this.doc.text("Descripción", 25, row);
-          this.doc.text("Marca", 90, row);
-          this.doc.text("Rubro", 130, row);
-          this.doc.text("Precio", 185, row);
+          this.doc.text("Descripción", 30, row);
+          this.doc.text("Marca", 100, row);
+          this.doc.text("Rubro", 140, row);
+          this.doc.text("Precio", 190, row);
+          this.doc.setFontType('normal');
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+        }
+      }
+    }
+    this.finishImpression();
+  }
+
+  public toPrintInventario(articleStocks: ArticleStock[]): void {
+
+    var row = 15;
+    var margin = 5;
+    this.doc.setFontType('bold');
+
+    this.doc.setFontSize(12);
+    if (this.companyName) {
+      this.doc.text(this.companyName, 5, row);
+    }
+
+    this.doc.setFontType('normal');
+    row += 5;
+    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+    }
+
+    this.doc.setFontType('bold');
+    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "INVENTARIO AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    row += 5;
+
+    // Encabezado de la tabla de Detalle de Productos
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.text("Código", 5, row);
+    this.doc.text("Descripción", 30, row);
+    this.doc.text("Marca", 100, row);
+    this.doc.text("Rubro", 145, row);
+    this.doc.text("Stock", 195, row);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    row += 5;
+
+    let page = 1;
+
+    // // Detalle de productos
+    if(articleStocks && articleStocks.length > 0) {
+      for(let articleStock of articleStocks) {
+        if(articleStock.article.code) {
+          this.doc.text(articleStock.article.code, 5, row);
+        }
+        if (articleStock.article.description) {
+          this.doc.text(articleStock.article.description.slice(0, 30), 30, row);
+        }
+        if (articleStock.article.make && articleStock.article.make.description) {
+          this.doc.text(articleStock.article.make.description.slice(0, 18), 100, row);
+        }
+        if (articleStock.article.category && articleStock.article.category.description) {
+          this.doc.text(articleStock.article.category.description.slice(0, 18), 145, row);
+        }
+        if (articleStock.realStock) {
+          this.doc.text(this.roundNumber.transform(articleStock.realStock).toString(), 195, row);
+        }
+        row += 5;
+
+        if (row >= (this.printer.pageHigh - 20)) {
+
+          if(page === 120) {
+            break;
+          }
+          this.doc.addPage();
+
+          var row = 15;
+          var margin = 5;
+          this.doc.setFontType('bold');
+
+          this.doc.setFontSize(12);
+          if (this.companyName) {
+            this.doc.text(this.companyName, 5, row);
+          }
+
+          this.doc.setFontType('normal');
+          row += 5;
+          if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+            this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+            this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+          }
+
+          this.doc.setFontType('bold');
+          this.centerText(margin, margin, this.printer.pageWidth, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+
+          // Encabezado de la tabla de Detalle de Productos
+          this.doc.setFontType('bold');
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.text("Código", 5, row);
+          this.doc.text("Descripción", 30, row);
+          this.doc.text("Marca", 100, row);
+          this.doc.text("Rubro", 145, row);
+          this.doc.text("Stock", 195, row);
           this.doc.setFontType('normal');
 
           row += 3;
