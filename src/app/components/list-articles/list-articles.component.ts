@@ -26,6 +26,7 @@ import { UpdateArticlePriceComponent } from '../update-article-price/update-arti
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-list-articles',
@@ -37,6 +38,7 @@ import { FilterPipe } from 'app/pipes/filter.pipe';
 
 export class ListArticlesComponent implements OnInit {
 
+  public identity: User;
   public articles: Article[] = new Array();
   public alertMessage: string = '';
   public userType: string = '';
@@ -81,6 +83,7 @@ export class ListArticlesComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _printerService: PrinterService,
+    public _authService: AuthService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -95,6 +98,12 @@ export class ListArticlesComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+
+    this._authService.getIdentity.subscribe(
+      identity => {
+        this.identity = identity;
+      }
+    );
 
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
