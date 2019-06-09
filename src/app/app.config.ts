@@ -41,6 +41,11 @@ export class Config {
 			}
 		}
 	};
+	public company: {
+		allowCurrentAccount: {
+			default: boolean
+		}
+	};
 
     constructor() {
         Config.updateApiURL();

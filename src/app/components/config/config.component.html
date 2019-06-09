@@ -306,6 +306,17 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente al dar de alta una empresa</span>
+              <select class="form-control" formControlName="company.allowCurrentAccount.default" name="company.allowCurrentAccount.default" id="company.allowCurrentAccount.default">
+                <option value="true">Si</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
             <button type="submit" class="btn btn-primary" [disabled]="!configFormSystem.valid || loadingSystem">
               <i class="fa" [ngClass]="{'fa-save':!loadingSystem, 'fa-spinner fa-spin':loadingSystem}"></i>
               <span *ngIf="!loadingSystem">Guardar</span>

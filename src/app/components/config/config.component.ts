@@ -286,6 +286,9 @@ export class ConfigComponent implements OnInit {
       ],
       'article.code.validators.maxLength' : [ this.config.article.code.validators.maxLength, [
         ]
+      ],
+      'company.allowCurrentAccount.default' : [ this.config.company.allowCurrentAccount.default, [
+        ]
       ]
     });
 
@@ -602,6 +605,7 @@ export class ConfigComponent implements OnInit {
     }
 
     if (!this.config.article.code.validators.maxLength) this.config.article.code.validators.maxLength = 10;
+    if (!this.config.company.allowCurrentAccount.default) this.config.company.allowCurrentAccount.default = false;
 
     this.configFormCompany.setValue({
       '_id': this.config._id,
@@ -630,7 +634,8 @@ export class ConfigComponent implements OnInit {
 
     this.configFormSystem.setValue({
       '_id': this.config._id,
-      'article.code.validators.maxLength': this.config.article.code.validators.maxLength
+      'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
+      'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default
     });
   }
 

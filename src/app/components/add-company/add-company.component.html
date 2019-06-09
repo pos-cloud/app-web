@@ -28,8 +28,8 @@
                     </div>
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="vatCondition" class="control-label" *ngIf="userCountry === 'AR'">Condición de IVA:</label>
-                    <label for="vatCondition" class="control-label" *ngIf="userCountry !== 'AR'">Régimen Fiscal:</label>
+                    <label for="vatCondition" class="control-label" *ngIf="config.country === 'AR'">Condición de IVA:</label>
+                    <label for="vatCondition" class="control-label" *ngIf="config.country !== 'AR'">Régimen Fiscal:</label>
                     <select class="form-control" formControlName="vatCondition">
                       <option [ngValue]="null" [selected]="!company || !company.vatCondition" [disabled]="readonly"></option>
                             <option *ngFor="let vatCondition of vatConditions"
@@ -68,7 +68,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row" *ngIf="userCountry === 'AR'">
+                <div class="row" *ngIf="config.country === 'AR'">
                   <div class="form-group col-md-12">
                     <label for="grossIncome" class="control-label">Ingresos Brutos:</label>
                     <div class="input-group">
@@ -152,8 +152,8 @@
                     </div>
                   </div>
                   <div class="form-group col-md-4">
-                    <label for="state" class="control-label" *ngIf="userCountry !== 'AR'">Estado:</label>
-                    <label for="state" class="control-label" *ngIf="userCountry === 'AR'">Provincia:</label>
+                    <label for="state" class="control-label" *ngIf="config.country !== 'AR'">Estado:</label>
+                    <label for="state" class="control-label" *ngIf="config.country === 'AR'">Provincia:</label>
                     <select class="form-control" formControlName="state">
                       <option [ngValue]="null" [selected]="!company || !company.state" [disabled]="readonly"></option>
                             <option *ngFor="let state of states"
@@ -246,8 +246,8 @@
                   <div class="form-group col-md-12">
                     <label for="allowCurrentAccount" class="control-label">¿Habilitado para comprar en cuenta corriente?</label>
                     <select class="form-control" formControlName="allowCurrentAccount">
-                      <option value="true">Si</option>
-                      <option value="false" selected>No</option>
+                      <option value="true" [selected]="company.allowCurrentAccount">Si</option>
+                      <option value="false" [selected]="!company.allowCurrentAccount">No</option>
                     </select>
                   </div>
                 </div>
