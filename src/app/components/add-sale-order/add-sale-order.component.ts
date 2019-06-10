@@ -375,6 +375,10 @@ export class AddSaleOrderComponent {
 
     return new Promise<Transaction>((resolve, reject) => {
 
+      this.transaction.exempt = this.roundNumber.transform(this.transaction.exempt);
+      this.transaction.discountAmount = this.roundNumber.transform(this.transaction.discountAmount);
+      this.transaction.totalPrice = this.roundNumber.transform(this.transaction.totalPrice);
+
       this._transactionService.updateTransaction(this.transaction).subscribe(
         result => {
           if (!result.transaction) {

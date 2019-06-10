@@ -49,7 +49,7 @@ section {
 }
 
 .full-screen {
-	left: -400px;
+	left: -200px;
 	position: absolute;
 	width: 100vh;
 	height: 100vh;

@@ -164,7 +164,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (!result[0].movementsOfArticles) {
+        if (!result || result.length === 0 || !result[0] || !result[0].movementsOfArticles) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.items = result[0].movementsOfArticles;
