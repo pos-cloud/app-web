@@ -18,6 +18,7 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 export class ListMovementOfCashesComponent implements OnInit {
 
   @Input() userType : string;
+  @Input() transactionAmount : number;
   public movementsOfCashes: MovementOfCash[] = new Array();
   public areMovementOfCashesEmpty = true;
   public alertMessage = '';
@@ -76,7 +77,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     let sortAux = { order: 1 };
     
     // FILTRAMOS LA CONSULTA
-    let match = {"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" };
+    let match = {"operationType": { "$ne": "D" }, "statusCheck" : "Disponible", "transaction.state" : "Cerrado" };
     
     // CAMPOS A TRAER
     let project = {
@@ -89,6 +90,7 @@ export class ListMovementOfCashesComponent implements OnInit {
       "expirationDate2": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
       "expirationDate": 1,
       "transaction._id":1,
+      "transaction.state" : 1,
       "date": 1,
       "statusCheck": 1,
       "titular" : 1,
@@ -160,7 +162,12 @@ export class ListMovementOfCashesComponent implements OnInit {
   }
 
   public selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-    this.activeModal.close(movementOfCashSelected);
+    console.log(this.transactionAmount);
+    if(this.transactionAmount > movementOfCashSelected.amountPaid){
+      this.activeModal.close(movementOfCashSelected);
+    } else {
+      this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
+    }
   }
 
   public orderBy (term: string, property?: string): void {
