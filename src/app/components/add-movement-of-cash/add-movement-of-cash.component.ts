@@ -538,6 +538,7 @@ export class AddMovementOfCashComponent implements OnInit {
       case 'checks':
           modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg' });
           modalRef.componentInstance.userType = "checks";
+          modalRef.componentInstance.transactionAmount = this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid;
           modalRef.result.then((result) => {
             if(result){
 
