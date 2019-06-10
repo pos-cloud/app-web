@@ -294,7 +294,6 @@ export class AddMovementOfCashComponent implements OnInit {
       this.paymentChange = '0.00';
     }
 
-    //console.log(this.movementOfCashForm.value.paymentMethod)
    //this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     for(let type of this.paymentMethods) {
       if (type._id.toString() === this.movementOfCashForm.value.paymentMethod) {
@@ -526,7 +525,6 @@ export class AddMovementOfCashComponent implements OnInit {
                 if(movement.type.checkDetail){
                   let check;
                   check = await this.getChecks(movement.number);
-                  //console.log(checkId);
                   this.updateCheck(check,StatusCheck.Available)
                 }
                 
@@ -541,36 +539,38 @@ export class AddMovementOfCashComponent implements OnInit {
           modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg' });
           modalRef.componentInstance.userType = "checks";
           modalRef.result.then((result) => {
+            if(result){
 
-            this.updateCheck(result,StatusCheck.Closed,result.amountPaid);
+              this.updateCheck(result,StatusCheck.Closed,result.amountPaid);
            
-            this.movementOfCash.titular = result.titular;
-            this.movementOfCash.amountPaid = result.amountPaid;
-            this.movementOfCash.expirationDate = result.expirationDate;
-            this.movementOfCash.date = this.movementOfCashForm.value.date;
-            this.movementOfCash.observation = result.observation;
-            this.movementOfCash.deliveredBy = result.deliveredBy;
-            this.movementOfCash.CUIT = result.CUIT;
-            this.movementOfCash.bank = result.bank;
-            this.movementOfCash.quota = result.quota;
-            this.movementOfCash.transaction = this.transaction;
-            this.movementOfCash.number = result.number;
-            this.movementOfCash.receiver = result.receiver;
-            this.movementOfCash.type = result.type;
-            this.movementOfCash.statusCheck = StatusCheck.Closed;
-            this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
+              this.movementOfCash.titular = result.titular;
+              this.movementOfCash.amountPaid = result.amountPaid;
+              this.movementOfCash.expirationDate = result.expirationDate;
+              this.movementOfCash.date = this.movementOfCashForm.value.date;
+              this.movementOfCash.observation = result.observation;
+              this.movementOfCash.deliveredBy = result.deliveredBy;
+              this.movementOfCash.CUIT = result.CUIT;
+              this.movementOfCash.bank = result.bank;
+              this.movementOfCash.quota = result.quota;
+              this.movementOfCash.transaction = this.transaction;
+              this.movementOfCash.number = result.number;
+              this.movementOfCash.receiver = result.receiver;
+              this.movementOfCash.type = result.type;
+              this.movementOfCash.statusCheck = StatusCheck.Closed;
+              this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
 
-            
+              
 
-            if(this.isValidAmount()){
-              this.saveMovementOfCash();
+              if(this.isValidAmount()){
+                this.saveMovementOfCash();
+              }
             }
+            
 
             
 
 
           }, (reason) => {
-            console.log(reason);
           });
         break;
       default : ;
@@ -579,18 +579,14 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public getChecks(number) {
 
-    console.log(number);
-
     return new Promise((resolve, reject) => {
     
 
       this._movementOfCashService.getCheck(number).subscribe(
         async result => {
-          console.log(result)
           resolve(result.movementsOfCashes[0]);
         },
         error => {
-          console.log(error)
           resolve(null);
         }
       )
@@ -795,13 +791,13 @@ export class AddMovementOfCashComponent implements OnInit {
       this.showMessage('Debe completar el numero de comprobante', 'info', true);
     }
 
-    if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && this.movementOfCashForm.value.number){
+    /*if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && this.movementOfCashForm.value.number){
       let checks = this.getChecks(this.movementOfCashForm.value.number)
       if(checks) {
         isValid = false;
         this.showMessage('El numero de comprobante ya existe', 'info', true);
       }
-    }
+    }*/
 
     /*if ((moment(this.movementOfCash.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
       isValid = false;

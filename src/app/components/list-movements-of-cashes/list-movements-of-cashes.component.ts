@@ -160,7 +160,6 @@ export class ListMovementOfCashesComponent implements OnInit {
   }
 
   public selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-    console.log(movementOfCashSelected);
     this.activeModal.close(movementOfCashSelected);
   }
 
