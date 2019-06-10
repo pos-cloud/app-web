@@ -10,7 +10,7 @@ import { Turn } from './../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
 import { Company } from './../../models/company';
 import { Config } from './../../app.config';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, Movements } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
 import { Article, ArticleType } from './../../models/article';
 
@@ -377,10 +377,15 @@ export class PrintComponent implements OnInit {
 
     for (let transaction of this.transactions) {
       
+      if(transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
+        transaction.type.transactionMovement === TransactionMovement.Purchase && transaction.type.movement === Movements.Inflows) {
+        transaction.exempt *= -1;
+        transaction.totalPrice *= -1;
+      }
       totalExempt += transaction.exempt;
       totalAmount += transaction.totalPrice;
 
-      if(transaction.taxes && transaction.taxes.length > 0) {
+      if(transaction.taxes && transaction.taxes.length > 0 && transaction.taxes[0].tax) {
         for(let transactionTax of transaction.taxes) {
 
           //DATOS PRINCIPALES
@@ -404,6 +409,13 @@ export class PrintComponent implements OnInit {
             , 120, row);
 
           // DATOS NUMÉRICOS
+
+          if(transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
+            transaction.type.transactionMovement === TransactionMovement.Purchase && transaction.type.movement === Movements.Inflows) {
+            transactionTax.taxAmount *= -1;
+            transactionTax.taxBase *= -1;
+          }
+
           let exists: boolean = false;
           for (let transactionTaxAux of totalTaxes) {
             if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
@@ -420,12 +432,68 @@ export class PrintComponent implements OnInit {
             totalTaxBase += transactionTax.taxBase;
           }
           totalTaxAmount += transactionTax.taxAmount;
-          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.taxBase).toLocaleString('de-DE')).toFixed(2), 150, row);
-          this.doc.text(parseFloat(this.roundNumber.transform(transaction.exempt).toLocaleString('de-DE')).toFixed(2), 170, row);
+
+          let printGravado = "0,00";
+          if ((this.roundNumber.transform(transactionTax.taxBase)).toString().split(".")[1]) {
+            if (this.roundNumber.transform(transactionTax.taxBase).toString().split(".")[1].length === 1) {
+              printGravado = transactionTax.taxBase.toLocaleString('de-DE') + "0";
+            } else {
+              printGravado = transactionTax.taxBase.toLocaleString('de-DE');
+            }
+          } else if (this.roundNumber.transform(transactionTax.taxBase)) {
+            printGravado = transactionTax.taxBase.toLocaleString('de-DE') + ",00";
+          }
+
+          let printExempt = "0,00";
+          if ((this.roundNumber.transform(transaction.exempt)).toString().split(".")[1]) {
+            if (this.roundNumber.transform(transaction.exempt).toString().split(".")[1].length === 1) {
+              printExempt = transaction.exempt.toLocaleString('de-DE') + "0";
+            } else {
+              printExempt = transaction.exempt.toLocaleString('de-DE');
+            }
+          } else if (this.roundNumber.transform(transaction.exempt)) {
+            printExempt = transaction.exempt.toLocaleString('de-DE') + ",00";
+          }
+
+          let printPercentage = "0,00";
+          if ((this.roundNumber.transform(transactionTax.percentage)).toString().split(".")[1]) {
+            if (this.roundNumber.transform(transactionTax.percentage).toString().split(".")[1].length === 1) {
+              printPercentage = transactionTax.percentage.toLocaleString('de-DE') + "0";
+            } else {
+              printPercentage = transactionTax.percentage.toLocaleString('de-DE');
+            }
+          } else if (this.roundNumber.transform(transactionTax.percentage)) {
+            printPercentage = transactionTax.percentage.toLocaleString('de-DE') + ",00";
+          }
+
+          let printTaxAmount = "0,00";
+          if ((this.roundNumber.transform(transactionTax.taxAmount)).toString().split(".")[1]) {
+            if (this.roundNumber.transform(transactionTax.taxAmount).toString().split(".")[1].length === 1) {
+              printTaxAmount = transactionTax.taxAmount.toLocaleString('de-DE') + "0";
+            } else {
+              printTaxAmount = transactionTax.taxAmount.toLocaleString('de-DE');
+            }
+          } else if (this.roundNumber.transform(transactionTax.taxAmount)) {
+            printTaxAmount = transactionTax.taxAmount.toLocaleString('de-DE') + ",00";
+          }
+
+          let printTotal = "0,00";
+          if ((this.roundNumber.transform((transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt))).toString().split(".")[1]) {
+            if (this.roundNumber.transform((transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt)).toString().split(".")[1].length === 1) {
+              printTotal = (transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt).toLocaleString('de-DE') + "0";
+            } else {
+              printTotal = (transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt).toLocaleString('de-DE');
+            }
+          } else if (this.roundNumber.transform((transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt))) {
+            printTotal = (transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt).toLocaleString('de-DE') + ",00";
+          }
+
+          this.doc.text(printGravado, 150, row);
+          this.doc.text(printExempt, 170, row);
           this.doc.text(transactionTax.tax.name, 195, row);
-          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.percentage).toLocaleString('de-DE')).toFixed(2), 225, row);
-          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.taxAmount).toLocaleString('de-DE')).toFixed(2), 245, row);
-          this.doc.text(parseFloat(this.roundNumber.transform(transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt).toLocaleString('de-DE')).toFixed(2), 270, row);
+          this.doc.text(printPercentage, 225, row);
+          this.doc.text(printTaxAmount, 245, row);
+          this.doc.text((printTotal), 270, row);
 
           row += 5;
         }
@@ -450,12 +518,34 @@ export class PrintComponent implements OnInit {
           , 120, row);
 
         // IMPRIMIR MONTOS
-        this.doc.text(parseFloat(this.roundNumber.transform(0).toLocaleString('de-DE')).toFixed(2), 150, row);
-        this.doc.text(parseFloat(this.roundNumber.transform(transaction.exempt).toLocaleString('de-DE')).toFixed(2), 170, row);
+        let printExempt = "0,00";
+        if ((this.roundNumber.transform(transaction.exempt)).toString().split(".")[1]) {
+          if (this.roundNumber.transform(transaction.exempt).toString().split(".")[1].length === 1) {
+            printExempt = transaction.exempt.toLocaleString('de-DE') + "0";
+          } else {
+            printExempt = transaction.exempt.toLocaleString('de-DE');
+          }
+        } else if (this.roundNumber.transform(transaction.exempt)) {
+          printExempt = transaction.exempt.toLocaleString('de-DE') + ",00";
+        }
+
+        let printTotal = "0,00";
+        if ((this.roundNumber.transform(transaction.totalPrice)).toString().split(".")[1]) {
+          if (this.roundNumber.transform(transaction.totalPrice).toString().split(".")[1].length === 1) {
+            printTotal = transaction.totalPrice.toLocaleString('de-DE') + "0";
+          } else {
+            printTotal = transaction.totalPrice.toLocaleString('de-DE');
+          }
+        } else if (this.roundNumber.transform(transaction.totalPrice)) {
+          printTotal = transaction.totalPrice.toLocaleString('de-DE') + ",00";
+        }
+
+        this.doc.text("0,00", 150, row);
+        this.doc.text(printExempt, 170, row);
         this.doc.text("", 195, row);
-        this.doc.text(parseFloat(this.roundNumber.transform(0).toLocaleString('de-DE')).toFixed(2), 225, row);
-        this.doc.text(parseFloat(this.roundNumber.transform(0).toLocaleString('de-DE')).toFixed(2), 245, row);
-        this.doc.text(parseFloat(this.roundNumber.transform(transaction.totalPrice).toLocaleString('de-DE')).toFixed(2), 270, row);
+        this.doc.text("0,00", 225, row);
+        this.doc.text("0,00", 245, row);
+        this.doc.text(printTotal, 270, row);
 
         row += 5;
       }
@@ -517,10 +607,54 @@ export class PrintComponent implements OnInit {
     row += 5;
     this.doc.setFontType('bold');
 
-    this.doc.text(parseFloat(this.roundNumber.transform(totalTaxBase).toLocaleString('de-DE')).toFixed(2), 152, row);
-    this.doc.text(parseFloat(this.roundNumber.transform(totalExempt).toLocaleString('de-DE')).toFixed(2), 172, row);
-    this.doc.text(parseFloat(this.roundNumber.transform(totalTaxAmount).toLocaleString('de-DE')).toFixed(2), 245, row);
-    this.doc.text(parseFloat(this.roundNumber.transform(totalAmount).toLocaleString('de-DE')).toFixed(2), 272, row);
+    let printTaxBase = "0,00";
+    if ((this.roundNumber.transform(totalTaxBase)).toString().split(".")[1]) {
+      if (this.roundNumber.transform(totalTaxBase).toString().split(".")[1].length === 1) {
+        printTaxBase = totalTaxBase.toLocaleString('de-DE') + "0";
+      } else {
+        printTaxBase = totalTaxBase.toLocaleString('de-DE');
+      }
+    } else if (this.roundNumber.transform(totalTaxBase)) {
+      printTaxBase = totalTaxBase.toLocaleString('de-DE') + ",00";
+    }
+
+    let printExempt = "0,00";
+    if ((this.roundNumber.transform(totalExempt)).toString().split(".")[1]) {
+      if (this.roundNumber.transform(totalExempt).toString().split(".")[1].length === 1) {
+        printExempt = totalExempt.toLocaleString('de-DE') + "0";
+      } else {
+        printExempt = totalExempt.toLocaleString('de-DE');
+      }
+    } else if (this.roundNumber.transform(totalExempt)) {
+      printExempt = totalExempt.toLocaleString('de-DE') + ",00";
+    }
+
+    let printTaxAmount = "0,00";
+    if ((this.roundNumber.transform(totalTaxAmount)).toString().split(".")[1]) {
+      if (this.roundNumber.transform(totalTaxAmount).toString().split(".")[1].length === 1) {
+        printTaxAmount = totalTaxAmount.toLocaleString('de-DE') + "0";
+      } else {
+        printTaxAmount = totalTaxAmount.toLocaleString('de-DE');
+      }
+    } else if (this.roundNumber.transform(totalTaxAmount)) {
+      printTaxAmount = totalTaxAmount.toLocaleString('de-DE') + ",00";
+    }
+
+    let printAmount = "0,00";
+    if ((this.roundNumber.transform(totalAmount)).toString().split(".")[1]) {
+      if (this.roundNumber.transform(totalAmount).toString().split(".")[1].length === 1) {
+        printAmount = totalAmount.toLocaleString('de-DE') + "0";
+      } else {
+        printAmount = totalAmount.toLocaleString('de-DE');
+      }
+    } else if (this.roundNumber.transform(totalAmount)) {
+      printAmount = totalAmount.toLocaleString('de-DE') + ",00";
+    }
+
+    this.doc.text(printTaxBase, 150, row);
+    this.doc.text(printExempt, 170, row);
+    this.doc.text(printTaxAmount, 245, row);
+    this.doc.text(printAmount, 270, row);
 
     this.doc.setFontType('normal');
     row += 3;
@@ -588,12 +722,35 @@ export class PrintComponent implements OnInit {
     row += 5;
 
     for(let tax of totalTaxes) {
-      this.doc.text(tax.tax.name, 15, row);
-      this.doc.text(parseFloat(this.roundNumber.transform(tax.taxBase).toLocaleString('de-DE')).toFixed(2), 55, row);
-      this.doc.text(parseFloat(this.roundNumber.transform(tax.taxAmount).toLocaleString('de-DE')).toFixed(2), 85, row);
-      row += 5;
+
+      let printTaxBase = "0,00";
+      if ((this.roundNumber.transform(tax.taxBase)).toString().split(".")[1]) {
+        if (this.roundNumber.transform(tax.taxBase).toString().split(".")[1].length === 1) {
+          printTaxBase = tax.taxBase.toLocaleString('de-DE') + "0";
+        } else {
+          printTaxBase = tax.taxBase.toLocaleString('de-DE');
+        }
+      } else if (this.roundNumber.transform(tax.taxBase)) {
+        printTaxBase = tax.taxBase.toLocaleString('de-DE') + ",00";
+      }
+
+      let printTaxAmount = "0,00";
+      if ((this.roundNumber.transform(tax.taxAmount)).toString().split(".")[1]) {
+        if (this.roundNumber.transform(tax.taxAmount).toString().split(".")[1].length === 1) {
+          printTaxAmount = tax.taxAmount.toLocaleString('de-DE') + "0";
+        } else {
+          printTaxAmount = tax.taxAmount.toLocaleString('de-DE');
+        }
+      } else if (this.roundNumber.transform(tax.taxAmount)) {
+        printTaxAmount = tax.taxAmount.toLocaleString('de-DE') + ",00";
+      }
+
+        this.doc.text(tax.tax.name, 15, row);
+        this.doc.text(printTaxBase, 55, row);
+        this.doc.text(printTaxAmount, 85, row);
+        row += 5;
     }
-    
+  
     // LINEA HORIZONTAL FINAL
     this.doc.line(10, row, 105, row);
     // LINEA VERTICAL IZQUIERDA

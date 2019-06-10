@@ -17,6 +17,7 @@ import { DateFormatPipe } from 'app/pipes/date-format.pipe';
 import { Taxes } from 'app/models/taxes';
 import { TaxClassification } from 'app/models/tax';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { Movements, TransactionMovement } from 'app/models/transaction-type';
 
 @Component({
   selector: 'app-export-iva',
@@ -133,6 +134,12 @@ export class ExportIvaComponent implements OnInit {
             for (let transaction of result) {
               
               data[i] = {};
+
+              if(transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
+                transaction.type.transactionMovement === TransactionMovement.Purchase && transaction.type.movement === Movements.Inflows) {
+                transaction.exempt *= -1;
+                transaction.totalPrice *= -1;
+              }
       
               totalExempt += transaction.exempt;
               totalAmount += transaction.totalPrice;
@@ -159,6 +166,12 @@ export class ExportIvaComponent implements OnInit {
                                           this.padString(transaction.number, 8);
 
                   // DATOS NUMÉRICOS
+                  if(transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
+                    transaction.type.transactionMovement === TransactionMovement.Purchase && transaction.type.movement === Movements.Inflows) {
+                    transactionTax.taxAmount *= -1;
+                    transactionTax.taxBase *= -1;
+                  }
+                  
                   let exists: boolean = false;
                   for (let transactionTaxAux of totalTaxes) {
                     if (transactionTaxAux.tax._id.toString() === transactionTax.tax._id.toString()) {
