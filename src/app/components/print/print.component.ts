@@ -2797,8 +2797,8 @@ export class PrintComponent implements OnInit {
           this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
           }
         } 
-        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), this.printer.pageWidth/1.4, row);
-        this.doc.text("$ " + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.2, row);
+        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), this.printer.pageWidth/1.4, row);
+        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), this.printer.pageWidth/1.18, row);
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
