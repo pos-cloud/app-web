@@ -21,7 +21,6 @@ export class Article {
   public codeSAT: string;
   public description: string = '';
   public posDescription: string = '';
-  public variantDescription: string;
   public quantityPerMeasure: number = 1;
   public unitOfMeasurement: UnitOfMeasurement;
   public observation: string;
@@ -45,7 +44,6 @@ export class Article {
   public allowMeasure: Boolean = false;
   public ecommerceEnabled: Boolean = false;
   public favourite: Boolean = false;
-  public printed: boolean;
   public picture: string = 'default.jpg';
   public providers : Company[];
   public creationUser: User;
