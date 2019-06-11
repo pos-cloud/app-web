@@ -10,7 +10,7 @@ import 'moment/locale/es';
 //Modelos
 import { PaymentMethod } from './../../models/payment-method';
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
-import { Transaction  } from './../../models/transaction';
+import { Transaction, TransactionState  } from './../../models/transaction';
 import { TransactionType, Movements  } from './../../models/transaction-type';
 
 
@@ -566,10 +566,6 @@ export class AddMovementOfCashComponent implements OnInit {
                 this.saveMovementOfCash();
               }
             }
-            
-
-            
-
 
           }, (reason) => {
           });
@@ -585,6 +581,7 @@ export class AddMovementOfCashComponent implements OnInit {
 
       this._movementOfCashService.getCheck(number).subscribe(
         async result => {
+          console.log(result)
           resolve(result.movementsOfCashes[0]);
         },
         error => {
@@ -916,7 +913,12 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
             this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
             // this.movementOfCash.state = MovementOfCashState.InPortafolio;
-            this.movementOfCash.statusCheck = StatusCheck.Available;
+            if(this.transaction.type.movement === Movements.Outflows){
+              this.movementOfCash.statusCheck = StatusCheck.Closed;
+            } else {
+              this.movementOfCash.statusCheck = StatusCheck.Available;
+            }
+            
           } else {
             this.movementOfCash.receiver = '';
             this.movementOfCash.number = '';
@@ -965,7 +967,14 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public cancel(): void {
-    this.activeModal.close('cancel');
+
+    /*if(this.transaction.type.movement === Movements.Inflows && this.movementOfCash.type.checkDetail && this.transaction.state === TransactionState.Open ){
+      this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
+    } else {*/
+      this.activeModal.close('cancel');
+    
+
+    
   }
 
   public saveMovementOfCash(): void {
@@ -1120,6 +1129,8 @@ export class AddMovementOfCashComponent implements OnInit {
   public updateTransaction(): void {
 
     this.loading = true;
+
+    console.log(this.transaction);
 
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {

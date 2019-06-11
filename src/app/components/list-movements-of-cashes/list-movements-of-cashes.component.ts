@@ -77,7 +77,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     let sortAux = { order: 1 };
     
     // FILTRAMOS LA CONSULTA
-    let match = {"operationType": { "$ne": "D" }, "statusCheck" : "Disponible", "transaction.state" : "Cerrado" };
+    let match = {"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" };
     
     // CAMPOS A TRAER
     let project = {
@@ -163,7 +163,7 @@ export class ListMovementOfCashesComponent implements OnInit {
 
   public selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
     console.log(this.transactionAmount);
-    if(this.transactionAmount > movementOfCashSelected.amountPaid){
+    if(this.transactionAmount >= movementOfCashSelected.amountPaid){
       this.activeModal.close(movementOfCashSelected);
     } else {
       this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
