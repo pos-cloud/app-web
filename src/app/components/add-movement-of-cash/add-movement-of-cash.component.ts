@@ -789,6 +789,18 @@ export class AddMovementOfCashComponent implements OnInit {
       this.showMessage('Debe completar el numero de comprobante', 'info', true);
     }
 
+
+    if(this.transaction.type.movement === Movements.Outflows  && this.paymentMethodSelected.checkDetail){
+      if(this.movementOfCash.number){
+        isValid = true;
+      } else {
+        if(!this.movementOfCashForm.value.number){
+          isValid = false;
+          this.showMessage('Debe completar el numero de comprobante', 'info', true);
+        }
+      }
+    }
+
     /*if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && this.movementOfCashForm.value.number){
       let checks = this.getChecks(this.movementOfCashForm.value.number)
       if(checks) {
@@ -913,11 +925,8 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
             this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
             // this.movementOfCash.state = MovementOfCashState.InPortafolio;
-            if(this.transaction.type.movement === Movements.Outflows){
-              this.movementOfCash.statusCheck = StatusCheck.Closed;
-            } else {
-              this.movementOfCash.statusCheck = StatusCheck.Available;
-            }
+            this.movementOfCash.statusCheck = StatusCheck.Closed;
+            
             
           } else {
             this.movementOfCash.receiver = '';
