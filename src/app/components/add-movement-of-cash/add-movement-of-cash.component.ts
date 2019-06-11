@@ -581,8 +581,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
       this._movementOfCashService.getCheck(number).subscribe(
         async result => {
-          console.log(result)
-          resolve(result.movementsOfCashes[0]);
+          if(result && result.movementsOfCashes){
+            resolve(result.movementsOfCashes[0]);
+          }
+          
         },
         error => {
           resolve(null);
