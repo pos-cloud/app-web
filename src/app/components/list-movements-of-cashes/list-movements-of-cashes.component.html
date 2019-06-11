@@ -151,6 +151,8 @@
                   <i class="fa fa-bars"></i>
                 </th>
                 <th (click)="orderBy('number')">Comprobante</th>
+                <th (click)="orderBy('transaction.type.name')">Tipo</th>
+                <th (click)="orderBy('transaction.type.transactionMovement')">Movimiento</th>
                 <th (click)="orderBy('bank.name')">Banco</th>
                 <th (click)="orderBy('expirationDate')">Fecha</th>
                 <th (click)="orderBy('amountPaid')">Importe</th>
@@ -159,6 +161,8 @@
               <tr *ngIf="areFiltersVisible" class="filters">
                 <th></th>
                 <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getMovementOfCashesV2()" placeholder="Comprobante..."></th>
+                <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getMovementOfCashesV2()" placeholder="Tipo..."></th>
+                <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getMovementOfCashesV2()" placeholder="Movimiento..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]="filters['bank.name']" (input)="getMovementOfCashesV2()" placeholder="Banco..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']" (input)="getMovementOfCashesV2()" placeholder="Fecha..."></th>
                 <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" (input)="getMovementOfCashesV2()" placeholder="Importe..."></th>
@@ -177,6 +181,8 @@
                 </td>
                 
                 <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.number }}</td>
+                <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.transaction.type[0].name }}</td>
+                <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.transaction.type[0].transactionMovement }}</td>
                 <td *ngIf="movementOfCash.bank" class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.bank.name }}</td>
                 <td *ngIf="!movementOfCash.bank" (click)="selectmovementOfCash(movementOfCash, $event)"></td>
                 <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.expirationDate2 }}</td>

@@ -91,6 +91,8 @@ export class ListMovementOfCashesComponent implements OnInit {
       "expirationDate": 1,
       "transaction._id":1,
       "transaction.state" : 1,
+      "transaction.type.name" : 1,
+      "transaction.type.transactionMovement" : 1,
       "date": 1,
       "statusCheck": 1,
       "titular" : 1,
