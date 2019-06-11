@@ -583,6 +583,8 @@ export class AddMovementOfCashComponent implements OnInit {
         async result => {
           if(result && result.movementsOfCashes){
             resolve(result.movementsOfCashes[0]);
+          } else {
+            resolve(null);
           }
           
         },
