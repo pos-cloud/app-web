@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -557,15 +556,9 @@ import { AuthService } from './services/auth.service';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
     RouterModule.forRoot(_routes, { useHash: true}),
     NgbModule.forRoot(),
     NgxPaginationModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule,
     HttpClientModule,
     // SocketIoModule.forRoot(config),
   ],

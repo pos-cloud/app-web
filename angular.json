@@ -27,12 +27,7 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.slim.min.js",
               "node_modules/tether/dist/js/tether.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/tinymce/tinymce.js",
-              "node_modules/tinymce/themes/modern/theme.js",
-              "node_modules/tinymce/plugins/link/plugin.js",
-              "node_modules/tinymce/plugins/paste/plugin.js",
-              "node_modules/tinymce/plugins/table/plugin.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
           "configurations": {
@@ -82,12 +77,7 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.slim.min.js",
               "node_modules/tether/dist/js/tether.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/tinymce/tinymce.js",
-              "node_modules/tinymce/themes/modern/theme.js",
-              "node_modules/tinymce/plugins/link/plugin.js",
-              "node_modules/tinymce/plugins/paste/plugin.js",
-              "node_modules/tinymce/plugins/table/plugin.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "styles": [
               "src/styles.css",

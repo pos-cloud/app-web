@@ -63,7 +63,7 @@ export class PointOfSaleComponent implements OnInit {
   public itemsPerPage = 10;
   public totalItems = 0;
   public printers: Printer[];
-  @ViewChild('contentPrinters') contentPrinters: ElementRef;
+  @ViewChild('contentPrinters', {static: false}) contentPrinters: ElementRef;
   @Output() eventRefreshCurrentAccount: EventEmitter<any> = new EventEmitter<any>();
   public transaction: Transaction;
   public printerSelected: Printer;
