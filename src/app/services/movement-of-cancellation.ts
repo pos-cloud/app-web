@@ -1,11 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { empty } from "rxjs";
+import { Observable } from "rxjs/Observable";
+import { map, catchError } from "rxjs/operators";
 
 import { Config } from '../app.config';
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-
-import { Http, Headers } from '@angular/http';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { AuthService } from './auth.service';
 

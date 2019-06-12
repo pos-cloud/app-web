@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { BehaviorSubject, empty } from "rxjs";
+import { Observable } from "rxjs/Observable";
+import { map, catchError } from "rxjs/operators";
+
 import { User } from 'app/models/user';
 import { Employee } from 'app/models/employee';
 import { EmployeeType } from 'app/models/employee-type';
-import { Http, Headers } from '@angular/http';
 import { Config } from 'app/app.config';
 
 @Injectable()

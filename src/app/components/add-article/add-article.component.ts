@@ -446,7 +446,9 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    this._articleService.getLastArticle().subscribe(
+    let query = 'sort="_id":-1&limit=1';
+
+    this._articleService.getArticles(query).subscribe(
       result => {
         let code = this.padString(1, this.config.article.code.validators.maxLength);
         let category: Category = new Category();
@@ -479,7 +481,9 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    this._articleStockService.getStockByArticle(this.article._id).subscribe(
+    let query = 'where="article": "' + this.article._id +  '"';
+
+    this._articleStockService.getArticleStocks(query).subscribe(
       result => {
         if (!result.articleStocks) {
           this.saveArticleStock();

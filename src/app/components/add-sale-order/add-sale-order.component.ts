@@ -658,7 +658,9 @@ export class AddSaleOrderComponent {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
-      this._articleStockService.getStockByArticle(movementOfArticle.article._id).subscribe(
+      let query = 'where="article": "' + movementOfArticle.article._id +  '"';
+
+      this._articleStockService.getArticleStocks(query).subscribe(
         result => {
           if (!result.articleStocks || result.articleStocks.length <= 0) {
             resolve(null);
