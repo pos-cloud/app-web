@@ -12,7 +12,7 @@
   },
   "private": true,
   "dependencies": {
-    "@agm/core": "1.0.0-beta.2",
+    "@agm/core": "1.0.0-beta.6",
     "@angular/animations": "^8.0.0",
     "@angular/cdk": "^8.0.1",
     "@angular/common": "^8.0.0",
@@ -29,7 +29,7 @@
     "@ngrx/store": "5.2.0",
     "@ngrx/store-devtools": "5.2.0",
     "@ngx-translate/core": "9.1.1",
-    "@swimlane/ngx-datatable": "11.2.0",
+    "@swimlane/ngx-datatable": "15.0.2",
     "@swimlane/ngx-dnd": "8.0.0",
     "@types/prismjs": "1.9.0",
     "ajv": "^6.0.0",
