@@ -1328,7 +1328,7 @@ export class PrintComponent implements OnInit {
 
         if (this.movementsOfCashes[i].bank){
           row += 4;
-          this.doc.text("Banco: "+this.movementsOfCashes[i].bank, 27, row);
+          this.doc.text("Banco: "+this.movementsOfCashes[i].bank.name, 27, row);
         }
 
         if(this.movementsOfCashes[i].titular){
