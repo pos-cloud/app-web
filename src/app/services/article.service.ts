@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import 'rxjs/add/operator/map';
+
 import { Article, ArticleType } from './../models/article';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
 import { Variant } from 'app/models/variant';
 
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 

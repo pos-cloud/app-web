@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import 'rxjs/add/operator/map';
+
 import { Make } from './../models/make';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';

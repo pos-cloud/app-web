@@ -1,5 +1,6 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -107,7 +108,7 @@ export class ListTransactionsComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listType = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
-    this.modules = Observable.of(Config.modules);
+    this.modules = observableOf(Config.modules);
     this.getPrinters();
     if (this.listType === "Compras") {
       this.transactionMovement = TransactionMovement.Purchase;

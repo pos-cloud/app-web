@@ -1,3 +1,5 @@
+
+import {of as observableOf, merge as observableMerge,  Observable } from 'rxjs';
 import { Component } from '@angular/core';
 
 import { Config } from './app.config';
@@ -7,7 +9,6 @@ import { ConfigService } from './services/config.service';
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -47,8 +48,8 @@ export class AppComponent {
             }
           );
         } else {
-          this.config$ = Observable.merge(
-            Observable.of(true)
+          this.config$ = observableMerge(
+            observableOf(true)
           );
         }
       }

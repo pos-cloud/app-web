@@ -1,8 +1,10 @@
+
+import {fromEvent as observableFromEvent, of as observableOf, merge as observableMerge,  Observable } from 'rxjs';
+
+import {mapTo} from 'rxjs/operators';
 // ANGULAR
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Rx';
 
 // DE TERCEROS
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -50,10 +52,10 @@ export class HeaderComponent {
     this.isReportVisible = false;
 
     // REVISAR INTERNET
-    this.online$ = Observable.merge(
-      Observable.of(navigator.onLine),
-      Observable.fromEvent(window, 'online').mapTo(true),
-      Observable.fromEvent(window, 'offline').mapTo(false)
+    this.online$ = observableMerge(
+      observableOf(navigator.onLine),
+      observableFromEvent(window, 'online').pipe(mapTo(true)),
+      observableFromEvent(window, 'offline').pipe(mapTo(false))
     );
 
     // REVISAR NOTIFICACION LICENCIA

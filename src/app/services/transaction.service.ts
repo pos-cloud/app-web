@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import 'rxjs/add/operator/map';
+
 import { Transaction, TransactionState } from './../models/transaction';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { MovementOfArticle } from 'app/models/movement-of-article';

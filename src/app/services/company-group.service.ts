@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
-import 'rxjs/add/operator/map';
+
 import { CompanyGroup } from './../models/company-group';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';

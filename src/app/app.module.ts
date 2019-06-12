@@ -215,7 +215,7 @@ import { UpdateCompanyFieldComponent } from './components/update-company-field/u
 import { DeleteCompanyFieldComponent } from './components/delete-company-field/delete-company-field.component';
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 import { AddCompanyFieldsComponent } from './components/add-company-fields/add-company-fields.component';
-import { from } from 'rxjs/observable/from';
+import { from } from 'rxjs';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type.component';
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 import { CancellationTypeService } from './services/cancellation-type.service';
