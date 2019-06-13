@@ -95,7 +95,7 @@ export class ListCountriesComponent implements OnInit {
 
     return new Promise((resolve, reject) => { 
 
-      this.countryService.addCountry(country).subscribe(
+      this.countryService.saveCountry(country).subscribe(
         result => {
           if (!result.country) {
             this.loading = false;

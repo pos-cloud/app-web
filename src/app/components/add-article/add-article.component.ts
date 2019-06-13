@@ -613,7 +613,9 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    this._companyService.getCompaniesByType(CompanyType.Provider.toString()).subscribe(
+    let query = 'where="type":"' + CompanyType.Provider.toString() + '"';
+
+    this._companyService.getCompanies(query).subscribe(
       result => {
         if (!result.companies) {
           this.getUnitsOfMeasurement();

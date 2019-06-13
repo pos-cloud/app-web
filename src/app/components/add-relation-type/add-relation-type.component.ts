@@ -112,7 +112,9 @@ export class AddRelationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._relationTypeService.getLastRelationType().subscribe(
+    let query = 'sort="code":-1&limit=1';
+
+    this._relationTypeService.getRelationTypes(query).subscribe(
       result => {
         if (!result.relationTypes) {
           this.loading = false;

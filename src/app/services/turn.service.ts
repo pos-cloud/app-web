@@ -4,7 +4,7 @@ import { empty } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
-import { Turn, TurnState } from './../models/turn';
+import { Turn } from './../models/turn';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
 
@@ -12,87 +12,239 @@ import { AuthService } from './auth.service';
 export class TurnService {
 
   constructor(
-    public _http: Http,
-    public _authService: AuthService
-  ) { }
+		private _http: HttpClient,
+		private _authService: AuthService
+	) { }
 
-  getOpenTurn(employeeId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'turns/where="employee":"' + employeeId + '","state":"' + TurnState.Open + '"', { headers: headers }).map (res => res.json());
-	}
+  public getTurn(_id: string): Observable<any> {
 
-  getLastTurn() {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'turns/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
+    const URL = `${Config.apiURL}turn`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('id', _id);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  getTurn(id) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "turn/" + id, { headers: headers }).map (res => res.json());
+  public getTurns(
+    query?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}turns`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('query', query);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  getTurns() {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "turns", { headers: headers }).map (res => res.json());
+  public getTurnsV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}v2/turns`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('project', JSON.stringify(project))
+        .set('match', JSON.stringify(match))
+        .set('sort', JSON.stringify(sort))
+        .set('group', JSON.stringify(group))
+        .set('limit', limit.toString())
+        .set('skip', skip.toString());
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  getShiftClosingByTransaction(turnId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "shift-closing-by-transaction/" + turnId, { headers: headers }).map(res => res.json());
+  public getShiftClosingByTransaction(
+    _id?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}shift-closing-by-transaction`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('_id', _id);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  getShiftClosingByMovementOfCash(turnId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "shift-closing-by-payment-method/" + turnId, { headers: headers }).map(res => res.json());
+  public getShiftClosingByMovementOfCash(
+    _id?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}shift-closing-by-payment-method`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('_id', _id);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  getShiftClosingByMovementOfArticle(turnId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "shift-closing-by-article/" + turnId, { headers: headers }).map(res => res.json());
+  public getShiftClosingByMovementOfArticle(
+    _id?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}shift-closing-by-articl`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('_id', _id);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  saveTurn(turn: Turn) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + "turn", turn, { headers: headers }).map (res => res.json());
-  }
-  
-  deleteTurn(id: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.delete(Config.apiURL + "turn/" + id, { headers: headers }).map (res => res.json());
-  }
+  public saveTurn(turn: Turn): Observable<any> {
 
-  updateTurn(turn: Turn) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.put(Config.apiURL + "turn/" + turn._id, turn, { headers: headers }).map (res => res.json());
-  }
+    const URL = `${Config.apiURL}turn`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, turn, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+}
+
+public updateTurn(turn: Turn): Observable<any> {
+
+    const URL = `${Config.apiURL}turn`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', turn._id);
+
+    return this._http.put(URL, turn, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+}
+
+public deleteTurn(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}turn`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', _id);
+
+    return this._http.delete(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+}
 }

@@ -12,23 +12,51 @@ import { AuthService } from './auth.service';
 export class PrintService {
 
 	constructor(
-		public _http: Http,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
 
-	toPrint(print: Print) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + 'to-print', print, { headers: headers }).map(res => res.json());
-	}
+	public toPrint(print: Print): Observable<any> {
 
-	getBarcode(barcode : string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL +'barcode/'+ barcode, { headers: headers }).map(res => res.json());
-	}
+        const URL = `${Config.apiURL}to-print`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, print, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public getBarcode(barcode : string): Observable<any> {
+
+        const URL = `${Config.apiURL}barcode`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('barcode', barcode);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

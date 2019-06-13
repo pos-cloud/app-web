@@ -1,10 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-
-import { Company,CompanyType } from './../../models/company';
+import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { MailService } from './../../services/send-mail.service';
 import { CompanyService } from './../../services/company.service';
@@ -106,7 +104,7 @@ export class SendMailComponent implements OnInit {
     
     this.loading = true;
     this.modelToImport = this.sendmailForm.value;
-    this._serviceMail.sendMail(this.modelToImport).subscribe(
+    this._serviceMail.sendEmail(this.modelToImport).subscribe(
     result => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 

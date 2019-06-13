@@ -12,63 +12,161 @@ import { AuthService } from './auth.service';
 export class UserService {
 
   constructor(
-    public _http: Http,
-    public _authService: AuthService
-  ) { }
+		private _http: HttpClient,
+		private _authService: AuthService
+	) { }
 
-  getLastUser() {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'users/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
+	public getUser(_id: string): Observable<any> {
 
-  getUser(id) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
-	}
+    const URL = `${Config.apiURL}user`;
 
-  getUsers(query?: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "users/" + query, { headers: headers }).map (res => res.json());
-	}
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
 
-  saveUser(user: User) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + "user", user, {headers: headers}).map (res => res.json());
+    const params = new HttpParams()
+        .set('id', _id);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  deleteUser (id: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.delete(Config.apiURL + "user/" + id, { headers: headers }).map (res => res.json());
+  public getUsers(
+    query?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}users`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('query', query);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  updateUser (user: User){
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.put(Config.apiURL + "user/" + user._id, user, { headers: headers }).map (res => res.json());
+  public getUsersV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}v2/users`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('project', JSON.stringify(project))
+        .set('match', JSON.stringify(match))
+        .set('sort', JSON.stringify(sort))
+        .set('group', JSON.stringify(group))
+        .set('limit', limit.toString())
+        .set('skip', skip.toString());
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  getUserOfEmployee(employeeId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'users/where="employee":"' + employeeId + '"&limit=1', { headers: headers }).map (res => res.json());
+  public saveUser(user: User): Observable<any> {
+
+    const URL = `${Config.apiURL}user`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, user, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public updateUser(user: User): Observable<any> {
+
+    const URL = `${Config.apiURL}user`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', user._id);
+
+    return this._http.put(URL, user, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public deleteUser(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}user`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', _id);
+
+    return this._http.delete(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 }

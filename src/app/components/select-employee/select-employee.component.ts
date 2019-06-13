@@ -122,7 +122,9 @@ export class SelectEmployeeComponent implements OnInit {
 
     this.loading = true;
 
-    this._turnService.getOpenTurn(this.employeeSelected._id).subscribe(
+    let query = 'where="employee":"' + this.employeeSelected._id + '","state":"' + TurnState.Open + '"';
+
+    this._turnService.getTurns(query).subscribe(
       result => {
         if (!result.turns) {
           if (this.op === "close-turn") {
@@ -188,7 +190,9 @@ export class SelectEmployeeComponent implements OnInit {
 
     this.loading = true;
 
-    this._userService.getUserOfEmployee(this.employeeSelected._id).subscribe(
+    let query = 'where="employee":"' + this.employeeSelected._id + '"&limit=1';
+
+    this._userService.getUsers(query).subscribe(
       result => {
         if (!result.users) {
           this.showMessage("Tienes configurado para que pida autorización, pero no tiene creado un usuario el empleado.", 'info', true);

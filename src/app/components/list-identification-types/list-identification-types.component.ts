@@ -50,7 +50,9 @@ export class ListIdentificationTypesComponent implements OnInit {
 
     this.loading = true;
 
-    this._identificationTypeService.getIdentificationTypes().subscribe(
+    let query = 'sort="name":1';
+
+    this._identificationTypeService.getIdentificationTypes(query).subscribe(
         result => {
           if (!result.identificationTypes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

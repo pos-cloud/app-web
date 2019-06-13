@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { empty } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
@@ -11,15 +11,27 @@ import { AuthService } from './auth.service';
 export class MailService {
 
 	constructor(
-		public _http: Http,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
 
-  sendMail (objectToImport) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + '/send-email', objectToImport, { headers: headers }).map (res => res.json());
-	}
+	public sendEmail(data: {}): Observable<any> {
+
+        const URL = `${Config.apiURL}send-email`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, data, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

@@ -12,10 +12,33 @@ import { Country } from './../models/country';
 export class CountryService {
 
 	constructor(
-        public _http: Http,
-        private http: HttpClient,
-		public _authService: AuthService
+        private _http: HttpClient,
+		private _authService: AuthService
 	) { }
+
+    public getCountry (_id: string): Observable<any> {
+        
+        const URL = `${Config.apiURL}country`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+        
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL , {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
     public getCountries(
         project: {},
@@ -29,34 +52,48 @@ export class CountryService {
         const URL = `${Config.apiURL}/countries`;
 
         const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
-        //.set('Authorization', this._authService.getSession()["token"]);
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
-        .set('project', JSON.stringify(project))
-        .set('match', JSON.stringify(match))
-        .set('sort', JSON.stringify(sort))
-        .set('group', JSON.stringify(group))
-        .set('limit', limit.toString())
-        .set('skip', skip.toString());
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
 
-        return this.http.get(URL, {
-        headers: headers,
-        params: params
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
         }).pipe(
             map(res => {
                 return res;
+            }),
+            catchError((err) => {
+                return empty();
             })
         );
     }
 
-    public addCountry( country: Country): Observable<any> {
-		let headers = new Headers({
-		'Content-Type': 'application/json',
-				'Authorization': this._authService.getToken()
-    });
-		return this._http.post(Config.apiURL + "country", country, { headers: headers }).map (res => res.json());
+    public saveCountry(country: Country): Observable<any> {
+
+        const URL = `${Config.apiURL}country`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, country, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
     }
 
     public updateCountry(country: Country): Observable<any> {
@@ -70,17 +107,20 @@ export class CountryService {
         const params = new HttpParams()
             .set('id', country._id);
 
-        return this.http.put(URL, country, {
+        return this._http.put(URL, country, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    public deleteCountry (countryId: string): Observable<any> {
+    public deleteCountry (_id: string): Observable<any> {
         
         const URL = `${Config.apiURL}country`;
 
@@ -89,36 +129,18 @@ export class CountryService {
             .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
-            .set('id', countryId);
+            .set('id', _id);
 
-        return this.http.delete(URL, {
+        return this._http.delete(URL, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
-        );
-    }
-
-    public getCountry (countryId: string): Observable<any> {
-        
-        const URL = `${Config.apiURL}country`;
-
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        
-        const params = new HttpParams()
-            .set('id', countryId);
-
-        return this.http.get(URL , {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 }

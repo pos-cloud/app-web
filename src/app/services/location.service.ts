@@ -12,59 +12,161 @@ import { AuthService } from './auth.service';
 export class LocationService {
 
 	constructor(
-		public _http: Http,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
   ) { }
-  
-  getLastLocation() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'locations/sort="description":-1&limit=1', { headers: headers }).map(res => res.json());
-	}
 
-	getLocation(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "location/" + id, { headers: headers }).map(res => res.json());
-	}
+	public getLocation(_id: string): Observable<any> {
 
-	getLocations(query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		if (query) {
-			return this._http.get(Config.apiURL + 'locations/' + query, { headers: headers }).map(res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + "locations", { headers: headers }).map(res => res.json());
-		}
-	}
+        const URL = `${Config.apiURL}location`;
 
-	saveLocation(location: Location) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "location", location, { headers: headers }).map(res => res.json());
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-	deleteLocation(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "location/" + id, { headers: headers }).map(res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', _id);
 
-	updateLocation(location: Location) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "location/" + location._id, location, { headers: headers }).map(res => res.json());
-	}
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public getLocations(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}locations`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public getLocationsV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}v2/locations`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public saveLocation(location: Location): Observable<any> {
+
+        const URL = `${Config.apiURL}location`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, location, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public updateLocation(location: Location): Observable<any> {
+
+        const URL = `${Config.apiURL}location`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', location._id);
+
+        return this._http.put(URL, location, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+    
+    public deleteLocation(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}location`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

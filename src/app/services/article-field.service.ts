@@ -104,7 +104,7 @@ export class ArticleFieldService {
 
     public saveArticleField(articleField: ArticleField): Observable<any> {
 
-        const URL = `${Config.apiURL}article`;
+        const URL = `${Config.apiURL}article-field`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
@@ -152,6 +152,7 @@ export class ArticleFieldService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
             .set('id', _id);

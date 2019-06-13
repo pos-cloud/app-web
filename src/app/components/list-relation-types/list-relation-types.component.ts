@@ -49,8 +49,10 @@ export class ListRelationTypesComponent implements OnInit {
   public getRelationTypes(): void {
 
     this.loading = true;
+    
+    let query = 'sort="description":1';
 
-    this._relationTypeService.getRelationTypes().subscribe(
+    this._relationTypeService.getRelationTypes(query).subscribe(
         result => {
           if (!result.relationTypes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

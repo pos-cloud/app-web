@@ -82,32 +82,33 @@ export class ViewTransactionComponent implements OnInit {
   public getMovementsOfArticlesByTransaction(): void {
     this.loading = true;
 
-    this._movementOfArticleService
-      .getMovementsOfTransaction(this.transaction._id)
-      .subscribe(
-        result => {
-          if (!result.movementsOfArticles) {
-            this.areMovementsOfArticlesEmpty = true;
-            this.movementsOfArticles = new Array();
-          } else {
-            this.areMovementsOfArticlesEmpty = false;
-            this.movementsOfArticles = result.movementsOfArticles;
-          }
-          this.loading = false;
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+    let query = 'where="transaction":"' + this.transaction._id + '"';
+
+    this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+      result => {
+        if (!result.movementsOfArticles) {
+          this.areMovementsOfArticlesEmpty = true;
+          this.movementsOfArticles = new Array();
+        } else {
+          this.areMovementsOfArticlesEmpty = false;
+          this.movementsOfArticles = result.movementsOfArticles;
         }
-      );
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getMovementsOfCashesByTransaction(): void {
+    
     this.loading = true;
 
-    this._movementOfCashService
-      .getMovementOfCashesByTransaction(this.transaction._id)
-      .subscribe(
+    let query = 'where="transaction":"' + this.transaction._id + '"';
+
+    this._movementOfCashService.getMovementsOfCashes(query).subscribe(
         result => {
           if (!result.movementsOfCashes) {
             this.areMovementsOfCashesEmpty = true;

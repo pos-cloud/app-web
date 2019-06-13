@@ -12,59 +12,125 @@ import { AuthService } from './auth.service';
 export class CompanyContactService {
 
 	constructor(
-		public _http: Http,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
 
-	getLastCompanyContact() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'contact/sort="code":-1&limit=1', { headers: headers }).map(res => res.json());
-	}
+	public getCompanyContact(_id: string): Observable<any> {
 
-	getCompanyContact(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "company-contact/" + id, { headers: headers }).map(res => res.json());
-	}
+        const URL = `${Config.apiURL}company-contact`;
 
-	getCompaniesContact(query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		if (query) {
-			return this._http.get(Config.apiURL + "contact/"+query, { headers: headers }).map(res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + "contact", { headers: headers }).map(res => res.json());
-		}
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-	saveCompanyContact(companyContact: CompanyContact) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "company-contact", companyContact, { headers: headers }).map(res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', _id);
 
-	deleteCompanyContact(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "company-contact/" + id, { headers: headers }).map(res => res.json());
-	}
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-	updateCompanyContact(companyContact: CompanyContact) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "company-contact/" + companyContact._id, companyContact, { headers: headers }).map(res => res.json());
-	}
+	public getCompaniesContact(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}contacts`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public saveCompanyContact(companyContact: CompanyContact): Observable<any> {
+
+        const URL = `${Config.apiURL}company-contact`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, companyContact, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public updateCompanyContact(companyContact: CompanyContact): Observable<any> {
+
+        const URL = `${Config.apiURL}company-contact`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', companyContact._id);
+
+        return this._http.put(URL, companyContact, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public deleteCompanyContact(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}company-contact`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

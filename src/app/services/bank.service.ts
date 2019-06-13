@@ -12,10 +12,33 @@ import { AuthService } from './auth.service';
 export class BankService {
 
 	constructor(
-        public _http: Http,
-        private http: HttpClient,
-		public _authService: AuthService
+        private _http: HttpClient,
+		private _authService: AuthService
 	) { }
+
+    public getBank(_id: string): Observable<any> {
+        
+        const URL = `${Config.apiURL}bank`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+        
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL , {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
     public getBanks(
         project: {},
@@ -26,12 +49,11 @@ export class BankService {
         skip: number = 0
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}/banks`;
+        const URL = `${Config.apiURL}banks`;
 
         const headers = new HttpHeaders()
         .set('Content-Type', 'application/json')
         .set('Authorization', this._authService.getToken());
-        //.set('Authorization', this._authService.getSession()["token"]);
 
         const params = new HttpParams()
         .set('project', JSON.stringify(project))
@@ -41,22 +63,37 @@ export class BankService {
         .set('limit', limit.toString())
         .set('skip', skip.toString());
 
-        return this.http.get(URL, {
+        return this._http.get(URL, {
         headers: headers,
         params: params
         }).pipe(
             map(res => {
                 return res;
+            }),
+            catchError((err) => {
+                return empty();
             })
         );
     }
 
-    public addBank( bank: Bank): Observable<any> {
-		let headers = new Headers({
-		'Content-Type': 'application/json',
-				'Authorization': this._authService.getToken()
-    });
-		return this._http.post(Config.apiURL + "bank", bank, { headers: headers }).map (res => res.json());
+    public saveBank(bank: Bank): Observable<any> {
+
+        const URL = `${Config.apiURL}bank`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, bank, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
     }
 
     public updateBank(bank: Bank): Observable<any> {
@@ -70,38 +107,20 @@ export class BankService {
         const params = new HttpParams()
             .set('id', bank._id);
 
-        return this.http.put(URL, bank, {
+        return this._http.put(URL, bank, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    public deleteBank(bankId: string): Observable<any> {
-        
-        const URL = `${Config.apiURL}bank`;
-
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken())
-        
-        const params = new HttpParams()
-            .set('id', bankId);
-
-        return this.http.delete(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-        );
-    }
-
-    public getBank(bankId: string): Observable<any> {
+    public deleteBank(_id: string): Observable<any> {
         
         const URL = `${Config.apiURL}bank`;
 
@@ -110,9 +129,9 @@ export class BankService {
             .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
-            .set('id', bankId);
+            .set('id', _id);
 
-        return this.http.get(URL , {
+        return this._http.delete(URL, {
             headers: headers,
             params: params
         }).pipe(

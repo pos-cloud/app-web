@@ -11,76 +11,188 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class EmployeeService {
 
-  constructor(
-    public _http: Http,
-    public _authService: AuthService
-  ) { }
+	constructor(
+		public _http: HttpClient,
+		public _authService: AuthService
+	) { }
 
-  getLastEmployee () {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'employees/sort="_id":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
+	public getEmployee(_id: string): Observable<any> {
 
-  getEmployee (id) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
-	}
+        const URL = `${Config.apiURL}employee`;
 
-  getEmployees (query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		if (query) {
-			return this._http.get(Config.apiURL + "employees/" + query, { headers: headers }).map (res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + "employees", { headers: headers }).map(res => res.json());
-		}
-	}
-  
-  getWaiters () {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "employees", { headers: headers }).map (res => res.json());
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-  saveEmployee(employee: Employee) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + "employee", employee, { headers: headers }).map(res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', _id);
 
-  deleteEmployee (id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "employee/"+id, { headers: headers }).map (res => res.json());
-  }
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-  updateEmployee (employee: Employee){
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "employee/"+employee._id, employee, { headers: headers }).map (res => res.json());
+	public getEmployees(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}employees`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
 	
-	getSalesByEmployee(query: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'sales-by-employee/' + query, { headers: headers }).map(res => res.json());
+	public getSalesByEmployee(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}sales-by-employee`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public getEmployeesV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}v2/employees`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public saveEmployee(employee: Employee): Observable<any> {
+
+        const URL = `${Config.apiURL}employee`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, employee, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public updateEmployee(employee: Employee): Observable<any> {
+
+        const URL = `${Config.apiURL}employee`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', employee._id);
+
+        return this._http.put(URL, employee, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
+	
+	public deleteEmployee(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}employee`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

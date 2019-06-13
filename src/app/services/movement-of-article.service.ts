@@ -12,94 +12,58 @@ import { AuthService } from './auth.service';
 export class MovementOfArticleService {
 
   constructor(
-    public _http: Http,
-		private http: HttpClient,
-    public _authService: AuthService
+		private _http: HttpClient,
+    private _authService: AuthService
   ) { }
-
-  getLastMovementOfArticle() {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'movements-of-articles/sort="code":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
-
-  getMovementOfArticle (id) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "movement-of-article/"+id, { headers: headers }).map (res => res.json());
-	}
-
-  getMovementsOfArticles (query?: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    if (query) {
-      return this._http.get(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map (res => res.json());
-    } else {
-      return this._http.get(Config.apiURL + "movements-of-articles", { headers: headers }).map(res => res.json());
-    }
-  }
-
-  movementOfArticleExists(articleId: string, transactionId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'movements-of-articles/where="article":"' + articleId + '","transaction":"' + transactionId + '"', { headers: headers }).map(res => res.json());
-  }
-
-  saveMovementOfArticle (movementOfArticle: MovementOfArticle) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + "movement-of-article", movementOfArticle, { headers: headers }).map (res => res.json());
-	}
-
-  deleteMovementOfArticle(id: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.delete(Config.apiURL + "movement-of-article/"+id, { headers: headers }).map (res => res.json());
-  }
-
-  deleteMovementsOfArticles(query: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.delete(Config.apiURL + 'movements-of-articles/' + query, { headers: headers }).map(res => res.json());
-  }
-
-  updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.put(Config.apiURL + "movement-of-article/" + movementOfArticle._id, movementOfArticle, { headers: headers }).map (res => res.json());
-  }
-
-  getMovementsOfTransaction (transactionId: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-
-    return this._http.get(Config.apiURL + 'movements-of-articles/where="transaction":"'+transactionId+'"', { headers: headers }).map (res => res.json());
-  }
   
-  saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + "movements-of-articles", { movementsOfArticles: movementsOfArticles }, { headers: headers }).map(res => res.json());
+  public getMovementOfArticle(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}"movement-of-field`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', _id);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public getMovementsOfArticles(
+    query?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}movements-of-articles`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('query', query);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
   public getMovementsOfArticlesV2(
@@ -111,27 +75,142 @@ export class MovementOfArticleService {
     skip: number = 0
   ): Observable<any> {
 
-	const URL = `${Config.apiURL}v2/movements-of-articles`;
+    const URL = `${Config.apiURL}v2/movements-of-articles`;
 
     const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken());
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
 
     const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
+        .set('project', JSON.stringify(project))
+        .set('match', JSON.stringify(match))
+        .set('sort', JSON.stringify(sort))
+        .set('group', JSON.stringify(group))
+        .set('limit', limit.toString())
+        .set('skip', skip.toString());
 
-    return this.http.get(URL, {
-      headers: headers,
-      params: params
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
     }).pipe(
-      map(res => {
-        return res;
-      })
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+  
+  public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
+
+    const URL = `${Config.apiURL}movement-of-article`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, movementOfArticle, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public saveMovementsOfArticles(movementsOfArticles: MovementOfArticle[]): Observable<any> {
+
+    const URL = `${Config.apiURL}movements-of-articles`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, { movementsOfArticles: movementsOfArticles }, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Observable<any> {
+
+    const URL = `${Config.apiURL}movement-of-article`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', movementOfArticle._id);
+
+    return this._http.put(URL, movementOfArticle, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+}
+
+  public deleteMovementOfArticle(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}movement-of-article`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', _id);
+
+    return this._http.delete(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public deleteMovementsOfArticles(query: string): Observable<any> {
+
+    const URL = `${Config.apiURL}movements-of-articles`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('query', query);
+
+    return this._http.delete(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
     );
   }
 }

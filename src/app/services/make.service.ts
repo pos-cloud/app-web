@@ -12,67 +12,187 @@ import { AuthService } from './auth.service';
 export class MakeService {
 
 	constructor(
-		public _http: Http,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
 
-	getLastMake () {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'makes/sort="description":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
+	public getMake(_id: string): Observable<any> {
 
-	getMake (id) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
-	}
+        const URL = `${Config.apiURL}make`;
 
-	getMakes (query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		if(query) {
-			return this._http.get(Config.apiURL + 'makes/' + query, { headers: headers }).map (res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + 'makes', { headers: headers }).map (res => res.json());
-		}
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-	saveMake (make : Make) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "make",make, { headers: headers }).map (res => res.json());
-	}
-  
-	deleteMake (id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "make/"+id, { headers: headers }).map (res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', _id);
 
-	updateMake (make: Make){
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "make/"+make._id, make, { headers: headers }).map (res => res.json());
-	}
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-	getSalesByMake(query: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "sales-by-make/" + query, { headers: headers }).map(res => res.json());
+	public getMakes(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}makes`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public getMakesV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}v2/makes`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
+	
+	public getSalesByMake(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}sales-by-make`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public saveMake(make : Make): Observable<any> {
+
+        const URL = `${Config.apiURL}make`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, make, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public updateMake(make: Make): Observable<any> {
+
+        const URL = `${Config.apiURL}make`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', make._id);
+
+        return this._http.put(URL, make, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+	}
+	
+	public deleteMake(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}make`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

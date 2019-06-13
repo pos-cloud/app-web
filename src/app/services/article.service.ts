@@ -4,7 +4,7 @@ import { empty } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
-import { Article, ArticleType } from './../models/article';
+import { Article } from './../models/article';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
 import { Variant } from 'app/models/variant';
@@ -193,12 +193,13 @@ export class ArticleService {
         );
 	}
 	
-	public deleteArticleField(_id: string): Observable<any> {
+	public deleteArticle(_id: string): Observable<any> {
 
         const URL = `${Config.apiURL}article`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
             .set('id', _id);

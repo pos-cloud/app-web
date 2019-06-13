@@ -12,10 +12,33 @@ import { State } from './../models/state';
 export class StateService {
 
 	constructor(
-        public _http: Http,
-        private http: HttpClient,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
+
+    public getState(_id: string): Observable<any> {
+        
+        const URL = `${Config.apiURL}state`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+        
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
     public getStates(
         project: {},
@@ -29,96 +52,95 @@ export class StateService {
         const URL = `${Config.apiURL}/states`;
 
         const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
-        //.set('Authorization', this._authService.getSession()["token"]);
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
-        .set('project', JSON.stringify(project))
-        .set('match', JSON.stringify(match))
-        .set('sort', JSON.stringify(sort))
-        .set('group', JSON.stringify(group))
-        .set('limit', limit.toString())
-        .set('skip', skip.toString());
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
 
-        return this.http.get(URL, {
-        headers: headers,
-        params: params
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
         }).pipe(
             map(res => {
                 return res;
+            }),
+            catchError((err) => {
+                return empty();
             })
         );
     }
 
-    public addState( state: State): Observable<any> {
-		let headers = new Headers({
-		'Content-Type': 'application/json',
-				'Authorization': this._authService.getToken()
-    });
-		return this._http.post(Config.apiURL + "state", state, { headers: headers }).map (res => res.json());
+    public saveState(state: State): Observable<any> {
+
+        const URL = `${Config.apiURL}state`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, state, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
     }
 
     public updateState(state: State): Observable<any> {
-        
+
         const URL = `${Config.apiURL}state`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
-        
+
         const params = new HttpParams()
             .set('id', state._id);
 
-        return this.http.put(URL, state, {
+        return this._http.put(URL, state, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    public deleteState(stateId: string): Observable<any> {
-        
+    public deleteState(_id: string): Observable<any> {
+
         const URL = `${Config.apiURL}state`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
-        
-        const params = new HttpParams()
-            .set('id', stateId);
 
-        return this.http.delete(URL, {
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
-        );
-    }
-
-    public getState(stateId: string): Observable<any> {
-        
-        const URL = `${Config.apiURL}state`;
-
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken());
-        
-        const params = new HttpParams()
-            .set('id', stateId);
-
-        return this.http.get(URL , {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 }

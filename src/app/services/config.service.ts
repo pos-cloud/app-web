@@ -13,48 +13,158 @@ export class ConfigService {
   private config: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
 	constructor(
-		public _http: Http,
+		public _http: HttpClient,
 		public _authService: AuthService
 	) { }
 
-	setConfig(config: any) {
+	public setConfig(config: any) {
     this.config.next(config);
 	}
 
 	get getConfig() {
     return this.config.asObservable();
   }
+  
+  public getConfigApi(): Observable<any> {
 
-	getConfigApi() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "config", { headers: headers }).map (res => res.json());
+    const URL = `${Config.apiURL}config`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.get(URL, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public getCompanyPicture(picture: string): Observable<any> {
+
+    const URL = `${Config.apiURL}get-image-base64-company`;
+
+    const params = new HttpParams()
+            .set('picture', picture);
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public generateLicensePayment(
+    payment: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}article-fields`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')           
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('payment', payment);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+	
+	public getCountry() {
+		return this._http.get("https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones;alpha3Code;flag;callingCodes")
 	}
 
-	saveConfigApi(config: Config) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "config", config, { headers: headers }).map (res => res.json());
+	public getTimeZone(country : string) {
+		return this._http.get("https://restcountries.eu/rest/v2/alpha/"+country)
 	}
 
-	updateConfig(config: Config) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "config/" + config._id, config, { headers: headers }).map (res => res.json());
-	}
+  public saveConfig(config: Config): Observable<any> {
 
-	generateCRS (config: Config){
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "generate-crs", config, {headers: headers}).map(res => res.json());
+    const URL = `${Config.apiURL}config`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, config, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public generateCRS(config: Config): Observable<any> {
+
+    const URL = `${Config.apiURL}generate-crs`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, config, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+  
+  public updateConfig(config: Config): Observable<any> {
+
+    const URL = `${Config.apiURL}config`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', config._id);
+
+    return this._http.put(URL, config, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
   public makeFileRequest(config, files: Array<File>) {
@@ -86,35 +196,27 @@ export class ConfigService {
     });
   }
 
-  getCompanyPicture(picture: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'get-image-base64-company/' + picture, { headers: headers }).map(res => res.json());
+  public deletePicture(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}delete-image-company`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('id', _id);
+
+    return this._http.delete(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
-
-  deletePicture(id: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.delete(Config.apiURL + "delete-image-company/" + id, { headers: headers }).map(res => res.json());
-  }
-
-  generateLicensePayment(payment) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'generar-licencia-payment/'+ payment, { headers: headers }).map(res => res.json());
-	}
-	
-	getCountry() {
-		return this._http.get("https://restcountries.eu/rest/v2/all?fields=name;alpha2Code;timezones;alpha3Code;flag;callingCodes")
-	}
-
-	getTimeZone(country : string) {
-		return this._http.get("https://restcountries.eu/rest/v2/alpha/"+country)
-	}
 }

@@ -12,10 +12,33 @@ import { CancellationType } from './../models/cancellation-type';
 export class CancellationTypeService {
 
 	constructor(
-        public _http: Http,
-        private http: HttpClient,
-		public _authService: AuthService
+        private _http: HttpClient,
+		private _authService: AuthService
 	) { }
+
+    public getCancellationType(_id: string): Observable<any> {
+        
+        const URL = `${Config.apiURL}cancellation-type`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+        
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL , {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
     public getCancellationTypes(
         project: {},
@@ -29,34 +52,48 @@ export class CancellationTypeService {
         const URL = `${Config.apiURL}/cancellation-types`;
 
         const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
-        //.set('Authorization', this._authService.getSession()["token"]);
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
-        .set('project', JSON.stringify(project))
-        .set('match', JSON.stringify(match))
-        .set('sort', JSON.stringify(sort))
-        .set('group', JSON.stringify(group))
-        .set('limit', limit.toString())
-        .set('skip', skip.toString());
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
 
-        return this.http.get(URL, {
-        headers: headers,
-        params: params
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
         }).pipe(
-        map(res => {
-            return res;
-        })
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    public addCancellationType( cancellationType: CancellationType,): Observable<any> {
-		let headers = new Headers({
-		'Content-Type': 'application/json',
-				'Authorization': this._authService.getToken()
-    });
-		return this._http.post(Config.apiURL + "cancellation-type", cancellationType, { headers: headers }).map (res => res.json());
+    public saveCancellationType(cancellationType: CancellationType): Observable<any> {
+
+        const URL = `${Config.apiURL}cancellation-type`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, cancellationType, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
     }
 
     public updateCancellationType(cancellationType: CancellationType): Observable<any> {
@@ -65,43 +102,25 @@ export class CancellationTypeService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken())
+            .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
             .set('id', cancellationType._id);
 
-        return this.http.put(URL, cancellationType, {
+        return this._http.put(URL, cancellationType, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    public deleteCancellationType(cancellationTypeId: string): Observable<any> {
-        
-        const URL = `${Config.apiURL}cancellation-type`;
-
-        const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')
-            .set('Authorization', this._authService.getToken())
-        
-        const params = new HttpParams()
-            .set('id', cancellationTypeId);
-
-        return this.http.delete(URL, {
-            headers: headers,
-            params: params
-        }).pipe(
-            map(res => {
-                return res;
-            }),
-        );
-    }
-
-    public getCancellationType(cancellationTypeId: string): Observable<any> {
+    public deleteCancellationType(_id: string): Observable<any> {
         
         const URL = `${Config.apiURL}cancellation-type`;
 
@@ -110,15 +129,18 @@ export class CancellationTypeService {
             .set('Authorization', this._authService.getToken());
         
         const params = new HttpParams()
-            .set('id', cancellationTypeId);
+            .set('id', _id);
 
-        return this.http.get(URL , {
+        return this._http.delete(URL, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 }

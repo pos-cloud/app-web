@@ -741,7 +741,10 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.loading = true;
 
     if(this.movementOfArticle.article) {
-      this._movementOfArticleService.movementOfArticleExists(this.movementOfArticle.article._id, this.movementOfArticle.transaction._id).subscribe(
+
+      let query = 'where="article":"' + this.movementOfArticle.article._id + '","transaction":"' + this.movementOfArticle.transaction._id + '"';
+
+      this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
         async result => {
           if (!result.movementsOfArticles) {
 

@@ -11,23 +11,50 @@ import { AuthService } from './auth.service';
 export class ImportService {
 
   constructor(
-    public _http: Http,
-    public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
   ) { }
 
-  import(objectToImport) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + 'import-xlsx', objectToImport, { headers: headers }).map (res => res.json());
+  public import(objectToImport: {}): Observable<any> {
+
+    const URL = `${Config.apiURL}import-xlsx`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, objectToImport, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
   
-  importMovement(objectToImport,transaccion) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + 'import-movement/'+ transaccion, objectToImport, { headers: headers }).map (res => res.json());
-	}
+  public importMovement(objectToImport: {}, transaccionId: string): Observable<any> {
+
+    const URL = `${Config.apiURL}import-movement`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+        .set('transaccion', transaccionId);
+
+    return this._http.post(URL, objectToImport, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
 }

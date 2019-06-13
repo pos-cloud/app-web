@@ -112,7 +112,9 @@ export class AddUseOfCFDIComponent implements OnInit {
 
     this.loading = true;
 
-    this._useOfCFDIService.getLastUseOfCFDI().subscribe(
+    let query = 'sort="code":-1&limit=1';
+
+    this._useOfCFDIService.getUsesOfCFDI(query).subscribe(
       result => {
         if (!result.useOfCFDIs) {
           this.loading = false;

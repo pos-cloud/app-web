@@ -223,7 +223,9 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
 
-    this._identificationTypeService.getIdentificationTypes().subscribe(
+    let query = 'sort="name":1';
+
+    this._identificationTypeService.getIdentificationTypes(query).subscribe(
       result => {
         if (!result.identificationTypes) {
           this.loading = false;
@@ -575,7 +577,9 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
 
-    this._companyService.getLastCompany().subscribe(
+    let query = 'sort="code":-1&limit=1';
+
+    this._companyService.getCompanies(query).subscribe(
         result => {
           let code = 1;
           if (result.companies){

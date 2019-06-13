@@ -445,7 +445,9 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
-    this._movementOfCashService.getMovementOfCashesByTransaction(this.transaction._id).subscribe(
+    let query = 'where="transaction":"' + this.transaction._id + '"';
+
+    this._movementOfCashService.getMovementsOfCashes(query).subscribe(
       result => {
         if (!result.movementsOfCashes) {
           this.movementsOfCashes = new Array();
@@ -578,8 +580,9 @@ export class AddMovementOfCashComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
     
+      let query = 'where="number":"' + number + '"';
 
-      this._movementOfCashService.getCheck(number).subscribe(
+      this._movementOfCashService.getMovementsOfCashes(query).subscribe(
         async result => {
           if(result && result.movementsOfCashes){
             resolve(result.movementsOfCashes[0]);
@@ -592,10 +595,7 @@ export class AddMovementOfCashComponent implements OnInit {
           resolve(null);
         }
       )
-  
     });
-
-   
   }
 
   public updateCheck(movementOfCash : MovementOfCash, statusCheck : StatusCheck, amount? : number) {
@@ -804,19 +804,6 @@ export class AddMovementOfCashComponent implements OnInit {
         }
       }
     }
-
-    /*if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && this.movementOfCashForm.value.number){
-      let checks = this.getChecks(this.movementOfCashForm.value.number)
-      if(checks) {
-        isValid = false;
-        this.showMessage('El numero de comprobante ya existe', 'info', true);
-      }
-    }*/
-
-    /*if ((moment(this.movementOfCash.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
-      isValid = false;
-      this.showMessage('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción', 'info', true);
-    }*/
 
     if(this.paymentMethodSelected.allowToFinance) {
       let amountTotal = 0;

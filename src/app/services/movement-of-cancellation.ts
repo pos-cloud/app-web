@@ -12,10 +12,33 @@ import { AuthService } from './auth.service';
 export class MovementOfCancellationService {
 
 	constructor(
-        public _http: Http,
-        private http: HttpClient,
-		public _authService: AuthService
-	) { }
+		private _http: HttpClient,
+		private _authService: AuthService
+    ) { }
+
+    public getMovementOfCancellation(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}movement-of-cancellation`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
     public getMovementsOfCancellations(
         project: {},
@@ -29,105 +52,139 @@ export class MovementOfCancellationService {
         const URL = `${Config.apiURL}/movements-of-cancellations`;
 
         const headers = new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Authorization', this._authService.getToken());
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
-        .set('project', JSON.stringify(project))
-        .set('match', JSON.stringify(match))
-        .set('sort', JSON.stringify(sort))
-        .set('group', JSON.stringify(group))
-        .set('limit', limit.toString())
-        .set('skip', skip.toString());
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
 
-        return this.http.get(URL, {
+        return this._http.get(URL, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
+            }),
+            catchError((err) => {
+                return empty();
             })
         );
     }
 
-    saveMovementOfCancellation (movementOfCancellation: MovementOfCancellation) {
-        let headers = new Headers({
-          'Content-Type': 'application/json',
-          'Authorization': this._authService.getToken()
-        });
-        return this._http.post(Config.apiURL + "movement-of-cancellation", movementOfCancellation, { headers: headers }).map (res => res.json());
-    }
+    public saveMovementOfCancellation (movementOfCancellation: MovementOfCancellation): Observable<any> {
 
-    saveMovementsOfCancellations (movementsOfCancellations: MovementOfCancellation[]) {
-        let headers = new Headers({
-          'Content-Type': 'application/json',
-          'Authorization': this._authService.getToken()
-        });
-        return this._http.post(Config.apiURL + "movements-of-cancellations", { movementsOfCancellations: movementsOfCancellations }, { headers: headers }).map (res => res.json());
-    }
-
-    updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation) {
-        
         const URL = `${Config.apiURL}movement-of-cancellation`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
-        
+
+        return this._http.post(URL, movementOfCancellation, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public saveMovementsOfCancellations(movementsOfCancellations: MovementOfCancellation[]): Observable<any> {
+
+        const URL = `${Config.apiURL}movements-of-cancellations`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, { movementsOfCancellations: movementsOfCancellations }, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public updateMovementOfCancellation(movementOfCancellation: MovementOfCancellation): Observable<any> {
+
+        const URL = `${Config.apiURL}movement-of-cancellation`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
         const params = new HttpParams()
             .set('id', movementOfCancellation._id);
 
-        return this.http.put(URL, movementOfCancellation, {
+        return this._http.put(URL, movementOfCancellation, {
             headers: headers,
             params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    deleteMovementOfCancellation(movementOfCancellationId: string) {
-        
-        const URL = `${Config.apiURL}movement-of-cancellation/`;
+    public deleteMovementOfCancellation(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}movement-of-cancellation`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
-        return this.http.delete(URL + movementOfCancellationId , {
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
             headers: headers,
+            params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
 
-    deleteMovementsOfCancellations(query: string) {
-        let headers = new Headers({
-          'Content-Type': 'application/json',
-          'Authorization': this._authService.getToken()
-        });
-        return this._http.delete(Config.apiURL + 'movements-of-cancellations/' + query, { headers: headers }).map(res => res.json());
-      }
+    public deleteMovementsOfCancellations(query: string): Observable<any> {
 
-    getMovementOfCancellation( movementOfCancellationId: string){
-        
-        const URL = `${Config.apiURL}movement-of-cancellation/`;
+        const URL = `${Config.apiURL}movements-of-cancellations`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
-        
 
-        return this.http.get(URL +  movementOfCancellationId , {
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.delete(URL, {
             headers: headers,
+            params: params
         }).pipe(
             map(res => {
                 return res;
             }),
+            catchError((err) => {
+                return empty();
+            })
         );
     }
-
 }

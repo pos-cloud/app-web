@@ -95,7 +95,9 @@ export class AddEmployeeComponent  implements OnInit {
 
     this.loading = true;
 
-    this._employeeService.getLastEmployee().subscribe(
+    let query = 'sort="_id":-1&limit=1';
+
+    this._employeeService.getEmployees(query).subscribe(
         result => {
           let code = 1;
           let employeeType: EmployeeType = new EmployeeType();

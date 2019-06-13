@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Router } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { BehaviorSubject, empty } from "rxjs";
 import { Observable } from "rxjs/Observable";
@@ -16,7 +17,7 @@ export class AuthService {
 
   constructor(
     private _router: Router,
-    public _http: Http
+		private _http: HttpClient
   ) { }
 
   get getIdentity() {
@@ -28,23 +29,46 @@ export class AuthService {
     return this.identity.asObservable();
   }
 
-  login(database: string, user: string, password: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json'
-    });
-    return this._http.post(Config.apiURL + "login", { 
-                                                      database: database, 
-                                                      user : user, 
-                                                      password: password 
-                                                    }, 
-                                                    { headers: headers }).map (res => res.json());
-	}
+  public login(database: string, user: string, password: string): Observable<any> {
 
-  register(data) {
-    let headers = new Headers({
-      'Content-Type': 'application/json'
-    });
-    return this._http.post(Config.apiURL + "register", data, { headers: headers }).map(res => res.json());
+    const URL = `${Config.apiURL}login`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json');
+
+    return this._http.post(URL, { 
+                                  database: database, 
+                                  user : user, 
+                                  password: password 
+                                }, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
+  }
+
+  public register(data): Observable<any> {
+
+    const URL = `${Config.apiURL}register`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json');
+
+    return this._http.post(URL, data, {
+        headers: headers
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
   public loginStorage(user: User): void {
@@ -82,20 +106,52 @@ export class AuthService {
     this._router.navigate(['/login']);
   }
 
-  isValidToken(token: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this.getToken()
-    });
-    return this._http.get(Config.apiURL + "validate_token/" + token.replace(/"/gi, ''), { headers: headers }).map(res => res.json());
+  public isValidToken(token: string): Observable<any> {
+
+    const URL = `${Config.apiURL}validate_token`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this.getToken());
+
+    const params = new HttpParams()
+        .set('token', token.replace(/"/gi, ''));
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
-  checkPermission(employee: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this.getToken()
-    });
-    return this._http.get(Config.apiURL + "check_permission/" + employee, { headers: headers }).map(res => res.json());
+  public checkPermission(employee: string): Observable<any> {
+
+    const URL = `${Config.apiURL}check_permission`;
+
+    const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Authorization', this.getToken());
+
+    const params = new HttpParams()
+        .set('employee', employee);
+
+    return this._http.get(URL, {
+        headers: headers,
+        params: params
+    }).pipe(
+        map(res => {
+            return res;
+        }),
+        catchError((err) => {
+            return empty();
+        })
+    );
   }
 
   getToken(): string {

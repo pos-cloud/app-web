@@ -11,56 +11,162 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class CompanyGroupService {
 
-  constructor(
-    public _http: Http,
-    public _authService: AuthService
-  ) { }
+	constructor(
+		public _http: HttpClient,
+		public _authService: AuthService
+	) { }
 
-  getLastCompanyGroup () {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'groups/sort="description":-1&limit=1', { headers: headers }).map (res => res.json());
-  }
+	public getCompanyGroup(_id: string): Observable<any> {
 
-  getCompanyGroup (id) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "group/"+id, { headers: headers }).map (res => res.json());
-  }
+		const URL = `${Config.apiURL}group`;
 
-  getCompaniesGroup () {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "groups", { headers: headers }).map (res => res.json());
-  }
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')
+			.set('Authorization', this._authService.getToken());
 
-  saveCompanyGroup (companyGroup : CompanyGroup) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "group",companyGroup, { headers: headers }).map (res => res.json());
-  }
-  
-  deleteCompanyGroup (id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "group/"+id, { headers: headers }).map (res => res.json());
-  }
+		const params = new HttpParams()
+			.set('id', _id);
 
-  updateCompanyGroup (companyGroup: CompanyGroup){
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "group/"+companyGroup._id, companyGroup, { headers: headers }).map (res => res.json());
-  }
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return empty();
+			})
+		);
+	}
+
+	public getCompaniesGroup(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}groups`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+	}
+	
+	public getCompaniesGroupV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}v2/groups`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public saveCompanyGroup(companyGroup : CompanyGroup): Observable<any> {
+
+        const URL = `${Config.apiURL}group`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, companyGroup, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public updateCompanyGroup(companyGroup: CompanyGroup): Observable<any> {
+
+        const URL = `${Config.apiURL}group`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', companyGroup._id);
+
+        return this._http.put(URL, companyGroup, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+	
+	public deleteCompanyGroup(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}group`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

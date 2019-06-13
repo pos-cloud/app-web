@@ -79,7 +79,9 @@ export class ListCompaniesComponent implements OnInit {
       }
     }
 
-    this._companyService.getCompaniesByType(this.type.toString()).subscribe(
+    let query = 'where="type":"' + this.type.toString() + '"';
+
+    this._companyService.getCompanies(query).subscribe(
         result => {
 					if (!result.companies) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);

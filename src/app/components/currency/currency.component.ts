@@ -129,7 +129,9 @@ export class CurrencyComponent implements OnInit {
 
     this.loading = true;
 
-    this._currencyService.getLastCurrency().subscribe(
+    let query = 'sort="code":-1&limit=1';
+
+    this._currencyService.getCurrencies(query).subscribe(
       result => {
         if (!result.currencies) {
           this.loading = false;

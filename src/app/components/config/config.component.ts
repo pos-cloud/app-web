@@ -108,7 +108,7 @@ export class ConfigComponent implements OnInit {
   public getCountries() : void {
     this._configService.getCountry().subscribe(
       result => {
-        this.countries = JSON.parse(result["_body"]);
+        this.countries = result;
       }
     )
   }
@@ -116,7 +116,7 @@ export class ConfigComponent implements OnInit {
   public getTimeZone(country : string) {
     this._configService.getTimeZone(country).subscribe(
       result => {
-        this.timezones = JSON.parse(result["_body"]);
+        this.timezones = result;
         this.timezones = this.timezones.timezones
       }
     )
@@ -374,7 +374,9 @@ export class ConfigComponent implements OnInit {
 
   public getIdentificationTypes(): void {
 
-    this._identificationTypeService.getIdentificationTypes().subscribe(
+    let query = 'sort="name":1';
+
+    this._identificationTypeService.getIdentificationTypes(query).subscribe(
       result => {
         if (!result.identificationTypes) {
         } else {

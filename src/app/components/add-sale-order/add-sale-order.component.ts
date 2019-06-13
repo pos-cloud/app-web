@@ -314,7 +314,9 @@ export class AddSaleOrderComponent {
 
     return new Promise<RelationType[]>((resolve, reject) => {
 
-      this._relationTypeService.getRelationTypes().subscribe(
+      let query = 'sort="description":1';
+
+      this._relationTypeService.getRelationTypes(query).subscribe(
         result => {
           if (!result.relationTypes) {
             resolve(null);
@@ -334,7 +336,9 @@ export class AddSaleOrderComponent {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+      let query = 'where="type":"' + this.transaction.type + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+
+      this._transactionService.getTransactions(query).subscribe(
         async result => {
           if (!result.transactions) {
             resolve(null);
@@ -494,7 +498,9 @@ export class AddSaleOrderComponent {
 
     this.loading = true;
 
-    this._movementOfArticleService.getMovementsOfTransaction(this.transaction._id).subscribe(
+    let query = 'where="transaction":"' + this.transaction._id + '"';
+
+    this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
       result => {
         if (!result.movementsOfArticles) {
           this.areMovementsOfArticlesEmpty = true;
@@ -1873,7 +1879,9 @@ export class AddSaleOrderComponent {
 
   public assignTransactionNumber() {
 
-    this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+    let query = 'where="type":"' + this.transaction.type + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+
+    this._transactionService.getTransactions(query).subscribe(
       result => {
         if (!result.transactions) {
           this.transaction.number = 1;

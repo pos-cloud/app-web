@@ -4,7 +4,7 @@ import { empty } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
-import { TransactionType, TransactionMovement } from './../models/transaction-type';
+import { TransactionType } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
 
@@ -12,100 +12,161 @@ import { AuthService } from './auth.service';
 export class TransactionTypeService {
 
 	constructor(
-		public _http: Http,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
 
-	getLastTransactionType() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/sort="_id":-1&limit=1', {headers: headers}).map(res => res.json());
-	}
+	public getTransactionType(_id: string): Observable<any> {
 
-	getTransactionType(id) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "transaction-type/" + id, {headers: headers}).map(res => res.json());
-	}
+        const URL = `${Config.apiURL}transaction-type`;
 
-	getTransactionTypes(query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-		if (query) {
-			return this._http.get(Config.apiURL + "transaction-types/" + query, {headers: headers}).map(res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + "transaction-types", { headers: headers }).map(res => res.json());
-		}
-	}
+        const params = new HttpParams()
+            .set('id', _id);
 
-	getTransactionTypesByMovement(transactionMovement: TransactionMovement) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transaction-types/where="transactionMovement":"' + transactionMovement + '"', { headers: headers }).map(res => res.json());
-  }
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-  getTransactionTypesOfCashBox() {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'transaction-types/where="$or":[{"cashOpening":true},{"cashClosing":true}]', { headers: headers }).map(res => res.json());
-  }
+    public getTransactionTypes(
+        query?: string
+    ): Observable<any> {
 
-	getDefectOrder() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transaction-types/where="defectOrders":' + true + '', { headers: headers }).map(res => res.json());
-	}
+        const URL = `${Config.apiURL}transaction-types`;
 
-	getTransactionByType(type: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transaction-types/where="name":"' + type + '"', {headers: headers}).map(res => res.json());
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
 
-	getTransactionTypeByName(name: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transaction-types/where="name":"' + name + '"', {headers: headers}).map(res => res.json());
-	}
+        const params = new HttpParams()
+            .set('query', query);
 
-	saveTransactionType(transactionType: TransactionType) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "transaction-type", transactionType, {headers: headers}).map(res => res.json());
-	}
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-	deleteTransactionType(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "transaction-type/" + id, {headers: headers}).map(res => res.json());
-	}
+    public getTransactionTypesV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
 
-	updateTransactionType(transactionType: TransactionType) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "transaction-type/" + transactionType._id, transactionType, {headers: headers}).map(res => res.json());
-	}
+        const URL = `${Config.apiURL}v2/transaction-types`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public saveTransactionType(transactionType: TransactionType): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction-type`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, transactionType, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public updateTransactionType(transactionType: TransactionType): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction-type`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', transactionType._id);
+
+        return this._http.put(URL, transactionType, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public deleteTransactionType(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction-type`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

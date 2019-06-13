@@ -12,59 +12,185 @@ import { AuthService } from './auth.service';
 export class CashBoxService {
 
 	constructor(
-		public _http: Http,
+		public _http: HttpClient,
 		public _authService: AuthService
 	) { }
 
-  	getCashBox (id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'cash-box/' + id, { headers: headers }).map (res => res.json());
-	}
+	public getCashBox(_id: string): Observable<any> {
 
-  	getCashBoxes (query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		if(query) {
-			return this._http.get(Config.apiURL + 'cash-boxes/' + query, { headers: headers }).map (res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + "cash-boxes", { headers: headers }).map (res => res.json());
-		}
-	}
+        const URL = `${Config.apiURL}cash-box`;
 
-  	saveCashBox (cashBox: CashBox) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "cash-box", cashBox, { headers: headers }).map (res => res.json());
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-	deleteCashBox (id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "cash-box/"+id, { headers: headers }).map (res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', _id);
 
-  	updateCashBox (cashBox: CashBox){
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "cash-box/"+cashBox._id, cashBox, { headers: headers }).map (res => res.json());
-	}
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-	getClosingCashBox(id) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "get-closing-cash-box/" + id, { headers: headers }).map(res => res.json());
+	public getCashBoxes(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}cash-boxes`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
+	
+	public getCashBoxesV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}v2/cash-boxes`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public getClosingCashBox(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}get-closing-cash-box`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public saveCashBox(cashBox: CashBox): Observable<any> {
+
+        const URL = `${Config.apiURL}cash-box`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, cashBox, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+	  
+	public updateCashBox(cashBox: CashBox): Observable<any> {
+
+        const URL = `${Config.apiURL}cash-box`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', cashBox._id);
+
+        return this._http.put(URL, cashBox, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public deleteCashBox(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}cash-box`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

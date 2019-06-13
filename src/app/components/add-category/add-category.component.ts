@@ -113,7 +113,9 @@ export class AddCategoryComponent  implements OnInit {
 
     this.loading = true;
 
-    this._categoryService.getLastCategory().subscribe(
+    let query = 'sort="order":-1&limit=1';
+
+    this._categoryService.getCategories(query).subscribe(
       result => {
         if (!result.categories) {
           this.category.order = 1;

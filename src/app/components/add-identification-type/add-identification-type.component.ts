@@ -112,7 +112,9 @@ export class AddIdentificationTypeComponent implements OnInit {
 
     this.loading = true;
 
-    this._identificationTypeService.getLastIdentificationType().subscribe(
+    let query = 'sort="code":-1&limit=1';
+
+    this._identificationTypeService.getIdentificationTypes(query).subscribe(
       result => {
         if (!result.identificationTypes) {
           this.loading = false;

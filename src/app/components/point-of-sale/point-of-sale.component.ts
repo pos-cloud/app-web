@@ -184,7 +184,9 @@ export class PointOfSaleComponent implements OnInit {
 
   public getTransactionTypesByMovement(): void {
 
-    this._transactionTypeService.getTransactionTypesByMovement(this.transactionMovement).subscribe(
+    let query = 'where="transactionMovement":"' + this.transactionMovement + '"';
+
+    this._transactionTypeService.getTransactionTypes(query).subscribe(
       result => {
         if (!result.transactionTypes) {
         } else {
@@ -257,7 +259,9 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionService.getOpenTransaction(this.posType).subscribe(
+    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + this.posType + '"}]';
+
+    this._transactionService.getTransactions(query).subscribe(
       result => {
         if (!result.transactions) {
           this.hideMessage();
@@ -282,7 +286,9 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    this._transactionService.getOpenTransactionsByMovement(transactionMovement, this.posType).subscribe(
+    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + this.posType + '"}]&sort="startDate":-1';
+
+    this._transactionService.getTransactionsByMovement(transactionMovement, query).subscribe(
       result => {
         if (!result.transactions) {
           this.loading = false;
@@ -319,7 +325,9 @@ export class PointOfSaleComponent implements OnInit {
 
   public getDefectOrder(): void {
 
-    this._transactionTypeService.getDefectOrder().subscribe(
+    let query = 'where="defectOrders":' + true;
+
+    this._transactionTypeService.getTransactionTypes(query).subscribe(
       async result => {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -842,7 +850,9 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, this.transaction.origin, this.transaction.letter).subscribe(
+      let query = 'where="type":"' + this.transaction.type + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+
+      this._transactionService.getTransactions(query).subscribe(
         result => {
           if (!result.transactions) {
             resolve(null);

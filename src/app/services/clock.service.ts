@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { interval as observableInterval, empty } from "rxjs";
+import { interval as observableInterval } from "rxjs";
 import { Observable } from "rxjs/Observable";
-import { map, catchError, share } from "rxjs/operators";
+import { map, share } from "rxjs/operators";
 
 import * as moment from 'moment';
 import 'moment/locale/es';

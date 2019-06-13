@@ -4,7 +4,7 @@ import { empty } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
-import { Transaction, TransactionState } from './../models/transaction';
+import { Transaction } from './../models/transaction';
 import { TransactionType, TransactionMovement } from './../models/transaction-type';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
@@ -15,250 +15,368 @@ import { MovementOfCash } from 'app/models/movement-of-cash';
 export class TransactionService {
 
 	constructor(
-    public _http: Http,
-    private http: HttpClient,
-		public _authService: AuthService
+		private _http: HttpClient,
+		private _authService: AuthService
 	) { }
 
-	getTransaction(id) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "transaction/" + id, { headers: headers }).map (res => res.json());
+	public getTransaction(_id: string): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('id', _id);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public getTransactions(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}transactions`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+    public getTransactionsV2(
+        project: {},
+        match: {},
+        sort: {},
+        group: {},
+        limit: number = 0,
+        skip: number = 0
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}v2/transactions`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('project', JSON.stringify(project))
+            .set('match', JSON.stringify(match))
+            .set('sort', JSON.stringify(sort))
+            .set('group', JSON.stringify(group))
+            .set('limit', limit.toString())
+            .set('skip', skip.toString());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public getTransactionsByMovement(
+		transactionMovement: TransactionMovement,
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}transactions-by-movement/${transactionMovement}`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+
+	public getTotalTransactionsBetweenDates(
+        query?: string
+    ): Observable<any> {
+
+        const URL = `${Config.apiURL}total-transactions`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        const params = new HttpParams()
+            .set('query', query);
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
 
-	getTransactions(query?: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		if (query) {
-			return this._http.get(Config.apiURL + "transactions/" + query, { headers: headers }).map (res => res.json());
-		} else {
-			return this._http.get(Config.apiURL + "transactions", { headers: headers }).map(res => res.json());
-		}
+	public getVATBook(
+		query?: string
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}get-vat-book`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')           
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('query', query);
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return empty();
+			})
+		);
 	}
 
-	getTransactionsByMovement(transactionMovement: TransactionMovement) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/sort="endDate":-1', { headers: headers }).map(res => res.json());
+	public exportCiti(
+		VATPeriod: string, 
+		transactionMovement: TransactionMovement
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}export-citi`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')           
+			.set('Authorization', this._authService.getToken());
+
+		let query = '{ "VATPeriod": "' + VATPeriod + '", "transactionMovement": "' + transactionMovement + '" }';
+
+		const params = new HttpParams()
+			.set('query', query);
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return empty();
+			})
+		);
 	}
 
-	getTotalTransactionsBetweenDates(query: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'total-transactions/' + query, { headers: headers }).map(res => res.json());
+	public downloadFile(
+		fileName: string
+	): Observable<any> {
+
+		const URL = `${Config.apiURL}download-file`;
+
+		const headers = new HttpHeaders()
+			.set('Content-Type', 'application/json')           
+			.set('Authorization', this._authService.getToken());
+
+		const params = new HttpParams()
+			.set('fileName', fileName);
+
+		return this._http.get(URL, {
+			headers: headers,
+			params: params
+		}).pipe(
+			map(res => {
+				return res;
+			}),
+			catchError((err) => {
+				return empty();
+			})
+		);
 	}
 
-	getOpenTransactionsByMovement(transactionMovement: TransactionMovement, posType: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions-by-movement/' + transactionMovement + '/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + posType + '"}]&sort="startDate":-1', { headers: headers }).map(res => res.json());
+	public saveTransaction(transaction: Transaction): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.post(URL, transaction, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
 
-	getTransactionsByCompany(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="company":"' + id + '","state":"' + TransactionState.Closed + '"&sort="endDate":-1', { headers: headers }).map(res => res.json());
+	public validateElectronicTransactionAR(transaction: Transaction): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/x-www-form-urlencoded');
+			
+		let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+
+        return this._http.post(URL, body, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
 
-	saveTransaction(transaction: Transaction) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.post(Config.apiURL + "transaction", transaction, { headers: headers }).map (res => res.json());
+	public validateElectronicTransactionMX(
+		transaction: Transaction,
+		movementsOfArticles: MovementOfArticle[],
+		movementsOfCashes: MovementOfCash[]
+	): Observable<any> {
+
+        const URL = `${Config.apiURL}transaction`;
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/x-www-form-urlencoded');
+			
+			let body =      'transaction=' + JSON.stringify(transaction) + '&' +
+			'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' +
+			'movementsOfCashes=' + JSON.stringify(movementsOfCashes) + '&' +
+			'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + Config.database + '"}';
+
+        return this._http.post(URL, body, {
+            headers: headers
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
 	}
+	  
+	public updateTransaction(transaction: Transaction): Observable<any> {
 
-	deleteTransaction(id: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.delete(Config.apiURL + "transaction/" + id, { headers: headers }).map (res => res.json());
-  	}
+        const URL = `${Config.apiURL}transaction`;
 
-	updateTransaction(transaction: Transaction) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "transaction/" + transaction._id, transaction, { headers: headers }).map (res => res.json());
-  	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-	getOpenTransactionByTable(tableId: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '","state":"' + TransactionState.Open + '"&limit=1', { headers: headers }).map (res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', transaction._id);
 
-	getOpenSaleOrdersByEmployee(employeeId: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled +'"}}],"employeeClosing":"' + employeeId + '"&limit=1', { headers: headers }).map(res => res.json());
-	}
+        return this._http.put(URL, transaction, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 
-	getOpenTransaction(posType: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + posType + '"}]', { headers: headers }).map(res => res.json());
-	}
+	public updateBalance(transaction: Transaction): Observable<any> {
 
-	getTransactionsByEmployee(employeeId: string, date: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/' + employeeId + '/' + date, { headers: headers }).map (res => res.json());
-	}
+        const URL = `${Config.apiURL}update-balance`;
 
-	getLastTransaction() {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
-	}
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-	getLastTransactionByOrigin(origin: number) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="origin":"' + origin + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
-	}
+        const params = new HttpParams()
+            .set('id', transaction._id);
 
-	getLastTransactionByType(type: TransactionType) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
-	}
+        return this._http.put(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
+	  
+	public deleteTransaction(_id: string): Observable<any> {
 
-	getLastTransactionByTypeAndOrigin(type: TransactionType, origin: number, letter) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="type":"' + type._id + '","origin":"' + origin + '","letter":"' + letter + '"&sort="number":-1&limit=1', { headers: headers }).map(res => res.json());
-	}
+        const URL = `${Config.apiURL}transaction`;
 
-	getLastTransactionByTable(tableId: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'transactions/where="table":"' + tableId + '"&sort="number":-1&limit=1', { headers: headers }).map (res => res.json());
-  }
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
-  validateElectronicTransactionAR(transaction: Transaction) {
-		let headers = new Headers();
-		headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        const params = new HttpParams()
+            .set('id', _id);
 
-    let body = 'transaction=' + JSON.stringify(transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
-
-		return this._http.post(Config.apiURL_FE_AR, body, { headers: headers }).map (res => res.json());
-  }
-
-  validateElectronicTransactionMX(
-    transaction: Transaction,
-    movementsOfArticles: MovementOfArticle[],
-    movementsOfCashes: MovementOfCash[]
-  ) {
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/x-www-form-urlencoded');
-
-    let body =      'transaction=' + JSON.stringify(transaction) + '&' +
-                    'movementsOfArticles=' + JSON.stringify(movementsOfArticles) + '&' +
-                    'movementsOfCashes=' + JSON.stringify(movementsOfCashes) + '&' +
-                    'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + Config.database + '"}';
-
-    return this._http.post(Config.apiURL_FE_MX, body, { headers: headers }).map(res => res.json());
-  }
-
-  exportCiti(VATPeriod: string, transactionMovement: TransactionMovement) {
-
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'export-citi/{ "VATPeriod": "' + VATPeriod + '", "transactionMovement": "' + transactionMovement + '"}', { headers: headers }).map(res => res.json());
-	}
-
-	downloadFile(fileName: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + "download-file/" + fileName, { headers: headers }).map(res => res.json());
-	}
-
-	getVATBook (cond: string) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.get(Config.apiURL + 'libroIVA/'+cond, { headers: headers }).map (res => res.json());
-  }
-
-  // V2
-  public getTransactionsV2(
-    project: {},
-    match: {},
-    sort: {},
-    group: {},
-    limit: number = 0,
-    skip: number = 0
-  ): Observable<any> {
-
-	const URL = `${Config.apiURL}v2/transactions`;
-
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json')
-      .set('Authorization', this._authService.getToken())
-    //.set('Authorization', this._authService.getSession()["token"]);
-
-    const params = new HttpParams()
-      .set('project', JSON.stringify(project))
-      .set('match', JSON.stringify(match))
-      .set('sort', JSON.stringify(sort))
-      .set('group', JSON.stringify(group))
-      .set('limit', limit.toString())
-      .set('skip', skip.toString());
-
-    return this.http.get(URL, {
-      headers: headers,
-      params: params
-    }).pipe(
-      map(res => {
-        return res;
-      })
-    );
-	}
-
-
-	updateBalance(transactionOriginId : Transaction) {
-		let headers = new Headers({
-			'Content-Type': 'application/json',
-			'Authorization': this._authService.getToken()
-		});
-		return this._http.put(Config.apiURL + "update-balance/" , transactionOriginId, { headers: headers }).map (res => res.json());
-	}
+        return this._http.delete(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return empty();
+            })
+        );
+    }
 }

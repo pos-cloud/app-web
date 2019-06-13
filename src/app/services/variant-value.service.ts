@@ -12,59 +12,161 @@ import { AuthService } from './auth.service';
 export class VariantValueService {
 
   constructor(
-    public _http: Http,
-    public _authService: AuthService
-  ) { }
+		private _http: HttpClient,
+		private _authService: AuthService
+	) { }
 
-  getLastVariantValue() {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + 'variant-values/sort="name":-1&limit=1', { headers: headers }).map(res => res.json());
+	public getVariantValue(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}variant-value`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('id', _id);
+
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return empty();
+      })
+    );
   }
 
-  getVariantValue(id) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.get(Config.apiURL + "variant-value/" + id, { headers: headers }).map(res => res.json());
+  public getVariantValues(
+    query?: string
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}variant-values`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')           
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('query', query);
+
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return empty();
+      })
+    );
   }
 
-  getVariantValues(query?: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    if(query) {
-      return this._http.get(Config.apiURL + 'variant-values/' + query, { headers: headers }).map(res => res.json());
-    } else {
-      return this._http.get(Config.apiURL + 'variant-values', { headers: headers }).map(res => res.json());
-    }
+  public getVariantValuesV2(
+    project: {},
+    match: {},
+    sort: {},
+    group: {},
+    limit: number = 0,
+    skip: number = 0
+  ): Observable<any> {
+
+    const URL = `${Config.apiURL}v2/variant-values`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')           
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('project', JSON.stringify(project))
+      .set('match', JSON.stringify(match))
+      .set('sort', JSON.stringify(sort))
+      .set('group', JSON.stringify(group))
+      .set('limit', limit.toString())
+      .set('skip', skip.toString());
+
+    return this._http.get(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return empty();
+      })
+    );
   }
 
-  saveVariantValue(variantValue: VariantValue) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.post(Config.apiURL + "variant-value", variantValue, { headers: headers }).map(res => res.json());
+  public saveVariantValue(variantValue: VariantValue): Observable<any> {
+
+    const URL = `${Config.apiURL}variant-value`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    return this._http.post(URL, variantValue, {
+      headers: headers
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return empty();
+      })
+    );
   }
 
-  deleteVariantValue(id: string) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.delete(Config.apiURL + "variant-value/" + id, { headers: headers }).map(res => res.json());
+  public updateVariantValue(variantValue: VariantValue): Observable<any> {
+
+    const URL = `${Config.apiURL}variant-value`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('id', variantValue._id);
+
+    return this._http.put(URL, variantValue, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+        return res;
+      }),
+      catchError((err) => {
+        return empty();
+      })
+    );
   }
 
-  updateVariantValue(variantValue: VariantValue) {
-    let headers = new Headers({
-      'Content-Type': 'application/json',
-      'Authorization': this._authService.getToken()
-    });
-    return this._http.put(Config.apiURL + "variant-value/" + variantValue._id, variantValue, { headers: headers }).map(res => res.json());
+  public deleteVariantValue(_id: string): Observable<any> {
+
+    const URL = `${Config.apiURL}variant-value`;
+
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', this._authService.getToken());
+
+    const params = new HttpParams()
+      .set('id', _id);
+
+    return this._http.delete(URL, {
+      headers: headers,
+      params: params
+    }).pipe(
+      map(res => {
+          return res;
+      }),
+      catchError((err) => {
+          return empty();
+      })
+    );
   }
 }

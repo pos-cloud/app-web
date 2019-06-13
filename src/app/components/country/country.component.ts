@@ -218,7 +218,7 @@ export class CountryComponent implements OnInit {
 
     this.country = this.countryForm.value;
 
-    this._countryService.addCountry(this.country).subscribe(
+    this._countryService.saveCountry(this.country).subscribe(
       result => {
         if (!result.country) {
           this.loading = false;

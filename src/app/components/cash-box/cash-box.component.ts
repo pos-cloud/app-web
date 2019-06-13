@@ -422,7 +422,10 @@ export class CashBoxComponent implements OnInit {
   public getLastTransactionByType(): Promise<Transaction> {
 
     return new Promise<Transaction>((resolve, reject) => {
-      this._transactionService.getLastTransactionByTypeAndOrigin(this.transaction.type, 0, this.transaction.letter).subscribe(
+
+      let query = 'where="type":"' + this.transaction.type + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+
+      this._transactionService.getTransactions(query).subscribe(
         result => {
           if (!result.transactions) {
             resolve(null);

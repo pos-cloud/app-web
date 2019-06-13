@@ -94,9 +94,9 @@ export class PrintComponent implements OnInit {
     public _transactionTypeService: TransactionTypeService,
     public _printService: PrintService,
     public _printerService: PrinterService,
-    public _movementOfCash: MovementOfCashService,
+    public _movementOfCashService: MovementOfCashService,
     public _transactionService: TransactionService,
-    public _movementOfArticle: MovementOfArticleService,
+    public _movementOfArticleService: MovementOfArticleService,
     public _configService: ConfigService,
     public _articleStockService: ArticleStockService,
     public _articleService: ArticleService,
@@ -1139,7 +1139,9 @@ export class PrintComponent implements OnInit {
 
     this.loading = true;
 
-    this._movementOfArticle.getMovementsOfTransaction(this.transactionId).subscribe(
+    let query = 'where="transaction":"' + this.transaction._id + '"';
+
+    this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
       result => {
         if (!result.movementsOfArticles) {
           this.showMessage("No se encontraron productos en la transacción", 'info', false);
@@ -1193,8 +1195,9 @@ export class PrintComponent implements OnInit {
   public getMovementOfCash(): void {
 
     this.loading = true;
+    let query = 'where="transaction":"' + this.transaction._id + '"';
 
-    this._movementOfCash.getMovementOfCashesByTransaction(this.transactionId).subscribe(
+    this._movementOfCashService.getMovementsOfCashes(query).subscribe(
       result => {
         if (!result.movementsOfCashes) {
           this.showMessage("No se encontraron movimientos en la transacción", 'info', false);

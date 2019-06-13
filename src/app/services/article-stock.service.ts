@@ -179,6 +179,7 @@ export class ArticleStockService {
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
+            .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
             .set('id', _id);

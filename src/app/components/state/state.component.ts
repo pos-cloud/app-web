@@ -272,7 +272,7 @@ export class StateComponent implements OnInit {
 
     this.state = this.stateForm.value;
 
-    this._stateService.addState(this.state).subscribe(
+    this._stateService.saveState(this.state).subscribe(
       result => {
         if (!result.state) {
           this.loading = false;

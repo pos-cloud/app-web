@@ -115,7 +115,9 @@ export class AddUnitOfMeasurementComponent implements OnInit {
 
     this.loading = true;
 
-    this._unitOfMeasurementService.getLastUnitOfMeasurement().subscribe(
+    let query = 'sort="code":-1&limit=1';
+
+    this._unitOfMeasurementService.getUnitsOfMeasurement(query).subscribe(
       result => {
         if (!result.unitsOfMeasurement) {
         } else {
