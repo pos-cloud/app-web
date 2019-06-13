@@ -124,7 +124,7 @@
                             {{movementOfArticle.notes}}
                           </strong>
                       </td>
-                      <td>{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
+                      <td>{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                     </tr>
                     <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
                       <td colspan="10 ">No existen productos en la transacción</td>
@@ -150,7 +150,7 @@
                     <tr *ngFor="let tax of transaction.taxes">
                       <td>{{tax.tax.name}}</td>
                       <td>{{tax.percentage}}</td>
-                      <td>{{tax.taxAmount | currency:'USD':'1.2-2'}}</td>
+                      <td>{{tax.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -176,7 +176,7 @@
                       <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm">
                         <td>{{movementOfCash.type.name}}</td>
                         <td>{{movementOfCash.quota}}</td>
-                        <td>{{movementOfCash.amountPaid | currency:'USD':'1.2-2'}}</td>
+                        <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                         <td>{{movementOfCash.number}}</td>
                         <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
                         <td>{{movementOfCash.bank}}</td>

@@ -73,8 +73,8 @@ export class PrintComponent implements OnInit {
   public movementsOfArticles2: MovementOfArticle[];
   public movementsOfCashes: MovementOfCash[];
   public config: Config;
-  @ViewChild('contentPrinters', {static: false}) contentPrinters: ElementRef;
-  @ViewChild('contentTicket', {static: false}) contentTicket: ElementRef;
+  @ViewChild('contentPrinters', {static: true}) contentPrinters: ElementRef;
+  @ViewChild('contentTicket', {static: true}) contentTicket: ElementRef;
   public pdfURL;
   public doc;
   public roundNumber = new RoundNumberPipe();

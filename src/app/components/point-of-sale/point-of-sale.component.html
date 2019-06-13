@@ -100,7 +100,7 @@
               <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
               <td (click)="openTransaction(transaction)" *ngIf="transaction.company">{{transaction.company.phones}}</td>
               <td (click)="openTransaction(transaction)" *ngIf="!transaction.company"></td>
-              <td (click)="openTransaction(transaction)">{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+              <td (click)="openTransaction(transaction)">{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td>
                 <button class="btn btn-primary" (click)="changeStateOfTransaction(transaction, 'Enviado')"  title="Enviar pedido">
                   <i class="fa fa-motorcycle">
@@ -176,7 +176,7 @@
               <td *ngIf="!transaction.company"></td>
               <td *ngIf="transaction.employeeOpening">{{transaction.employeeOpening.name}}</td>
               <td *ngIf="!transaction.employeeOpening"></td>
-              <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td>
                 <button class="btn btn-warning" (click)="changeStateOfTransaction(transaction, 'Entregado')"  title="Entregar">
                   <i class="fa fa-handshake-o">
@@ -254,7 +254,7 @@
               <td *ngIf="!transaction.company"></td>
               <td *ngIf="transaction.employeeOpening">{{transaction.employeeOpening.name}}</td>
               <td *ngIf="!transaction.employeeOpening"></td>
-              <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td>
                 <button class="btn btn-danger" (click)="cancelTransaction(transaction)"  title="Cancelar">
                   <i class="fa fa-close">
@@ -352,7 +352,7 @@
               <td *ngIf="transaction.company && (transactionMovement === 'Compra' || transactionMovement === 'Venta')" (click)="openTransaction(transaction)">{{transaction.company.name}}</td>
               <td *ngIf="!transaction.company && (transactionMovement === 'Venta')" (click)="openTransaction(transaction)">Consumidor Final</td>
               <td *ngIf="!transaction.company && (transactionMovement === 'Compra')" (click)="openTransaction(transaction)"></td>
-              <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+              <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             </tr>
             <tr align="center" *ngIf="areTransactionsEmpty">
               <td colspan="7">Aún no hay transacciones pendientes</td>

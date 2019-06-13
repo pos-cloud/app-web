@@ -48,7 +48,7 @@
             <td  *ngIf="userCountry === 'AR'" (click)="selectTransaction(transaction, $event)">{{transaction.origin}}</td>
             <td (click)="selectTransaction(transaction, $event)">{{transaction.number}}</td> 
             <td (click)="selectTransaction(transaction, $event)">{{transaction.letter}}</td>
-            <td (click)="selectTransaction(transaction, $event)">{{transaction.totalPrice | currency:'USD':'1.2-2' }}</td>
+            <td (click)="selectTransaction(transaction, $event)">{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             <td>
               <input  type="number" 
                       class="form-control" 
@@ -69,7 +69,7 @@
     <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
-          <b>Saldo Seleccionado: {{ balanceSelected | currency:'USD':'1.2-2' }}</b>
+          <b>Saldo Seleccionado: {{ balanceSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
         </div>
         <div class="row">
           <div class="col-md-2">

@@ -282,7 +282,7 @@
         </tr>
         <tr *ngIf="shiftClosingTransaction">
           <td colspan="12">
-            <font face="Courier" size="2">Facturado: {{shiftClosingTransaction.invoicedAmount | currency:'USD':'1.2-2'}}</font>
+            <font face="Courier" size="2">Facturado: {{shiftClosingTransaction.invoicedAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</font>
           </td>
         </tr>
         <tr *ngIf="!shiftClosingTransaction">
@@ -343,27 +343,27 @@
         </tr>
         <tr *ngIf="shiftClosingMovementOfCash && shiftClosingMovementOfCash.cash !== 0">
           <td colspan="12">
-            <font face="Courier" size="2">Efectivo: {{shiftClosingMovementOfCash.cash | currency:'USD':'1.2-2'}}</font>
+            <font face="Courier" size="2">Efectivo: {{shiftClosingMovementOfCash.cash | currency:'USD':'symbol-narrow':'1.2-2'}}</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingMovementOfCash && shiftClosingMovementOfCash.currentAccount !== 0">
           <td colspan="12">
-            <font face="Courier" size="2">Cuenta Corriente: {{shiftClosingMovementOfCash.currentAccount | currency:'USD':'1.2-2'}}</font>
+            <font face="Courier" size="2">Cuenta Corriente: {{shiftClosingMovementOfCash.currentAccount | currency:'USD':'symbol-narrow':'1.2-2'}}</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingMovementOfCash && shiftClosingMovementOfCash.creditCard !== 0">
           <td colspan="12">
-            <font face="Courier" size="2">Tarjeta de Crédito: {{shiftClosingMovementOfCash.creditCard | currency:'USD':'1.2-2'}}</font>
+            <font face="Courier" size="2">Tarjeta de Crédito: {{shiftClosingMovementOfCash.creditCard | currency:'USD':'symbol-narrow':'1.2-2'}}</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingMovementOfCash && shiftClosingMovementOfCash.debitCard !== 0">
           <td colspan="12">
-            <font face="Courier" size="2">Tarjeta de Débito: {{shiftClosingMovementOfCash.debitCard | currency:'USD':'1.2-2'}}</font>
+            <font face="Courier" size="2">Tarjeta de Débito: {{shiftClosingMovementOfCash.debitCard | currency:'USD':'symbol-narrow':'1.2-2'}}</font>
           </td>
         </tr>
         <tr *ngIf="shiftClosingMovementOfCash && shiftClosingMovementOfCash.thirdPartyCheck !== 0">
           <td colspan="12">
-            <font face="Courier" size="2">Cheque de Terceros: {{shiftClosingMovementOfCash.thirdPartyCheck | currency:'USD':'1.2-2'}}</font>
+            <font face="Courier" size="2">Cheque de Terceros: {{shiftClosingMovementOfCash.thirdPartyCheck | currency:'USD':'symbol-narrow':'1.2-2'}}</font>
           </td>
         </tr>
       </tbody>

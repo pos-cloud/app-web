@@ -173,7 +173,7 @@ export class ArticleStockService {
         );
     }
 
-	public deleteArticleField(_id: string): Observable<any> {
+	public deleteArticleStock(_id: string): Observable<any> {
 
         const URL = `${Config.apiURL}article-stock`;
 

@@ -33,11 +33,11 @@ export class StatisticsComponent implements OnInit {
   public totalCollections: number = 0;
   public totalReturns: number = 0;
   public showStatistics: boolean = false;
-  @ViewChild(ReportBestSellingArticleComponent, {static: false}) reportBestSellingArticle: ReportBestSellingArticleComponent;
-  @ViewChild(ReportSalesByPaymentMethodComponent, {static: false}) reportSalesByPaymentMethod: ReportSalesByPaymentMethodComponent;
-  @ViewChild(ReportSalesByClientComponent, {static: false}) reportSalesByClient: ReportSalesByClientComponent;
-  @ViewChild(ReportSalesByMakeComponent, {static: false}) reportSalesByMake: ReportSalesByMakeComponent;
-  @ViewChild(ReportBirthdayComponent, {static: false}) reportBirthday: ReportBirthdayComponent;
+  @ViewChild(ReportBestSellingArticleComponent, {static: true}) reportBestSellingArticle: ReportBestSellingArticleComponent;
+  @ViewChild(ReportSalesByPaymentMethodComponent, {static: true}) reportSalesByPaymentMethod: ReportSalesByPaymentMethodComponent;
+  @ViewChild(ReportSalesByClientComponent, {static: true}) reportSalesByClient: ReportSalesByClientComponent;
+  @ViewChild(ReportSalesByMakeComponent, {static: true}) reportSalesByMake: ReportSalesByMakeComponent;
+  @ViewChild(ReportBirthdayComponent, {static: true}) reportBirthday: ReportBirthdayComponent;
   public transactionMovement: string;
 
   constructor(
@@ -72,7 +72,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   public loadStatistics(): void {
-
+    
     this.getTotalSales();
     this.getTotalCollections();
     this.getTotalReturns();

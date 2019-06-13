@@ -56,7 +56,7 @@
         <div class="col-md-2" *ngIf="transaction && transaction.type && transaction.type.requestCurrency">
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-quotation')">
-              Cotización: {{ transaction.quotation | currency:'USD':'1.2-2' }}
+              Cotización: {{ transaction.quotation | currency:'USD':'symbol-narrow':'1.2-2' }}
             </button>
             <button type="button" 
                     class="btn btn-secondary fa fa-pencil" 
@@ -139,7 +139,7 @@
                   {{movementOfArticle.notes}}
                 </strong>
               </td>
-              <td *ngIf="transaction.type && transaction.type.showPrices">{{movementOfArticle.salePrice | currency:'USD':'1.2-2'}}</td>
+              <td *ngIf="transaction.type && transaction.type.showPrices">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             </tr>
             <tr align="center " *ngIf="areMovementsOfArticlesEmpty ">
               <td colspan="10 ">Todavía no se cargaron productos al pedido</td>
@@ -157,7 +157,7 @@
                 <strong>Impuestos</strong>
               </td>
               <td align="right">
-                <strong>({{totalTaxesAmount | currency:'USD':'1.2-2'}})</strong>
+                <strong>({{totalTaxesAmount | currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
               </td>
             </tr>
             <tr class="totals"
@@ -166,7 +166,7 @@
                 <strong>Descuento</strong>
               </td>
               <td align="right">
-                <strong>({{transaction.discountAmount | currency:'USD':'1.2-2'}})</strong>
+                <strong>({{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}})</strong>
               </td>
             </tr>
             <tr>
@@ -177,7 +177,7 @@
               </td>
               <td align="right">
                 <h3>
-                  <b>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</b>
+                  <b>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</b>
                 </h3>
               </td>
             </tr>

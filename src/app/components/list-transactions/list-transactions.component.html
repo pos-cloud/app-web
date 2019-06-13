@@ -121,16 +121,15 @@
               </h6>
             </td>
             <td>{{transaction.observation}}</td>
-            <td>{{transaction.balance | currency:'USD':'1.2-2'}}</td>
-            <td>{{transaction.discountAmount | currency:'USD':'1.2-2'}}</td>
-            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            <td>{{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
           </tr>
         </tbody>
       </table>
-
     </div>
     <div class="card-footer bg-primary">
       <div class="row">
@@ -243,9 +242,9 @@
               </h6>
             </td>
             <td>{{transaction.observation}}</td>
-            <td>{{transaction.balance | currency:'USD':'1.2-2'}}</td>
-            <td>{{transaction.discountAmount | currency:'USD':'1.2-2'}}</td>
-            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            <td>{{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>
@@ -349,7 +348,7 @@
               </h6>
             </td>
             <td>{{transaction.observation}}</td>
-            <td>{{transaction.totalPrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones</td>

@@ -52,8 +52,8 @@
               <td class="flat">{{ item.employee.name }}</td>
               <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
               <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
-              <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'1.2-2' }}</td>
-              <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'1.2-2' }}</td>
+              <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+              <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             </tr>
             <tr align="center" *ngIf="areEmployeesEmpty && !loading && transactionMovement === 'Venta'">
               <td colspan="3">No se encontraron ventas por empleado</td>
@@ -69,7 +69,7 @@
             <tr>
               <th >Total</th>
               <th >{{totalItem}}</th>
-              <th >{{totalAmount | currency:'USD':'1.2-2' }}</th>
+              <th >{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</th>
             </tr>
           </tfoot>
         </table>

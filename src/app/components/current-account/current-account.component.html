@@ -136,13 +136,13 @@
               <td class="align-center"  *ngIf="userCountry === 'AR'">{{item.transactionOrigin}}</td>
               <td class="align-center">{{item.transactionLetter}}</td>
               <td class="align-right">{{item.transactionNumber}}</td>
-              <td class="align-right">{{item.transactionTotalPrice | currency:'USD':'1.2-2'}}</td>
+              <td class="align-right">{{item.transactionTotalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="align-left">{{item.paymentMethodName}}</td>
               <td class="align-center">{{item.quota}}</td>
               <td class="align-center">{{item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}</td>
-              <td class="align-right" [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'1.2-2'}}</td>
-              <td class="align-right" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'1.2-2'}}</td>
-              <td class="align-right" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'1.2-2'}}</td>
+              <td class="align-right" [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-right" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-right" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             </tr>
             <tr align="center" *ngIf="items.length === 0 && !loading">
               <td colspan="13">No se encontraron movimientos</td>
@@ -153,10 +153,10 @@
               <strong>SALDO TOTAL</strong>
             </td>
             <td *ngIf="balance>=0" class="align-right">
-              <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
+              <strong>{{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
             </td>
             <td *ngIf="balance<0" class="align-right">
-              <strong>{{balance | currency:'USD':'1.2-2'}}</strong>
+              <strong>{{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
             </td>
           </tfoot>
         </table>

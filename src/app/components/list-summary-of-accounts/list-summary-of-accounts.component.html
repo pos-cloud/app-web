@@ -83,10 +83,10 @@
                 <td class="flat">{{ item._id.companyPhones }}</td>
                 <td class="flat">{{ item._id.companyEmails }}</td>
                 <td class="flat align-right" *ngIf="item.balance>=0">
-                  <strong>{{item.balance | currency:'USD':'1.2-2'}}</strong>
+                  <strong>{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                 </td>
                 <td class="flat align-right" *ngIf="item.balance<0">
-                  <strong>{{item.balance | currency:'USD':'1.2-2'}}</strong>
+                  <strong>{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                 </td>
               </tr>
               <tr align="center" *ngIf="items.length === 0 && !loading">

@@ -63,8 +63,8 @@
             <td class="flat" *ngIf="articleStock.article.category && articleStock.article.category">{{articleStock.article.category.description}}</td>
             <td class="flat" *ngIf="!articleStock.article.category || !articleStock.article.category"></td>
             <td class="flat">{{articleStock.realStock}}</td>
-            <td class="flat">{{articleStock.article.costPrice | currency:'USD':'1.2-2' }}</td>
-            <td class="flat">{{articleStock.article.costPrice * articleStock.realStock | currency:'USD':'1.2-2' }}</td>
+            <td class="flat">{{articleStock.article.costPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
+            <td class="flat">{{articleStock.article.costPrice * articleStock.realStock | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="7">No se encontraron artículos en stock</td>
@@ -78,8 +78,8 @@
             <th></th>
             <th></th>
             <th>{{totalRealStock}}</th>
-            <th>{{totalCost | currency:'USD':'1.2-2'}}</th>
-            <th>{{totalTotal | currency:'USD':'1.2-2'}}</th>
+            <th>{{totalCost | currency:'USD':'symbol-narrow':'1.2-2'}}</th>
+            <th>{{totalTotal | currency:'USD':'symbol-narrow':'1.2-2'}}</th>
           </tr>
         </tfoot>
       </table>
