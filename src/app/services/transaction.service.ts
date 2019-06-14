@@ -340,12 +340,8 @@ export class TransactionService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', transaction._id);
-
-        return this._http.put(URL, {
+        return this._http.put(URL, transaction, {
             headers: headers,
-            params: params
         }).pipe(
             map(res => {
                 return res;
