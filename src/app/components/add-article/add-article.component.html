@@ -172,7 +172,7 @@
                 <app-add-article-fields (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"></app-add-article-fields>
                 <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article" [otherFields]="otherFields" [articleTaxes]="taxes" [filterTaxClassification]="filterTaxClassification"></app-add-article-tax>
                 <div class="row">
-                  <div class="form-group col-md-12">
+                  <div class="form-group col-md-6">
                     <label for="costPrice" class="control-label">Precio de costo:</label>
                     <div class="input-group">
                       <span class="input-group-addon">$</span>
@@ -181,6 +181,17 @@
                     <div *ngIf="formErrors.costPrice" class="alert alert-danger">
                       {{ formErrors.costPrice }}
                     </div>
+                    
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="control-label">Precio de ultima compra:</label>
+                    <div class="input-group">
+                      <span class="input-group-addon">$</span> 
+                      <input type="number" class="form-control" formControlName="lastPricePurchase" [(ngModel)]="lastPricePurchase" readonly/> 
+                  </div>
+                   
+                    
                   </div>
                 </div>
                 <div class="row">

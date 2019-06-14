@@ -40,6 +40,7 @@ import { ArticleFieldType } from '../../models/article-field';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
+import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 
 @Component({
   selector: 'app-add-article',
@@ -79,6 +80,7 @@ export class AddArticleComponent implements OnInit {
   public imageURL: string;
   public articleType: string;
   public filterTaxClassification: TaxClassification = TaxClassification.Tax;
+  public lastPricePurchase;
 
   public formErrors = {
     'code': '',
@@ -152,6 +154,7 @@ export class AddArticleComponent implements OnInit {
     public _categoryService: CategoryService,
     public _companyService : CompanyService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
+    public _movementsOfArticle : MovementOfArticleService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -289,7 +292,8 @@ export class AddArticleComponent implements OnInit {
       'favourite' : [this.article.favourite, [
         ]
       ],
-      'providers' : [this.article.providers, []]
+      'providers' : [this.article.providers, []],
+      'lastPricePurchase' : [,[]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -616,6 +620,7 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.companies = result.companies;
+          this.getLastPricePurchase();
           this.getUnitsOfMeasurement();
         }
         this.loading = false;
@@ -626,6 +631,79 @@ export class AddArticleComponent implements OnInit {
       }
     );
   }
+
+  public getLastPricePurchase() : void {
+    this.loading = true;
+
+    let orderTerm: string[] = ['-transaction.endDate'];
+
+    /// ORDENAMOS LA CONSULTA
+    let sortAux;
+    if (orderTerm[0].charAt(0) === '-') {
+        sortAux = `{ "${orderTerm[0].split('-')[1]}" : -1 }`;
+    } else {
+        sortAux = `{ "${orderTerm[0]}" : 1 }`;
+    }
+    sortAux = JSON.parse(sortAux);
+
+    // FILTRAMOS LA CONSULTA
+
+    let match = `{  "operationType": { "$ne": "D" },
+                    "transaction.operationType" : { "$ne": "D" },
+                    "transaction.state" : "Cerrado",
+                    "transaction.type.transactionMovement" : "Compra",
+                    "article._id" : { "$oid" : "${this.article._id}"}
+                  }`;
+    
+
+    match = JSON.parse(match);
+
+    let project = {
+        "transaction.state": 1,
+        "transaction.operationType": 1,
+        "article._id": 1,
+        "operationType": 1,
+        "transaction.endDate": 1,
+        "transaction.type.name": 1,
+        "transaction.type.transactionMovement" : 1,
+        "transaction._id": 1,
+        "amount": 1,
+        "salePrice" : 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        movementsOfArticles: { $push: "$$ROOT" }
+    };
+
+    let limit = 1;
+    let skip = 0;
+                
+    this._movementsOfArticle.getMovementsOfArticlesV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        limit, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        if (!result || result.length === 0 || !result[0] || !result[0].movementsOfArticles || !result[0].movementsOfArticles[0]) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.lastPricePurchase = result[0].movementsOfArticles[0].salePrice;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
 
   public getUnitsOfMeasurement(): void {
 
@@ -912,6 +990,14 @@ export class AddArticleComponent implements OnInit {
     this.article.markupPrice = this.roundNumber.transform(this.article.markupPrice,3);
     this.article.salePrice = this.roundNumber.transform(this.article.salePrice);
 
+
+    let lastPricePurchase
+    if(this.lastPricePurchase && this.lastPricePurchase != 0) {
+      lastPricePurchase = this.lastPricePurchase
+    } else {
+      lastPricePurchase = 0;
+    }
+
     const values = {
       '_id': this.article._id,
       'code': this.article.code,
@@ -939,7 +1025,8 @@ export class AddArticleComponent implements OnInit {
       'allowMeasure': this.article.allowMeasure,
       'ecommerceEnabled': this.article.ecommerceEnabled,
       'favourite': this.article.favourite,
-      'providers' : providers
+      'providers' : providers,
+      'lastPricePurchase' : lastPricePurchase
     };
 
     this.articleForm.setValue(values);
