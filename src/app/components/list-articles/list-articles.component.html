@@ -29,7 +29,6 @@
             <th (click)="orderBy('description')">Descripción</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
-            <th (click)="orderBy('costPrice')">Precio de Costo</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
             <th (click)="orderBy('observation')">Observation</th>
             <th (click)="orderBy('barcode')">Código de Barra</th>
@@ -40,7 +39,6 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (input)="getArticles()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (input)="getArticles()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (input)="getArticles()" placeholder="Rubro..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['costPrice']" (input)="getArticles()" placeholder="Precio de Costo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (input)="getArticles()" placeholder="Precio de Venta..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getArticles()" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (input)="getArticles()" placeholder="Código de Barra..."></th>
@@ -66,7 +64,6 @@
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
             <td *ngIf="!article.category"></td>
-            <td>{{article.costPrice | currency:'USD':'1.2-2'}}</td>
             <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
             <td>{{article.observation}}</td>
             <td>{{article.barcode}}</td>
