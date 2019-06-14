@@ -169,7 +169,7 @@
                     </div>
                   </div>
                 </div>
-                <app-add-article-fields (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields"></app-add-article-fields>
+                <app-add-article-fields (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields" [location]="'Price'"></app-add-article-fields>
                 <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article" [otherFields]="otherFields" [articleTaxes]="taxes" [filterTaxClassification]="filterTaxClassification"></app-add-article-tax>
                 <div class="row">
                   <div class="form-group col-md-6">
@@ -295,7 +295,16 @@
 					<ng-template ngbTabContent>
 						<app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article" [variants]="variants"></app-add-variant>
 					</ng-template>
-				</ngb-tab>
+        </ngb-tab>
+        <ngb-tab title="Campos Personalizados">
+					<ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div class="form-group col-md-12">
+                <app-add-article-fields (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields" [location] = "'Custom'"></app-add-article-fields>
+              </div>
+            </div>
+					</ng-template>
+        </ngb-tab>
 				<ngb-tab title="Configuraciones">
 					<ng-template ngbTabContent>
             <div class="row tab-content">

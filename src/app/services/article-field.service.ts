@@ -34,7 +34,15 @@ export class ArticleFieldService {
 			'Content-Type': 'application/json',
 			'Authorization': this._authService.getToken()
 		});
-		return this._http.get(Config.apiURL + "article-fields", { headers: headers }).map (res => res.json());
+		return this._http.get(Config.apiURL +  'article-fields/', { headers: headers }).map (res => res.json());
+	}
+
+	getArticleFieldsByType (type) {
+		let headers = new Headers({
+			'Content-Type': 'application/json',
+			'Authorization': this._authService.getToken()
+		});
+		return this._http.get(Config.apiURL +  'article-field/where="type":"' + type + '"', { headers: headers }).map (res => res.json());
 	}
 
 	saveArticleField (articleField : ArticleField) {

@@ -20,7 +20,10 @@ export class AddArticleFieldsComponent implements OnInit {
 
   public field: ArticleFields;
   public articleFields: ArticleField[];
+  public articleFieldsCustom : ArticleField[] = new Array();
+  public articleFieldsPrice : ArticleField[] = new Array();
   @Input() fields: ArticleFields[];
+  @Input() location: string;
   public articleFieldsForm: FormGroup;
   public alertMessage: string = '';
   public loading: boolean = false;
@@ -155,6 +158,16 @@ export class AddArticleFieldsComponent implements OnInit {
         } else {
           this.hideMessage();
           this.articleFields = result.articleFields;
+
+          for (let index = 0; index < result.articleFields.length; index++) {
+
+            if(result.articleFields[index].datatype === "Alfabético"){
+              this.articleFieldsCustom.push(result.articleFields[index]);
+            } else {
+              this.articleFieldsPrice.push(result.articleFields[index]);
+            }
+            
+          }
         }
         this.loading = false;
       },

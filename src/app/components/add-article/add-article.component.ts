@@ -350,6 +350,7 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.article = result.article;
+          this.getLastPricePurchase();
           if(this.article.containsVariants) {
             this.getVariantsByArticleParent();
           }
@@ -620,7 +621,6 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.companies = result.companies;
-          this.getLastPricePurchase();
           this.getUnitsOfMeasurement();
         }
         this.loading = false;
@@ -698,6 +698,7 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       },
       error => {
+        console.log(error);
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
