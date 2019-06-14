@@ -134,7 +134,7 @@ export class AddArticleFieldsComponent implements OnInit {
 
     if(!this.field.articleField) { null }
     if(!this.field.name) { this.field.name = '' }
-    if(!this.field.datatype) { this.field.datatype }
+    if(!this.field.datatype) { this.field.datatype = null }
     if(!this.field.value) { this.field.value = '' }
 
     const values = {
