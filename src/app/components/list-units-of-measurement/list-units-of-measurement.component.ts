@@ -54,7 +54,7 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
         result => {
           if (!result.unitsOfMeasurement) {
             this.loading = false;
-            this.unitsOfMeasurement = null;
+            this.unitsOfMeasurement = new Array();
             this.areUnitsOfMeasurementEmpty = true;
           } else {
             this.hideMessage();

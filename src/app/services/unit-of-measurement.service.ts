@@ -44,7 +44,7 @@ export class UnitOfMeasurementService {
         query?: string
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}units-of-measurements`;
+        const URL = `${Config.apiURL}units-of-measurement`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')           
@@ -75,7 +75,7 @@ export class UnitOfMeasurementService {
         skip: number = 0
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}v2/units-of-measurements`;
+        const URL = `${Config.apiURL}v2/units-of-measurement`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')           
