@@ -346,30 +346,16 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.article = result.article;
-          if(this.article.containsVariants) {
-            this.getVariantsByArticleParent();
-          }
-          if (this.operation === 'update') {
-            this.taxes = this.article.taxes;
-            this.otherFields = this.article.otherFields;
-            if (this.article.picture && this.article.picture !== 'default.jpg') {
-              this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-            } else {
-              this.imageURL = './../../../assets/img/default.jpg';
-            }
-            this.getMakes();
-          } else if (this.operation === 'view') {
-            this.taxes = this.article.taxes;
-            this.otherFields = this.article.otherFields;
-            this.readonly = true;
-            if (this.article.picture && this.article.picture !== 'default.jpg') {
-              this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-            } else {
-              this.imageURL = './../../../assets/img/default.jpg';
-            }
-            this.getMakes();
+          this.taxes = this.article.taxes;
+          this.otherFields = this.article.otherFields;
+          if (this.article.picture && this.article.picture !== 'default.jpg') {
+            this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
+          }
+          this.getMakes();
+          if(this.article.containsVariants) {
+            this.getVariantsByArticleParent();
           }
         }
       },
