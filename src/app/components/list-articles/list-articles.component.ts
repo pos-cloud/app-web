@@ -391,6 +391,11 @@ export class ListArticlesComponent implements OnInit {
       case 'update-prices':
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
         modalRef.componentInstance.operation = "update-prices";
+        modalRef.result.then((result) => {
+          this.getArticles();
+        }, (reason) => {
+          this.getArticles();
+        });
         break;
       default: ;
     }
