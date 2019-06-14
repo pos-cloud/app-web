@@ -850,7 +850,7 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      let query = 'where="type":"' + this.transaction.type + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+      let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
 
       this._transactionService.getTransactions(query).subscribe(
         result => {
