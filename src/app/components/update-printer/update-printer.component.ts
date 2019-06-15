@@ -26,7 +26,7 @@ export class UpdatePrinterComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public pageSizes: string[] = ["A4", "Roll Paper", "Etiqueta", "Personalizado"];
+  public pageSizes: string[] = ["A4", "A5", "Etiqueta", "Legal", "Letter", "Roll Paper", "Personalizado"];
 
   public formErrors = {
     'name': '',
@@ -121,18 +121,32 @@ export class UpdatePrinterComponent implements OnInit {
 
   public updatePageSize(): void {
     
+    //http://www.rotisedapsales.com/snr/cloud2/website/jsPDF-master/docs/jspdf.js.html
+
     switch (this.printerForm.value.pageSize) {
       case "A4":
-        this.printer.pageWidth = 210;
-        this.printer.pageHigh = 297;
+        this.printer.pageWidth = 595.28;
+        this.printer.pageHigh = 841.89;
+        break;
+      case "A5":
+        this.printer.pageWidth = 419.53;
+        this.printer.pageHigh = 595.28;
+        break;
+      case "Etiqueta":
+        this.printer.pageWidth = 82.21;
+        this.printer.pageHigh = 175.75;
+        break;
+      case "Legal":
+        this.printer.pageWidth = 612;
+        this.printer.pageHigh = 1008;
+        break;
+      case "Letter":
+        this.printer.pageWidth = 612;
+        this.printer.pageHigh = 792;
         break;
       case "Roll Paper":
         this.printer.pageWidth = 80;
         this.printer.pageHigh = 297;
-        break;
-      case "Etiqueta":
-        this.printer.pageWidth = 29;
-        this.printer.pageHigh = 62;
         break;
       case "Personalizado":
         this.printer.pageWidth = 0;

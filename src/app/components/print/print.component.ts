@@ -108,26 +108,26 @@ export class PrintComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    
     if (!this.printer) {
       this.printer = new Printer();
       this.printer.name = "PDF";
       this.printer.printIn = PrinterPrintIn.Counter;
       this.printer.type = PrinterType.PDF;
-      this.printer.pageWidth = 210;
-      this.printer.pageHigh = 297;
+      this.printer.pageWidth = 595.28;
+      this.printer.pageHigh = 841.89;
     }
 
     if (!this.printer.pageWidth || this.printer.pageWidth === 0) {
-      this.printer.pageWidth = 210;
+      this.printer.pageWidth = 595.28;
     }
 
     if (!this.printer.pageHigh || this.printer.pageHigh === 0) {
-      this.printer.pageHigh = 297;
+      this.printer.pageHigh = 841.89;
     }
 
     let orientation = "p";
-    if (this.typePrint === "label") {
+    if (this.typePrint === "label" || this.typePrint === 'IVA') {
       orientation = "l";
     }
 
@@ -314,10 +314,7 @@ export class PrintComponent implements OnInit {
 
   public toPrintVAT() {
 
-    this.doc = new jsPDF('l', 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
-
     // ENCABEZADO
-
     var folio = 1;
 
     if (this.params.split("&")[2] && !isNaN(this.params.split("&")[2])) {
@@ -2184,7 +2181,7 @@ export class PrintComponent implements OnInit {
   public getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false): void {
 
     this.loading = true;
-    this._configService.getCompanyPicture(this.config[0]['companyPicture']).subscribe(
+    this._configService.getCompanyPicture(this.config[0].companyPicture).subscribe(
       result => {
         if (!result.imageBase64) {
           this.getCompanyData();
@@ -2202,13 +2199,13 @@ export class PrintComponent implements OnInit {
         }
         this.loading = false;
       },
-      error => {
-        this.getCompanyData();
-        if (finish) {
-          this.finishImpression();
-        }
-        this.loading = false;
-      }
+      // error => {
+      //   this.getCompanyData();
+      //   if (finish) {
+      //     this.finishImpression();
+      //   }
+      //   this.loading = false;
+      // }
     );
   }
 
@@ -2711,7 +2708,6 @@ export class PrintComponent implements OnInit {
 
     this.getGreeting();
     this.getFooter();
-
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
@@ -3004,33 +3000,20 @@ export class PrintComponent implements OnInit {
   public toPrintBarcode(): void {
 
     if (this.articleStock) {
-
       this.doc.text(this.articleStock.article.description, 0 , 5);
-
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-
-      this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
-
+      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh * 35.27751646284102 / 100) -2, (this.printer.pageWidth * 35.27751646284102 / 100) -5 );
       for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
-
-
         this.doc.addPage();
-
         this.doc.text(this.articleStock.article.description, 0 , 5);
-
         let imgdata = 'data:image/png;base64,' + this.barcode64;
-
-        this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
-
+        this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh * 35.27751646284102 / 100) -2, (this.printer.pageWidth * 35.27751646284102 / 100) -5 );
       }
       this.finishImpression();
     }  else if (this.article) {
-
       this.doc.text(this.article.description, 0 , 5);
-
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-
-      this.doc.addImage(imgdata, 'PNG', 1, 5, this.printer.pageHigh -2, this.printer.pageWidth -5 );
+      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh * 35.27751646284102 / 100) -2, (this.printer.pageWidth * 35.27751646284102 / 100) -5 );
       this.finishImpression();
     }
   }

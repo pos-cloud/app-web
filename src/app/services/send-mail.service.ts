@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { empty } from "rxjs";
+import { of } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
@@ -30,7 +30,7 @@ export class MailService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { empty } from "rxjs";
+import { of } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
@@ -35,7 +35,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }
@@ -71,7 +71,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }
@@ -91,7 +91,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }
@@ -111,7 +111,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }
@@ -135,7 +135,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }
@@ -159,7 +159,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }
@@ -183,7 +183,7 @@ export class MovementOfCancellationService {
                 return res;
             }),
             catchError((err) => {
-                return empty();
+                return of(err);
             })
         );
     }

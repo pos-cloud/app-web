@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Router } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { BehaviorSubject, empty } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { Observable } from "rxjs/Observable";
 import { map, catchError } from "rxjs/operators";
 
@@ -47,7 +47,7 @@ export class AuthService {
             return res;
         }),
         catchError((err) => {
-            return empty();
+            return of(err);
         })
     );
   }
@@ -66,7 +66,7 @@ export class AuthService {
             return res;
         }),
         catchError((err) => {
-            return empty();
+            return of(err);
         })
     );
   }
@@ -125,7 +125,7 @@ export class AuthService {
             return res;
         }),
         catchError((err) => {
-            return empty();
+            return of(err);
         })
     );
   }
@@ -149,7 +149,7 @@ export class AuthService {
             return res;
         }),
         catchError((err) => {
-            return empty();
+            return of(err);
         })
     );
   }
