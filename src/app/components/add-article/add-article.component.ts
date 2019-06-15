@@ -353,6 +353,7 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
+          this.setValuesForm();
           this.getMakes();
           if(this.article.containsVariants) {
             this.getVariantsByArticleParent();

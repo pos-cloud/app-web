@@ -404,6 +404,7 @@ export class ConfigComponent implements OnInit {
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
+          this.setConfigurationSettings(this.config);
           this.setValuesForm();
         }
       },
@@ -453,7 +454,6 @@ export class ConfigComponent implements OnInit {
                 (result) => {
                   this.config["companyPicture"] = result["filename"];
                   this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
-                  this.setConfigurationSettings(this.config);
                   this.getConfig();
                   this.loadingCompany = false;
                 },
@@ -464,7 +464,7 @@ export class ConfigComponent implements OnInit {
               );
           } else {
               this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
-              this.setConfigurationSettings(this.config);
+              this.getConfig();
               this.loadingCompany = false;
           }
         }
@@ -480,7 +480,7 @@ export class ConfigComponent implements OnInit {
         if(config) {
           this.config = config;
           this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
-          this.setConfigurationSettings(this.config);
+          this.getConfig();
         }
         this.loadingEmail = false;
       }
@@ -544,7 +544,7 @@ export class ConfigComponent implements OnInit {
         } else {
           this.config = result.configs[0];
           this.showMessage("Los cambios fueron guardados con éxito.", "success", false);
-          this.setConfigurationSettings(this.config);
+          this.getConfig();
         }
         this.loadingCompany = false;
       },
