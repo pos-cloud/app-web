@@ -38,18 +38,14 @@ export class PrintService {
 
 	public getBarcode(barcode : string): Observable<any> {
 
-        const URL = `${Config.apiURL}barcode`;
+        const URL = `${Config.apiURL}barcode/${barcode}`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('barcode', barcode);
-
         return this._http.get(URL, {
-            headers: headers,
-            params: params
+            headers: headers
         }).pipe(
             map(res => {
                 return res;
