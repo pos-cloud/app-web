@@ -350,40 +350,15 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.article = result.article;
-<<<<<<< HEAD
           this.taxes = this.article.taxes;
           this.otherFields = this.article.otherFields;
           if (this.article.picture && this.article.picture !== 'default.jpg') {
             this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-=======
-          this.getLastPricePurchase();
-          if(this.article.containsVariants) {
-            this.getVariantsByArticleParent();
-          }
-          if (this.operation === 'update') {
-            this.taxes = this.article.taxes;
-            this.otherFields = this.article.otherFields;
-            if (this.article.picture && this.article.picture !== 'default.jpg') {
-              this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-            } else {
-              this.imageURL = './../../../assets/img/default.jpg';
-            }
-            this.getMakes();
-          } else if (this.operation === 'view') {
-            this.taxes = this.article.taxes;
-            this.otherFields = this.article.otherFields;
-            this.readonly = true;
-            if (this.article.picture && this.article.picture !== 'default.jpg') {
-              this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
-            } else {
-              this.imageURL = './../../../assets/img/default.jpg';
-            }
-            this.getMakes();
->>>>>>> testing
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
           this.setValuesForm();
+          this.getLastPricePurchase();
           this.getMakes();
           if(this.article.containsVariants) {
             this.getVariantsByArticleParent();
@@ -651,18 +626,11 @@ export class AddArticleComponent implements OnInit {
   }
 
   public getLastPricePurchase() : void {
+
     this.loading = true;
 
-    let orderTerm: string[] = ['-transaction.endDate'];
-
     /// ORDENAMOS LA CONSULTA
-    let sortAux;
-    if (orderTerm[0].charAt(0) === '-') {
-        sortAux = `{ "${orderTerm[0].split('-')[1]}" : -1 }`;
-    } else {
-        sortAux = `{ "${orderTerm[0]}" : 1 }`;
-    }
-    sortAux = JSON.parse(sortAux);
+    let sortAux = { 'transaction.endDate': -1 };
 
     // FILTRAMOS LA CONSULTA
 
@@ -716,7 +684,6 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        console.log(error);
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
       }
