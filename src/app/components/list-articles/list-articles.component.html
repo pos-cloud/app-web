@@ -64,7 +64,7 @@
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
             <td *ngIf="!article.category"></td>
-            <td>{{article.salePrice | currency:'USD':'1.2-2'}}</td>
+            <td>{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td>{{article.observation}}</td>
             <td>{{article.barcode}}</td>
           </tr>
