@@ -332,28 +332,6 @@ export class AddSaleOrderComponent {
     });
   }
 
-  public getLastTransactionByType(): Promise<Transaction> {
-
-    return new Promise<Transaction>((resolve, reject) => {
-
-      let query = 'where="type":"' + this.transaction.type + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
-
-      this._transactionService.getTransactions(query).subscribe(
-        async result => {
-          if (!result.transactions) {
-            resolve(null);
-          } else {
-            resolve(result.transactions[0]);
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );
-    });
-  }
-
   public getTransaction(): Promise<Transaction> {
 
     return new Promise<Transaction>((resolve, reject) => {
@@ -1879,7 +1857,7 @@ export class AddSaleOrderComponent {
 
   public assignTransactionNumber() {
 
-    let query = 'where="type":"' + this.transaction.type + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+    let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
 
     this._transactionService.getTransactions(query).subscribe(
       result => {
