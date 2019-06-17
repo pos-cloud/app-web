@@ -219,16 +219,4 @@ export class ConfigService {
             })
         );
     }
-
-    // Error handling 
-    handleError(error) {
-        let errorMessage = '';
-        if(error.error instanceof ErrorEvent) {
-            errorMessage = error.error.message;
-        } else {
-            errorMessage = `Error Code: ${error.status}\nMessage: ${error.error}`;
-        }
-        window.alert(errorMessage);
-        return throwError(errorMessage);
-    }
 }

@@ -145,8 +145,8 @@ export class UpdatePrinterComponent implements OnInit {
         this.printer.pageHigh = 792;
         break;
       case "Roll Paper":
-        this.printer.pageWidth = 80;
-        this.printer.pageHigh = 297;
+        this.printer.pageWidth = 226.77;
+        this.printer.pageHigh = 595.28;
         break;
       case "Personalizado":
         this.printer.pageWidth = 0;

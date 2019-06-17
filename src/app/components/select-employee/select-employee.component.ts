@@ -139,7 +139,8 @@ export class SelectEmployeeComponent implements OnInit {
               break;
             case "close-turn":
               let turn = result.turns[0];
-              this.getTransactions('where="turnOpening":"' + turn._id + '"},{"$or":[{"state":"' + TransactionState.Pending + '"},{"state": "' + TransactionState.Open + '"}]', turn);
+              let query = 'where="turnOpening":"' + turn._id + '"},{"$or":[{"state":"' + TransactionState.Pending + '"},{"state": "' + TransactionState.Open + '"}]';
+              this.getTransactions(query, turn);
               break;
             case "change-employee":
               this.activeModal.close({ employee: this.employeeSelected, turn: turn });

@@ -183,12 +183,6 @@ export class ListTransactionsComponent implements OnInit {
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
-      'type.transactionMovement': 1,
-      'type.name': 1,
-      'type.requestArticles': 1,
-      'type.allowEdit': 1,
-      'type.allowDelete': 1,
-      'type.electronics': 1,
       origin: { $toString : "$origin" },
       letter: 1,
       number: { $toString : "$number" },
@@ -204,7 +198,14 @@ export class ListTransactionsComponent implements OnInit {
       totalPrice: { $toString : '$totalPrice' },
       operationType: 1,
       CAE: 1,
-      balance : 1
+      balance : 1,
+      'type.transactionMovement': 1,
+      'type.name': 1,
+      'type.requestArticles': 1,
+      'type.allowEdit': 1,
+      'type.allowDelete': 1,
+      'type.electronics': 1,
+      'type.defectPrinter': 1
     }
 
     // AGRUPAMOS EL RESULTADO

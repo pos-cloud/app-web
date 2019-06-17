@@ -249,11 +249,6 @@ export class PrintComponent implements OnInit {
             this.transaction = result.transaction;
             if(this.transaction && this.transaction.type && this.transaction.type.defectPrinter) {
               this.printer = this.transaction.type.defectPrinter;
-              let orientation = "p";
-              if (this.typePrint === "label") {
-                orientation = "l";
-              }
-              this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
             }
             this.company = this.transaction.company;
             if (this.typePrint === "turn") {
