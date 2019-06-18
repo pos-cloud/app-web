@@ -143,6 +143,7 @@
                     <tr>
                       <th>Impuesto</th>
                       <th>Porcentaje</th>
+                      <th>Gravado</th>
                       <th>Monto</th>
                     </tr>
                   </thead>
@@ -150,6 +151,7 @@
                     <tr *ngFor="let tax of transaction.taxes">
                       <td>{{tax.tax.name}}</td>
                       <td>{{tax.percentage}}</td>
+                      <td>{{tax.taxBase | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                       <td>{{tax.taxAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                     </tr>
                   </tbody>
