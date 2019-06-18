@@ -261,7 +261,8 @@ export class TransactionService {
 
 	public validateElectronicTransactionAR(transaction: Transaction): Observable<any> {
 
-        const URL = `${Config.apiURL}transaction`;
+        const URL = `${Config.apiURL_FE_AR}`;
+        //const URL = `http://localhost/libs/fe-ar/index.php`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/x-www-form-urlencoded');
@@ -286,7 +287,8 @@ export class TransactionService {
 		movementsOfCashes: MovementOfCash[]
 	): Observable<any> {
 
-        const URL = `${Config.apiURL}transaction`;
+        const URL = `${Config.apiURL_FE_MX}`;
+        //const URL = `http://localhost/libs/fe-mx/01_CFDI_fe.php`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/x-www-form-urlencoded');

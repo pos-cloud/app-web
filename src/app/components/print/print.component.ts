@@ -1039,17 +1039,17 @@ export class PrintComponent implements OnInit {
     this._cashBoxService.getClosingCashBox(this.cashBox._id).subscribe(
       result => {
         if (!result || result.length <= 0) {
-          if (this.printer.pageWidth < 230) {
+          if (this.printer.pageWidth < 150) {
             this.toPrintCashBox(undefined);
-          } else if (this.printer.pageHigh > 230) {
+          } else if (this.printer.pageHigh > 150) {
             this.toPrintCashBoxReport(undefined);
           } else {
             this.toPrintCashBoxReport(undefined);
           }
         } else {
-          if (this.printer.pageWidth < 230) {
+          if (this.printer.pageWidth < 150) {
             this.toPrintCashBox(result);
-          } else if (this.printer.pageHigh > 230) {
+          } else if (this.printer.pageHigh > 150) {
             this.toPrintCashBoxReport(result);
           } else {
             this.toPrintCashBoxReport(result);
@@ -1160,18 +1160,18 @@ export class PrintComponent implements OnInit {
                           this.transaction.CFDStamp) {
                   this.calculateBarcodeMX();
               } else {
-                if (this.printer.pageWidth < 230) {
+                if (this.printer.pageWidth < 150) {
                   this.toPrintRoll();
-                } else if (this.printer.pageHigh > 230) {
+                } else if (this.printer.pageHigh > 150) {
                   this.toPrintInvoice();
                 } else {
                   this.toPrintInvoice();
                 }
               }
             } else {
-              if (this.printer.pageWidth < 230) {
+              if (this.printer.pageWidth < 150) {
                 this.toPrintRoll();
-              } else if (this.printer.pageHigh > 230) {
+              } else if (this.printer.pageHigh > 150) {
                 this.toPrintInvoice();
               } else {
                 this.toPrintInvoice();
@@ -1216,9 +1216,9 @@ export class PrintComponent implements OnInit {
                       this.transaction.SATStamp) {
               this.calculateBarcodeMX();
             } else {
-              if (this.printer.pageWidth < 230) {
+              if (this.printer.pageWidth < 150) {
                 this.toPrintRoll();
-              } else if (this.printer.pageHigh > 230) {
+              } else if (this.printer.pageHigh > 150) {
                 this.toPrintInvoice();
               } else {
                 this.toPrintInvoice();
