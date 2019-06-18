@@ -10,8 +10,8 @@ import 'moment/locale/es';
 //Modelos
 import { PaymentMethod } from './../../models/payment-method';
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
-import { Transaction, TransactionState  } from './../../models/transaction';
-import { TransactionType, Movements  } from './../../models/transaction-type';
+import { Transaction } from './../../models/transaction';
+import { Movements  } from './../../models/transaction-type';
 
 
 //Servicios
@@ -520,16 +520,11 @@ export class AddMovementOfCashComponent implements OnInit {
                 } else if (movement.surcharge && movement.surcharge !== 0) {
                   this.transaction.totalPrice -= movement.amountPaid * movement.surcharge / 100;
                 }
-
-                //tendria que buscar el el cheque con el mismo numero pero que no esta eliminado y ponerlo habilitado
-                
-
                 if(movement.type.checkDetail){
                   let check;
                   check = await this.getChecks(movement.number);
                   this.updateCheck(check,StatusCheck.Available)
                 }
-                
                 this.updateTransaction();
               }
             }
@@ -561,8 +556,6 @@ export class AddMovementOfCashComponent implements OnInit {
               this.movementOfCash.type = result.type;
               this.movementOfCash.statusCheck = StatusCheck.Closed;
               this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
-
-              
 
               if(this.isValidAmount()){
                 this.saveMovementOfCash();
@@ -600,18 +593,13 @@ export class AddMovementOfCashComponent implements OnInit {
 
   public updateCheck(movementOfCash : MovementOfCash, statusCheck : StatusCheck, amount? : number) {
     
-   // let movementOfCash = new MovementOfCash()
-
-    //movementOfCash._id = id;
     movementOfCash.statusCheck = statusCheck;
     movementOfCash.amountPaid = amount;
 
     this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
         result => {
-          console.log(result)
         },
         error => {
-          console.log(error);
         }
       )
   }
@@ -967,20 +955,12 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public cancel(): void {
-
-    /*if(this.transaction.type.movement === Movements.Inflows && this.movementOfCash.type.checkDetail && this.transaction.state === TransactionState.Open ){
-      this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
-    } else {*/
       this.activeModal.close('cancel');
-    
-
-    
   }
 
   public saveMovementOfCash(): void {
 
     this.loading = true;
-
 
       this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
         result => {
@@ -1021,8 +1001,6 @@ export class AddMovementOfCashComponent implements OnInit {
           this.loading = false;
         }
       );
-    
-    
   }
 
   public saveMovementsOfCashes(): void {
@@ -1130,8 +1108,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
-    console.log(this.transaction);
-
     this._transactionService.updateTransaction(this.transaction).subscribe(
       result => {
         if (!result.transaction) {
@@ -1157,7 +1133,6 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public updateChecks(movementsOfCashes : MovementOfCash[], statusCheck : StatusCheck) : void {
-
    
     for (let index = 0; index < movementsOfCashes.length; index++) {
       
@@ -1170,13 +1145,9 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         },
         error => {
-          console.log(error);
         }
       )
-      
     }
-
-    
   }
 
   public orderBy(term: string, property?: string): void {

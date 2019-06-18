@@ -164,7 +164,6 @@ export class ListMovementOfCashesComponent implements OnInit {
   }
 
   public selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-    console.log(this.transactionAmount);
     if(this.transactionAmount >= movementOfCashSelected.amountPaid){
       this.activeModal.close(movementOfCashSelected);
     } else {

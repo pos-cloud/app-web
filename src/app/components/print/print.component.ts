@@ -114,24 +114,30 @@ export class PrintComponent implements OnInit {
       this.printer.name = "PDF";
       this.printer.printIn = PrinterPrintIn.Counter;
       this.printer.type = PrinterType.PDF;
-      this.printer.pageWidth = 595.28;
-      this.printer.pageHigh = 841.89;
+      this.printer.pageWidth = 210;
+      this.printer.pageHigh = 297;
     }
 
     if (!this.printer.pageWidth || this.printer.pageWidth === 0) {
-      this.printer.pageWidth = 595.28;
+      this.printer.pageWidth = 210;
     }
 
     if (!this.printer.pageHigh || this.printer.pageHigh === 0) {
-      this.printer.pageHigh = 841.89;
+      this.printer.pageHigh = 297;
     }
+    
+
 
     let orientation = "p";
     if (this.typePrint === "label" || this.typePrint === 'IVA') {
       orientation = "l";
     }
+    let units = 'mm';
+    let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
+    let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
 
-    this.doc = new jsPDF(orientation, 'mm', [this.printer.pageWidth, this.printer.pageHigh]);
+
+    this.doc = new jsPDF(orientation, units, [pageWidth, pageHigh]);
 
     this.getConfig();
   }
@@ -2856,8 +2862,7 @@ export class PrintComponent implements OnInit {
     //Cabecera del ticket
     var margin = 5;
     var row = 5;
-    let width = (this.printer.pageWidth * 35.27751646284102 / 100);
-    let height = (this.printer.pageHigh * 35.27751646284102 / 100);
+    let width = this.printer.pageWidth;
 
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       
