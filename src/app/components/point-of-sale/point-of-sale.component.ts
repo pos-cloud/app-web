@@ -292,7 +292,7 @@ export class PointOfSaleComponent implements OnInit {
       result => {
         if (!result.transactions) {
           this.loading = false;
-          this.transactions = null;
+          this.transactions = new Array();
           this.areTransactionsEmpty = true;
         } else {
           this.hideMessage();
