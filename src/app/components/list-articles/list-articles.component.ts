@@ -118,7 +118,7 @@ export class ListArticlesComponent implements OnInit {
   }
 
   public getArticles(): void {
-
+    
     this.loading = true;
 
     /// ORDENAMOS LA CONSULTA
@@ -158,11 +158,6 @@ export class ListArticlesComponent implements OnInit {
     }
     match = JSON.parse(match);
 
-    let timezone = "-03:00";
-    if(Config.timezone && Config.timezone !== '') {
-      timezone = Config.timezone.split('UTC')[1];
-    }
-
     let project = {};
     let group = {};
     let limit = 0;
@@ -187,19 +182,20 @@ export class ListArticlesComponent implements OnInit {
         "make.visibleSale": 1
       }
     } else {
-      let projectAux = "{}"
-      if (this.displayedColumns && this.displayedColumns.length > 0) {
-          projectAux = '{';
-          for (let i = 0; i < this.displayedColumns.length; i++) {
-              let field = this.displayedColumns[i];
-              projectAux += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"${timezone}"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-              if (i < this.displayedColumns.length - 1) {
-                  projectAux += ',';
-              }
-          }
-          projectAux += '}';
+      project = {
+        'type' : 1,
+        'code' : 1,
+        'barcode' : 1,
+        'description' : 1,
+        'posDescription' : 1,
+        'make.description' : 1,
+        'category.description' : 1,
+        'costPrice' : { $toString : '$costPrice' },
+        'salePrice' : { $toString : '$salePrice' },
+        'observation' : 1,
+        'picture' : 1,
+        'operationType': 1
       }
-      project = JSON.parse(projectAux);
 
       // AGRUPAMOS EL RESULTADO
       group = {

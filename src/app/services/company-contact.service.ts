@@ -40,7 +40,7 @@ export class CompanyContactService {
         );
     }
 
-	public getCompaniesContact(
+	public getCompaniesContacts(
         query?: string
     ): Observable<any> {
 

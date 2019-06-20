@@ -255,7 +255,7 @@
                   <div class="form-group col-md-12">
                     <label for="group" class="control-label">Grupo</label>
                     <select class="form-control" formControlName="group">
-                      <option *ngFor="let companyGroup of companiesGroup" [ngValue]="companyGroup">{{companyGroup.description}}</option>
+                      <option *ngFor="let companyGroup of companiesGroups" [ngValue]="companyGroup">{{companyGroup.description}}</option>
                     </select>
                     <div *ngIf="formErrors.group" class="alert alert-danger">
                       {{ formErrors.group }}

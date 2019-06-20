@@ -1,10 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
-import * as moment from 'moment';
-import 'moment/locale/es';
 
 import { CompanyContact } from './../../models/company-contact';
 import { Company } from './../../models/company';
@@ -16,9 +14,10 @@ import { CompanyContactService } from './../../services/company-contact.service'
   styleUrls: ['./company-contact.component.css'],
   providers: [NgbAlertConfig]
 })
+
 export class CompanyContactComponent implements OnInit {
 
-  public companiesContact: CompanyContact[] = new Array();
+  public companiesContacts: CompanyContact[] = new Array();
   public companyContact: CompanyContact;
   public areCompaniesContactEmpty: boolean = true;
   @Input() company: Company;
@@ -57,7 +56,7 @@ export class CompanyContactComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getCompaniesContact();
+    this.getCompaniesContacts();
   }
 
   ngAfterViewInit() {
@@ -67,24 +66,24 @@ export class CompanyContactComponent implements OnInit {
   
 
 
-  public getCompaniesContact(): void {
+  public getCompaniesContacts(): void {
 
     this.loading = true;
 
     let query: string = 'where="company":"' + this.company._id + '"';
 
-    this._companyContactService.getCompaniesContact(query).subscribe(
+    this._companyContactService.getCompaniesContacts(query).subscribe(
       result => {
-        if (!result.companiesContact) {
+        if (!result.companiesContacts) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.companiesContact = null;
+          this.companiesContacts = null;
           this.areCompaniesContactEmpty = true;
         } else {
           this.hideMessage();
           this.loading = false;
-          this.companiesContact = result.companiesContact;
-          this.totalItems = this.companiesContact.length;
+          this.companiesContacts = result.companiesContacts;
+          this.totalItems = this.companiesContacts.length;
           this.areCompaniesContactEmpty = false;
         }
       },
@@ -106,7 +105,7 @@ export class CompanyContactComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getCompaniesContact();
+    this.getCompaniesContacts();
   }
 
   public addCompanyContact(): void {
@@ -132,7 +131,7 @@ export class CompanyContactComponent implements OnInit {
           this.companyContact = result.companyContact;
           this.companyContact = new CompanyContact();
           this.focusEvent.emit(true);
-          this.getCompaniesContact();
+          this.getCompaniesContacts();
         }
         this.loading = false;
       },
@@ -153,7 +152,7 @@ export class CompanyContactComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.getCompaniesContact();
+          this.getCompaniesContacts();
         }
         this.loading = false;
       },

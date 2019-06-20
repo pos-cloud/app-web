@@ -47,7 +47,7 @@ export class AddCompanyComponent  implements OnInit {
   public config: Config;
   public types: CompanyType[];
   public vatConditions: VATCondition[];
-  public companiesGroup: CompanyGroup[];
+  public companiesGroups: CompanyGroup[];
   public employees: Employee[];
   public states : State[];
   public otherFields: CompanyFields[] = new Array();
@@ -142,7 +142,7 @@ export class AddCompanyComponent  implements OnInit {
     this.vatConditions = new Array();
     this.getVATConditions();
     this.getIdentificationTypes();
-    this.getCompaniesGroup();
+    this.getCompaniesGroups();
     this.getEmployees();
     this.getCountries();
 
@@ -317,14 +317,14 @@ export class AddCompanyComponent  implements OnInit {
   );
   }
 
-  public getCompaniesGroup(): void {
+  public getCompaniesGroups(): void {
     this.loading = true;
 
-    this._companyGroupService.getCompaniesGroup().subscribe(
+    this._companyGroupService.getCompaniesGroups().subscribe(
       result => {
-        if (!result.companiesGroup) {
+        if (!result.companiesGroups) {
         } else {
-          this.companiesGroup = result.companiesGroup;
+          this.companiesGroups = result.companiesGroups;
         }
         this.loading = false;
       },

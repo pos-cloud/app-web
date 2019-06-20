@@ -69,7 +69,6 @@ export class ListCancellationTypeComponent implements OnInit {
     sortAux = JSON.parse(sortAux);
 
     // FILTRAMOS LA CONSULTA
-
     let match = `{`;
     for(let i = 0; i < this.displayedColumns.length; i++) {
       let value = this.filters[this.displayedColumns[i]];

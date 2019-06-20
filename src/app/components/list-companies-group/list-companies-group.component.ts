@@ -20,7 +20,7 @@ import { DeleteCompanyGroupComponent } from "./../../components/delete-company-g
 })
 export class ListCompaniesGroupComponent implements OnInit {
 
-  public companiesGroup: CompanyGroup[] = new Array();
+  public companiesGroups: CompanyGroup[] = new Array();
   public areCompanyGroupEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
@@ -43,25 +43,25 @@ export class ListCompaniesGroupComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getCompaniesGroup();
+    this.getCompaniesGroups();
   }
 
-  public getCompaniesGroup(): void {
+  public getCompaniesGroups(): void {
 
     this.loading = true;
 
-    this._companyGroupService.getCompaniesGroup().subscribe(
+    this._companyGroupService.getCompaniesGroups().subscribe(
         result => {
-          if (!result.companiesGroup) {
+          if (!result.companiesGroups) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.companiesGroup = null;
+            this.companiesGroups = null;
             this.areCompanyGroupEmpty = true;
           } else {
             this.hideMessage();
             this.loading = false;
-            this.companiesGroup = result.companiesGroup;
-            this.totalItems = this.companiesGroup.length;
+            this.companiesGroups = result.companiesGroups;
+            this.totalItems = this.companiesGroups.length;
             this.areCompanyGroupEmpty = false;
           }
         },
@@ -83,7 +83,7 @@ export class ListCompaniesGroupComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getCompaniesGroup();
+    this.getCompaniesGroups();
   }
 
   public openModal(op: string, companyGroup:CompanyGroup): void {
@@ -97,9 +97,9 @@ export class ListCompaniesGroupComponent implements OnInit {
         break;
       case 'add' :
         modalRef = this._modalService.open(AddCompanyGroupComponent, { size: 'lg' }).result.then((result) => {
-          this.getCompaniesGroup();
+          this.getCompaniesGroups();
         }, (reason) => {
-          this.getCompaniesGroup();
+          this.getCompaniesGroups();
         });
         break;
       case 'update' :
@@ -108,7 +108,7 @@ export class ListCompaniesGroupComponent implements OnInit {
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
             if (result === 'save_close') {
-              this.getCompaniesGroup();
+              this.getCompaniesGroups();
             }
           }, (reason) => {
 
@@ -119,7 +119,7 @@ export class ListCompaniesGroupComponent implements OnInit {
           modalRef.componentInstance.companyGroup = companyGroup;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {
-              this.getCompaniesGroup();
+              this.getCompaniesGroups();
             }
           }, (reason) => {
 
