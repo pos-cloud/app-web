@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { PaymentMethod } from './../../models/payment-method';
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 import { Transaction } from './../../models/transaction';
-import { Movements  } from './../../models/transaction-type';
+import { Movements, TransactionMovement  } from './../../models/transaction-type';
 
 
 //Servicios
@@ -31,6 +31,7 @@ import { Config } from 'app/app.config';
 import { BankService } from 'app/services/bank.service';
 import { Bank } from 'app/models/bank';
 import { ListMovementOfCashesComponent } from '../list-movements-of-cashes/list-movements-of-cashes.component';
+import { async } from 'q';
 
 @Component({
   selector: 'app-add-movement-of-cash',
@@ -536,7 +537,7 @@ export class AddMovementOfCashComponent implements OnInit {
           modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg' });
           modalRef.componentInstance.userType = "checks";
           modalRef.componentInstance.transactionAmount = this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid;
-          modalRef.result.then((result) => {
+          modalRef.result.then(async (result)  => {
             if(result){
 
               this.updateCheck(result,StatusCheck.Closed,result.amountPaid);
@@ -557,7 +558,10 @@ export class AddMovementOfCashComponent implements OnInit {
               this.movementOfCash.statusCheck = StatusCheck.Closed;
               this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
 
-              if(this.isValidAmount()){
+              console.log(await this.isValidAmount())
+
+              if(await this.isValidAmount()){
+                console.log("paso copia")
                 this.saveMovementOfCash();
               }
             }
@@ -598,8 +602,10 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
         result => {
+          console.log(result)
         },
         error => {
+          console.log(error)
         }
       )
   }
@@ -736,105 +742,116 @@ export class AddMovementOfCashComponent implements OnInit {
     this.setValueForm();
   }
 
-  public isValidAmount(): boolean {
+  public async isValidAmount() {
 
-    let isValid: boolean = true;
-   
-
-    if (this.amountToPay <= 0) {
-      isValid = false;
-      this.showMessage("El monto ingresado no puede ser 0 o menor.", 'info', true);
-    }
-
-    if ((parseFloat((this.amountPaid + this.amountToPay).toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2))) &&
-        !this.paymentMethodSelected.acceptReturned) {
-      isValid = false;
-      this.showMessage("El medio de pago " + this.paymentMethodSelected.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.", 'info', true);
-    }
-
-    if ( this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
-      this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) &&
-      !this.paymentMethodSelected.acceptReturned) {
-      isValid = false;
-      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true);
-    }
-
-    if (this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
-      this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) &&
-      !this.paymentMethodSelected.acceptReturned) {
-      isValid = false;
-      this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true);
-    }
-
-    if (!this.movementOfCash.expirationDate || !moment(this.movementOfCash.expirationDate).isValid()) {
-      isValid = false;
-      this.showMessage('Debe ingresar fecha de vencimiento de pago válida', 'info', true);
-    }
-
-    if (!this.movementOfCash || !this.paymentMethodSelected) {
-      isValid = false;
-      this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
-    }
-
-    if(this.transaction.type.movement === Movements.Inflows  && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number){
-      isValid = false;
-      this.showMessage('Debe completar el numero de comprobante', 'info', true);
-    }
-
-
-    if(this.transaction.type.movement === Movements.Outflows  && this.paymentMethodSelected.checkDetail){
-      if(this.movementOfCash.number){
-        isValid = true;
-      } else {
-        if(!this.movementOfCashForm.value.number){
-          isValid = false;
-          this.showMessage('Debe completar el numero de comprobante', 'info', true);
+    return new Promise(async resolve => {
+      
+      if(this.paymentMethodSelected.checkDetail === true && this.transaction.type.movement === Movements.Inflows){
+        console.log(this.movementOfCashForm.value.number)
+        let check = await this.getChecks(this.movementOfCashForm.value.number)
+        console.log(check);
+        if(check) {
+          resolve(false);
+          this.showMessage("El numero de comprobante ya existe",'info',true);
         }
       }
-    }
-
-    if(this.paymentMethodSelected.allowToFinance) {
-      let amountTotal = 0;
-      if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
-        for(let mov of this.movementsOfCashesToFinance) {
-          amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
-          if (!moment(mov.expirationDate).isValid()) {
-            isValid = false;
-            this.showMessage('Debe ingresar fechas de vencimiento de pago válidas', 'info', true);
-          } else {
-            if ((moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
-              isValid = false;
-              this.showMessage('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción', 'info', true);
-            }
+     
+  
+      if (this.amountToPay <= 0) {
+        resolve(false);
+        this.showMessage("El monto ingresado no puede ser 0 o menor.", 'danger', true);
+      }
+  
+      if ((parseFloat((this.amountPaid + this.amountToPay).toFixed(2)) > parseFloat(this.transactionAmount.toFixed(2))) &&
+          !this.paymentMethodSelected.acceptReturned) {
+            resolve(false);
+        this.showMessage("El medio de pago " + this.paymentMethodSelected.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.", 'info', true);
+      }
+  
+      if ( this.movementOfCash.discount && this.movementOfCash.discount > 0 &&
+        this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) &&
+        !this.paymentMethodSelected.acceptReturned) {
+          resolve(false);
+        this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.discount / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true);
+      }
+  
+      if (this.movementOfCash.surcharge && this.movementOfCash.surcharge > 0 &&
+        this.amountToPay > parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) &&
+        !this.paymentMethodSelected.acceptReturned) {
+          resolve(false);
+        this.showMessage("El monto ingresado no puede ser mayor a " + parseFloat(((this.transaction.totalPrice * this.movementOfCash.surcharge / 100) + this.transaction.totalPrice).toFixed(2)) + '.', 'info', true);
+      }
+  
+      if (!this.movementOfCash.expirationDate || !moment(this.movementOfCash.expirationDate).isValid()) {
+        resolve(false);
+        this.showMessage('Debe ingresar fecha de vencimiento de pago válida', 'info', true);
+      }
+  
+      if (!this.movementOfCash || !this.paymentMethodSelected) {
+        resolve(false);
+        this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
+      }
+  
+      if(this.transaction.type.movement === Movements.Inflows  && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number){
+        resolve(false);
+        this.showMessage('Debe completar el numero de comprobante', 'info', true);
+      }
+  
+  
+      if(this.transaction.type.movement === Movements.Outflows  && this.paymentMethodSelected.checkDetail){
+        if(this.movementOfCash.number){
+          resolve(true);
+        } else {
+          if(!this.movementOfCashForm.value.number){
+            resolve(false);
+            this.showMessage('Debe completar el numero de comprobante', 'info', true);
           }
         }
       }
-      if (amountTotal !== this.movementOfCashForm.value.amountToPay) {
-        isValid = false;
-        this.showMessage("El monto total de las cuotas no puede ser distinto del monto a pagar.", "info", true);
+  
+      if(this.paymentMethodSelected.allowToFinance) {
+        let amountTotal = 0;
+        if (this.movementsOfCashesToFinance && this.movementsOfCashesToFinance.length > 0) {
+          for(let mov of this.movementsOfCashesToFinance) {
+            amountTotal = this.roundNumber.transform(amountTotal + mov.amountPaid);
+            if (!moment(mov.expirationDate).isValid()) {
+              resolve(false);
+              this.showMessage('Debe ingresar fechas de vencimiento de pago válidas', 'info', true);
+            } else {
+              if ((moment(mov.expirationDate).diff(moment(this.transaction.startDate), 'days') < 0)) {
+                resolve(false);
+                this.showMessage('La fecha de vencimiento de pago no puede ser menor a la fecha de la transacción', 'info', true);
+              }
+            }
+          }
+        }
+        if (amountTotal !== this.movementOfCashForm.value.amountToPay) {
+          resolve(false);
+          this.showMessage("El monto total de las cuotas no puede ser distinto del monto a pagar.", "info", true);
+        }
       }
-    }
+  
+      if( this.paymentMethodSelected.isCurrentAccount &&
+          !this.transaction.company) {
+        resolve(false);
+        this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.paymentMethodSelected.name + ".", "info", true);
+      }
+  
+      if (this.paymentMethodSelected.isCurrentAccount &&
+          this.transaction.company &&
+          !this.transaction.company.allowCurrentAccount) {
+        resolve(false);
+        this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.paymentMethodSelected.name + ".", "info", true);
+      }
+  
+      if (this.paymentMethodSelected.isCurrentAccount &&
+          this.transaction.type.currentAccount === CurrentAccount.Charge) {
+        resolve(false);
+        this.showMessage("No se puede elegir el medio de pago " + this.paymentMethodSelected.name + " para el tipo de transacción " + this.transaction.type.name + " .", "info", true);
+      }
 
-    if( this.paymentMethodSelected.isCurrentAccount &&
-        !this.transaction.company) {
-      isValid = false;
-      this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.paymentMethodSelected.name + ".", "info", true);
-    }
-
-    if (this.paymentMethodSelected.isCurrentAccount &&
-        this.transaction.company &&
-        !this.transaction.company.allowCurrentAccount) {
-      isValid = false;
-      this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.paymentMethodSelected.name + ".", "info", true);
-    }
-
-    if (this.paymentMethodSelected.isCurrentAccount &&
-        this.transaction.type.currentAccount === CurrentAccount.Charge) {
-      isValid = false;
-      this.showMessage("No se puede elegir el medio de pago " + this.paymentMethodSelected.name + " para el tipo de transacción " + this.transaction.type.name + " .", "info", true);
-    }
-
-    return isValid;
+      resolve(true);
+    });
   }
 
   public areValidAmounts(): boolean {
@@ -879,12 +896,12 @@ export class AddMovementOfCashComponent implements OnInit {
     return areValid;
   }
 
-  public addMovementOfCash(): void {
+  public async addMovementOfCash() {
 
     
 
     if (!this.fastPayment) {
-      if (this.isValidAmount()) {
+      if (await this.isValidAmount()) {
         if (!this.paymentMethodSelected.allowToFinance) {
           if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount)) {
             this.movementOfCash.amountPaid = this.roundNumber.transform(this.amountToPay - this.roundNumber.transform(parseFloat(this.movementOfCashForm.value.paymentChange)));
@@ -948,7 +965,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.transactionAmount = this.transaction.totalPrice;
       this.movementOfCash.amountPaid = this.transactionAmount;
 
-      if (this.isValidAmount()) {
+      if (await this.isValidAmount()) {
         this.saveMovementOfCash();
       }
     }
@@ -961,6 +978,8 @@ export class AddMovementOfCashComponent implements OnInit {
   public saveMovementOfCash(): void {
 
     this.loading = true;
+
+    console.log(this.movementOfCash)
 
       this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
         result => {
