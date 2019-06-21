@@ -54,6 +54,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "transaction.letter",
     "transaction.number",
     "transaction.origin",
+    "transaction.company.name",
     "transaction._id",
     "modifyStock",
     "stockMovement",
@@ -139,6 +140,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
         "transaction.letter": { $toString : "$transaction.letter"},
         "transaction.number": { $toString : '$transaction.number'},
         "transaction.origin": { $toString : '$transaction.origin'},
+        "transaction.company.name" : 1,
         "transaction._id": 1,
         "modifyStock": 1,
         "stockMovement": 1,
@@ -164,6 +166,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
+        console.log(result);
         if (!result || result.length === 0 || !result[0] || !result[0].movementsOfArticles) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
