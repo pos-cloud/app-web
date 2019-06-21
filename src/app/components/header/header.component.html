@@ -670,6 +670,11 @@
             Movimiento de medios
           </a>
         </li>
+        <li>
+          <a (click)="openReport('checks/fondos/movimientos-de-medios')">
+            Cartera de Cheques
+          </a>
+        </li>
       </ul>
     </div>
     <div class="col-md-3" style="width: 300px" *ngIf="!config.modules.money">
@@ -690,11 +695,6 @@
         <li>
           <a (click)="openReport('admin/cumpleaños')">
             Cumpleaños
-          </a>
-        </li>
-        <li>
-          <a (click)="openReport('checks/fondos/movimientos-de-medios')">
-            Cartera de Cheques
           </a>
         </li>
       </ul>
