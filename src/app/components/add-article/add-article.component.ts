@@ -1194,7 +1194,12 @@ export class AddArticleComponent implements OnInit {
 
   public addArticleFields(otherFields: ArticleFields[]): void {
     this.otherFields = otherFields;
-    this.updatePrices('otherFields');
+    for (let index = 0; index < this.otherFields.length; index++) {
+      if(this.otherFields[index].datatype !== ArticleFieldType.String){
+        this.updatePrices('otherFields');
+      }
+    }
+    
   }
 
   public addStock(articleStock: ArticleStock): void {
