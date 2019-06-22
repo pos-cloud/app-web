@@ -49,6 +49,7 @@ import { Taxes } from 'app/models/taxes';
 
 export class PrintComponent implements OnInit {
 
+
   @Input() company: Company;
   public transaction: Transaction;
   public transactions: Transaction[];
@@ -2718,7 +2719,7 @@ export class PrintComponent implements OnInit {
 
   public finishImpression(): void {
     this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
 
   public toPrintKitchen() {
