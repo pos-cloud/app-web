@@ -31,6 +31,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public itemsPerPage = 10;
   public totalItems = 0;
   public transactionMovement: string;
+  public pathLocation: string[]
 
   public currentPage: number = 0;
   public displayedColumns = [
@@ -56,11 +57,11 @@ export class ListMovementOfCashesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
+    this.pathLocation = this._router.url.split('/');
     if(!this.userType){
-      this.userType = pathLocation[1];
+      this.userType = this.pathLocation[1];
     }
-    this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
+    this.transactionMovement = this.pathLocation[2].charAt(0).toUpperCase() + this.pathLocation[2].slice(1);
     if(this.userType === "admin"){
       this.getMovementOfCashes();
     } else {
@@ -167,7 +168,9 @@ export class ListMovementOfCashesComponent implements OnInit {
     if(this.transactionAmount >= movementOfCashSelected.amountPaid){
       this.activeModal.close(movementOfCashSelected);
     } else {
-      this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
+      if(this.pathLocation[2] !== "fondos"){
+        this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
+      }
     }
   }
 

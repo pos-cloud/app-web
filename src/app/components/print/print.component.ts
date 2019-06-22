@@ -49,6 +49,7 @@ import { Taxes } from 'app/models/taxes';
 
 export class PrintComponent implements OnInit {
 
+
   @Input() company: Company;
   public transaction: Transaction;
   public transactions: Transaction[];
@@ -2718,8 +2719,9 @@ export class PrintComponent implements OnInit {
 
   public finishImpression(): void {
     this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('dataurl'));
+    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
+
 
   public toPrintKitchen() {
 
@@ -3004,18 +3006,18 @@ export class PrintComponent implements OnInit {
     if (this.articleStock) {
       this.doc.text(this.articleStock.article.description, 0 , 5);
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh * 35.27751646284102 / 100) -2, (this.printer.pageWidth * 35.27751646284102 / 100) -5 );
+      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh) -2, (this.printer.pageWidth) -5 );
       for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
         this.doc.addPage();
         this.doc.text(this.articleStock.article.description, 0 , 5);
         let imgdata = 'data:image/png;base64,' + this.barcode64;
-        this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh * 35.27751646284102 / 100) -2, (this.printer.pageWidth * 35.27751646284102 / 100) -5 );
+        this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh) -2, (this.printer.pageWidth) -5 );
       }
       this.finishImpression();
     }  else if (this.article) {
       this.doc.text(this.article.description, 0 , 5);
       let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh * 35.27751646284102 / 100) -2, (this.printer.pageWidth * 35.27751646284102 / 100) -5 );
+      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh ) -2, (this.printer.pageWidth) -5 );
       this.finishImpression();
     }
   }

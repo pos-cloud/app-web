@@ -423,7 +423,8 @@ export class CashBoxComponent implements OnInit {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      let query = 'where="type":"' + this.transaction.type + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+
+      let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
 
       this._transactionService.getTransactions(query).subscribe(
         result => {

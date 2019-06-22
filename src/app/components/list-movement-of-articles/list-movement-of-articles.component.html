@@ -86,6 +86,7 @@
               <th class=""><i class="fa fa-bars"></i></th>
               <th class="">Fecha</th>
               <th class="">Movimiento</th>
+              <th class="">Empresa</th>
               <th class="">Tipo</th>
               <th class="" *ngIf="userCountry === 'AR'">Punto de venta</th>
               <th class="">Letra</th>
@@ -98,6 +99,7 @@
               <th></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getSummary()" placeholder="Movimiento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.company.name']" (input)="getSummary()" placeholder="Empresa..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getSummary()" placeholder="Tipo..."></th>
               <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['transaction.origin']" (input)="getSummary()" placeholder="Punto de venta..."  *ngIf="userCountry === 'AR'"></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.letter']" (input)="getSummary()" placeholder="Letra..."></th>
@@ -115,6 +117,8 @@
               </td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.endDate">{{movementsOfArticle.transaction.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
               <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].transactionMovement}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.company">{{movementsOfArticle.transaction.company.name }}</td>
+              <td class="align-center" *ngIf="!movementsOfArticle.transaction.company">Consumidor Final</td>
               <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].name}}</td>
               <td class="align-center" *ngIf="userCountry === 'AR' && movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.letter}}</td>
