@@ -155,14 +155,8 @@ export class ArticleStockService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
-        const params = new HttpParams()
-            .set('id', article._id)
-            .set('amount', amount.toString())
-            .set('stockMovement', stockMovement);
-
-        return this._http.put(URL, article, {
-            headers: headers,
-            params: params
+        return this._http.put(URL, { id: article._id, amount: amount, stockMovement: stockMovement }, {
+            headers: headers
         }).pipe(
             map(res => {
                 return res;
