@@ -116,6 +116,7 @@ export class AddSaleOrderComponent {
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;
   public filterTaxClassification: TaxClassification;
+  public fastPayment: PaymentMethod
 
   constructor(
     public _transactionService: TransactionService,
@@ -1058,6 +1059,8 @@ export class AddSaleOrderComponent {
 
   async openModal(op: string, movementOfArticle?: MovementOfArticle, fastPayment?: PaymentMethod) {
 
+    this.fastPayment = fastPayment;
+
     let modalRef;
 
     switch (op) {
@@ -1401,6 +1404,23 @@ export class AddSaleOrderComponent {
       if(await !this.areValidMovementOfArticle()) {
         isValid = false;
       }
+    }
+
+    if(this.transaction.type.requestPaymentMethods && 
+      this.fastPayment &&
+      this.fastPayment.isCurrentAccount && 
+      !this.transaction.company){
+      isValid = false;
+      this.showMessage("Debe seleccionar una empresa.", 'info', true);
+    }
+
+    if( this.transaction.type.requestPaymentMethods && 
+        this.fastPayment &&
+        this.fastPayment.isCurrentAccount && 
+        this.transaction.company && 
+        !this.transaction.company.allowCurrentAccount){
+      isValid = false;
+      this.showMessage("La empresa no esta habilitada para cuenta corriente.", 'info', true);
     }
 
     if (isValid &&
