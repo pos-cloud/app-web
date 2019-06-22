@@ -2722,6 +2722,7 @@ export class PrintComponent implements OnInit {
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
 
+
   public toPrintKitchen() {
 
     //Cabecera del ticket
