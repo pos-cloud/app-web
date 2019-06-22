@@ -117,9 +117,9 @@
               </td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.endDate">{{movementsOfArticle.transaction.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
               <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].transactionMovement}}</td>
-              <td class="align-center" *ngIf="movementsOfArticle.transaction.company.name">{{movementsOfArticle.transaction.company.name }}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.company">{{movementsOfArticle.transaction.company.name }}</td>
+              <td class="align-center" *ngIf="!movementsOfArticle.transaction.company">Consumidor Final</td>
               <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type[0].name}}</td>
-              
               <td class="align-center" *ngIf="userCountry === 'AR' && movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.letter}}</td>
               <td class="align-right" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.number}}</td>
