@@ -747,9 +747,7 @@ export class AddMovementOfCashComponent implements OnInit {
     return new Promise(async resolve => {
       
       if(this.paymentMethodSelected.checkDetail === true && this.transaction.type.movement === Movements.Inflows){
-        console.log(this.movementOfCashForm.value.number)
         let check = await this.getChecks(this.movementOfCashForm.value.number)
-        console.log(check);
         if(check) {
           resolve(false);
           this.showMessage("El numero de comprobante ya existe",'info',true);
@@ -799,13 +797,9 @@ export class AddMovementOfCashComponent implements OnInit {
   
   
       if(this.transaction.type.movement === Movements.Outflows  && this.paymentMethodSelected.checkDetail){
-        if(this.movementOfCash.number){
-          resolve(true);
-        } else {
-          if(!this.movementOfCashForm.value.number){
+          if(this.movementOfCash.number && !this.movementOfCashForm.value.number){
             resolve(false);
             this.showMessage('Debe completar el numero de comprobante', 'info', true);
-          }
         }
       }
   
