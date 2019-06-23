@@ -36,8 +36,11 @@ export class ListMovementOfCashesComponent implements OnInit {
   public currentPage: number = 0;
   public displayedColumns = [
     "number",
-    "bank",
-    "amountPaid"
+    "bank.name",
+    "transaction.type.name",
+    "transaction.type.transactionMovement",
+    "amountPaid",
+    "expirationDate"
   ];
   public filters: any[];
   public filterValue: string;
@@ -78,18 +81,33 @@ export class ListMovementOfCashesComponent implements OnInit {
     let sortAux = { order: 1 };
     
     // FILTRAMOS LA CONSULTA
-    let match = {"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" };
+
+    let match = `{`;
+    for(let i = 0; i < this.displayedColumns.length; i++) {
+      let value = this.filters[this.displayedColumns[i]];
+      if (value && value != "") {
+        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+        if (i < this.displayedColumns.length - 1) {
+          match += ',';
+        }
+      }
+    }
+
+    match += `",operationType": { "$ne": "D" }, "statusCheck" : "Disponible" }`;
+
+    console.log(match)
+
+    match = JSON.parse(match);
     
     // CAMPOS A TRAER
     let project = {
       "_id" : 1,
       "number": 1,
       "bank._id" : 1 ,
-      "bank.name" : 1 ,
-      "amountPaid" :1 ,
+      "bank.name" : { $toString : '$bank.name'} ,
+      "amountPaid" :{ $toString : '$amountPaid'} ,
       "operationType": 1,
-      "expirationDate2": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
-      "expirationDate": 1,
+      "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
       "transaction._id":1,
       "transaction.state" : 1,
       "transaction.type.name" : 1,
@@ -164,14 +182,36 @@ export class ListMovementOfCashesComponent implements OnInit {
     );
   }
 
-  public selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
+  public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
     if(this.transactionAmount >= movementOfCashSelected.amountPaid){
-      this.activeModal.close(movementOfCashSelected);
+      let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
+      this.activeModal.close(movementOfCash);
     } else {
       if(this.pathLocation[2] !== "fondos"){
         this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
       }
     }
+  }
+
+  public getMovementOfCashById(id : string): Promise<MovementOfCash> {
+
+    return new Promise<MovementOfCash>((resolve, reject) => {
+
+      this._movementOfCashService.getMovementOfCash(id).subscribe(
+        async result => {
+          if (!result.movementOfCash) {
+            this.showMessage(result.message, 'danger', false);
+            resolve(null);
+          } else {
+            resolve(result.movementOfCash);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public orderBy (term: string, property?: string): void {
