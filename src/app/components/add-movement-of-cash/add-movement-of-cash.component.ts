@@ -558,10 +558,7 @@ export class AddMovementOfCashComponent implements OnInit {
               this.movementOfCash.statusCheck = StatusCheck.Closed;
               this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
 
-              console.log(await this.isValidAmount())
-
               if(await this.isValidAmount()){
-                console.log("paso copia")
                 this.saveMovementOfCash();
               }
             }
@@ -789,19 +786,21 @@ export class AddMovementOfCashComponent implements OnInit {
         resolve(false);
         this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
       }
-  
-      if(this.transaction.type.movement === Movements.Inflows  && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number){
+
+      console.log(this.transaction.type.movement);
+
+      if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number){
         resolve(false);
         this.showMessage('Debe completar el numero de comprobante', 'info', true);
       }
   
   
-      if(this.transaction.type.movement === Movements.Outflows  && this.paymentMethodSelected.checkDetail){
+      /*if(this.transaction.type.movement === Movements.Outflows && this.paymentMethodSelected.checkDetail){
           if(this.movementOfCash.number && !this.movementOfCashForm.value.number){
             resolve(false);
             this.showMessage('Debe completar el numero de comprobante', 'info', true);
         }
-      }
+      }*/
   
       if(this.paymentMethodSelected.allowToFinance) {
         let amountTotal = 0;
@@ -827,6 +826,7 @@ export class AddMovementOfCashComponent implements OnInit {
   
       if( this.paymentMethodSelected.isCurrentAccount &&
           !this.transaction.company) {
+            
         resolve(false);
         this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.paymentMethodSelected.name + ".", "info", true);
       }
