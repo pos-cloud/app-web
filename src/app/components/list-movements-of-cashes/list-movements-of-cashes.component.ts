@@ -139,9 +139,9 @@ export class ListMovementOfCashesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.movementsOfCashes) {
+        if (result.movementOfCashes) {
           this.loading = false;
-          this.movementsOfCashes = result.movementsOfCashes;
+          this.movementsOfCashes = result.movementOfCashes;
           this.totalItems = result.count;
           this.areMovementOfCashesEmpty = false;
         } 
