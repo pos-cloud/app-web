@@ -255,7 +255,10 @@
                   <div class="form-group col-md-6">
                     <label for="deposit" class="control-label">Depósito:</label>
                     <select class="form-control" formControlName="deposit">
-                      <option *ngFor="let deposit of deposits" [selected]="article.deposit && deposit._id===article.deposit._id" [value]="deposit._id" [disabled]="readonly">{{deposit.name}}</option>
+                      <option *ngFor="let deposit of deposits" 
+                              [selected]="article.deposit && deposit._id===article.deposit._id" 
+                              [value]="deposit._id" 
+                              [disabled]="readonly">Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</option>
                     </select>
                     <div *ngIf="formErrors.deposit" class="alert alert-danger">
                       {{ formErrors.deposit }}
