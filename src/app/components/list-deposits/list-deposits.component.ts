@@ -107,9 +107,7 @@ export class ListDepositsComponent implements OnInit {
         modalRef.componentInstance.deposit = deposit;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getDeposits();
-          }
+          this.getDeposits();
         }, (reason) => {
 
         });

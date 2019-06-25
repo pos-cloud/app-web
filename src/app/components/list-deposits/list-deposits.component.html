@@ -19,24 +19,24 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>
-              <i class="fa fa-bars"></i>
-            </th>
+            <th><i class="fa fa-bars"></i></th>
+            <th (click)="orderBy('branch','name')">Nombre </th>
             <th (click)="orderBy('name')">Nombre </th>
             <th (click)="orderBy('capacity')">Capacidad </th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre...">
-            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterBranch" placeholder="Sucursal..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterCapacity" placeholder="Capacidad..."></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let deposit of deposits | filter: filterName:'name'
-                                               | filter: filterCapacity:'capacity'
-                                          | orderBy: orderTerm: propertyTerm
-                                          | paginate: { itemsPerPage: itemsPerPage,
+                                              | filter: filterBranch:'name':'branch'
+                                              | filter: filterCapacity:'capacity'
+                                              | orderBy: orderTerm: propertyTerm
+                                              | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
                                                         totalItems: totalItems
                                                       }">
@@ -51,6 +51,8 @@
                 <i class="fa fa-trash-o"></i>
               </button>
             </td>
+            <td class="flat" *ngIf="deposit.branch">{{deposit.branch.name}}</td>
+            <td class="flat" *ngIf="!deposit.branch"></td>
             <td class="flat">{{deposit.name}}</td>
             <td class="flat">{{deposit.capacity}}</td>
           </tr>

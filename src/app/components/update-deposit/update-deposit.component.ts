@@ -7,6 +7,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Deposit } from './../../models/deposit';
 
 import { DepositService } from './../../services/deposit.service';
+import { BranchService } from 'app/services/branch.service';
 
 @Component({
   selector: 'app-update-deposit',
@@ -14,9 +15,11 @@ import { DepositService } from './../../services/deposit.service';
   styleUrls: ['./update-deposit.component.css'],
   providers: [NgbAlertConfig]
 })
+
 export class UpdateDepositComponent implements OnInit {
 
   @Input() deposit: Deposit;
+  public branches: Branch[];
   @Input() readonly: boolean;
   public depositForm: FormGroup;
   public alertMessage: string = '';
@@ -26,11 +29,15 @@ export class UpdateDepositComponent implements OnInit {
 
   public formErrors = {
     'name': '',
+    'branch': '',
     'capacity':''
   };
 
   public validationMessages = {
     'name': {
+      'required': 'Este campo es requerido.'
+    },
+    'branch': {
       'required': 'Este campo es requerido.'
     },
     'capacity' : {
@@ -39,6 +46,7 @@ export class UpdateDepositComponent implements OnInit {
 
   constructor(
     public _depositService: DepositService,
+    public _branchService: BranchService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -49,12 +57,9 @@ export class UpdateDepositComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.branches = new Array();
     this.buildForm();
-    this.depositForm.setValue({
-      '_id': this.deposit._id,
-      'name': this.deposit.name,
-      'capacity' : this.deposit.capacity
-    });
+    this.getBranches();
   }
 
   ngAfterViewInit() {
@@ -68,6 +73,10 @@ export class UpdateDepositComponent implements OnInit {
         ]
       ],
       'name': [this.deposit.name, [
+        Validators.required
+        ]
+      ],
+      'branch': [this.deposit.branch, [
         Validators.required
         ]
       ],
@@ -100,6 +109,59 @@ export class UpdateDepositComponent implements OnInit {
     }
   }
 
+  public getBranches(): void {
+
+    this.loading = true;
+    
+    this._branchService.getBranches(
+        { name: 1, operationType: 1 }, // PROJECT
+        { operationType: { $ne: 'D' } }, // MATCH
+        { name: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+    ).subscribe(
+      result => {
+        if (result && result.branches) {
+          this.branches = result.branches;
+          this.setValuesForm();
+        } else {
+          this.branches = new Array();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public setValuesForm(): void {
+
+    if(!this.deposit._id) this.deposit._id = '';
+    if(!this.deposit.name) this.deposit.name = '';
+    if(!this.deposit.capacity) this.deposit.capacity = 0;
+    
+    let branch;
+    if (!this.deposit.branch) {
+      branch = null;
+    } else {
+      if (this.deposit.branch._id) {
+        branch = this.deposit.branch._id;
+      } else {
+        branch = this.deposit.branch;
+      }
+    }
+    
+    this.depositForm.setValue({
+      '_id': this.deposit._id,
+      'name': this.deposit.name,
+      'branch': branch,
+      'capacity' : this.deposit.capacity
+    });
+  }
+
   public updateDeposit(): void {
     if (!this.readonly) {
       this.loading = true;
@@ -119,8 +181,7 @@ export class UpdateDepositComponent implements OnInit {
           this.loading = false;
         } else {
           this.deposit = result.deposit;
-          this.showMessage("El impuesto se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
+          this.showMessage("El depósito se ha actualizado con éxito.", 'success', false);
         }
         this.loading = false;
       },
