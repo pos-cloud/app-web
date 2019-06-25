@@ -59,6 +59,7 @@ import { ListMovementOfArticlesComponent } from './components/list-movement-of-a
 import { ListStatesComponent } from './components/list-states/list-states.component';
 import { ListCountriesComponent } from './components/list-countries/list-countries.component';
 import { ListBankComponent } from './components/list-bank/list-bank.component'
+import { ListBranchComponent } from './components/list-branches/list-branches.component';
 
 export const _routes: Routes = [
   { 
@@ -362,8 +363,13 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/banks',
+    path: 'admin/bancos',
     component: ListBankComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/sucursales',
+    component: ListBranchComponent,
     canActivate: [AuthGuard]
   },
   {

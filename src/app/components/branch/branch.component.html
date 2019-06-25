@@ -1,19 +1,15 @@
 <div class="modal-header">
   <h4 class="modal-title" *ngIf="operation==='add'">
-    <span *ngIf="userCountry === 'AR'">Agregar Provincia</span>
-    <span *ngIf="userCountry !== 'AR'">Agregar Estado</span>
+    <span>Agregar Sucursal</span>
   </h4>
   <h4 class="modal-title" *ngIf="operation==='edit'">
-    <span *ngIf="userCountry === 'AR'">Editar Provincia {{state.name}}</span>
-    <span *ngIf="userCountry !== 'AR'">Editar Estado  {{state.name}}</span>
+    <span>Editar Sucursal {{branch.name}}</span>
   </h4>
   <h4 class="modal-title" *ngIf="operation==='view'">
-      <span *ngIf="userCountry === 'AR'">Provincia {{state.name}}</span>
-      <span *ngIf="userCountry !== 'AR'">Estado {{state.name}}</span>
+      <span>Sucursal {{branch.name}}</span>
   </h4>
   <h4 class="modal-title" *ngIf="operation==='delete'">
-    <span *ngIf="userCountry === 'AR'">Eliminar Provincia {{state.name}}</span>
-    <span *ngIf="userCountry !== 'AR'">Eliminar Estado {{state.name}}</span>
+    <span>Eliminar Sucursal {{branch.name}}</span>
   </h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
@@ -25,7 +21,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="stateForm" #formCancellationType="ngForm" (ngSubmit)="addState()" autocomplete="off">
+  <form [formGroup]="branchForm" #formCancellationType="ngForm" (ngSubmit)="addBranch()" autocomplete="off">
     <div class="modal-body">
       <ngb-tabset>
         <ngb-tab title="Datos principales">
@@ -34,12 +30,12 @@
               <div class="form-group col-md-12">
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="code" class="control-label">Código</label>
+                    <label for="number" class="control-label">Número</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="code" name="code" id="code" [readonly]="readonly" [focus]="focusEvent"/>
+                      <input type="number" class="form-control" formControlName="number" name="number" id="number" [readonly]="readonly" [focus]="focusEvent"/>
                     </div>
-                    <div *ngIf="formErrors.code" class="alert alert-danger">
-                      {{ formErrors.code }}
+                    <div *ngIf="formErrors.number" class="alert alert-danger">
+                      {{ formErrors.number }}
                     </div>
                   </div>
                   <div class="form-group col-md-6">
@@ -50,22 +46,6 @@
                       <div *ngIf="formErrors.name" class="alert alert-danger">
                         {{ formErrors.name }}
                       </div>
-                  </div>
-                </div>
-                <div class="form-group col-md-12">
-                  <div class="row">
-                          <label for="country" class="control-label">País</label>
-                          <select class="form-control" formControlName="country">
-                              <option *ngFor="let country of countries"
-                                      [selected]="(state.country && state.country._id && country._id===state.country._id) ||
-                                                  (state.country && country._id===state.country)"
-                                      [value]="country._id"
-                                      [disabled]="readonly">
-                                      {{country.name}}</option>
-                            </select>
-                          <div *ngIf="formErrors.country" class="alert alert-danger">
-                            {{ formErrors.country }}
-                          </div>
                   </div>
                 </div>
               </div>
@@ -79,23 +59,23 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                       <label class="control-label">Creado por:</label>
-                      <label *ngIf="state.creationUser" class="control-label"><b>{{state.creationUser.name}}</b></label>
+                      <label *ngIf="branch.creationUser" class="control-label"><b>{{branch.creationUser.name}}</b></label>
                   </div>
                   <div class="form-group col-md-6">
                       <label class="control-label">El día:</label>
-                      <label *ngIf="state.creationDate" class="control-label"> <b>{{state.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      <label *ngIf="branch.creationDate" class="control-label"> <b>{{branch.creationDate | dateFormat:'DD/MM/YYYY'}}</b></label>
                   </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
                       <label class="control-label">Modificado por:</label>
-                      <label *ngIf="state.updateUser" class="control-label"><b>{{state.updateUser.name}}</b></label>
-                      <label *ngIf="!state.updateUser" class="control-label"><b>-</b></label>
+                      <label *ngIf="branch.updateUser" class="control-label"><b>{{branch.updateUser.name}}</b></label>
+                      <label *ngIf="!branch.updateUser" class="control-label"><b>-</b></label>
                   </div>
                   <div class="form-group col-md-6">
                       <label class="control-label">El día:</label>
-                      <label *ngIf="state.updateDate" class="control-label"><b>{{state.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
-                      <label *ngIf="!state.updateDate" class="control-label"><b>-</b></label>
+                      <label *ngIf="branch.updateDate" class="control-label"><b>{{branch.updateDate | dateFormat:'DD/MM/YYYY'}}</b></label>
+                      <label *ngIf="!branch.updateDate" class="control-label"><b>-</b></label>
                   </div>
                 </div>
               </div>
@@ -106,7 +86,7 @@
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
       <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!stateForm.valid || loading" *ngIf="operation !== 'delete'">
+      <button type="submit" class="btn btn-primary" [disabled]="!branchForm.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>
         <span *ngIf="loading">Espere por favor</span>
@@ -114,8 +94,8 @@
       <button type="button" 
               class="btn btn-danger" 
               *ngIf="operation === 'delete'" 
-              [disabled]="!stateForm.valid || loading" 
-              (click)="deleteState()">
+              [disabled]="!branchForm.valid || loading" 
+              (click)="deleteBranch()">
         <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Eliminar</span>
         <span *ngIf="loading">Espere por favor</span>

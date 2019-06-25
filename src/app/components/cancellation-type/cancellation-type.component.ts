@@ -317,12 +317,11 @@ export class CancellationTypeComponent implements OnInit {
 
     this._cancelationTypeService.deleteCancellationType(this.cancellationType._id).subscribe(
       result => {
-        if (result && result.ok === 1) {
-          this.loading = false;
-          this.activeModal.close();
-        } else {
-          this.loading = false;
+        this.loading = false;
+        if (!result.cancellationType) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+        } else {
+            this.activeModal.close();
         }
       },
       error => {

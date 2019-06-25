@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CountryService } from '../../services/country.service'
 import { Country } from '../../models/country'
 import { CountryComponent } from '../country/country.component'
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService } from 'app/services/config.service';
 
 @Component({
@@ -31,7 +31,8 @@ export class ListCountriesComponent implements OnInit {
   public displayedColumns = [
     "code",
     "name",
-    "flag"
+    "flag",
+    "operationType"
   ];
   public filters: any[];
   public filterValue: string;

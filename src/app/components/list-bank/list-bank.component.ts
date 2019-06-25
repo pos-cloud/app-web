@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BankService } from '../../services/bank.service'
 import { Bank } from '../../models/bank'
 import { BankComponent } from '../bank/bank.component'
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 
 
@@ -34,7 +34,8 @@ export class ListBankComponent implements OnInit {
     "code",
     "agency",
     "name",
-    "account"
+    "account",
+    "operationType"
   ];
   public filters: any[];
   public filterValue: string;

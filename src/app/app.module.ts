@@ -233,6 +233,9 @@ import { CountryService } from './services/country.service';
 import { BankComponent } from './components/bank/bank.component';
 import { ListBankComponent } from './components/list-bank/list-bank.component';
 import { AuthService } from './services/auth.service';
+import { BranchComponent } from './components/branch/branch.component';
+import { ListBranchComponent } from './components/list-branches/list-branches.component';
+import { BranchService } from './services/branch.service';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -398,7 +401,9 @@ import { AuthService } from './services/auth.service';
     CountryComponent,
     ListCountriesComponent,
     BankComponent,
-    ListBankComponent
+    ListBankComponent,
+    BranchComponent,
+    ListBranchComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -549,7 +554,10 @@ import { AuthService } from './services/auth.service';
     ListMovementOfArticlesComponent,
     StateComponent,
     CountryComponent,
-    BankComponent
+    BankComponent,
+    ListBankComponent,
+    BranchComponent,
+    ListBranchComponent
   ],
   imports: [
     BrowserModule,
@@ -611,6 +619,7 @@ import { AuthService } from './services/auth.service';
     StateService,
     CountryService,
     BankService,
+    BranchService,
     AuthGuard,
     AuthService,
   ],

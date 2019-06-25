@@ -3,28 +3,29 @@ import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 
-import { BankService } from '../../services/bank.service';
+import { BranchService } from '../../services/branch.service';
 
-import { Bank } from '../../models/bank';
+import { Branch } from '../../models/branch';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 
 @Component({
-  selector: 'app-bank',
-  templateUrl: './bank.component.html',
-  styleUrls: ['./bank.component.css'],
+  selector: 'app-branch',
+  templateUrl: './branch.component.html',
+  styleUrls: ['./branch.component.css'],
   providers: [NgbAlertConfig]
 })
-export class BankComponent implements OnInit {
+
+export class BranchComponent implements OnInit {
 
   @Input() operation: string;
   @Input() readonly: boolean;
-  @Input() bankId : string;
+  @Input() branchId : string;
   public alertMessage: string = '';
   public userType: string;
-  public bank: Bank;
-  public areBankEmpty: boolean = true;
+  public branch: Branch;
+  public areBranchEmpty: boolean = true;
   public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
@@ -33,16 +34,12 @@ export class BankComponent implements OnInit {
   public userCountry: string;
 
   public formErrors = {
-    'code': '',
-    'name': '',
-    'agency' : ''
+    'number': '',
+    'name': ''
   };
 
   public validationMessages = {
-    'code': {
-      'required': 'Este campo es requerido.'
-    },
-    'agency': {
+    'number': {
       'required': 'Este campo es requerido.'
     },
     'name': {
@@ -50,16 +47,16 @@ export class BankComponent implements OnInit {
     }
   };
 
-  public bankForm: FormGroup;
+  public branchForm: FormGroup;
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public _bankService: BankService,
+    public _branchService: BranchService,
     public _router: Router,
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
-    this.bank = new Bank();
+    this.branch = new Branch();
   }
 
   ngOnInit() {
@@ -68,8 +65,8 @@ export class BankComponent implements OnInit {
     this.userType = pathLocation[1];;
     this.buildForm();
     
-    if (this.bankId) {
-      this.getBank();
+    if (this.branchId) {
+      this.getBranch();
     }
   }
 
@@ -77,17 +74,17 @@ export class BankComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getBank() {
+  public getBranch() {
 
     this.loading = true;
 
-    this._bankService.getBank(this.bankId).subscribe(
+    this._branchService.getBranch(this.branchId).subscribe(
       result => {
-        if (!result.bank) {
+        if (!result.branch) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this.bank = result.bank;
+          this.branch = result.branch;
           this.setValueForm();
         }
         this.loading = false;
@@ -100,53 +97,42 @@ export class BankComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
    
-    if (!this.bank._id) { this.bank._id = ''; }
-    if (!this.bank.code) { this.bank.code = 0; }
-    if (!this.bank.name) { this.bank.name = ''; }
-    if (!this.bank.agency) { this.bank.agency = 0; }
-    if (!this.bank.account) { this.bank.account = ''; }
-
+    if (!this.branch._id) { this.branch._id = ''; }
+    if (!this.branch.number) { this.branch.number = 0; }
+    if (!this.branch.name) { this.branch.name = ''; }
 
     const values = {
-      '_id': this.bank._id,
-      'code': this.bank.code,
-      'name': this.bank.name,
-      'agency' : this.bank.agency,
-      'account' : this.bank.account,
+      '_id': this.branch._id,
+      'number': this.branch.number,
+      'name': this.branch.name,
     };
-    this.bankForm.setValue(values);
+    this.branchForm.setValue(values);
   }
 
   public buildForm(): void {
 
-    this.bankForm = this._fb.group({
-      '_id' : [this.bank._id, []],
-      'code': [this.bank.code, [
+    this.branchForm = this._fb.group({
+      '_id' : [this.branch._id, []],
+      'number': [this.branch.number, [
         Validators.required
         ]
       ],
-      'name': [this.bank.name, [
+      'name': [this.branch.name, [
         Validators.required
         ]
-      ],
-      'agency': [this.bank.agency, [
-        Validators.required
-        ]
-      ],
-      'account' : [this.bank.account,[]]
+      ]
     });
 
-    this.bankForm.valueChanges
+    this.branchForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
 
-    if (!this.bankForm) { return; }
-    const form = this.bankForm;
+    if (!this.branchForm) { return; }
+    const form = this.branchForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -161,36 +147,36 @@ export class BankComponent implements OnInit {
     }
   }
 
-  public addBank() {
+  public addBranch() {
 
     switch (this.operation) {
       case 'add':
-        this.saveBank();
+        this.saveBranch();
         break;
       case 'edit':
-        this.updateBank();
+        this.updateBranch();
         break;
       case 'delete' :
-        this.deleteBank();
+        this.deleteBranch();
       default:
         break;
     }
   }
 
-  public updateBank() {
+  public updateBranch() {
 
     this.loading = true;
 
-    this.bank = this.bankForm.value;
+    this.branch = this.branchForm.value;
 
-    this._bankService.updateBank(this.bank).subscribe(
+    this._branchService.updateBranch(this.branch).subscribe(
       result => {
-        if (!result.bank) {
+        if (!result.branch) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
           this.loading = false;
-          this.showMessage('El banco se ha actualizado con éxito.', 'success', false);
+          this.showMessage('La sucursal se ha actualizado con éxito.', 'success', false);
         }
       },
       error => {
@@ -200,21 +186,21 @@ export class BankComponent implements OnInit {
     );
   }
 
-  public saveBank() {
+  public saveBranch() {
 
     this.loading = true;
 
-    this.bank = this.bankForm.value;
+    this.branch = this.branchForm.value;
 
-    this._bankService.saveBank(this.bank).subscribe(
+    this._branchService.saveBranch(this.branch).subscribe(
       result => {
-        if (!result.bank) {
+        if (!result.branch) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
             this.loading = false;
-            this.showMessage('El banco se ha añadido con éxito.', 'success', false);
-            this.bank = new Bank();
+            this.showMessage('La sucursal se ha añadido con éxito.', 'success', false);
+            this.branch = new Branch();
             this.buildForm();
         }
       },
@@ -225,17 +211,17 @@ export class BankComponent implements OnInit {
     );
   }
 
-  public deleteBank() {
+  public deleteBranch() {
 
     this.loading = true;
 
-    this._bankService.deleteBank(this.bank._id).subscribe(
+    this._branchService.deleteBranch(this.branch._id).subscribe(
       result => {
         this.loading = false;
-        if (!result.bank) {
+        if (!result.branch) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
-          this.activeModal.close();
+            this.activeModal.close();
         }
       },
       error => {

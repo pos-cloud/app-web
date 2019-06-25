@@ -179,7 +179,7 @@
                     [routerLinkActive]="['active']">
                     Clientes
             </button>
-            <div *ngIf="config.modules.currentAccount">
+            <div>
               <button class="dropdown-item"
                       [routerLink]="['admin','resumenes-de-cuentas','cliente']"
                       [routerLinkActive]="['active']">
@@ -199,7 +199,7 @@
                     [routerLinkActive]="['active']">
               Proveedores
             </button>
-            <div *ngIf="config.modules.currentAccount">
+            <div>
               <button class="dropdown-item"
                       [routerLink]="['admin','resumenes-de-cuentas','proveedor']"
                       [routerLinkActive]="['active']">
@@ -309,6 +309,12 @@
           </button>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item"
+                  [routerLink]="['admin','sucursales']"
+                  [routerLinkActive]="['active']">
+            Sucursales
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item"
                   [routerLink]="['admin','tipos-de-transacciones']"
                   [routerLinkActive]="['active']">
             Tipos de Transacciones
@@ -354,7 +360,7 @@
             Usos de CFDI
           </button>
           <button class="dropdown-item"
-                  [routerLink]="['admin','banks']"
+                  [routerLink]="['admin','bancos']"
                   [routerLinkActive]="['active']">
             Bancos
           </button>

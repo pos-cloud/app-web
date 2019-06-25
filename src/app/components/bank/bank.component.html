@@ -6,7 +6,7 @@
     <span>Editar Banco {{bank.name}}</span>
   </h4>
   <h4 class="modal-title" *ngIf="operation==='view'">
-      <span>{{bank.name}}</span>
+      <span>Banco {{bank.name}}</span>
   </h4>
   <h4 class="modal-title" *ngIf="operation==='delete'">
     <span>Eliminar Banco {{bank.name}}</span>
@@ -116,7 +116,7 @@
               *ngIf="operation === 'delete'" 
               [disabled]="!bankForm.valid || loading" 
               (click)="deleteBank()">
-        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Eliminar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>

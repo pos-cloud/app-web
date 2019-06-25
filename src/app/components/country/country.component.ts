@@ -243,12 +243,10 @@ export class CountryComponent implements OnInit {
 
     this._countryService.deleteCountry(this.country._id).subscribe(
       result => {
-        if (result && result.ok === 1) {
-          this.loading = false;
-          this.activeModal.close();
-        } else {
-          this.loading = false;
+        if (!result.country) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+        } else {
+            this.activeModal.close();
         }
       },
       error => {

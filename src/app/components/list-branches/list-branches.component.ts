@@ -1,38 +1,38 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { CancellationTypeService } from '../../services/cancellation-type.service'
-import { CancellationType } from '../../models/cancellation-type'
-import { CancellationTypeComponent } from '../cancellation-type/cancellation-type.component'
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { BranchService } from '../../services/branch.service'
+import { Branch } from '../../models/branch'
+import { BranchComponent } from '../branch/branch.component'
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Config } from 'app/app.config';
+
 
 @Component({
-  selector: 'app-list-cancellation-types',
-  templateUrl: './list-cancellation-types.component.html',
-  styleUrls: ['./list-cancellation-types.component.scss'],
-  providers: [NgbAlertConfig],
+  selector: 'app-list-branches',
+  templateUrl: './list-branches.component.html',
+  styleUrls: ['./list-branches.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ListCancellationTypeComponent implements OnInit {
+export class ListBranchComponent implements OnInit {
 
   public alertMessage: string = '';
   public userType: string;
-  public cancellationTypes: CancellationType[] = new Array();
-  public relationOfCancellationEmpty: boolean = true;
-  public orderTerm: string[] = ['-origin'];
+  public branches: Branch[] = new Array();
+  public relationOfBranchEmpty: boolean = true;
+  public orderTerm: string[] = ['number'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  public userCountry: string;
 
   public itemsPerPage = 10;
   public totalItems = 0;
 
   public currentPage: number = 0;
   public displayedColumns = [
-    "origin.name",
-    "origin.transactionMovement",
-    "destination.name",
-    "destination.transactionMovement",
+    "number",
+    "name",
     "operationType"
   ];
   public filters: any[];
@@ -40,7 +40,7 @@ export class ListCancellationTypeComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public relationService :CancellationTypeService,
+    public branchService: BranchService,
     public _router: Router,
     public _modalService: NgbModal,
   ) {
@@ -51,12 +51,13 @@ export class ListCancellationTypeComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getCancellationTypes()
+    this.getBranches()
   }
 
-  public getCancellationTypes() : void {
+  public getBranches() : void {
 
     this.loading = true;
 
@@ -70,6 +71,7 @@ export class ListCancellationTypeComponent implements OnInit {
     sortAux = JSON.parse(sortAux);
 
     // FILTRAMOS LA CONSULTA
+
     let match = `{`;
     for(let i = 0; i < this.displayedColumns.length; i++) {
       let value = this.filters[this.displayedColumns[i]];
@@ -84,25 +86,17 @@ export class ListCancellationTypeComponent implements OnInit {
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = '{}';
-    if (this.displayedColumns && this.displayedColumns.length > 0) {
-        project = '{';
-        for (let i = 0; i < this.displayedColumns.length; i++) {
-            let field = this.displayedColumns[i];
-            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-            if (i < this.displayedColumns.length - 1) {
-                project += ',';
-            }
-        }
-        project += '}';
+    let project = {
+      number: { $toString: '$number' },
+      name: 1,
+      operationType: 1
     }
-    project = JSON.parse(project);
 
     // AGRUPAMOS EL RESULTADO
     let group = {
         _id: null,
         count: { $sum: 1 },
-        cancellationTypes: { $push: "$$ROOT" }
+        branches: { $push: "$$ROOT" }
     };
 
     let page = 0;
@@ -113,7 +107,7 @@ export class ListCancellationTypeComponent implements OnInit {
             (page * this.itemsPerPage) :
                 0 // SKIP
 
-    this.relationService.getCancellationTypes(
+    this.branchService.getBranches(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
@@ -122,11 +116,11 @@ export class ListCancellationTypeComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.cancellationTypes) {
+        if (result.branches) {
           this.loading = false;
-          this.cancellationTypes = result.cancellationTypes;
+          this.branches = result.branches;
           this.totalItems = result.count;
-          this.relationOfCancellationEmpty = false;
+          this.relationOfBranchEmpty = false;
         } 
       },
       error => {
@@ -139,7 +133,7 @@ export class ListCancellationTypeComponent implements OnInit {
 
   public pageChange(page): void {
     this.currentPage = page;
-    this.getCancellationTypes();
+    this.getBranches();
   }
 
   public orderBy(term: string): void {
@@ -149,52 +143,52 @@ export class ListCancellationTypeComponent implements OnInit {
       } else {
         this.orderTerm[0] = term;
       }
-      this.getCancellationTypes();
+      this.getBranches();
   }
 
-  public openModal (op: string, cancellationType?: CancellationType) : void {
+  public openModal (op: string, branch?: Branch) : void {
 
     let modalRef
     switch (op) {
       case 'add':
-        modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BranchComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "add";
+        modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          this.getCancellationTypes();
+          this.getBranches();
         }, (reason) => {
-          this.getCancellationTypes();
+          this.getBranches();
         });
         break;
       case 'edit':
-        modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BranchComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "edit";
-        modalRef.componentInstance.cancellationTypeId = cancellationType._id;
+        modalRef.componentInstance.branchId = branch._id;
+        modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          this.getCancellationTypes();
+          this.getBranches();
         }, (reason) => {
-          this.getCancellationTypes();
+          this.getBranches();
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BranchComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "delete";
-        modalRef.componentInstance.cancellationTypeId = cancellationType._id;
+        modalRef.componentInstance.branchId = branch._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          this.getCancellationTypes();
+          this.getBranches();
         }, (reason) => {
-          this.getCancellationTypes();
+          this.getBranches();
         });
         break;
       case 'view':
-        modalRef = this._modalService.open(CancellationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BranchComponent, { size: 'lg' });
         modalRef.componentInstance.operation = "view";
-        modalRef.componentInstance.cancellationTypeId = cancellationType._id;
+        modalRef.componentInstance.branchId = branch._id;
         modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
-          this.getCancellationTypes();
         }, (reason) => {
-          this.getCancellationTypes();
         });
         break;
       default:
@@ -204,7 +198,7 @@ export class ListCancellationTypeComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getCancellationTypes();
+    this.getBranches();
   }
 
 
@@ -217,4 +211,6 @@ export class ListCancellationTypeComponent implements OnInit {
   public hideMessage(): void {
     this.alertMessage = '';
   }
+
 }
+

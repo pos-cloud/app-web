@@ -297,12 +297,10 @@ export class StateComponent implements OnInit {
 
     this._stateService.deleteState(this.state._id).subscribe(
       result => {
-        if (result && result.ok === 1) {
-          this.loading = false;
-          this.activeModal.close();
-        } else {
-          this.loading = false;
+        if (!result.state) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
+        } else {
+            this.activeModal.close();
         }
       },
       error => {

@@ -796,14 +796,6 @@ export class PointOfSaleComponent implements OnInit {
       this.loading = false;
     }
 
-    if (isValid &&
-      this.transaction.type.electronics &&
-      !Config.modules.sale.electronicTransactions) {
-      isValid = false;
-      this.showMessage("No tiene habilitado el módulo de factura electrónica.", 'info', true);
-      this.loading = false;
-    }
-
     return isValid;
   }
 
