@@ -477,6 +477,16 @@ export const _routes: Routes = [
     component: PointOfSaleComponent,
     canActivate: [AuthGuard]
   },
+  { 
+    path: 'report/compra/compras-por-comprobante', 
+    component: ListTransactionTypesComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'report/venta/ventas-por-comprobante', 
+    component: ListTransactionTypesComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: 'pos/delivery/agregar-transaccion/:type',
     component: AddSaleOrderComponent,

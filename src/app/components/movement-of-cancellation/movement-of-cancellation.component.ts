@@ -317,9 +317,9 @@ export class MovementOfCancellationComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result && result.transactions) {
-            this.transactions = result.transactions;
-            this.totalItems = result.count;
+        if (result && result[0].transactions) {
+            this.transactions = result[0].transactions;
+            this.totalItems = result[0].count;
         } else {
             this.loading = false;
             this.transactions = null;

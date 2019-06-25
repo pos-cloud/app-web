@@ -545,6 +545,11 @@
             Ventas por empleado
           </a>
         </li>
+        <li>
+          <a (click)="openReport('report/venta/ventas-por-comprobante')">
+            Ventas por Tipo de Comprobante
+          </a>
+        </li>
       </ul>
     </div>
     <div class="col-md-3"  style="width: 300px" *ngIf="!config.modules.sale ||
@@ -609,6 +614,11 @@
         <li>
           <a (click)="openReport('admin/compra/compras-por-empleado')">
             Compras por empleado
+          </a>
+        </li>
+        <li>
+          <a (click)="openReport('report/compra/compras-por-comprobante')">
+            Compras por Tipo de Comprobante
           </a>
         </li>
       </ul>
