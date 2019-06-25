@@ -28,7 +28,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let companyGroup of companiesGroup | filter: filterDescription:'description'
+            <tr *ngFor="let companyGroup of companiesGroups | filter: filterDescription:'description'
                                           | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,

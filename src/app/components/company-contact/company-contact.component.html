@@ -21,7 +21,7 @@
           <td class="flat"><input  class="form-control" placeholder="Puesto" [(ngModel)]="companyContact.position" [focus]="focusEvent"></td>
           <td align="left" width="50"><button type="button" class="btn btn-success btn-sm" (click)="addCompanyContact()" title="Agregar"><i class="fa fa-plus"></i></button></td>
         </tr>
-        <tr *ngFor="let companyContact of companiesContact  | filter: filterName:'name' 
+        <tr *ngFor="let companyContact of companiesContacts  | filter: filterName:'name' 
                                                       | orderBy: orderTerm: propertyTerm
                                                       | paginate: { itemsPerPage: itemsPerPage, 
                                                         currentPage: p, 

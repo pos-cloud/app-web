@@ -40,7 +40,7 @@ export class CompanyGroupService {
 		);
 	}
 
-	public getCompaniesGroup(
+	public getCompaniesGroups(
         query?: string
     ): Observable<any> {
 
@@ -66,7 +66,7 @@ export class CompanyGroupService {
         );
 	}
 	
-	public getCompaniesGroupV2(
+	public getCompaniesGroupsV2(
         project: {},
         match: {},
         sort: {},

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TransactionType,TransactionMovement } from '../../models/transaction-type'
+import { TransactionMovement } from '../../models/transaction-type'
 import { Transaction } from '../../models/transaction'
 
 //service
@@ -204,8 +204,8 @@ export class MovementOfCancellationComponent implements OnInit {
 
     // CAMPOS A TRAER
     let project = {
-      "origin": 1,
-      "destination": 1,
+      "origin._id": 1,
+      "destination._id": 1,
       "operationType" : 1
     };
 
