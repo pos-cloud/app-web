@@ -5,7 +5,7 @@
     </ngb-alert>
   </div>
   <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Empresas
+    <div class="card-header bg-primary">Listado de {{type}}es
       <div class="pull-right">
         <!-- <button class="btn btn-primary" (click)="openMail()"> Enviar Mail </button> -->
         <button class="btn btn-primary" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-cloud-upload"></i> Importar</button>
@@ -24,12 +24,10 @@
               <th><i class="fa fa-bars"></i></th>
               <th (click)="orderBy('name')">Nombre</th>
               <th (click)="orderBy('fantasyName')">Nombre de Fantasía</th>
-              <th (click)="orderBy('type')">Tipo</th>
               <th (click)="orderBy('vatCondition','description')" *ngIf="userCountry === 'AR'">Condición de IVA</th>
               <th (click)="orderBy('vatCondition','description')" *ngIf="userCountry !== 'AR'">Régimen Fiscal</th>
-              <th (click)="orderBy('identificationType','name')">Tipo Doc</th>
-              <th (click)="orderBy('identificationValue')">Nro Doc</th>
-              <th (click)="orderBy('grossIncome')">Ingresos Brutos</th>
+              <th (click)="orderBy('identificationType','name')">Tipo Identificación</th>
+              <th (click)="orderBy('identificationValue')">Nro Identificación</th>
               <th (click)="orderBy('address')">Dirección</th>
               <th (click)="orderBy('addressNumber')">Número</th>
               <th (click)="orderBy('city')">Ciudad</th>
@@ -43,12 +41,10 @@
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterFantasyName" placeholder="Nombre de Fantasía..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterType" placeholder="Tipo..." ></th>
               <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Condición de IVA..."></th>
               <th *ngIf="userCountry !== 'AR'"><input type="text" class="form-control" [(ngModel)]= "filterVATCondition" placeholder="Régimen Fiscal..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationType" placeholder="Tipo Doc..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Nro Doc..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterGrossIncome" placeholder="Ingresos Brutos..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationType" placeholder="Tipo Identificación..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Nro Identificación..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAddress" placeholder="Dirección..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterAddressNumber" placeholder="Número..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterCity" placeholder="Ciudad..." ></th>
@@ -62,11 +58,9 @@
           <tbody>
             <tr *ngFor="let company of companies  | filter: filterName:'name'
                                                   | filter: filterFantasyName:'fantasyName'
-                                                  | filter: filterType:'type'
                                                   | filter: filterVATCondition:'description':'vatCondition'
                                                   | filter: filterIdentificationType:'name':'identificationType'
                                                   | filter: filterIdentificationValue:'identificationValue'
-                                                  | filter: filterGrossIncome: 'grossIncome'
                                                   | filter: filterAddress:'address'
                                                   | filter: filterAddressNumber:'addressNumber'
                                                   | filter: filterCity:'city'
@@ -80,20 +74,18 @@
                                                                 currentPage: p,
                                                                 totalItems: totalItems
                                                               }">
-              <td align="left" width="130">
+              <td nowrap align="left" width="130">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', company)" title="Ver"><i class="fa fa-eye"></i></button>
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', company)" title="Modificar"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', company)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
               <td>{{company.name}}</td>
               <td>{{company.fantasyName}}</td>
-              <td>{{company.type}}</td>
               <td *ngIf="company.vatCondition">{{company.vatCondition.description}}</td>
               <td *ngIf="!company.vatCondition">Consumidor Final</td>
-              <td *ngIf="company.identificationType">{{company.identificationType.name}}</td>
-              <td *ngIf="!company.identificationType"></td>
-              <td>{{company.identificationValue}}</td>
-              <td>{{company.grossIncome}}</td>
+              <td  align="center" *ngIf="company.identificationType">{{company.identificationType.name}}</td>
+              <td align="center" *ngIf="!company.identificationType"></td>
+              <td nowrap >{{company.identificationValue}}</td>
               <td>{{company.address}}</td>
               <td>{{company.addressNumber}}</td>
               <td>{{company.city}}</td>
