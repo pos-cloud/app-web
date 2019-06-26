@@ -32,6 +32,7 @@ export class CompanyNewsComponent implements OnInit {
   public totalItems = 0;
   public focusEvent = new EventEmitter<boolean>();
 
+
   constructor(
     public _companyNewsService: CompanyNewsService,
     public _router: Router,
@@ -64,7 +65,7 @@ export class CompanyNewsComponent implements OnInit {
         if (!result.companiesNews) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.companiesNews = null;
+          this.companiesNews = [];
           this.areCompaniesNewsEmpty = true;
         } else {
           this.hideMessage();

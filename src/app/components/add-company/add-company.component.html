@@ -229,6 +229,11 @@
             </div>
 					</ng-template>
         </ngb-tab>
+        <ngb-tab *ngIf="operation != 'add'" title="Novedades">
+          <ng-template ngbTabContent>
+          		<app-company-news [company]="company"></app-company-news>
+          </ng-template>
+        </ngb-tab>
         <ngb-tab title="Campos Personalizados">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
