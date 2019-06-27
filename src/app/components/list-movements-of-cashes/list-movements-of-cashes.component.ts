@@ -86,14 +86,11 @@ export class ListMovementOfCashesComponent implements OnInit {
     for(let i = 0; i < this.displayedColumns.length; i++) {
       let value = this.filters[this.displayedColumns[i]];
       if (value && value != "") {
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
-        if (i < this.displayedColumns.length - 1) {
-          match += ',';
-        }
+        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"},`;
       }
     }
 
-    match += `",operationType": { "$ne": "D" }, "statusCheck" : "Disponible" }`;
+    match += `"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" }`;
 
     console.log(match)
 
@@ -139,9 +136,9 @@ export class ListMovementOfCashesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.movementsOfCashes) {
+        if (result.movementOfCashes) {
           this.loading = false;
-          this.movementsOfCashes = result.movementsOfCashes;
+          this.movementsOfCashes = result.movementOfCashes;
           this.totalItems = result.count;
           this.areMovementOfCashesEmpty = false;
         } 

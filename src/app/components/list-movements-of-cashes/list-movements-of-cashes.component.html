@@ -181,8 +181,8 @@
                 </td>
                 
                 <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.number }}</td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.transaction.type[0].name }}</td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.transaction.type[0].transactionMovement }}</td>
+                <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.transaction.type.name }}</td>
+                <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.transaction.type.transactionMovement }}</td>
                 <td *ngIf="movementOfCash.bank" class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.bank.name }}</td>
                 <td *ngIf="!movementOfCash.bank" (click)="selectmovementOfCash(movementOfCash, $event)"></td>
                 <td class="flat" (click)="selectmovementOfCash(movementOfCash, $event)">{{movementOfCash.expirationDate }}</td>

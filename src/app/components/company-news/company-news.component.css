@@ -12,9 +12,10 @@
 }
 
 .table {
-      border-radius: 5px;
-      box-shadow: 0px 0px 2px;
+      /*border-radius: 5px;
+      box-shadow: 0px 0px 2px;*/
       cursor: pointer;
+      overflow: hidden;
  }
 
  .center-content {

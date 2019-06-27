@@ -27,7 +27,7 @@
         <tr>
           <td class="flat"><input type="date" class="form-control" placeholder="Fecha" [(ngModel)]="companyNews.date" [focus]="focusEvent"></td>
           <td class="flat"><textarea class="form-control" placeholder="Novedad" [(ngModel)]="companyNews.news"></textarea></td>
-          <td align="left" width="50"><button type="button" class="btn btn-success btn-sm" (click)="addCompanyNews()" title="Agregar"><i class="fa fa-plus"></i></button></td>
+          <td class="flat"><button type="button" class="btn btn-success btn-sm" (click)="addCompanyNews()" title="Agregar"><i class="fa fa-plus"></i></button></td>
         </tr>
         <tr *ngFor="let companyNews of companiesNews  | filter: filterDate:'date' 
                                                       | filter: filterNews:'news'
@@ -38,7 +38,7 @@
                                                     }">
           <td class="flat">{{companyNews.date | dateFormat:'DD/MM/YYYY' }}</td>
           <td class="flat"><pre>{{companyNews.news}}</pre></td>
-          <td align="left" width="50"><button type="button" class="btn btn-danger btn-sm" (click)="deleteCompanyNews(companyNews)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
+          <td class="flat"><button type="button" class="btn btn-danger btn-sm" (click)="deleteCompanyNews(companyNews)" title="Eliminar"><i class="fa fa-trash-o"></i></button></td>
         </tr>
       </tbody>
     </table>

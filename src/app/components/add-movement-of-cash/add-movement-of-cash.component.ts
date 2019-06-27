@@ -736,6 +736,7 @@ export class AddMovementOfCashComponent implements OnInit {
       this.calculateQuotas('quotas');
     }
 
+    console.log(this.movementOfCashForm.value)
     this.setValueForm();
   }
 
@@ -786,8 +787,6 @@ export class AddMovementOfCashComponent implements OnInit {
         resolve(false);
         this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
       }
-
-      console.log(this.transaction.type.movement);
 
       if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number){
         resolve(false);
@@ -891,8 +890,6 @@ export class AddMovementOfCashComponent implements OnInit {
   }
 
   public async addMovementOfCash() {
-
-    
 
     if (!this.fastPayment) {
       if (await this.isValidAmount()) {

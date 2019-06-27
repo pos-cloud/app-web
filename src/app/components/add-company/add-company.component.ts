@@ -29,6 +29,7 @@ import { ConfigService } from 'app/services/config.service';
 import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
+import { CompanyNews } from 'app/models/company-news';
 
 @Component({
   selector: 'app-add-company',

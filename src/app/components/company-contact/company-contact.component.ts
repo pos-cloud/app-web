@@ -77,7 +77,7 @@ export class CompanyContactComponent implements OnInit {
         if (!result.companiesContacts) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.companiesContacts = null;
+          this.companiesContacts = [];
           this.areCompaniesContactEmpty = true;
         } else {
           this.hideMessage();
