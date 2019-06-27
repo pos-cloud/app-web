@@ -1,11 +1,16 @@
+// ANGULAR
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+// TERCEROS
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+// MODELS
 import { Deposit } from './../../models/deposit';
+import { Branch } from './../../models/branch';
 
+// SERVICES
 import { DepositService } from './../../services/deposit.service';
 import { BranchService } from 'app/services/branch.service';
 

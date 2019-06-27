@@ -7,7 +7,6 @@ import { User } from './../../models/user';
 import { UserService } from './../../services/user.service';
 
 import { AddUserComponent } from './../../components/add-user/add-user.component';
-import { UpdateUserComponent } from './../../components/update-user/update-user.component';
 import { DeleteUserComponent } from './../../components/delete-user/delete-user.component';
 
 @Component({
@@ -90,21 +89,26 @@ export class ListUsersComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
         modalRef.componentInstance.userId = user._id;
         modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = 'view';
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then((result) => {
           this.getUsers();
         }, (reason) => {
           this.getUsers();
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
           modalRef.componentInstance.userId = user._id;
           modalRef.componentInstance.readonly = false;
+          modalRef.componentInstance.operation = 'update';
           modalRef.result.then((result) => {
             if (result === 'save_close') {
               this.getUsers();

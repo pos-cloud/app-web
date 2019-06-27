@@ -87,7 +87,6 @@ import { AddCategoryComponent } from './components/add-category/add-category.com
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { DeleteCategoryComponent } from './components/delete-category/delete-category.component';
 import { AddUserComponent } from './components/add-user/add-user.component';
-import { UpdateUserComponent } from './components/update-user/update-user.component';
 import { ListUsersComponent } from './components/list-users/list-users.component';
 import { DeleteUserComponent } from './components/delete-user/delete-user.component';
 import { ListCompaniesComponent } from './components/list-companies/list-companies.component';
@@ -284,7 +283,6 @@ import { BranchService } from './services/branch.service';
     TotalPipe,
     RoundNumberPipe,
     AddUserComponent,
-    UpdateUserComponent,
     ListUsersComponent,
     DeleteUserComponent,
     ListCompaniesComponent,
@@ -442,7 +440,6 @@ import { BranchService } from './services/branch.service';
     PointOfSaleComponent,
     LoginComponent,
     AddUserComponent,
-    UpdateUserComponent,
     ListUsersComponent,
     DeleteUserComponent,
     ListCompaniesComponent,

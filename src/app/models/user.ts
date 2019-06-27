@@ -1,4 +1,6 @@
 import { Employee } from './employee';
+import { Company } from './company';
+import { Branch } from './branch';
 
 export class User {
 
@@ -10,6 +12,8 @@ export class User {
 	public token: string;
   	public tokenExpiration: number = 9999;
 	public employee: Employee = null;
+	public company: Company = null;
+	public branch: Branch = null;
 
 	constructor () {}
 }

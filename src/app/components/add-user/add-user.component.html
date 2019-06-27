@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Usuario</h4>
+  <h4 class="modal-title">Usuario <span *ngIf="user">{{user.name}}</span></h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -13,31 +13,41 @@
   <form [formGroup]="userForm" #formAddUser="ngForm" (ngSubmit)="addUser()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="name" class="control-label">Nombre:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent"/>
+            <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
           </div>
         </div>
+        <div class="form-group col-md-6">
+          <label for="state" class="control-label">Habilitado</label>
+          <select class="form-control" formControlName="state">
+            <option *ngFor="let state of states" 
+                    [value]="state" 
+                    [disabled]="readonly  || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')">
+            {{state}}</option>
+          </select>
+          <div *ngIf="formErrors.state" class="alert alert-danger">
+            {{ formErrors.state }}
+          </div>
+        </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-6">
           <label for="email" class="control-label">Email:</label>
           <div class="input-group">
-            <input type="text" class="form-control" formControlName="email" name="email" id="email"/>
+            <input type="text" class="form-control" formControlName="email" name="email" id="email" [readonly]="readonly"/>
           </div>
           <div *ngIf="formErrors.email" class="alert alert-danger">
             {{ formErrors.email }}
           </div>
         </div>
-      </div>
-      <div class="row">
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-6">
 					<label for="password" class="control-label">Contraseña:</label>
-					<input type="password" class="form-control" formControlName="password" name="password" id="password"/>
+					<input type="password" class="form-control" formControlName="password" name="password" id="password" [readonly]="readonly"/>
 					<div *ngIf="formErrors.password" class="alert alert-danger">
 						{{ formErrors.password }}
 					</div>
@@ -45,20 +55,58 @@
       </div>
       <div class="row">
         <div class="form-group col-md-6">
-          <label for="state" class="control-label">Habilitado</label>
-          <select class="form-control" formControlName="state">
-            <option *ngFor="let state of states" [ngValue]="state">{{state}}</option>
+          <label for="employee" class="control-label">Empleado Asociado</label>
+          <select class="form-control" formControlName="employee">
+            <option [ngValue]="null" 
+                    [selected]="!user || !user.employee" 
+                    [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"></option>
+            <option *ngFor="let employee of employees" 
+                    [value]="employee._id" 
+                    [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
+                    [selected]="(user.employee && user.employee._id && employee._id===user.employee._id) ||
+                                (user.employee && employee._id===user.employee)">
+                    {{employee.name}}
+            </option>
           </select>
-          <div *ngIf="formErrors.state" class="alert alert-danger">
-            {{ formErrors.state }}
+          <div *ngIf="formErrors.employee" class="alert alert-danger">
+            {{ formErrors.employee }}
           </div>
         </div>
         <div class="form-group col-md-6">
-          <label for="employee" class="control-label">Empleado Asociado</label>
-          <select class="form-control" formControlName="employee">
-            <option *ngFor="let employee of employees" [ngValue]="employee">{{employee.name}}</option>
+          <label for="branch" class="control-label">Sucursal</label>
+          <select class="form-control" formControlName="branch">
+            <option [ngValue]="null" 
+                    [selected]="!user || !user.branch" 
+                    [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"></option>
+            <option *ngFor="let branch of branches" 
+                    [value]="branch._id" 
+                    [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
+                    [selected]="(user.branch && user.branch._id && branch._id===user.branch._id) ||
+                                (user.branch && branch._id===user.branch)">
+                    {{branch.name}} ( {{branch.number}} )
+            </option>
           </select>
-          <div *ngIf="formErrors.employee" class="alert alert-danger">
+          <div *ngIf="formErrors.branch" class="alert alert-danger">
+            {{ formErrors.branch }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="company" class="control-label">Compañia Asociada</label>
+          <select class="form-control" formControlName="company">
+            <option [ngValue]="null" [selected]="!user || !user.company" 
+                    [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"></option>
+            <option *ngFor="let company of companies" 
+                    [value]="company._id"
+                    [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
+                    [selected]="(user.company && user.company._id && company._id===user.company._id) ||
+                                (user.company && company._id===user.company)">
+                    {{company.name}} 
+                    <span *ngIf="company.identificationValue"> ( {{company.identificationValue}} ) </span>
+            </option>
+          </select>
+          <div *ngIf="formErrors.company" class="alert alert-danger">
             {{ formErrors.state }}
           </div>
         </div>

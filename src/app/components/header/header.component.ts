@@ -1,10 +1,9 @@
 
-import {fromEvent as observableFromEvent, of as observableOf, merge as observableMerge,  Observable } from 'rxjs';
-
-import {mapTo} from 'rxjs/operators';
 // ANGULAR
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
+import {fromEvent as observableFromEvent, of as observableOf, merge as observableMerge,  Observable } from 'rxjs';
+import {mapTo} from 'rxjs/operators';
 
 // DE TERCEROS
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,10 +13,10 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { User } from './../../models/user';
 
 // SERVICES
-import { UpdateUserComponent } from '../update-user/update-user.component';
 import { LicensePaymentComponent } from '../license-payment/license-payment.component';
 import { AuthService } from 'app/services/auth.service';
 import { ConfigService } from 'app/services/config.service';
+import { AddUserComponent } from '../add-user/add-user.component';
 
 @Component({
   selector: 'app-header',
@@ -113,13 +112,16 @@ export class HeaderComponent {
     let modalRef;
     switch (op) {
       case 'view-user':
-        modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'view';
+        modalRef.componentInstance.readonly = true;
         this._authService.getIdentity.subscribe(
           identity => {
-            modalRef.componentInstance.userId = identity._id;
+            if(modalRef != null && modalRef.componentInstance) {
+              modalRef.componentInstance.userId = identity._id;
+            }
           },
         );
-        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
 
         }, (reason) => {
@@ -127,10 +129,14 @@ export class HeaderComponent {
         });
         break;
       case 'update-user':
-        modalRef = this._modalService.open(UpdateUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'update';
+        modalRef.componentInstance.readonly = false;
         this._authService.getIdentity.subscribe(
           identity => {
-            modalRef.componentInstance.userId = identity._id;
+            if(modalRef != null && modalRef.componentInstance) {
+              modalRef.componentInstance.userId = identity._id;
+            }
           },
         );
         modalRef.result.then((result) => {
@@ -157,17 +163,6 @@ export class HeaderComponent {
 
   public goToHome(): void {
     this._router.navigate(['/']);
-    /*
-    this.makeVisibleReport(false);
-    this._authService.getIdentity.subscribe(
-      identity => {
-        if (identity.employee.type.description === "Administrador") {
-          this._router.navigate(['/']);
-        } else {
-          this._router.navigate(['/']);
-        }
-      },
-    );*/
   }
 
   public makeVisibleReport(visible: boolean): void {
