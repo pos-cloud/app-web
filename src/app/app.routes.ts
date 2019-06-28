@@ -60,6 +60,7 @@ import { ListStatesComponent } from './components/list-states/list-states.compon
 import { ListCountriesComponent } from './components/list-countries/list-countries.component';
 import { ListBankComponent } from './components/list-bank/list-bank.component'
 import { ListBranchComponent } from './components/list-branches/list-branches.component';
+import { ListOriginsComponent } from './components/list-origins/list-origins.component';
 
 export const _routes: Routes = [
   { 
@@ -370,6 +371,11 @@ export const _routes: Routes = [
   {
     path: 'admin/sucursales',
     component: ListBranchComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/puntos-de-venta',
+    component: ListOriginsComponent,
     canActivate: [AuthGuard]
   },
   {

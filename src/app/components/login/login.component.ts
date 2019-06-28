@@ -1,17 +1,20 @@
+// ANGULAR
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
+// TERCEROS
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { User } from './../../models/user';
+// MODELS
 import { Employee } from './../../models/employee';
+import { Config } from 'app/app.config';
 
+// SERVICES
 import { UserService } from './../../services/user.service';
 import { TurnService } from './../../services/turn.service';
 import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
-import { Config } from 'app/app.config';
 import { AuthService } from 'app/services/auth.service';
 import { ConfigService } from 'app/services/config.service';
 

@@ -469,28 +469,6 @@ export class AddArticleComponent implements OnInit {
     );
   }
 
-  public getArticleStock(): void {
-
-    this.loading = true;
-
-    let query = 'where="article": "' + this.article._id +  '"';
-
-    this._articleStockService.getArticleStocks(query).subscribe(
-      result => {
-        if (!result.articleStocks) {
-          this.saveArticleStock();
-        } else {
-          this.articleStock = result.articleStocks[0];
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
-
   public saveArticleStock(): void {
 
     if (!this.articleStock) {

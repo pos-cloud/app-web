@@ -1,64 +1,65 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
+import { OriginService } from '../../services/origin.service';
 
-import { BankService } from '../../services/bank.service';
-
-import { Bank } from '../../models/bank';
+import { Origin } from '../../models/origin';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
+import { BranchService } from 'app/services/branch.service';
+import { Branch } from 'app/models/branch';
 
 @Component({
-  selector: 'app-bank',
-  templateUrl: './bank.component.html',
-  styleUrls: ['./bank.component.css'],
+  selector: 'app-origin',
+  templateUrl: './origin.component.html',
+  styleUrls: ['./origin.component.css'],
   providers: [NgbAlertConfig]
 })
-export class BankComponent implements OnInit {
+
+export class OriginComponent implements OnInit {
 
   @Input() operation: string;
   @Input() readonly: boolean;
-  @Input() bankId : string;
+  @Input() originId : string;
   public alertMessage: string = '';
   public userType: string;
-  public bank: Bank;
-  public areBankEmpty: boolean = true;
-  public orderTerm: string[] = ['name'];
+  public origin: Origin;
+  public areOriginEmpty: boolean = true;
+  public orderTerm: string[] = ['number'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
-  public bankForm: FormGroup;
+  public originForm: FormGroup;
+  public branches: Branch[];
 
   public formErrors = {
-    'code': '',
-    'name': '',
-    'agency' : ''
+    'number': '',
+    'branch': ''
   };
 
   public validationMessages = {
-    'code': {
+    'number': {
       'required': 'Este campo es requerido.'
     },
-    'agency': {
-      'required': 'Este campo es requerido.'
-    },
-    'name': {
+    'branch': {
       'required': 'Este campo es requerido.'
     }
   };
 
   constructor(
-    public alertConfig: NgbAlertConfig,
-    public _bankService: BankService,
-    public _router: Router,
-    public _fb: FormBuilder,
+    private _originService: OriginService,
+    private _branchService: BranchService,
+    private _router: Router,
+    private _fb: FormBuilder,
     public activeModal: NgbActiveModal,
+    public alertConfig: NgbAlertConfig,
   ) {
-    this.bank = new Bank();
+    this.origin = new Origin();
+    this.branches = new Array();
   }
 
   ngOnInit() {
@@ -66,9 +67,10 @@ export class BankComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];;
     this.buildForm();
+    this.getBranches();
     
-    if (this.bankId) {
-      this.getBank();
+    if (this.originId) {
+      this.getOrigin();
     }
   }
 
@@ -76,17 +78,17 @@ export class BankComponent implements OnInit {
     this.focusEvent.emit(true);
   }
 
-  public getBank() {
+  public getOrigin() {
 
     this.loading = true;
 
-    this._bankService.getBank(this.bankId).subscribe(
+    this._originService.getOrigin(this.originId).subscribe(
       result => {
-        if (!result.bank) {
+        if (!result.origin) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
-          this.bank = result.bank;
+          this.origin = result.origin;
           this.setValueForm();
         }
         this.loading = false;
@@ -99,53 +101,52 @@ export class BankComponent implements OnInit {
   }
 
   public setValueForm(): void {
-
    
-    if (!this.bank._id) { this.bank._id = ''; }
-    if (!this.bank.code) { this.bank.code = 0; }
-    if (!this.bank.name) { this.bank.name = ''; }
-    if (!this.bank.agency) { this.bank.agency = 0; }
-    if (!this.bank.account) { this.bank.account = ''; }
+    if (!this.origin._id) { this.origin._id = ''; }
+    if (!this.origin.number) { this.origin.number = 0; }
 
+    let branch;
+    if (!this.origin.branch) {
+      branch = null;
+    } else {
+      if (this.origin.branch._id) {
+        branch = this.origin.branch._id;
+      } else {
+        branch = this.origin.branch;
+      }
+    }
 
     const values = {
-      '_id': this.bank._id,
-      'code': this.bank.code,
-      'name': this.bank.name,
-      'agency' : this.bank.agency,
-      'account' : this.bank.account,
+      '_id': this.origin._id,
+      'number': this.origin.number,
+      'branch': branch,
     };
-    this.bankForm.setValue(values);
+    this.originForm.setValue(values);
   }
 
   public buildForm(): void {
 
-    this.bankForm = this._fb.group({
-      '_id' : [this.bank._id, []],
-      'code': [this.bank.code, [
+    this.originForm = this._fb.group({
+      '_id' : [this.origin._id, []],
+      'number': [this.origin.number, [
         Validators.required
         ]
       ],
-      'name': [this.bank.name, [
+      'branch': [this.origin.branch, [
         Validators.required
         ]
-      ],
-      'agency': [this.bank.agency, [
-        Validators.required
-        ]
-      ],
-      'account' : [this.bank.account,[]]
+      ]
     });
 
-    this.bankForm.valueChanges
+    this.originForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
     this.onValueChanged();
   }
 
   public onValueChanged(data?: any): void {
 
-    if (!this.bankForm) { return; }
-    const form = this.bankForm;
+    if (!this.originForm) { return; }
+    const form = this.originForm;
 
     for (const field in this.formErrors) {
       this.formErrors[field] = '';
@@ -160,36 +161,63 @@ export class BankComponent implements OnInit {
     }
   }
 
-  public addBank() {
+  public getBranches(): void {
+
+   this.loading = true;
+   
+   this._branchService.getBranches(
+       { number:1, name: 1, operationType: 1 }, // PROJECT
+       { operationType: { $ne: 'D' } }, // MATCH
+       { name: 1 }, // SORT
+       {}, // GROUP
+       0, // LIMIT
+       0 // SKIP
+   ).subscribe(
+     result => {
+       if (result && result.branches) {
+         this.branches = result.branches;
+       } else {
+         this.branches = new Array();
+       }
+       this.loading = false;
+     },
+     error => {
+       this.showMessage(error._body, 'danger', false);
+       this.loading = false;
+     }
+   );
+ }
+
+  public addOrigin() {
 
     switch (this.operation) {
       case 'add':
-        this.saveBank();
+        this.saveOrigin();
         break;
-      case 'edit':
-        this.updateBank();
+      case 'update':
+        this.updateOrigin();
         break;
       case 'delete' :
-        this.deleteBank();
+        this.deleteOrigin();
       default:
         break;
     }
   }
 
-  public updateBank() {
+  public updateOrigin() {
 
     this.loading = true;
 
-    this.bank = this.bankForm.value;
+    this.origin = this.originForm.value;
 
-    this._bankService.updateBank(this.bank).subscribe(
+    this._originService.updateOrigin(this.origin).subscribe(
       result => {
-        if (!result.bank) {
+        if (!result.origin) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
           this.loading = false;
-          this.showMessage('El banco se ha actualizado con éxito.', 'success', false);
+          this.showMessage('El punto de venta se ha actualizado con éxito.', 'success', false);
         }
       },
       error => {
@@ -199,21 +227,21 @@ export class BankComponent implements OnInit {
     );
   }
 
-  public saveBank() {
+  public saveOrigin() {
 
     this.loading = true;
 
-    this.bank = this.bankForm.value;
+    this.origin = this.originForm.value;
 
-    this._bankService.saveBank(this.bank).subscribe(
+    this._originService.saveOrigin(this.origin).subscribe(
       result => {
-        if (!result.bank) {
+        if (!result.origin) {
           this.loading = false;
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
             this.loading = false;
-            this.showMessage('El banco se ha añadido con éxito.', 'success', false);
-            this.bank = new Bank();
+            this.showMessage('El punto de venta se ha añadido con éxito.', 'success', false);
+            this.origin = new Origin();
             this.buildForm();
         }
       },
@@ -224,17 +252,17 @@ export class BankComponent implements OnInit {
     );
   }
 
-  public deleteBank() {
+  public deleteOrigin() {
 
     this.loading = true;
 
-    this._bankService.deleteBank(this.bank._id).subscribe(
+    this._originService.deleteOrigin(this.origin._id).subscribe(
       result => {
         this.loading = false;
-        if (!result.bank) {
+        if (!result.origin) {
           if (result.message && result.message !== '') { this.showMessage(result.message, 'info', true); }
         } else {
-          this.activeModal.close();
+            this.activeModal.close();
         }
       },
       error => {

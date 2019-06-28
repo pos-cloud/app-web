@@ -235,6 +235,9 @@ import { AuthService } from './services/auth.service';
 import { BranchComponent } from './components/branch/branch.component';
 import { ListBranchComponent } from './components/list-branches/list-branches.component';
 import { BranchService } from './services/branch.service';
+import { ListOriginsComponent } from './components/list-origins/list-origins.component';
+import { OriginService } from './services/origin.service';
+import { OriginComponent } from './components/origin/origin.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -401,7 +404,9 @@ import { BranchService } from './services/branch.service';
     BankComponent,
     ListBankComponent,
     BranchComponent,
-    ListBranchComponent
+    ListBranchComponent,
+    ListOriginsComponent,
+    OriginComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -554,7 +559,9 @@ import { BranchService } from './services/branch.service';
     BankComponent,
     ListBankComponent,
     BranchComponent,
-    ListBranchComponent
+    ListBranchComponent,
+    ListOriginsComponent,
+    OriginComponent
   ],
   imports: [
     BrowserModule,
@@ -619,6 +626,7 @@ import { BranchService } from './services/branch.service';
     BranchService,
     AuthGuard,
     AuthService,
+    OriginService
   ],
   bootstrap: [AppComponent]
 })

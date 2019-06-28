@@ -232,7 +232,6 @@ export class ListTransactionsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        console.log(result)
         if (result && result[0].transactions) {
             this.transactions = result[0].transactions;
             this.totalItems = result[0].count;

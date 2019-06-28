@@ -12,6 +12,8 @@ import 'moment/locale/es';
 import { UseOfCFDI } from './use-of-CFDI';
 import { RelationType } from './relation-type';
 import { Currency } from './currency';
+import { Branch } from './branch';
+import { Deposit } from './deposit';
 
 export class Transaction {
 
@@ -51,6 +53,10 @@ export class Transaction {
 	public table: Table;
 	public employeeOpening: Employee;
 	public employeeClosing: Employee;
+	public branchOrigin: Branch;
+	public branchDestination: Branch;
+	public depositOrigin: Deposit;
+	public depositDestination: Deposit;
 	public turnOpening: Turn;
 	public turnClosing: Turn;
 	public creationUser: User;

@@ -1,15 +1,6 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="operation==='add'">
-    <span>Agregar Banco</span>
-  </h4>
-  <h4 class="modal-title" *ngIf="operation==='edit'">
-    <span>Editar Banco {{bank.name}}</span>
-  </h4>
-  <h4 class="modal-title" *ngIf="operation==='view'">
-      <span>Banco {{bank.name}}</span>
-  </h4>
-  <h4 class="modal-title" *ngIf="operation==='delete'">
-    <span>Eliminar Banco {{bank.name}}</span>
+  <h4 class="modal-title">
+    Banco <span *ngIf="bank">{{bank.name}}</span>
   </h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
@@ -21,7 +12,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="bankForm" #formCancellationType="ngForm" (ngSubmit)="addBank()" autocomplete="off">
+  <form [formGroup]="bankForm" #formBank="ngForm" (ngSubmit)="addBank()" autocomplete="off">
     <div class="modal-body">
       <ngb-tabset>
         <ngb-tab title="Datos principales">

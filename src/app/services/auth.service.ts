@@ -9,6 +9,7 @@ import { User } from 'app/models/user';
 import { Employee } from 'app/models/employee';
 import { EmployeeType } from 'app/models/employee-type';
 import { Config } from 'app/app.config';
+import { Branch } from 'app/models/branch';
 
 @Injectable()
 export class AuthService {
@@ -82,6 +83,12 @@ export class AuthService {
       userStorage.employee.type = new EmployeeType();
       userStorage.employee.type._id = user.employee.type._id;
       userStorage.employee.type.description = user.employee.type.description;
+    }
+    if(user.branch) {
+      userStorage.branch = new Branch();
+      userStorage.branch._id = user.branch._id;
+      userStorage.branch.number = user.branch.number;
+      userStorage.branch.name = user.branch.name;
     }
     sessionStorage.setItem('user', JSON.stringify(userStorage));
     sessionStorage.setItem('session_token', user.token);
