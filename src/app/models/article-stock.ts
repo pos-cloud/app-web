@@ -6,6 +6,7 @@ export class ArticleStock {
 	public article: Article;
 	public realStock: number = 0.00;
 	public minStock: number = 0.00;
+	public maxStock: number = 0.00;
 
 	constructor() { }
 }
