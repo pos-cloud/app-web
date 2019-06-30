@@ -169,10 +169,11 @@ export class ListCompaniesComponent implements OnInit {
         model.code = '';
         model.name = '';
         model.fantasyName = '';
-        model.type = CompanyType.Client;
+        model.type = '';
         model.relations = new Array();
         model.relations.push("vat-condition_relation_description");
         model.relations.push("identification-type_relation_name");
+        model.relations.push("state_relation_name");
         model.identificationValue = '';
         model.address = '';
         model.city = '';
@@ -181,6 +182,7 @@ export class ListCompaniesComponent implements OnInit {
         model.birthday = '';
         model.observation = '';
         model.gender = '';
+        model.grossIncome = '';
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
           if (result === 'import_close') {
