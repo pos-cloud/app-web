@@ -1382,11 +1382,9 @@ export class AddSaleOrderComponent {
 
         modalRef.componentInstance.model = model;
         modalRef.result.then((result) => {
-          if (result === 'cancel') {
-            this.getMovementsOfTransaction();
-          }
+          this.getMovementsOfTransaction();
         }, (reason) => {
-
+          this.getMovementsOfTransaction();
         });
         break;
       default: ;

@@ -64,6 +64,13 @@
             </button>
           </div>
         </div>
+        <!--<div class="col-md-2" >
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary" (click)="openModal('import')">
+              Importar Productos
+            </button>
+          </div>
+        </div>-->
         <div class="col-md-2" *ngIf="userCountry === 'MX' && transaction && transaction.type && transaction.type.electronics">
           <select class="form-control" (change)="changeUseOfCFDI($event.target.value)">
             <option [ngValue]="null" [selected]="!transaction.useOfCFDI">Uso de CFDI:</option>
