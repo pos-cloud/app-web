@@ -92,8 +92,6 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     match += `"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" }`;
 
-    console.log(match)
-
     match = JSON.parse(match);
     
     // CAMPOS A TRAER

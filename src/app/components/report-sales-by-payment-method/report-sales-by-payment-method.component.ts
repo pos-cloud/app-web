@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -7,6 +7,9 @@ import 'moment/locale/es';
 
 import { PaymentMethodService } from './../../services/payment-method.service';
 import { Config } from 'app/app.config';
+import { BranchService } from 'app/services/branch.service';
+import { AuthService } from 'app/services/auth.service';
+import { Branch } from 'app/models/branch';
 
 @Component({
   selector: 'app-report-sales-by-payment-method',
@@ -37,12 +40,17 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
   public transactionMovement: string;
   public totalItem;
   public totalAmount;
+  public branches: Branch[];
+  @Input() branchSelectedId: String;
+  public allowChangeBranch: boolean;
 
   constructor(
     public _paymentMethodService: PaymentMethodService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _branchService: BranchService,
+    private _authService: AuthService
   ) {
     this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
@@ -52,9 +60,57 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
     this.totalAmount = 0;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+
+    if(!this.branchSelectedId) {
+      await this.getBranches({ operationType: { $ne: 'D' } }).then(
+        branches => {
+          this.branches = branches;
+          if(this.branches && this.branches.length > 1) {
+            this.branchSelectedId = this.branches[0]._id;
+          }
+        }
+      );
+      this._authService.getIdentity.subscribe(
+        async identity => {
+          if(identity && identity.origin) {
+            this.branchSelectedId = identity.origin.branch._id;
+            this.allowChangeBranch = false;
+          } else {
+            this.allowChangeBranch = true;
+          }
+        }
+      );
+    }
 
     this.getSalesByPaymentMethod();
+  }
+
+  public getBranches(match: {} = {}): Promise<Branch[]> {
+
+    return new Promise<Branch[]>((resolve, reject) => {
+  
+      this._branchService.getBranches(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result && result.branches) {
+            resolve(result.branches);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public getSalesByPaymentMethod(): void {
@@ -82,7 +138,8 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
       startDate: this.startDate + " " + this.startTime + timezone,
       endDate: this.endDate + " " + this.endTime + timezone,
       sort: this.sort,
-      limit: this.limit
+      limit: this.limit,
+      branch: this.branchSelectedId
     }
 
     this._paymentMethodService.getSalesByPaymentMethod(JSON.stringify(query)).subscribe(
@@ -90,7 +147,7 @@ export class ReportSalesByPaymentMethodComponent implements OnInit {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.items = null;
+          this.items = new Array();
           this.arePaymentMethodsEmpty = true;
         } else {
           this.hideMessage();

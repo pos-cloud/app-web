@@ -104,7 +104,7 @@ export class CurrentAccountComponent implements OnInit {
       result => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.items = null;
+          this.items = new Array();
           this.totalItems = 0;
         } else {
           this.hideMessage();

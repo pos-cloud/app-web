@@ -14,6 +14,8 @@ import { Router } from '@angular/router';
 import { ReportBirthdayComponent } from '../report-birthday/report-birthday.component';
 import { Config } from 'app/app.config';
 import { AuthService } from 'app/services/auth.service';
+import { Branch } from 'app/models/branch';
+import { BranchService } from 'app/services/branch.service';
 
 @Component({
   selector: 'app-statistics',
@@ -39,25 +41,45 @@ export class StatisticsComponent implements OnInit {
   @ViewChild(ReportSalesByMakeComponent, {static: true}) reportSalesByMake: ReportSalesByMakeComponent;
   @ViewChild(ReportBirthdayComponent, {static: true}) reportBirthday: ReportBirthdayComponent;
   public transactionMovement: string;
+  public branches: Branch[];
+  public branchSelectedId: String;
+  public allowChangeBranch: boolean;
 
   constructor(
     public _companyService: CompanyService,
     public alertConfig: NgbAlertConfig,
     public _transactionService: TransactionService,
     public _authService: AuthService,
-    public _router: Router
+    public _router: Router,
+    private _branchService: BranchService
   ) {
     let pathLocation: string[] = this._router.url.split('/');
     this.transactionMovement = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
     this.endDate = moment().format('YYYY-MM-DD');
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
     this.showStatistics = true;
+    await this.getBranches({ operationType: { $ne: 'D' } }).then(
+      branches => {
+        this.branches = branches;
+      }
+    );
+    this._authService.getIdentity.subscribe(
+      async identity => {
+        if(identity && identity.origin) {
+          this.allowChangeBranch = false;
+          this.branchSelectedId = identity.origin.branch._id;
+        } else {
+          this.allowChangeBranch = true;
+        }
+      }
+    );
+    
     this.loadStatistics();
   }
 
@@ -71,6 +93,33 @@ export class StatisticsComponent implements OnInit {
     );
   }
 
+  public getBranches(match: {} = {}): Promise<Branch[]> {
+
+    return new Promise<Branch[]>((resolve, reject) => {
+  
+      this._branchService.getBranches(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result && result.branches) {
+            resolve(result.branches);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
   public loadStatistics(): void {
     
     this.getTotalSales();
@@ -81,24 +130,28 @@ export class StatisticsComponent implements OnInit {
     this.reportBestSellingArticle.endDate = this.endDate;
     this.reportBestSellingArticle.endTime = this.endTime;
     this.reportBestSellingArticle.limit = 5;
+    this.reportBestSellingArticle.branchSelectedId = this.branchSelectedId;
     this.reportBestSellingArticle.getBestSellingArticle();
     this.reportSalesByPaymentMethod.startDate = this.startDate;
     this.reportSalesByPaymentMethod.startTime = this.startTime;
     this.reportSalesByPaymentMethod.endDate = this.endDate;
     this.reportSalesByPaymentMethod.endTime = this.endTime;
     this.reportSalesByPaymentMethod.limit = 5;
+    this.reportSalesByPaymentMethod.branchSelectedId = this.branchSelectedId;
     this.reportSalesByPaymentMethod.getSalesByPaymentMethod();
     this.reportSalesByClient.startDate = this.startDate;
     this.reportSalesByClient.startTime = this.startTime;
     this.reportSalesByClient.endDate = this.endDate;
     this.reportSalesByClient.endTime = this.endTime;
     this.reportSalesByClient.limit = 5;
+    this.reportSalesByClient.branchSelectedId = this.branchSelectedId;
     this.reportSalesByClient.getSalesByCompany();
     this.reportSalesByMake.startDate = this.startDate;
     this.reportSalesByMake.startTime = this.startTime;
     this.reportSalesByMake.endDate = this.endDate;
     this.reportSalesByMake.endTime = this.endTime;
     this.reportSalesByMake.limit = 5;
+    this.reportSalesByMake.branchSelectedId = this.branchSelectedId;
     this.reportSalesByMake.getSalesByMake();
   }
 
@@ -123,6 +176,7 @@ export class StatisticsComponent implements OnInit {
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime + timezone,
       endDate: this.endDate + " " + this.endTime + timezone,
+      branch: this.branchSelectedId
     }
 
     this.getTotalTransactionsBetweenDates("Sales", JSON.stringify(query));
@@ -149,6 +203,7 @@ export class StatisticsComponent implements OnInit {
       modifyStock: false,
       startDate: this.startDate + " " + this.startTime + timezone,
       endDate: this.endDate + " " + this.endTime + timezone,
+      branch: this.branchSelectedId
     }
 
     this.getTotalTransactionsBetweenDates("Collections", JSON.stringify(query));
@@ -175,6 +230,7 @@ export class StatisticsComponent implements OnInit {
       modifyStock: true,
       startDate: this.startDate + " " + this.startTime + timezone,
       endDate: this.endDate + " " + this.endTime + timezone,
+      branch: this.branchSelectedId
     }
 
     this.getTotalTransactionsBetweenDates("Returns", JSON.stringify(query));
