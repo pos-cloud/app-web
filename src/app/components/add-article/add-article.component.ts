@@ -718,7 +718,9 @@ export class AddArticleComponent implements OnInit {
             if (field.articleField.modifyVAT) {
               taxedAmount += field.amount;
             } else {
-              this.articleForm.value.costPrice += field.amount;
+              if(field.amount){
+                this.articleForm.value.costPrice += field.amount;
+              }
             }
           }
         }
@@ -831,7 +833,7 @@ export class AddArticleComponent implements OnInit {
     this.articleForm.value.basePrice = this.roundNumber.transform(this.articleForm.value.basePrice);
     this.articleForm.value.costPrice = this.roundNumber.transform(this.articleForm.value.costPrice);
     this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
-    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice,3);
+    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
 
     this.article = this.articleForm.value;
