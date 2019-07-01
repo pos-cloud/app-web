@@ -592,7 +592,7 @@ export class PointOfSaleComponent implements OnInit {
               if(!this.transaction.branchDestination || !this.transaction.branchOrigin) {
                 await this.getBranches({ operationType: { $ne: 'D' } }).then(
                   async branches => {
-                    if(branches) {
+                    if(branches && branches.length > 0) {
                       if(branches.length > 1) {
                         // SOLICITAR SUCURSAL
                         this.openModal('select-branch');
