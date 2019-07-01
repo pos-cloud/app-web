@@ -8,6 +8,8 @@ import { ArticleStock } from './../models/article-stock';
 import { Article } from './../models/article';
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
+import { Branch } from 'app/models/branch';
+import { Deposit } from 'app/models/deposit';
 
 @Injectable()
 export class ArticleStockService {
@@ -147,7 +149,13 @@ export class ArticleStockService {
         );
     }
 
-	public updateRealStock(article: Article, amount: number, stockMovement: string): Observable<any> {
+	public updateRealStock(
+        article: Article, 
+        branch: Branch, 
+        deposit: Deposit, 
+        amount: number, 
+        stockMovement: string
+    ): Observable<any> {
 
         const URL = `${Config.apiURL}amount-stock-by-article`;
 
@@ -155,7 +163,12 @@ export class ArticleStockService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
-        return this._http.put(URL, { id: article._id, amount: amount, stockMovement: stockMovement }, {
+        return this._http.put(URL, {articleId: article._id, 
+                                    branchId: branch._id, 
+                                    depositId: deposit._id, 
+                                    amount: amount, 
+                                    stockMovement: stockMovement 
+                                }, {
             headers: headers
         }).pipe(
             map(res => {

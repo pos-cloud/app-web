@@ -44,11 +44,14 @@ export class ListArticleStocksComponent implements OnInit {
     "realStock",
     "minStock",
     "article.code",
+    "article.barcode",
     "article.description",
     "article.costPrice",
     "article.make.description",
     "article.category.description",
     "article.operationType",
+    "branch.number",
+    "deposit.name",
     "operationType"
   ];
   public filters: any[];
@@ -189,17 +192,18 @@ export class ListArticleStocksComponent implements OnInit {
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
-      "realStock" : 1,
-      "minStock" : 1,
-      "article.code" : 1,
-      "article.description" : 1,
-      "article.costPrice" : 1,
-      "article.make.description" : 1,
-      "article.category.description" : 1,
-      "article.operationType" : 1,
-      "branchDestination.name" : 1,
-      "depositDestination.name" : 1,
-      "operationType" : 1,
+      realStock : 1,
+      minStock : { $toString: '$minStock' },
+      operationType : 1,
+      'article.code' : { $toString: '$article.code' },
+      'article.barcode' : 1,
+      'article.description' : 1,
+      'article.costPrice' : 1,
+      'article.make.description' : 1,
+      'article.category.description' : 1,
+      'article.operationType' : 1,
+      'branch.number' : { $toString: '$branch.number' },
+      'deposit.name' : 1,
     }
 
     // AGRUPAMOS EL RESULTADO

@@ -644,8 +644,8 @@ export class AddSaleOrderComponent {
     return new Promise<ArticleStock>((resolve, reject) => {
 
       let query = `where= "article": "${movementOfArticle.article._id}",
-                          "branch": "${movementOfArticle.transaction.branchDestination._id}",
-                          "deposit": "${movementOfArticle.transaction.depositDestination._id}"`;
+                          "branch": "${this.transaction.branchDestination._id}",
+                          "deposit": "${this.transaction.depositDestination._id}"`;
                           
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
@@ -1642,7 +1642,13 @@ export class AddSaleOrderComponent {
         amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
       }
 
-      this._articleStockService.updateRealStock(movementOfArticle.article, amountToModify, this.transaction.type.stockMovement.toString()).subscribe(
+      this._articleStockService.updateRealStock(
+        movementOfArticle.article,
+        this.transaction.branchDestination,
+        this.transaction.depositDestination,
+        amountToModify, 
+        this.transaction.type.stockMovement.toString()
+      ).subscribe(
         result => {
           this.loading = false;
           if (!result.articleStock) {
