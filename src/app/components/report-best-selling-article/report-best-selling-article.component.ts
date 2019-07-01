@@ -7,6 +7,9 @@ import 'moment/locale/es';
 
 import { ArticleService } from './../../services/article.service';
 import { Config } from 'app/app.config';
+import { Branch } from 'app/models/branch';
+import { BranchService } from 'app/services/branch.service';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-report-best-selling-article',
@@ -44,12 +47,17 @@ export class ReportBestSellingArticleComponent implements OnInit {
       'article.category.description',
       'article.make.description'
   ];
+  public branches: Branch[];
+  @Input() branchSelectedId: String;
+  public allowChangeBranch: boolean;
 
   constructor(
     public _articleService: ArticleService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    private _branchService: BranchService,
+    private _authService: AuthService
   ) {
     this.startDate = moment().format('YYYY-MM-DD');
     this.startTime = moment('00:00', 'HH:mm').format('HH:mm');
@@ -63,9 +71,58 @@ export class ReportBestSellingArticleComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+
+    if(!this.branchSelectedId) {
+      await this.getBranches({ operationType: { $ne: 'D' } }).then(
+        branches => {
+          this.branches = branches;
+          if(this.branches && this.branches.length > 1) {
+            this.branchSelectedId = this.branches[0]._id;
+          }
+        }
+      );
+      this._authService.getIdentity.subscribe(
+        async identity => {
+          if(identity && identity.origin) {
+            this.allowChangeBranch = false;
+            this.branchSelectedId = identity.origin.branch._id;
+          } else {
+            this.allowChangeBranch = true;
+            this.branchSelectedId = null;
+          }
+        }
+      );
+    }
 
     this.getBestSellingArticle();
+  }
+
+  public getBranches(match: {} = {}): Promise<Branch[]> {
+
+    return new Promise<Branch[]>((resolve, reject) => {
+  
+      this._branchService.getBranches(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result && result.branches) {
+            resolve(result.branches);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public getBestSellingArticle(): void {
@@ -112,7 +169,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
       endDate: this.endDate + " " + this.endTime + timezone,
       match: match,
       sort: this.sort,
-      limit: this.limit
+      limit: this.limit,
+      branch: this.branchSelectedId
     }
 
     this._articleService.getBestSellingArticle(JSON.stringify(query)).subscribe(
@@ -120,7 +178,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
         if (!result || result.length <= 0) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.items = null;
+          this.items = new Array();
           this.areArticlesEmpty = true;
         } else {
           this.hideMessage();

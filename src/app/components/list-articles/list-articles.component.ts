@@ -227,7 +227,7 @@ export class ListArticlesComponent implements OnInit {
             this.articles = result.articles;
             this.totalItems = result.count;
         } else {
-            this.articles = null;
+            this.articles = new Array();
             this.totalItems = 0;
         }
         this.loading = false;

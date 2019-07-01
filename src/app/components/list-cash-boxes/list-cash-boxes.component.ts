@@ -59,7 +59,7 @@ export class ListCashBoxesComponent implements OnInit {
         result => {
 					if (!result.cashBoxes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-					  this.cashBoxes = null;
+					  this.cashBoxes = new Array();
             this.areCashBoxesEmpty = true;
 					} else {
             this.hideMessage();

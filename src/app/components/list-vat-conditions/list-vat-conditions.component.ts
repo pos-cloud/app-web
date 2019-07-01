@@ -60,7 +60,7 @@ export class ListVATConditionsComponent implements OnInit {
           if (!result.vatConditions) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.vatConditions = null;
+            this.vatConditions = new Array();
             this.areVATConditionsEmpty = true;
           } else {
             this.hideMessage();

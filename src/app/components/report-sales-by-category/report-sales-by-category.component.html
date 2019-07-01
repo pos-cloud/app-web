@@ -12,6 +12,9 @@
         </tr>
       </thead>
       <tbody>
+        <tr align="center" *ngIf="loading">
+          <td colspan="3">Cargando...</td>
+        </tr>
         <tr *ngFor="let item of items">
           <td class="flat">{{ item.category.description }}</td>
           <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
@@ -19,14 +22,17 @@
           <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
         </tr>
+        <tr *ngIf="items.length > 0 && transactionMovement === 'Venta'" align="center">
+          <td colspan="3"><a [routerLink]="['','admin','venta','rubros-mas-vendidos']">Ver más...</a></td>
+        </tr>
+        <tr *ngIf="items.length > 0 && transactionMovement === 'Compra'" align="center">
+          <td colspan="3"><a [routerLink]="['','admin','compra','rubros-mas-comprados']">Ver más...</a></td>
+        </tr>
         <tr align="center" *ngIf="areCategoriesEmpty && !loading && transactionMovement === 'Venta'">
           <td colspan="3">No se encontraron ventas por rubros</td>
         </tr>
         <tr align="center" *ngIf="areCategoriesEmpty && !loading && transactionMovement === 'Compra'">
           <td colspan="3">No se encontraron compras por rubros</td>
-        </tr>
-        <tr align="center" *ngIf="areCategoriesEmpty && loading">
-          <td colspan="3">Cargando...</td>
         </tr>
       </tbody>
     </table>
@@ -41,7 +47,24 @@
     </ngb-alert>
   </div>
   <div class="row container-filter">
-    <div class="col-md-2 offset-md-1">
+    <div class="col-md-2">
+      <label for="branch" class="control-label">
+        <b>Sucursal</b>
+      </label>
+      <select class="form-control" [(ngModel)]="branchSelectedId">
+        <option [ngValue]="null" [disabled]="!allowChangeBranch">
+          Todas
+        </option>
+        <option 
+          *ngFor="let branch of branches" 
+          [ngValue]="branch._id" 
+          [disabled]="!allowChangeBranch"
+          >
+          {{branch.number}} - {{branch.name}}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-2">
       <label for="startDate" class="control-label">
         <b>Fecha Desde:</b>
       </label>
@@ -83,6 +106,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="3">Cargando...</td>
+          </tr>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item.category.description }}</td>
             <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
@@ -95,9 +121,6 @@
           </tr>
           <tr align="center" *ngIf="areCategoriesEmpty && !loading && transactionMovement === 'Compra'">
             <td colspan="3">No se encontraron compras por rubros</td>
-          </tr>
-          <tr align="center" *ngIf="areCategoriesEmpty && loading">
-            <td colspan="3">Cargando...</td>
           </tr>
         </tbody>
         <tfoot>

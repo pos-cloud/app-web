@@ -73,7 +73,7 @@ export class ConfigService {
         payment: string
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}article-fields`;
+        const URL = `${Config.apiURL}generar-licencia-payment`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')           

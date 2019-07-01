@@ -56,7 +56,7 @@ export class ListArticleFieldsComponent implements OnInit {
           if (!result.articleFields) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.articleFields = null;
+            this.articleFields = new Array();
             this.areArticleFieldsEmpty = true;
           } else {
             this.hideMessage();

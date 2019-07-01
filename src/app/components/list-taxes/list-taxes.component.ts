@@ -55,7 +55,7 @@ export class ListTaxesComponent implements OnInit {
         if (!result.taxes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.taxes = null;
+          this.taxes = new Array();
           this.areTaxesEmpty = true;
         } else {
           this.hideMessage();

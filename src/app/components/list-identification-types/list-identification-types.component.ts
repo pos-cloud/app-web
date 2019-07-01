@@ -57,7 +57,7 @@ export class ListIdentificationTypesComponent implements OnInit {
           if (!result.identificationTypes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.identificationTypes = null;
+            this.identificationTypes = new Array();
             this.areIdentificationTypesEmpty = true;
           } else {
             this.hideMessage();

@@ -209,7 +209,24 @@
     </ngb-alert>
   </div>
   <div class="row container-filter">
-    <div class="col-md-2 offset-md-1">
+    <div class="col-md-2">
+      <label for="branch" class="control-label">
+        <b>Sucursal</b>
+      </label>
+      <select class="form-control" [(ngModel)]="branchSelectedId">
+        <option [ngValue]="null" [disabled]="!allowChangeBranch">
+          Todas
+        </option>
+        <option 
+          *ngFor="let branch of branches" 
+          [ngValue]="branch._id" 
+          [disabled]="!allowChangeBranch"
+          >
+          {{branch.number}} - {{branch.name}}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-2">
       <label for="startDate" class="control-label">
         <b>Fecha Desde:</b>
       </label>
@@ -239,8 +256,8 @@
     </div>
   </div>
   <div class="card card-outline-primary card-large">
-  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'venta'">Ventas por tipo de comprobante</div>
-  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'compra'">Compras por tipo de comprobante</div>
+  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'venta'">Ventas por tipo de transacción</div>
+  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'compra'">Compras por tipo de transacción</div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
@@ -251,6 +268,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="3">Cargando...</td>
+          </tr>
           <tr *ngFor="let item of items">
             <td class="flat">{{ item._id }}</td>
             <td class="flat">{{ item.count }}</td>
@@ -261,9 +281,6 @@
           </tr>
           <tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'compra'">
             <td colspan="3">No se encontraron compras por tipo de comprobante</td>
-          </tr>
-          <tr align="center" *ngIf="areItemsEmpty && loading">
-            <td colspan="3">Cargando...</td>
           </tr>
         </tbody>
         <tfoot>

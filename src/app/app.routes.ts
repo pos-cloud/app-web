@@ -490,12 +490,12 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   { 
-    path: 'report/compra/compras-por-comprobante', 
+    path: 'report/compra/compras-por-tipo-de-transacción', 
     component: ListTransactionTypesComponent,
     canActivate: [AuthGuard]
   },
   { 
-    path: 'report/venta/ventas-por-comprobante', 
+    path: 'report/venta/ventas-por-tipo-de-transacción', 
     component: ListTransactionTypesComponent,
     canActivate: [AuthGuard]
   },

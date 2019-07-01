@@ -56,7 +56,7 @@ export class ListPaymentMethodsComponent implements OnInit {
         if (!result.paymentMethods) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.paymentMethods = null;
+          this.paymentMethods = new Array();
           this.arePaymentMethodsEmpty = true;
         } else {
           this.hideMessage();

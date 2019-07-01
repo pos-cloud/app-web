@@ -55,7 +55,7 @@ export class ListCompaniesGroupComponent implements OnInit {
           if (!result.companiesGroups) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.companiesGroups = null;
+            this.companiesGroups = new Array();
             this.areCompanyGroupEmpty = true;
           } else {
             this.hideMessage();

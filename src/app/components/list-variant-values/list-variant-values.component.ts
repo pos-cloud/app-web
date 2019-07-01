@@ -56,7 +56,7 @@ export class ListVariantValuesComponent implements OnInit {
         if (!result.variantValues) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.variantValues = null;
+          this.variantValues = new Array();
           this.areVariantValuesEmpty = true;
         } else {
           this.hideMessage();

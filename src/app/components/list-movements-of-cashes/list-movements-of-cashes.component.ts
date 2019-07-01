@@ -92,8 +92,6 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     match += `"operationType": { "$ne": "D" }, "statusCheck" : "Disponible" }`;
 
-    console.log(match)
-
     match = JSON.parse(match);
     
     // CAMPOS A TRAER
@@ -162,7 +160,7 @@ export class ListMovementOfCashesComponent implements OnInit {
             this.showMessage(result.message, 'info', true);
           }
           this.loading = false;
-          this.movementsOfCashes = null;
+          this.movementsOfCashes = new Array();
           this.areMovementOfCashesEmpty = true;
         } else {
           this.hideMessage();

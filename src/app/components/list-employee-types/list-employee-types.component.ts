@@ -54,7 +54,7 @@ export class ListEmployeeTypesComponent implements OnInit {
         if (!result.employeeTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.employeeTypes = null;
+          this.employeeTypes = new Array();
           this.areEmployeeTypesEmpty = true;
         } else {
           this.hideMessage();

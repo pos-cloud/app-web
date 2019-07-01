@@ -56,7 +56,7 @@ export class ListCompanyFieldsComponent implements OnInit {
           if (!result.companyFields) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.companyFields = null;
+            this.companyFields = new Array();
             this.areCompanyFieldsEmpty = true;
           } else {
             this.hideMessage();

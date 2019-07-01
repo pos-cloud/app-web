@@ -56,7 +56,7 @@ export class ListMakesComponent implements OnInit {
           if (!result.makes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.makes = null;
+            this.makes = new Array();
             this.areMakesEmpty = true;
           } else {
             this.hideMessage();

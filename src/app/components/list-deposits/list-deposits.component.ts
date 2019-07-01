@@ -56,7 +56,7 @@ export class ListDepositsComponent implements OnInit {
         if (!result.deposits) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.deposits = null;
+          this.deposits = new Array();
           this.areDepositsEmpty = true;
         } else {
           this.hideMessage();
@@ -109,7 +109,7 @@ export class ListDepositsComponent implements OnInit {
         modalRef.result.then((result) => {
           this.getDeposits();
         }, (reason) => {
-
+          this.getDeposits();
         });
         break;
       case 'delete':

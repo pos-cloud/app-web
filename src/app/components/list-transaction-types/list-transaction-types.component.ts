@@ -14,6 +14,9 @@ import { TransactionService } from 'app/services/transaction.service';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { Branch } from 'app/models/branch';
+import { AuthService } from 'app/services/auth.service';
+import { BranchService } from 'app/services/branch.service';
 
 @Component({
   selector: 'app-list-transaction-types',
@@ -49,6 +52,9 @@ export class ListTransactionTypesComponent implements OnInit {
    public areItemsEmpty: boolean = true;
    public totalItem = 0;
    public totalAmount = 0;
+   public branches: Branch[];
+   public branchSelectedId: String;
+   public allowChangeBranch: boolean;
 
   public currentPage: number = 0;
   public displayedColumns = [
@@ -83,7 +89,9 @@ export class ListTransactionTypesComponent implements OnInit {
     public _transactionService: TransactionService,
     public _router: Router,
     public _modalService: NgbModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
+    public _authService: AuthService,
+    private _branchService: BranchService
   ) {
     this.filters = new Array();
     for(let field of this.displayedColumns) {
@@ -95,14 +103,57 @@ export class ListTransactionTypesComponent implements OnInit {
     this.endTime = moment('23:59', 'HH:mm').format('HH:mm');
    }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
-    this.transactionMovement = TransactionMovement.Sale
+    this.transactionMovement = TransactionMovement.Sale;
     this.userCountry = Config.country;
     this.pathLocation = this._router.url.split('/');
     this.userType = this.pathLocation[1];
+    await this.getBranches({ operationType: { $ne: 'D' } }).then(
+      branches => {
+        this.branches = branches;
+      }
+    );
+    this._authService.getIdentity.subscribe(
+      async identity => {
+        if(identity && identity.origin) {
+          this.allowChangeBranch = false;
+          this.branchSelectedId = identity.origin.branch._id;
+        } else {
+          this.allowChangeBranch = true;
+          this.branchSelectedId = null;
+        }
+      }
+    );
     this.getTransactionTypes();
     this.getTransactionTypesV2();
+  }
+
+  public getBranches(match: {} = {}): Promise<Branch[]> {
+
+    return new Promise<Branch[]>((resolve, reject) => {
+  
+      this._branchService.getBranches(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result && result.branches) {
+            resolve(result.branches);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public getTransactionTypes(): void {
@@ -114,7 +165,7 @@ export class ListTransactionTypesComponent implements OnInit {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.transactionTypes = null;
+          this.transactionTypes = new Array();
           this.areTransactionTypesEmpty = true;
         } else {
           this.hideMessage();
@@ -132,21 +183,13 @@ export class ListTransactionTypesComponent implements OnInit {
   }
 
   public getTransactionTypesV2() : void {
-
     
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sortAux = `{}`;
-    /*if (this.orderTerm[0].charAt(0) === '-') {
-        sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-    } else {
-        sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-    }*/
-    sortAux = JSON.parse(sortAux);
+    let sort = { "type.name": 1 };
 
     let movement;
-    if(this.pathLocation[2] === "venta"){
+    if(this.pathLocation[2] === "venta") {
       movement = "Venta"
     } else {
       movement = "Compra"
@@ -158,42 +201,31 @@ export class ListTransactionTypesComponent implements OnInit {
     }
 
     // FILTRAMOS LA CONSULTA
-    let match = `{  "operationType": { "$ne": "D" } , 
+    let match = `{  "operationType": { "$ne": "D" }, 
                     "state" : "Cerrado", 
                     "type.transactionMovement" : "${movement}",
-                    "endDate" : {"$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
-                              "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}
-                              }
-                  }`;
-    /*for(let i = 0; i < this.displayedColumns.length; i++) {
-      let value = this.filters[this.displayedColumns[i]];
-      if (value && value != "") {
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
-        if (i < this.displayedColumns.length - 1) {
-          match += ',';
-        }
-      }
+                    "type.operationType": { "$ne": "D" },
+                    "endDate" : { "$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
+                                  "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}
+                                }`
+    
+    if(this.branchSelectedId) {
+      match += `, "branchDestination": { "$oid": "${this.branchSelectedId}" }`;  
     }
 
-    if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
-      match += `,"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } }`;
-    } else {
-      match += `"type.transactionMovement": "${this.transactionMovement}", "operationType": { "$ne": "D" } } }`;
-    }*/
+    match += `}`;
     match = JSON.parse(match);
-
-    
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
-
       "type.name" : 1,
       "totalPrice" : 1,
       "operationType" : 1,
       "state" : 1,
       "type.transactionMovement" : 1,
+      "type.operationType" : 1,
       "endDate" : 1,
-                
+      "branchDestination" : 1,
     }
 
     // AGRUPAMOS EL RESULTADO
@@ -203,33 +235,24 @@ export class ListTransactionTypesComponent implements OnInit {
         totalPrice: { $sum: "$totalPrice" },
 
     };
-
-    let page = 0;
-    if(this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage) :
-                0 // SKIP
     
     this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH
-        sortAux, // SORT
+        sort, // SORT
         group, // GROUP
-        //this.itemsPerPage, // LIMIT
-        //skip // SKIP
+        0, // LIMIT
+        0 // SKIP
     ).subscribe(
       result => {
         if (result && result.length > 0) {
-            this.items = result;
-            this.areItemsEmpty = false;
-            this.loading = false;
-            this.calculateTotal();
+          this.items = result;
+          this.areItemsEmpty = false;
         } else {
-            this.loading = false;
-            this.areItemsEmpty = true;
+          this.items = new Array();
+          this.areItemsEmpty = true;
         }
+        this.calculateTotal();
         this.loading = false;
       },
       error => {

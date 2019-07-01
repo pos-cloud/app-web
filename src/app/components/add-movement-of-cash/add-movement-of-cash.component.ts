@@ -599,10 +599,8 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this._movementOfCashService.updateMovementOfCash(movementOfCash).subscribe(
         result => {
-          console.log(result)
         },
         error => {
-          console.log(error)
         }
       )
   }
@@ -736,7 +734,6 @@ export class AddMovementOfCashComponent implements OnInit {
       this.calculateQuotas('quotas');
     }
 
-    console.log(this.movementOfCashForm.value)
     this.setValueForm();
   }
 
@@ -970,47 +967,45 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
-    console.log(this.movementOfCash)
-
-      this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
-        result => {
-          if (!result.movementOfCash) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            this.loading = false;
+    this._movementOfCashService.saveMovementOfCash(this.movementOfCash).subscribe(
+      result => {
+        if (!result.movementOfCash) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.movementOfCash = result.movementOfCash;
+          this.movementOfCash.number = '';
+          if (this.transactionAmount !== this.transaction.totalPrice) {
+            this.transaction.totalPrice = this.transactionAmount;
+            if (this.transaction.type.requestArticles) {
+              this.addMovementOfArticle();
+            } else {
+              this.updateTransaction();
+            }
           } else {
-            this.movementOfCash = result.movementOfCash;
-            this.movementOfCash.number = '';
-            if (this.transactionAmount !== this.transaction.totalPrice) {
-              this.transaction.totalPrice = this.transactionAmount;
-              if (this.transaction.type.requestArticles) {
+            this.movementsOfCashes = new Array();
+            this.movementsOfCashes.push(this.movementOfCash);
+            this.paymentMethodSelected = this.movementOfCash.type;
+            this.movementOfCash = new MovementOfCash();
+            this.movementOfCash.type = this.paymentMethodSelected;
+            
+            if(!this.fastPayment) {
+              this.getMovementOfCashesByTransaction();
+            } else {
+              if(this.amountDiscount && this.amountDiscount !== 0) {
                 this.addMovementOfArticle();
               } else {
                 this.updateTransaction();
               }
-            } else {
-              this.movementsOfCashes = new Array();
-              this.movementsOfCashes.push(this.movementOfCash);
-              this.paymentMethodSelected = this.movementOfCash.type;
-              this.movementOfCash = new MovementOfCash();
-              this.movementOfCash.type = this.paymentMethodSelected;
-              
-              if(!this.fastPayment) {
-                this.getMovementOfCashesByTransaction();
-              } else {
-                if(this.amountDiscount && this.amountDiscount !== 0) {
-                  this.addMovementOfArticle();
-                } else {
-                  this.updateTransaction();
-                }
-              }
             }
           }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
         }
-      );
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public saveMovementsOfCashes(): void {

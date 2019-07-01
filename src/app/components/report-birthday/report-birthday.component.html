@@ -10,6 +10,9 @@
         </tr>
       </thead>
       <tbody>
+        <tr align="center" *ngIf="loading">
+          <td colspan="4">Cargando...</td>
+        </tr>
         <tr *ngFor="let company of companies">
           <td align="left" width="130">
             <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
@@ -18,11 +21,11 @@
           </td>
           <td class="flat">{{ company.name }}</td>
         </tr>
+        <tr *ngIf="companies.length > 0" align="center">
+          <td colspan="3"><a [routerLink]="['','admin','cumpleaños']">Ver más...</a></td>
+        </tr>
         <tr align="center" *ngIf="companies.length === 0 && !loading">
           <td colspan="4">No se encontraron cumpleaños</td>
-        </tr>
-        <tr align="center" *ngIf="companies.length === 0 && loading">
-          <td colspan="4">Cargando...</td>
         </tr>
       </tbody>
     </table>
@@ -65,6 +68,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr align="center" *ngIf="loading">
+            <td colspan="6">Cargando...</td>
+          </tr>
           <tr *ngFor="let company of companies">
             <td align="left" width="150">
               <button type="button" class="btn btn-success btn-sm" (click)="openModal('view', company._id)" title="Ver"><i class="fa fa-eye"></i></button>
@@ -80,9 +86,6 @@
           </tr>
           <tr align="center" *ngIf="companies.length === 0 && !loading">
             <td colspan="6">No se encontraron cumpleaños</td>
-          </tr>
-          <tr align="center" *ngIf="companies.length === 0 && loading">
-            <td colspan="6">Cargando...</td>
           </tr>
         </tbody>
       </table>
