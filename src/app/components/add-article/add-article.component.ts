@@ -41,6 +41,7 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
+import { ArticleFieldService } from 'app/services/article-field.service';
 
 @Component({
   selector: 'app-add-article',
@@ -81,6 +82,10 @@ export class AddArticleComponent implements OnInit {
   public articleType: string;
   public filterTaxClassification: TaxClassification = TaxClassification.Tax;
   public lastPricePurchase;
+  public otherFieldsAlfabetico = false;
+  public otherFieldsNumber = false;
+
+
 
   public formErrors = {
     'code': '',
@@ -155,6 +160,7 @@ export class AddArticleComponent implements OnInit {
     public _companyService : CompanyService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
     public _movementsOfArticle : MovementOfArticleService,
+    public _articleFields : ArticleFieldService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -189,6 +195,8 @@ export class AddArticleComponent implements OnInit {
         this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
       }
     );
+
+    this.getArticleFields();
     
     if(this.articleId) {
       this.getArticle();
@@ -196,6 +204,32 @@ export class AddArticleComponent implements OnInit {
       this.getMakes();
       this.imageURL = './../../../assets/img/default.jpg';
     }
+  }
+
+  public getArticleFields(){
+    
+    this.loading = true;
+
+    this._articleFields.getArticleFields().subscribe(
+      result => {
+        if(result && result.articleFields) {
+          for (let x = 0; x < result.articleFields.length; x++) {
+            
+            if(result.articleFields[x]['datatype'] === ArticleFieldType.String){
+              this.otherFieldsAlfabetico = true;
+            }
+            if(result.articleFields[x]['datatype'] !== ArticleFieldType.String){
+              this.otherFieldsNumber = true;
+            }
+            
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -667,7 +701,6 @@ export class AddArticleComponent implements OnInit {
       }
     );
   }
-
 
   public getUnitsOfMeasurement(): void {
 
