@@ -109,7 +109,7 @@ export class ListDepositsComponent implements OnInit {
         modalRef.result.then((result) => {
           this.getDeposits();
         }, (reason) => {
-
+          this.getDeposits();
         });
         break;
       case 'delete':
