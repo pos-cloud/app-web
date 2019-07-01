@@ -74,10 +74,11 @@ export class ReportSalesByCategoryComponent implements OnInit {
       this._authService.getIdentity.subscribe(
         async identity => {
           if(identity && identity.origin) {
-            this.branchSelectedId = identity.origin.branch._id;
             this.allowChangeBranch = false;
+            this.branchSelectedId = identity.origin.branch._id;
           } else {
             this.allowChangeBranch = true;
+            this.branchSelectedId = null;
           }
         }
       );

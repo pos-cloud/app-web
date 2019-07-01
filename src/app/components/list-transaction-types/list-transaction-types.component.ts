@@ -121,9 +121,7 @@ export class ListTransactionTypesComponent implements OnInit {
           this.branchSelectedId = identity.origin.branch._id;
         } else {
           this.allowChangeBranch = true;
-          if(this.branches && this.branches.length > 1) {
-            this.branchSelectedId = this.branches[0]._id;
-          }
+          this.branchSelectedId = null;
         }
       }
     );

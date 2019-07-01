@@ -75,12 +75,6 @@
               <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
               <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             </tr>
-            <tr *ngIf="items.length > 0 && transactionMovement === 'Venta'" align="center">
-              <td colspan="3"><a [routerLink]="['','admin','venta','ventas-por-empleado']">Ver más...</a></td>
-            </tr>
-            <tr *ngIf="items.length > 0 && transactionMovement === 'Compra'" align="center">
-              <td colspan="3"><a [routerLink]="['','admin','compra','compras-por-empleado']">Ver más...</a></td>
-            </tr>
             <tr align="center" *ngIf="areEmployeesEmpty && !loading && transactionMovement === 'Venta'">
               <td colspan="3">No se encontraron ventas por empleado</td>
             </tr>
