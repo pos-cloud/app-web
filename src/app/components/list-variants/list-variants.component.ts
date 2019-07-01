@@ -79,7 +79,7 @@ export class ListVariantsComponent implements OnInit {
           } else {
             this.areVariantsEmpty = true;
           }
-          this.variants = null;
+          this.variants = new Array();
         } else {
           this.variants = this.getUniqueVariants(result.variants);
           this.areVariantsEmpty = false;

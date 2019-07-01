@@ -55,7 +55,7 @@ export class ListPrintersComponent implements OnInit {
           if (!result.printers) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.printers = null;
+            this.printers = new Array();
             this.arePrintersEmpty = true;
           } else {
             this.hideMessage();

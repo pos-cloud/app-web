@@ -53,7 +53,7 @@ export class ListLocationsComponent implements OnInit {
         result => {
           if (!result.locations) {
             this.loading = false;
-            this.locations = null;
+            this.locations = new Array();
             this.areLocationsEmpty = true;
           } else {
             this.hideMessage();

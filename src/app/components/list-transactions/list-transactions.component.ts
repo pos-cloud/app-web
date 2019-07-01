@@ -253,7 +253,7 @@ export class ListTransactionsComponent implements OnInit {
           this.transactions = result.transactions;
           this.totalItems = result.count;
         } else {
-          this.transactions = null;
+          this.transactions = new Array();
           this.totalItems = 0;
         }
         this.loading = false;

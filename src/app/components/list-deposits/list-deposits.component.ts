@@ -56,7 +56,7 @@ export class ListDepositsComponent implements OnInit {
         if (!result.deposits) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.deposits = null;
+          this.deposits = new Array();
           this.areDepositsEmpty = true;
         } else {
           this.hideMessage();

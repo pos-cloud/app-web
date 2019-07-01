@@ -75,7 +75,7 @@ export class ListCategoriesComponent implements OnInit {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           }
           this.loading = false;
-          this.categories = null;
+          this.categories = new Array();
           this.areCategoriesEmpty = true;
         } else {
           this.hideMessage();

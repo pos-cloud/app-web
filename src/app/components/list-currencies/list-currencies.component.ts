@@ -54,7 +54,7 @@ export class ListCurrenciesComponent implements OnInit {
           if (!result.currencies) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.currencies = null;
+            this.currencies = new Array();
             this.areCurrenciesEmpty = true;
           } else {
             this.hideMessage();

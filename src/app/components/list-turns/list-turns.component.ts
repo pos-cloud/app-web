@@ -53,7 +53,7 @@ export class ListTurnsComponent implements OnInit {
       result => {
         if (!result.turns) {
           this.loading = false;
-          this.turns = null;
+          this.turns = new Array();
           this.areTurnsEmpty = true;
         } else {
           this.hideMessage();

@@ -55,7 +55,7 @@ export class ListRoomsComponent implements OnInit {
           if (!result.rooms) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
             this.loading = false;
-            this.rooms = null;
+            this.rooms = new Array();
             this.areRoomsEmpty = true;
           } else {
             this.hideMessage();

@@ -53,7 +53,7 @@ export class ListUsersComponent implements OnInit {
 					if (!result.users) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-					  this.users = null;
+					  this.users = new Array();
             this.areUsersEmpty = true;
 					} else {
             this.hideMessage();

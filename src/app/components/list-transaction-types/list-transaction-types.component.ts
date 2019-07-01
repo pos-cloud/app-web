@@ -165,7 +165,7 @@ export class ListTransactionTypesComponent implements OnInit {
         if (!result.transactionTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.transactionTypes = null;
+          this.transactionTypes = new Array();
           this.areTransactionTypesEmpty = true;
         } else {
           this.hideMessage();

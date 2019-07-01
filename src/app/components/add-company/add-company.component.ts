@@ -230,7 +230,7 @@ export class AddCompanyComponent  implements OnInit {
       result => {
         if (!result.identificationTypes) {
           this.loading = false;
-          this.identificationTypes = null;
+          this.identificationTypes = new Array();
         } else {
           this.hideMessage();
           this.loading = false;

@@ -55,7 +55,7 @@ export class ListVariantTypesComponent implements OnInit {
         if (!result.variantTypes) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.variantTypes = null;
+          this.variantTypes = new Array();
           this.areVariantTypesEmpty = true;
         } else {
           this.hideMessage();

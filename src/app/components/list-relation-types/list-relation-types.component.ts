@@ -57,7 +57,7 @@ export class ListRelationTypesComponent implements OnInit {
           if (!result.relationTypes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             this.loading = false;
-            this.relationTypes = null;
+            this.relationTypes = new Array();
             this.areRelationTypesEmpty = true;
           } else {
             this.hideMessage();

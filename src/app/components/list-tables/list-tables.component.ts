@@ -61,7 +61,7 @@ export class ListTablesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.tables = null;
+    this.tables = new Array();
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.getTables();
@@ -76,7 +76,7 @@ export class ListTablesComponent implements OnInit {
         if (!result.tables) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
-          this.tables = null;
+          this.tables = new Array();
           this.areTablesEmpty = true;
         } else {
           this.hideMessage();

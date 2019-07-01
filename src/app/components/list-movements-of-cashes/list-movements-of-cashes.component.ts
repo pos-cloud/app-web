@@ -160,7 +160,7 @@ export class ListMovementOfCashesComponent implements OnInit {
             this.showMessage(result.message, 'info', true);
           }
           this.loading = false;
-          this.movementsOfCashes = null;
+          this.movementsOfCashes = new Array();
           this.areMovementOfCashesEmpty = true;
         } else {
           this.hideMessage();
