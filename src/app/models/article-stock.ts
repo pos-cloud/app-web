@@ -10,6 +10,7 @@ export class ArticleStock {
 	public deposit: Deposit;
 	public realStock: number = 0.00;
 	public minStock: number = 0.00;
+	public maxStock: number = 0.00;
 
 	constructor() { }
 }
