@@ -24,6 +24,7 @@
               <th (click)="orderBy('state')">Estado</th>
               <th (click)="orderBy('tokenExpiration')">Minutos de sesión</th>
 	            <th (click)="orderBy('employee','name')">Empleado</th>
+	            <th (click)="orderBy('origin','number')">Punto de venta</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
@@ -32,6 +33,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterTokenExpiration" placeholder="Minutos de sesión..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Punto de venta..." ></th>
             </tr>
           </thead>
           <tbody>
@@ -40,6 +42,7 @@
                                           | filter: filterState:'state'
                                           | filter: filterTokenExpiration:'tokenExpiration'
                                           | filter: filterEmployee:'name':'employee'
+                                          | filter: filterEmployee:'number':'origin'
                                           | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
@@ -63,6 +66,8 @@
               <td>{{user.tokenExpiration}}</td>
               <td *ngIf="user.employee">{{user.employee.name}}</td>
               <td *ngIf="!user.employee"></td>
+              <td *ngIf="user.origin">{{user.origin.number}}</td>
+              <td *ngIf="!user.origin"></td>
             </tr>
             <tr align="center" *ngIf="areUsersEmpty && !loading">
               <td colspan="5">No se encontraron usuarios</td>

@@ -81,7 +81,7 @@ export class TransactionService {
         const URL = `${Config.apiURL}v2/transactions`;
 
         const headers = new HttpHeaders()
-            .set('Content-Type', 'application/json')           
+            .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()

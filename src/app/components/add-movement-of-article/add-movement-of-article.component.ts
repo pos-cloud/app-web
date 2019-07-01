@@ -673,7 +673,9 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
-      let query = 'where="article": "' + this.movementOfArticle.article._id +  '"';
+      let query = `where= "article": "${this.movementOfArticle.article._id}",
+                          "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
+                          "deposit": "${this.movementOfArticle.transaction.depositDestination._id}"`;
 
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {

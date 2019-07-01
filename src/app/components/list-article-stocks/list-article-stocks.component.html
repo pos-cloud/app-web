@@ -22,6 +22,8 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
+            <th (click)="orderBy('branch.name')">Sucursal </th>
+            <th (click)="orderBy('deposit.name')">Depósito </th>
             <th (click)="orderBy('article.make.description')">Marca </th>
             <th (click)="orderBy('article.code')">Producto </th>
             <th (click)="orderBy('article.description')">Descripción </th>
@@ -32,6 +34,8 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['branch.name']" (input)="getArticleStocksV2()" placeholder="Sucursal..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['deposit.name']" (input)="getArticleStocksV2()" placeholder="Depósito..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['article.make.description']" (input)="getArticleStocksV2()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['article.code']" (input)="getArticleStocksV2()" placeholder="Producto..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['article.description']" (input)="getArticleStocksV2()" placeholder="Descripción..."></th>
@@ -47,15 +51,16 @@
                                                                       currentPage: currentPage,
                                                                       totalItems: totalItems
                                                                     }">
-
-
             <td align="left" width="100">
-
               <button type="button" class="btn btn-secondary btn-sm" title="Imprimir" *ngIf="'articleStock.realStock' >= '0'"  (click)= "openModal('print-label', articleStock )">
                 <i class="fa fa-print"></i>
               </button>
-
             </td>
+            <td class="flat" *ngIf="articleStock.branch">{{articleStock.branch.name}}</td>
+            <td class="flat" *ngIf="!articleStock.branch"></td>
+            <td class="flat" *ngIf="articleStock.deposit">{{articleStock.deposit.name}}</td>
+            <td class="flat" *ngIf="!articleStock.deposit"></td>
+            <td class="flat" *ngIf="articleStock.article.make && articleStock.article.make">{{articleStock.article.make.description}}</td>
             <td class="flat" *ngIf="articleStock.article.make && articleStock.article.make">{{articleStock.article.make.description}}</td>
             <td class="flat" *ngIf="!articleStock.article.make || !articleStock.article.make"></td>
             <td class="flat">{{articleStock.article.code}}</td>

@@ -197,6 +197,8 @@ export class ListArticleStocksComponent implements OnInit {
       "article.make.description" : 1,
       "article.category.description" : 1,
       "article.operationType" : 1,
+      "branchDestination.name" : 1,
+      "depositDestination.name" : 1,
       "operationType" : 1,
     }
 
@@ -210,20 +212,13 @@ export class ListArticleStocksComponent implements OnInit {
         articleStocks: { $push: "$$ROOT" },
     };
 
-    let page = 0;
-    if(this.currentPage != 0) {
-      page = this.currentPage - 1;
-    }
-    let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage) :
-                0 // SKIP
     this._articleStockService.getArticleStocksV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        //this.itemsPerPage, // LIMIT
-        //skip // SKIP
+        0, // LIMIT
+        0 // SKIP
     ).subscribe(
       result => {
         this.totalCost = result.totalCostArticle;

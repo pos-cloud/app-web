@@ -217,6 +217,8 @@ export class PrintComponent implements OnInit {
       "article.make.description" : 1,
       "article.category.description" : 1,
       "article.operationType" : 1,
+      "branchDestination.name" : 1,
+      "depositDestination.name" : 1,
       "operationType" : 1,
     }
 

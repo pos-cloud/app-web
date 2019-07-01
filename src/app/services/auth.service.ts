@@ -10,6 +10,7 @@ import { Employee } from 'app/models/employee';
 import { EmployeeType } from 'app/models/employee-type';
 import { Config } from 'app/app.config';
 import { Branch } from 'app/models/branch';
+import { Origin } from 'app/models/origin';
 
 @Injectable()
 export class AuthService {
@@ -76,20 +77,8 @@ export class AuthService {
     let userStorage = new User();
     userStorage._id = user._id;
     userStorage.name = user.name;
-    if (user.employee) {
-      userStorage.employee = new Employee();
-      userStorage.employee._id = user.employee._id;
-      userStorage.employee.name = user.employee.name;
-      userStorage.employee.type = new EmployeeType();
-      userStorage.employee.type._id = user.employee.type._id;
-      userStorage.employee.type.description = user.employee.type.description;
-    }
-    if(user.branch) {
-      userStorage.branch = new Branch();
-      userStorage.branch._id = user.branch._id;
-      userStorage.branch.number = user.branch.number;
-      userStorage.branch.name = user.branch.name;
-    }
+    userStorage.employee = user.employee;
+    userStorage.origin = user.origin;
     sessionStorage.setItem('user', JSON.stringify(userStorage));
     sessionStorage.setItem('session_token', user.token);
     this.identity.next(userStorage);

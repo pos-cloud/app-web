@@ -140,8 +140,10 @@ export class LoginComponent implements OnInit {
           this._authService.loginStorage(result.user);
           await this.getConfigApi().then(
             config => {
-              this._configService.setConfig(config);
-              this.setConfigurationSettings(config);
+              if(config) {
+                this._configService.setConfig(config);
+                this.setConfigurationSettings(config);
+              }
             }
           );
 

@@ -11,7 +11,6 @@ import { AddDepositComponent } from './../../components/add-deposit/add-deposit.
 import { UpdateDepositComponent } from './../../components/update-deposit/update-deposit.component';
 import { DeleteDepositComponent } from './../../components/delete-deposit/delete-deposit.component';
 
-
 @Component({
   selector: 'app-list-deposits',
   templateUrl: './list-deposits.component.html',
@@ -19,6 +18,7 @@ import { DeleteDepositComponent } from './../../components/delete-deposit/delete
   providers: [NgbAlertConfig],
   encapsulation: ViewEncapsulation.None
 })
+
 export class ListDepositsComponent implements OnInit {
 
   public deposits: Deposit[] = new Array();

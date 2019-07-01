@@ -11,8 +11,8 @@ import { UserService } from './../../services/user.service';
 import { EmployeeService } from './../../services/employee.service';
 import { CompanyService } from 'app/services/company.service';
 import { Company } from 'app/models/company';
-import { Branch } from 'app/models/branch';
-import { BranchService } from 'app/services/branch.service';
+import { Origin } from 'app/models/origin';
+import { OriginService } from 'app/services/origin.service';
 import { EmployeeType } from 'app/models/employee-type';
 import { AuthService } from 'app/services/auth.service';
 
@@ -37,7 +37,7 @@ export class AddUserComponent  implements OnInit {
   public states: UserState[] = [UserState.Enabled, UserState.Disabled];
   public employees: Employee[] = new Array();
   public companies: Company[] = new Array();
-  public branches: Branch[] = new Array();
+  public origins: Origin[] = new Array();
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
@@ -45,7 +45,7 @@ export class AddUserComponent  implements OnInit {
     'email': '',
     'password': '',
     'state': '',
-    'branch': '',
+    'origin': '',
     'employee': '',
     'company': ''
   };
@@ -62,7 +62,7 @@ export class AddUserComponent  implements OnInit {
     'state': {
       'required': 'Este campo es requerido.'
     },
-    'branch': {
+    'origin': {
     },
     'employee': {
     },
@@ -74,7 +74,7 @@ export class AddUserComponent  implements OnInit {
     private _userService: UserService,
     private _employeeService: EmployeeService,
     private _companyService: CompanyService,
-    private _branchService: BranchService,
+    private _originService: OriginService,
     private _authService: AuthService,
     public _fb: FormBuilder,
     public _router: Router,
@@ -100,7 +100,7 @@ export class AddUserComponent  implements OnInit {
     this.buildForm();
     this.getEmployees();
     this.getCompanies();
-    this.getBranches();
+    this.getOrigins();
   }
 
   ngAfterViewInit() {
@@ -128,7 +128,7 @@ export class AddUserComponent  implements OnInit {
           Validators.required
         ]
       ],
-      'branch': [this.user.branch, [
+      'origin': [this.user.origin, [
         ]
       ],
       'employee': [this.user.employee, [
@@ -215,14 +215,14 @@ export class AddUserComponent  implements OnInit {
       }
     }
 
-    let branch;
-    if (!this.user.branch) {
-      branch = null;
+    let origin;
+    if (!this.user.origin) {
+      origin = null;
     } else {
-      if (this.user.branch._id) {
-        branch = this.user.branch._id;
+      if (this.user.origin._id) {
+        origin = this.user.origin._id;
       } else {
-        branch = this.user.branch;
+        origin = this.user.origin;
       }
     }
 
@@ -234,7 +234,7 @@ export class AddUserComponent  implements OnInit {
       'state': this.user.state,
       'employee': employee,
       'company': company,
-      'branch': branch
+      'origin': origin
     });
   }
 
@@ -286,23 +286,23 @@ export class AddUserComponent  implements OnInit {
       );
    }
 
-   public getBranches(): void {
+   public getOrigins(): void {
 
     this.loading = true;
     
-    this._branchService.getBranches(
-        { number:1, name: 1, operationType: 1 }, // PROJECT
+    this._originService.getOrigins(
+        { number: 1, 'branch.name': 1, operationType: 1 }, // PROJECT
         { operationType: { $ne: 'D' } }, // MATCH
-        { name: 1 }, // SORT
+        { numnber: 1 }, // SORT
         {}, // GROUP
         0, // LIMIT
         0 // SKIP
     ).subscribe(
       result => {
-        if (result && result.branches) {
-          this.branches = result.branches;
+        if (result && result.origins) {
+          this.origins = result.origins;
         } else {
-          this.branches = new Array();
+          this.origins = new Array();
         }
         this.loading = false;
       },
@@ -374,7 +374,6 @@ export class AddUserComponent  implements OnInit {
             }
             sessionStorage.setItem('user', JSON.stringify(userStorage));
           }
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

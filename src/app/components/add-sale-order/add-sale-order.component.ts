@@ -643,8 +643,10 @@ export class AddSaleOrderComponent {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
-      let query = 'where="article": "' + movementOfArticle.article._id +  '"';
-
+      let query = `where= "article": "${movementOfArticle.article._id}",
+                          "branch": "${movementOfArticle.transaction.branchDestination._id}",
+                          "deposit": "${movementOfArticle.transaction.depositDestination._id}"`;
+                          
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
           if (!result.articleStocks || result.articleStocks.length <= 0) {

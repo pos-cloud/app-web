@@ -40,7 +40,7 @@ export class ListBranchComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public branchService: BranchService,
+    public _branchService: BranchService,
     public _router: Router,
     public _modalService: NgbModal,
   ) {
@@ -107,7 +107,7 @@ export class ListBranchComponent implements OnInit {
             (page * this.itemsPerPage) :
                 0 // SKIP
 
-    this.branchService.getBranches(
+    this._branchService.getBranches(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT

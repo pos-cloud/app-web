@@ -73,21 +73,21 @@
           </div>
         </div>
         <div class="form-group col-md-6">
-          <label for="branch" class="control-label">Sucursal</label>
-          <select class="form-control" formControlName="branch">
+          <label for="origin" class="control-label">Punto de Venta</label>
+          <select class="form-control" formControlName="origin">
             <option [ngValue]="null" 
-                    [selected]="!user || !user.branch" 
+                    [selected]="!user || !user.origin" 
                     [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"></option>
-            <option *ngFor="let branch of branches" 
-                    [value]="branch._id" 
+            <option *ngFor="let origin of origins" 
+                    [value]="origin._id" 
                     [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
-                    [selected]="(user.branch && user.branch._id && branch._id===user.branch._id) ||
-                                (user.branch && branch._id===user.branch)">
-                    {{branch.name}} ( {{branch.number}} )
+                    [selected]="(user.origin && user.origin._id && origin._id===user.origin._id) ||
+                                (user.origin && origin._id===user.origin)">
+                    {{origin.number}} ( Sucursal {{origin.branch.name}} )
             </option>
           </select>
-          <div *ngIf="formErrors.branch" class="alert alert-danger">
-            {{ formErrors.branch }}
+          <div *ngIf="formErrors.origin" class="alert alert-danger">
+            {{ formErrors.origin }}
           </div>
         </div>
       </div>

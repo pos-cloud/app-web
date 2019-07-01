@@ -40,7 +40,7 @@
                               [disabled]="readonly || (identity && identity.employee && identity.employee.type && identity.employee.type.description !== 'Administrador')"
                               [selected]="(origin.branch && origin.branch._id && branch._id===origin.branch._id) ||
                                           (origin.branch && branch._id===origin.branch)">
-                              {{branch.name}} ( {{branch.number}} )
+                              {{ branch.number }} - {{ branch.name }}
                       </option>
                     </select>
                     <div *ngIf="formErrors.branch" class="alert alert-danger">

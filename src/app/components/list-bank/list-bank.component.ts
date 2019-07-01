@@ -42,7 +42,7 @@ export class ListBankComponent implements OnInit {
 
   constructor(
     public alertConfig: NgbAlertConfig,
-    public bankService: BankService,
+    public _bankService: BankService,
     public _router: Router,
     public _modalService: NgbModal,
   ) {
@@ -117,7 +117,7 @@ export class ListBankComponent implements OnInit {
             (page * this.itemsPerPage) :
                 0 // SKIP
 
-    this.bankService.getBanks(
+    this._bankService.getBanks(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT

@@ -35,6 +35,7 @@
             <th *ngIf ="allowResto" (click)="orderBy('diners')">Comensales</th>
             <th *ngIf ="(modules | async)?.money" (click)="orderBy('cashBox.number')">Caja</th>
             <th (click)="orderBy('madein')">Canal</th>
+            <th (click)="orderBy('branchDestination.number')">Sucursal</th>
             <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('balance')">Saldo</th>
@@ -43,23 +44,24 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (input)="getTransactions()" placeholder="Cliente..."></th>
-            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['table.description']" (input)="getTransactions()" placeholder="Mesa..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['employeeClosing.name']" (input)="getTransactions()" placeholder="Empleado..."></th>
-            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['turnOpening.startDate']" (input)="getTransactions()" placeholder="Turno..."></th>
-            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['diners']" (input)="getTransactions()" placeholder="Comensales..."></th>
-            <th *ngIf="(modules | async)?.money"><input type="text" class="form-control" [(ngModel)]="filters['cashBox.number']" (input)="getTransactions()" placeholder="Caja..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['madein']" (input)="getTransactions()" placeholder="Canal..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (input)="getTransactions()" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getTransactions()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (input)="getTransactions()" placeholder="Saldo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (input)="getTransactions()" placeholder="Descuento..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()" placeholder="Tipo..."></th>
+            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (keydown.enter)="getTransactions()" placeholder="POS..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (keydown.enter)="getTransactions()" placeholder="Letra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getTransactions()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (keydown.enter)="getTransactions()" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (keydown.enter)="getTransactions()" placeholder="Cliente..."></th>
+            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['table.description']" (keydown.enter)="getTransactions()" placeholder="Mesa..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['employeeClosing.name']" (keydown.enter)="getTransactions()" placeholder="Empleado..."></th>
+            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['turnOpening.startDate']" (keydown.enter)="getTransactions()" placeholder="Turno..."></th>
+            <th *ngIf="allowResto"><input type="text" class="form-control" [(ngModel)]="filters['diners']" (keydown.enter)="getTransactions()" placeholder="Comensales..."></th>
+            <th *ngIf="(modules | async)?.money"><input type="text" class="form-control" [(ngModel)]="filters['cashBox.number']" (keydown.enter)="getTransactions()" placeholder="Caja..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['madein']" (keydown.enter)="getTransactions()" placeholder="Canal..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['branchDestination.number']" (keydown.enter)="getTransactions()" placeholder="Sucursal..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (keydown.enter)="getTransactions()" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (keydown.enter)="getTransactions()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (keydown.enter)="getTransactions()" placeholder="Saldo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (keydown.enter)="getTransactions()" placeholder="Descuento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (keydown.enter)="getTransactions()" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -111,6 +113,8 @@
             <td *ngIf="(modules | async)?.money && transaction.cashBox">{{transaction.cashBox.number}}</td>
             <td *ngIf="(modules | async)?.money && !transaction.cashBox"></td>
             <td>{{transaction.madein}}</td>
+            <td *ngIf="transaction.branchDestination">{{transaction.branchDestination.number}}</td>
+            <td *ngIf="!transaction.branchDestination"></td>
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',
@@ -197,17 +201,17 @@
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (input)="getTransactions()" placeholder="Letra..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (input)="getTransactions()" placeholder="Proveedor..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (input)="getTransactions()" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getTransactions()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (input)="getTransactions()" placeholder="Saldo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (input)="getTransactions()" placeholder="Descuento..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()" placeholder="Tipo..."></th>
+            <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (keydown.enter)="getTransactions()" placeholder="POS..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (keydown.enter)="getTransactions()" placeholder="Letra..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getTransactions()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (keydown.enter)="getTransactions()" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['company.name']" (keydown.enter)="getTransactions()" placeholder="Proveedor..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (keydown.enter)="getTransactions()" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (keydown.enter)="getTransactions()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['balance']" (keydown.enter)="getTransactions()" placeholder="Saldo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['discountAmount']" (keydown.enter)="getTransactions()" placeholder="Descuento..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (keydown.enter)="getTransactions()" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -306,18 +310,20 @@
             <th (click)="orderBy('type.name')">Tipo</th>
             <th (click)="orderBy('number')">Número</th>
             <th (click)="orderBy('endDate')">Fecha</th>
+            <th (click)="orderBy('branchDestination.number')">Sucursal</th>
             <th (click)="orderBy('state')">Estado</th>
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Precio Total</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" (input)="getTransactions()" placeholder="Tipo..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (input)="getTransactions()" placeholder="Estado..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (input)="getTransactions()" placeholder="Observación..."></th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (input)="getTransactions()" placeholder="Precio Total..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()"placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getTransactions()" placeholder="Número..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (keydown.enter)="getTransactions()" placeholder="Fecha..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['branchDestination.number']" (keydown.enter)="getTransactions()" placeholder="Sucursal..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['state']" (keydown.enter)="getTransactions()" placeholder="Estado..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (keydown.enter)="getTransactions()" placeholder="Observación..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['totalPrice']" (keydown.enter)="getTransactions()" placeholder="Precio Total..."></th>
           </tr>
         </thead>
         <tbody>
@@ -338,6 +344,8 @@
             <td *ngIf="!transaction.type"></td>
             <td>{{transaction.number}}</td>
             <td>{{transaction.endDate }}</td>
+            <td *ngIf="transaction.branchDestination">{{transaction.branchDestination.number}}</td>
+            <td *ngIf="!transaction.branchDestination"></td>
             <td>
               <h6>
                 <span class="badge" [ngClass]="{'badge-danger':transaction.state==='Anulado',

@@ -1,5 +1,5 @@
 
-import {of as observableOf, merge as observableMerge,  Observable } from 'rxjs';
+import {of as observableOf, merge as observableMerge } from 'rxjs';
 import { Component } from '@angular/core';
 
 import { Config } from './app.config';

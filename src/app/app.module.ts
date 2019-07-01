@@ -238,6 +238,8 @@ import { BranchService } from './services/branch.service';
 import { ListOriginsComponent } from './components/list-origins/list-origins.component';
 import { OriginService } from './services/origin.service';
 import { OriginComponent } from './components/origin/origin.component';
+import { SelectBranchComponent } from './components/select-branch/select-branch.component';
+import { SelectOriginComponent } from './components/select-origin/select-origin.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -406,7 +408,9 @@ import { OriginComponent } from './components/origin/origin.component';
     BranchComponent,
     ListBranchComponent,
     ListOriginsComponent,
-    OriginComponent
+    OriginComponent,
+    SelectBranchComponent,
+    SelectOriginComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -561,7 +565,9 @@ import { OriginComponent } from './components/origin/origin.component';
     BranchComponent,
     ListBranchComponent,
     ListOriginsComponent,
-    OriginComponent
+    OriginComponent,
+    SelectBranchComponent,
+    SelectOriginComponent
   ],
   imports: [
     BrowserModule,

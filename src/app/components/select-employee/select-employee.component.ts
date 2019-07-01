@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
@@ -89,6 +89,9 @@ export class SelectEmployeeComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.employees = result.employees;
+          if(this.employees && this.employees.length > 0) {
+            this.employeeSelected = this.employees[0];
+          }
         }
       },
       error => {

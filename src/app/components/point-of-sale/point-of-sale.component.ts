@@ -13,8 +13,6 @@ import { TransactionType, TransactionMovement } from './../../models/transaction
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
 import { TransactionTypeService } from './../../services/transaction-type.service';
-import { PaymentMethodService } from './../../services/payment-method.service';
-import { TurnService } from './../../services/turn.service';
 import { PrinterService } from './../../services/printer.service';
 
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
@@ -32,10 +30,18 @@ import { CurrencyService } from 'app/services/currency.service';
 import { Config } from 'app/app.config';
 import { CashBox, CashBoxState } from 'app/models/cash-box';
 import { CashBoxService } from 'app/services/cash-box.service';
-import { UserService } from 'app/services/user.service';
 import { Company } from 'app/models/company';
 import { Table, TableState } from 'app/models/table';
 import { TableService } from 'app/services/table.service';
+import { AuthService } from 'app/services/auth.service';
+import { DepositService } from 'app/services/deposit.service';
+import { Deposit } from 'app/models/deposit';
+import { BranchService } from 'app/services/branch.service';
+import { Branch } from 'app/models/branch';
+import { SelectBranchComponent } from '../select-branch/select-branch.component';
+import { Origin } from 'app/models/origin';
+import { OriginService } from 'app/services/origin.service';
+import { SelectOriginComponent } from '../select-origin/select-origin.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -75,20 +81,21 @@ export class PointOfSaleComponent implements OnInit {
   @Input() totalPrice: number;
 
   constructor(
-    public _turnService: TurnService,
-    public _roomService: RoomService,
-    public _transactionService: TransactionService,
-    public _transactionTypeService: TransactionTypeService,
-    public _paymentMethodService: PaymentMethodService,
-    public _printerService: PrinterService,
-    public _employeeTypeService: EmployeeTypeService,
-    public _router: Router,
-    public _modalService: NgbModal,
+    private _roomService: RoomService,
+    private _transactionService: TransactionService,
+    private _transactionTypeService: TransactionTypeService,
+    private _printerService: PrinterService,
+    private _employeeTypeService: EmployeeTypeService,
+    private _depositService: DepositService,
+    private _branchService: BranchService,
+    private _router: Router,
+    private _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
-    public _currencyService: CurrencyService,
-    public _cashBoxService: CashBoxService,
-    public _userService: UserService,
-    public _tableService: TableService,
+    private _currencyService: CurrencyService,
+    private _cashBoxService: CashBoxService,
+    private _tableService: TableService,
+    private _authService: AuthService,
+    private _originService: OriginService
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
@@ -96,6 +103,7 @@ export class PointOfSaleComponent implements OnInit {
   }
 
   async ngOnInit() {
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
@@ -144,6 +152,87 @@ export class PointOfSaleComponent implements OnInit {
         }
       );
     }
+  }
+
+  public getBranches(match: {} = {}): Promise<Branch[]> {
+
+    return new Promise<Branch[]>((resolve, reject) => {
+  
+      this._branchService.getBranches(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result && result.branches) {
+            resolve(result.branches);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  public getDeposits(match: {} = {}): Promise<Deposit[]> {
+
+    return new Promise<Deposit[]>((resolve, reject) => {
+  
+      this._depositService.getDepositsV2(
+          {}, // PROJECT
+          match, // MATCH
+          { name: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result.deposits) {
+            resolve(result.deposits);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  public getOrigins(match: {} = {}): Promise<Origin[]> {
+
+    return new Promise<Origin[]>((resolve, reject) => {
+  
+      this._originService.getOrigins(
+          {}, // PROJECT
+          match, // MATCH
+          { number: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result.origins) {
+            resolve(result.origins);
+          } else {
+            resolve(null);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public getCurrencies(): Promise<Currency[]> {
@@ -259,7 +348,18 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + this.posType + '"}]';
+    let query = `where= "$and":[{"state":{"$ne": "${TransactionState.Closed}"}},
+                                {"state":{"$ne": "${TransactionState.Canceled}"}},`
+                                
+    this._authService.getIdentity.subscribe(
+      identity => {
+        if(identity && identity.origin) {
+          query += `{"branch":"${identity.origin.branch._id}"},`;
+        }
+      }
+    );
+
+    query += `{"madein":"${this.posType}"}]`;
 
     this._transactionService.getTransactions(query).subscribe(
       result => {
@@ -286,7 +386,17 @@ export class PointOfSaleComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"madein":"' + this.posType + '"}]&sort="startDate":-1';
+    let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
+    
+    this._authService.getIdentity.subscribe(
+      identity => {
+        if(identity && identity.origin) {
+          query += `{"branchDestination":"${identity.origin.branch._id}"},`;
+        }
+      }
+    );
+
+    query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
 
     this._transactionService.getTransactionsByMovement(transactionMovement, query).subscribe(
       result => {
@@ -348,6 +458,10 @@ export class PointOfSaleComponent implements OnInit {
     this.transaction.type = type;
     this.transaction.table = this.tableSelected;
 
+    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
+      this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
+    }
+
     if(this.posType === 'cuentas-corrientes') {
       if(this.transactionMovement === TransactionMovement.Sale) {
         this.totalPrice *= -1;
@@ -358,14 +472,6 @@ export class PointOfSaleComponent implements OnInit {
       }
 
       this.transaction.totalPrice = this.totalPrice;
-    }
-
-    if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
-      this.transaction.origin = this.transaction.type.fixedOrigin;
-    }
-
-    if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
-      this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     }
 
     if(!type.cashOpening && !type.cashClosing) {
@@ -445,42 +551,183 @@ export class PointOfSaleComponent implements OnInit {
     });
   }
 
-  async nextStepTransaction() {
+  async assignBranch(): Promise<boolean> {
 
-    if(this.transaction &&
-      (!this.transaction._id || this.transaction._id === "")) {
-      await this.getLastTransactionByType().then(
-        async transaction => {
-          if(transaction) {
-            this.transaction.number = transaction.number + 1;
-          } else {
-            this.transaction.number = 1;
-          }
-          await this.assignCurrency().then(
-            async result => {
-              if(result) {
-                await this.saveTransaction().then(
-                  async transaction => {
-                    if(transaction) {
-                      this.transaction = transaction;
-                      if(this.posType === "resto") {
-                        this.tableSelected.lastTransaction = this.transaction;
-                        await this.updateTable().then(
-                          table => {
-                            if(table) {
-                              this.tableSelected = table;
-                            }
+    return new Promise<boolean>(async (resolve, reject) => {
+      
+      if(!this.transaction.branchDestination || !this.transaction.branchOrigin) {
+        this._authService.getIdentity.subscribe(
+          async identity => {
+            // CONSULTAMOS SI TIENE PUNTO DE VENTA ASIGNADO AL USUARIO
+            if(identity && identity.origin) {
+              // PREDOMINIA PUNTO DE VENTA DEL TIPO DE TRANSACCION
+              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                this.transaction.origin = this.transaction.type.fixedOrigin;
+              } else {
+                if(this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+                  this.transaction.origin = identity.origin.number;
+                }
+              }
+              // ASIGNAMOS A LA TRANSACCIÓN LA SUCURSAL DEL PV DEL USUARIO
+              this.transaction.branchOrigin = identity.origin.branch;
+              this.transaction.branchDestination = identity.origin.branch;
+              let depositAssigned = await this.assignDeposit();
+              if(depositAssigned) {
+                if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+                  let originAssigned = await this.assignOrigin();
+                  resolve(originAssigned);
+                } else {
+                  resolve(depositAssigned);
+                }
+              } else {
+                resolve(depositAssigned);
+              }
+            } else {
+              // SI NO TIENE ASIGNADO PV
+              if (this.transaction.type.fixedOrigin && this.transaction.type.fixedOrigin !== 0) {
+                this.transaction.origin = this.transaction.type.fixedOrigin;
+              }
+  
+              // CONSULTAMOS LAS SUCURSALES
+              if(!this.transaction.branchDestination || !this.transaction.branchOrigin) {
+                await this.getBranches({ operationType: { $ne: 'D' } }).then(
+                  async branches => {
+                    if(branches) {
+                      if(branches.length > 1) {
+                        // SOLICITAR SUCURSAL
+                        this.openModal('select-branch');
+                      } else {
+                        // ASIGNAR ÚNICA SUCURSAL
+                        let defaultBranch = branches[0];
+                        this.transaction.branchOrigin = defaultBranch;
+                        this.transaction.branchDestination = defaultBranch;
+                        let depositAssigned = await this.assignDeposit();
+                        if(depositAssigned) {
+                          if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+                            let originAssigned = await this.assignOrigin();
+                            resolve(originAssigned);
+                          } else {
+                            resolve(depositAssigned);
                           }
-                        );
+                        } else {
+                          resolve(depositAssigned);
+                        }
                       }
+                    } else {
+                      this.showMessage("Debe crear un sucursal para poder poder crear una transacción", "info", true);
+                      resolve(false);
                     }
-                  })
-                ;
+                  }
+                );
               }
             }
-          );
+          }
+        );
+      } else if (!this.transaction.depositDestination || this.transaction.depositOrigin) {
+        let depositAssigned = await this.assignDeposit();
+        if(depositAssigned) {
+          if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+            let originAssigned = await this.assignOrigin();
+            resolve(originAssigned);
+          } else {
+            resolve(depositAssigned);
+          }
+        } else {
+          resolve(depositAssigned);
+        }
+      } else if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+        let originAssigned = await this.assignOrigin();
+        resolve(originAssigned);
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  async assignDeposit(): Promise<boolean> {
+
+    return new Promise<boolean>(async (resolve, reject) => {
+      // ASIGNAMOS EL ÚNICO DEPOSITO DE LA LA SUCURSAL
+      await this.getDeposits({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
+        deposits => {
+          if(deposits && deposits.length > 0) {
+            this.transaction.depositOrigin = deposits[0];
+            this.transaction.depositDestination = deposits[0];
+            resolve(true);
+          } else {
+            this.showMessage("Debe crear un depósito defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
+            resolve(false);
+          }
         }
       );
+    });
+  }
+
+  async assignOrigin(): Promise<boolean> {
+    
+    return new Promise<boolean>(async (resolve, reject) => {
+
+      if(this.transaction.origin === 0) {
+        // ASIGNAMOS EL ÚNICO DEPOSITO DE LA LA SUCURSAL
+        await this.getOrigins({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
+          origins => {
+            if(origins && origins.length > 0) {
+              if(origins.length > 1) {
+                this.openModal('select-origin');
+              } else {
+                this.transaction.origin = origins[0].number;
+                resolve(true);
+              }
+            } else {
+              this.showMessage("Debe crear un punto de venta defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
+              resolve(false);
+            }
+          }
+        );
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  async nextStepTransaction() {
+
+    if(this.transaction && (!this.transaction._id || this.transaction._id === "")) {
+      let branchAssigned = await this.assignBranch();
+      if(branchAssigned) {
+        await this.getLastTransactionByType().then(
+          async transaction => {
+            if(transaction) {
+              this.transaction.number = transaction.number + 1;
+            } else {
+              this.transaction.number = 1;
+            }
+            await this.assignCurrency().then(
+              async result => {
+                if(result) {
+                  await this.saveTransaction().then(
+                    async transaction => {
+                      if(transaction) {
+                        this.transaction = transaction;
+                        if(this.posType === "resto") {
+                          this.tableSelected.lastTransaction = this.transaction;
+                          await this.updateTable().then(
+                            table => {
+                              if(table) {
+                                this.tableSelected = table;
+                              }
+                            }
+                          );
+                        }
+                      }
+                    })
+                  ;
+                }
+              }
+            );
+          }
+        );
+      }
     } else {
       await this.updateTransaction().then(
         transaction => {
@@ -682,6 +929,34 @@ export class PointOfSaleComponent implements OnInit {
           this.hideMessage();
         });
         break;
+      case 'select-branch':
+        modalRef = this._modalService.open(SelectBranchComponent);
+        modalRef.result.then((result) => {
+          if (result && result.branch) {
+            this.transaction.branchOrigin = result.branch;
+            this.transaction.branchDestination = result.branch;
+            this.nextStepTransaction();
+          } else {
+            this.hideMessage();
+          }
+        }, (reason) => {
+          this.hideMessage();
+        });
+        break;
+      case 'select-origin':
+        modalRef = this._modalService.open(SelectOriginComponent);
+        modalRef.componentInstance.branchId = this.transaction.branchDestination._id;
+        modalRef.result.then((result) => {
+          if (result && result.origin) {
+            this.transaction.origin = result.origin.number;
+            this.nextStepTransaction();
+          } else {
+            this.hideMessage();
+          }
+        }, (reason) => {
+          this.hideMessage();
+        });
+        break;
       case 'select-employee':
         modalRef = this._modalService.open(SelectEmployeeComponent);
         modalRef.componentInstance.requireLogin = false;
@@ -842,7 +1117,11 @@ export class PointOfSaleComponent implements OnInit {
 
     return new Promise<Transaction>((resolve, reject) => {
 
-      let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + this.transaction.origin + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
+      let query = `where= "type":"${this.transaction.type._id}",
+                          "origin":"${this.transaction.origin}",
+                          "letter":"${this.transaction.letter}"
+                  &sort="number":-1
+                  &limit=1`;
 
       this._transactionService.getTransactions(query).subscribe(
         result => {

@@ -110,11 +110,9 @@ export class ListUsersComponent implements OnInit {
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.operation = 'update';
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getUsers();
-            }
+            this.getUsers();
           }, (reason) => {
-
+            this.getUsers();
           });
         break;
       case 'delete' :

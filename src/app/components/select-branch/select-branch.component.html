@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="!typeEmployee">Seleccionar Sucursal</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <div class="center-content">
+          <div class="btn-group-vertical">
+            <button type="button" 
+                    *ngFor="let branch of branches" 
+                    class="btn btn-branch" 
+                    [ngClass]="{'btn-primary':branch._id===branchSelected._id,
+                                'btn-outline-primary':branch._id!==branchSelected._id}"
+              (click)="branchSelected = branch">
+              {{ branch.number }} - {{ branch.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectBranch()">
+      <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading">Siguiente</span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
+</section>

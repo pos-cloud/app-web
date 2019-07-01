@@ -23,6 +23,7 @@ import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
+import { AuthService } from 'app/services/auth.service';
 
 @Component({
   selector: 'app-list-transactions',
@@ -73,7 +74,9 @@ export class ListTransactionsComponent implements OnInit {
       'totalPrice',
       'operationType',
       'CAE',
-      'balance'
+      'balance',
+      'branchDestination._id',
+      'branchDestination.number'
   ];
   public filters: any[];
   public filterValue: string;
@@ -86,7 +89,8 @@ export class ListTransactionsComponent implements OnInit {
     public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService
+    public _printerService: PrinterService,
+    private _authService: AuthService
   ) {
     this.filters = new Array();
     for(let field of this.displayedColumns) {
@@ -119,6 +123,14 @@ export class ListTransactionsComponent implements OnInit {
     } else if (this.listType === "Fondos") {
       this.transactionMovement = TransactionMovement.Money;
     }
+
+    this._authService.getIdentity.subscribe(
+      async identity => {
+        if(identity && identity.origin) {
+          this.filters['branchDestination._id'] = identity.origin.branch._id;
+        }
+      }
+    );
 
     this.getTransactions();
   }
@@ -205,7 +217,9 @@ export class ListTransactionsComponent implements OnInit {
       'type.allowEdit': 1,
       'type.allowDelete': 1,
       'type.electronics': 1,
-      'type.defectPrinter': 1
+      'type.defectPrinter': 1,
+      'branchDestination._id': { $toString: '$branchDestination._id' },
+      'branchDestination.number': 1
     }
 
     // AGRUPAMOS EL RESULTADO
@@ -232,12 +246,15 @@ export class ListTransactionsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result && result[0].transactions) {
+        if (result && result[0] && result[0].transactions) {
             this.transactions = result[0].transactions;
             this.totalItems = result[0].count;
+        } else if(result && result.transactions) {
+          this.transactions = result.transactions;
+          this.totalItems = result.count;
         } else {
-            this.transactions = null;
-            this.totalItems = 0;
+          this.transactions = null;
+          this.totalItems = 0;
         }
         this.loading = false;
       },

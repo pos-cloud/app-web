@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="!typeEmployee">Seleccionar Punto de Venta</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+  <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="form-group col-md-12">
+        <div class="center-content">
+          <div class="btn-group-vertical">
+            <button type="button" 
+                    *ngFor="let origin of origins" 
+                    class="btn btn-origin" 
+                    [ngClass]="{'btn-primary':origin._id===originSelected._id,
+                                'btn-outline-primary':origin._id!==originSelected._id}"
+              (click)="originSelected = origin">
+              {{ origin.number }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectOrigin()">
+      <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+      <span *ngIf="!loading">Siguiente</span>
+      <span *ngIf="loading">Espere por favor</span>
+    </button>
+  </div>
+</section>
