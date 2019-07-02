@@ -115,7 +115,7 @@ export class AddSaleOrderComponent {
   @ViewChild(ListCategoriesComponent, {static: true}) listCategoriesComponent: ListCategoriesComponent;
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;
-  public filterTaxClassification: TaxClassification;
+  public filtersTaxClassification: TaxClassification[];
   public fastPayment: PaymentMethod
 
   constructor(
@@ -189,11 +189,7 @@ export class AddSaleOrderComponent {
               this.backFinal();
             } else {
               this.transactionMovement = '' + this.transaction.type.transactionMovement;
-              if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                this.filterTaxClassification = TaxClassification.Withholding;
-              } else {
-                this.filterTaxClassification = TaxClassification.Perception;
-              }
+              this.filtersTaxClassification = [ TaxClassification.Withholding, TaxClassification.Perception ];
               this.lastQuotation = this.transaction.quotation;
 
               if(this.userCountry === 'MX' &&

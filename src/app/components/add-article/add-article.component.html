@@ -96,14 +96,6 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
-                    <input type="text" class="form-control" formControlName="quantityPerMeasure" name="quantityPerMeasure" id="quantityPerMeasure"
-                      [readonly]="readonly" />
-                    <div *ngIf="formErrors.quantityPerMeasure" class="alert alert-danger">
-                      {{ formErrors.quantityPerMeasure }}
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
                     <label for="unitOfMeasurement" class="control-label">Unidad de Medida:</label>
                     <select class="form-control" formControlName="unitOfMeasurement">
                       <option *ngFor="let unitOfMeasurement of unitsOfMeasurement"
@@ -115,6 +107,14 @@
                     </select>
                     <div *ngIf="formErrors.unitOfMeasurement" class="alert alert-danger">
                       {{ formErrors.unitOfMeasurement }}
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
+                    <input type="text" class="form-control" formControlName="quantityPerMeasure" name="quantityPerMeasure" id="quantityPerMeasure"
+                      [readonly]="readonly" />
+                    <div *ngIf="formErrors.quantityPerMeasure" class="alert alert-danger">
+                      {{ formErrors.quantityPerMeasure }}
                     </div>
                   </div>
                 </div>
@@ -170,7 +170,7 @@
                   </div>
                 </div>
                 <app-add-article-fields *ngIf="otherFieldsNumber" (eventAddArticleFields)="addArticleFields($event)" [fields]="otherFields" [location]="'Price'"></app-add-article-fields>
-                <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article" [otherFields]="otherFields" [articleTaxes]="taxes" [filterTaxClassification]="filterTaxClassification"></app-add-article-tax>
+                <app-add-article-tax (eventAddArticleTax)="addArticleTaxes($event)" [article]="article" [otherFields]="otherFields" [articleTaxes]="taxes" [filtersTaxClassification]="filtersTaxClassification"></app-add-article-tax>
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="costPrice" class="control-label">Precio de costo:</label>
