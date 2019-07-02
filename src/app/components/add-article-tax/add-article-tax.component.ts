@@ -33,7 +33,7 @@ export class AddArticleTaxComponent implements OnInit {
   @Input() article: Article;
   @Input() otherFields: ArticleFields[];
   @Input() articleTaxes: Taxes[] = new Array();
-  @Input() filterTaxClassification: TaxClassification;
+  @Input() filtersTaxClassification: TaxClassification[];
   @Input() transaction: Transaction;
   @Output() eventAddArticleTax: EventEmitter<Taxes[]> = new EventEmitter<Taxes[]>();
 
@@ -69,9 +69,25 @@ export class AddArticleTaxComponent implements OnInit {
     this.buildForm();
 
     let query;
-    if(this.filterTaxClassification) {
-      query = `where="classification":"${this.filterTaxClassification.toString()}"`;
+
+    if(this.filtersTaxClassification && this.filtersTaxClassification.length > 0) {
+      query = `where=`;
+      if(this.filtersTaxClassification && this.filtersTaxClassification.length === 1) {
+        query += `"classification":"${this.filtersTaxClassification[0].toString()}"`;
+      } else if(this.filtersTaxClassification && this.filtersTaxClassification.length > 1) {
+        let i: number = 0;
+        query += `"$or":[`;
+        for(let filterTaxClassification of this.filtersTaxClassification) {
+          if(i > 0) {
+            query += `,`;
+          }
+          query += `{"classification":"${filterTaxClassification.toString()}"}`;
+          i++;
+        }
+        query += `]`;
+      }
     }
+
     await this.getTaxes(query).then(
       taxes => {
         if(taxes) {

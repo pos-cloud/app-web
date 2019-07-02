@@ -79,7 +79,7 @@ export class AddArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
   public articleType: string;
-  public filterTaxClassification: TaxClassification = TaxClassification.Tax;
+  public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   public lastPricePurchase;
 
   public formErrors = {
