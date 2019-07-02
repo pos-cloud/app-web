@@ -691,7 +691,7 @@ export class AddArticleComponent implements OnInit {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.lastPricePurchase = result.movementsOfArticles[0].salePrice;
+          this.lastPricePurchase = result.movementsOfArticles[0].salePrice; 
         }
         this.loading = false;
       },
