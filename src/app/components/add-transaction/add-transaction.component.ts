@@ -71,7 +71,7 @@ export class AddTransactionComponent implements OnInit {
   public transactionDate: string;
   public userCountry: string;
   public showButtonCancelation: boolean;
-  public filterTaxClassification: TaxClassification = TaxClassification.Perception;
+  public filtersTaxClassification: TaxClassification[] = [ TaxClassification.Perception, TaxClassification.Withholding ];
 
   public formErrors = {
     'date': '',
