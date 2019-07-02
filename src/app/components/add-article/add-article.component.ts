@@ -688,10 +688,10 @@ export class AddArticleComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (!result || result.length === 0 || !result[0] || !result[0].movementsOfArticles || !result[0].movementsOfArticles[0]) {
+        if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
-          this.lastPricePurchase = result[0].movementsOfArticles[0].salePrice;
+          this.lastPricePurchase = result.movementsOfArticles[0].salePrice;
         }
         this.loading = false;
       },
