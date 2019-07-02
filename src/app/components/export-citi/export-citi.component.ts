@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -8,7 +8,6 @@ import 'moment/locale/es';
 
 import { TransactionService } from './../../services/transaction.service';
 import { UserService } from '../../services/user.service';
-import { ConfigService } from '../../services/config.service';
 
 import { TransactionMovement } from '../../models/transaction-type';
 import { Config } from 'app/app.config';
@@ -18,6 +17,7 @@ import { Config } from 'app/app.config';
   templateUrl: './export-citi.component.html',
   styleUrls: ['./export-citi.component.css']
 })
+
 export class ExportCitiComponent implements OnInit {
 
   public exportCitiForm: FormGroup;
