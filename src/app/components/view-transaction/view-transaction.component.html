@@ -191,7 +191,8 @@
                         <td>{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
                         <td>{{movementOfCash.number}}</td>
                         <td>{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY' }}</td>
-                        <td>{{movementOfCash.bank.name}}</td>
+                        <td *ngIf="movementOfCash.bank">{{movementOfCash.bank.name}}</td>
+                        <td *ngIf="movementOfCash.bank"></td>
                         <td>{{movementOfCash.observation}}</td>
                       </tr>
                       <tr align="center " *ngIf="movementsOfCashes.length === 0">
