@@ -268,9 +268,6 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sort = { name: 1 };
-
     // FILTRAMOS LA CONSULTA
     let match;
     if(this.companyForm.value.country) {
@@ -283,33 +280,27 @@ export class AddCompanyComponent  implements OnInit {
       match = { "country._id": { $oid: this.company.country }, operationType: { $ne: "D" } };
     }
 
-    
-
-    //match = JSON.parse(match);
-
     let project = {
         name: 1,
         operationType: 1,
         "country._id": 1
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
     this._stateService.getStates(
       project, // PROJECT
       match, // MATCH
-      sort, // SORT
-      group, // GROUP
-      //0, // LIMIT
-      //0 // SKIP
+      { name: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(
       result => {
-        if (result.states) {
-          this.loading = false;
+        this.loading = false;
+        if (result && result.states) {
           this.states = result.states;
-          
-        } 
+        } else {
+          this.states = new Array();
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -666,12 +657,6 @@ export class AddCompanyComponent  implements OnInit {
   public getCountries() : void {
     
     this.loading = true;
-
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { name: 1 };
-    
-    // FILTRAMOS LA CONSULTA
-    let match = { operationType: { $ne: "D" } };
     
     // CAMPOS A TRAER
     let project = {
@@ -679,27 +664,19 @@ export class AddCompanyComponent  implements OnInit {
       operationType: 1
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._countryService.getCountries(
       project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { operationType: { $ne: "D" } }, // MATCH
+      { name: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(result => {
-      if (result && result.countries && result.countries.length > 0) {
+      this.loading = false;
+      if (result && result.countries) {
         this.countries = result.countries;
-        //this.company.country = this.countries[0];
         this.getStates();
       }
-      this.loading = false;
     },
     error => {
       this.showMessage(error._body, 'danger', false);

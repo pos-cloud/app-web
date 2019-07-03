@@ -299,12 +299,12 @@ export class AddUserComponent  implements OnInit {
         0 // SKIP
     ).subscribe(
       result => {
+        this.loading = false;
         if (result && result.origins) {
           this.origins = result.origins;
         } else {
           this.origins = new Array();
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

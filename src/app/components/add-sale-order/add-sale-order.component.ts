@@ -244,30 +244,13 @@ export class AddSaleOrderComponent {
 
     return new Promise<CancellationType[]>((resolve, reject) => {
 
-      // ORDENAMOS LA CONSULTA
-      let sortAux = { order: 1 };
-
-      // FILTRAMOS LA CONSULTA
-      let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
-
-      // CAMPOS A TRAER
-      let project = {
-        "destination._id": 1,
-        "operationType" : 1
-      };
-
-      // AGRUPAMOS EL RESULTADO
-      let group = {};
-      let limit = 0;
-      let skip = 0;
-
       this._cancellationTypeService.getCancellationTypes(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+        { "destination._id": 1, "operationType" : 1 }, // PROJECT
+        { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } }, // MATCH
+        { order: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
       ).subscribe(result => {
         if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
           resolve(result.cancellationTypes);
@@ -985,30 +968,37 @@ export class AddSaleOrderComponent {
 
     this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
       result => {
-        if (result.status === 'err') {
-          let msn = '';
-          if (result.code && result.code !== '') {
-            msn += result.code + " - ";
+        let msn = '';
+        if(result) {
+          if (result.status === 'err') {
+            if (result.code && result.code !== '') {
+              msn += result.code + " - ";
+            }
+            if (result.message && result.message !== '') {
+              msn += result.message + ". ";
+            }
+            if (result.observationMessage && result.observationMessage !== '') {
+              msn += result.observationMessage + ". ";
+            }
+            if (result.observationMessage2 && result.observationMessage2 !== '') {
+              msn += result.observationMessage2 + ". ";
+            }
+            if (msn === '') {
+              msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+            }
+            this.showMessage(msn, 'info', true);
+          } else {
+            this.transaction.number = result.number;
+            this.transaction.CAE = result.CAE;
+            this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+            this.transaction.state = TransactionState.Closed;
+            this.finish();
           }
-          if (result.message && result.message !== '') {
-            msn += result.message + ". ";
-          }
-          if (result.observationMessage && result.observationMessage !== '') {
-            msn += result.observationMessage + ". ";
-          }
-          if (result.observationMessage2 && result.observationMessage2 !== '') {
-            msn += result.observationMessage2 + ". ";
-          }
+        } else {
           if (msn === '') {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
-        } else {
-          this.transaction.number = result.number;
-          this.transaction.CAE = result.CAE;
-          this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-          this.transaction.state = TransactionState.Closed;
-          this.finish();
         }
         this.loading = false;
       },

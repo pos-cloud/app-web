@@ -58,11 +58,11 @@ export class ListArticleStocksComponent implements OnInit {
   public filterValue: string;
 
   constructor(
-    public _articleStockService: ArticleStockService,
-    public _router: Router,
+    private _articleStockService: ArticleStockService,
+    private _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService
+    private _printerService: PrinterService
   ) {
     this.filters = new Array();
     for(let field of this.displayedColumns) {
@@ -225,15 +225,20 @@ export class ListArticleStocksComponent implements OnInit {
         0 // SKIP
     ).subscribe(
       result => {
-        this.totalCost = result.totalCostArticle;
-        this.totalRealStock = result.totalRealStock;
-        this.totalTotal = result.totalStockValued;
-
-        if (result.articleStocks) {
-          this.loading = false;
-          this.articleStocks = result.articleStocks;
-          this.totalItems = result.count;
-        } 
+        this.loading = false;
+        if(result && result[0] && result[0].articleStocks) {
+          this.totalCost = result[0].totalCostArticle;
+          this.totalRealStock = result[0].totalRealStock;
+          this.totalTotal = result[0].totalStockValued;
+          this.articleStocks = result[0].articleStocks;
+          this.totalItems = result[0].count;
+        } else {
+          this.totalCost = 0;
+          this.totalRealStock = 0;
+          this.totalTotal = 0;
+          this.articleStocks = new Array();
+          this.totalItems = 0;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);

@@ -300,32 +300,13 @@ export class AddTransactionComponent implements OnInit {
 
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
-    
-    // FILTRAMOS LA CONSULTA
-    let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
-    
-    // CAMPOS A TRAER
-    let project = {
-      "destination._id": 1,
-      "operationType" : 1
-    };
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._cancellationTypeService.getCancellationTypes(
-      project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { "destination._id": 1, "operationType" : 1 }, // PROJECT
+      { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } }, // MATCH
+      { order: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(result => {
       if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
         if(!this.transaction.type.requestArticles) {

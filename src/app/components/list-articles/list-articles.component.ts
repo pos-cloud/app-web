@@ -223,14 +223,24 @@ export class ListArticlesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result && result.articles) {
+        this.loading = false;
+        if(this.userType === 'pos') {
+          if (result && result && result.articles) {
             this.articles = result.articles;
             this.totalItems = result.count;
-        } else {
+          } else {
             this.articles = new Array();
             this.totalItems = 0;
+          }
+        } else {
+          if (result && result[0] && result[0].articles) {
+            this.articles = result[0].articles;
+            this.totalItems = result[0].count;
+          } else {
+            this.articles = new Array();
+            this.totalItems = 0;
+          }
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

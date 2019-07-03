@@ -81,7 +81,6 @@ export class ListMovementOfCashesComponent implements OnInit {
     let sortAux = { order: 1 };
     
     // FILTRAMOS LA CONSULTA
-
     let match = `{`;
     for(let i = 0; i < this.displayedColumns.length; i++) {
       let value = this.filters[this.displayedColumns[i]];
@@ -125,8 +124,6 @@ export class ListMovementOfCashesComponent implements OnInit {
       movementOfCashes: { $push: '$$ROOT' }
     };
 
-    let limit = 0;
-
     let page = 0;
     if(this.currentPage != 0) {
       page = this.currentPage - 1;
@@ -144,12 +141,16 @@ export class ListMovementOfCashesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.movementOfCashes) {
-          this.loading = false;
-          this.movementsOfCashes = result.movementOfCashes;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].movementOfCashes) {
+          this.movementsOfCashes = result[0].movementOfCashes;
+          this.totalItems = result[0].count;
           this.areMovementOfCashesEmpty = false;
-        } 
+        } else {
+          this.movementsOfCashes = new Array();
+          this.totalItems = 0;
+          this.areMovementOfCashesEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);

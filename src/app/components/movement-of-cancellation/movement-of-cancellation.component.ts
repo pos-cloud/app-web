@@ -99,9 +99,6 @@ export class MovementOfCancellationComponent implements OnInit {
 
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
-
     let match;
     // FILTRAMOS LA CONSULTA
     if(this.transactionOriginViewId) {
@@ -117,20 +114,13 @@ export class MovementOfCancellationComponent implements OnInit {
       "operationType" : 1
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._movementOfCancellation.getMovementsOfCancellations(
       project, // PROJECT
       match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { order: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(async result => {
       if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
         for (let index = 0; index < result.movementsOfCancellations.length; index++) {
@@ -196,12 +186,6 @@ export class MovementOfCancellationComponent implements OnInit {
 
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
-
-    // FILTRAMOS LA CONSULTA
-    let match = { "destination._id": { $oid: this.transactionDestination.type._id} , "operationType": { "$ne": "D" } };
-
     // CAMPOS A TRAER
     let project = {
       "origin._id": 1,
@@ -209,20 +193,13 @@ export class MovementOfCancellationComponent implements OnInit {
       "operationType" : 1
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._cancellationTypeService.getCancellationTypes(
       project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { "destination._id": { $oid: this.transactionDestination.type._id} , "operationType": { "$ne": "D" } }, // MATCH
+      { order: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(result => {
       if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
         this.cancellationTypes = result.cancellationTypes;
@@ -305,27 +282,23 @@ export class MovementOfCancellationComponent implements OnInit {
         transactions: { $push: "$$ROOT" }
     };
 
-    let skip = 0; // SKIP
-    let limit = 0; // LIMIT
-
     this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+        0, // LIMIT
+        0 // SKIP
     ).subscribe(
       result => {
+        this.loading = false;
         if (result && result[0].transactions) {
             this.transactions = result[0].transactions;
             this.totalItems = result[0].count;
         } else {
-            this.loading = false;
-            this.transactions = null;
+            this.transactions = new Array();
             this.totalItems = 0;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

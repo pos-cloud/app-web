@@ -688,8 +688,10 @@ export class AddArticleComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result && result.movementsOfArticles && result.movementsOfArticles.length > 0) {
-          this.lastPricePurchase = result.movementsOfArticles[0].salePrice; 
+        if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles[0]) {
+          this.lastPricePurchase = result[0].movementsOfArticles[0].salePrice; 
+        } else {
+          this.lastPricePurchase = 0;
         }
       },
       error => {

@@ -126,12 +126,16 @@ export class ListBankComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.banks) {
-          this.loading = false;
-          this.banks = result.banks;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].banks) {
+          this.banks = result[0].banks;
+          this.totalItems = result[0].count;
           this.relationOfBankEmpty = false;
-        } 
+        } else {
+          this.banks = new Array();
+          this.totalItems = 0;
+          this.relationOfBankEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
