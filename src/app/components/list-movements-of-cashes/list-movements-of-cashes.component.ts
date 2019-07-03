@@ -149,6 +149,11 @@ export class ListMovementOfCashesComponent implements OnInit {
     );
   }
 
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getMovementOfCashesV2();
+  }
+
   public getMovementOfCashes(): void {
 
     this.loading = true;
