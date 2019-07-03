@@ -172,7 +172,7 @@
             <tbody>
               <tr *ngFor="let movementOfCash of movementsOfCashes | orderBy: orderTerm: propertyTerm
                                                                   | paginate: { itemsPerPage: itemsPerPage,
-                                                                                currentPage: p,
+                                                                                currentPage: currentPage,
                                                                                 totalItems: totalItems
                                                                               }"
                   >

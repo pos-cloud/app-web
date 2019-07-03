@@ -119,11 +119,21 @@ export class ListMovementOfCashesComponent implements OnInit {
     };
 
     // AGRUPAMOS EL RESULTADO
-    let group = {};
+    let group = {
+      _id: null,
+      count: { $sum: 1 },
+      movementOfCashes: { $push: '$$ROOT' }
+    };
 
     let limit = 0;
 
-    let skip = 0;
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+                0 // SKIP
 
     this._movementOfCashService.getMovementsOfCashesV2(
         project, // PROJECT
