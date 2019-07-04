@@ -64,6 +64,7 @@ import { ListCategoriesComponent } from '../list-categories/list-categories.comp
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
 import { TaxClassification } from 'app/models/tax';
+import { ClaimService } from 'app/services/claim.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -137,7 +138,8 @@ export class AddSaleOrderComponent {
     public _relationTypeService: RelationTypeService,
     public _movementOfCancellationService : MovementOfCancellationService,
     public _cancellationTypeService: CancellationTypeService,
-    public _currencyService: CurrencyService
+    public _currencyService: CurrencyService,
+    private _claimService: ClaimService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -987,6 +989,7 @@ export class AddSaleOrderComponent {
               msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
             }
             this.showMessage(msn, 'info', true);
+            this.saveClaim(msn);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1008,6 +1011,13 @@ export class AddSaleOrderComponent {
       }
     )
   }
+  
+  public saveClaim(message: string): void {
+    
+    this.loading = true;
+
+    this._claimService.saveClaim(message).subscribe();
+  }
 
   public validateElectronicTransactionMX(): void {
 
@@ -1027,6 +1037,7 @@ export class AddSaleOrderComponent {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
+          this.saveClaim(msn);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
