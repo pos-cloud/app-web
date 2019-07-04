@@ -65,6 +65,7 @@ import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
 import { TaxClassification } from 'app/models/tax';
 import { ClaimService } from 'app/services/claim.service';
+import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -1016,7 +1017,13 @@ export class AddSaleOrderComponent {
     
     this.loading = true;
 
-    this._claimService.saveClaim(message).subscribe();
+    let claim: Claim = new Claim();
+    claim.description = message;
+    claim.name = 'ERROR FACTURA ELECTRÓNICA';
+    claim.priority = ClaimPriority.High;
+    claim.type = ClaimType.Err;
+
+    this._claimService.saveClaim(claim).subscribe();
   }
 
   public validateElectronicTransactionMX(): void {
