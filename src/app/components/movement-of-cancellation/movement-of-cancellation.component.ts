@@ -14,7 +14,7 @@ import { CompanyService } from 'app/services/company.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { MovementOfArticle } from 'app/models/movement-of-article';
 import { MovementOfCashService } from 'app/services/movement-of-cash.service';
-import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';

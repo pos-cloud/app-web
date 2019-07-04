@@ -30,7 +30,7 @@ import { UserService } from 'app/services/user.service';
 import { Config } from 'app/app.config';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
-import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 import { CancellationTypeService } from 'app/services/cancellation-type.service';
 import { TaxClassification } from 'app/models/tax';
 

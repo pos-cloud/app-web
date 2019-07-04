@@ -54,7 +54,7 @@ import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { RelationTypeService } from 'app/services/relation-type.service';
 import { RelationType } from 'app/models/relation-type';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
-import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 import { CancellationTypeService } from 'app/services/cancellation-type.service';
 import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
