@@ -255,8 +255,12 @@ export class CancellationTypeComponent implements OnInit {
     if(this.originSelected.modifyStock && destinationSelected.modifyStock) {
       if(this.originSelected.stockMovement === destinationSelected.stockMovement){
         valid = false
-        this.showMessage('No se puede relacionar transacciones con el mismo movimiento de stock','danger',false);
+        this.showMessage('No se puede relacionar transacciones con el mismo movimiento de stock', 'danger', false);
       }
+    }
+
+    if(destinationSelected._id === this.originSelected._id) {valid = false
+      this.showMessage('No se puede cancelar una transacción con otra del mismo tipo', 'danger', false);
     }
     
     return valid;

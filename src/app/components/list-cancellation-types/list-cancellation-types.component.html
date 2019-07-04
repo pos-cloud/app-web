@@ -41,7 +41,7 @@
         </thead>
         <tbody>
           <tr align="center" *ngIf="loading">
-            <td colspan="4">Cargando...</td>
+            <td colspan="5">Cargando...</td>
           </tr>
           <tr *ngFor="let cancellationType of cancellationTypes | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -70,7 +70,7 @@
            
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
-            <td colspan="16">No se encontraron cancelaciones</td>
+            <td colspan="5">No se encontraron cancelaciones</td>
           </tr>
         </tbody>
       </table>

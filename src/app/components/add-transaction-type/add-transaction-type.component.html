@@ -1,7 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title" *ngIf="operation==='add'">Agregar Tipo de Transacción</h4>
-  <h4 class="modal-title" *ngIf="operation==='update'">Editar Tipo de Transacción {{transactionType.name}}</h4>
-  <h4 class="modal-title" *ngIf="operation==='view'">Tipo de Transacción {{transactionType.name}}</h4>
+  <h4 class="modal-title">Tipo de Transacción <span *ngIf="transactionType">{{transactionType.name}}</span></h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -77,9 +75,9 @@
                     <label for="currentAccount" class="control-label">Cuenta Corriente</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="currentAccount">
-                        <option value="Si" [selected]="opCurrentAccount === 'Si'" [disabled]="readonly">Si</option>
-                        <option value="No" [selected]="opCurrentAccount === 'No'" [disabled]="readonly">No</option>
-                        <option value="Cobra" [selected]="opCurrentAccount === 'Cobra'" [disabled]="readonly">Cobra/Paga</option>
+                        <option value="Si" [selected]="transactionType.currentAccount.toString() === 'Si'" [disabled]="readonly">Si</option>
+                        <option value="No" [selected]="transactionType.currentAccount.toString() === 'No'" [disabled]="readonly">No</option>
+                        <option value="Cobra" [selected]="transactionType.currentAccount.toString() === 'Cobra'" [disabled]="readonly">Cobra/Paga</option>
                       </select>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Afecta la cuenta corriente la transacción?">
                         <b>?</b>
@@ -91,8 +89,8 @@
                     <div class="input-group">
                       <select class="form-control" formControlName="movement">
                         <option [ngValue]="null" [selected]="!transactionType || !transactionType.movement" [disabled]="readonly"></option>
-                        <option value="Entrada" [selected]="opCashMovement === 'Entrada'" [disabled]="readonly">Entrada</option>
-                        <option value="Salida" [selected]="opCashMovement === 'Salida'" [disabled]="readonly">Salida</option>
+                        <option value="Entrada" [selected]="transactionType.movement.toString() === 'Entrada'" [disabled]="readonly">Entrada</option>
+                        <option value="Salida" [selected]="transactionType.movement.toString() === 'Salida'" [disabled]="readonly">Salida</option>
                       </select>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Qué tipo de movimiento de dinero realiza?">
                         <b>?</b>
@@ -146,7 +144,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="userCountry === 'MX'">
                   <div class="form-group col-md-12">
                     <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
                     <div class="input-group">
@@ -401,11 +399,11 @@
                     <label for="entryAmount" class="control-label">Monto a editar</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="entryAmount">
-                          <option [ngValue]="null" [selected]="!transactionType || !transactionType.entryAmount" [disabled]="readonly"></option>
-                        <option value="Costo sin IVA" [disabled]="readonly">Costo sin IVA</option>
-                        <option value="Costo con IVA" [disabled]="readonly">Costo con IVA</option>
-                        <option value="Venta sin IVA" [disabled]="readonly">Venta sin IVA</option>
-                        <option value="Venta con IVA" [disabled]="readonly">Venta con IVA</option>
+                        <option [ngValue]="null" [selected]="!transactionType.entryAmount" [disabled]="readonly"></option>
+                        <option value="Costo sin IVA" [selected]="transactionType.entryAmount.toString() === 'Costo sin IVA'" [disabled]="readonly">Costo sin IVA</option>
+                        <option value="Costo con IVA" [selected]="transactionType.entryAmount.toString() === 'Costo con IVA'" [disabled]="readonly">Costo con IVA</option>
+                        <option value="Venta sin IVA" [selected]="transactionType.entryAmount.toString() === 'Venta sin IVA'" [disabled]="readonly">Venta sin IVA</option>
+                        <option value="Venta con IVA" [selected]="transactionType.entryAmount.toString() === 'Venta con IVA'" [disabled]="readonly">Venta con IVA</option>
                       </select>
                       <button type="button"
                               class="btn btn-secondary"
@@ -507,9 +505,9 @@
                     <div class="input-group">
                       <select class="form-control" formControlName="stockMovement">
                         <option [ngValue]="null" [selected]="!transactionType || !transactionType.stockMovement" [disabled]="readonly"></option>
-                        <option value="Entrada" [selected]="opStockMovement === 'Entrada'" [disabled]="readonly">Entrada</option>
-                        <option value="Salida" [selected]="opStockMovement === 'Salida'" [disabled]="readonly">Salida</option>
-                        <option value="Inventario" [selected]="opStockMovement === 'Inventario'" [disabled]="readonly">Inventario</option>
+                        <option value="Entrada" [selected]="transactionType.stockMovement.toString() === 'Entrada'" [disabled]="readonly">Entrada</option>
+                        <option value="Salida" [selected]="transactionType.stockMovement.toString() === 'Salida'" [disabled]="readonly">Salida</option>
+                        <option value="Inventario" [selected]="transactionType.stockMovement.toString() === 'Inventario'" [disabled]="readonly">Inventario</option>
                       </select>
                       <button type="button"
                               class="btn btn-secondary"
@@ -623,7 +621,7 @@
             </div>
           </ng-template>
         </ngb-tab>
-        <ngb-tab *ngIf="operation === 'view' || operation === 'update'" title="Auditoría">
+        <ngb-tab *ngIf="transactionType" title="Auditoría">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
               <div class="form-group col-md-12">
