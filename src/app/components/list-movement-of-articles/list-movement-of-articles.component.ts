@@ -22,6 +22,7 @@ import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
   templateUrl: './list-movement-of-articles.component.html',
   styleUrls: ['./list-movement-of-articles.component.css']
 })
+
 export class ListMovementOfArticlesComponent implements OnInit {
 
   public articleSelected: Article;

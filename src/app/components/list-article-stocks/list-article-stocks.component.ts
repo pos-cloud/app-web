@@ -186,8 +186,8 @@ export class ListArticleStocksComponent implements OnInit {
       }
     }
 
-    match += `"operationType": { "$ne": "D" } , "article.operationType": { "$ne": "D" } }`;
-    
+    match += `"operationType": { "$ne": "D" } , "article.containsVariants": false, "article.operationType": { "$ne": "D" } }`;
+
     match = JSON.parse(match);
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
@@ -202,6 +202,7 @@ export class ListArticleStocksComponent implements OnInit {
       'article.make.description' : 1,
       'article.category.description' : 1,
       'article.operationType' : 1,
+      'article.containsVariants' : 1,
       'branch.number' : { $toString: '$branch.number' },
       'deposit.name' : 1,
     }
