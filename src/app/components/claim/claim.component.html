@@ -34,21 +34,32 @@
 			</div>
 			<div class="row">
 				<div class="form-group col-md-12">
-					<label for="claim" class="control-label">Mensaje:</label>
-					<textarea type="text" class="form-control" formControlName="claim" name="claim" id="claim" rows="2" [focus]="focusEvent" ></textarea>
-					<div *ngIf="formErrors.claim" class="alert alert-danger">
-						{{ formErrors.claim }}
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
-					<label for="name" class="control-label">¿Tu nombre?:</label>
+					<label for="name" class="control-label">Asunto:</label>
 					<div class="input-group">
 						<input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
 					</div>
 					<div *ngIf="formErrors.name" class="alert alert-danger">
 						{{ formErrors.name }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="description" class="control-label">Comentario:</label>
+					<textarea type="text" class="form-control" formControlName="description" name="description" id="description" rows="2" [focus]="focusEvent" ></textarea>
+					<div *ngIf="formErrors.description" class="alert alert-danger">
+						{{ formErrors.description }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-md-12">
+					<label for="author" class="control-label">¿Tu nombre?:</label>
+					<div class="input-group">
+						<input type="text" class="form-control" formControlName="author" name="author" id="author" [readonly]="readonly"/>
+					</div>
+					<div *ngIf="formErrors.author" class="alert alert-danger">
+						{{ formErrors.author }}
 					</div>
 				</div>
 			</div>

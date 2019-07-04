@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ClaimService } from 'app/services/claim.service';
+import { ClaimPriority, ClaimType, Claim } from 'app/models/claim';
 
 @Component({
   selector: 'app-claim',
@@ -19,19 +20,23 @@ export class ClaimComponent  implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public claim: string = '';
-  public priorities: string[] = [ 'Baja', 'Media', 'Alta' ];
-  public types: string[] = [ 'Sugerencia', 'Mejora', 'Error', 'Nueva Implementación' ];
+  public claim: Claim;
+  public priorities: ClaimPriority[] = [ ClaimPriority.Low, ClaimPriority.Half, ClaimPriority.High ];
+  public types: ClaimType[] = [ ClaimType.Suggestion, ClaimType.Improvement, ClaimType.Err, ClaimType.Implementation ];
 
   public formErrors = {
-    'claim': '',
+    'name': '',
+    'description': '',
     'priority': '',
     'type': '',
-    'name': ''
+    'author': ''
   };
 
   public validationMessages = {
-    'claim': {
+    'name': {
+      'required': 'Este campo es requerido.',
+    },
+    'description': {
       'required': 'Este campo es requerido.',
     },
     'priority': {
@@ -40,7 +45,7 @@ export class ClaimComponent  implements OnInit {
     'type': {
       'required': 'Este campo es requerido.',
     },
-    'name': {
+    'author': {
       'required': 'Este campo es requerido.',
     }
   };
@@ -51,7 +56,9 @@ export class ClaimComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { }
+  ) {
+    this.claim = new Claim();
+  }
 
   ngOnInit(): void {
 
@@ -67,22 +74,26 @@ export class ClaimComponent  implements OnInit {
   public buildForm(): void {
 
     this.claimForm = this._fb.group({
-      'claim': ['', [
+      'name': [this.claim.name, [
           Validators.required
         ]
       ],
-      'priority': [this.priorities[0], [
+      'description': [this.claim.description, [
           Validators.required
         ]
       ],
-      'type': [this.types[0], [
+      'priority': [this.claim.priority, [
           Validators.required
         ]
       ],
-      'name': ['', [
+      'type': [this.claim.type, [
           Validators.required
         ]
-      ]
+      ],
+      'author': [this.claim.author, [
+          Validators.required
+        ]
+      ],
     });
 
     this.claimForm.valueChanges
@@ -112,6 +123,7 @@ export class ClaimComponent  implements OnInit {
 
   public addClaim(): void {
     this.loading = true;
+    this.claim = this.claimForm.value;
     this.saveClaim();
   }
 
@@ -119,15 +131,14 @@ export class ClaimComponent  implements OnInit {
     
     this.loading = true;
 
-    let message = "{" + this.claimForm.value.type +"} " + "{" + this.claimForm.value.priority +"} " + this.claimForm.value.claim + " - " + this.claimForm.value.name;
-    
-    this._claimService.saveClaim(message).subscribe(
+    this._claimService.saveClaim(this.claim).subscribe(
       result => {
         this.loading = false;
-        if (!result.claimId) {
+        if (!result.claim) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         } else {
-          this.showMessage(`El informe ha sido recibido correctamente, estaremos en contacto contigo pronto. Tú nro de reclamo es ${result.claimId}, débes guardarlo para consultar el estado del mismo.`, 'success', false);
+          this.claim = result.claim;
+          this.showMessage(`El informe ha sido recibido correctamente, estaremos en contacto contigo pronto. Tú nro de reclamo es ${this.claim._id}, débes guardarlo para consultar el estado del mismo.`, 'success', false);
           this.buildForm();
         }
       },

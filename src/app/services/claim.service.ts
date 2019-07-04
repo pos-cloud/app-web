@@ -6,6 +6,7 @@ import { map, catchError } from "rxjs/operators";
 
 import { Config } from './../app.config';
 import { AuthService } from './auth.service';
+import { Claim } from 'app/models/claim';
 
 @Injectable()
 export class ClaimService {
@@ -15,7 +16,7 @@ export class ClaimService {
 		private _authService: AuthService
 	) { }
 
-	public saveClaim(claim: string): Observable<any> {
+	public saveClaim(claim: Claim): Observable<any> {
 
         const URL = `${Config.apiURL}claim`;
 
@@ -23,7 +24,7 @@ export class ClaimService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
         console.log(claim);
-        return this._http.post(URL, { claim: claim }, {
+        return this._http.post(URL, claim, {
             headers: headers
         }).pipe(
             map(res => {
