@@ -78,7 +78,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     this.loading = true;
 
     // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
+    let sortAux = { expirationDate: 1 };
     
     // FILTRAMOS LA CONSULTA
     let match = `{`;
