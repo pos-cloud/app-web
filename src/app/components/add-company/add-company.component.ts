@@ -29,7 +29,6 @@ import { ConfigService } from 'app/services/config.service';
 import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
-import { CompanyNews } from 'app/models/company-news';
 
 @Component({
   selector: 'app-add-company',
@@ -631,7 +630,6 @@ export class AddCompanyComponent  implements OnInit {
 
   public saveCompany(): void {
 
-
     this.loading = true;
 
     this._companyService.saveCompany(this.company).subscribe(
@@ -640,10 +638,14 @@ export class AddCompanyComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
-          this.showMessage("La empresa se ha añadido con éxito.", 'success', false);
-          this.company = new Company ();
-          this.buildForm();
-          this.getLastCompany();
+          if(this.userType === 'pos') {
+            this.activeModal.close({ company: this.company });
+          } else {
+            this.showMessage("La empresa se ha añadido con éxito.", 'success', false);
+            this.company = new Company ();
+            this.buildForm();
+            this.getLastCompany();
+          }
         }
         this.loading = false;
       },

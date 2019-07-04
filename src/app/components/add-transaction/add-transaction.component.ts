@@ -383,10 +383,9 @@ export class AddTransactionComponent implements OnInit {
         modalRef.result.then(
           (result) => {
             if (result.company) {
-              if (!transaction) {
-                transaction = new Transaction();
-              }
               transaction.company = result.company;
+              this.companyName = transaction.company.name;
+              this.setValuesForm();
             }
           }, (reason) => {
 
