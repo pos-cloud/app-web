@@ -24,7 +24,7 @@ export class ClaimService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
         console.log(claim);
-        return this._http.post(URL, claim, {
+        return this._http.post(URL, { claim: claim }, {
             headers: headers
         }).pipe(
             map(res => {
