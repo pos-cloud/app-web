@@ -243,8 +243,20 @@ export class StatisticsComponent implements OnInit {
 
     this._transactionService.getTotalTransactionsBetweenDates(query).subscribe(
       result => {
-        if (!result || result.length <= 0) {
-          this.loading = false;
+        this.loading = false;
+        if (result && result[0]) {
+          switch (op) {
+            case "Sales":
+              this.totalSales = result[0].total;
+              break;
+            case "Collections":
+              this.totalCollections = result[0].total;
+              break;
+            case "Returns":
+              this.totalReturns = result[0].total;
+              break;
+          }
+        } else {
           switch (op) {
             case "Sales":
               this.totalSales = 0;
@@ -254,20 +266,6 @@ export class StatisticsComponent implements OnInit {
               break;
             case "Returns":
               this.totalReturns = 0;
-              break;
-          }
-        } else {
-          this.hideMessage();
-          this.loading = false;
-          switch (op) {
-            case "Sales":
-              this.totalSales = result.total;
-              break;
-            case "Collections":
-              this.totalCollections = result.total;
-              break;
-            case "Returns":
-              this.totalReturns = result.total;
               break;
           }
         }

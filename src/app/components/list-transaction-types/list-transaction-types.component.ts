@@ -125,8 +125,11 @@ export class ListTransactionTypesComponent implements OnInit {
         }
       }
     );
-    this.getTransactionTypes();
-    this.getTransactionTypesV2();
+    if(this.userType === 'report') {
+      this.getTransactionTypesV2();
+    } else {
+      this.getTransactionTypes();
+    }
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
@@ -186,8 +189,6 @@ export class ListTransactionTypesComponent implements OnInit {
     
     this.loading = true;
 
-    let sort = { "type.name": 1 };
-
     let movement;
     if(this.pathLocation[2] === "venta") {
       movement = "Venta"
@@ -239,12 +240,13 @@ export class ListTransactionTypesComponent implements OnInit {
     this._transactionService.getTransactionsV2(
         project, // PROJECT
         match, // MATCH
-        sort, // SORT
+        { "type.name": 1 }, // SORT
         group, // GROUP
         0, // LIMIT
         0 // SKIP
     ).subscribe(
       result => {
+        this.loading = false;
         if (result && result.length > 0) {
           this.items = result;
           this.areItemsEmpty = false;
@@ -253,7 +255,6 @@ export class ListTransactionTypesComponent implements OnInit {
           this.areItemsEmpty = true;
         }
         this.calculateTotal();
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

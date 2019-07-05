@@ -48,11 +48,6 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() operation: string;
   public userCountry: string = 'AR';
 
-  // OPCIONES FORMULARIO
-  public opCurrentAccount: string = '';
-  public opCashMovement: string = '';
-  public opStockMovement: string = '';
-
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -97,16 +92,6 @@ export class AddTransactionTypeComponent implements OnInit {
     this.userType = pathLocation[1];
     if(!this.transactionType) {
       this.transactionType = new TransactionType();
-    } else {
-      if (this.transactionType.currentAccount) {
-        this.opCurrentAccount = this.transactionType.currentAccount.toString();
-      }
-      if (this.transactionType.movement) {
-        this.opCashMovement = this.transactionType.movement.toString();
-      }
-      if (this.transactionType.stockMovement) {
-        this.opStockMovement = this.transactionType.stockMovement.toString();
-      }
     }
     this.buildForm();
     this.setValueForm();
@@ -218,16 +203,16 @@ export class AddTransactionTypeComponent implements OnInit {
       'labelPrint': [this.transactionType.labelPrint, [
         ]
       ],
-      'currentAccount': [this.transactionType.currentAccount, [
+      'currentAccount': [this.transactionType.currentAccount.toString(), [
         ]
       ],
-      'movement': [this.transactionType.movement, [
+      'movement': [this.transactionType.movement.toString(), [
         ]
       ],
       'modifyStock': [this.transactionType.modifyStock, [
         ]
       ],
-      'stockMovement': [this.transactionType.stockMovement, [
+      'stockMovement': [this.transactionType.stockMovement.toString(), [
         ]
       ],
       'requestArticles': [this.transactionType.requestArticles, [
@@ -296,7 +281,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'showPrices': [this.transactionType.showPrices, [
         ]
       ],
-      'entryAmount': [this.transactionType.entryAmount, [
+      'entryAmount': [this.transactionType.entryAmount.toString(), [
         ]
       ],
       'allowEdit': [this.transactionType.allowEdit, [
@@ -436,9 +421,9 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
     if (this.transactionType.showPrices === undefined) this.transactionType.showPrices = true;
     if(this.transactionType.transactionMovement === TransactionMovement.Sale) {
-      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+      if (!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
     } else {
-      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
+      if (!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;

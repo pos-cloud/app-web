@@ -73,9 +73,6 @@ export class ReportBirthdayComponent implements OnInit {
 
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sortAux = { birthday: 1 };
-
     // FILTRAMOS LA CONSULTA
     let match: any = `{ "operationType" : { "$ne" : "D" }`;
 
@@ -131,25 +128,21 @@ export class ReportBirthdayComponent implements OnInit {
       companies: { $push: "$$ROOT" }
     };
 
-    let limit = 0;
-    let skip = 0;
-
     this._companyService.getCompaniesV2(
       project, // PROJECT
       match, // MATCH
-      sortAux, // SORT
+      { birthday: 1 }, // SORT
       group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(
       result => {
-        if (result && result.companies) {
-          this.companies = result.companies;
-        } else {
-          this.loading = false;
-          this.companies = null;
-        }
         this.loading = false;
+        if (result && result[0] && result[0].companies) {
+          this.companies = result[0].companies;
+        } else {
+          this.companies = new Array();
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);

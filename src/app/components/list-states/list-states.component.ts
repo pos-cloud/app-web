@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { StateService } from '../../services/state.service'
 import { State } from '../../models/state'
 import { StateComponent } from '../state/state.component'
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Config } from 'app/app.config';
 
 @Component({
@@ -19,7 +19,7 @@ export class ListStatesComponent implements OnInit {
   public userType: string;
   public states: State[] = new Array();
   public relationOfStateEmpty: boolean = true;
-  public orderTerm: string[] = ['-code'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -124,12 +124,16 @@ export class ListStatesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.states) {
-          this.loading = false;
-          this.states = result.states;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].states) {
+          this.states = result[0].states;
+          this.totalItems = result[0].count;
           this.relationOfStateEmpty = false;
-        } 
+        } else {
+          this.states = new Array();
+          this.totalItems = 0;
+          this.relationOfStateEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);

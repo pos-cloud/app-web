@@ -201,14 +201,6 @@ export class PrintComponent implements OnInit {
 
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sortAux = { description: 1 };
-
-    // FILTRAMOS LA CONSULTA
-
-    let match = `{"operationType": { "$ne": "D" } , "article.operationType": { "$ne": "D" } }`;
-    match = JSON.parse(match);
-
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
       "realStock" : 1,
@@ -222,22 +214,16 @@ export class PrintComponent implements OnInit {
       "operationType" : 1,
     }
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let skip = 0; // SKIP
-    let limit = 0;
-
     this._articleStockService.getArticleStocksV2(
         project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        skip, // LIMIT
-        limit // SKIP
+        { operationType: { $ne: 'D' } ,'article.operationType': { $ne: 'D' } }, // MATCH
+        { description: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
     ).subscribe(
       result => {
-        if (result.articleStocks) {
+        if (result && result.articleStocks) {
           this.toPrintInventario(result.articleStocks);
         } 
       },
@@ -955,12 +941,6 @@ export class PrintComponent implements OnInit {
 
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sort = {};
-
-    // FILTRAMOS LA CONSULTA
-    let match = { type: ArticleType.Final, operationType: { $ne: "D" } };
-
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
       type:1,
@@ -971,27 +951,22 @@ export class PrintComponent implements OnInit {
       "make.description": 1,
       operationType: 1,
     }
-
-    // AGRUPAMOS EL RESULTADO
-    let group = { };
-    let skip = 0;
-    let limit = 0;
     
     this._articleService.getArticlesV2(
         project, // PROJECT
-        match, // MATCH
-        sort, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+        { type: ArticleType.Final, operationType: { $ne: "D" } }, // MATCH
+        { description: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
     ).subscribe(
       result => {
+        this.loading = false;
         if (result && result.articles) {
             this.articles = result.articles;
         } else {
             this.articles = null;
         }
-        this.loading = false;
         this.printPriceList();
       },
       error => {

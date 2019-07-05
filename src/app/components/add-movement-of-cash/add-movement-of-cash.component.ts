@@ -295,15 +295,12 @@ export class AddMovementOfCashComponent implements OnInit {
       this.paymentChange = '0.00';
     }
 
-   //this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     for(let type of this.paymentMethods) {
       if (type._id.toString() === this.movementOfCashForm.value.paymentMethod) {
         this.paymentMethodSelected = type;
         this.movementOfCash.type = type;
       }
     }
-
-    //this.paymentMethodSelected =  this.movementOfCashForm.value.paymentMethod;
     
     this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
   }
@@ -311,12 +308,6 @@ export class AddMovementOfCashComponent implements OnInit {
   public getBanks() {
     
     this.loading = true;
-
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
-    
-    // FILTRAMOS LA CONSULTA
-    let match = { "operationType": { "$ne": "D" } };
     
     // CAMPOS A TRAER
     let project = {
@@ -325,29 +316,20 @@ export class AddMovementOfCashComponent implements OnInit {
       "operationType": 1,
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._bankService.getBanks(
       project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { "operationType": { "$ne": "D" } }, // MATCH
+      { order: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(result => {
+      this.loading = false;
       if (result && result.banks) {
         this.banks = result.banks;
       } else {
-        this.showMessage("No se encontraron paises", 'danger', false);
-        this.loading = true;
+        this.banks = new Array();
       }
-      this.loading = false;
-
     },
     error => {
       this.showMessage(error._body, 'danger', false);

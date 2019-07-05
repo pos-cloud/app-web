@@ -31,8 +31,10 @@ export class ListCancellationTypeComponent implements OnInit {
   public displayedColumns = [
     "origin.name",
     "origin.transactionMovement",
+    "origin.operationType",
     "destination.name",
     "destination.transactionMovement",
+    "destination.operationType",
     "operationType"
   ];
   public filters: any[];
@@ -79,7 +81,9 @@ export class ListCancellationTypeComponent implements OnInit {
       }
     }
 
-    match += `"operationType": { "$ne": "D" } }`;
+    match += `"operationType": { "$ne": "D" },
+              "origin.operationType":{ "$ne": "D" },
+              "destination.operatioype": { "$ne": "D" } }`;
 
     match = JSON.parse(match);
 
@@ -122,12 +126,16 @@ export class ListCancellationTypeComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.cancellationTypes) {
-          this.loading = false;
-          this.cancellationTypes = result.cancellationTypes;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].cancellationTypes) {
+          this.cancellationTypes = result[0].cancellationTypes;
+          this.totalItems = result[0].count;
           this.relationOfCancellationEmpty = false;
-        } 
+        } else {
+          this.cancellationTypes = new Array();
+          this.totalItems = 0;
+          this.relationOfCancellationEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
