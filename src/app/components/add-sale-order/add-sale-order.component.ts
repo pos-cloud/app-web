@@ -1019,9 +1019,10 @@ export class AddSaleOrderComponent {
 
     let claim: Claim = new Claim();
     claim.description = message;
-    claim.name = 'ERROR FACTURA ELECTRÓNICA';
+    claim.name = 'ERROR FE';
     claim.priority = ClaimPriority.High;
     claim.type = ClaimType.Err;
+    claim.listName = 'ERRORES 500';
 
     this._claimService.saveClaim(claim).subscribe();
   }

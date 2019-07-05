@@ -139,6 +139,7 @@ export class ClaimComponent  implements OnInit {
         } else {
           this.claim = result.claim;
           this.showMessage(`El informe ha sido recibido correctamente, estaremos en contacto contigo pronto. Tú nro de reclamo es ${this.claim._id}, débes guardarlo para consultar el estado del mismo.`, 'success', false);
+          this.claim = new Claim();
           this.buildForm();
         }
       },
