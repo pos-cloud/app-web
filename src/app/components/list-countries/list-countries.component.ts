@@ -56,7 +56,9 @@ export class ListCountriesComponent implements OnInit {
     this.getCountries()
   }
 
-  public async importCountry() {
+  public async importCountries() {
+
+    this.loading = true;
 
     this._configService.getCountry().subscribe(
       async result => {
@@ -89,10 +91,10 @@ export class ListCountriesComponent implements OnInit {
             }
           }
           if(err && err !== '') {
+            this.loading = false;
             this.showMessage(err, "danger", true);
           }
         }
-        this.loading = false;
         this.refresh();
       }
     );

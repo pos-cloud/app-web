@@ -267,16 +267,11 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
 
-    // FILTRAMOS LA CONSULTA
     let match;
     if(this.companyForm.value.country) {
-      if(this.companyForm.value.country) {
-        match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
-      } else {
-        match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
-      }
-    } else {
-      match = { "country._id": { $oid: this.company.country }, operationType: { $ne: "D" } };
+      match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
+    } else if (this.company.state) {
+      match = { "country._id": { $oid: this.company.state._id }, operationType: { $ne: "D" } };
     }
 
     let project = {
@@ -677,7 +672,9 @@ export class AddCompanyComponent  implements OnInit {
       this.loading = false;
       if (result && result.countries) {
         this.countries = result.countries;
-        this.getStates();
+        if(this.company.state) {
+          this.getStates();
+        }
       }
     },
     error => {
