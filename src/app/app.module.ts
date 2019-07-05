@@ -240,6 +240,9 @@ import { OriginService } from './services/origin.service';
 import { OriginComponent } from './components/origin/origin.component';
 import { SelectBranchComponent } from './components/select-branch/select-branch.component';
 import { SelectOriginComponent } from './components/select-origin/select-origin.component';
+import { TransportComponent } from './components/transport/transport.component';
+import { TransportService } from './services/transport.service';
+import { ListTransportComponent } from './components/list-transports/list-transports.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -410,7 +413,9 @@ import { SelectOriginComponent } from './components/select-origin/select-origin.
     ListOriginsComponent,
     OriginComponent,
     SelectBranchComponent,
-    SelectOriginComponent
+    SelectOriginComponent,
+    TransportComponent,
+    ListTransportComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -567,7 +572,8 @@ import { SelectOriginComponent } from './components/select-origin/select-origin.
     ListOriginsComponent,
     OriginComponent,
     SelectBranchComponent,
-    SelectOriginComponent
+    SelectOriginComponent,
+    TransportComponent
   ],
   imports: [
     BrowserModule,
@@ -632,7 +638,8 @@ import { SelectOriginComponent } from './components/select-origin/select-origin.
     BranchService,
     AuthGuard,
     AuthService,
-    OriginService
+    OriginService,
+    TransportService
   ],
   bootstrap: [AppComponent]
 })
