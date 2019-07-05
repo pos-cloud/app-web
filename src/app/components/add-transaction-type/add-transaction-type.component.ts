@@ -184,6 +184,11 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public buildForm(): void {
 
+    if(!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAccount.No;
+    if(!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
+    if(!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Inflows;
+    if(!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+    
     this.transactionTypeForm = this._fb.group({
       '_id': [this.transactionType._id, [
         ]
@@ -511,14 +516,13 @@ export class AddTransactionTypeComponent implements OnInit {
 
     this._transactionTypeService.updateTransactionType(this.transactionType).subscribe(
       result => {
+        this.loading = false;
         if (!result.transactionType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
         } else {
           this.transactionType = result.transactionType;
           this.showMessage("El tipo de transacción se ha actualizado con éxito.", 'success', false);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

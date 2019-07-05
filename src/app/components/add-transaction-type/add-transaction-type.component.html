@@ -10,7 +10,7 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <form [formGroup]="transactionTypeForm" #formAddTable="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
+  <form [formGroup]="transactionTypeForm" #formAddTransactionType="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
     <div class="modal-body-lg">
       <ngb-tabset>
         <ngb-tab title="Datos principales">
