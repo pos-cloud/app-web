@@ -1144,6 +1144,8 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         },
         error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
       )
     }
