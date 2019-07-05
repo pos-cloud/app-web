@@ -1019,9 +1019,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let movementOfArticle = new MovementOfArticle();
 
-    console.log("entro")
-    console.log(this.transaction);
-
     if (this.paymentMethodSelected.surcharge && this.paymentMethodSelected.surcharge > 0) {
       movementOfArticle.description = 'Recargo por pago con ' + this.paymentMethodSelected.name;
     } else if (this.paymentMethodSelected.discount && this.paymentMethodSelected.discount > 0) {
@@ -1059,7 +1056,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this._taxService.getTaxes('where="percentage":"'+tax.percentage+'"').subscribe(
       result => {
-        console.log(result)
         if (!result.taxes) {
           this.loading = false;
           this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
@@ -1082,11 +1078,8 @@ export class AddMovementOfCashComponent implements OnInit {
 
     this.loading = true;
 
-    console.log(movementOfArticle);
-    
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
-        console.log(result)
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {

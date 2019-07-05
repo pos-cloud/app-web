@@ -70,7 +70,7 @@ export class ConfigService {
     }
 
     public generateLicensePayment(
-        payment: string
+        payment: number
     ): Observable<any> {
 
         const URL = `${Config.apiURL}generar-licencia-payment`;
@@ -80,7 +80,7 @@ export class ConfigService {
             .set('Authorization', this._authService.getToken());
 
         const params = new HttpParams()
-            .set('payment', payment);
+            .set('payment', payment.toString());
 
         return this._http.get(URL, {
             headers: headers,
