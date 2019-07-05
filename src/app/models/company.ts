@@ -9,6 +9,7 @@ import { CompanyFields } from './company-fields';
 
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { Transport } from './transport';
 
 export class Company {
 
@@ -39,6 +40,7 @@ export class Company {
   public floorNumber: string;
   public flat: string;
   public state: State;
+  public transport: Transport;
   public addressNumber: string;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');

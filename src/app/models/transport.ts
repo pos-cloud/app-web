@@ -34,6 +34,7 @@ export class Transport {
   public flat: string;
   public state: State;
   public addressNumber: string;
+  public transport: Transport;
   public creationUser: User;
   public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
   public updateUser: User;
