@@ -101,7 +101,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-12">
+                  <div class="form-group col-md-3">
                     <label for="electronics" class="control-label">Transacción Electrónica</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="electronics">
@@ -117,56 +117,52 @@
                       </button>
                     </div>
                   </div>
-                </div>
-                <div class="row" *ngIf="userCountry === 'AR'">
-                  <div class="form-group col-md-4">
-                    <label for="codeA">Código AFIP A</label>
-                    <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="codeB">Código AFIP B</label>
-                    <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"  [readonly]="readonly"/>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="codeC">Código AFIP C</label>
-                    <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"  [readonly]="readonly"/>
-                  </div>
-                </div>
-                <div class="row"  *ngIf="userCountry !== 'AR'">
-                  <div class="form-group col-md-12">
-                    <label for="fiscalCode">Código Fiscal</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
-                      <button type="button"
-                              class="btn btn-secondary"
-                              placement="right"
-                              ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
-                        <b>?</b>
-                      </button>
+                  <div *ngIf="userCountry !== 'AR'" class="form-group col-md-3">
+                      <label for="fiscalCode">Código Fiscal</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
+                          <b>?</b>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-12">
-                    <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
-                    <div class="input-group">
-                      <select class="form-control" formControlName="defectUseOfCFDI">
-                        <option *ngFor="let useOfCFDI of usesOfCFDI"
-                                [ngValue]="useOfCFDI._id"
-                                [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
-                                            (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)"
-                                [disabled]="readonly">
-                            {{ useOfCFDI.description }}</option>
-                      </select>
-                      <button type="button"
-                              class="btn btn-secondary"
-                              placement="right"
-                              ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
-                        <b>?</b>
-                      </button>
+                  <div *ngIf="userCountry !== 'AR'" class="form-group col-md-6">
+                      <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="defectUseOfCFDI">
+                          <option *ngFor="let useOfCFDI of usesOfCFDI"
+                                  [ngValue]="useOfCFDI._id"
+                                  [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
+                                              (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)"
+                                  [disabled]="readonly">
+                              {{ useOfCFDI.description }}</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
+                          <b>?</b>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                    <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
+                        <label for="codeA">Código AFIP A</label>
+                        <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>
+                      </div>
+                      <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
+                        <label for="codeB">Código AFIP B</label>
+                        <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"  [readonly]="readonly"/>
+                      </div>
+                      <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
+                        <label for="codeC">Código AFIP C</label>
+                        <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"  [readonly]="readonly"/>
+                      </div>
+                    
                 </div>
+                  
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="requestTaxes" class="control-label">Pide Impuestos</label>
@@ -202,7 +198,7 @@
                 <b>PERMISOS</b>
                 <hr>
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-3">
                     <label for="allowEdit" class="control-label">Permite editar</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="allowEdit">
@@ -217,7 +213,7 @@
                       </button>
                     </div>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-3">
                     <label for="allowDelete" class="control-label">Permite borrar</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="allowDelete">
@@ -229,7 +225,7 @@
                       </button>
                     </div>
                   </div>
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-3">
                     <label for="allowAPP">Permite APP</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="allowAPP">
@@ -241,6 +237,18 @@
                       </button>
                     </div>
                   </div>
+                  <div class="form-group col-md-3">
+                      <label for="requestTransport">Pide Transporte</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="requestTransport">
+                          <option value="true" [selected]="transactionType.requestTransport" [disabled]="readonly">Si</option>
+                          <option value="false" [selected]="!transactionType.requestTransport" [disabled]="readonly">No</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Pide Transporte?">
+                          <b>?</b>
+                        </button>
+                      </div>
+                    </div>
                 </div>
                 <b>PERSONALIZADO</b>
                 <hr>

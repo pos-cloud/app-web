@@ -316,6 +316,9 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'requestCompany': [this.transactionType.requestCompany, [
         ]
+      ],
+      'requestTransport': [this.transactionType.requestTransport, [
+        ]
       ]
     });
 
@@ -443,6 +446,8 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
     if (this.transactionType.requestCurrency === undefined) this.transactionType.requestCurrency = false;
+    if (this.transactionType.requestTransport === undefined) this.transactionType.requestTransport = false;
+
 
     let requestEmployee;
     if (!this.transactionType.requestEmployee) {
@@ -504,7 +509,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestEmployee': requestEmployee,
       'fastPayment': fastPayment,
       'requestCompany': this.transactionType.requestCompany,
-      'cashBoxImpact': this.transactionType.cashBoxImpact
+      'cashBoxImpact': this.transactionType.cashBoxImpact,
+      'requestTransport': this.transactionType.requestTransport
     });
   }
 
