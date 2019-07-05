@@ -939,6 +939,11 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.CUIT = '';
       this.movementOfCash.deliveredBy = '';
       //this.movementOfCash.state = MovementOfCashState.Closed;
+      if(this.transaction.type.movement === Movements.Inflows){
+        this.movementOfCash.statusCheck == StatusCheck.Available;
+      } else {
+        this.movementOfCash.statusCheck == StatusCheck.Closed
+      }
       this.movementOfCash.discount = this.movementOfCash.type.discount;
       this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
 
@@ -1032,6 +1037,9 @@ export class AddMovementOfCashComponent implements OnInit {
 
     let movementOfArticle = new MovementOfArticle();
 
+    console.log("entro")
+    console.log(this.transaction);
+
     if (this.paymentMethodSelected.surcharge && this.paymentMethodSelected.surcharge > 0) {
       movementOfArticle.description = 'Recargo por pago con ' + this.paymentMethodSelected.name;
     } else if (this.paymentMethodSelected.discount && this.paymentMethodSelected.discount > 0) {
@@ -1058,17 +1066,18 @@ export class AddMovementOfCashComponent implements OnInit {
     let taxes: Taxes[] = new Array();
     let tax: Taxes = new Taxes();
     if(Config.country === 'MX') {
-      tax.percentage = 16.00;
+      tax.percentage = 16;
     } else {
-      tax.percentage = 21.00;
+      tax.percentage = 21;
     }
     tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
     tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
 
     movementOfArticle.basePrice = movementOfArticle.salePrice - tax.taxAmount;
 
-    this._taxService.getTaxes('where="name":"IVA"').subscribe(
+    this._taxService.getTaxes('where="percentage":"'+tax.percentage+'"').subscribe(
       result => {
+        console.log(result)
         if (!result.taxes) {
           this.loading = false;
           this.showMessage("Debe configurar el impuesto IVA para el realizar el recargo de la tarjeta", 'info', true);
@@ -1090,9 +1099,12 @@ export class AddMovementOfCashComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
+
+    console.log(movementOfArticle);
     
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
+        console.log(result)
         if (!result.movementOfArticle) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
