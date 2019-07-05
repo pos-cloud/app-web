@@ -728,7 +728,10 @@ export class PointOfSaleComponent implements OnInit {
           }
         );
       }
-    } else {
+    }
+
+    if(this.transaction && this.transaction._id && this.transaction._id !== "") {
+      
       await this.updateTransaction().then(
         transaction => {
           if(transaction) {
@@ -736,9 +739,7 @@ export class PointOfSaleComponent implements OnInit {
           }
         }
       );
-    }
 
-    if(this.transaction && this.transaction._id && this.transaction._id !== "") {
       if( !this.transaction.branchDestination || 
           !this.transaction.branchOrigin || 
           !this.transaction.depositOrigin || 
