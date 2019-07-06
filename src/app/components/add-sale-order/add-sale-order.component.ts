@@ -64,6 +64,9 @@ import { ListCategoriesComponent } from '../list-categories/list-categories.comp
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
 import { TaxClassification } from 'app/models/tax';
+import { TransportService } from 'app/services/transport.service';
+import { Transport } from 'app/models/transport';
+import { SelectTransportComponent } from '../select-transport/select-transport.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -116,7 +119,8 @@ export class AddSaleOrderComponent {
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;
   public filterTaxClassification: TaxClassification;
-  public fastPayment: PaymentMethod
+  public fastPayment: PaymentMethod;
+  public transports: Transport[];
 
   constructor(
     public _transactionService: TransactionService,
@@ -137,7 +141,8 @@ export class AddSaleOrderComponent {
     public _relationTypeService: RelationTypeService,
     public _movementOfCancellationService : MovementOfCancellationService,
     public _cancellationTypeService: CancellationTypeService,
-    public _currencyService: CurrencyService
+    public _currencyService: CurrencyService,
+    public _transportService: TransportService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -212,6 +217,7 @@ export class AddSaleOrderComponent {
                   }
                 }
               );
+              this.getTransports();
               this.getMovementsOfTransaction();
             }
           }
@@ -308,6 +314,15 @@ export class AddSaleOrderComponent {
 
   async changeUseOfCFDI(useOfCFDI) {
     this.transaction.useOfCFDI = useOfCFDI;
+    await this.updateTransaction();
+  }
+
+  async changeTransport(transport) {
+    if(transport){
+      this.transaction.transport = transport;
+    } else {
+      this.transaction.transport = null;
+    }
     await this.updateTransaction();
   }
 
@@ -1155,6 +1170,11 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
             this.transaction.company = result.company;
+            if(this.transaction.company.transport){
+              this.transaction.transport = this.transaction.company.transport;
+            } else {
+              this.transaction.transport = null;
+            }
             await this.updateTransaction().then(
               transaction => {
                 if(transaction) {
@@ -1387,6 +1407,18 @@ export class AddSaleOrderComponent {
           this.getMovementsOfTransaction();
         }, (reason) => {
           this.getMovementsOfTransaction();
+        });
+        break;
+      case 'change-transport':
+        modalRef = this._modalService.open(SelectTransportComponent,{ size: 'lg'});
+        modalRef.result.then((result) => {
+          console.log(result);
+          if(result && result.transport){
+            this.transaction.transport = result.transport
+            this.updateTransaction();
+          }
+        }, (reason) => {
+          this.updateTransaction()
         });
         break;
       default: ;
@@ -1871,6 +1903,47 @@ export class AddSaleOrderComponent {
     }
 
     this.loading = true;
+  }
+
+  public getTransports(): void {
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { name: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { operationType: { $ne: "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      name: 1,
+      operationType: 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._transportService.getTransports(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.transports && result.transports.length > 0) {
+        this.transports = result.transports;
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public assignTransactionNumber() {

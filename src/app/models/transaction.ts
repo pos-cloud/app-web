@@ -14,6 +14,7 @@ import { RelationType } from './relation-type';
 import { Currency } from './currency';
 import { Branch } from './branch';
 import { Deposit } from './deposit';
+import { Transport } from './transport';
 
 export class Transaction {
 
@@ -57,6 +58,7 @@ export class Transaction {
 	public branchDestination: Branch;
 	public depositOrigin: Deposit;
 	public depositDestination: Deposit;
+	public transport: Transport;
 	public turnOpening: Turn;
 	public turnClosing: Turn;
 	public creationUser: User;

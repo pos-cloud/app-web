@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h4 class="modal-title" >Seleccionar Transporte</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <section class="container-fluid">
+    <div class="center-content" *ngIf="alertMessage !== ''">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-md-12">
+          <div class="center-content">
+            <div class="btn-group-vertical">
+              <button type="button" 
+                      *ngFor="let transport of transports" 
+                      class="btn btn-transport" 
+                      [ngClass]="{'btn-primary':transport._id===transportSelected._id,
+                                  'btn-outline-primary':transport._id!==transportSelected._id}"
+                (click)="transportSelected = transport">
+                {{ transport.name }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="loading" (click)="selectTransport()">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Cambiar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </section>
+  

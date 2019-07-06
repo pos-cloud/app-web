@@ -205,7 +205,6 @@ export class AddCompanyComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
-          console.log(this.company);
           this.getCountries();
 
           this.otherFields = this.company.otherFields;
