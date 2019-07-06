@@ -115,7 +115,7 @@
                       </button>
                     </div>
                   </div>
-                  <div *ngIf="userCountry !== 'AR'" class="form-group col-md-3">
+                  <div *ngIf="userCountry === 'MX'" class="form-group col-md-3">
                       <label for="fiscalCode">Código Fiscal</label>
                       <div class="input-group">
                         <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
@@ -127,10 +127,8 @@
                         </button>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div class="row" *ngIf="userCountry === 'MX'">
-                  <div class="form-group col-md-12">
+                
+                  <div *ngIf="userCountry === 'MX'" class="form-group col-md-3">
                     <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="defectUseOfCFDI">
@@ -147,25 +145,10 @@
                               ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
                         <b>?</b>
                       </button>
-                  <div *ngIf="userCountry !== 'AR'" class="form-group col-md-6">
-                      <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
-                      <div class="input-group">
-                        <select class="form-control" formControlName="defectUseOfCFDI">
-                          <option *ngFor="let useOfCFDI of usesOfCFDI"
-                                  [ngValue]="useOfCFDI._id"
-                                  [selected]="(transactionType.defectUseOfCFDI && transactionType.defectUseOfCFDI._id && useOfCFDI._id===transactionType.defectUseOfCFDI._id) ||
-                                              (transactionType.defectUseOfCFDI && useOfCFDI._id===transactionType.defectUseOfCFDI)"
-                                  [disabled]="readonly">
-                              {{ useOfCFDI.description }}</option>
-                        </select>
-                        <button type="button"
-                                class="btn btn-secondary"
-                                placement="right"
-                                ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
-                          <b>?</b>
-                        </button>
-                      </div>
+
                     </div>
+                  </div>
+
                     <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
                         <label for="codeA">Código AFIP A</label>
                         <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>
@@ -180,7 +163,6 @@
                       </div>
                     
                 </div>
-                  
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="requestTaxes" class="control-label">Pide Impuestos</label>

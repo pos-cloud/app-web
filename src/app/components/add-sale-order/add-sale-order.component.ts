@@ -146,7 +146,7 @@ export class AddSaleOrderComponent {
     public _movementOfCancellationService : MovementOfCancellationService,
     public _cancellationTypeService: CancellationTypeService,
     public _currencyService: CurrencyService,
-    private _claimService: ClaimService
+    private _claimService: ClaimService,
     public _transportService: TransportService
   ) {
     this.transaction = new Transaction();
