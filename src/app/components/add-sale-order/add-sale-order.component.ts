@@ -122,8 +122,6 @@ export class AddSaleOrderComponent {
   public totalTaxesAmount: number = 0;
   public filtersTaxClassification: TaxClassification[];
   public fastPayment: PaymentMethod
-  public filterTaxClassification: TaxClassification;
-  public fastPayment: PaymentMethod;
   public transports: Transport[];
 
   constructor(
