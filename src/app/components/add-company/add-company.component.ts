@@ -29,6 +29,9 @@ import { ConfigService } from 'app/services/config.service';
 import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
+import { CompanyNews } from 'app/models/company-news';
+import { TransportService } from 'app/services/transport.service';
+import { Transport } from 'app/models/transport';
 
 @Component({
   selector: 'app-add-company',
@@ -60,6 +63,7 @@ export class AddCompanyComponent  implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public countries : any;
+  public transports: Transport;
 
   public formErrors = {
     'code': '',
@@ -132,6 +136,7 @@ export class AddCompanyComponent  implements OnInit {
     public _configService: ConfigService,
     public _identificationTypeService: IdentificationTypeService,
     public _countryService : CountryService,
+    public _transportService: TransportService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -145,6 +150,7 @@ export class AddCompanyComponent  implements OnInit {
     this.getCompaniesGroups();
     this.getEmployees();
     this.getCountries();
+    this.getTransports();
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -381,7 +387,9 @@ export class AddCompanyComponent  implements OnInit {
       'floorNumber': [this.company.floorNumber,[]],
       'flat': [this.company.flat,[]],
       'state': [this.company.state,[]],
-      'addressNumber': [this.company.addressNumber,[]]
+      'addressNumber': [this.company.addressNumber,[]],
+      'transport': [this.company.transport,[]]
+
     });
 
     this.companyForm.valueChanges
@@ -508,6 +516,16 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    let transport;
+    if (!this.company.transport) {
+      transport = null;
+    } else {
+      if (this.company.transport._id) {
+        transport = this.company.transport._id;
+      } else {
+        transport = this.company.transport;
+      }
+    }
 
     const values = {
       '_id': this.company._id,
@@ -533,7 +551,8 @@ export class AddCompanyComponent  implements OnInit {
       'floorNumber' : this.company.floorNumber,
       'flat' : this.company.flat,
       'group': group,
-      'employee' : employee
+      'employee' : employee,
+      'transport' : transport
     };
 
     this.companyForm.setValue(values);
@@ -651,6 +670,27 @@ export class AddCompanyComponent  implements OnInit {
     );
   }
 
+  public updateCompany(): void {
+
+    this.loading = true;
+
+    this._companyService.updateCompany(this.company).subscribe(
+      result => {
+        if (!result.company) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.company = result.company;
+          this.showMessage("La empresa se ha actualizado con éxito.", 'success', false);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
   public getCountries() : void {
     
     this.loading = true;
@@ -683,25 +723,45 @@ export class AddCompanyComponent  implements OnInit {
     });
   }
 
-  public updateCompany(): void {
-
+  public getTransports(): void {
     this.loading = true;
 
-    this._companyService.updateCompany(this.company).subscribe(
-      result => {
-        if (!result.company) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
-          this.company = result.company;
-          this.showMessage("La empresa se ha actualizado con éxito.", 'success', false);
-        }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { name: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { operationType: { $ne: "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      name: 1,
+      operationType: 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._transportService.getTransports(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.transports && result.transports.length > 0) {
+        this.transports = result.transports;
       }
-    );
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

@@ -44,6 +44,7 @@ export class TransactionType {
 	public allowDelete: boolean = false;
 	public requestCurrency: boolean = false;
 	public requestEmployee: EmployeeType;
+	public requestTransport: boolean = false;
 	public fastPayment: PaymentMethod;
 	public requestCompany: CompanyType;
 	public creationUser: User;

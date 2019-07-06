@@ -241,6 +241,10 @@ import { SelectBranchComponent } from './components/select-branch/select-branch.
 import { SelectOriginComponent } from './components/select-origin/select-origin.component';
 import { ClaimService } from './services/claim.service';
 import { ClaimComponent } from './components/claim/claim.component';
+import { TransportComponent } from './components/transport/transport.component';
+import { TransportService } from './services/transport.service';
+import { ListTransportComponent } from './components/list-transports/list-transports.component';
+import { SelectTransportComponent } from './components/select-transport/select-transport.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -412,7 +416,10 @@ import { ClaimComponent } from './components/claim/claim.component';
     OriginComponent,
     SelectBranchComponent,
     SelectOriginComponent,
-    ClaimComponent
+    ClaimComponent,
+    TransportComponent,
+    ListTransportComponent,
+    SelectTransportComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -570,7 +577,9 @@ import { ClaimComponent } from './components/claim/claim.component';
     OriginComponent,
     SelectBranchComponent,
     SelectOriginComponent,
-    ClaimComponent
+    ClaimComponent,
+    TransportComponent,
+    SelectTransportComponent
   ],
   imports: [
     BrowserModule,
@@ -636,7 +645,8 @@ import { ClaimComponent } from './components/claim/claim.component';
     AuthGuard,
     AuthService,
     OriginService,
-    ClaimService
+    ClaimService,
+    TransportService
   ],
   bootstrap: [AppComponent]
 })
