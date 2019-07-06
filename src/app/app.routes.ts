@@ -505,6 +505,11 @@ export const _routes: Routes = [
     component: ListTransactionTypesComponent,
     canActivate: [AuthGuard]
   },
+  { 
+    path: 'report/fondo/fondos-por-tipo-de-transacción', 
+    component: ListTransactionTypesComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: 'pos/delivery/agregar-transaccion/:type',
     component: AddSaleOrderComponent,
