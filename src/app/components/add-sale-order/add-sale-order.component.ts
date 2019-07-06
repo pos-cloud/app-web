@@ -1410,7 +1410,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'change-transport':
-        modalRef = this._modalService.open(SelectTransportComponent,{ size: 'lg'});
+        modalRef = this._modalService.open(SelectTransportComponent);
         modalRef.result.then((result) => {
           console.log(result);
           if(result && result.transport){
