@@ -689,7 +689,7 @@ export class AddArticleComponent implements OnInit {
     ).subscribe(
       result => {
         if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles[0]) {
-          this.lastPricePurchase = result[0].movementsOfArticles[0].salePrice; 
+          this.lastPricePurchase = result[0].movementsOfArticles[0].salePrice / result[0].movementsOfArticles[0].amount;
         } else {
           this.lastPricePurchase = 0;
         }
