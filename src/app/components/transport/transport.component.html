@@ -10,7 +10,7 @@
 			{{alertMessage}}
 		</ngb-alert>
 	</div>
-	<form [formGroup]="transportForm" #formAddTransport="ngForm" (ngSubmit)="addTransport()" autocomplete="off">
+	<form [formGroup]="transportForm" #addTransportForm="ngForm" (ngSubmit)="addTransport()" autocomplete="off">
 		<div class="modal-body">
 			<ngb-tabset>
 				<ngb-tab title="Datos principales">
@@ -19,9 +19,9 @@
               <div class="form-group col-md-12">
                 <div class="row">
                   <div class="form-group col-md-6">
-                      <label for="name" class="control-label">Nombre:</label>
+                      <label class="control-label">Nombre:</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" formControlName="name" name="name" id="name"/>
+                        <input type="text" class="form-control" formControlName="name" name="name" [focus]="focusEvent"/>
                       </div>
                       <div *ngIf="formErrors.name" class="alert alert-danger">
                         {{ formErrors.name }}
@@ -61,7 +61,7 @@
                   <div class="form-group col-md-6">
                     <label for="identificationValue" class="control-label">Nro. de identificación</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue" [focus]="focusEvent"/>
+                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue"/>
                     </div>
                     <div *ngIf="formErrors.identificationValue" class="alert alert-danger">
                       {{ formErrors.identificationValue }}
