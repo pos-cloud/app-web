@@ -21,7 +21,7 @@
                   <div class="form-group col-md-6">
                       <label class="control-label">Nombre:</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" formControlName="name" name="name" [focus]="focusEvent"/>
+                        <input type="text" class="form-control" formControlName="name" name="name" [focus]="focusEvent" [readonly]="readonly"/>
                       </div>
                       <div *ngIf="formErrors.name" class="alert alert-danger">
                         {{ formErrors.name }}
@@ -31,7 +31,7 @@
                     <label for="vatCondition" class="control-label" *ngIf="config.country === 'AR'">Condición de IVA:</label>
                     <label for="vatCondition" class="control-label" *ngIf="config.country !== 'AR'">Régimen Fiscal:</label>
                     <select class="form-control" formControlName="vatCondition">
-                      <option [ngValue]="null" [selected]="!transport || !transport.vatCondition" [disabled]="readonly"></option>
+                      <option [ngValue]="null" [selected]="!transport || !transport.vatCondition"></option>
                             <option *ngFor="let vatCondition of vatConditions"
                                     [selected]="(transport.vatCondition && transport.vatCondition._id && vatCondition._id===transport.vatCondition._id) ||
                                                 (transport.vatCondition && vatCondition._id===transport.vatCondition)"
@@ -48,9 +48,10 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="identificationType" class="control-label">Tipo de Identificación</label>
-                    <select class="form-control" formControlName="identificationType">
+                    <select class="form-control" formControlName="identificationType" >
                       <option *ngFor="let identificationType of identificationTypes"
-                              [ngValue]="identificationType._id">
+                              [ngValue]="identificationType._id"
+                              [disabled]="readonly">
                         {{identificationType.name}}
                       </option>
                     </select>
@@ -61,7 +62,7 @@
                   <div class="form-group col-md-6">
                     <label for="identificationValue" class="control-label">Nro. de identificación</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue"/>
+                      <input type="text" class="form-control" formControlName="identificationValue" name="identificationValue" id="identificationValue" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.identificationValue" class="alert alert-danger">
                       {{ formErrors.identificationValue }}
@@ -72,7 +73,7 @@
                   <div class="form-group col-md-6">
                     <label for="address" class="control-label">Dirección:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="address" name="address" id="address"/>
+                      <input type="text" class="form-control" formControlName="address" name="address" id="address" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.address" class="alert alert-danger">
                       {{ formErrors.address }}
@@ -81,7 +82,7 @@
                   <div class="form-group col-md-2">
                     <label for="addressNumber" class="control-label">Número:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="addressNumber" name="addressNumber" id="addressNumber"/>
+                      <input type="number" class="form-control" formControlName="addressNumber" name="addressNumber" id="addressNumber" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.addressNumber" class="alert alert-danger">
                       {{ formErrors.addressNumber }}
@@ -92,7 +93,7 @@
                   <div class="form-group col-md-4">
                     <label for="country" class="control-label">País:</label>
                     <select class="form-control" formControlName="country" name="country" id="country" (change)="getStates()">
-                      <option [ngValue]="null" [selected]="!transport || !transport.country" [disabled]="readonly"></option>
+                      <option [ngValue]="null" [selected]="!transport || !transport.country"></option>
                             <option *ngFor="let country of countries"
                                     [selected]="(transport.country && transport.country._id && country._id===transport.country._id) ||
                                                 (transport.country && country._id===transport.country)"
@@ -109,7 +110,7 @@
                     <label for="state" class="control-label" *ngIf="config.country !== 'AR'">Estado:</label>
                     <label for="state" class="control-label" *ngIf="config.country === 'AR'">Provincia:</label>
                     <select class="form-control" formControlName="state">
-                      <option [ngValue]="null" [selected]="!transport || !transport.state" [disabled]="readonly"></option>
+                      <option [ngValue]="null" [selected]="!transport || !transport.state"></option>
                             <option *ngFor="let state of states"
                                     [selected]="(transport.state && transport.state._id && state._id===transport.state._id) ||
                                                 (transport.state && state._id===transport.state)"
@@ -125,7 +126,7 @@
                   <div class="form-group col-md-4">
                     <label for="city" class="control-label">Ciudad:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="city" name="city" id="city"/>
+                      <input type="text" class="form-control" formControlName="city" name="city" id="city" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.city" class="alert alert-danger">
                       {{ formErrors.city }}
@@ -136,7 +137,7 @@
                   <div class="form-group col-md-6">
                     <label for="phones" class="control-label">Teléfonos:</label>
                     <div class="input-group">
-                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones"/>
+                      <input type="number" class="form-control" formControlName="phones" name="phones" id="phones" [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.phones" class="alert alert-danger">
                       {{ formErrors.phones }}
@@ -145,7 +146,7 @@
                   <div class="form-group col-md-6">
                     <label for="emails" class="control-label">Emails:</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" formControlName="emails" name="emails" id="emails"/>
+                      <input type="text" class="form-control" formControlName="emails" name="emails" id="emails"  [readonly]="readonly"/>
                     </div>
                     <div *ngIf="formErrors.emails" class="alert alert-danger">
                       {{ formErrors.emails }}
@@ -155,7 +156,7 @@
                 <div class = "row">
                   <div class="form-group col-md-12">
                     <label for="observation" class="control-label">Observación:</label>
-                    <textarea class="form-control" formControlName="observation" name="observation" id="observation"></textarea>
+                    <textarea class="form-control" formControlName="observation" name="observation" id="observation" [readonly]="readonly"></textarea>
                     <div *ngIf="formErrors.observation" class="alert alert-danger">
                       {{ formErrors.observation }}
                     </div>
