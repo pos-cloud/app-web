@@ -245,6 +245,7 @@ import { TransportComponent } from './components/transport/transport.component';
 import { TransportService } from './services/transport.service';
 import { ListTransportComponent } from './components/list-transports/list-transports.component';
 import { SelectTransportComponent } from './components/select-transport/select-transport.component';
+import { PrintPriceListComponent } from './components/print-price-list/print-price-list.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -419,7 +420,8 @@ import { SelectTransportComponent } from './components/select-transport/select-t
     ClaimComponent,
     TransportComponent,
     ListTransportComponent,
-    SelectTransportComponent
+    SelectTransportComponent,
+    PrintPriceListComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -579,7 +581,8 @@ import { SelectTransportComponent } from './components/select-transport/select-t
     SelectOriginComponent,
     ClaimComponent,
     TransportComponent,
-    SelectTransportComponent
+    SelectTransportComponent,
+    PrintPriceListComponent
   ],
   imports: [
     BrowserModule,

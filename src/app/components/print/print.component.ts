@@ -181,8 +181,6 @@ export class PrintComponent implements OnInit {
               this.toPrintKitchen();
             } else if (this.typePrint === "IVA") {
               this.getVATBook();
-            } else if (this.typePrint === "price-list") {
-              this.getArticles();
             } else if (this.typePrint === "inventario") {
               this.getArticleStocksV2();
             }
@@ -270,9 +268,7 @@ export class PrintComponent implements OnInit {
               this.toPrintKitchen();
             } else if (this.typePrint === "IVA") {
               this.getVATBook();
-            } else if (this.typePrint === "price-list") {
-              this.getArticles();
-            }
+            } 
         } else {
             this.transaction = null;
         }
@@ -716,117 +712,6 @@ export class PrintComponent implements OnInit {
     this.finishImpression();
   }
 
-  public printPriceList(): void {
-    
-    var row = 15;
-    var margin = 5;
-    this.doc.setFontType('bold');
-
-    this.doc.setFontSize(12);
-    if (this.companyName) {
-      this.doc.text(this.companyName, 5, row);
-    }
-
-    this.doc.setFontType('normal');
-    row += 5;
-    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-    }
-
-    this.doc.setFontType('bold');
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-
-    row += 3;
-    this.doc.line(0, row, 400, row);
-    row += 5;
-
-    // Encabezado de la tabla de Detalle de Productos
-    this.doc.setFontType('bold');
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Código", 5, row);
-    this.doc.text("Descripción", 30, row);
-    this.doc.text("Marca", 100, row);
-    this.doc.text("Rubro", 145, row);
-    this.doc.text("Precio", 190, row);
-    this.doc.setFontType('normal');
-
-    row += 3;
-    this.doc.line(0, row, 400, row);
-    row += 5;
-
-    let page = 1;
-
-    // // Detalle de productos
-    if(this.articles && this.articles.length > 0) {
-      for(let article of this.articles) {
-
-        if(article.code) {
-          this.doc.text(article.code, 5, row);
-        }
-        if (article.description) {
-          this.doc.text(article.description.slice(0, 30), 30, row);
-        }
-        if (article.make && article.make.description) {
-          this.doc.text(article.make.description.slice(0, 18), 100, row);
-        }
-        if (article.category && article.category.description) {
-          this.doc.text(article.category.description.slice(0, 18), 145, row);
-        }
-        if (article.salePrice) {
-          this.doc.text("$" + this.roundNumber.transform(article.salePrice).toString(), 190, row);
-        }
-        row += 5;
-
-        if (row >= (this.printer.pageHigh - 20)) {
-
-          if(page === 120) {
-            break;
-          }
-          this.doc.addPage();
-
-          var row = 15;
-          var margin = 5;
-          this.doc.setFontType('bold');
-
-          this.doc.setFontSize(12);
-          if (this.companyName) {
-            this.doc.text(this.companyName, 5, row);
-          }
-
-          this.doc.setFontType('normal');
-          row += 5;
-          if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-            this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-            this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-          }
-
-          this.doc.setFontType('bold');
-          this.centerText(margin, margin, this.printer.pageWidth, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-
-          row += 3;
-          this.doc.line(0, row, 400, row);
-          row += 5;
-
-          // Encabezado de la tabla de Detalle de Productos
-          this.doc.setFontType('bold');
-          this.doc.setFontSize(this.fontSizes.normal);
-          this.doc.text("Código", 5, row);
-          this.doc.text("Descripción", 30, row);
-          this.doc.text("Marca", 100, row);
-          this.doc.text("Rubro", 140, row);
-          this.doc.text("Precio", 190, row);
-          this.doc.setFontType('normal');
-
-          row += 3;
-          this.doc.line(0, row, 400, row);
-          row += 5;
-        }
-      }
-    }
-    this.finishImpression();
-  }
-
   public toPrintInventario(articleStocks: ArticleStock[]): void {
 
     var row = 15;
@@ -935,46 +820,6 @@ export class PrintComponent implements OnInit {
       }
     }
     this.finishImpression();
-  }
-
-  public getArticles(): void {
-
-    this.loading = true;
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = {
-      type:1,
-      code:1,
-      description:1,
-      salePrice:1,
-      "category.description": 1,
-      "make.description": 1,
-      operationType: 1,
-    }
-    
-    this._articleService.getArticlesV2(
-        project, // PROJECT
-        { type: ArticleType.Final, operationType: { $ne: "D" } }, // MATCH
-        { description: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-    ).subscribe(
-      result => {
-        this.loading = false;
-        if (result && result.articles) {
-            this.articles = result.articles;
-        } else {
-            this.articles = null;
-        }
-        this.printPriceList();
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-        this.printPriceList();
-      }
-    );
   }
 
   public getClosingCashBox(): void {
