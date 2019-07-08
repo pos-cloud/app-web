@@ -47,15 +47,13 @@
 h6 {
     margin: 1% 2% 3% 0;
     font-size: 20px;
-
-    
 }
 
 .card-price {
-    font-size: 30px;
-    font-weight: 800;
-    font-size: 70px;
-    text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.42);
+    font-weight: 700;
+    font-size: 2.4em;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 ul {
@@ -126,6 +124,14 @@ a {
 
 .pricing-table.recommended .pricing-title {
     background: #2db3cb;
+}
+
+.pricing-table.recommended-plus .pricing-title {
+    background: #04B45F;
+}
+
+.recommended-plus {
+    background: #04B45F;
 }
 
 .pricing-table.recommended .pricing-action {
@@ -267,11 +273,6 @@ a {
     .pricing-wrapper {
         width: 300px;
     }
-} 
-
-.imgPayment {
-    width: 100%;
-    
 }
 
 .text {

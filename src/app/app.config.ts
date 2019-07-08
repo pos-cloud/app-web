@@ -29,10 +29,10 @@ export class Config {
     static companyPostalCode: string;
     static footerInvoice: string;
     static expirationLicense: string;
-    static country : string;
-    static timezone : string;
+    static country: string;
+    static timezone: string;
     static currency: Currency;
-    static licenseCost : number;
+    static licenseCost: number;
     static showLicenseNotification: boolean = true;
     public article: {
 		code: {
@@ -78,11 +78,24 @@ export class Config {
         Config.emailPassword = emailPassword;
     }
 
-    public static setConfigCompany( 
-        companyPicture, companyName, companyAddress, companyPhone, companyVatCondition,companyStartOfActivity, 
-        companyGrossIncome, footerInvoice, companyFantasyName, country, timezone, currency, companyIdentificationType, 
-        companyIdentificationValue, companyLicenseCost, companyPostalCode): void {
-            
+    public static setConfigCompany(
+        companyPicture, 
+        companyName, 
+        companyAddress, 
+        companyPhone,
+        companyVatCondition, 
+        companyStartOfActivity, 
+        companyGrossIncome, 
+        footerInvoice, 
+        companyFantasyName,
+        country, 
+        timezone, 
+        currency, 
+        companyIdentificationType, 
+        companyIdentificationValue, 
+        licenseCost,
+        companyPostalCode
+    ): void {
         Config.companyPicture = companyPicture;
         Config.companyName = companyName;
         Config.companyAddress = companyAddress;
@@ -96,7 +109,7 @@ export class Config {
         Config.timezone = timezone;
         Config.companyIdentificationType = companyIdentificationType;
         Config.companyIdentificationValue = companyIdentificationValue;
-        Config.licenseCost = companyLicenseCost;
+        Config.licenseCost = licenseCost;
         Config.currency = currency;
         Config.companyPostalCode = companyPostalCode;
     }

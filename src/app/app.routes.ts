@@ -61,6 +61,7 @@ import { ListCountriesComponent } from './components/list-countries/list-countri
 import { ListBankComponent } from './components/list-bank/list-bank.component'
 import { ListBranchComponent } from './components/list-branches/list-branches.component';
 import { ListOriginsComponent } from './components/list-origins/list-origins.component';
+import { ListTransportComponent } from './components/list-transports/list-transports.component';
 
 export const _routes: Routes = [
   { 
@@ -454,6 +455,11 @@ export const _routes: Routes = [
     component : LicensePaymentComponent,
     canActivate: [AuthGuard]
   },
+  {
+    path : 'admin/transports',
+    component : ListTransportComponent,
+    canActivate: [AuthGuard]
+  },
   { 
     path: 'pos', 
     component: PointOfSaleComponent,
@@ -496,6 +502,11 @@ export const _routes: Routes = [
   },
   { 
     path: 'report/venta/ventas-por-tipo-de-transacción', 
+    component: ListTransactionTypesComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'report/fondo/fondos-por-tipo-de-transacción', 
     component: ListTransactionTypesComponent,
     canActivate: [AuthGuard]
   },

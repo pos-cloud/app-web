@@ -41,6 +41,7 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
+import { ArticleFieldService } from 'app/services/article-field.service';
 
 @Component({
   selector: 'app-add-article',
@@ -79,8 +80,12 @@ export class AddArticleComponent implements OnInit {
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
   public articleType: string;
-  public filterTaxClassification: TaxClassification = TaxClassification.Tax;
+  public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   public lastPricePurchase;
+  public otherFieldsAlfabetico = false;
+  public otherFieldsNumber = false;
+
+
 
   public formErrors = {
     'code': '',
@@ -155,6 +160,7 @@ export class AddArticleComponent implements OnInit {
     public _companyService : CompanyService,
     public _unitOfMeasurementService: UnitOfMeasurementService,
     public _movementsOfArticle : MovementOfArticleService,
+    public _articleFields : ArticleFieldService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -189,6 +195,8 @@ export class AddArticleComponent implements OnInit {
         this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
       }
     );
+
+    this.getArticleFields();
     
     if(this.articleId) {
       this.getArticle();
@@ -196,6 +204,32 @@ export class AddArticleComponent implements OnInit {
       this.getMakes();
       this.imageURL = './../../../assets/img/default.jpg';
     }
+  }
+
+  public getArticleFields(){
+    
+    this.loading = true;
+
+    this._articleFields.getArticleFields().subscribe(
+      result => {
+        if(result && result.articleFields) {
+          for (let x = 0; x < result.articleFields.length; x++) {
+            
+            if(result.articleFields[x]['datatype'] === ArticleFieldType.String){
+              this.otherFieldsAlfabetico = true;
+            }
+            if(result.articleFields[x]['datatype'] !== ArticleFieldType.String){
+              this.otherFieldsNumber = true;
+            }
+            
+          }
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -654,12 +688,12 @@ export class AddArticleComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (!result || result.length === 0 || !result[0] || !result[0].movementsOfArticles || !result[0].movementsOfArticles[0]) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles[0]) {
+          this.lastPricePurchase= result[0].movementsOfArticles[0].salePrice / result[0].movementsOfArticles[0].amount;
+          this.lastPricePurchase = this.roundNumber.transform(this.lastPricePurchase);
         } else {
-          this.lastPricePurchase = result[0].movementsOfArticles[0].salePrice;
+          this.lastPricePurchase = 0;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -667,7 +701,6 @@ export class AddArticleComponent implements OnInit {
       }
     );
   }
-
 
   public getUnitsOfMeasurement(): void {
 
@@ -718,7 +751,9 @@ export class AddArticleComponent implements OnInit {
             if (field.articleField.modifyVAT) {
               taxedAmount += field.amount;
             } else {
-              this.articleForm.value.costPrice += field.amount;
+              if(field.amount){
+                this.articleForm.value.costPrice += field.amount;
+              }
             }
           }
         }
@@ -831,7 +866,7 @@ export class AddArticleComponent implements OnInit {
     this.articleForm.value.basePrice = this.roundNumber.transform(this.articleForm.value.basePrice);
     this.articleForm.value.costPrice = this.roundNumber.transform(this.articleForm.value.costPrice);
     this.articleForm.value.markupPercentage = this.roundNumber.transform(this.articleForm.value.markupPercentage);
-    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice,3);
+    this.articleForm.value.markupPrice = this.roundNumber.transform(this.articleForm.value.markupPrice);
     this.articleForm.value.salePrice = this.roundNumber.transform(this.articleForm.value.salePrice);
 
     this.article = this.articleForm.value;

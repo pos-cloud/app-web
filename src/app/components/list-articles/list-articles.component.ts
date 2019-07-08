@@ -146,18 +146,16 @@ export class ListArticlesComponent implements OnInit {
         }
       }
     }
-
     if(this.userType === 'pos') {
-        match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
+       match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
+    } else if(this.userType === 'report') {
+      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
+      match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
     } else {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}')  {
-        match += `,"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
-      } else {
-        match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
-      }
+      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
+      match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
     }
     match = JSON.parse(match);
-
     let project = {};
     let group = {};
     let limit = 0;
@@ -188,6 +186,7 @@ export class ListArticlesComponent implements OnInit {
         'barcode' : 1,
         'description' : 1,
         'posDescription' : 1,
+        'containsVariants': 1,
         'make.description' : 1,
         'category.description' : 1,
         'costPrice' : { $toString : '$costPrice' },
@@ -223,14 +222,24 @@ export class ListArticlesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result && result.articles) {
+        this.loading = false;
+        if(this.userType === 'pos') {
+          if (result && result && result.articles) {
             this.articles = result.articles;
             this.totalItems = result.count;
-        } else {
+          } else {
             this.articles = new Array();
             this.totalItems = 0;
+          }
+        } else {
+          if (result && result[0] && result[0].articles) {
+            this.articles = result[0].articles;
+            this.totalItems = result[0].count;
+          } else {
+            this.articles = new Array();
+            this.totalItems = 0;
+          }
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

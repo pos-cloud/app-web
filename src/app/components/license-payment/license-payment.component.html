@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">Renovar Licencia</h4>
+    <h4 class="modal-title">RECOMENDADO << 25% OFF POR 12 MESES >> </h4>
     <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
     <span aria-hidden="true">&times;</span>
     </button>
@@ -8,54 +8,68 @@
     <div class="pricing-wrapper clearfix">
         <div class="pricing-table">
             <h3 class="pricing-title">Mensual</h3>
-            <div class="table-buy">
-                <p>$ {{payment}}<sup>/ mes</sup></p>
-                <a class="pricing-action" (click)="changePrice('1')">Contratar</a>
-            </div>
-        </div>
-        <div class="pricing-table recommended">
-            <h3 class="pricing-title">Semestral</h3>
             <ul class="table-list">
-                <li>10 % <span>De ahorro</span></li>
+                <li>0 % OFF</li>
             </ul>
             <div class="table-buy">
-                <p>$ {{ ( (payment*6) - ((10*(payment*6))/100)) /6 }}<sup>/ mes</sup></p>
-                <a class="pricing-action" (click)="changePrice('6')">Contratar</a>
+                <p>$ {{licenseCost}}<sup>/ mes</sup></p>
+                <a class="pricing-action" (click)="changePrice('1')">CONTRATAR</a>
             </div>
         </div>
         <div class="pricing-table">
-            <h3 class="pricing-title">Anual</h3>
+            <h3 class="pricing-title">Semestral</h3>
             <ul class="table-list">
-                <li>25 % <span>De ahorro</span></li>
+                <li>10 % OFF</li>
             </ul>
             <div class="table-buy">
-                <p>$ {{ ( (payment*12) - ((25*(payment*12))/100)) /12 }}<sup>/ mes</sup></p>
-                <a class="pricing-action" (click)="changePrice('12')">Contratar</a>
+                <p>$ {{ ( (licenseCost*6) - ((10*(licenseCost*6))/100)) /6 }}<sup>/ mes</sup></p>
+                <a class="pricing-action" (click)="changePrice('6')">CONTRATAR</a>
+            </div>
+        </div>
+        <div class="pricing-table">
+            <h3 class="pricing-title recommended-plus">Anual</h3>
+            <ul class="table-list">
+                <li>25 % OFF</li>
+            </ul>
+            <div class="table-buy">
+                <p>$ {{ ( (licenseCost*12) - ((25*(licenseCost*12))/100)) /12 }}<sup>/ mes</sup></p>
+                <a class="pricing-action" style="background: #04B45F;" (click)="changePrice('12')">CONTRATAR</a>
             </div>
         </div>
     </div>
     <div class ="body">
-        <h6 class="card-price text-center">IMPORTE: $ {{paymentTotal}}<span class="period"></span></h6>
-        <div *ngIf="toggleButton">
-                <h6 class="title">Seleccione la forma de pago:</h6>
-                <div class="row">
-                    <div class = "col-md-6"  (click)="paymentSelect('mp')">
-                        <img class ="imgPayment" src="./../../../assets/img/mercadopago-logo.png" >
-                    </div>
-                    <div class = "col-md-6" (click)="paymentSelect('tf')">
-                        <img class ="imgPayment" src="./../../../assets/img/transferencia-bancaria-png-2.png"   height= 130px;                    >
-                    </div>
-                </div>
-                <div  *ngIf="wireTransfer" class="row">
-                    <h6 class="title"> Datos Bancarios:</h6>
-                    <h6 class="text">Banco: HSBC Bank Argentina</h6>
-                    <h6 class="text">Titular : Franco Joel Androetto</h6> 
-                    <h6 class="text"> CBU : 15006648-00066460563732</h6> 
-                    <h6 class="text">Una vez realizado el depósito enviar el comprobante por:</h6>   
-                    <h6 class="text2"> <i class="fa fa-whatsapp" aria-hidden="true"></i> : +54 9 3564 67-7539</h6>   
-                    <h6 class="text2"> <i class="fa fa-envelope-o" aria-hidden="true"></i> : info@poscloud.com.ar</h6> 
-                    
-                </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h6 class="card-price text-center">IMPORTE TOTAL: $ {{paymentTotal}}<span class="period"></span></h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="text-left" style="margin-bottom: 50px;">Seleccione la forma de pago:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6" (click)="paymentSelect('tf')">
+                <img src="./../../../assets/img/transferencia-bancaria-png-2.png"  width="200px" height="auto">
+            </div>
+            <div class="col-md-6"  (click)="paymentSelect('mp')">
+                <img src="./../../../assets/img/mercadopago-logo.png" width="auto" height="80px">
+            </div>
+        </div>
+        <div class="row" *ngIf="showTransferData">
+            <div class="col-md-12">
+                <h6 class="title">Datos Bancarios:</h6>
+                <h6 class="text">Banco: HSBC Bank Argentina</h6>
+                <h6 class="text">Titular : Franco Joel Androetto</h6> 
+                <h6 class="text">CBU : 15006648-00066460563732</h6> 
+            </div>
+        </div>
+        <div class="row" style="margin-TOP: 20px;">
+            <div class="col-md-12">
+                <h6 class="text">Una vez realizado el pago enviar el comprobante a:</h6>
+                <h6 class="text2"> <i class="fa fa-whatsapp" aria-hidden="true"></i> : +54 9 3564 67-7539</h6>   
+                <h6 class="text2"> <i class="fa fa-envelope-o" aria-hidden="true"></i> : info@poscloud.com.ar</h6> 
+            </div>
         </div>
     </div>
 </div>

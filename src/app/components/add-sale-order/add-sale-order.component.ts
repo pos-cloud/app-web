@@ -54,7 +54,7 @@ import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { RelationTypeService } from 'app/services/relation-type.service';
 import { RelationType } from 'app/models/relation-type';
 import { MovementOfCancellationComponent } from '../movement-of-cancellation/movement-of-cancellation.component';
-import { MovementOfCancellationService } from 'app/services/movement-of-cancellation';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 import { CancellationTypeService } from 'app/services/cancellation-type.service';
 import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
@@ -64,6 +64,11 @@ import { ListCategoriesComponent } from '../list-categories/list-categories.comp
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
 import { TaxClassification } from 'app/models/tax';
+import { ClaimService } from 'app/services/claim.service';
+import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
+import { TransportService } from 'app/services/transport.service';
+import { Transport } from 'app/models/transport';
+import { SelectTransportComponent } from '../select-transport/select-transport.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -115,8 +120,9 @@ export class AddSaleOrderComponent {
   @ViewChild(ListCategoriesComponent, {static: true}) listCategoriesComponent: ListCategoriesComponent;
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;
-  public filterTaxClassification: TaxClassification;
+  public filtersTaxClassification: TaxClassification[];
   public fastPayment: PaymentMethod
+  public transports: Transport[];
 
   constructor(
     public _transactionService: TransactionService,
@@ -137,7 +143,9 @@ export class AddSaleOrderComponent {
     public _relationTypeService: RelationTypeService,
     public _movementOfCancellationService : MovementOfCancellationService,
     public _cancellationTypeService: CancellationTypeService,
-    public _currencyService: CurrencyService
+    public _currencyService: CurrencyService,
+    private _claimService: ClaimService,
+    public _transportService: TransportService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -189,11 +197,7 @@ export class AddSaleOrderComponent {
               this.backFinal();
             } else {
               this.transactionMovement = '' + this.transaction.type.transactionMovement;
-              if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                this.filterTaxClassification = TaxClassification.Withholding;
-              } else {
-                this.filterTaxClassification = TaxClassification.Perception;
-              }
+              this.filtersTaxClassification = [ TaxClassification.Withholding, TaxClassification.Perception ];
               this.lastQuotation = this.transaction.quotation;
 
               if(this.userCountry === 'MX' &&
@@ -212,6 +216,7 @@ export class AddSaleOrderComponent {
                   }
                 }
               );
+              this.getTransports();
               this.getMovementsOfTransaction();
             }
           }
@@ -248,30 +253,13 @@ export class AddSaleOrderComponent {
 
     return new Promise<CancellationType[]>((resolve, reject) => {
 
-      // ORDENAMOS LA CONSULTA
-      let sortAux = { order: 1 };
-
-      // FILTRAMOS LA CONSULTA
-      let match = { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } };
-
-      // CAMPOS A TRAER
-      let project = {
-        "destination._id": 1,
-        "operationType" : 1
-      };
-
-      // AGRUPAMOS EL RESULTADO
-      let group = {};
-      let limit = 0;
-      let skip = 0;
-
       this._cancellationTypeService.getCancellationTypes(
-        project, // PROJECT
-        match, // MATCH
-        sortAux, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+        { "destination._id": 1, "operationType" : 1 }, // PROJECT
+        { "destination._id": { $oid: this.transaction.type._id} , "operationType": { "$ne": "D" } }, // MATCH
+        { order: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
       ).subscribe(result => {
         if (result && result.cancellationTypes && result.cancellationTypes.length > 0) {
           resolve(result.cancellationTypes);
@@ -308,6 +296,15 @@ export class AddSaleOrderComponent {
 
   async changeUseOfCFDI(useOfCFDI) {
     this.transaction.useOfCFDI = useOfCFDI;
+    await this.updateTransaction();
+  }
+
+  async changeTransport(transport) {
+    if(transport){
+      this.transaction.transport = transport;
+    } else {
+      this.transaction.transport = null;
+    }
     await this.updateTransaction();
   }
 
@@ -989,30 +986,38 @@ export class AddSaleOrderComponent {
 
     this._transactionService.validateElectronicTransactionAR(this.transaction).subscribe(
       result => {
-        if (result.status === 'err') {
-          let msn = '';
-          if (result.code && result.code !== '') {
-            msn += result.code + " - ";
+        let msn = '';
+        if(result) {
+          if (result.status === 'err') {
+            if (result.code && result.code !== '') {
+              msn += result.code + " - ";
+            }
+            if (result.message && result.message !== '') {
+              msn += result.message + ". ";
+            }
+            if (result.observationMessage && result.observationMessage !== '') {
+              msn += result.observationMessage + ". ";
+            }
+            if (result.observationMessage2 && result.observationMessage2 !== '') {
+              msn += result.observationMessage2 + ". ";
+            }
+            if (msn === '') {
+              msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
+            }
+            this.showMessage(msn, 'info', true);
+            this.saveClaim(msn);
+          } else {
+            this.transaction.number = result.number;
+            this.transaction.CAE = result.CAE;
+            this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
+            this.transaction.state = TransactionState.Closed;
+            this.finish();
           }
-          if (result.message && result.message !== '') {
-            msn += result.message + ". ";
-          }
-          if (result.observationMessage && result.observationMessage !== '') {
-            msn += result.observationMessage + ". ";
-          }
-          if (result.observationMessage2 && result.observationMessage2 !== '') {
-            msn += result.observationMessage2 + ". ";
-          }
+        } else {
           if (msn === '') {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
-        } else {
-          this.transaction.number = result.number;
-          this.transaction.CAE = result.CAE;
-          this.transaction.CAEExpirationDate = moment(result.CAEExpirationDate, 'DD/MM/YYYY HH:mm:ss').format("YYYY-MM-DDTHH:mm:ssZ");
-          this.transaction.state = TransactionState.Closed;
-          this.finish();
         }
         this.loading = false;
       },
@@ -1021,6 +1026,20 @@ export class AddSaleOrderComponent {
         this.loading = false;
       }
     )
+  }
+  
+  public saveClaim(message: string): void {
+    
+    this.loading = true;
+
+    let claim: Claim = new Claim();
+    claim.description = message;
+    claim.name = 'ERROR FE';
+    claim.priority = ClaimPriority.High;
+    claim.type = ClaimType.Err;
+    claim.listName = 'ERRORES 500';
+
+    this._claimService.saveClaim(claim).subscribe();
   }
 
   public validateElectronicTransactionMX(): void {
@@ -1041,6 +1060,7 @@ export class AddSaleOrderComponent {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
+          this.saveClaim(msn);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
@@ -1155,6 +1175,11 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
             this.transaction.company = result.company;
+            if(this.transaction.company.transport){
+              this.transaction.transport = this.transaction.company.transport;
+            } else {
+              this.transaction.transport = null;
+            }
             await this.updateTransaction().then(
               transaction => {
                 if(transaction) {
@@ -1387,6 +1412,18 @@ export class AddSaleOrderComponent {
           this.getMovementsOfTransaction();
         }, (reason) => {
           this.getMovementsOfTransaction();
+        });
+        break;
+      case 'change-transport':
+        modalRef = this._modalService.open(SelectTransportComponent);
+        modalRef.result.then((result) => {
+          console.log(result);
+          if(result && result.transport){
+            this.transaction.transport = result.transport
+            this.updateTransaction();
+          }
+        }, (reason) => {
+          this.updateTransaction()
         });
         break;
       default: ;
@@ -1871,6 +1908,47 @@ export class AddSaleOrderComponent {
     }
 
     this.loading = true;
+  }
+
+  public getTransports(): void {
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { name: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { operationType: { $ne: "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      name: 1,
+      operationType: 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._transportService.getTransports(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.transports && result.transports.length > 0) {
+        this.transports = result.transports;
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public assignTransactionNumber() {

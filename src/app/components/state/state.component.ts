@@ -82,41 +82,20 @@ export class StateComponent implements OnInit {
     
     this.loading = true;
 
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
-    
-    // FILTRAMOS LA CONSULTA
-    let match = { "operationType": { "$ne": "D" } };
-    
-    // CAMPOS A TRAER
-    let project = {
-      "name": 1,
-      "operationType": 1,
-    };
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._countryService.getCountries(
-      project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { "name": 1, "operationType": 1, }, // PROJECT
+      { "operationType": { "$ne": "D" } }, // MATCH
+      { name: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(result => {
+      this.loading = false;
       if (result && result.countries) {
         this.countries = result.countries;
       } else {
-        this.showMessage("No se encontraron paises", 'danger', false);
-        this.loading = true;
+        this.countries = new Array();
       }
-      this.loading = false;
-
     },
     error => {
       this.showMessage(error._body, 'danger', false);

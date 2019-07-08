@@ -643,12 +643,25 @@ export class ConfigComponent implements OnInit {
 
   public setConfigurationSettings(config) {
     if (config.emailAccount) Config.setConfigEmail(config.emailAccount, config.emailPassword)
-    if (config.companyName) Config.setConfigCompany(
-          config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
-          config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, 
-          config.footerInvoice, config.companyFantasyName, config.country, config.timezone, 
-          config.companyIdentificationType, config.companyIdentificationValue, config.companyLicenseCost,
-          config.currency, config.companyPostalCode);
+    if (config.companyName) { 
+      Config.setConfigCompany(
+        config.companyPicture, 
+        config.companyName, 
+        config.companyAddress, 
+        config.companyPhone,
+        config.companyVatCondition, 
+        config.companyStartOfActivity, 
+        config.companyGrossIncome, 
+        config.footerInvoice, 
+        config.companyFantasyName,
+        config.country, 
+        config.timezone, 
+        config.currency, 
+        config.companyIdentificationType, 
+        config.companyIdentificationValue, 
+        config.licenseCost,
+        config.companyPostalCode);
+    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

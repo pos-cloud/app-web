@@ -213,13 +213,12 @@ import { UpdateCompanyFieldComponent } from './components/update-company-field/u
 import { DeleteCompanyFieldComponent } from './components/delete-company-field/delete-company-field.component';
 import { ListCompanyFieldsComponent } from './components/list-company-fields/list-company-fields.component';
 import { AddCompanyFieldsComponent } from './components/add-company-fields/add-company-fields.component';
-import { from } from 'rxjs';
 import { CancellationTypeComponent } from './components/cancellation-type/cancellation-type.component';
 import { ListCancellationTypeComponent } from './components/list-cancellation-types/list-cancellation-types.component';
 import { CancellationTypeService } from './services/cancellation-type.service';
 import { RouterModule } from '@angular/router';
 import { MovementOfCancellationComponent } from "./components/movement-of-cancellation/movement-of-cancellation.component";
-import { MovementOfCancellationService } from './services/movement-of-cancellation';
+import { MovementOfCancellationService } from './services/movement-of-cancellation.service';
 import { CurrencyComponent } from './components/currency/currency.component';
 import { ListCurrenciesComponent } from './components/list-currencies/list-currencies.component';
 import { CurrencyService } from './services/currency.service';
@@ -240,6 +239,12 @@ import { OriginService } from './services/origin.service';
 import { OriginComponent } from './components/origin/origin.component';
 import { SelectBranchComponent } from './components/select-branch/select-branch.component';
 import { SelectOriginComponent } from './components/select-origin/select-origin.component';
+import { ClaimService } from './services/claim.service';
+import { ClaimComponent } from './components/claim/claim.component';
+import { TransportComponent } from './components/transport/transport.component';
+import { TransportService } from './services/transport.service';
+import { ListTransportComponent } from './components/list-transports/list-transports.component';
+import { SelectTransportComponent } from './components/select-transport/select-transport.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -410,7 +415,11 @@ import { SelectOriginComponent } from './components/select-origin/select-origin.
     ListOriginsComponent,
     OriginComponent,
     SelectBranchComponent,
-    SelectOriginComponent
+    SelectOriginComponent,
+    ClaimComponent,
+    TransportComponent,
+    ListTransportComponent,
+    SelectTransportComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -567,7 +576,10 @@ import { SelectOriginComponent } from './components/select-origin/select-origin.
     ListOriginsComponent,
     OriginComponent,
     SelectBranchComponent,
-    SelectOriginComponent
+    SelectOriginComponent,
+    ClaimComponent,
+    TransportComponent,
+    SelectTransportComponent
   ],
   imports: [
     BrowserModule,
@@ -632,7 +644,9 @@ import { SelectOriginComponent } from './components/select-origin/select-origin.
     BranchService,
     AuthGuard,
     AuthService,
-    OriginService
+    OriginService,
+    ClaimService,
+    TransportService
   ],
   bootstrap: [AppComponent]
 })

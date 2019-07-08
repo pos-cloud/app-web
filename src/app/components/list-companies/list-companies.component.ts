@@ -134,7 +134,11 @@ export class ListCompaniesComponent implements OnInit {
           modalRef.componentInstance.companyType = this.type;
         }
         modalRef.result.then((result) => {
-          this.getCompaniesByType();
+          if(this.userType === 'pos') {
+            this.selectCompany(result.company);
+          } else {
+            this.getCompaniesByType();
+          }
         }, (reason) => {
           this.getCompaniesByType();
         });

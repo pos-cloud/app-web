@@ -19,7 +19,7 @@ export class ListCountriesComponent implements OnInit {
   public userType: string;
   public countries: Country[] = new Array();
   public relationOfCountryEmpty: boolean = true;
-  public orderTerm: string[] = ['-code'];
+  public orderTerm: string[] = ['name'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -56,61 +56,68 @@ export class ListCountriesComponent implements OnInit {
     this.getCountries()
   }
 
-  public async importCountry() {
+  public async importCountries() {
 
-    let countryImport = 0;
+    this.loading = true;
 
     this._configService.getCountry().subscribe(
       async result => {
-        let countries = JSON.parse(result["_body"]);
-
-        for (let index = 0; index < countries.length; index++) {
-          
-          let country = new Country();
-
-          country.code = countries[index]['alpha2Code'];
-          country.alpha2Code = countries[index]['alpha2Code'];
-          country.alpha3Code = countries[index]['alpha3Code'];
-          country.flag = countries[index]['flag'];
-          country.name = countries[index]['name'];
-          country.callingCodes = countries[index]['callingCodes'][0];
-          country.timezones = countries[index]['timezones'][0];
-
-          let result = await this.saveCountry(country)
-
-          if(result){
-            countryImport ++;
+        if(result) {
+          let countries: any[] = <any[]> result;
+          let err;
+  
+          for (let index = 0; index < countries.length; index++) {
+            if(err === undefined) {
+              let country = new Country();
+              country.code = countries[index]['alpha2Code'];
+              country.alpha2Code = countries[index]['alpha2Code'];
+              country.alpha3Code = countries[index]['alpha3Code'];
+              country.flag = countries[index]['flag'];
+              country.name = countries[index]['name'];
+              country.callingCodes = countries[index]['callingCodes'][0];
+              country.timezones = countries[index]['timezones'][0];
+    
+              await this.saveCountry(country).then(
+                country => {
+                  if(!country) {
+                    err = '';
+                  }
+                }
+              ).catch(
+                err => {
+                  err = err;
+                }
+              );
+            }
           }
-
-          this.loading = true;
-          
+          if(err && err !== '') {
+            this.loading = false;
+            this.showMessage(err, "danger", true);
+          }
         }
-        this.loading = false;
         this.refresh();
       }
-    )
-    
+    );
   }
 
-  public async saveCountry(country:Country){
+  public async saveCountry(country: Country) {
 
     return new Promise((resolve, reject) => { 
 
       this.countryService.saveCountry(country).subscribe(
         result => {
+          this.loading = false;
           if (!result.country) {
-            this.loading = false;
-            if (result.message && result.message !== '') { 
-              this.showMessage(result.message, 'info', true); 
-            }
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
           } else {
-              this.loading = false;
-              resolve(result.country);
+            resolve(result.country);
           }
         },
         error => {
           this.showMessage(error._body, 'danger', false);
           this.loading = false;
+          resolve(null);
         }
       );
     })
@@ -183,12 +190,16 @@ export class ListCountriesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.countries) {
-          this.loading = false;
-          this.countries = result.countries;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].countries) {
+          this.countries = result[0].countries;
+          this.totalItems = result[0].count;
           this.relationOfCountryEmpty = false;
-        } 
+        } else {
+          this.countries = new Array();
+          this.totalItems = 0;
+          this.relationOfCountryEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -267,7 +278,6 @@ export class ListCountriesComponent implements OnInit {
   public refresh(): void {
     this.getCountries();
   }
-
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

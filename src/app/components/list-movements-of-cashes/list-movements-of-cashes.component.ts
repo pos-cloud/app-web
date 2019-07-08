@@ -78,10 +78,9 @@ export class ListMovementOfCashesComponent implements OnInit {
     this.loading = true;
 
     // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
+    let sortAux = { expirationDate: 1 };
     
     // FILTRAMOS LA CONSULTA
-
     let match = `{`;
     for(let i = 0; i < this.displayedColumns.length; i++) {
       let value = this.filters[this.displayedColumns[i]];
@@ -119,11 +118,19 @@ export class ListMovementOfCashesComponent implements OnInit {
     };
 
     // AGRUPAMOS EL RESULTADO
-    let group = {};
+    let group = {
+      _id: null,
+      count: { $sum: 1 },
+      movementOfCashes: { $push: '$$ROOT' }
+    };
 
-    let limit = 0;
-
-    let skip = 0;
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+                0 // SKIP
 
     this._movementOfCashService.getMovementsOfCashesV2(
         project, // PROJECT
@@ -134,12 +141,16 @@ export class ListMovementOfCashesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.movementOfCashes) {
-          this.loading = false;
-          this.movementsOfCashes = result.movementOfCashes;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].movementOfCashes) {
+          this.movementsOfCashes = result[0].movementOfCashes;
+          this.totalItems = result[0].count;
           this.areMovementOfCashesEmpty = false;
-        } 
+        } else {
+          this.movementsOfCashes = new Array();
+          this.totalItems = 0;
+          this.areMovementOfCashesEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -147,6 +158,11 @@ export class ListMovementOfCashesComponent implements OnInit {
         this.totalItems = 0;
       }
     );
+  }
+
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getMovementOfCashesV2();
   }
 
   public getMovementOfCashes(): void {

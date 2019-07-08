@@ -127,13 +127,33 @@ export class ExportIvaComponent implements OnInit {
             let data: any = [];
             let totalTaxBase = 0;
             let totalExempt = 0;
-            let totalTaxAmount = 0;
+            let totalTaxAmountIVA = 0;
+            let totalTaxAmountPercep = 0;
             let totalAmount = 0;
             let totalTaxes: Taxes[] = new Array();
             let i = 0;
             for (let transaction of result) {
               
               data[i] = {};
+
+              //DATOS PRINCIPALES
+              data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
+              if(transaction.company) {
+                data[i]['RAZÓN SOCIAL'] = transaction.company.name.toUpperCase();
+                data[i]['IDENTIFICADOR'] = transaction.company.identificationValue.replace(/-/g, "");
+              } else {
+                data[i]['RAZÓN SOCIAL'] = 'CONSUMIDOR FINAL';
+                data[i]['IDENTIFICADOR'] = '00000000000';
+              }
+              if(transaction.type.labelPrint && transaction.type.labelPrint !== "") {
+                data[i]['TIPO COMP.'] = transaction.type.labelPrint;
+              } else {
+                data[i]['TIPO COMP.'] = transaction.type.name;
+              }
+
+              data[i]['NRO COMP.'] =  this.padString(transaction.origin, 4) + "-" +
+                                                    transaction.letter + "-" +
+                                      this.padString(transaction.number, 8);
 
               if(transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
                 transaction.type.transactionMovement === TransactionMovement.Purchase && transaction.type.movement === Movements.Inflows) {
@@ -144,26 +164,12 @@ export class ExportIvaComponent implements OnInit {
               totalExempt += transaction.exempt;
               totalAmount += transaction.totalPrice;
 
-              if(transaction.taxes && transaction.taxes.length > 0) {
-                for(let transactionTax of transaction.taxes) {
-                  //DATOS PRINCIPALES
-                  data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
-                  if(transaction.company) {
-                    data[i]['RAZÓN SOCIAL'] = transaction.company.name.toUpperCase();
-                    data[i]['IDENTIFICADOR'] = transaction.company.identificationValue.replace(/-/g, "");
-                  } else {
-                    data[i]['RAZÓN SOCIAL'] = 'CONSUMIDOR FINAL';
-                    data[i]['IDENTIFICADOR'] = '00000000000';
-                  }
-                  if(transaction.type.labelPrint && transaction.type.labelPrint !== "") {
-                    data[i]['TIPO COMP.'] = transaction.type.labelPrint;
-                  } else {
-                    data[i]['TIPO COMP.'] = transaction.type.name;
-                  }
+              let partialTaxBase: number = 0;
+              let partialTaxAmountIVA: number = 0;
+              let partialTaxAmountPercep: number = 0;
 
-                  data[i]['NRO COMP.'] =  this.padString(transaction.origin, 4) + "-" +
-                                                        transaction.letter + "-" +
-                                          this.padString(transaction.number, 8);
+              if(transaction.taxes && transaction.taxes.length > 0 && transaction.taxes[0].tax) {
+                for(let transactionTax of transaction.taxes) {
 
                   // DATOS NUMÉRICOS
                   if(transaction.type.transactionMovement === TransactionMovement.Sale && transaction.type.movement === Movements.Outflows ||
@@ -186,56 +192,34 @@ export class ExportIvaComponent implements OnInit {
 
                   if(transactionTax.tax.classification === TaxClassification.Tax) {
                     totalTaxBase += transactionTax.taxBase;
+                    partialTaxAmountIVA += transactionTax.taxAmount;
+                    partialTaxBase += transactionTax.taxBase;
+                    totalTaxAmountIVA += transactionTax.taxAmount;
+                  } else {
+                    partialTaxAmountPercep += transactionTax.taxAmount;
+                    totalTaxAmountPercep += transactionTax.taxAmount;
                   }
-
-                  totalTaxAmount += transactionTax.taxAmount;
-
-                  data[i]['GRAV.'] = this.roundNumber.transform(transactionTax.taxBase);
-                  data[i]['EXENTO'] = this.roundNumber.transform(transaction.exempt);
-                  data[i]['IMPUESTO'] = transactionTax.tax.name;
-                  data[i]['% IMP.'] = this.roundNumber.transform(transactionTax.percentage);
-                  data[i]['MONTO IMP.'] = this.roundNumber.transform(transactionTax.taxAmount);
-                  data[i]['TOTAL'] = this.roundNumber.transform(transactionTax.taxBase + transactionTax.taxAmount + transaction.exempt);
-
-                  i++;
-                  data[i] = {};
                 }
-              } else {
-                //DATOS PRINCIPALES
-                data[i]['FECHA'] = this.dateFormat.transform(transaction.endDate, 'DD/MM/YYYY');
-                if(transaction.company) {
-                  data[i]['RAZÓN SOCIAL'] = transaction.company.name.toUpperCase();
-                  data[i]['IDENTIFICADOR'] = transaction.company.identificationValue.replace(/-/g, "");
-                } else {
-                  data[i]['RAZÓN SOCIAL'] = 'CONSUMIDOR FINAL';
-                  data[i]['IDENTIFICADOR'] = '00000000000';
-                }
-                if(transaction.type.labelPrint && transaction.type.labelPrint !== "") {
-                  data[i]['TIPO COMP.'] = transaction.type.labelPrint;
-                } else {
-                  data[i]['TIPO COMP.'] = transaction.type.name;
-                }
-
-                data[i]['NRO COMP.'] =  this.padString(transaction.origin, 4) + "-" +
-                                                      transaction.letter + "-" +
-                                        this.padString(transaction.number, 8);
-                
-                data[i]['GRAV.'] = 0;
-                data[i]['EXENTO'] = this.roundNumber.transform(transaction.exempt);
-                data[i]['IMPUESTO'] = "";
-                data[i]['% IMP.'] = 0;
-                data[i]['MONTO IMP.'] = 0;
-                data[i]['TOTAL'] = this.roundNumber.transform(transaction.totalPrice);
               }
+
+              data[i]['GRAVADO'] = this.roundNumber.transform(partialTaxBase);
+              data[i]['EXENTO'] = this.roundNumber.transform(transaction.exempt);
+              data[i]['MONTO IVA'] = this.roundNumber.transform(partialTaxAmountIVA);
+              data[i]['MONTO PERCEP.'] = this.roundNumber.transform(partialTaxAmountPercep);
+              data[i]['MONTO TOTAL'] = this.roundNumber.transform(partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt);
+
+              i++;
+              data[i] = {};
             }
 
             i++;
             data[i] = {};
             data[i]['FECHA'] = "TOTALES";
-            data[i]['GRAV.'] = this.roundNumber.transform(totalTaxBase);
+            data[i]['GRAVADO'] = this.roundNumber.transform(totalTaxBase);
             data[i]['EXENTO'] = this.roundNumber.transform(totalExempt);
-            data[i]['MONTO IMP.'] = this.roundNumber.transform(totalTaxAmount);
-            data[i]['TOTAL'] = this.roundNumber.transform(totalAmount);
+            data[i]['MONTO IVA'] = this.roundNumber.transform(totalTaxAmountIVA);
+            data[i]['MONTO PERCEP.'] = this.roundNumber.transform(totalTaxAmountPercep);
+            data[i]['MONTO TOTAL'] = this.roundNumber.transform(totalAmount);
 
             i += 5;
             data[i] = {};

@@ -76,10 +76,24 @@ export class AppComponent {
 
   public setConfigurationSettings(config) {
     if (config.emailAccount) { Config.setConfigEmail(config.emailAccount, config.emailPassword) }
-    if (config.companyName) { Config.setConfigCompany(config.companyPicture, config.companyName, config.companyAddress, config.companyPhone,
-                                                    config.companyVatCondition, config.companyStartOfActivity, config.companyGrossIncome, config.footerInvoice, config.companyFantasyName,
-                                                    config.country, config.timezone, config.currency, config.companyIdentificationType, config.companyIdentificationValue, config.licenseCost,
-                                                    config.companyPostalCode);
+    if (config.companyName) { 
+      Config.setConfigCompany(
+        config.companyPicture, 
+        config.companyName, 
+        config.companyAddress, 
+        config.companyPhone,
+        config.companyVatCondition, 
+        config.companyStartOfActivity, 
+        config.companyGrossIncome, 
+        config.footerInvoice, 
+        config.companyFantasyName,
+        config.country, 
+        config.timezone, 
+        config.currency, 
+        config.companyIdentificationType, 
+        config.companyIdentificationValue, 
+        config.licenseCost,
+        config.companyPostalCode);
     }
     if (config.showLicenseNotification !== undefined) {
       Config.setConfigs(config.showLicenseNotification);

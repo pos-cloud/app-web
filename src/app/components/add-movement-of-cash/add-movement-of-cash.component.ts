@@ -295,15 +295,12 @@ export class AddMovementOfCashComponent implements OnInit {
       this.paymentChange = '0.00';
     }
 
-   //this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
     for(let type of this.paymentMethods) {
       if (type._id.toString() === this.movementOfCashForm.value.paymentMethod) {
         this.paymentMethodSelected = type;
         this.movementOfCash.type = type;
       }
     }
-
-    //this.paymentMethodSelected =  this.movementOfCashForm.value.paymentMethod;
     
     this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
   }
@@ -311,12 +308,6 @@ export class AddMovementOfCashComponent implements OnInit {
   public getBanks() {
     
     this.loading = true;
-
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { order: 1 };
-    
-    // FILTRAMOS LA CONSULTA
-    let match = { "operationType": { "$ne": "D" } };
     
     // CAMPOS A TRAER
     let project = {
@@ -325,29 +316,20 @@ export class AddMovementOfCashComponent implements OnInit {
       "operationType": 1,
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
     this._bankService.getBanks(
       project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
+      { "operationType": { "$ne": "D" } }, // MATCH
+      { order: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(result => {
+      this.loading = false;
       if (result && result.banks) {
         this.banks = result.banks;
       } else {
-        this.showMessage("No se encontraron paises", 'danger', false);
-        this.loading = true;
+        this.banks = new Array();
       }
-      this.loading = false;
-
     },
     error => {
       this.showMessage(error._body, 'danger', false);
@@ -939,6 +921,11 @@ export class AddMovementOfCashComponent implements OnInit {
       this.movementOfCash.CUIT = '';
       this.movementOfCash.deliveredBy = '';
       //this.movementOfCash.state = MovementOfCashState.Closed;
+      if(this.transaction.type.movement === Movements.Inflows){
+        this.movementOfCash.statusCheck == StatusCheck.Available;
+      } else {
+        this.movementOfCash.statusCheck == StatusCheck.Closed
+      }
       this.movementOfCash.discount = this.movementOfCash.type.discount;
       this.movementOfCash.surcharge = this.movementOfCash.type.surcharge;
 
@@ -1058,16 +1045,16 @@ export class AddMovementOfCashComponent implements OnInit {
     let taxes: Taxes[] = new Array();
     let tax: Taxes = new Taxes();
     if(Config.country === 'MX') {
-      tax.percentage = 16.00;
+      tax.percentage = 16;
     } else {
-      tax.percentage = 21.00;
+      tax.percentage = 21;
     }
     tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice / ((tax.percentage / 100) + 1)));
     tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));
 
     movementOfArticle.basePrice = movementOfArticle.salePrice - tax.taxAmount;
 
-    this._taxService.getTaxes('where="name":"IVA"').subscribe(
+    this._taxService.getTaxes('where="percentage":"'+tax.percentage+'"').subscribe(
       result => {
         if (!result.taxes) {
           this.loading = false;
@@ -1090,7 +1077,7 @@ export class AddMovementOfCashComponent implements OnInit {
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): void {
 
     this.loading = true;
-    
+
     this._movementOfArticleService.saveMovementOfArticle(movementOfArticle).subscribe(
       result => {
         if (!result.movementOfArticle) {
@@ -1150,6 +1137,8 @@ export class AddMovementOfCashComponent implements OnInit {
           }
         },
         error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
       )
     }

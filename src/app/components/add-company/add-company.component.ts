@@ -30,6 +30,8 @@ import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
 import { CompanyNews } from 'app/models/company-news';
+import { TransportService } from 'app/services/transport.service';
+import { Transport } from 'app/models/transport';
 
 @Component({
   selector: 'app-add-company',
@@ -61,6 +63,7 @@ export class AddCompanyComponent  implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public countries : any;
+  public transports: Transport;
 
   public formErrors = {
     'code': '',
@@ -133,6 +136,7 @@ export class AddCompanyComponent  implements OnInit {
     public _configService: ConfigService,
     public _identificationTypeService: IdentificationTypeService,
     public _countryService : CountryService,
+    public _transportService: TransportService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -146,6 +150,7 @@ export class AddCompanyComponent  implements OnInit {
     this.getCompaniesGroups();
     this.getEmployees();
     this.getCountries();
+    this.getTransports();
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -268,24 +273,12 @@ export class AddCompanyComponent  implements OnInit {
 
     this.loading = true;
 
-    /// ORDENAMOS LA CONSULTA
-    let sort = { name: 1 };
-
-    // FILTRAMOS LA CONSULTA
     let match;
     if(this.companyForm.value.country) {
-      if(this.companyForm.value.country) {
-        match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
-      } else {
-        match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
-      }
-    } else {
-      match = { "country._id": { $oid: this.company.country }, operationType: { $ne: "D" } };
+      match = { "country._id": { $oid: this.companyForm.value.country }, operationType: { $ne: "D" } };
+    } else if (this.company.state) {
+      match = { "country._id": { $oid: this.company.state._id }, operationType: { $ne: "D" } };
     }
-
-    
-
-    //match = JSON.parse(match);
 
     let project = {
         name: 1,
@@ -293,23 +286,21 @@ export class AddCompanyComponent  implements OnInit {
         "country._id": 1
     };
 
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
     this._stateService.getStates(
       project, // PROJECT
       match, // MATCH
-      sort, // SORT
-      group, // GROUP
-      //0, // LIMIT
-      //0 // SKIP
+      { name: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
     ).subscribe(
       result => {
-        if (result.states) {
-          this.loading = false;
+        this.loading = false;
+        if (result && result.states) {
           this.states = result.states;
-          
-        } 
+        } else {
+          this.states = new Array();
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -396,7 +387,9 @@ export class AddCompanyComponent  implements OnInit {
       'floorNumber': [this.company.floorNumber,[]],
       'flat': [this.company.flat,[]],
       'state': [this.company.state,[]],
-      'addressNumber': [this.company.addressNumber,[]]
+      'addressNumber': [this.company.addressNumber,[]],
+      'transport': [this.company.transport,[]]
+
     });
 
     this.companyForm.valueChanges
@@ -523,6 +516,16 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    let transport;
+    if (!this.company.transport) {
+      transport = null;
+    } else {
+      if (this.company.transport._id) {
+        transport = this.company.transport._id;
+      } else {
+        transport = this.company.transport;
+      }
+    }
 
     const values = {
       '_id': this.company._id,
@@ -548,7 +551,8 @@ export class AddCompanyComponent  implements OnInit {
       'floorNumber' : this.company.floorNumber,
       'flat' : this.company.flat,
       'group': group,
-      'employee' : employee
+      'employee' : employee,
+      'transport' : transport
     };
 
     this.companyForm.setValue(values);
@@ -640,7 +644,6 @@ export class AddCompanyComponent  implements OnInit {
 
   public saveCompany(): void {
 
-
     this.loading = true;
 
     this._companyService.saveCompany(this.company).subscribe(
@@ -649,10 +652,14 @@ export class AddCompanyComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.company = result.company;
-          this.showMessage("La empresa se ha añadido con éxito.", 'success', false);
-          this.company = new Company ();
-          this.buildForm();
-          this.getLastCompany();
+          if(this.userType === 'pos') {
+            this.activeModal.close({ company: this.company });
+          } else {
+            this.showMessage("La empresa se ha añadido con éxito.", 'success', false);
+            this.company = new Company ();
+            this.buildForm();
+            this.getLastCompany();
+          }
         }
         this.loading = false;
       },
@@ -661,50 +668,6 @@ export class AddCompanyComponent  implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  public getCountries() : void {
-    
-    this.loading = true;
-
-    // ORDENAMOS LA CONSULTA
-    let sortAux = { name: 1 };
-    
-    // FILTRAMOS LA CONSULTA
-    let match = { operationType: { $ne: "D" } };
-    
-    // CAMPOS A TRAER
-    let project = {
-      name: 1,
-      operationType: 1
-    };
-
-    // AGRUPAMOS EL RESULTADO
-    let group = {};
-
-    let limit = 0;
-
-    let skip = 0;
-
-    this._countryService.getCountries(
-      project, // PROJECT
-      match, // MATCH
-      sortAux, // SORT
-      group, // GROUP
-      limit, // LIMIT
-      skip // SKIP
-    ).subscribe(result => {
-      if (result && result.countries && result.countries.length > 0) {
-        this.countries = result.countries;
-        //this.company.country = this.countries[0];
-        this.getStates();
-      }
-      this.loading = false;
-    },
-    error => {
-      this.showMessage(error._body, 'danger', false);
-      this.loading = false;
-    });
   }
 
   public updateCompany(): void {
@@ -726,6 +689,79 @@ export class AddCompanyComponent  implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getCountries() : void {
+    
+    this.loading = true;
+    
+    // CAMPOS A TRAER
+    let project = {
+      name: 1,
+      operationType: 1
+    };
+
+    this._countryService.getCountries(
+      project, // PROJECT
+      { operationType: { $ne: "D" } }, // MATCH
+      { name: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
+    ).subscribe(result => {
+      this.loading = false;
+      if (result && result.countries) {
+        this.countries = result.countries;
+        if(this.company.state) {
+          this.getStates();
+        }
+      }
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
+  }
+
+  public getTransports(): void {
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { name: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { operationType: { $ne: "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      name: 1,
+      operationType: 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._transportService.getTransports(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.transports && result.transports.length > 0) {
+        this.transports = result.transports;
+      }
+      this.loading = false;
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

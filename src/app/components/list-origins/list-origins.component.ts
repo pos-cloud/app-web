@@ -117,12 +117,16 @@ export class ListOriginsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.origins) {
-          this.loading = false;
-          this.origins = result.origins;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].origins) {
+          this.origins = result[0].origins;
+          this.totalItems = result[0].count;
           this.relationOfOriginEmpty = false;
-        } 
+        } else {
+          this.origins = new Array();
+          this.totalItems = 0;
+          this.relationOfOriginEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);

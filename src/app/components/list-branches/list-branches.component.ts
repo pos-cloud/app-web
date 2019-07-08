@@ -116,12 +116,16 @@ export class ListBranchComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (result.branches) {
-          this.loading = false;
-          this.branches = result.branches;
-          this.totalItems = result.count;
+        this.loading = false;
+        if (result && result[0] && result[0].branches) {
+          this.branches = result[0].branches;
+          this.totalItems = result[0].count;
           this.relationOfBranchEmpty = false;
-        } 
+        } else {
+          this.branches = new Array();
+          this.totalItems = 0;
+          this.relationOfBranchEmpty = true;
+        }
       },
       error => {
         this.showMessage(error._body, 'danger', false);

@@ -48,11 +48,6 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() operation: string;
   public userCountry: string = 'AR';
 
-  // OPCIONES FORMULARIO
-  public opCurrentAccount: string = '';
-  public opCashMovement: string = '';
-  public opStockMovement: string = '';
-
   public formErrors = {
     'transactionMovement': '',
     'abbreviation': '',
@@ -97,16 +92,6 @@ export class AddTransactionTypeComponent implements OnInit {
     this.userType = pathLocation[1];
     if(!this.transactionType) {
       this.transactionType = new TransactionType();
-    } else {
-      if (this.transactionType.currentAccount) {
-        this.opCurrentAccount = this.transactionType.currentAccount.toString();
-      }
-      if (this.transactionType.movement) {
-        this.opCashMovement = this.transactionType.movement.toString();
-      }
-      if (this.transactionType.stockMovement) {
-        this.opStockMovement = this.transactionType.stockMovement.toString();
-      }
     }
     this.buildForm();
     this.setValueForm();
@@ -199,6 +184,11 @@ export class AddTransactionTypeComponent implements OnInit {
 
   public buildForm(): void {
 
+    if(!this.transactionType.currentAccount) this.transactionType.currentAccount = CurrentAccount.No;
+    if(!this.transactionType.movement) this.transactionType.movement = Movements.Inflows;
+    if(!this.transactionType.stockMovement) this.transactionType.stockMovement = StockMovement.Inflows;
+    if(!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+    
     this.transactionTypeForm = this._fb.group({
       '_id': [this.transactionType._id, [
         ]
@@ -218,16 +208,16 @@ export class AddTransactionTypeComponent implements OnInit {
       'labelPrint': [this.transactionType.labelPrint, [
         ]
       ],
-      'currentAccount': [this.transactionType.currentAccount, [
+      'currentAccount': [this.transactionType.currentAccount.toString(), [
         ]
       ],
-      'movement': [this.transactionType.movement, [
+      'movement': [this.transactionType.movement.toString(), [
         ]
       ],
       'modifyStock': [this.transactionType.modifyStock, [
         ]
       ],
-      'stockMovement': [this.transactionType.stockMovement, [
+      'stockMovement': [this.transactionType.stockMovement.toString(), [
         ]
       ],
       'requestArticles': [this.transactionType.requestArticles, [
@@ -296,7 +286,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'showPrices': [this.transactionType.showPrices, [
         ]
       ],
-      'entryAmount': [this.transactionType.entryAmount, [
+      'entryAmount': [this.transactionType.entryAmount.toString(), [
         ]
       ],
       'allowEdit': [this.transactionType.allowEdit, [
@@ -315,6 +305,9 @@ export class AddTransactionTypeComponent implements OnInit {
         ]
       ],
       'requestCompany': [this.transactionType.requestCompany, [
+        ]
+      ],
+      'requestTransport': [this.transactionType.requestTransport, [
         ]
       ]
     });
@@ -436,13 +429,15 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.requestPaymentMethods === undefined) this.transactionType.requestPaymentMethods = true;
     if (this.transactionType.showPrices === undefined) this.transactionType.showPrices = true;
     if(this.transactionType.transactionMovement === TransactionMovement.Sale) {
-      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
+      if (!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.SaleWithVAT;
     } else {
-      if (this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
+      if (!this.transactionType.entryAmount) this.transactionType.entryAmount = EntryAmount.CostWithoutVAT;
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
     if (this.transactionType.requestCurrency === undefined) this.transactionType.requestCurrency = false;
+    if (this.transactionType.requestTransport === undefined) this.transactionType.requestTransport = false;
+
 
     let requestEmployee;
     if (!this.transactionType.requestEmployee) {
@@ -504,7 +499,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestEmployee': requestEmployee,
       'fastPayment': fastPayment,
       'requestCompany': this.transactionType.requestCompany,
-      'cashBoxImpact': this.transactionType.cashBoxImpact
+      'cashBoxImpact': this.transactionType.cashBoxImpact,
+      'requestTransport': this.transactionType.requestTransport
     });
   }
 
@@ -526,14 +522,13 @@ export class AddTransactionTypeComponent implements OnInit {
 
     this._transactionTypeService.updateTransactionType(this.transactionType).subscribe(
       result => {
+        this.loading = false;
         if (!result.transactionType) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
         } else {
           this.transactionType = result.transactionType;
           this.showMessage("El tipo de transacción se ha actualizado con éxito.", 'success', false);
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

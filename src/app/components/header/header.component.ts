@@ -17,6 +17,7 @@ import { LicensePaymentComponent } from '../license-payment/license-payment.comp
 import { AuthService } from 'app/services/auth.service';
 import { ConfigService } from 'app/services/config.service';
 import { AddUserComponent } from '../add-user/add-user.component';
+import { ClaimComponent } from '../claim/claim.component';
 
 @Component({
   selector: 'app-header',
@@ -147,6 +148,14 @@ export class HeaderComponent {
         break;
       case 'pay-license':
         modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
+        modalRef.result.then((result) => {
+
+        }, (reason) => {
+
+        });
+        break;
+      case 'claim':
+        modalRef = this._modalService.open(ClaimComponent, { size: 'lg' });
         modalRef.result.then((result) => {
 
         }, (reason) => {

@@ -246,17 +246,14 @@ export class ListTransactionsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
+        this.loading = false;
         if (result && result[0] && result[0].transactions) {
             this.transactions = result[0].transactions;
             this.totalItems = result[0].count;
-        } else if(result && result.transactions) {
-          this.transactions = result.transactions;
-          this.totalItems = result.count;
         } else {
           this.transactions = new Array();
           this.totalItems = 0;
         }
-        this.loading = false;
       },
       error => {
         this.showMessage(error._body, 'danger', false);

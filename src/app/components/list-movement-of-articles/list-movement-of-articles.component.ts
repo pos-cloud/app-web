@@ -22,6 +22,7 @@ import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
   templateUrl: './list-movement-of-articles.component.html',
   styleUrls: ['./list-movement-of-articles.component.css']
 })
+
 export class ListMovementOfArticlesComponent implements OnInit {
 
   public articleSelected: Article;
@@ -166,16 +167,19 @@ export class ListMovementOfArticlesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if (!result || result.length === 0 || !result[0] || !result[0].movementsOfArticles) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-        } else {
+        this.loading = false;
+        if(result && result[0] && result[0].movementsOfArticles) {
           this.items = result[0].movementsOfArticles;
           this.totalItems = result[0].count;
           this.areTransactionsEmpty = false;
           this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
-          this.getBalance();
+        } else {
+          this.items = new Array();
+          this.totalItems = 0;
+          this.areTransactionsEmpty = true;
+          this.currentPage = 0;
         }
-        this.loading = false;
+        this.getBalance();
       },
       error => {
         this.showMessage(error._body, 'danger', false);
