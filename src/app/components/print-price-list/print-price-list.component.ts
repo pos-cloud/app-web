@@ -22,6 +22,8 @@ import { Article } from 'app/models/article';
 import { ConfigService } from 'app/services/config.service';
 import { Config } from 'app/app.config';
 import { VariantService } from 'app/services/variant.service';
+import { VariantValue } from 'app/models/variant-value';
+import { Variant} from 'app/models/variant';
 
 @Component({
   selector: 'app-print-price-list',
@@ -371,7 +373,7 @@ export class PrintPriceListComponent implements OnInit {
         for(let article of this.articles) {
             this.doc.setFontType('blod')
             img = await this.getPicture(article.picture);
-            this.doc.addImage(img, 'JPEG', 10, row, 80, 40);
+            this.doc.addImage(img, 'JPEG', 15, row, 60, 40);
             row +=5
             this.doc.setFontSize(this.fontSizes.extraLarge)
             this.doc.text(95, row, article.description)
@@ -394,7 +396,16 @@ export class PrintPriceListComponent implements OnInit {
               }
             }
             if(article.containsVariants){
-              let variant = await this.getVariants(article._id)
+              let variants = await this.getVariants(article._id)
+              for(let variant of variants){
+                row +=5
+                this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
+                let col = 110 + variant["_id"]["type"]["name"].length;
+                for(let value of  variant["value"] ){
+                  this.doc.text(col, row , value["description"])
+                  col += 15 + value["description"].length;
+                }
+              }
             }
             row +=20
             this.doc.line(0, row, 300, row);
@@ -426,7 +437,7 @@ export class PrintPriceListComponent implements OnInit {
   }
 
   public getVariants(articleId){
-    return new Promise ((resolve, reject) => {
+    return new Promise<Array<[]>> ((resolve, reject) => {
 
       let match = `{"articleParent._id" :  { "$oid" : "${articleId}" },"operationType" : { "$ne" : "D" } }`;
   
@@ -441,9 +452,12 @@ export class PrintPriceListComponent implements OnInit {
       }
 
       let group = {
-        _id: null,
+        _id: {
+          "type" : "$type",
+          "articleParent" : "$articleParent"
+        },
         count: { $sum: 1 },
-        variants: { $push: "$$ROOT" }
+        value : { "$addToSet" : "$value"}
       };
       
 
@@ -456,8 +470,8 @@ export class PrintPriceListComponent implements OnInit {
         0 // SKIP
       ).subscribe(
         result =>{
-          if(result && result[0] && result[0].variants.length > 0){
-            resolve(result[0].variants)
+          if(result) {
+            resolve(result)
           }
         },
         error => {
