@@ -2251,7 +2251,10 @@ export class PrintComponent implements OnInit {
     this.doc.text("Código", 18, 77);
     this.doc.text("Detalle", 45, 77);
     if (this.transaction.type && this.transaction.type.showPrices) {
-      this.doc.text("Precio U.", 155, 77);
+      this.doc.text("Precio U.", 145, 77);
+      if(this.transaction.type.requestTaxes){
+        this.doc.text("IVA.", 165, 77);
+      }
       this.doc.text("Total", 185, 77);
     }
     this.doc.setFontType('normal');
@@ -2296,8 +2299,17 @@ export class PrintComponent implements OnInit {
 
         }
         if (this.transaction.type && this.transaction.type.showPrices) {
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice / this.movementsOfArticles[i].amount), 155, row);
-          this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+          if(this.transaction.type.requestTaxes){
+            for(let tax of this.movementsOfArticles[i].taxes){
+              this.doc.text("$ " + this.roundNumber.transform(tax.taxBase), 145, row);
+              this.doc.text("% " + this.roundNumber.transform(tax.percentage), 165, row);
+            }
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+          } else {
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount), 145, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+          }
+          
         }
         if (this.movementsOfArticles[i].notes) {
           this.doc.setFontStyle("italic");
