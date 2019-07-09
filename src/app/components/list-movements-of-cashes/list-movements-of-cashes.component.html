@@ -30,7 +30,7 @@
               <th (click)="orderBy('expirationDate')">Vencimiento </th>
               <th (click)="orderBy('statusCheck')">Estado </th>
               <th (click)="orderBy('observation')">Observación </th>
-              <th (click)="orderBy('bank')">Banco </th>
+              <th (click)="orderBy('bank','name')">Banco </th>
               <th (click)="orderBy('titular')">Titular </th>
               <th (click)="orderBy('CUIT')">CUIT </th>
               <th (click)="orderBy('deliveredBy')">Entregado Por </th>
@@ -64,7 +64,7 @@
                                                                 | filter: filterExpirationDate:'expirationDate'
                                                                 | filter: filterStatus:'statusCheck'
                                                                 | filter: filterObservation:'observation'
-                                                                | filter: filterBank:'bank'
+                                                                | filter: filterBank:'bank':'name'
                                                                 | filter: filterTitular:'titular'
                                                                 | filter: filterCUIT:'CUIT'
                                                                 | filter: filterDeliveryBy:'deliveredBy'
