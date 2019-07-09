@@ -23,7 +23,7 @@
               </th>
               <th (click)="orderBy('transaction','endDate')">Fecha </th>
               <th (click)="orderBy('type','name')">Método </th>
-              <th (click)="orderBy('quota')">Couta </th>
+              <th (click)="orderBy('quota')">Cuota </th>
               <th (click)="orderBy('amountPaid')">Importe </th>
               <th (click)="orderBy('discount')">Descuento </th>
               <th (click)="orderBy('number')">Comprobante </th>
@@ -88,7 +88,7 @@
               <td class="flat" >{{movementOfCash.expirationDate | dateFormat:'DD/MM/YYYY'}}</td>
               <td class="flat"> {{movementOfCash.statusCheck}}</td>
               <td class="flat" >{{movementOfCash.observation}}</td>
-              <td class="flat" >{{movementOfCash.bank}}</td>
+              <td class="flat" *ngIf="movementOfCash.bank">{{movementOfCash.bank.name}}</td>
               <td class="flat" >{{movementOfCash.titular}}</td>
               <td class="flat" >{{movementOfCash.CUIT}}</td>
               <td class="flat" >{{movementOfCash.deliveredBy}}</td>
