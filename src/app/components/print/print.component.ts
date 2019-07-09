@@ -2301,13 +2301,13 @@ export class PrintComponent implements OnInit {
         if (this.transaction.type && this.transaction.type.showPrices) {
           if(this.transaction.type.requestTaxes){
             for(let tax of this.movementsOfArticles[i].taxes){
-              this.doc.text("$ " + this.roundNumber.transform(tax.taxBase), 145, row);
-              this.doc.text("% " + this.roundNumber.transform(tax.percentage), 165, row);
+              this.doc.text("$ " + this.roundNumber.transform(tax.taxBase,2), 145, row);
+              this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), 165, row);
             }
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 185, row);
           } else {
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount), 145, row);
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice), 185, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 185, row);
           }
           
         }
@@ -2398,7 +2398,7 @@ export class PrintComponent implements OnInit {
       rowTotals +=8;
       this.doc.text("Descuento:", 140, rowTotals);
       this.doc.setFontType('normal');
-      this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount) + ")", 173, rowTotals);
+      this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount,2) + ")", 173, rowTotals);
       let subtotal = this.transaction.totalPrice;
 
       if (this.transaction.company &&
@@ -2422,7 +2422,7 @@ export class PrintComponent implements OnInit {
               this.doc.setFontType('bold');
               this.doc.text("Exento:", 140, rowTotals);
               this.doc.setFontType('normal');
-              this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt), 173, rowTotals);
+              this.doc.text("$ " + this.roundNumber.transform(this.transaction.exempt,2), 173, rowTotals);
               subtotal -= this.transaction.exempt;
             }
       }
@@ -2430,14 +2430,14 @@ export class PrintComponent implements OnInit {
       if (this.transaction.discountAmount) {
         subtotal += this.transaction.discountAmount;
       }
-      this.doc.text("$ " + this.roundNumber.transform((subtotal)).toString(), 173, 247);
+      this.doc.text("$ " + this.roundNumber.transform((subtotal),2).toString(), 173, 247);
       rowTotals += 8;
       this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.large);
       this.doc.text("Total:", 140, rowTotals);
       this.doc.setFontType('normal');
-      this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 173, rowTotals);
+      this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice,2), 173, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
