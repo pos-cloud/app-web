@@ -237,17 +237,18 @@ export class PrintPriceListComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        if (result && result[0].articles) {
+        console.log(result);  
+        if (result && result[0] && result[0].articles && result[0].articles.length > 0) {
             this.articles = result[0].articles;
+            this.printPriceList();
         } else {
+            this.showMessage("No se encontraron articulos", 'danger', false);
             this.articles = null;
         }
-        this.printPriceList();
       },
       error => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-        this.printPriceList();
       }
     );
   }
