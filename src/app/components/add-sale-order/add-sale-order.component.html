@@ -12,6 +12,10 @@
           <b>{{ transaction.type.requestEmployee.description }}:</b>
           <span *ngIf="transaction.employeeClosing">{{transaction.employeeClosing.name}}</span>
         </div>
+        <div class="col-md-2" *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
+            <b> Transporte:</b>
+            <span *ngIf="transaction.transport">{{transaction.transport.name}}</span>
+        </div>
         <div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'">
           <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
           <b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
@@ -64,6 +68,17 @@
             </button>
           </div>
         </div>
+        <div class="col-md-2" *ngIf="transaction && transaction.company && transaction.type && transaction.type.requestTransport">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-secondary" (click)="openModal('change-transport')">
+                  Transporte
+                </button>
+                <button type="button" 
+                        class="btn btn-secondary fa fa-exchange" 
+                        (click)="openModal('change-transport')">
+                </button>
+              </div>
+          </div>
         <!--<div class="col-md-2" >
           <div class="btn-group">
             <button type="button" class="btn btn-outline-secondary" (click)="openModal('import')">

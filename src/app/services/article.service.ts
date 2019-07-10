@@ -244,5 +244,29 @@ export class ArticleService {
 
 			xhr.send(formData);
 		});
-	}
+    }
+    
+    public getPicture(picture: string): Observable<any> {
+
+        const URL = `${Config.apiURL}get-image-base64-article`;
+
+        const params = new HttpParams()
+                .set('picture', picture);
+
+        const headers = new HttpHeaders()
+            .set('Content-Type', 'application/json')           
+            .set('Authorization', this._authService.getToken());
+
+        return this._http.get(URL, {
+            headers: headers,
+            params: params
+        }).pipe(
+            map(res => {
+                return res;
+            }),
+            catchError((err) => {
+                return of(err);
+            })
+        );
+    }
 }

@@ -190,10 +190,18 @@ export class ListTransactionTypesComponent implements OnInit {
     this.loading = true;
 
     let movement;
-    if(this.pathLocation[2] === "venta") {
-      movement = "Venta"
-    } else {
-      movement = "Compra"
+
+    switch (this.pathLocation[2]) {
+      case "venta":      
+        movement = "Venta"
+        break;
+      case "compra":
+        movement = "Compra"
+        break;
+      case "fondo":
+        movement = "Fondos"
+      default:
+        break;
     }
 
     let timezone = "-03:00";

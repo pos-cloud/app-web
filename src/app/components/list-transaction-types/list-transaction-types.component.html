@@ -258,6 +258,7 @@
   <div class="card card-outline-primary card-large">
   <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'venta'">Ventas por tipo de transacción</div>
   <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'compra'">Compras por tipo de transacción</div>
+  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'fondo'">Fondos por tipo de transacción</div>
     <div class="card-block table-responsive">
       <table class="table table-hover">
         <thead>
@@ -281,6 +282,9 @@
           </tr>
           <tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'compra'">
             <td colspan="3">No se encontraron compras por tipo de comprobante</td>
+          </tr>
+          <tr align="center" *ngIf="areItemsEmpty && !loading && pathLocation[2] === 'fondo'">
+            <td colspan="3">No se encontraron fondos por tipo de comprobante</td>
           </tr>
         </tbody>
         <tfoot>

@@ -42,6 +42,24 @@ export class ListMovementOfCashesComponent implements OnInit {
     "amountPaid",
     "expirationDate"
   ];
+  public displayedColumns2 = [
+    "number",
+    "bank.name",
+    "transaction.cashBox.number",
+    "transaction.type.name",
+    "amountPaid",
+    "expirationDate",
+    "transaction.endDate",
+    "type.name",
+    "quota",
+    "discount",
+    "statusCheck",
+    "observation",
+    "titular",
+    "CUIT",
+    "deliveredBy",
+    "receiver"
+  ];
   public filters: any[];
   public filterValue: string;
 
@@ -169,6 +187,93 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     this.loading = true;
 
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { expirationDate: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = `{`;
+    for(let i = 0; i < this.displayedColumns2.length; i++) {
+      let value = this.filters[this.displayedColumns2[i]];
+      if (value && value != "") {
+        match += `"${this.displayedColumns2[i]}": { "$regex": "${value}", "$options": "i"},`;
+      }
+    }
+
+    match += `"operationType": { "$ne": "D" }, "transaction.type.transactionMovement" : "${this.transactionMovement}" }`;
+
+    match = JSON.parse(match);
+    
+    // CAMPOS A TRAER
+    let project = {
+      "_id" : 1,
+      "transaction.endDate": { $dateToString : { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: "-03:00"}},
+      "transaction.cashBox.number" : { $toString : "$transaction.cashBox.number"},
+      "quota" :1 ,
+      "discount": 1,
+      "number" : 1,
+      "statusCheck" : 1,
+      "observation" : 1,
+      "bank._id" : 1 ,
+      "bank.name" : { $toString : '$bank.name'} , 
+      "amountPaid" :{ $toString : '$amountPaid'} ,
+      "operationType": 1,
+      "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
+      "transaction._id":1,
+      "transaction.state" : 1,
+      "transaction.type.name" : 1,
+      "transaction.type.transactionMovement" : 1,
+      "date": 1,
+      "titular" : 1,
+      "receiver" : 1,
+      "type" : 1,
+      "deliveredBy" : 1,
+      "CUIT" : 1,
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+      _id: null,
+      count: { $sum: 1 },
+      movementOfCashes: { $push: '$$ROOT' }
+    };
+
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+                0 // SKIP
+
+    this._movementOfCashService.getMovementsOfCashesV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        this.itemsPerPage, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].movementOfCashes) {
+          this.movementsOfCashes = result[0].movementOfCashes;
+          this.totalItems = result[0].count;
+          this.areMovementOfCashesEmpty = false;
+        } else {
+          this.movementsOfCashes = new Array();
+          this.totalItems = 0;
+          this.areMovementOfCashesEmpty = true;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
+
+    /*this.loading = true;
+
     this._movementOfCashService.getMovementsOfCashesByMovement(this.transactionMovement).subscribe(
       result => {
         if (!result.movementsOfCashes) {
@@ -182,6 +287,7 @@ export class ListMovementOfCashesComponent implements OnInit {
           this.hideMessage();
           this.loading = false;
           this.movementsOfCashes = result.movementsOfCashes;
+          console.log(this.movementsOfCashes);
           this.totalItems = this.movementsOfCashes.length;
           this.areMovementOfCashesEmpty = false;
         }
@@ -201,7 +307,7 @@ export class ListMovementOfCashesComponent implements OnInit {
       if(this.pathLocation[2] !== "fondos"){
         this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
       }
-    }
+    }*/
   }
 
   public getMovementOfCashById(id : string): Promise<MovementOfCash> {

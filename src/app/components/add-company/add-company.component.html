@@ -279,11 +279,36 @@
                 <div class="row">
                   <div class="form-group col-md-12">
                     <label for="employee" class="control-label">Empleado asignado</label>
-                    <select class="form-control" formControlName="employee">
-                      <option *ngFor="let employee of employees" [ngValue]="employee">{{employee.name}}</option>
-                    </select>
+                    <select class="form-control" formControlName="employee" name="employee" id="employee" >
+                        <option [ngValue]="null" [selected]="!company || !company.employee" [disabled]="readonly"></option>
+                              <option *ngFor="let employee of employees"
+                                      [selected]="(company.employee && company.employee._id && employee._id===company.employee._id) ||
+                                                  (company.employee && employee._id===company.employee)"
+                                      [value]="employee._id"
+                                      [disabled]="readonly">
+                                      {{employee.name}}</option>
+  
+                      </select>
                     <div *ngIf="formErrors.employee" class="alert alert-danger">
                       {{ formErrors.employee }}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="transport" class="control-label">Transporte asignado</label>
+                    <select class="form-control" formControlName="transport" name="transport" id="transport" >
+                        <option [ngValue]="null" [selected]="!company || !company.transport" [disabled]="readonly"></option>
+                              <option *ngFor="let transport of transports"
+                                      [selected]="(company.transport && company.transport._id && transport._id===company.transport._id) ||
+                                                  (company.transport && transport._id===company.transport)"
+                                      [value]="transport._id"
+                                      [disabled]="readonly">
+                                      {{transport.name}}</option>
+  
+                      </select>
+                    <div *ngIf="formErrors.transport" class="alert alert-danger">
+                      {{ formErrors.transport }}
                     </div>
                   </div>
                 </div>
