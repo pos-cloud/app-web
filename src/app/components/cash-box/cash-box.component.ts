@@ -274,7 +274,7 @@ export class CashBoxComponent implements OnInit {
       if (this.cashBox.state === CashBoxState.Closed) {
         this.openModal("print");
       } else {
-        let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{ "transaction.type.cashBoxImpact : "true" },{"cashBox":"' + this.cashBox._id + '"}]';
+        let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
         await this.getTransactions(query).then(
           async transactions => {
             if(transactions) {
