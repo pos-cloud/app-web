@@ -990,7 +990,7 @@ export class AddSaleOrderComponent {
               msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
             }
             this.showMessage(msn, 'info', true);
-            this.saveClaim(msn);
+            this.saveClaim(msn + ' - FE NRO ' + this.transaction.number + ' - MONTO ' + this.transaction.totalPrice);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1045,7 +1045,7 @@ export class AddSaleOrderComponent {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
-          this.saveClaim(msn);
+          this.saveClaim(msn + ' - FE NRO ' + this.transaction.number + ' - MONTO ' + this.transaction.totalPrice);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
