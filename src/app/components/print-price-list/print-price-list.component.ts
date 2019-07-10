@@ -77,7 +77,10 @@ export class PrintPriceListComponent implements OnInit {
     public _variantService: VariantService,
     private domSanitizer: DomSanitizer
 
-  ) { }
+  ) { 
+    this.pageWidth = 210 * 100 / 35.27751646284102;
+    this.pageHigh = 297 * 100 / 35.27751646284102;
+  }
 
   async ngOnInit() {
 
@@ -96,11 +99,6 @@ export class PrintPriceListComponent implements OnInit {
     this.userType = pathLocation[1];
     this.getMakes();
     this.buildForm();
-
-
-    this.pageWidth = 210 * 100 / 35.27751646284102;
-    this.pageHigh = 297 * 100 / 35.27751646284102;
-
     this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);
 
   }
@@ -237,7 +235,6 @@ export class PrintPriceListComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        console.log(result);  
         if (result && result[0] && result[0].articles && result[0].articles.length > 0) {
             this.articles = result[0].articles;
             this.printPriceList();
@@ -277,6 +274,7 @@ export class PrintPriceListComponent implements OnInit {
     row += 3;
     this.doc.line(0, row, 400, row);
     
+
 
     if(this.printPriceListForm.value.withImage == false){
       row += 5;
@@ -380,8 +378,10 @@ export class PrintPriceListComponent implements OnInit {
             this.doc.text(95, row, article.description)
             row +=5
             this.doc.setFontSize(this.fontSizes.normal)
-            this.doc.text(95, row, 'Marca:')
-            this.doc.text(120, row, article.make.description)
+            if(article.make){
+              this.doc.text(95, row, 'Marca:')
+              this.doc.text(120, row, article.make.description)
+            }
             this.doc.text(150, row, 'Precio')
             this.doc.setFontSize(this.fontSizes.extraLarge)
             this.doc.text(150, row + 8,"$" + this.roundNumber.transform(article.salePrice).toString());
@@ -486,6 +486,8 @@ export class PrintPriceListComponent implements OnInit {
   public finishImpression(): void {
     this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);
+
   }
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {
