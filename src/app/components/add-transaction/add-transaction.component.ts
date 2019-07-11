@@ -493,6 +493,8 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.letter = this.transactionForm.value.letter;
       this.transaction.number = this.transactionForm.value.number;
     }
+    
+    this.transactionDate = this.transactionForm.value.date;
 
     this.transaction.observation = this.transactionForm.value.observation;
     this.setValuesForm();
