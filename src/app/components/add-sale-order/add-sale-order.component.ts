@@ -1005,7 +1005,8 @@ export class AddSaleOrderComponent {
               msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
             }
             this.showMessage(msn, 'info', true);
-            this.saveClaim(msn + ' - FE NRO ' + this.transaction.number + ' - MONTO ' + this.transaction.totalPrice);
+            let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+            this.saveClaim(msn + ' - ' + body);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1060,7 +1061,13 @@ export class AddSaleOrderComponent {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
-          this.saveClaim(msn + ' - FE NRO ' + this.transaction.number + ' - MONTO ' + this.transaction.totalPrice);
+
+          let body ='transaction=' + JSON.stringify(this.transaction) + '&' +
+                    'movementsOfArticles=' + JSON.stringify(this.movementsOfArticles) + '&' +
+                    'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
+                    'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + Config.database + '"}';
+      
+          this.saveClaim(msn + ' - ' + body);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
