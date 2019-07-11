@@ -396,7 +396,11 @@ export class PointOfSaleComponent implements OnInit {
       }
     );
 
-    query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+    if(this.posType === 'mostrador') {
+      query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
+    } else {
+      query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+    }
 
     this._transactionService.getTransactionsByMovement(transactionMovement, query).subscribe(
       result => {
