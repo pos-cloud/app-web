@@ -62,7 +62,11 @@ export class AddMakeComponent implements OnInit {
         ]
       ],
       'visibleSale' : [this.make.visibleSale, [
-      ]]
+        ]
+      ],
+      'ecommerceEnabled' : [this.make.ecommerceEnabled, [
+        ]
+      ]
     });
 
     this.makeForm.valueChanges

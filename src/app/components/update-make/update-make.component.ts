@@ -51,7 +51,8 @@ export class UpdateMakeComponent implements OnInit {
     this.makeForm.setValue({
       '_id':this.make._id,
       'description': this.make.description,
-      'visibleSale': this.make.visibleSale 
+      'visibleSale': this.make.visibleSale,
+      'ecommerceEnabled': this.make.ecommerceEnabled
     });
   }
 
@@ -69,8 +70,12 @@ export class UpdateMakeComponent implements OnInit {
           Validators.required
         ]
       ],
-      'visibleSale' : [this.make.visibleSale, [
-      ]]
+      'visibleSale' : [this.make.visibleSale,[
+        ]
+      ],
+      'ecommerceEnabled' : [this.make.ecommerceEnabled,[
+        ]
+      ]
     });
 
     this.makeForm.valueChanges
@@ -117,7 +122,6 @@ export class UpdateMakeComponent implements OnInit {
         } else {
           this.make = result.make;
           this.showMessage("La marca se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },
