@@ -298,7 +298,8 @@ export class ListMovementOfCashesComponent implements OnInit {
       }
     );
   }
-
+*/
+  }
   public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
     if(this.transactionAmount >= movementOfCashSelected.amountPaid){
       let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
@@ -307,7 +308,7 @@ export class ListMovementOfCashesComponent implements OnInit {
       if(this.pathLocation[2] !== "fondos"){
         this.showMessage("El cheque es mayor al monto a pagar", 'info', false);
       }
-    }*/
+    }
   }
 
   public getMovementOfCashById(id : string): Promise<MovementOfCash> {
