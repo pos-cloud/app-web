@@ -97,9 +97,8 @@ export class AddMovementOfCashComponent implements OnInit {
     'surcharge': {
     },
     'CUIT': {
-      'minlength': 'El CUIT debe contener 13 díguitos.',
-      'maxlength': 'El CUIT debe contener 13 díguitos.',
-      'pattern': ' Ingrese el CUIT con formato con guiones'
+      'minlength': 'El CUIT debe contener 8 díguitos.',
+      'maxlength': 'El CUIT debe contener 8 díguitos.',
     },
     'number' : {
       'pattern': ' Ingrese solo números '
@@ -189,9 +188,8 @@ export class AddMovementOfCashComponent implements OnInit {
         ]
       ],
       'CUIT': [this.movementOfCash.CUIT, [
-          Validators.maxLength(13),
-          Validators.minLength(13),
-          Validators.pattern('^[0-9]{2}-[0-9]{8}-[0-9]$')
+          Validators.maxLength(8),
+          Validators.minLength(8)
         ]
       ],
       'deliveredBy': [this.movementOfCash.deliveredBy, [

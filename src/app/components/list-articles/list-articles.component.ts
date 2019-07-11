@@ -28,6 +28,7 @@ import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
 import { User } from 'app/models/user';
+import { PrintPriceListComponent } from '../print-price-list/print-price-list.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -368,31 +369,12 @@ export class ListArticlesComponent implements OnInit {
         );
         break;
       case 'print-list':
-
-        await this.getPrinters().then(
-          printers => {
-            let counterPrinter: Printer;
-            if (printers && printers.length > 0) {
-              for (let printer of printers) {
-                if (printer.printIn === PrinterPrintIn.Counter) {
-                  counterPrinter = printer;
-                }
-              }
-            }
-
-            if(counterPrinter) {
-              modalRef = this._modalService.open(PrintComponent);
-              if(article) {
-                modalRef.componentInstance.article = article;
-              } else {
-                modalRef.componentInstance.articles = this.articles;
-              }
-              modalRef.componentInstance.typePrint = 'price-list';
-            } else {
-              this.showMessage('Debe definir un modelo de impresora como Mostrador en el menu Configuración->Impresoras', "info", true);
-            }
-          }
-        );
+        modalRef = this._modalService.open(PrintPriceListComponent);
+        modalRef.result.then((result) => {
+          this.getArticles();
+        }, (reason) => {
+          this.getArticles();
+        });
         break;
       case 'update-prices':
         modalRef = this._modalService.open(UpdateArticlePriceComponent);
