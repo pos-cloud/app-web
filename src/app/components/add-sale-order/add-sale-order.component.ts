@@ -1005,7 +1005,8 @@ export class AddSaleOrderComponent {
               msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
             }
             this.showMessage(msn, 'info', true);
-            this.saveClaim(msn + ' - FE NRO ' + this.transaction.number + ' - MONTO ' + this.transaction.totalPrice);
+            let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+            this.saveClaim(msn + ' - ' + body);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1060,7 +1061,13 @@ export class AddSaleOrderComponent {
             msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
           }
           this.showMessage(msn, 'info', true);
-          this.saveClaim(msn + ' - FE NRO ' + this.transaction.number + ' - MONTO ' + this.transaction.totalPrice);
+
+          let body ='transaction=' + JSON.stringify(this.transaction) + '&' +
+                    'movementsOfArticles=' + JSON.stringify(this.movementsOfArticles) + '&' +
+                    'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
+                    'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + Config.database + '"}';
+      
+          this.saveClaim(msn + ' - ' + body);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
@@ -1448,7 +1455,7 @@ export class AddSaleOrderComponent {
       this.fastPayment.isCurrentAccount && 
       !this.transaction.company){
       isValid = false;
-      this.showMessage("Debe seleccionar una empresa.", 'info', true);
+      this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.fastPayment.name + ".", "info", true);
     }
 
     if( this.transaction.type.requestPaymentMethods && 
@@ -1457,7 +1464,7 @@ export class AddSaleOrderComponent {
         this.transaction.company && 
         !this.transaction.company.allowCurrentAccount){
       isValid = false;
-      this.showMessage("La empresa no esta habilitada para cuenta corriente.", 'info', true);
+      this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.fastPayment.name + ".", "info", true);
     }
 
     if (isValid &&
