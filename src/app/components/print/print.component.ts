@@ -2190,7 +2190,10 @@ export class PrintComponent implements OnInit {
     var transport =0;
 
     // Encabezado de la transacción
-    this.getHeader(true);
+    console.log(this.transaction.type.isPreprinted)
+    if(!this.transaction.type.isPreprinted){
+      this.getHeader(true);
+    }
     this.getClient();
 
     // Numeración de la transacción
