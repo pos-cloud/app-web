@@ -108,11 +108,9 @@ export class ListMakesComponent implements OnInit {
           modalRef.componentInstance.make = make;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getMakes();
-            }
+            this.getMakes();
           }, (reason) => {
-
+            this.getMakes();
           });
         break;
       case 'delete' :

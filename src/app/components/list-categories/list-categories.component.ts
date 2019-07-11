@@ -126,11 +126,9 @@ export class ListCategoriesComponent implements OnInit {
           modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' });
           modalRef.componentInstance.category = category;
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getCategories();
-            }
+            this.getCategories();
           }, (reason) => {
-
+            this.getCategories();
           });
         break;
       case 'delete' :

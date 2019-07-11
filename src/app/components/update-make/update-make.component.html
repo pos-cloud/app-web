@@ -44,6 +44,15 @@
                       </select>
                     </div>
                   </div>
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                      <label for="ecommerceEnabled" class="control-label">¿Habilitado para Ecommerce?</label>
+                      <select class="form-control" formControlName="ecommerceEnabled">
+                        <option [value]="true" [disabled]="readonly">Si</option>
+                        <option [value]="false" [disabled]="readonly">No</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
             </ng-template>

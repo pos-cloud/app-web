@@ -162,7 +162,6 @@ export class UpdateCategoryComponent implements OnInit {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
                   this.showMessage("El rubro se ha actualizado con éxito.", 'success', false);
-                  this.activeModal.close('save_close');
                 },
                 (error) => {
                   this.showMessage(error, 'danger', false);
@@ -170,7 +169,6 @@ export class UpdateCategoryComponent implements OnInit {
               );
           } else {
             this.showMessage("El rubro se ha actualizado con éxito.", 'success', false);
-            this.activeModal.close('save_close');
           }
         }
         this.loading = false;
