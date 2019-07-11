@@ -25,7 +25,7 @@
 				<div class="form-group col-md-12">
 					<label for="make" class="control-label">Marca</label>
 					<select class="form-control" formControlName="make">
-						<option [ngValue]="null" [disabled]="readonly"></option>
+						<option [ngValue]="null"></option>
 						<option *ngFor="let make of makes" [value]="make._id" [disabled]="readonly">{{make.description}}</option>
 					</select>
 					<div *ngIf="formErrors.make" class="alert alert-danger">
@@ -37,7 +37,7 @@
 				<div class="form-group col-md-12">
 					<label for="category" class="control-label">Rubro:</label>
 					<select class="form-control" formControlName="category">
-						<option [ngValue]="null" [disabled]="readonly"></option>
+						<option [ngValue]="null"></option>
 						<option *ngFor="let category of categories" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
 					</select>
 					<div *ngIf="formErrors.category" class="alert alert-danger">
