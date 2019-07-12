@@ -6,6 +6,8 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 import { MovementOfCashService } from './../../services/movement-of-cash.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
+import { TransactionState } from 'app/models/transaction';
+import { PaymentMethod } from 'app/models/payment-method';
 
 @Component({
   selector: 'app-list-movement-of-cash',
@@ -17,11 +19,12 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 
 export class ListMovementOfCashesComponent implements OnInit {
 
-  @Input() transactionAmount : number;
+  @Input() transactionAmount: number;
+  @Input() paymentMethod: PaymentMethod;
   public movementsOfCashes: MovementOfCash[] = new Array();
   public movementsOfCashesSelected: MovementOfCash[] = new Array();
   public areMovementOfCashesEmpty = true;
-  public userType : string;
+  public userType: string;
   public alertMessage = '';
   public orderTerm: string[] = ['-expirationDate'];
   public propertyTerm: string;
@@ -35,30 +38,31 @@ export class ListMovementOfCashesComponent implements OnInit {
 
   public currentPage: number = 0;
   public displayedColumns = [
-    "number",
-    "bank.name",
-    "transaction.type.name",
-    "transaction.type.transactionMovement",
-    "amountPaid",
-    "expirationDate"
-  ];
-  public displayedColumns2 = [
-    "number",
-    "bank.name",
-    "transaction.cashBox.number",
-    "transaction.type.name",
-    "amountPaid",
-    "expirationDate",
+    "_id",
     "transaction.endDate",
-    "type.name",
+    "transaction.cashBox.number",
     "quota",
     "discount",
+    "number",
     "statusCheck",
     "observation",
+    "bank._id",
+    "bank.name", 
+    "amountPaid",
+    "operationType",
+    "expirationDate",
+    "transaction._id",
+    "transaction.state",
+    "transaction.type.name",
+    "transaction.type.transactionMovement",
+    "date",
     "titular",
-    "CUIT",
+    "receiver",
+    "type._id",
+    "type.name",
     "deliveredBy",
-    "receiver"
+    "CUIT",
+    "transaction.operationType"
   ];
   public filters: any[];
   public filterValue: string;
@@ -74,6 +78,9 @@ export class ListMovementOfCashesComponent implements OnInit {
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
     }
+    if(this.paymentMethod) {
+      this.filters['type._id'] = this.paymentMethod._id;
+    }
   }
 
   ngOnInit(): void {
@@ -84,7 +91,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     this.getMovementOfCashes();
   }
 
-  public getMovementOfCashes() : void {
+  public getMovementOfCashes(): void {
     
     this.loading = true;
 
@@ -100,10 +107,14 @@ export class ListMovementOfCashesComponent implements OnInit {
       }
     }
 
+    match += `"operationType": { "$ne": "D" },
+              "transaction.state": "${TransactionState.Closed}",
+              "transaction.operationType": { "$ne": "D" },`;
+    
     if(this.userType === 'admin') {
-      match += `"operationType": { "$ne": "D" }, "transaction.type.transactionMovement" : "${this.transactionMovement}" }`;
+      match += `"transaction.type.transactionMovement": "${this.transactionMovement}" }`;
     } else {
-      match += `"operationType": { "$ne": "D" }, "statusCheck" : "${StatusCheck.Available}" }`;
+      match += `"statusCheck": "${StatusCheck.Available}" }`;
     }
 
     match = JSON.parse(match);
@@ -112,52 +123,56 @@ export class ListMovementOfCashesComponent implements OnInit {
     // CAMPOS A TRAER
     if(this.userType === 'admin') {
       project = {
-        "_id" : 1,
-        "transaction.endDate": { $dateToString : { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: "-03:00"}},
-        "transaction.cashBox.number" : { $toString : "$transaction.cashBox.number"},
-        "quota" :1 ,
+        "_id": 1,
+        "transaction.endDate": { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: "-03:00"}},
+        "transaction.cashBox.number": { $toString: "$transaction.cashBox.number"},
+        "quota":1 ,
         "discount": 1,
-        "number" : 1,
-        "statusCheck" : 1,
-        "observation" : 1,
-        "bank._id" : 1 ,
-        "bank.name" : { $toString : '$bank.name'} , 
-        "amountPaid" :{ $toString : '$amountPaid'} ,
+        "number": 1,
+        "statusCheck": 1,
+        "observation": 1,
+        "bank._id": 1 ,
+        "bank.name": 1, 
+        "amountPaid": { $toString: '$amountPaid'},
         "operationType": 1,
         "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
         "transaction._id":1,
-        "transaction.state" : 1,
-        "transaction.type.name" : 1,
-        "transaction.type.transactionMovement" : 1,
+        "transaction.state": 1,
+        "transaction.type.name": 1,
+        "transaction.type.transactionMovement": 1,
         "date": 1,
-        "titular" : 1,
-        "receiver" : 1,
-        "type" : 1,
-        "deliveredBy" : 1,
-        "CUIT" : 1,
+        "titular": 1,
+        "receiver": 1,
+        "type._id": { $toString: '$type._id'},
+        "type.name": 1,
+        "deliveredBy": 1,
+        "CUIT": 1,
+        "transaction.operationType": 1
       };
     } else {
       project = {
-        "_id" : 1,
+        "_id": 1,
         "number": 1,
-        "bank._id" : 1 ,
-        "bank.name" : { $toString : '$bank.name'} ,
-        "amountPaid" :{ $toString : '$amountPaid'} ,
+        "bank._id": 1 ,
+        "bank.name": 1,
+        "amountPaid":{ $toString: '$amountPaid'},
         "operationType": 1,
         "expirationDate": { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: "-03:00" }},
         "transaction._id":1,
-        "transaction.state" : 1,
-        "transaction.type.name" : 1,
-        "transaction.type.transactionMovement" : 1,
+        "transaction.state": 1,
+        "transaction.type.name": 1,
+        "transaction.type.transactionMovement": 1,
         "date": 1,
         "statusCheck": 1,
-        "titular" : 1,
-        "receiver" : 1,
-        "quota" : 1 ,
-        "type" : 1,
-        "deliveredBy" : 1,
-        "CUIT" : 1,
-        "observation" : 1
+        "titular": 1,
+        "receiver": 1,
+        "quota": 1,
+        "type._id": { $toString: '$type._id'},
+        "type.name": 1,
+        "deliveredBy": 1,
+        "CUIT": 1,
+        "observation": 1,
+        "transaction.operationType": 1
       };
     }
 
@@ -173,7 +188,7 @@ export class ListMovementOfCashesComponent implements OnInit {
       page = this.currentPage - 1;
     }
     let skip = !isNaN(page * this.itemsPerPage) ?
-            (page * this.itemsPerPage) :
+            (page * this.itemsPerPage):
                 0 // SKIP
     this._movementOfCashService.getMovementsOfCashesV2(
         project, // PROJECT
@@ -221,7 +236,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     }
   }
 
-  public getMovementOfCashById(id : string): Promise<MovementOfCash> {
+  public getMovementOfCashById(id: string): Promise<MovementOfCash> {
 
     return new Promise<MovementOfCash>((resolve, reject) => {
 
@@ -262,12 +277,12 @@ export class ListMovementOfCashesComponent implements OnInit {
 
     let modalRef;
     switch (op) {
-      case 'view' :
+      case 'view':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
         modalRef.componentInstance.readonly = true;
         break;
-      default : ;
+      default: ;
     }
   };
 

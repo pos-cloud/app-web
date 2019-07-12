@@ -449,6 +449,7 @@ export class AddMovementOfCashComponent implements OnInit {
               this.fastPayment = null;
             }
           } else {
+            this.cleanForm();
             this.updateAmounts();
           }
           this.loading = false;
@@ -570,6 +571,7 @@ export class AddMovementOfCashComponent implements OnInit {
           modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg' });
           // MANDAMOS LÍMITE DE MONTO A SELECCIONAR
           modalRef.componentInstance.transactionAmount = this.roundNumber.transform(this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid);
+          modalRef.componentInstance.paymentMethod = this.paymentMethodSelected;
           modalRef.result.then(async (result)  => {
 
             if(result && result.movementsOfCashes && result.movementsOfCashes.length > 0) {
@@ -602,11 +604,7 @@ export class AddMovementOfCashComponent implements OnInit {
                       async movementOfCash => {
                         if(movementOfCash) {
                           
-                          // REINICIAMOS DATO DE FORMULARIO
-                          this.movementOfCash = new MovementOfCash();
-                          this.movementOfCash.type = this.paymentMethodSelected;
-                          this.movementOfCash.transaction = this.transaction;
-                          this.buildForm();
+                          this.cleanForm();
 
                           // CAMBIAMOS ESTADO DE METODO DE PAGO RELACIONADO EJ. CHEQUE
                           mov.statusCheck = StatusCheck.Closed;
@@ -983,6 +981,10 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.statusCheck = StatusCheck.Closed;
           }
 
+          if(this.paymentMethodSelected.inputAndOuput) {
+            this.movementOfCash.statusCheck = StatusCheck.Available;
+          }
+
           await this.saveMovementOfCash().then(
             async movementOfCash => {
               if(movementOfCash) {
@@ -1131,6 +1133,7 @@ export class AddMovementOfCashComponent implements OnInit {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
             resolve(null);
           } else {
+            this.hideMessage();
             resolve(result.movementsOfCashes);
           }
         },
@@ -1215,6 +1218,13 @@ export class AddMovementOfCashComponent implements OnInit {
         }
       }
     );
+  }
+
+  public cleanForm(): void {
+    this.movementOfCash = new MovementOfCash();
+    this.movementOfCash.type = this.paymentMethodSelected;
+    this.movementOfCash.transaction = this.transaction;
+    this.buildForm();
   }
 
   async getTaxes(query: string): Promise<Tax[]> {
