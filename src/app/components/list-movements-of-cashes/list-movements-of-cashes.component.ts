@@ -26,7 +26,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public areMovementOfCashesEmpty = true;
   public userType: string;
   public alertMessage = '';
-  public orderTerm: string[] = ['-expirationDate'];
+  public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
   public areFiltersVisible = false;
   public loading = false;
@@ -96,7 +96,13 @@ export class ListMovementOfCashesComponent implements OnInit {
     this.loading = true;
 
     // ORDENAMOS LA CONSULTA
-    let sortAux = { expirationDate: 1 };
+    let sortAux;
+    if (this.orderTerm[0].charAt(0) === '-') {
+        sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
+    } else {
+        sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+    }
+    sortAux = JSON.parse(sortAux);
     
     // FILTRAMOS LA CONSULTA
     let match = `{`;
