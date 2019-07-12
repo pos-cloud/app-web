@@ -183,6 +183,7 @@ export class ListMovementOfCashesComponent implements OnInit {
       movementOfCashes: { $push: '$$ROOT' }
     };
 
+    let limit = this.itemsPerPage;
     let page = 0;
     if(this.currentPage != 0) {
       page = this.currentPage - 1;
@@ -190,12 +191,18 @@ export class ListMovementOfCashesComponent implements OnInit {
     let skip = !isNaN(page * this.itemsPerPage) ?
             (page * this.itemsPerPage):
                 0 // SKIP
+    
+    if(this.userType === 'pos') {
+      limit = 0;
+      skip = 0;
+    }
+    
     this._movementOfCashService.getMovementsOfCashesV2(
         project, // PROJECT
         match, // MATCH
         sortAux, // SORT
         group, // GROUP
-        this.itemsPerPage, // LIMIT
+        limit, // LIMIT
         skip // SKIP
     ).subscribe(
       result => {
