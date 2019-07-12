@@ -801,6 +801,15 @@ export class AddMovementOfCashComponent implements OnInit {
       this.calculateQuotas('quotas');
     }
 
+    this.movementOfCash.observation = this.movementOfCashForm.value.observation;
+    this.movementOfCash.number = this.movementOfCashForm.value.number;
+    this.movementOfCash.expirationDate = this.movementOfCashForm.value.expirationDate;
+    this.movementOfCash.bank = this.movementOfCashForm.value.bank;
+    this.movementOfCash.deliveredBy = this.movementOfCashForm.value.deliveredBy;
+    this.movementOfCash.receiver = this.movementOfCashForm.value.receiver;
+    this.movementOfCash.titular = this.movementOfCashForm.value.titular;
+    this.movementOfCash.CUIT = this.movementOfCashForm.value.CUIT;
+
     this.setValuesForm();
   }
 
