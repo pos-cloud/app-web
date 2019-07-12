@@ -309,7 +309,8 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'requestTransport': [this.transactionType.requestTransport, [
         ]
-      ]
+      ],
+      'isPreprinted' : [this.transactionType.isPreprinted,[]]
     });
 
     this.transactionTypeForm.valueChanges
@@ -397,6 +398,8 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.electronics === undefined) this.transactionType.electronics = false;
     if (!this.transactionType.fiscalCode) this.transactionType.fiscalCode = "";
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
+    if (this.transactionType.isPreprinted === undefined) this.transactionType.isPreprinted = false;
+
 
     let defectPrinter;
     if (!this.transactionType.defectPrinter) {
@@ -500,7 +503,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'fastPayment': fastPayment,
       'requestCompany': this.transactionType.requestCompany,
       'cashBoxImpact': this.transactionType.cashBoxImpact,
-      'requestTransport': this.transactionType.requestTransport
+      'requestTransport': this.transactionType.requestTransport,
+      'isPreprinted' : this.transactionType.isPreprinted
     });
   }
 

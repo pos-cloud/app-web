@@ -627,6 +627,17 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="isPreprinted" class="control-label">Es Preimpreso?</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="isPreprinted">
+                        <option value="true" [selected]="transactionType.isPreprinted" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.isPreprinted" >No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </ng-template>

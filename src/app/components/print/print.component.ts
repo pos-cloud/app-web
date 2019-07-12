@@ -1989,14 +1989,7 @@ export class PrintComponent implements OnInit {
           }
         }
         this.loading = false;
-      },
-      // error => {
-      //   this.getCompanyData();
-      //   if (finish) {
-      //     this.finishImpression();
-      //   }
-      //   this.loading = false;
-      // }
+      }
     );
   }
 
@@ -2017,9 +2010,7 @@ export class PrintComponent implements OnInit {
     } else {
       this.doc.text("Régimen Fiscal:", margin, 65);
     }
-    if (this.config[0].country === 'AR') {
-      this.doc.text("Ingresos Brutos:", margin, 70);
-    }
+    
     this.doc.text("Dirección:", 110, 55);
     this.doc.text("Teléfono:", 110, 60);
     this.doc.text("Localidad:", 110, 65);
@@ -2039,9 +2030,7 @@ export class PrintComponent implements OnInit {
       if (this.company.vatCondition && this.company.vatCondition.description) {
         this.doc.text(this.company.vatCondition.description, 42, 65);
       }
-      if (this.company.grossIncome) {
-        this.doc.text(this.company.grossIncome, 42, 70);
-      }
+      
       if (this.company.address) {
         this.doc.text(this.company.address, 130, 55);
       }
@@ -2190,57 +2179,61 @@ export class PrintComponent implements OnInit {
     var transport =0;
 
     // Encabezado de la transacción
-    this.getHeader(true);
-    this.getClient();
+    if(!this.transaction.type.isPreprinted){
+      this.getHeader(true);
 
-    // Numeración de la transacción
-    this.doc.setFontSize(this.fontSizes.extraLarge);
-
-    if (this.transaction.type.labelPrint &&
-      this.transaction.type.labelPrint !== '') {
-      this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
-    } else {
-      this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
-    }
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.setFontType('bold');
-    this.doc.text("Comp. Nº:", 110, 25);
-    this.doc.setFontType('normal');
-    if(Config.country === 'AR') {
-      this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 130, 25);
-    } else {
-      this.doc.text(this.padString(this.transaction.number, 8), 130, 25);
-    }
-    this.doc.setFontType('bold');
-    this.doc.text("Fecha:", 110, 30);
-    this.doc.setFontType('normal');
-    if (this.transaction.endDate) {
-      this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 30);
-    } else {
-      this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 30);
-    }
-
-    // Letra de transacción
-    if (this.transaction.letter && this.transaction.letter !== "") {
-      // Dibujar la linea cortada para la letra
-      this.doc.line(105, 16, 105, 50); //vertical letra
+      // Numeración de la transacción
       this.doc.setFontSize(this.fontSizes.extraLarge);
+
+      if (this.transaction.type.labelPrint &&
+        this.transaction.type.labelPrint !== '') {
+        this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+      } else {
+        this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+      }
+      this.doc.setFontSize(this.fontSizes.normal);
       this.doc.setFontType('bold');
-      this.doc.setDrawColor("Black");
-      this.doc.rect(100, 3, 10, 10);
-      this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-      if (this.transaction.type.codes && Config.country === 'AR') {
-        for (let i = 0; i < this.transaction.type.codes.length; i++) {
-          if(this.transaction.letter === this.transaction.type.codes[i].letter){
-            this.doc.setFontSize('8');
-            this.doc.text("Cod:"+this.padString((this.transaction.type.codes[i].code).toString(),2),101,16);
+      this.doc.text("Comp. Nº:", 110, 25);
+      this.doc.setFontType('normal');
+      if(Config.country === 'AR') {
+        this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 130, 25);
+      } else {
+        this.doc.text(this.padString(this.transaction.number, 8), 130, 25);
+      }
+      this.doc.setFontType('bold');
+      this.doc.text("Fecha:", 110, 30);
+      this.doc.setFontType('normal');
+      if (this.transaction.endDate) {
+        this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 30);
+      } else {
+        this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 30);
+      }
+
+      // Letra de transacción
+      if (this.transaction.letter && this.transaction.letter !== "") {
+        // Dibujar la linea cortada para la letra
+        this.doc.line(105, 16, 105, 50); //vertical letra
+        this.doc.setFontSize(this.fontSizes.extraLarge);
+        this.doc.setFontType('bold');
+        this.doc.setDrawColor("Black");
+        this.doc.rect(100, 3, 10, 10);
+        this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+        if (this.transaction.type.codes && Config.country === 'AR') {
+          for (let i = 0; i < this.transaction.type.codes.length; i++) {
+            if(this.transaction.letter === this.transaction.type.codes[i].letter){
+              this.doc.setFontSize('8');
+              this.doc.text("Cod:"+this.padString((this.transaction.type.codes[i].code).toString(),2),101,16);
+            }
           }
         }
+      } else {
+        // Dibujar la linea cortada para la letra
+        this.doc.line(105, 0, 105, 50); //vertical letra
       }
-    } else {
-      // Dibujar la linea cortada para la letra
-      this.doc.line(105, 0, 105, 50); //vertical letra
     }
+    this.getClient();
+
+    
 
     this.doc.setFontType('normal');
     this.doc.setFontSize('normal');
@@ -2335,57 +2328,62 @@ export class PrintComponent implements OnInit {
           this.doc.text("TRANSPORTE:".toString(),25,85);
           this.doc.text(this.roundNumber.transform(transport).toString(),185,85);
 
-          this.getHeader(true);
-          this.getClient();
+          console.log(this.transaction.type.isPreprinted);
+          if(!this.transaction.type.isPreprinted){
+            console.log("entro")
+            this.getHeader(true);
+          
 
-          // Dibujar la linea cortada para la letra
-          this.doc.line(105, 13, 105, 50); //vertical letra
-
-          // Numeración de la transacción
-          this.doc.setFontSize(this.fontSizes.extraLarge);
-
-          if (this.transaction.type.labelPrint &&
-            this.transaction.type.labelPrint !== '') {
-            this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
-          } else {
-            this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
-          }
-          this.doc.setFontSize(this.fontSizes.normal);
-          this.doc.setFontType('bold');
-          this.doc.text("Comp. Nº:", 110, 20);
-          this.doc.setFontType('normal');
-          if (Config.country === 'AR') {
-            this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
-          } else {
-            this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
-          }
-          this.doc.setFontType('bold');
-          this.doc.text("Fecha:", 110, 25);
-          this.doc.setFontType('normal');
-          if (this.transaction.endDate) {
-            this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
-          } else {
-            this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
-          }
-
-          // Letra de transacción
-          this.doc.setFontSize(this.fontSizes.extraLarge);
-          this.doc.setFontType('bold');
-          this.doc.setDrawColor("Black");
-          this.doc.rect(100, 3, 10, 10);
-          this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
-          this.doc.setFontType('normal');
-
-          // Encabezado de la tabla de Detalle de Productos
-          this.doc.setFontType('bold');
-          this.doc.setFontSize(this.fontSizes.normal);
-          this.doc.text("Cant", 5, 77);
-          this.doc.text("Detalle", 25, 77);
-          if (this.transaction.type && this.transaction.type.showPrices) {
-            this.doc.text("Precio", 155, 77);
-            this.doc.text("Total", 185, 77);
+            // Dibujar la linea cortada para la letra
+            this.doc.line(105, 13, 105, 50); //vertical letra
+  
+            // Numeración de la transacción
+            this.doc.setFontSize(this.fontSizes.extraLarge);
+  
+            if (this.transaction.type.labelPrint &&
+              this.transaction.type.labelPrint !== '') {
+              this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+            } else {
+              this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+            }
+            this.doc.setFontSize(this.fontSizes.normal);
+            this.doc.setFontType('bold');
+            this.doc.text("Comp. Nº:", 110, 20);
             this.doc.setFontType('normal');
+            if (Config.country === 'AR') {
+              this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+            } else {
+              this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+            }
+            this.doc.setFontType('bold');
+            this.doc.text("Fecha:", 110, 25);
+            this.doc.setFontType('normal');
+            if (this.transaction.endDate) {
+              this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+            } else {
+              this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+            }
+  
+            // Letra de transacción
+            this.doc.setFontSize(this.fontSizes.extraLarge);
+            this.doc.setFontType('bold');
+            this.doc.setDrawColor("Black");
+            this.doc.rect(100, 3, 10, 10);
+            this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+            this.doc.setFontType('normal');
+  
+            // Encabezado de la tabla de Detalle de Productos
+            this.doc.setFontType('bold');
+            this.doc.setFontSize(this.fontSizes.normal);
+            this.doc.text("Cant", 5, 77);
+            this.doc.text("Detalle", 25, 77);
+            if (this.transaction.type && this.transaction.type.showPrices) {
+              this.doc.text("Precio", 155, 77);
+              this.doc.text("Total", 185, 77);
+              this.doc.setFontType('normal');
+            }
           }
+          this.getClient();
         }
       }
     }
@@ -2441,24 +2439,29 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
-    if (this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].observation) {
-      if(Config.country !== 'MX') {
-        this.doc.setFontType('bold');
-        this.doc.text("Observaciones: ", 10, 246);
-        this.doc.setFontType('normal');
-        this.doc.text(this.movementsOfCashes[0].observation.slice(0, 53) + " -", 37, 246);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(53, 105) + " -", 37, 249);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(105, 157) + " -", 37, 252);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(157, 210), 37, 255);
-      } else {
-        this.doc.setFontType('bold');
-        this.doc.text("Observaciones: ", 35, 246);
-        this.doc.setFontType('normal');
-        this.doc.text(this.movementsOfCashes[0].observation.slice(0, 40) + " -", 62, 246);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(40, 78) + " -", 62, 249);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(78, 122) + " -", 62, 252);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(122, 160), 62, 255);
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+      for(let movementOfCash of this.movementsOfCashes){
+        if(movementOfCash.observation){
+          if(Config.country !== 'MX') {
+            this.doc.setFontType('bold');
+            this.doc.text("Observaciones: ", 10, 246);
+            this.doc.setFontType('normal');
+            this.doc.text(movementOfCash.observation.slice(0, 53) + " -", 37, 246);
+            this.doc.text(movementOfCash.observation.slice(53, 106) + " -", 37, 249);
+            this.doc.text(movementOfCash.observation.slice(105, 157) + " -", 37, 252);
+            this.doc.text(movementOfCash.observation.slice(157, 255), 37, 258);
+          } else {
+            this.doc.setFontType('bold');
+            this.doc.text("Observaciones: ", 35, 246);
+            this.doc.setFontType('normal');
+            this.doc.text(this.movementsOfCashes[0].observation.slice(0, 40) + " -", 62, 246);
+            this.doc.text(this.movementsOfCashes[0].observation.slice(40, 78) + " -", 62, 249);
+            this.doc.text(this.movementsOfCashes[0].observation.slice(78, 122) + " -", 62, 252);
+            this.doc.text(this.movementsOfCashes[0].observation.slice(122, 160), 62, 255);
+          }
+        }
       }
+      
     }
 
     this.doc.setFontType('normal');
@@ -2468,15 +2471,15 @@ export class PrintComponent implements OnInit {
         this.transaction.CAE &&
         this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
-      this.doc.text("CAE:", 10, 272);
-      this.doc.text("Fecha Vto:", 10, 275);
+      this.doc.text("CAE:", 10, 282);
+      this.doc.text("Fecha Vto:", 10, 285);
       this.doc.setFontType('normal');
-      this.doc.text(this.transaction.CAE, 20, 272);
-      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 275);
+      this.doc.text(this.transaction.CAE, 20, 282);
+      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 285);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 10, 250, 125, 15);
+      this.doc.addImage(imgdata, 'PNG', 10, 260, 125, 15);
     } else if (Config.country === 'MX' &&
               this.transaction.stringSAT &&
               this.transaction.SATStamp &&

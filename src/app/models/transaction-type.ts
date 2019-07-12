@@ -47,6 +47,7 @@ export class TransactionType {
 	public requestTransport: boolean = false;
 	public fastPayment: PaymentMethod;
 	public requestCompany: CompanyType;
+	public isPreprinted : boolean = false;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
