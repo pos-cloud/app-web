@@ -2439,24 +2439,29 @@ export class PrintComponent implements OnInit {
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
-    if (this.movementsOfCashes && this.movementsOfCashes.length > 0 && this.movementsOfCashes[0].observation) {
-      if(Config.country !== 'MX') {
-        this.doc.setFontType('bold');
-        this.doc.text("Observaciones: ", 10, 246);
-        this.doc.setFontType('normal');
-        this.doc.text(this.movementsOfCashes[0].observation.slice(0, 53) + " -", 37, 246);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(53, 105) + " -", 37, 249);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(105, 157) + " -", 37, 252);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(157, 210), 37, 255);
-      } else {
-        this.doc.setFontType('bold');
-        this.doc.text("Observaciones: ", 35, 246);
-        this.doc.setFontType('normal');
-        this.doc.text(this.movementsOfCashes[0].observation.slice(0, 40) + " -", 62, 246);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(40, 78) + " -", 62, 249);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(78, 122) + " -", 62, 252);
-        this.doc.text(this.movementsOfCashes[0].observation.slice(122, 160), 62, 255);
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+      for(let movementOfCash of this.movementsOfCashes){
+        if(movementOfCash.observation){
+          if(Config.country !== 'MX') {
+            this.doc.setFontType('bold');
+            this.doc.text("Observaciones: ", 10, 246);
+            this.doc.setFontType('normal');
+            this.doc.text(movementOfCash.observation.slice(0, 53) + " -", 37, 246);
+            this.doc.text(movementOfCash.observation.slice(53, 106) + " -", 37, 249);
+            this.doc.text(movementOfCash.observation.slice(105, 157) + " -", 37, 252);
+            this.doc.text(movementOfCash.observation.slice(157, 255), 37, 258);
+          } else {
+            this.doc.setFontType('bold');
+            this.doc.text("Observaciones: ", 35, 246);
+            this.doc.setFontType('normal');
+            this.doc.text(this.movementsOfCashes[0].observation.slice(0, 40) + " -", 62, 246);
+            this.doc.text(this.movementsOfCashes[0].observation.slice(40, 78) + " -", 62, 249);
+            this.doc.text(this.movementsOfCashes[0].observation.slice(78, 122) + " -", 62, 252);
+            this.doc.text(this.movementsOfCashes[0].observation.slice(122, 160), 62, 255);
+          }
+        }
       }
+      
     }
 
     this.doc.setFontType('normal');
@@ -2466,15 +2471,15 @@ export class PrintComponent implements OnInit {
         this.transaction.CAE &&
         this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
-      this.doc.text("CAE:", 10, 272);
-      this.doc.text("Fecha Vto:", 10, 275);
+      this.doc.text("CAE:", 10, 282);
+      this.doc.text("Fecha Vto:", 10, 285);
       this.doc.setFontType('normal');
-      this.doc.text(this.transaction.CAE, 20, 272);
-      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 275);
+      this.doc.text(this.transaction.CAE, 20, 282);
+      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 285);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 10, 250, 125, 15);
+      this.doc.addImage(imgdata, 'PNG', 10, 260, 125, 15);
     } else if (Config.country === 'MX' &&
               this.transaction.stringSAT &&
               this.transaction.SATStamp &&
