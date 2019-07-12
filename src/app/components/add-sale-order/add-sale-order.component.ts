@@ -1006,7 +1006,7 @@ export class AddSaleOrderComponent {
             }
             this.showMessage(msn, 'info', true);
             let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
-            this.saveClaim(msn + ' - ' + body);
+            this.saveClaim('ERROR FE :' + msn, body);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1029,13 +1029,13 @@ export class AddSaleOrderComponent {
     )
   }
   
-  public saveClaim(message: string): void {
+  public saveClaim(titulo: string, message: string): void {
     
     this.loading = true;
 
     let claim: Claim = new Claim();
     claim.description = message;
-    claim.name = 'ERROR FE';
+    claim.name = titulo;
     claim.priority = ClaimPriority.High;
     claim.type = ClaimType.Err;
     claim.listName = 'ERRORES 500';
@@ -1067,7 +1067,7 @@ export class AddSaleOrderComponent {
                     'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
                     'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + Config.database + '"}';
       
-          this.saveClaim(msn + ' - ' + body);
+          this.saveClaim('ERROR FE :' + msn, body);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
