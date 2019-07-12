@@ -57,7 +57,7 @@
               <td align="left" width="130">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
-              <td class="flat" *ngIf="movementOfCash.transaction">{{movementOfCash.transaction.endDate | dateFormat:'DD/MM/YYYY'}}</td>
+              <td class="flat" *ngIf="movementOfCash.transaction">{{movementOfCash.transaction.endDate}}</td>
               <td class="flat" *ngIf="!movementOfCash.transaction"></td>
               <td class="flat" *ngIf="movementOfCash.transaction.cashBox">{{movementOfCash.transaction.cashBox.number}}</td>
               <td class="flat" *ngIf="!movementOfCash.transaction.cashBox"></td>
