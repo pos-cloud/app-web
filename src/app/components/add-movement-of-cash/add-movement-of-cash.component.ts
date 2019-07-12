@@ -598,7 +598,7 @@ export class AddMovementOfCashComponent implements OnInit {
                   this.movementOfCash.statusCheck = StatusCheck.Closed;
                   this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
   
-                  if(await this.isValidAmount()) {
+                  if(await this.isValidAmount(true)) {
   
                     await this.saveMovementOfCash().then(
                       async movementOfCash => {
@@ -811,11 +811,11 @@ export class AddMovementOfCashComponent implements OnInit {
     this.setValuesForm();
   }
 
-  async isValidAmount() {
+  async isValidAmount(isCopy: boolean = false) {
     
     return new Promise(async resolve => {
       
-      if(this.paymentMethodSelected.checkDetail && this.transaction.type.movement === Movements.Inflows) {
+      if(this.paymentMethodSelected.checkDetail && !isCopy) {
         let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}"`;
         await this.getMovementsOfCashes(query).then(
           movementOfCashes => {
@@ -856,7 +856,7 @@ export class AddMovementOfCashComponent implements OnInit {
         this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
       }
 
-      if(this.transaction.type.movement === Movements.Inflows && this.paymentMethodSelected.checkDetail && !this.movementOfCashForm.value.number) {
+      if(this.paymentMethodSelected.checkDetail && (!this.movementOfCash.number && !this.movementOfCashForm.value.number) ) {
         resolve(false);
         this.showMessage('Debe completar el numero de comprobante', 'info', true);
       }
