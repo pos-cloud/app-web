@@ -113,7 +113,7 @@
       </ngb-alert>
     </div>
     <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Listado de Cheques
+      <div class="card-header bg-primary">Listado de Movimientos de Medios
         <div class="pull-right">
           <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
           <button class="btn btn-primary fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
@@ -129,7 +129,6 @@
               <th (click)="orderBy('bank.name')">Banco</th>
               <th (click)="orderBy('expirationDate')">Vencimiento</th>
               <th (click)="orderBy('amountPaid')">Importe</th>
-
             </tr>
             <tr class="filters">
               <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getMovementOfCashes()" placeholder="Comprobante..."></th>

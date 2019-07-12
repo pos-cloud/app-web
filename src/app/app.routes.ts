@@ -415,7 +415,7 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path : 'checks/fondos/movimientos-de-medios',
+    path : 'report/cartera-de-cheques',
     component: ListMovementOfCashesComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Administrador'] }
