@@ -16,6 +16,7 @@ import { ListArticlesComponent } from '../list-articles/list-articles.component'
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
+import { TransactionState } from 'app/models/transaction';
 
 @Component({
   selector: 'app-list-movement-of-articles',
@@ -122,7 +123,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
 
     match += `"article._id" : { "$oid" : "${this.articleSelected._id}"},
               "operationType": { "$ne": "D" },"transaction.operationType" : { "$ne": "D" }, 
-              "transaction.state" : "Cerrado","modifyStock" : true,
+              "transaction.state" : "${TransactionState.Closed}","modifyStock" : true,
               "transaction.endDate" : {"$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},
                               "$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}
                               }

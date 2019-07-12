@@ -6,8 +6,8 @@ import 'moment/locale/es';
 
 export class PaymentMethod {
 
-  public _id: string;
-  public code: number = 1;
+	public _id: string;
+	public code: number = 1;
 	public name: string = '';
 	public discount: number = 0.00;
 	public surcharge: number = 0.00;
@@ -15,15 +15,15 @@ export class PaymentMethod {
 	public acceptReturned: boolean;
 	public inputAndOuput: boolean;
 	public checkDetail: boolean;
-  public cardDetail: boolean;
-  public allowToFinance: boolean;
+	public cardDetail: boolean;
+	public allowToFinance: boolean;
 	public cashBoxImpact: boolean;
 	public bankReconciliation: boolean;
 	public company : CompanyType;
 	public creationUser: User;
-  public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
-  public updateUser: User;
-  public updateDate: string;
+	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
+	public updateUser: User;
+  	public updateDate: string;
 
 	constructor () {}
 }
