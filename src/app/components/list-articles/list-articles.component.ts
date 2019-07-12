@@ -151,7 +151,7 @@ export class ListArticlesComponent implements OnInit {
        match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
     } else if(this.userType === 'report') {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
+      match += `"$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
     } else {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
       match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
