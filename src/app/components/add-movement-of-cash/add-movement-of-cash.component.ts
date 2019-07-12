@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { PaymentMethod } from './../../models/payment-method';
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 import { Transaction } from './../../models/transaction';
-import { CurrentAccount, Movements } from './../../models/transaction-type';
+import { CurrentAccount, Movements, StockMovement } from './../../models/transaction-type';
 import { Taxes } from '../../models/taxes';
 import { MovementOfArticle } from '../../models/movement-of-article';
 import { Tax } from 'app/models/tax';
@@ -981,7 +981,7 @@ export class AddMovementOfCashComponent implements OnInit {
             this.movementOfCash.statusCheck = StatusCheck.Closed;
           }
 
-          if(this.paymentMethodSelected.inputAndOuput) {
+          if(this.paymentMethodSelected.inputAndOuput && this.transaction.type.movement === Movements.Inflows) {
             this.movementOfCash.statusCheck = StatusCheck.Available;
           }
 

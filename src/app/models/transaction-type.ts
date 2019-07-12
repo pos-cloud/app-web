@@ -58,8 +58,7 @@ export class TransactionType {
 
 export enum Movements {
 	Inflows = <any> "Entrada",
-	Outflows = <any> "Salida",
-	Invetory = <any> "Inventario"
+	Outflows = <any> "Salida"
 }
 
 export enum StockMovement {
