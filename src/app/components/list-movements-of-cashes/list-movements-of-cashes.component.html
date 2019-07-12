@@ -70,7 +70,7 @@
               <td class="flat" >{{movementOfCash.discount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="flat" >{{movementOfCash.number}}</td>
               <td class="flat" *ngIf="movementOfCash.bank"> {{movementOfCash.bank.name}}</td>
-              <td class="flat" *ngIf="!movementOfCash.bank"> {{movementOfCash.bank.name}}</td>
+              <td class="flat" *ngIf="!movementOfCash.bank"></td>
               <td class="flat"> {{movementOfCash.expirationDate}}</td>
               <td class="flat" >{{movementOfCash.observation}}</td>
               
