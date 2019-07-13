@@ -213,7 +213,6 @@ export class ListMovementOfCashesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        console.log(result);
         this.loading = false;
         if (result && result[0] && result[0].movementsOfCashes) {
           this.movementsOfCashes = result[0].movementsOfCashes;
@@ -241,11 +240,11 @@ export class ListMovementOfCashesComponent implements OnInit {
   public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
     
     let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
-    this.totalAmountSelected += movementOfCash.amountPaid;
     if(this.isMovementOfCashSelected(movementOfCash)) {
       this.deleteMovementOfCashSelected(movementOfCash);
     } else {
-      if(this.transactionAmount >= this.totalAmountSelected) {
+      if(this.transactionAmount >= (this.totalAmountSelected + movementOfCash.amountPaid)) {
+        this.totalAmountSelected += movementOfCash.amountPaid;
         this.movementsOfCashesSelected.push(movementOfCash);
       } else {
         this.deleteMovementOfCashSelected(movementOfCash);
