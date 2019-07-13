@@ -70,7 +70,7 @@
               <td class="flat" >{{movementOfCash.discount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="flat" >{{movementOfCash.number}}</td>
               <td class="flat" *ngIf="movementOfCash.bank"> {{movementOfCash.bank.name}}</td>
-              <td class="flat" *ngIf="!movementOfCash.bank"> {{movementOfCash.bank.name}}</td>
+              <td class="flat" *ngIf="!movementOfCash.bank"></td>
               <td class="flat"> {{movementOfCash.expirationDate}}</td>
               <td class="flat" >{{movementOfCash.observation}}</td>
               
@@ -151,7 +151,8 @@
               <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: { itemsPerPage: itemsPerPage,
                                                                                 currentPage: currentPage,
                                                                                 totalItems: totalItems
-                                                                              }">
+                                                                              }"
+                  [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}">
                 <td align="left" width="130">
                   <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
                 </td>
@@ -169,20 +170,21 @@
             </tbody>
           </table>
         </div>
-        <div class="card-footer bg-primary">
-          <div class="row">
-            <div class="form-group col-md-2 offset-md-10">
-              <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getMovementOfCashes()">
-                <option [value]="5">Mostrar 5 Registros</option>
-                <option [value]="10">Mostrar 10 Registros</option>
-                <option [value]="15">Mostrar 15 Registros</option>
-                <option [value]="20">Mostrar 20 Registros</option>
-                <option [value]="50">Mostrar 50 Registros</option>
-                <option [value]="100">Mostrar 100 Registros</option>
-              </select>
+        <div class="card-footer">
+            <div class="row">
+              <div class="col-md-10">
+                <b>Monto Seleccionado: {{ totalAmountSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <button class="btn btn-primary"
+                          (click)="closeModal()">
+                    Aceptar
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
       </div>
   </section>
   
