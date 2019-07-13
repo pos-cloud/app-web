@@ -234,8 +234,16 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Cuenta de Mail</span>
+              <button type="button"
+                    class="btn btn-secondary"
+                    placement="right"
+                    ngbPopover="Solo se permite cuenta de Gmail y tendra que habilitar la app en el siguiente link https://myaccount.google.com/lesssecureapps">
+                    
+              <b>?</b>
+            </button>
               <input type="text" class="form-control" formControlName="emailAccount" name="emailAccount" id="emailAccount" aria-describedby="basic-addon1">
             </div>
+            
             <div *ngIf="formErrors.emailAccount" class="alert alert-danger">
               {{ formErrors.emailAccount }}
             </div>
