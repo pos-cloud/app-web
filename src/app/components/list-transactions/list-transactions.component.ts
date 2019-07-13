@@ -24,6 +24,7 @@ import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { AuthService } from 'app/services/auth.service';
+import { SendMailComponent } from '../send-mail/send-mail.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -195,6 +196,7 @@ export class ListTransactionsComponent implements OnInit {
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
+      "_id" : 1,
       origin: { $toString : "$origin" },
       letter: 1,
       number: { $toString : "$number" },
@@ -208,6 +210,7 @@ export class ListTransactionsComponent implements OnInit {
       CAE: 1,
       balance : 1,
       'company.name': 1,
+      'company.emails' : 1,
       'employeeClosing.name': 1,
       'turnClosing.endDate': { $dateToString: { date: "$turnClosing.endDate", format: "%d/%m/%Y", timezone: timezone }},
       'cashBox.number': { $toString : "$cashBox.number" },
@@ -330,6 +333,14 @@ export class ListTransactionsComponent implements OnInit {
         }, (reason) => {
 
         });
+      case 'mail' :
+        modalRef = this._modalService.open(SendMailComponent)
+        modalRef.componentInstance.emails = transaction.company.emails;
+        modalRef.result.then((result) => {
+          if(result){
+            this.getTransactions();
+          }
+        })
         break;
       default: ;
     }

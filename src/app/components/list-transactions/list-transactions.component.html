@@ -74,6 +74,11 @@
                                                                     }">
             <td align="left" width="150">
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button"  
+                      *ngIf = "transaction.company.emails"
+                      class="btn btn-secondary btn-sm" 
+                      (click)="openModal('mail', transaction)" 
+                      title="Enviar"><i class="fa fa-envelope"></i></button>
               <button type="button"
                       *ngIf="transaction.type.allowEdit &&
                             (!transaction.type.electronics ||
@@ -284,7 +289,7 @@
   </div>
 </section>
 
-<!-- SECCION STOCK -->
+<!-- SECCION STOCK Y FONDOS -->
 <section class="container-fluid" *ngIf="userType=='admin' && ((((modules | async)?.stock) && listType==='Stock') || listType==='Fondos')">
   <div class="center-content" *ngIf="alertMessage !== '' && totalItems > 0">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">

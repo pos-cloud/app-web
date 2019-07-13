@@ -1,6 +1,8 @@
 //Paquetes de angular
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router, ActivatedRoute } from '@angular/router';
+
 
 //Modelos
 import { Transaction } from './../../models/transaction';
@@ -66,6 +68,7 @@ export class PrintComponent implements OnInit {
   @Input() printer: Printer;
   @Input() transactionId: string;
   public loading: boolean;
+  public pathLocation: string[];
   public alertMessage: string = '';
   public shiftClosingTransaction;
   public shiftClosingMovementOfArticle;
@@ -90,6 +93,7 @@ export class PrintComponent implements OnInit {
                                   "extraLarge" : 20}`);
 
   constructor(
+    public _router: Router,
     public _turnService: TurnService,
     public _cashBoxService: CashBoxService,
     public _transactionTypeService: TransactionTypeService,
@@ -109,6 +113,14 @@ export class PrintComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.pathLocation = this._router.url.split('/');
+
+    if(this.pathLocation[1] === "print"){
+      this.typePrint = this.pathLocation[2];
+      this.transactionId = this.pathLocation[3];
+    }
+    
     
     if (!this.printer) {
       this.printer = new Printer();
@@ -2522,7 +2534,9 @@ export class PrintComponent implements OnInit {
   }
 
   public finishImpression(): void {
-    this.doc.autoPrint();
+    if(this.pathLocation[1] !== "print"){
+      this.doc.autoPrint();
+    }
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
 

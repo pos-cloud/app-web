@@ -62,6 +62,7 @@ import { ListBankComponent } from './components/list-bank/list-bank.component'
 import { ListBranchComponent } from './components/list-branches/list-branches.component';
 import { ListOriginsComponent } from './components/list-origins/list-origins.component';
 import { ListTransportComponent } from './components/list-transports/list-transports.component';
+import { PrintComponent } from './components/print/print.component';
 
 export const _routes: Routes = [
   { 
@@ -459,6 +460,10 @@ export const _routes: Routes = [
     path : 'admin/transports',
     component : ListTransportComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path : 'print/invoice/:transaction',
+    component : PrintComponent
   },
   { 
     path: 'pos', 
