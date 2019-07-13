@@ -336,6 +336,8 @@ export class ListTransactionsComponent implements OnInit {
       case 'mail' :
         modalRef = this._modalService.open(SendMailComponent)
         modalRef.componentInstance.emails = transaction.company.emails;
+        modalRef.componentInstance.subject = transaction.type.name + "  " + transaction.origin + "-" + transaction.letter + "-" + transaction.number;
+        modalRef.componentInstance.body = "http://" + Config.database + ".poscloud.com.ar/#/print/invoice/" + transaction._id
         modalRef.result.then((result) => {
           if(result){
             this.getTransactions();

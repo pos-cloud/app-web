@@ -17,7 +17,7 @@ export class MailService {
 
 	public sendEmail(data: {}): Observable<any> {
 
-        const URL = `${Config.apiURL}send-email`;
+        const URL = `${Config.apiURL}send-email-client`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, ɵɵresolveBody } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -22,6 +22,8 @@ export class SendMailComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public modelToImport: Array<String>;
   @Input() emails;
+  @Input() subject;
+  @Input() body;
 
   public formErrors = {
     'emails': '',
@@ -57,19 +59,17 @@ export class SendMailComponent implements OnInit {
     this.userType = pathLocation[1];
     this.buildForm();
     this.sendmailForm.setValue({
-      'emails': this.emails,
-      'subject': '',
-      'body': ''
+      'emails': this.emails || '',
+      'subject': this.subject || '', 
+      'body': this.body || ''
     });
   }
 
   public buildForm(): void {
     this.sendmailForm = this._fb.group({
-      'emails': [this.emails, [
-        ]
-      ],
-      'subject': '',
-      'body': ''
+      'emails': [this.emails, []],
+      'subject': [this.subject,[]],
+      'body': [this.body,[]]
     });
 
     this.sendmailForm.valueChanges
@@ -96,16 +96,12 @@ export class SendMailComponent implements OnInit {
         }
       }
 
-  public textomail(content) {
-
-  }
-
   public sendEmail (): void {
     
     this.loading = true;
     this.modelToImport = this.sendmailForm.value;
     this._serviceMail.sendEmail(this.modelToImport).subscribe(
-    result => {
+      result => {
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
           this.loading = false;
@@ -116,7 +112,7 @@ export class SendMailComponent implements OnInit {
         this.loading = false;
       },
       error => {
-        this.showMessage(error._body, 'danger', false);
+        this.showMessage(error, 'danger', false);
         this.loading = false;
       }
     );
