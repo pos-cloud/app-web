@@ -35,6 +35,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public totalItems = 0;
   public transactionMovement: string;
   public pathLocation: string[]
+  public totalAmountSelected: number = 0;
 
   public currentPage: number = 0;
   public displayedColumns = [
@@ -186,7 +187,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     let group = {
       _id: null,
       count: { $sum: 1 },
-      movementOfCashes: { $push: '$$ROOT' }
+      movementsOfCashes: { $push: '$$ROOT' }
     };
 
     let limit = this.itemsPerPage;
@@ -212,9 +213,10 @@ export class ListMovementOfCashesComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
+        console.log(result);
         this.loading = false;
-        if (result && result[0] && result[0].movementOfCashes) {
-          this.movementsOfCashes = result[0].movementOfCashes;
+        if (result && result[0] && result[0].movementsOfCashes) {
+          this.movementsOfCashes = result[0].movementsOfCashes;
           this.totalItems = result[0].count;
           this.areMovementOfCashesEmpty = false;
         } else {
@@ -237,16 +239,57 @@ export class ListMovementOfCashesComponent implements OnInit {
   }
 
   public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {
-
-    if(this.transactionAmount >= movementOfCashSelected.amountPaid) {
-      let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
-      this.movementsOfCashesSelected.push(movementOfCash);
-      this.activeModal.close({ movementsOfCashes: this.movementsOfCashesSelected });
+    
+    let movementOfCash = await this.getMovementOfCashById(movementOfCashSelected._id);
+    this.totalAmountSelected += movementOfCash.amountPaid;
+    if(this.isMovementOfCashSelected(movementOfCash)) {
+      this.deleteMovementOfCashSelected(movementOfCash);
     } else {
-      if(this.pathLocation[2] !== "fondos"){
-        this.showMessage("El monto $" + movementOfCashSelected.amountPaid + " es superior al de la transacción.", 'info', false);
+      if(this.transactionAmount >= this.totalAmountSelected) {
+        this.movementsOfCashesSelected.push(movementOfCash);
+      } else {
+        this.deleteMovementOfCashSelected(movementOfCash);
+        if(this.pathLocation[2] !== "fondos"){
+          this.showMessage("El monto $" + movementOfCashSelected.amountPaid + " es superior al de la transacción.", 'info', false);
+        }
       }
     }
+  }
+
+  public isMovementOfCashSelected(movementOfCash: MovementOfCash) {
+
+    let isSelected: boolean = false;
+
+    for(let mov of this.movementsOfCashesSelected) {
+      if(mov._id.toString() === movementOfCash._id.toString()) {
+        isSelected = true;
+      }
+    }
+
+    return isSelected;
+  }
+
+  public deleteMovementOfCashSelected(movementOfCash: MovementOfCash): void {
+
+    let movementToDelete: number;
+
+    for(let i=0; i < this.movementsOfCashesSelected.length; i++) {
+      if(this.movementsOfCashesSelected[i]._id.toString() === movementOfCash._id.toString()) {
+        movementToDelete = i;
+      }
+    }
+    if(movementToDelete !== undefined) {
+      this.totalAmountSelected -= this.movementsOfCashesSelected[movementToDelete].amountPaid;
+      this.movementsOfCashesSelected.splice(movementToDelete, 1);
+    }
+  }
+
+  public closeModal(): void {
+    this.activeModal.close(
+      {
+        movementsOfCashes: this.movementsOfCashesSelected
+      }
+    );
   }
 
   public getMovementOfCashById(id: string): Promise<MovementOfCash> {

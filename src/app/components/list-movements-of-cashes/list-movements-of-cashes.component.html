@@ -151,7 +151,8 @@
               <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: { itemsPerPage: itemsPerPage,
                                                                                 currentPage: currentPage,
                                                                                 totalItems: totalItems
-                                                                              }">
+                                                                              }"
+                  [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}">
                 <td align="left" width="130">
                   <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
                 </td>
@@ -169,6 +170,21 @@
             </tbody>
           </table>
         </div>
+        <div class="card-footer">
+            <div class="row">
+              <div class="col-md-10">
+                <b>Monto Seleccionado: {{ totalAmountSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <button class="btn btn-primary"
+                          (click)="closeModal()">
+                    Aceptar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
   </section>
   

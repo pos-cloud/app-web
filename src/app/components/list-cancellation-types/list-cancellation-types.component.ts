@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CancellationTypeService } from '../../services/cancellation-type.service'
 import { CancellationType } from '../../models/cancellation-type'
 import { CancellationTypeComponent } from '../cancellation-type/cancellation-type.component'
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-list-cancellation-types',
@@ -13,6 +13,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
   providers: [NgbAlertConfig],
   encapsulation: ViewEncapsulation.None
 })
+
 export class ListCancellationTypeComponent implements OnInit {
 
   public alertMessage: string = '';

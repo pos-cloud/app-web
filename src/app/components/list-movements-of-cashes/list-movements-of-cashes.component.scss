@@ -17,6 +17,16 @@ app-list-movement-of-cash {
           box-shadow: 0px 0px 2px;
           border-radius: 5px;
           cursor: pointer;
+      }
+
+       .row-active {
+           background: #0275D8;
+           color: #fff;
+       }
+       
+       .row-inactive {
+           background: #fff;
+           color: #000;
        }
       
        .center-content {

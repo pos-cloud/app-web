@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { PaymentMethod } from './../../models/payment-method';
 import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
 import { Transaction } from './../../models/transaction';
-import { CurrentAccount, Movements, StockMovement } from './../../models/transaction-type';
+import { CurrentAccount, Movements } from './../../models/transaction-type';
 import { Taxes } from '../../models/taxes';
 import { MovementOfArticle } from '../../models/movement-of-article';
 import { Tax } from 'app/models/tax';
@@ -542,10 +542,10 @@ export class AddMovementOfCashComponent implements OnInit {
                       if(movement.type.checkDetail) {
                         let query = `where="number":"${movement.number}","type":"${movement.type._id}"`;
                         await this.getMovementsOfCashes(query).then(
-                          async movementOfCashes => {
-                            if(movementOfCashes && movementOfCashes.length > 0) {
-                              movementOfCashes[0].statusCheck = StatusCheck.Available;
-                              await this.updateMovementOfCash(movementOfCashes[0]).then(
+                          async movementsOfCashes => {
+                            if(movementsOfCashes && movementsOfCashes.length > 0) {
+                              movementsOfCashes[0].statusCheck = StatusCheck.Available;
+                              await this.updateMovementOfCash(movementsOfCashes[0]).then(
                                 movementOfCash => {
                                   if(movementOfCash) {
                                     this.getMovementOfCashesByTransaction();
@@ -818,8 +818,8 @@ export class AddMovementOfCashComponent implements OnInit {
       if(this.paymentMethodSelected.checkDetail && !isCopy) {
         let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}"`;
         await this.getMovementsOfCashes(query).then(
-          movementOfCashes => {
-            if(movementOfCashes && movementOfCashes.length > 0) {
+          movementsOfCashes => {
+            if(movementsOfCashes && movementsOfCashes.length > 0) {
               resolve(false);
               this.showMessage(`El ${this.paymentMethodSelected.name} número ${this.movementOfCashForm.value.number} ya existe`,'info',true);
             }
