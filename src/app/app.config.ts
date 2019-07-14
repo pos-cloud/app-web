@@ -44,6 +44,9 @@ export class Config {
 	public company: {
 		allowCurrentAccount: {
 			default: boolean
+		},
+		vatCondition: {
+			default: VATCondition
 		}
 	};
 

@@ -307,6 +307,23 @@
         <div class="row">
           <div class="form-group col-md-12">
             <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'">Cóndicion de IVA defecto para las empresas:</span>
+              <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal defecto para las empresas:</span>
+              <select class="form-control" formControlName="company.vatCondition.default" name="company.vatCondition.default" id="company.vatCondition.default">
+                <option [ngValue]="null" [selected]="!config.company.vatCondition.default" [disabled]="readonly"></option>
+                <option *ngFor="let vatCondition of vatConditions"
+                        [selected]="(config.company.vatCondition.default && config.company.vatCondition.default._id && vatCondition._id===config.company.vatCondition.default._id) ||
+                                    (config.company.vatCondition.default && vatCondition._id===config.company.vatCondition.default)"
+                        [value]="vatCondition._id">
+                  {{vatCondition.description}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Valor defecto si permite cuenta corriente al dar de alta una empresa</span>
               <select class="form-control" formControlName="company.allowCurrentAccount.default" name="company.allowCurrentAccount.default" id="company.allowCurrentAccount.default">
                 <option value="true">Si</option>
