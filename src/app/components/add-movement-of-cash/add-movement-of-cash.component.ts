@@ -283,9 +283,11 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
-    if (parseFloat(this.paymentChange) < 0) {
-      this.paymentChange = '0.00';
+    if(this.transaction.totalPrice !== 0) {
+      this.paymentChange = (this.movementOfCashForm.value.amountPaid - this.movementOfCashForm.value.transactionAmount).toFixed(2);
+      if (parseFloat(this.paymentChange) < 0) {
+        this.paymentChange = '0.00';
+      }
     }
 
     for(let type of this.paymentMethods) {
@@ -444,7 +446,9 @@ export class AddMovementOfCashComponent implements OnInit {
           this.movementsOfCashes = result.movementsOfCashes;
           if (this.isChargedFinished()) {
             if (await this.areValidAmounts()) {
-              this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+              if(this.transaction.totalPrice !== 0) {
+                this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+              }
             } else {
               this.fastPayment = null;
             }
@@ -636,6 +640,32 @@ export class AddMovementOfCashComponent implements OnInit {
     }
   };
 
+  async finish() {
+
+    if (await this.areValidAmounts()) {
+      if(this.transaction.totalPrice === 0) {
+        let paid = 0;
+        for (let mov of this.movementsOfCashes) {
+          paid += mov.amountPaid;
+        } 
+        if(paid > 0) {
+          this.transaction.totalPrice = this.roundNumber.transform(paid);
+          await this.updateTransaction().then(
+            transaction => {
+              if(transaction) {
+                this.transaction = transaction;
+              }
+            }
+          );
+        }
+      } else {
+        this.activeModal.close({ movementsOfCashes: this.movementsOfCashes, movementOfArticle: this.movementOfArticle });
+      }
+    } else {
+      this.fastPayment = null;
+    }
+  }
+
   public getMovementsOfCashes(query?: string): Promise<MovementOfCash[]> {
 
     return new Promise<MovementOfCash[]>((resolve, reject) => {
@@ -755,9 +785,6 @@ export class AddMovementOfCashComponent implements OnInit {
 
     if (op === 'amountToPay') {
       this.amountToPay = this.movementOfCashForm.value.amountToPay;
-      if (this.amountToPay < 0) {
-        this.amountToPay = 0;
-      }
     } else {
       this.amountPaid = 0;
       if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
@@ -767,7 +794,7 @@ export class AddMovementOfCashComponent implements OnInit {
       }
     }
 
-    if (op !== 'amountToPay') {
+    if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
       this.amountToPay = this.transactionAmount - this.amountPaid - this.amountDiscount;
     }
 
@@ -784,13 +811,15 @@ export class AddMovementOfCashComponent implements OnInit {
       this.transactionAmount = this.transaction.totalPrice;
     }
 
-    if (op !== 'amountToPay') {
+    if (op !== 'amountToPay' && this.transaction.totalPrice !== 0) {
       this.amountToPay = this.transactionAmount - this.amountPaid;
     }
 
-    this.paymentChange = (this.amountPaid + this.amountToPay - this.transactionAmount).toFixed(2);
-    if (parseFloat(this.paymentChange) < 0) {
-      this.paymentChange = '0.00';
+    if(this.transaction.totalPrice !== 0) {
+      this.paymentChange = (this.amountPaid + this.amountToPay - this.transactionAmount).toFixed(2);
+      if (parseFloat(this.paymentChange) < 0) {
+        this.paymentChange = '0.00';
+      }
     }
 
     this.amountDiscount = this.transactionAmount - this.transaction.totalPrice;
@@ -827,7 +856,9 @@ export class AddMovementOfCashComponent implements OnInit {
         );
       }
   
-      if (this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount) && !this.paymentMethodSelected.acceptReturned) {
+      if (this.transaction.totalPrice !== 0 &&
+        this.roundNumber.transform(this.amountPaid + this.amountToPay) > this.roundNumber.transform(this.transactionAmount) && 
+          !this.paymentMethodSelected.acceptReturned) {
         resolve(false);
         this.showMessage("El medio de pago " + this.paymentMethodSelected.name + " no acepta vuelto, por lo tanto el monto a pagar no puede ser mayor que el de la transacción.", 'info', true);
       }
@@ -940,8 +971,13 @@ export class AddMovementOfCashComponent implements OnInit {
         }
       }
 
-      if (this.roundNumber.transform(paid) > this.roundNumber.transform(this.transactionAmount)) {
+      if (this.roundNumber.transform(paid) > this.roundNumber.transform(this.transactionAmount) && !this.transaction.type.allowZero) {
         this.showMessage("La suma de monto de medios de pago no puede ser mayor al de la transacción.", 'info', true);
+        resolve(false);
+      }
+
+      if (this.roundNumber.transform(paid) <= 0) {
+        this.showMessage("La suma de monto de medios de pago no puede ser menor o igual a 0.", 'info', true);
         resolve(false);
       }
 

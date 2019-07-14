@@ -295,6 +295,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'allowDelete': [this.transactionType.allowDelete, [
         ]
       ],
+      'allowZero': [this.transactionType.allowZero, [
+        ]
+      ],
       'requestEmployee': [this.transactionType.requestEmployee, [
         ]
       ],
@@ -438,6 +441,7 @@ export class AddTransactionTypeComponent implements OnInit {
     }
     if (this.transactionType.allowDelete === undefined) this.transactionType.allowDelete = false;
     if (this.transactionType.allowEdit === undefined) this.transactionType.allowEdit = false;
+    if (this.transactionType.allowZero === undefined) this.transactionType.allowZero = false;
     if (this.transactionType.requestCurrency === undefined) this.transactionType.requestCurrency = false;
     if (this.transactionType.requestTransport === undefined) this.transactionType.requestTransport = false;
 
@@ -498,6 +502,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'entryAmount': this.transactionType.entryAmount,
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,
+      'allowZero': this.transactionType.allowZero,
       'requestCurrency': this.transactionType.requestCurrency,
       'requestEmployee': requestEmployee,
       'fastPayment': fastPayment,

@@ -2328,9 +2328,8 @@ export class PrintComponent implements OnInit {
           this.doc.text("TRANSPORTE:".toString(),25,85);
           this.doc.text(this.roundNumber.transform(transport).toString(),185,85);
 
-          console.log(this.transaction.type.isPreprinted);
           if(!this.transaction.type.isPreprinted){
-            console.log("entro")
+
             this.getHeader(true);
           
 

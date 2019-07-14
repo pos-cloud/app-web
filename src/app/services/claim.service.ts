@@ -23,7 +23,6 @@ export class ClaimService {
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
-        console.log(claim);
         return this._http.post(URL, { claim: claim }, {
             headers: headers
         }).pipe(

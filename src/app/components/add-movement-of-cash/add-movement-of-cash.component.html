@@ -262,6 +262,15 @@
           <span *ngIf="!loading">Guardar</span>
           <span *ngIf="loading">Espere por favor</span>
         </button>
+        <button type="button" 
+                class="btn btn-success" 
+                [disabled]="!movementOfCashForm.valid || loading"
+                *ngIf="transaction.type.allowZero"
+                (click)="finish()">
+          <i class="fa" [ngClass]="{'fa-check':!loading, 'fa-spinner fa-spin':loading}"></i>
+          <span *ngIf="!loading">Finalizar</span>
+          <span *ngIf="loading">Espere por favor</span>
+        </button>
       </div>
   </form>
 </section>

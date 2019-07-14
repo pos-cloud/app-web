@@ -345,8 +345,6 @@ export class PrintPriceListComponent implements OnInit {
             this.doc.line(0, row, 400, row);
             row += 5;
 
-            console.log(this.config[0].article.code.validators.maxLength);
-
             // Encabezado de la tabla de Detalle de Productos
             this.doc.setFontType('bold');
             this.doc.setFontSize(this.fontSizes.normal);
