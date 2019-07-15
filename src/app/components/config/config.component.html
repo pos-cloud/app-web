@@ -310,10 +310,10 @@
               <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country === 'AR'">Cóndicion de IVA defecto para las empresas:</span>
               <span class="input-group-addon" id="basic-addon1" *ngIf="configFormCompany.value.country !== 'AR'">Régimen Fiscal defecto para las empresas:</span>
               <select class="form-control" formControlName="company.vatCondition.default" name="company.vatCondition.default" id="company.vatCondition.default">
-                <option [ngValue]="null" [selected]="!config.company.vatCondition.default" [disabled]="readonly"></option>
+                <option [ngValue]="null" [selected]="!config.company.vatCondition || !config.company.vatCondition.default" [disabled]="readonly"></option>
                 <option *ngFor="let vatCondition of vatConditions"
-                        [selected]="(config.company.vatCondition.default && config.company.vatCondition.default._id && vatCondition._id===config.company.vatCondition.default._id) ||
-                                    (config.company.vatCondition.default && vatCondition._id===config.company.vatCondition.default)"
+                        [selected]="(config.company.vatCondition && config.company.vatCondition.default && config.company.vatCondition.default._id && vatCondition._id===config.company.vatCondition.default._id) ||
+                                    (config.company.vatCondition && config.company.vatCondition.default && vatCondition._id===config.company.vatCondition.default)"
                         [value]="vatCondition._id">
                   {{vatCondition.description}}
                 </option>
@@ -332,6 +332,17 @@
             </div>
           </div>
         </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+              <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Código a imprimir en la etiqueta del artículo</span>
+                <select class="form-control" formControlName="article.printLabel.value" name="article.printLabel.value" id="article.printLabel.value">
+                  <option value="code">Código Interno</option>
+                  <option value="barcode">Código de Barras</option>
+                </select>
+              </div>
+            </div>
+          </div>
         <div class="row">
           <div class="form-group col-md-12">
             <button type="submit" class="btn btn-primary" [disabled]="!configFormSystem.valid || loadingSystem">

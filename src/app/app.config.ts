@@ -39,6 +39,9 @@ export class Config {
 			validators: {
 				maxLength: number
 			}
+		},
+		printLabel: {
+			value: string
 		}
 	};
 	public company: {
