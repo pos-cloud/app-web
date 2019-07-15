@@ -2538,15 +2538,10 @@ export class PrintComponent implements OnInit {
     }
   }
 
-<<<<<<< HEAD
   public finishImpression(): void {
     if(this.pathLocation[1] !== "print"){
       this.doc.autoPrint();
     }
-=======
-  async finishImpression() {
-    this.doc.autoPrint();
->>>>>>> 215dcf669c3f596c4814d4f24a5b0923f74e87fc
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
 
