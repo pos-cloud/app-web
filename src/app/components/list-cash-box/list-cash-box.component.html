@@ -1,0 +1,137 @@
+<section class="container-fluid">
+  <div class="card card-outline-primary">
+    <div class="card-header bg-primary">Detalle de Caja
+      <div class="pull-right">
+        <span (click)="areFiltersVisible = !areFiltersVisible">
+          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+        </span>
+      </div>
+    </div>
+    <div class="card-block table-responsive">
+      <div class="center-content" *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+          {{alertMessage}}
+        </ngb-alert>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-1" *ngIf="cashBoxSelected">
+          <label for="number" class="control-label">Numero:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.number" readonly/>
+        </div>
+        <div class="form-group col-md-3" *ngIf="cashBoxSelected">
+          <label for="openingDate" class="control-label">Apertura:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.openingDate" readonly/>
+        </div>
+        <div class="form-group col-md-3" *ngIf="cashBoxSelected ">
+          <label for="closingDate" class="control-label">Cierre:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.closingDate" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="cashBoxSelected && cashBoxSelected.employee">
+          <label for="employee" class="control-label">Empleado:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.employee.name" readonly/>
+        </div>
+        <div class="form-group col-md-2" *ngIf="cashBoxSelected">
+          <label for="state" class="control-label">Stado:</label>
+          <input type="text" class="form-control" [value]="cashBoxSelected.state" readonly/>
+        </div>
+        <div class="form-group col-md-10" *ngIf="!cashBoxSelected">
+          <input type="text" class="form-control" value="Seleccione una caja" readonly/>
+        </div>
+        <div class="col-md-1">
+          <label for="btn" class="control-label" *ngIf="cashBoxSelected">Acción:</label>
+          <span class="form-control cursor-pointer center-content" (click)="openModal('cashBox')">
+            Cambiar
+          </span>
+        </div>
+      </div>
+      <div class="row center-content">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th class="th transaction-data"></th>
+              <th colspan="5" class="th transaction-data">Datos de la transacción</th>
+              <th colspan="3" class="th balance-data">Movimientos</th>
+            </tr>
+            <tr>
+              <th class=""><i class="fa fa-bars"></i></th>
+              <th class="">Fecha</th>
+              <th class="">Movimiento</th>
+              <th class="">Tipo</th>
+              <th class="">Numero</th>
+              <th class="">Metodo de Pago</th>
+              <th class="">Entrada</th>
+              <th class="">Salida</th>
+              <th class="">Total</th>
+            </tr>
+            <tr *ngIf="areFiltersVisible" class="filters">
+              <th></th>
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getMovementOfCashes()" placeholder="Movimiento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getMovementOfCashes()" placeholder="Tipo..."></th>              
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getMovementOfCashes()" placeholder="Numero..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getMovementOfCashes()" placeholder="Metodo de Pago..."></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let movementsOfCash of items | paginate: { itemsPerPage: itemsPerPage,
+                                                                        currentPage: currentPage,
+                                                                        totalItems: totalItems
+                                                                      }">
+              <td align="left" width="100">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', movementsOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
+              </td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.endDate">{{movementsOfCash.transaction.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.type">{{movementsOfCash.transaction.type.transactionMovement}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.type">{{movementsOfCash.transaction.type.name}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction">{{movementsOfCash.transaction.number}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.type.name">{{movementsOfCash.type.name}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement === 'Entrada'">{{movementsOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement !== 'Entrada'"></td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement === 'Salida'">{{movementsOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+              <td class="align-center" *ngIf="movementsOfCash.transaction.type.movement !== 'Salida'"></td>
+              <td class="align-center">{{movementsOfCash.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            </tr>
+            <tr align="center" *ngIf="!items || items.length === 0 && !loading">
+              <td colspan="9" >No se encontraron movimientos</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <td colspan="9" class="align-right">
+              <strong>Total</strong>
+            </td>
+            <td class="align-right">
+              <strong>{{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+            </td>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-primary">
+      <div class="row">
+        <div class="col-md-10">
+          <pagination-controls
+            class="my-pagination"
+            (pageChange)="currentPage=$event"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true">
+          </pagination-controls>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage">
+            <option [value]="5">Mostrar 5 Registros</option>
+            <option [value]="10">Mostrar 10 Registros</option>
+            <option [value]="15">Mostrar 15 Registros</option>
+            <option [value]="20">Mostrar 20 Registros</option>
+            <option [value]="50">Mostrar 50 Registros</option>
+            <option [value]="100">Mostrar 100 Registros</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

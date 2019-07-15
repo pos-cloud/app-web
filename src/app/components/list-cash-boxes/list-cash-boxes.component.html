@@ -1,4 +1,4 @@
-<section class="container-fluid" *ngIf="userType=='admin'">
+<section class="container-fluid">
   <div class="center-content" *ngIf="alertMessage !== '' && !areCashBoxesEmpty">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
@@ -43,7 +43,8 @@
                                                   | paginate: { itemsPerPage: itemsPerPage,
                                                                 currentPage: p,
                                                                 totalItems: totalItems
-                                                              }">
+                                                              }"
+                                                              (click)="selectCashBox(cashBox)">
               <td align="left" width="100">
                 <button *ngIf="cashBox.state === 'Cerrada'" type="button" class="btn btn-secondary btn-sm" (click)="printBoxClosure(cashBox)" title="Imprimir">
                     <i class="fa fa-print"></i>

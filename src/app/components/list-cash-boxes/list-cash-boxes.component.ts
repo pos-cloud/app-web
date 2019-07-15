@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
@@ -36,6 +36,7 @@ export class ListCashBoxesComponent implements OnInit {
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig,
+    public activeModal: NgbActiveModal,
     public _transactionTypeService: TransactionTypeService
   ) { }
 
@@ -49,6 +50,10 @@ export class ListCashBoxesComponent implements OnInit {
   public getBadge(term: string): boolean {
 
     return true;
+  }
+
+  public selectCashBox(cashBoxSelected: CashBox): void {
+    this.activeModal.close({ cashBoxId: cashBoxSelected._id });
   }
 
   public getCashBoxes(): void {

@@ -63,6 +63,7 @@ import { ListBranchComponent } from './components/list-branches/list-branches.co
 import { ListOriginsComponent } from './components/list-origins/list-origins.component';
 import { ListTransportComponent } from './components/list-transports/list-transports.component';
 import { PrintComponent } from './components/print/print.component';
+import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
 
 export const _routes: Routes = [
   { 
@@ -324,6 +325,11 @@ export const _routes: Routes = [
     path : 'report/kardex-de-productos',
     component : ListMovementOfArticlesComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path : 'report/list-box',
+    component : ListCashBoxComponent,
+    canActivate : [AuthGuard]
   },
   {
     path: 'admin/cuentas-corrientes/cliente/:id',
