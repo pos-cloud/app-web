@@ -29,7 +29,6 @@ import { ConfigService } from 'app/services/config.service';
 import { StateService } from 'app/services/state.service';
 import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
-import { CompanyNews } from 'app/models/company-news';
 import { TransportService } from 'app/services/transport.service';
 import { Transport } from 'app/models/transport';
 
@@ -177,6 +176,7 @@ export class AddCompanyComponent  implements OnInit {
       config => {
         this.config = config;
         this.company.allowCurrentAccount = this.config.company.allowCurrentAccount.default;
+        this.company.vatCondition = this.config.company.vatCondition.default;
       }
     );
 
@@ -442,7 +442,11 @@ export class AddCompanyComponent  implements OnInit {
 
     let vatCondition;
     if (!this.company.vatCondition) {
-      vatCondition = null;
+      if (this.vatConditions && this.vatConditions.length > 0) {
+        this.company.vatCondition = this.vatConditions[0];
+      } else {
+        vatCondition = null;
+      }
     } else {
       if (this.company.vatCondition._id) {
         vatCondition = this.company.vatCondition._id;
@@ -567,7 +571,6 @@ export class AddCompanyComponent  implements OnInit {
         if (!result.vatConditions) {
         } else {
           this.vatConditions = result.vatConditions;
-          this.company.vatCondition = this.vatConditions[0];
         }
         this.loading = false;
       },
@@ -594,9 +597,6 @@ export class AddCompanyComponent  implements OnInit {
           }
 
           this.company.code = code;
-          if (this.vatConditions && this.vatConditions.length > 0) {
-            this.company.vatCondition = this.vatConditions[0];
-          }
           this.company.identificationType = result.companies[0].identificationType;
           this.otherFields = this.company.otherFields;
           this.setValueForm();

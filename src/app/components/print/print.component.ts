@@ -14,7 +14,7 @@ import { Company } from './../../models/company';
 import { Config } from './../../app.config';
 import { TransactionType, TransactionMovement, Movements } from './../../models/transaction-type';
 import { ArticleStock } from './../../models/article-stock';
-import { Article, ArticleType } from './../../models/article';
+import { Article } from './../../models/article';
 
 
 //Paquetes de terceros
@@ -183,12 +183,15 @@ export class PrintComponent implements OnInit {
               this.getClosingCashBox();
             } else if (this.typePrint === "label") {
               let code;
-              if (this.articleStock) {
-                code = this.articleStock.article.code;
-              } else if (this.article) {
-                code = this.article.code;
+              if (this.articleStock && this.articleStock.article[this.config[0].article.printLabel.value]) {
+                code = this.articleStock.article[this.config[0].article.printLabel.value];
+                this.getBarcode64('code128?value=' + code, this.typePrint);
+              } else if (this.article && this.article[this.config[0].article.printLabel.value]) {
+                code = this.article[this.config[0].article.printLabel.value];
+                this.getBarcode64('code128?value=' + code, this.typePrint);
+              } else {
+                this.showMessage('Debe completar el código del producto a imprimir.', 'info', true);
               }
-              this.getBarcode64('code128?value=' + code, this.typePrint);
             } else if (this.typePrint === "kitchen") {
               this.toPrintKitchen();
             } else if (this.typePrint === "IVA") {
@@ -270,12 +273,15 @@ export class PrintComponent implements OnInit {
               this.getClosingCashBox();
             } else if (this.typePrint === "label") {
               let code;
-              if (this.articleStock) {
-                code = this.articleStock.article.code;
-              } else if (this.article) {
-                code = this.article.code;
+              if (this.articleStock && this.articleStock.article[this.config[0].article.printLabel.value]) {
+                code = this.articleStock.article[this.config[0].article.printLabel.value];
+                this.getBarcode64('code128?value=' + code, this.typePrint);
+              } else if (this.article && this.article[this.config[0].article.printLabel.value]) {
+                code = this.article[this.config[0].article.printLabel.value];
+                this.getBarcode64('code128?value=' + code, this.typePrint);
+              } else {
+                this.showMessage('Debe completar el código del producto a imprimir.', 'info', true);
               }
-              this.getBarcode64('code128?value=' + code, this.typePrint);
             } else if (this.typePrint === "kitchen") {
               this.toPrintKitchen();
             } else if (this.typePrint === "IVA") {
@@ -2340,9 +2346,8 @@ export class PrintComponent implements OnInit {
           this.doc.text("TRANSPORTE:".toString(),25,85);
           this.doc.text(this.roundNumber.transform(transport).toString(),185,85);
 
-          console.log(this.transaction.type.isPreprinted);
           if(!this.transaction.type.isPreprinted){
-            console.log("entro")
+
             this.getHeader(true);
           
 
@@ -2533,13 +2538,17 @@ export class PrintComponent implements OnInit {
     }
   }
 
+<<<<<<< HEAD
   public finishImpression(): void {
     if(this.pathLocation[1] !== "print"){
       this.doc.autoPrint();
     }
+=======
+  async finishImpression() {
+    this.doc.autoPrint();
+>>>>>>> 215dcf669c3f596c4814d4f24a5b0923f74e87fc
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
   }
-
 
   public toPrintKitchen() {
 

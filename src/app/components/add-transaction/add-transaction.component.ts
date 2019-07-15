@@ -443,7 +443,10 @@ export class AddTransactionComponent implements OnInit {
       this.transaction.totalPrice = this.transactionForm.value.totalPrice;
       if (this.transaction.type.requestArticles ||
         (this.transaction.totalPrice > 0 &&
-        !this.transaction.type.requestArticles)) {
+        !this.transaction.type.requestArticles) || 
+        (this.transaction.totalPrice === 0 &&
+        !this.transaction.type.requestArticles &&
+        this.transaction.type.allowZero)) {
         if (this.transactionForm.value.state) {
           this.transaction.state = this.transactionForm.value.state;
         }

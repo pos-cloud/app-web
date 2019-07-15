@@ -287,6 +287,12 @@ export class ConfigComponent implements OnInit {
       'article.code.validators.maxLength' : [ this.config.article.code.validators.maxLength, [
         ]
       ],
+      'article.printLabel.value' : [ this.config.article.printLabel.value, [
+        ]
+      ],
+      'company.vatCondition.default' : [ this.config.company.vatCondition.default, [
+        ]
+      ],
       'company.allowCurrentAccount.default' : [ this.config.company.allowCurrentAccount.default, [
         ]
       ]
@@ -608,6 +614,18 @@ export class ConfigComponent implements OnInit {
 
     if (!this.config.article.code.validators.maxLength) this.config.article.code.validators.maxLength = 10;
     if (!this.config.company.allowCurrentAccount.default) this.config.company.allowCurrentAccount.default = false;
+    if (!this.config.article.printLabel.value) this.config.article.printLabel.value = 'code';
+
+    let vatConfitionDefault;
+    if (!this.config.company.vatCondition.default) {
+      vatConfitionDefault = null;
+    } else {
+      if (this.config.company.vatCondition.default._id) {
+        vatConfitionDefault = this.config.company.vatCondition.default._id;
+      } else {
+        vatConfitionDefault = this.config.company.vatCondition.default;
+      }
+    }
 
     this.configFormCompany.setValue({
       '_id': this.config._id,
@@ -637,7 +655,9 @@ export class ConfigComponent implements OnInit {
     this.configFormSystem.setValue({
       '_id': this.config._id,
       'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
-      'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default
+      'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
+      'company.vatCondition.default': vatConfitionDefault,
+      'article.printLabel.value': this.config.article.printLabel.value
     });
   }
 

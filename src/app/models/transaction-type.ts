@@ -42,6 +42,7 @@ export class TransactionType {
 	public allowAPP: boolean = false;
 	public allowEdit: boolean = false;
 	public allowDelete: boolean = false;
+	public allowZero: boolean = false;
 	public requestCurrency: boolean = false;
 	public requestEmployee: EmployeeType;
 	public requestTransport: boolean = false;

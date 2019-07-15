@@ -243,7 +243,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     if(this.isMovementOfCashSelected(movementOfCash)) {
       this.deleteMovementOfCashSelected(movementOfCash);
     } else {
-      if(this.transactionAmount >= (this.totalAmountSelected + movementOfCash.amountPaid)) {
+      if(this.transactionAmount === 0 || (this.transactionAmount >= (this.totalAmountSelected + movementOfCash.amountPaid))) {
         this.totalAmountSelected += movementOfCash.amountPaid;
         this.movementsOfCashesSelected.push(movementOfCash);
       } else {

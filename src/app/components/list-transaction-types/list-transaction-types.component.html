@@ -45,6 +45,7 @@
             <th *ngIf="userCountry === 'MX'" (click)="orderBy('defectUseOfCFDI','description')">Uso de CFDI</th>
             <th (click)="orderBy('allowEdit')">Permite Editar</th>
             <th (click)="orderBy('allowDelete')">Permite Eliminar</th>
+            <th (click)="orderBy('allowDelete')">Cambia monto según medios</th>
             <th (click)="orderBy('printable')">Imprime al finalizar</th>
             <th (click)="orderBy('defectPrinter','name')">Impresora defecto</th>
             <th (click)="orderBy('requestTaxes')">Pide impuestos</th>
@@ -82,6 +83,7 @@
             <th *ngIf="userCountry === 'MX'"><input type="text" class="form-control" [(ngModel)]="filterDefectUseOfCFDI" placeholder="Uso de CFDI..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Editar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAllowDelete" placeholder="Permite Eliminar..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAllowZero" placeholder="Cambia monto según medios..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterPrintable" placeholder="Imprime al finalizar..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectPrinter" placeholder="Impresora defecto..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterRequestTaxes" placeholder="Pide impuestos..."></th>
@@ -116,6 +118,7 @@
                                                               | filter: filterDefectUseOfCFDI:'description':'defectUseOfCFDI'
                                                               | filter: filterAllowEdit:'allowEdit'
                                                               | filter: filterAllowDelete:'allowDelete'
+                                                              | filter: filterAllowZero:'allowZero'
                                                               | filter: filterPrintable:'printable'
                                                               | filter: filterDefectPrinter:'name':'defectPrinter'
                                                               | filter: filterRequestTaxes:'requestTaxes'
@@ -161,6 +164,7 @@
             <td class="flat" *ngIf="userCountry === 'MX' && !transactionType.defectUseOfCFDI"></td>
             <td class="flat">{{transactionType.allowEdit}}</td>
             <td class="flat">{{transactionType.allowDelete}}</td>
+            <td class="flat">{{transactionType.allowZero}}</td>
             <td class="flat">{{transactionType.printable}}</td>
             <td class="flat" *ngIf="transactionType.defectPrinter">{{transactionType.defectPrinter.name}}</td>
             <td class="flat" *ngIf="!transactionType.defectPrinter"></td>

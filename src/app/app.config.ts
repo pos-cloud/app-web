@@ -39,11 +39,17 @@ export class Config {
 			validators: {
 				maxLength: number
 			}
+		},
+		printLabel: {
+			value: string
 		}
 	};
 	public company: {
 		allowCurrentAccount: {
 			default: boolean
+		},
+		vatCondition: {
+			default: VATCondition
 		}
 	};
 
