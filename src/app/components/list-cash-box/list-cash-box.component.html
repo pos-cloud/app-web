@@ -66,10 +66,10 @@
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
               <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getMovementOfCashes()" placeholder="Movimiento..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (input)="getMovementOfCashes()" placeholder="Tipo..."></th>              
-              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getMovementOfCashes()" placeholder="Numero..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getMovementOfCashes()" placeholder="Metodo de Pago..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Tipo..."></th>              
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (keydown.enter)="getMovementOfCashes()" placeholder="Numero..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Metodo de Pago..."></th>
               <th></th>
               <th></th>
               <th></th>
