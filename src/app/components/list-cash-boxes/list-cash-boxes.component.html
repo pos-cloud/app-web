@@ -26,7 +26,7 @@
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
-              <th><input type="date" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterNumber" placeholder="Número..." ></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterOpeningDate" placeholder="Fecha Apertura..." ></th>
               <th><input type="date" class="form-control" [(ngModel)]= "filterClosingDate" placeholder="Fecha Cierre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterState" placeholder="Estado..." ></th>
@@ -38,7 +38,7 @@
                                                   | filter: filterOpeningDate:'openingDate'
                                                   | filter: filterClosingDate:'closingDate'
                                                   | filter: filterState:'state'
-                                                  | filter: filterState:'name':'employee'
+                                                  | filter: filterEmployee:'name':'employee'
                                                   | orderBy: orderTerm: propertyTerm
                                                   | paginate: { itemsPerPage: itemsPerPage,
                                                                 currentPage: p,
@@ -65,7 +65,7 @@
               <td *ngIf="!cashBox.employee"></td>
             </tr>
             <tr align="center" *ngIf="areCashBoxesEmpty && !loading">
-              <td colspan="5">No se encontraron cajas</td>
+              <td colspan="6">No se encontraron cajas</td>
             </tr>
           </tbody>
         </table>

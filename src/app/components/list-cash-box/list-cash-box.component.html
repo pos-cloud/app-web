@@ -15,7 +15,7 @@
       </div>
       <div class="row">
         <div class="form-group col-md-1" *ngIf="cashBoxSelected">
-          <label for="number" class="control-label">Numero:</label>
+          <label for="number" class="control-label">Número:</label>
           <input type="text" class="form-control" [value]="cashBoxSelected.number" readonly/>
         </div>
         <div class="form-group col-md-3" *ngIf="cashBoxSelected">
@@ -31,7 +31,7 @@
           <input type="text" class="form-control" [value]="cashBoxSelected.employee.name" readonly/>
         </div>
         <div class="form-group col-md-2" *ngIf="cashBoxSelected">
-          <label for="state" class="control-label">Stado:</label>
+          <label for="state" class="control-label">Estado:</label>
           <input type="text" class="form-control" [value]="cashBoxSelected.state" readonly/>
         </div>
         <div class="form-group col-md-10" *ngIf="!cashBoxSelected">
@@ -100,10 +100,7 @@
           </tbody>
           <tfoot>
             <td colspan="9" class="align-right">
-              <strong>Total</strong>
-            </td>
-            <td class="align-right">
-              <strong>{{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
+              <strong>Total : {{balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
             </td>
           </tfoot>
         </table>

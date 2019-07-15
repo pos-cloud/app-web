@@ -64,10 +64,12 @@ export class ListCashBoxesComponent implements OnInit {
         result => {
 					if (!result.cashBoxes) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
 					  this.cashBoxes = new Array();
             this.areCashBoxesEmpty = true;
 					} else {
             this.hideMessage();
+            this.loading = false;
             this.cashBoxes = result.cashBoxes;
             this.totalItems = this.cashBoxes.length;
             this.areCashBoxesEmpty = false;

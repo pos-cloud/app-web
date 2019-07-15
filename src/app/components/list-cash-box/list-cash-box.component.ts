@@ -235,13 +235,15 @@ export class ListCashBoxComponent implements OnInit {
         //skip // SKIP
     ).subscribe(
       result => {
-        this.loading = false;
         if (result && result[0] && result[0].movementsOfCashes) {
+          this.loading = false;
           this.items = result[0].movementsOfCashes;
           this.totalItems = result[0].count;
           this.areMovementOfCashesEmpty = false;
+          this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
         } else {
           this.items = new Array();
+          this.loading = false;
           this.totalItems = 0;
           this.areMovementOfCashesEmpty = true;
         }
