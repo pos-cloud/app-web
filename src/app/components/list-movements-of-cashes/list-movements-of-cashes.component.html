@@ -148,10 +148,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: { itemsPerPage: itemsPerPage,
-                                                                                currentPage: currentPage,
-                                                                                totalItems: totalItems
-                                                                              }"
+              <tr *ngFor="let movementOfCash of movementsOfCashes"
                   [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}">
                 <td align="left" width="130">
                   <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>

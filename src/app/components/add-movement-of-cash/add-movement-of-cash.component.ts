@@ -887,9 +887,14 @@ export class AddMovementOfCashComponent implements OnInit {
         this.showMessage('Debe seleccionar un medio de pago válido', 'info', true);
       }
 
-      if(this.paymentMethodSelected.checkDetail && (!this.movementOfCash.number && !this.movementOfCashForm.value.number) ) {
-        resolve(false);
-        this.showMessage('Debe completar el numero de comprobante', 'info', true);
+      if(this.paymentMethodSelected.checkDetail && 
+        (!this.movementOfCash.number && !this.movementOfCashForm.value.number)) {
+          resolve(false);
+          if(this.paymentMethodSelected.inputAndOuput) {
+            this.showMessage('Debe seleccionar los métodos de pago en cartera a utilizar.', 'info', true);
+          } else {
+            this.showMessage('Debe completar el numero de comprobante', 'info', true);
+          }
       }
   
       if(this.paymentMethodSelected.allowToFinance) {
