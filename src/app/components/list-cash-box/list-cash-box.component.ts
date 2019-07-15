@@ -31,6 +31,7 @@ export class ListCashBoxComponent implements OnInit {
   public items: any[];
   public loading: boolean = false;
   public itemsPerPage = 10;
+  public areFiltersVisible: boolean;
   public roundNumber = new RoundNumberPipe();
   public listTitle: string;
   public currentPage: number = 0;
