@@ -23,8 +23,11 @@ export class ClaimComponent  implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public claim: Claim;
+  public filesToUpload : Array<File>;
   public priorities: ClaimPriority[] = [ ClaimPriority.Low, ClaimPriority.Half, ClaimPriority.High ];
   public types: ClaimType[] = [ ClaimType.Suggestion, ClaimType.Improvement, ClaimType.Err, ClaimType.Implementation ];
+  public file;
+  public fileName;
 
   public formErrors = {
     'name': '',
@@ -143,6 +146,7 @@ export class ClaimComponent  implements OnInit {
   public addClaim(): void {
     this.loading = true;
     this.claim = this.claimForm.value;
+    this.claim.file = this.file
     this.saveClaim();
   }
 
@@ -158,6 +162,8 @@ export class ClaimComponent  implements OnInit {
         } else {
           this.claim = result.claim;
           this.showMessage(`El informe ha sido recibido correctamente, estaremos en contacto contigo pronto. Tú nro de reclamo es ${this.claim._id}, débes guardarlo para consultar el estado del mismo.`, 'success', false);
+          this.fileName = null;
+          this.file = null;
           this.claim = new Claim();
           this._authService.getIdentity.subscribe(
             identity => {
@@ -176,6 +182,42 @@ export class ClaimComponent  implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public fileChangeEvent(fileInput: any): void {
+
+    this.fileName = fileInput.target.files[0].name;
+
+    this.filesToUpload = <Array<File>>fileInput.target.files;
+
+    this._claimService.makeFileRequest(this.filesToUpload).then(
+      result =>{
+        if(result){
+          this.file = result['file'];
+          this.showMessage("El archivo se guardo correstamente", 'info', false);
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+      }
+    )
+  }
+
+  public deleteFile(): void {
+
+    this._claimService.deleteFile(this.file).subscribe(
+      result =>{
+        if(result){
+          this.showMessage(result.message, 'info', false);
+          this.fileName = null;
+          this.file = null;
+        }
+      },
+      error => {
+        this.showMessage(error, 'danget', false);      
+      }
+    );
+     
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

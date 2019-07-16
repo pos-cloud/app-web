@@ -72,6 +72,20 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="form-group col-md-3">
+					<div *ngIf="!fileName" class="custom-file">
+						<label class="btn btn-primary" for="customFileLang">Subir Archivo</label>
+						<input type="file" class="custom-file-input" lang="es" id="customFileLang" (change)="fileChangeEvent($event)"/>
+					</div>
+					<div *ngIf="fileName" class="custom-file">
+						<label class="btn btn-primary" (click)="deleteFile()">Eliminar Archivo</label>
+					</div>
+				</div>
+				<div class = "form-group col-md-9">
+					<label for="image1" class="my-btn">{{this.fileName}}</label>	
+				</div>
+			</div>
 		</div>
     <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

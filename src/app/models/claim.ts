@@ -13,6 +13,7 @@ export class Claim {
     public author: string = '';
     public email: string = '';
     public listName: string = '';
+    public file: string = '';
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
