@@ -113,7 +113,7 @@
             <th (click)="orderBy('article.description')">Producto</th>
             <th (click)="orderBy('article.category.description')">Categoría</th>
             <th (click)="orderBy('article.make.description')">Marca</th>
-            <th (click)="orderBy('count')">Ítems</th>
+            <th (click)="orderBy('count')">Ítems Vendidos</th>
             <th (click)="orderBy('total')">Monto Total</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
@@ -121,6 +121,7 @@
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.description']" placeholder="Producto..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.category.description']" placeholder="Categoría..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.make.description']" placeholder="Marca..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
+
             <th></th>
             <th></th>
           </tr>
@@ -136,8 +137,8 @@
             <td class="flat" *ngIf="!item.article.category"></td>
             <td class="flat" *ngIf="item.article.make">{{ item.article.make.description }}</td>
             <td class="flat" *ngIf="!item.article.make"></td>
-            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * -1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count * item.article.quantityPerMeasure }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * item.article.quantityPerMeasure * -1 }}</td>
             <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
             <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.total * -1 | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>
