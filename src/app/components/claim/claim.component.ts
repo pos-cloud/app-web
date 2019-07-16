@@ -29,7 +29,8 @@ export class ClaimComponent  implements OnInit {
     'description': '',
     'priority': '',
     'type': '',
-    'author': ''
+    'author': '',
+    'email': ''
   };
 
   public validationMessages = {
@@ -46,6 +47,9 @@ export class ClaimComponent  implements OnInit {
       'required': 'Este campo es requerido.',
     },
     'author': {
+      'required': 'Este campo es requerido.',
+    },
+    'email': {
       'required': 'Este campo es requerido.',
     }
   };
@@ -91,6 +95,10 @@ export class ClaimComponent  implements OnInit {
         ]
       ],
       'author': [this.claim.author, [
+          Validators.required
+        ]
+      ],
+      'email': [this.claim.email, [
           Validators.required
         ]
       ],
