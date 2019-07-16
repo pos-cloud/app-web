@@ -17,7 +17,7 @@ import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.c
 import { ImportComponent } from './components/import/import.component';
 import { ConfigComponent } from './components/config/config.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { SendMailComponent } from './components/send-mail/send-mail.component';
+import { SendEmailComponent } from './components/send-email/send-email.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ExportCitiComponent } from './components/export-citi/export-citi.component';
 import { ExportIvaComponent } from './components/export-iva/export-iva.component';
@@ -347,8 +347,8 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/send-mail',
-    component: SendMailComponent,
+    path: 'admin/send-email',
+    component: SendEmailComponent,
     canActivate: [AuthGuard]
   },
   {

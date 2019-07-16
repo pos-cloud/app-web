@@ -33,7 +33,7 @@ import { PrinterService } from './services/printer.service';
 import { ImportService } from './services/import.service';
 import { ConfigService } from './services/config.service';
 import { PaymentMethodService } from './services/payment-method.service';
-import { MailService } from './services/send-mail.service';
+import { EmailService } from './services/send-email.service';
 import { MovementOfCashService } from './services/movement-of-cash.service';
 import { PrintService } from './services/print.service';
 import { VATConditionService } from './services/vat-condition.service';
@@ -105,7 +105,7 @@ import { AddArticleStockComponent } from './components/add-article-stock/add-art
 import { ConfigComponent } from './components/config/config.component';
 import { AddTransactionComponent } from './components/add-transaction/add-transaction.component';
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
-import { SendMailComponent } from './components/send-mail/send-mail.component';
+import { SendEmailComponent } from './components/send-email/send-email.component';
 import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
 import { PrintComponent } from './components/print/print.component';
 import { ViewTransactionComponent } from './components/view-transaction/view-transaction.component';
@@ -314,7 +314,7 @@ import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.c
     ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
-    SendMailComponent,
+    SendEmailComponent,
     SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
@@ -481,7 +481,7 @@ import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.c
     ConfigComponent,
     AddTransactionComponent,
     CurrentAccountComponent,
-    SendMailComponent,
+    SendEmailComponent,
     SelectEmployeeComponent,
     PrintComponent,
     ViewTransactionComponent,
@@ -622,7 +622,7 @@ import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.c
     PaymentMethodService,
     MovementOfCashService,
     PrintService,
-    MailService,
+    EmailService,
     VATConditionService,
     ArticleStockService,
     VariantTypeService,

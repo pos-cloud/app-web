@@ -8,7 +8,7 @@ import { Config } from './../app.config';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class MailService {
+export class EmailService {
 
 	constructor(
 		private _http: HttpClient,

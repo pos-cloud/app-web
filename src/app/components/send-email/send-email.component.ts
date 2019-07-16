@@ -1,26 +1,27 @@
-import { Component, OnInit, Input, EventEmitter, ɵɵresolveBody } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component, OnInit, Input, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 
-import { MailService } from './../../services/send-mail.service';
+import { EmailService } from './../../services/send-email.service';
 import { CompanyService } from './../../services/company.service';
 
 @Component({
-  selector: 'app-send-mail',
-  templateUrl: './send-mail.component.html',
-  styleUrls: ['./send-mail.component.css'],
-  providers: [NgbAlertConfig]
+  selector: 'app-send-email',
+  templateUrl: './send-email.component.html',
+  styleUrls: ['./send-email.component.css'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
-export class SendMailComponent implements OnInit {
+
+export class SendEmailComponent implements OnInit {
   
-  public sendmailForm: FormGroup;
+  public sendEmailForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  public modelToImport: Array<String>;
   @Input() emails;
   @Input() subject;
   @Input() body;
@@ -42,12 +43,10 @@ export class SendMailComponent implements OnInit {
       'required':       'Este campo es requerido.'
     }
   };
-
   
   constructor(
-
     public _companyService: CompanyService,
-    public _serviceMail: MailService,
+    public _serviceEmail: EmailService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -58,7 +57,7 @@ export class SendMailComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
-    this.sendmailForm.setValue({
+    this.sendEmailForm.setValue({
       'emails': this.emails || '',
       'subject': this.subject || '', 
       'body': this.body || ''
@@ -66,13 +65,22 @@ export class SendMailComponent implements OnInit {
   }
 
   public buildForm(): void {
-    this.sendmailForm = this._fb.group({
-      'emails': [this.emails, []],
-      'subject': [this.subject,[]],
-      'body': [this.body,[]]
+    this.sendEmailForm = this._fb.group({
+      'emails': [this.emails, [
+          Validators.required
+        ]
+      ],
+      'subject': [this.subject, [
+          Validators.required
+        ]
+      ],
+      'body': [this.body, [
+          Validators.required
+        ]
+      ],
     });
 
-    this.sendmailForm.valueChanges
+    this.sendEmailForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
@@ -80,34 +88,33 @@ export class SendMailComponent implements OnInit {
 
   public onValueChanged(data?: any): void {
     
-        if (!this.sendmailForm) { return; }
-        const form = this.sendmailForm;
-    
-        for (const field in this.formErrors) {
-          this.formErrors[field] = '';
-          const control = form.get(field);
-    
-          if (control && control.dirty && !control.valid) {
-            const messages = this.validationMessages[field];
-            for (const key in control.errors) {
-              this.formErrors[field] += messages[key] + ' ';
-            }
-          }
+    if (!this.sendEmailForm) { return; }
+    const form = this.sendEmailForm;
+
+    for (const field in this.formErrors) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
         }
       }
+    }
+  }
 
   public sendEmail (): void {
     
     this.loading = true;
-    this.modelToImport = this.sendmailForm.value;
-    this._serviceMail.sendEmail(this.modelToImport).subscribe(
+
+    this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
       result => {
+        console.log(result);
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
-          this.loading = false;
         } else {
-          this.showMessage("El mail se envio correctamente.", 'success', false);
-          this.activeModal.close('save_close');
+          this.showMessage("El email se ha enviado correctamente.", 'success', false);
         }
         this.loading = false;
       },

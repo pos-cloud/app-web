@@ -10,7 +10,7 @@ import { CompanyService } from './../../services/company.service';
 
 import { AddCompanyComponent } from './../../components/add-company/add-company.component';
 import { DeleteCompanyComponent } from './../../components/delete-company/delete-company.component';
-import { SendMailComponent } from './../../components/send-mail/send-mail.component';
+import { SendEmailComponent } from './../../components/send-email/send-email.component';
 import { ImportComponent } from '../import/import.component';
 import { User } from 'app/models/user';
 import { AuthService } from 'app/services/auth.service';
@@ -200,14 +200,14 @@ export class ListCompaniesComponent implements OnInit {
     }
   };
 
-  public openMail(): void {
+  public openEmail(): void {
 
     if (Config.emailAccount) {
       if (this.companies && this.companies.length !== 0) {
         let modalRef;
         let emails = '';
 
-        modalRef = this._modalService.open(SendMailComponent, { size: 'lg' });
+        modalRef = this._modalService.open(SendEmailComponent, { size: 'lg' });
         if(this.companies && this.companies.length > 0) {
           for(let i=0; i < this.companies.length; i++){
             emails += this.companies[i].emails;

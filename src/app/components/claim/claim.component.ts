@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ClaimService } from 'app/services/claim.service';
+import { AuthService } from 'app/services/auth.service';
 import { ClaimPriority, ClaimType, Claim } from 'app/models/claim';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-claim',
@@ -29,7 +31,8 @@ export class ClaimComponent  implements OnInit {
     'description': '',
     'priority': '',
     'type': '',
-    'author': ''
+    'author': '',
+    'email': ''
   };
 
   public validationMessages = {
@@ -47,6 +50,9 @@ export class ClaimComponent  implements OnInit {
     },
     'author': {
       'required': 'Este campo es requerido.',
+    },
+    'email': {
+      'required': 'Este campo es requerido.',
     }
   };
 
@@ -56,8 +62,17 @@ export class ClaimComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
+    private _authService: AuthService,
   ) {
     this.claim = new Claim();
+    this._authService.getIdentity.subscribe(
+      identity => {
+        if(identity && identity.employee) {
+          this.claim.author = identity.employee.name;
+        }
+      },
+    );
+    this.claim.email = Config.emailAccount;
   }
 
   ngOnInit(): void {
@@ -91,6 +106,10 @@ export class ClaimComponent  implements OnInit {
         ]
       ],
       'author': [this.claim.author, [
+          Validators.required
+        ]
+      ],
+      'email': [this.claim.email, [
           Validators.required
         ]
       ],
@@ -140,6 +159,15 @@ export class ClaimComponent  implements OnInit {
           this.claim = result.claim;
           this.showMessage(`El informe ha sido recibido correctamente, estaremos en contacto contigo pronto. Tú nro de reclamo es ${this.claim._id}, débes guardarlo para consultar el estado del mismo.`, 'success', false);
           this.claim = new Claim();
+          this._authService.getIdentity.subscribe(
+            identity => {
+              if(identity && identity.employee) {
+                this.claim.author = identity.employee.name;
+              }
+            },
+          );
+          this.claim.email = Config.emailAccount;
+          this.focusEvent.emit(true);
           this.buildForm();
         }
       },
