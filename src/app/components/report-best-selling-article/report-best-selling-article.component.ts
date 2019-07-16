@@ -46,7 +46,8 @@ export class ReportBestSellingArticleComponent implements OnInit {
       'article.description',
       'article.category.description',
       'article.make.description',
-      'article.quantityPerMeasure'
+      'article.quantityPerMeasure',
+      'article.unitOfMeasurement.name'
   ];
   public branches: Branch[];
   @Input() branchSelectedId: String;
