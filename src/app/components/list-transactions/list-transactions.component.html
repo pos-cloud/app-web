@@ -73,12 +73,10 @@
                                                                       totalItems: totalItems
                                                                     }">
             <td align="left" width="150">
-              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', transaction)" title="Ver"><i class="fa fa-eye"></i></button>
-              <button type="button"
-                      class="btn btn-secondary btn-sm" 
-                      (click)="openModal('mail', transaction)"                      
-                      title="Enviar"><i class="fa fa-envelope"></i>                     
-                    </button>
+              <button type="button" 
+                      class="btn btn-success  btn-sm" 
+                      (click)="openModal('view', transaction)" 
+                      title="Ver"><i class="fa fa-eye"></i></button>
               <button type="button"
                       *ngIf="transaction.type.allowEdit &&
                             (!transaction.type.electronics ||
@@ -97,7 +95,16 @@
                       (click)="openModal('delete', transaction)"
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
-              <button *ngIf="transaction.state === 'Cerrado'" type="button" class="btn btn-secondary btn-sm" (click)="openModal('print', transaction)" title="Imprimir"><i class="fa fa-print"></i></button>
+              <button *ngIf="transaction.state === 'Cerrado'" 
+                      type="button" 
+                      class="btn btn-secondary btn-sm" 
+                      (click)="openModal('print', transaction)" 
+                      title="Imprimir"><i class="fa fa-print"></i></button>
+              <button type="button"
+                      class="btn btn-secondary btn-sm" 
+                      (click)="openModal('send-email', transaction)"                      
+                      title="Enviar"><i class="fa fa-envelope"></i>                     
+                    </button>
             </td>
             <td *ngIf="transaction.type">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type"></td>

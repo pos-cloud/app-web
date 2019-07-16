@@ -24,7 +24,7 @@ import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { AuthService } from 'app/services/auth.service';
-import { SendMailComponent } from '../send-mail/send-mail.component';
+import { SendEmailComponent } from '../send-email/send-email.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -60,6 +60,7 @@ export class ListTransactionsComponent implements OnInit {
       'type.allowEdit',
       'type.allowDelete',
       'type.electronics',
+      'type.labelPrint',
       'origin',
       'letter',
       'number',
@@ -216,6 +217,7 @@ export class ListTransactionsComponent implements OnInit {
       'cashBox.number': { $toString : "$cashBox.number" },
       'type.transactionMovement': 1,
       'type.name': 1,
+      'type.labelPrint': 1,
       'type.requestArticles': 1,
       'type.allowEdit': 1,
       'type.allowDelete': 1,
@@ -333,20 +335,28 @@ export class ListTransactionsComponent implements OnInit {
         }, (reason) => {
 
         });
-      case 'mail' :
-        modalRef = this._modalService.open(SendMailComponent)
+      case 'send-email' :
+        modalRef = this._modalService.open(SendEmailComponent);
         modalRef.componentInstance.emails = transaction.company.emails;
-        modalRef.componentInstance.subject = transaction.type.name + "  " + transaction.origin + "-" + transaction.letter + "-" + transaction.number;
-        modalRef.componentInstance.body = "En el siguiente link podra consultar su factura http://" + Config.database + ".poscloud.com.ar/#/print/invoice/" + transaction._id
-        modalRef.result.then((result) => {
-          if(result){
-            this.getTransactions();
-          }
-        })
+        let labelPrint = transaction.type.name;
+        if(transaction.type.labelPrint) {
+          labelPrint = transaction.type.labelPrint;
+        }
+        modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
+        modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar/#/print/invoice/` + transaction._id;
+        modalRef.result.then((result) => {});
         break;
       default: ;
     }
   };
+
+  public padNumber(n, length) : string{
+    
+    var n = n.toString();
+    while (n.length < length)
+        n = "0" + n;
+    return n;
+  }
 
   public calculateTotal(transactions: Transaction[], col, format): string {
 
