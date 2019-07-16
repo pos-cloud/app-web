@@ -57,7 +57,8 @@ export class AddMovementOfArticleComponent implements OnInit {
   public formErrors = {
     'description': '',
     'amount': '',
-    'unitPrice': ''
+    'unitPrice': '',
+    'notes' : '',
   };
 
   public validationMessages = {
@@ -69,6 +70,9 @@ export class AddMovementOfArticleComponent implements OnInit {
     },
     'unitPrice': {
       'required': 'Este campo es requerido.'
+    },
+    'notes': {
+      'maxLength': 'Este campo no puede superar los 180 caracteres.'
     }
   };
 
@@ -149,6 +153,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         ]
       ],
       'notes': [this.movementOfArticle.notes, [
+        Validators.maxLength(2)
         ]
       ],
       'unitPrice': [this.movementOfArticle.unitPrice, [
@@ -179,9 +184,12 @@ export class AddMovementOfArticleComponent implements OnInit {
       const control = form.get(field);
 
       if (control && control.dirty && !control.valid) {
+        console.log(field)
         const messages = this.validationMessages[field];
         for (const key in control.errors) {
+          this.formErrors
           this.formErrors[field] += messages[key] + ' ';
+          console.log(this.formErrors[field])
         }
       }
     }
