@@ -337,7 +337,9 @@ export class ListTransactionsComponent implements OnInit {
         });
       case 'send-email' :
         modalRef = this._modalService.open(SendEmailComponent);
-        modalRef.componentInstance.emails = transaction.company.emails;
+        if(transaction.company && transaction.company.emails) {
+          modalRef.componentInstance.emails = transaction.company.emails;
+        }
         let labelPrint = transaction.type.name;
         if(transaction.type.labelPrint) {
           labelPrint = transaction.type.labelPrint;
