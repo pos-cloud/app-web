@@ -153,7 +153,7 @@ export class AddMovementOfArticleComponent implements OnInit {
         ]
       ],
       'notes': [this.movementOfArticle.notes, [
-        Validators.maxLength(180)
+        Validators.maxLength(165)
         ]
       ],
       'unitPrice': [this.movementOfArticle.unitPrice, [
