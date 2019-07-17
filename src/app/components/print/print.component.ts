@@ -2290,22 +2290,22 @@ export class PrintComponent implements OnInit {
                 this.movementsOfArticles[i].make.visibleSale) {
               this.doc.text((this.movementsOfArticles[i].description + ' - ' +
                             this.movementsOfArticles[i].category.description + ' - ' +
-                            this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
+                            this.movementsOfArticles[i].make.description).slice(0, 45), 46, row);
             } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
                         !this.movementsOfArticles[i].make.visibleSale) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 49), 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 45), 46, row);
             } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 45), 46, row);
             }
           } else {
             if (this.movementsOfArticles[i].category &&
                 this.movementsOfArticles[i].category.visibleInvoice &&
                 this.movementsOfArticles[i].category.visibleInvoice){
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 49), 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 45), 46, row);
             }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 49), 46, row);
+              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 45), 46, row);
             } else
-              this.doc.text((this.movementsOfArticles[i].description).slice(0, 49), 46, row);
+              this.doc.text((this.movementsOfArticles[i].description).slice(0, 45), 46, row);
           }
 
         }
@@ -2341,7 +2341,7 @@ export class PrintComponent implements OnInit {
         if((i+1)%19 === 0) {
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
-          this.doc.text(this.roundNumber.transform(transport).toString(),185, row);
+          this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
           this.getCompanyPicture(10, 5, 80, 40);
           row = 95;
           this.doc.addPage();
@@ -2349,7 +2349,7 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType("bold");
 
           this.doc.text("TRANSPORTE:".toString(),25,85);
-          this.doc.text(this.roundNumber.transform(transport).toString(),185,85);
+          this.doc.text(this.roundNumber.transform(transport).toString(), 185, 85);
 
           if(!this.transaction.type.isPreprinted){
 
