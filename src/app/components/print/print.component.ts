@@ -2325,11 +2325,14 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles[i].notes) {
           this.doc.setFontStyle("italic");
           this.doc.text(this.movementsOfArticles[i].notes.slice(0, 55), 46, row + 5);
-          row += 5; 
-          this.doc.text(this.movementsOfArticles[i].notes.slice(55, 110), 46, row + 5);
-          row += 5;
-          this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
-
+          if(this.movementsOfArticles[i].notes.slice(55, 110) != ''){
+            row += 5;
+            this.doc.text(this.movementsOfArticles[i].notes.slice(55, 110), 46, row + 5);
+          }
+          if(this.movementsOfArticles[i].notes.slice(110, 165) != ''){
+            row += 5;
+            this.doc.text(this.movementsOfArticles[i].notes.slice(110, 165), 46, row + 5);
+          }
           this.doc.setFontStyle("normal");
           row += 5;
         }
