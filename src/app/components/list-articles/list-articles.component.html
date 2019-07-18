@@ -30,6 +30,7 @@
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
+            <th (click)="orderBy('currency.name')">Moneda</th>
             <th (click)="orderBy('observation')">Observation</th>
             <th (click)="orderBy('barcode')">Código de Barra</th>
           </tr>
@@ -40,6 +41,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (keydown.enter)="getArticles()" placeholder="Precio de Venta..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['currency.name']" (keydown.enter)="getArticles()" placeholder="Moneda..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['observation']" (keydown.enter)="getArticles()" placeholder="Observación..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (keydown.enter)="getArticles()" placeholder="Código de Barra..."></th>
           </tr>
@@ -65,6 +67,8 @@
             <td *ngIf="article.category">{{article.category.description}}</td>
             <td *ngIf="!article.category"></td>
             <td>{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            <td *ngIf="article.currency">{{article.currency.name}}</td>
+            <td *ngIf="!article.currency"></td>
             <td>{{article.observation}}</td>
             <td>{{article.barcode}}</td>
           </tr>
