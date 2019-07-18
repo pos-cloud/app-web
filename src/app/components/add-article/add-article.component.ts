@@ -81,7 +81,7 @@ export class AddArticleComponent implements OnInit {
   public imageURL: string;
   public articleType: string;
   public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
-  public lastPricePurchase;
+  public lastPricePurchase: number = 0.00;
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
 
@@ -327,7 +327,7 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'providers' : [this.article.providers, []],
-      'lastPricePurchase' : [,[]]
+      'lastPricePurchase' : [0.00,[]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -665,6 +665,7 @@ export class AddArticleComponent implements OnInit {
         "transaction.type.name": 1,
         "transaction.type.transactionMovement" : 1,
         "transaction._id": 1,
+        "transaction.quotation": 1,
         "amount": 1,
         "salePrice" : 1
     };
@@ -688,9 +689,14 @@ export class AddArticleComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles[0]) {
-          this.lastPricePurchase= result[0].movementsOfArticles[0].salePrice / result[0].movementsOfArticles[0].amount;
-          this.lastPricePurchase = this.roundNumber.transform(this.lastPricePurchase);
+        if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles.length > 0) {
+          let movementOfArticle = result[0].movementsOfArticles[0];
+          this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.salePrice / movementOfArticle.amount);
+          let quotation = 1;
+          if(movementOfArticle.transaction && movementOfArticle.transaction.quotation) {
+            quotation = movementOfArticle.transaction.quotation;
+          }
+          this.lastPricePurchase = this.roundNumber.transform(this.lastPricePurchase / quotation);
         } else {
           this.lastPricePurchase = 0;
         }

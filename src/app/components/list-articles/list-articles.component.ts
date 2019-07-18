@@ -194,7 +194,8 @@ export class ListArticlesComponent implements OnInit {
         'salePrice' : { $toString : '$salePrice' },
         'observation' : 1,
         'picture' : 1,
-        'operationType': 1
+        'operationType': 1,
+        'currency.name': 1
       }
 
       // AGRUPAMOS EL RESULTADO
