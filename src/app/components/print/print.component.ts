@@ -1979,7 +1979,7 @@ export class PrintComponent implements OnInit {
     if(Config.country === 'AR') {
       this.doc.text("Condición de IVA:", margin, 45);
     } else {
-      this.doc.text("Condición de IVA:", margin, 45);
+      this.doc.text("Régimen Fiscal:", margin, 45);
     }
     this.doc.setFontType('normal');
     if (this.config[0].companyVatCondition) {
@@ -2263,7 +2263,9 @@ export class PrintComponent implements OnInit {
     this.doc.text("Detalle", 45, 77);
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Precio U.", 145, 77);
-      if(this.transaction.type.requestTaxes){
+      if(this.transaction.type.requestTaxes && 
+        this.transaction.company &&
+        this.transaction.company.vatCondition.discriminate) {
         this.doc.text("IVA.", 165, 77);
       }
       this.doc.text("Total", 185, 77);
@@ -2272,6 +2274,7 @@ export class PrintComponent implements OnInit {
 
     // Detalle de productos
     var row = 85;
+    var margin = 5;
 
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (var i = 0; i < this.movementsOfArticles.length; i++) {
@@ -2310,12 +2313,14 @@ export class PrintComponent implements OnInit {
 
         }
         if (this.transaction.type && this.transaction.type.showPrices) {
-          if(this.transaction.type.requestTaxes){
+          if(this.transaction.type.requestTaxes  && 
+            this.transaction.company &&
+            this.transaction.company.vatCondition.discriminate) {
             for(let tax of this.movementsOfArticles[i].taxes){
               this.doc.text("$ " + this.roundNumber.transform(tax.taxBase,2), 145, row);
               this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), 165, row);
             }
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 185, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 185, row);
           } else {
             this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
             this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 185, row);
@@ -2412,10 +2417,16 @@ export class PrintComponent implements OnInit {
 
     if (this.transaction.type && this.transaction.type.showPrices) {
 
+      let space;
+      if(Config.country === 'MX') {
+        space = 6;
+      } else {
+        space = 8;
+      }
       let rowTotals = 247;
       this.doc.setFontType('bold');
       this.doc.text("Subtotal:", 140, rowTotals);
-      rowTotals +=8;
+      rowTotals +=space;
       this.doc.text("Descuento:", 140, rowTotals);
       this.doc.setFontType('normal');
       this.doc.text("$ (" + this.roundNumber.transform(this.transaction.discountAmount,2) + ")", 173, rowTotals);
@@ -2428,7 +2439,7 @@ export class PrintComponent implements OnInit {
 
             if(this.transaction.taxes && this.transaction.taxes.length > 0) {
               for (let tax of this.transaction.taxes) {
-                rowTotals += 8;
+                rowTotals += space;
                 this.doc.setFontType('bold');
                 this.doc.text(tax.tax.name + ":", 140, rowTotals);
                 this.doc.setFontType('normal');
@@ -2438,7 +2449,7 @@ export class PrintComponent implements OnInit {
             }
 
             if (this.transaction.exempt && this.transaction.exempt > 0) {
-              rowTotals += 8;
+              rowTotals += space;
               this.doc.setFontType('bold');
               this.doc.text("Exento:", 140, rowTotals);
               this.doc.setFontType('normal');
@@ -2451,83 +2462,132 @@ export class PrintComponent implements OnInit {
         subtotal += this.transaction.discountAmount;
       }
       this.doc.text("$ " + this.roundNumber.transform((subtotal),2).toString(), 173, 247);
-      rowTotals += 8;
+      rowTotals += space;
       this.doc.setFontSize(this.fontSizes.extraLarge);
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.large);
       this.doc.text("Total:", 140, rowTotals);
       this.doc.setFontType('normal');
-      this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice,2), 173, rowTotals);
+      this.doc.text("$ " + parseFloat(this.roundNumber.transform(this.transaction.totalPrice,2)).toFixed(2), 173, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
     }
 
+    row = 246;
+
+    // FORMA DE PAGO
     if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
-      for(let movementOfCash of this.movementsOfCashes){
-        if(movementOfCash.observation){
-          if(Config.country !== 'MX') {
-            this.doc.setFontType('bold');
-            this.doc.text("Observaciones: ", 10, 246);
-            this.doc.setFontType('normal');
-            this.doc.text(movementOfCash.observation.slice(0, 53) + " -", 37, 246);
-            this.doc.text(movementOfCash.observation.slice(53, 106) + " -", 37, 249);
-            this.doc.text(movementOfCash.observation.slice(105, 157) + " -", 37, 252);
-            this.doc.text(movementOfCash.observation.slice(157, 255), 37, 258);
-          } else {
-            this.doc.setFontType('bold');
-            this.doc.text("Observaciones: ", 35, 246);
-            this.doc.setFontType('normal');
-            this.doc.text(this.movementsOfCashes[0].observation.slice(0, 40) + " -", 62, 246);
-            this.doc.text(this.movementsOfCashes[0].observation.slice(40, 78) + " -", 62, 249);
-            this.doc.text(this.movementsOfCashes[0].observation.slice(78, 122) + " -", 62, 252);
-            this.doc.text(this.movementsOfCashes[0].observation.slice(122, 160), 62, 255);
+
+      if(Config.country === 'MX' &&
+        this.transaction.stringSAT &&
+        this.transaction.SATStamp &&
+        this.transaction.CFDStamp) {
+          this.doc.setFontType('bold');
+          this.doc.text("Forma de pago: ", 35, row);
+          this.doc.setFontType('normal');
+      
+          row += 5;
+
+          for(let movementOfCash of this.movementsOfCashes) {
+            this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, 35, row);
+            this.doc.text(`${movementOfCash.type.name}.`, 65, row);
+            row += 5;
           }
+      } else {
+        this.doc.setFontType('bold');
+        this.doc.text("Forma de pago: ", margin, row);
+        this.doc.setFontType('normal');
+    
+        row += 5;
+
+        for(let movementOfCash of this.movementsOfCashes) {
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, margin, row);
+          this.doc.text(`${movementOfCash.type.name}.`, 28, row);
+          row += 5;
         }
       }
-      
     }
 
-    this.doc.setFontType('normal');
-    this.doc.text('', 38, 250);
+    // FIN FORMA DE PAGO
+
+    // OBSERVATION
+    
+    let observation: string = '';
+
+    if(this.transaction.observation) {
+      observation += this.transaction.observation + '.- ';
+    }
+
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+      for(let movementOfCash of this.movementsOfCashes) {
+        if(movementOfCash.observation) {
+          observation += movementOfCash.observation + '.- ';
+        }
+      }
+    }
+
+    if(observation && observation !== '') {
+
+      if(Config.country === 'MX' &&
+        this.transaction.stringSAT &&
+        this.transaction.SATStamp &&
+        this.transaction.CFDStamp) {
+          this.doc.setFontType('bold');
+          this.doc.text("Observaciones: ", 35, row);
+          this.doc.setFontType('normal');
+          
+          this.doc.text(observation.slice(0, 45) + "-", 65, row);
+          this.doc.text(observation.slice(45, 105) + "-", 35, row += 4);
+      } else {
+        this.doc.setFontType('bold');
+        this.doc.text("Observaciones: ", margin, row);
+        this.doc.setFontType('normal');
+        
+        this.doc.text(observation.slice(0, 60) + "-", 37, row);
+        this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
+      }
+    }
+
+    // FIN OBSERVATION
 
     if (Config.country === 'AR' &&
         this.transaction.CAE &&
         this.transaction.CAEExpirationDate) {
       this.doc.setFontType('bold');
       this.doc.text("CAE:", 10, 282);
-      this.doc.text("Fecha Vto:", 10, 285);
+      this.doc.text("Fecha Vto:", 10, 287);
       this.doc.setFontType('normal');
       this.doc.text(this.transaction.CAE, 20, 282);
-      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 285);
+      this.doc.text(this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), 32, 287);
 
       let imgdata = 'data:image/png;base64,' + this.barcode64;
 
-      this.doc.addImage(imgdata, 'PNG', 10, 260, 125, 15);
+      this.doc.addImage(imgdata, 'PNG', margin, 263, 125, 14);
     } else if (Config.country === 'MX' &&
               this.transaction.stringSAT &&
               this.transaction.SATStamp &&
               this.transaction.CFDStamp) {
-                this.doc.setFontSize(this.fontSizes.small);
-                let row = 270;
-                this.doc.setFontType('bold');
-                this.doc.text("Sello SAT:", 10, row);
-                this.doc.setFontType('normal');
-                this.doc.text(this.transaction.SATStamp.slice(0, 130), 23, row);
-                row += 3;
-                this.doc.text(this.transaction.SATStamp.slice(130, 265), 10, row);
-                row += 3;
-                this.doc.text(this.transaction.SATStamp.slice(265, 400), 10, row);
-                row += 3;
-                this.doc.setFontType('bold');
-                this.doc.text("Cadena Original SAT:", 10, row);
-                this.doc.setFontType('normal');
-                this.doc.text(this.transaction.stringSAT.slice(0, 118), 37, row);
-                row += 3;
-                this.doc.text(this.transaction.stringSAT.slice(118, 255), 10, row);
-                row += 3;
-                this.doc.text(this.transaction.stringSAT.slice(255, 390), 10, row);
-                row += 3;
-                this.doc.text(this.transaction.stringSAT.slice(390, 500), 10, row);
-                this.doc.setFontSize(this.fontSizes.normal);
+        this.doc.setFontSize(this.fontSizes.small);
+        let row = 270;
+        this.doc.setFontType('bold');
+        this.doc.text("Sello SAT:", 10, row);
+        this.doc.setFontType('normal');
+        this.doc.text(this.transaction.SATStamp.slice(0, 130), 23, row);
+        row += 3;
+        this.doc.text(this.transaction.SATStamp.slice(130, 265), 10, row);
+        row += 3;
+        this.doc.text(this.transaction.SATStamp.slice(265, 400), 10, row);
+        row += 3;
+        this.doc.setFontType('bold');
+        this.doc.text("Cadena Original SAT:", 10, row);
+        this.doc.setFontType('normal');
+        this.doc.text(this.transaction.stringSAT.slice(0, 118), 37, row);
+        row += 3;
+        this.doc.text(this.transaction.stringSAT.slice(118, 255), 10, row);
+        row += 3;
+        this.doc.text(this.transaction.stringSAT.slice(255, 390), 10, row);
+        row += 3;
+        this.doc.text(this.transaction.stringSAT.slice(390, 500), 10, row);
+        this.doc.setFontSize(this.fontSizes.normal);
 
         let imgdata = 'data:image/png;base64,' + this.barcode64;
 
