@@ -161,7 +161,7 @@ export class ClaimComponent  implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         } else {
           this.claim = result.claim;
-          this.showMessage(`El informe ha sido recibido correctamente, estaremos en contacto contigo pronto. Tú nro de reclamo es ${this.claim._id}, débes guardarlo para consultar el estado del mismo.`, 'success', false);
+          this.showMessage(`El informe ha sido recibido correctamente, se lo contactará vía email informando el estado del Ticket ${this.claim._id}.`, 'success', false);
           this.fileName = null;
           this.file = null;
           this.claim = new Claim();
