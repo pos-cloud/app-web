@@ -13,13 +13,38 @@
   <form [formGroup]="movementOfArticleForm" #formAddMovementOfArticle="ngForm" (ngSubmit)="addMovementOfArticle()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
+        <div class="form-group col-md-6">
+          <label for="code" class="control-label">Código Interno:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="code" name="code" id="code" readonly/>
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="barcode" class="control-label">Código de Barras:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="barcode" name="barcode" id="barcode" readonly/>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="config && config.modules && config.modules.stock">
+        <div class="form-group col-md-6">
+          <label for="stock" class="control-label">Stock:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="stock" name="stock" id="stock" readonly/>
+          </div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="position" class="control-label">Posición:</label>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="position" name="position" id="position" readonly/>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="form-group col-md-12">
           <label for="description" class="control-label">Descripción:</label>
           <div class="input-group">
             <input type="text" class="form-control" formControlName="description" name="description" id="description" readonly/>
-          </div>
-          <div *ngIf="formErrors.description" class="alert alert-danger">
-            {{ formErrors.description }}
           </div>
         </div>
       </div>

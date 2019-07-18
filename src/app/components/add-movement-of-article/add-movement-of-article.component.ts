@@ -27,6 +27,7 @@ import { Taxes } from '../../models/taxes';
 import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -53,6 +54,8 @@ export class AddMovementOfArticleComponent implements OnInit {
   public errVariant: string;
   public config: Config;
   public orderByPipe: OrderByPipe = new OrderByPipe();
+  public stock: number = 0;
+  public position: string = '';
 
   public formErrors = {
     'description': '',
@@ -77,9 +80,10 @@ export class AddMovementOfArticleComponent implements OnInit {
   };
 
   constructor(
-    public _movementOfArticleService: MovementOfArticleService,
-    public _articleStockService: ArticleStockService,
-    public _variantService: VariantService,
+    private _movementOfArticleService: MovementOfArticleService,
+    private _articleStockService: ArticleStockService,
+    private _variantService: VariantService,
+    private _configService: ConfigService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -89,12 +93,35 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.selectedVariants = {};
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+      }
+    );
     if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
+      if(this.movementOfArticle.article.deposit) {
+        this.position += `Dep. ${this.movementOfArticle.article.deposit.name} - `;
+      }
+      if(this.movementOfArticle.article.location) {
+        this.position += `Ubic. ${this.movementOfArticle.article.location.description} - 
+                          ${this.movementOfArticle.article.location.positionX} - 
+                          ${this.movementOfArticle.article.location.positionY} - 
+                          ${this.movementOfArticle.article.location.positionZ}`;
+      }
+      if(Config.modules && Config.modules.stock && this.movementOfArticle.transaction.type.modifyStock) {
+        await this.getArticleStock().then(
+          articleStock => {
+            if (articleStock) {
+              this.stock = articleStock.realStock;
+            }
+          }
+        );
+      }
     }
     if (this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
@@ -140,12 +167,19 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
     }
 
+    this.movementOfArticle.unitPrice = this.roundNumber.transform(this.movementOfArticle.unitPrice);
+
     this.movementOfArticleForm = this._fb.group({
       '_id': [this.movementOfArticle._id, [
         ]
       ],
+      'code': [this.movementOfArticle.code, [
+        ]
+      ],
+      'barcode': [this.movementOfArticle.barcode, [
+        ]
+      ],
       'description': [this.movementOfArticle.description, [
-        Validators.required
         ]
       ],
       'amount': [this.movementOfArticle.amount, [
@@ -163,6 +197,12 @@ export class AddMovementOfArticleComponent implements OnInit {
         ]
       ],
       'quantityMeasure': [this.movementOfArticle.quantityMeasure, [
+        ]
+      ],
+      'stock': [this.stock, [
+        ]
+      ],
+      'position': [this.position, [
         ]
       ]
     });
@@ -362,7 +402,9 @@ export class AddMovementOfArticleComponent implements OnInit {
       'notes': this.movementOfArticle.notes,
       'unitPrice': this.movementOfArticle.unitPrice,
       'measure': this.movementOfArticle.measure,
-      'quantityMeasure': this.movementOfArticle.quantityMeasure
+      'quantityMeasure': this.movementOfArticle.quantityMeasure,
+      'stock': this.stock,
+      'position': this.position
     };
 
     this.movementOfArticleForm.setValue(values);
