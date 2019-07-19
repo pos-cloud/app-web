@@ -342,8 +342,9 @@ export class AddTransactionComponent implements OnInit {
       case 'list-cancellations':
         modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
+        modalRef.componentInstance.totalPrice = this.transactionForm.value.totalPrice;
         modalRef.result.then(async (result) => {
-          if(result.movementsOfCancellations) {
+          if(result && result.movementsOfCancellations) {
             await this.daleteMovementsOfCancellations('{"transactionDestination":"'+this.transaction._id+'"}').then(
               async movementsOfCancellations => {
                 if(movementsOfCancellations) {

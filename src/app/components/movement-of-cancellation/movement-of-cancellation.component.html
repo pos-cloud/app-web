@@ -17,6 +17,7 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
+            <th (click)="orderBy('endDate')">Fecha</th>
             <th (click)="orderBy('type.name')">Nombre</th>
             <th (click)="orderBy('origin')" *ngIf="userCountry === 'AR'">POS</th>
             <th (click)="orderBy('number')">Número</th>
@@ -25,7 +26,8 @@
             <th (click)="orderBy('balance')">Saldo</th>
           </tr>
           <tr class="filters">
-            <th>
+            <th></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['endDate']" (input)="getTransactions()" placeholder="Fecha..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (input)="getTransactions()" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['origin']" (input)="getTransactions()" placeholder="POS..." *ngIf="userCountry === 'AR'"></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (input)="getTransactions()" placeholder="Número..."></th>
@@ -37,12 +39,13 @@
         <tbody>
           <tr *ngFor="let transaction of transactions"
               [ngClass]="{'row-active':isTransactionSelected(transaction), 'row-inactive':!isTransactionSelected(transaction)}">
-            <td align="left" width="150">
+            <td align="left" width="50">
               <button type="button"
                       class="btn btn-success  btn-sm" 
                       (click)="openModal('view', transaction)" 
                       title="Ver"><i class="fa fa-eye"></i></button>
             </td>
+            <td (click)="selectTransaction(transaction, $event)">{{transaction.endDate}}</td>
             <td *ngIf="transaction.type" (click)="selectTransaction(transaction, $event)">{{transaction.type.name}}</td>
             <td *ngIf="!transaction.type" (click)="selectTransaction(transaction, $event)"></td>
             <td  *ngIf="userCountry === 'AR'" (click)="selectTransaction(transaction, $event)">{{transaction.origin}}</td>
@@ -68,16 +71,20 @@
     </div>
     <div class="card-footer">
       <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-8">
           <b>Saldo Seleccionado: {{ balanceSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
         </div>
-        <div class="row">
-          <div class="col-md-2">
-            <button class="btn btn-primary"
-                    (click)="finish()">
-              Aceptar
-            </button>
-          </div>
+        <div class="col-md-2">
+          <button class="btn btn-default"
+                  (click)="activeModal.close()">
+            Cancelar
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary"
+                  (click)="finish()">
+            Aceptar
+          </button>
         </div>
       </div>
     </div>
