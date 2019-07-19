@@ -33,6 +33,7 @@ export class MovementOfCancellationComponent implements OnInit {
   @Input() transactionDestinationId: string;
   @Input() transactionDestinationViewId: string;
   @Input() transactionOriginViewId : string;
+  @Input() totalPrice: number = 0;
   public transactionDestination: Transaction;
   public transactionMovement: TransactionMovement;
   public movementsOfCancellations: MovementOfCancellation[];
@@ -41,20 +42,21 @@ export class MovementOfCancellationComponent implements OnInit {
   public alertMessage: string = '';
   public loading: boolean = false;
   public totalItems: number = -1;
-  public orderTerm: string[] = ['-endDate'];
+  public orderTerm: string[] = ['endDate'];
   public existingCanceled = [];
   public displayedColumns = [
-      'type.name',
-      '_id',
-      'type._id',
-      'company._id',
-      'number',
-      'letter',
-      'totalPrice',
-      'state',
-      'operationType',
-      'type.requestArticles',
-      'balance'
+    '_id',
+    'endDate',
+    'number',
+    'letter',
+    'state',
+    'totalPrice',
+    'balance',
+    'operationType',
+    'type.name',
+    'type._id',
+    'type.requestArticles',
+    'company._id'
   ];
   public filters: any[];
   public filterValue: string;
@@ -72,6 +74,7 @@ export class MovementOfCancellationComponent implements OnInit {
     public _modalService: NgbModal,
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
+    public _movementOfCancellationService: MovementOfCancellationService
   ) {
     this.userCountry = Config.country;
     this.filters = new Array();
@@ -196,7 +199,7 @@ export class MovementOfCancellationComponent implements OnInit {
     this._cancellationTypeService.getCancellationTypes(
       project, // PROJECT
       { "destination._id": { $oid: this.transactionDestination.type._id} , "operationType": { "$ne": "D" } }, // MATCH
-      { order: 1 }, // SORT
+      {}, // SORT
       {}, // GROUP
       0, // LIMIT
       0 // SKIP
@@ -216,7 +219,7 @@ export class MovementOfCancellationComponent implements OnInit {
     });
   }
 
-  public getTransactions() {
+  async getTransactions() {
 
     this.loading = true;
 
@@ -239,7 +242,7 @@ export class MovementOfCancellationComponent implements OnInit {
       }
     }
 
-    if(this.cancellationTypes.length != 0) {
+    if(this.cancellationTypes && this.cancellationTypes.length != 0) {
 
       match += `"$or": [`
       for (let index = 0; index < this.cancellationTypes.length; index++) {
@@ -260,20 +263,26 @@ export class MovementOfCancellationComponent implements OnInit {
 
     match = JSON.parse(match);
 
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = '{}';
-    if (this.displayedColumns && this.displayedColumns.length > 0) {
-        project = '{';
-        for (let i = 0; i < this.displayedColumns.length; i++) {
-            let field = this.displayedColumns[i];
-            project += `"${field}":{"$cond":[{"$eq":[{"$type":"$${field}"},"date"]},{"$dateToString":{"date":"$${field}","format":"%d/%m/%Y","timezone":"-03:00"}},{"$cond":[{"$ne":[{"$type":"$${field}"},"array"]},{"$toString":"$${field}"},"$${field}"]}]}`;
-            if (i < this.displayedColumns.length - 1) {
-                project += ',';
-            }
-        }
-        project += '}';
+    let timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
     }
-    project = JSON.parse(project);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      _id: 1,
+      endDate: { $dateToString: { date: '$endDate', format: '%d/%m/%Y', timezone: timezone }},
+      number: { $toString : '$number' },
+      letter: 1,
+      state: 1,
+      totalPrice: { $toString : '$totalPrice' },
+      balance: { $toString : '$balance' },
+      operationType: 1,
+      'company._id': { $toString : '$company._id' },
+      'type._id': { $toString : '$type._id' },
+      'type.name': 1,
+      'type.requestArticles': 1,
+    };
 
     // AGRUPAMOS EL RESULTADO
     let group = {
@@ -290,11 +299,34 @@ export class MovementOfCancellationComponent implements OnInit {
         0, // LIMIT
         0 // SKIP
     ).subscribe(
-      result => {
+      async result => {
+        console.log(result);
         this.loading = false;
-        if (result && result[0].transactions) {
+        if (result && result.length > 0 && result[0].transactions) {
             this.transactions = result[0].transactions;
             this.totalItems = result[0].count;
+            if(this.transactions.length > 0) {
+              if(this.totalPrice > 0 && this.balanceSelected === 0) {
+                await this.getMovementsOfCancellations().then(
+                  movementsOfCancellations => {
+                    if(movementsOfCancellations && movementsOfCancellations.length > 0) {
+                      this.movementsOfCancellations = movementsOfCancellations;
+                      for(let movementOfCancellation of this.movementsOfCancellations) {
+                        this.balanceSelected += movementOfCancellation.balance;
+                        for(let transaction of this.transactions) {
+                          if(movementOfCancellation.transactionOrigin._id.toString() === transaction._id.toString()) {
+                            transaction.balance = movementOfCancellation.balance;
+                          }
+                        }
+                      }
+                    }
+                  }
+                );
+                if(this.balanceSelected === 0) {
+                  this.selectAutomatically();
+                }
+              }
+            }
         } else {
             this.transactions = new Array();
             this.totalItems = 0;
@@ -306,6 +338,69 @@ export class MovementOfCancellationComponent implements OnInit {
         this.totalItems = 0;
       }
     );
+  }
+
+  public getMovementsOfCancellations(): Promise<MovementOfCancellation[]> {
+
+    return new Promise<MovementOfCancellation[]>((resolve, reject) => {
+
+      // CAMPOS A TRAER
+      let project = {
+        "_id": 0,
+        "transactionOrigin._id": 1,
+        "transactionDestination._id": 1,
+        "balance" : 1,
+        "operationType": 1,
+        'transactionOrigin.type.name': 1,
+        'transactionOrigin.number': 1,
+        'transactionOrigin.operationType': 1,
+        'transactionOrigin.balance': 1
+      };
+
+      this._movementOfCancellationService.getMovementsOfCancellations(
+        project, // PROJECT
+        { "transactionDestination._id": { $oid: this.transactionDestination._id}, "operationType": { "$ne": "D" }, "transactionOrigin.operationType": { "$ne": "D" } }, // MATCH
+        { }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(result => {
+        if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+          resolve(result.movementsOfCancellations);
+        } else {
+          resolve(null);
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        resolve(null);
+      });
+    });
+  }
+
+  async selectAutomatically() {
+
+    let amountSelected: number = 0;
+
+    if(this.totalPrice > 0) {
+      for(let transaction of this.transactions) {
+        if(this.totalPrice > (transaction.balance + amountSelected)) {
+          await this.selectTransaction(transaction);
+          amountSelected += transaction.balance;
+        } else {
+          if(this.totalPrice > this.balanceSelected) {
+            let movementOfCancellation = new MovementOfCancellation();
+            movementOfCancellation.transactionOrigin = transaction;
+            movementOfCancellation.transactionDestination = this.transactionDestination;
+            movementOfCancellation.balance = this.roundNumber.transform(this.totalPrice - this.balanceSelected);
+            this.balanceSelected += movementOfCancellation.balance;
+            amountSelected += movementOfCancellation.balance;
+            transaction.balance = movementOfCancellation.balance;
+            this.movementsOfCancellations.push(movementOfCancellation);
+          }
+        }
+      }
+    }
   }
 
   public orderBy(term: string): void {
@@ -364,9 +459,11 @@ export class MovementOfCancellationComponent implements OnInit {
 
     let isSelected: boolean = false;
 
-    for(let mov of this.movementsOfCancellations) {
-      if(mov.transactionOrigin._id.toString() === transaction._id.toString()) {
-        isSelected = true;
+    if(this.movementsOfCancellations && this.movementsOfCancellations.length > 0) {
+      for(let mov of this.movementsOfCancellations) {
+        if(mov.transactionOrigin._id.toString() === transaction._id.toString()) {
+          isSelected = true;
+        }
       }
     }
 
