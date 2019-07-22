@@ -18,7 +18,16 @@
         </ngb-alert>
       </div>
       <div class="row container-filter">
-        <div class="col-md-2 offset-md-3">
+        <div class="col-md-2 offset-md-1">
+          <label for="detailsPaymentMethod" class="control-label">
+            <b>Detallar método de pago</b>
+          </label>
+          <select class="form-control" [(ngModel)]="detailsPaymentMethod">
+            <option [value]="true" >Sí</option>
+            <option [value]="false" >No</option>
+          </select>
+        </div>
+        <div class="col-md-2">
           <label for="startDate" class="control-label">
             <b>Fecha Desde:</b>
           </label>
@@ -75,7 +84,7 @@
             <tr>
               <th class="th transaction-data"></th>
               <th colspan="6" class="th transaction-data">Datos de la Transacción</th>
-              <th colspan="3" class="th payment-method-data">Datos del Pago</th>
+              <th colspan="3" class="th payment-method-data" *ngIf="showPaymentMethod">Datos del Pago</th>
               <th colspan="3" class="th balance-data">Saldos</th>
             </tr>
             <tr>
@@ -86,9 +95,9 @@
               <th class="">Letra</th>
               <th class="">Número</th>
               <th class="">Importe</th>
-              <th class="">Método</th>
-              <th class="">Cuota</th>
-              <th class="">Vencimiento</th>
+              <th class="" *ngIf="showPaymentMethod">Método</th>
+              <th class="" *ngIf="showPaymentMethod">Cuota</th>
+              <th class="" *ngIf="showPaymentMethod">Vencimiento</th>
               <th class="">Debe</th>
               <th class="">Haber</th>
               <th class="">Saldo</th>
@@ -101,15 +110,19 @@
               <th><input type="text" class="form-control" [(ngModel)]="filterLetter" placeholder="Letra..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Importe..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodName" placeholder="Método..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterQuota" placeholder="Cuota..."></th>
-              <th><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodExpirationDate" placeholder="Vencimiento..."></th>
+              <th *ngIf="showPaymentMethod"><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodName" placeholder="Método..."></th>
+              <th *ngIf="showPaymentMethod"><input type="text" class="form-control" [(ngModel)]="filterQuota" placeholder="Cuota..."></th>
+              <th *ngIf="showPaymentMethod"><input type="text" class="form-control" [(ngModel)]="filterPaymentMethodExpirationDate" placeholder="Vencimiento..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterDebe" placeholder="Debe..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterHaber" placeholder="Haber..."></th>
               <th></th>
             </tr>
           </thead>
           <tbody>
+            <tr align="center" *ngIf="loading">
+              <td colspan="12" *ngIf="showPaymentMethod">Cargando...</td>
+              <td colspan="9" *ngIf="!showPaymentMethod">Cargando...</td>
+            </tr>
             <tr *ngFor="let item of items | filter: filterDate:'transactionDate'
                                           | filter: filterType:'transactionTypeName'
                                           | filter: filterOrigin:'transactionOrigin'
@@ -137,9 +150,9 @@
               <td class="align-center">{{item.transactionLetter}}</td>
               <td class="align-right">{{item.transactionNumber}}</td>
               <td class="align-right">{{item.transactionTotalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
-              <td class="align-left">{{item.paymentMethodName}}</td>
-              <td class="align-center">{{item.quota}}</td>
-              <td class="align-center">{{item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}</td>
+              <td class="align-left" *ngIf="showPaymentMethod">{{item.paymentMethodName}}</td>
+              <td class="align-center" *ngIf="showPaymentMethod">{{item.quota}}</td>
+              <td class="align-center" *ngIf="showPaymentMethod">{{item.paymentMethodExpirationDate | dateFormat: 'DD/MM/YYYY' }}</td>
               <td class="align-right" [ngClass]="{'credit': item.debe > 0 }">{{item.debe | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="align-right" [ngClass]="{'debit': item.haber > 0 }">{{item.haber | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
               <td class="align-right" [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
@@ -149,7 +162,10 @@
             </tr>
           </tbody>
           <tfoot [ngClass]="{'credit':balance>0,'debit':balance<0}">
-            <td colspan="12" class="align-right">
+            <td colspan="12" class="align-right" *ngIf="showPaymentMethod">
+              <strong>SALDO TOTAL</strong>
+            </td>
+            <td colspan="9" class="align-right" *ngIf="!showPaymentMethod">
               <strong>SALDO TOTAL</strong>
             </td>
             <td *ngIf="balance>=0" class="align-right">
