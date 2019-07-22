@@ -1,7 +1,7 @@
 //Paquetes de angular
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 
 //Modelos
@@ -2098,8 +2098,12 @@ export class PrintComponent implements OnInit {
     this.doc.text("Fecha", margin, 77);
     this.doc.text("Tipo Comp.", 25, 77);
     this.doc.text("Nro Comprobante", 53, 77);
-    this.doc.text("Monto", 90, 77);
-    this.doc.text("Método", 110, 77);
+    if(this.params.detailsPaymentMethod) {
+      this.doc.text("Monto", 90, 77);
+      this.doc.text("Método", 110, 77);
+    } else {
+      this.doc.text("Monto", 110, 77);
+    }
     this.doc.text("Debe", 145, 77);
     this.doc.text("Haber", 165, 77);
     this.doc.text("Saldo", 185, 77);
@@ -2132,8 +2136,12 @@ export class PrintComponent implements OnInit {
         } else {
           this.doc.text(item.transactionLetter + "-" + this.padString(item.transactionNumber, 10), 53, row);
         }
-        this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 90, row);
-        this.doc.text(item.paymentMethodName.slice(0, 22), 110, row);
+        if(this.params.detailsPaymentMethod) {
+          this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 90, row);
+          this.doc.text(item.paymentMethodName.slice(0, 22), 110, row);
+        } else {
+          this.doc.text("$ " + this.roundNumber.transform(item.transactionTotalPrice), 110, row);
+        }
         this.doc.text("$ " + this.roundNumber.transform(item.debe), 145, row);
         this.doc.text("$ " + this.roundNumber.transform(item.haber), 165, row);
         this.doc.setFontType('bold');
@@ -2160,7 +2168,12 @@ export class PrintComponent implements OnInit {
           this.doc.text("Fecha", margin, 77);
           this.doc.text("Tipo Comp.", 25, 77);
           this.doc.text("Nro Comprobante.", 53, 77);
-          this.doc.text("Monto", 90, 77);
+          if(this.params.detailsPaymentMethod) {
+            this.doc.text("Monto", 90, 77);
+            this.doc.text("Método", 110, 77);
+          } else {
+            this.doc.text("Monto", 110, 77);
+          }
           this.doc.text("Método", 110, 77);
           this.doc.text("Debe", 145, 77);
           this.doc.text("Haber", 165, 77);
@@ -2197,7 +2210,8 @@ export class PrintComponent implements OnInit {
     var transport =0;
 
     // Encabezado de la transacción
-    if(!this.transaction.type.isPreprinted){
+    if(!this.transaction.type.isPreprinted) {
+
       this.getHeader(true);
 
       // Numeración de la transacción

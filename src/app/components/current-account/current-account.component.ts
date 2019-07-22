@@ -55,6 +55,8 @@ export class CurrentAccountComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public userCountry: string;
+  public detailsPaymentMethod: boolean = false;
+  public showPaymentMethod: boolean = false;
 
   constructor(
     public _transactionService: TransactionService,
@@ -94,10 +96,15 @@ export class CurrentAccountComponent implements OnInit {
       timezone =  Config.timezone.split('UTC')[1];
     }
 
+    if(typeof this.detailsPaymentMethod !== 'boolean') {
+      this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
+    }
+    
     let query = {
       company: this.companySelected._id,
       startDate: this.startDate + " 00:00:00" + timezone,
-      endDate:  this.endDate + " 23:59:59" + timezone
+      endDate:  this.endDate + " 23:59:59" + timezone,
+      detailsPaymentMethod: this.detailsPaymentMethod
     }
 
     this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
@@ -112,6 +119,7 @@ export class CurrentAccountComponent implements OnInit {
           this.totalItems = this.items.length;
           this.currentPage = parseFloat(this.roundNumber.transform(this.totalItems / this.itemsPerPage + 0.5, 0).toFixed(0));
           this.getBalance();
+          this.showPaymentMethod = this.detailsPaymentMethod;
         }
         this.loading = false;
       },
@@ -197,6 +205,7 @@ export class CurrentAccountComponent implements OnInit {
           modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.items = this.items;
           modalRef.componentInstance.company = this.companySelected;
+          modalRef.componentInstance.params = { detailsPaymentMethod: this.detailsPaymentMethod };
           modalRef.componentInstance.typePrint = 'current-account';
           modalRef.componentInstance.balance = this.balance;
         } else {
