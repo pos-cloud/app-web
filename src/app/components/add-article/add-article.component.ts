@@ -215,10 +215,12 @@ export class AddArticleComponent implements OnInit {
         if(result && result.articleFields) {
           for (let x = 0; x < result.articleFields.length; x++) {
             
-            if(result.articleFields[x]['datatype'] === ArticleFieldType.String){
+            if(result.articleFields[x]['datatype'] === ArticleFieldType.String || 
+              result.articleFields[x]['datatype'] === ArticleFieldType.Array){
               this.otherFieldsAlfabetico = true;
             }
-            if(result.articleFields[x]['datatype'] !== ArticleFieldType.String){
+            if(result.articleFields[x]['datatype'] !== ArticleFieldType.String &&
+            result.articleFields[x]['datatype'] !== ArticleFieldType.Array){
               this.otherFieldsNumber = true;
             }
             
@@ -1214,7 +1216,7 @@ export class AddArticleComponent implements OnInit {
   public addArticleFields(otherFields: ArticleFields[]): void {
     this.otherFields = otherFields;
     for (let index = 0; index < this.otherFields.length; index++) {
-      if(this.otherFields[index].datatype !== ArticleFieldType.String){
+      if(this.otherFields[index].datatype !== ArticleFieldType.String && this.otherFields[index].datatype !== ArticleFieldType.Array ){
         this.updatePrices('otherFields');
       }
     }
