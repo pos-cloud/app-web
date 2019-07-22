@@ -71,7 +71,8 @@ export class ListArticlesComponent implements OnInit {
       'salePrice',
       'observation',
       'picture',
-      'operationType'
+      'operationType',
+      'currency.name'
   ];
   public filters: any[];
   public totalItems: number = 0;
