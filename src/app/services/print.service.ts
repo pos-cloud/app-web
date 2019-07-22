@@ -55,4 +55,17 @@ export class PrintService {
             })
         );
     }
+
+    public saveFile(file,name) {
+
+		return new Promise((resolve, reject) => {
+            var data = new FormData();
+            data.append('file' , file);
+            var xhr = new XMLHttpRequest();
+          
+            xhr.open('POST', Config.apiURL + 'upload-invoice/'+name, true);
+            xhr.setRequestHeader('Authorization', this._authService.getToken());
+            xhr.send(data);      
+		});
+    }
 }
