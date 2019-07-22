@@ -1,8 +1,8 @@
 //Paquetes de angular
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router, ActivatedRoute } from '@angular/router';
 
+import { AuthService } from './../../services/auth.service';
 
 //Modelos
 import { Transaction } from './../../models/transaction';
@@ -41,6 +41,7 @@ import { CashBox } from '../../models/cash-box';
 import { CashBoxService } from '../../services/cash-box.service';
 import { TaxClassification } from 'app/models/tax';
 import { Taxes } from 'app/models/taxes';
+import { ClaimService } from 'app/services/claim.service';
 
 @Component({
   selector: 'app-print',
@@ -93,7 +94,6 @@ export class PrintComponent implements OnInit {
                                   "extraLarge" : 20}`);
 
   constructor(
-    public _router: Router,
     public _turnService: TurnService,
     public _cashBoxService: CashBoxService,
     public _transactionTypeService: TransactionTypeService,
@@ -106,6 +106,8 @@ export class PrintComponent implements OnInit {
     public _articleStockService: ArticleStockService,
     public _articleService: ArticleService,
     public alertConfig: NgbAlertConfig,
+    private _authService: AuthService,
+    public _claimService : ClaimService,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
     private domSanitizer: DomSanitizer
@@ -114,13 +116,6 @@ export class PrintComponent implements OnInit {
 
   ngOnInit() {
 
-    this.pathLocation = this._router.url.split('/');
-
-    if(this.pathLocation[1] === "print"){
-      this.typePrint = this.pathLocation[2];
-      this.transactionId = this.pathLocation[3];
-    }
-    
     
     if (!this.printer) {
       this.printer = new Printer();
@@ -2544,10 +2539,20 @@ export class PrintComponent implements OnInit {
   }
 
   public finishImpression(): void {
-    if(this.pathLocation[1] !== "print"){
-      this.doc.autoPrint();
-    }
+    
+    this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+
+    if(this.transaction.type.electronics){
+      this._printService.saveFile(this.doc.output('blob'),this.transactionId).then(
+        result =>{
+          console.log(result)
+        },
+        error =>{
+          console.log(error)
+        }
+      )
+    }
   }
 
   public toPrintKitchen() {
