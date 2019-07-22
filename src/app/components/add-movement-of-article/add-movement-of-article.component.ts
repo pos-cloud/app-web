@@ -52,7 +52,7 @@ export class AddMovementOfArticleComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public roundNumber: RoundNumberPipe;
   public errVariant: string;
-  public config: Config;
+  public config$: any;
   public orderByPipe: OrderByPipe = new OrderByPipe();
   public stock: number = 0;
   public position: string = '';
@@ -97,11 +97,8 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    await this._configService.getConfig.subscribe(
-      config => {
-        this.config = config;
-      }
-    );
+    this.config$ = this._configService.getConfig;
+
     if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
       if(this.movementOfArticle.article.deposit) {
