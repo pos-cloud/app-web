@@ -13,5 +13,6 @@ export class ArticleField {
 export enum ArticleFieldType {
     Percentage = <any> "Porcentaje",
     Number = <any> "Número",
-    String = <any> "Alfabético"
+    String = <any> "Alfabético",
+    Array = <any> "Lista"
 }

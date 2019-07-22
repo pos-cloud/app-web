@@ -21,7 +21,12 @@ export class UpdateArticleFieldComponent implements OnInit {
   @Input() readonly: boolean;
   public articleFieldForm: FormGroup;
   public alertMessage: string = '';
-  public datatypes: ArticleFieldType[] = [ ArticleFieldType.Percentage, ArticleFieldType.Number, ArticleFieldType.String ];
+  public datatypes: ArticleFieldType[] = [ 
+    ArticleFieldType.Percentage,
+    ArticleFieldType.Number,
+    ArticleFieldType.String, 
+    ArticleFieldType.Array
+  ];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();

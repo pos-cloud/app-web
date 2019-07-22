@@ -161,7 +161,7 @@ export class AddArticleFieldsComponent implements OnInit {
 
           for (let index = 0; index < result.articleFields.length; index++) {
 
-            if(result.articleFields[index].datatype === "Alfabético"){
+            if(result.articleFields[index].datatype === ArticleFieldType.String || result.articleFields[index].datatype === ArticleFieldType.Array) {
               this.articleFieldsCustom.push(result.articleFields[index]);
             } else {
               this.articleFieldsPrice.push(result.articleFields[index]);
