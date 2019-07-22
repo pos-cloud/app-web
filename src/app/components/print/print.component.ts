@@ -2607,7 +2607,16 @@ export class PrintComponent implements OnInit {
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
 
     if(this.transaction.type.electronics){
-      this._printService.saveFile(this.doc.output('blob'),this.transactionId).then(
+      this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
+        result =>{
+          console.log(result)
+        },
+        error =>{
+          console.log(error)
+        }
+      )
+    } else {
+      this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
         result =>{
           console.log(result)
         },

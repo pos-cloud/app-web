@@ -345,7 +345,11 @@ export class ListTransactionsComponent implements OnInit {
           labelPrint = transaction.type.labelPrint;
         }
         modalRef.componentInstance.subject = `${labelPrint} ${this.padNumber(transaction.origin, 4)}-${transaction.letter}-${this.padNumber(transaction.number, 8)}`;
-        modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar/#/print/invoice/` + transaction._id;
+        if(transaction.type.electronics){
+          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar/#/print/invoice/` + transaction._id;
+        } else {
+          modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar/#/print/others/` + transaction._id;
+        }
         modalRef.result.then((result) => {});
         break;
       default: ;
