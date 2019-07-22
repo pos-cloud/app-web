@@ -2312,7 +2312,7 @@ export class PrintComponent implements OnInit {
             this.transaction.company &&
             this.transaction.company.vatCondition.discriminate) {
             for(let tax of this.movementsOfArticles[i].taxes){
-              this.doc.text("$ " + this.roundNumber.transform(tax.taxBase,2), 145, row);
+              this.doc.text("$ " + this.roundNumber.transform(tax.taxBase/this.movementsOfArticles[i].amount,2), 145, row);
               this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), 165, row);
             }
             this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 185, row);
