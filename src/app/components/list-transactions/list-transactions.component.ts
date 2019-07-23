@@ -335,7 +335,8 @@ export class ListTransactionsComponent implements OnInit {
         }, (reason) => {
 
         });
-      case 'send-email' :
+        break;
+      case 'send-email':
         modalRef = this._modalService.open(SendEmailComponent);
         if(transaction.company && transaction.company.emails) {
           modalRef.componentInstance.emails = transaction.company.emails;
