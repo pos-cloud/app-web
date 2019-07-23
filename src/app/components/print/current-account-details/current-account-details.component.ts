@@ -73,7 +73,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$gt" : 0 },
               "state" : "Cerrado",
-              "type.currentAccount" : "Si" ,
+              "type.currentAccount" : "Si",
               "company.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
 
@@ -175,10 +175,18 @@ export class CurrentAccountDetailsComponent implements OnInit {
       if(this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
         this.doc.text(5,row,this.items[i]._id.company.identificationType.name+":"+this.items[i]._id.company.identificationValue);
       }
-      this.doc.text(100,row,"Condición de IVA:")
-      if(this.items[i]._id.company.vatCondition){
-        this.doc.text(100,row,"Condición de IVA:"+this.items[i]._id.company.vatCondition.description);
+      if(Config.country === 'AR'){
+        this.doc.text(100,row,"Condición de IVA:")
+        if(this.items[i]._id.company.vatCondition){
+          this.doc.text(100,row,"Condición de IVA:"+this.items[i]._id.company.vatCondition.description);
+        }
+      } else {
+        this.doc.text(100,row,"Régimen Fiscal:")
+        if(this.items[i]._id.company.vatCondition){
+          this.doc.text(100,row,"Régimen Fiscal:"+this.items[i]._id.company.vatCondition.description);
+        }
       }
+      
       row += 5;
       this.doc.setLineWidth(0.5);
       this.doc.line(0, row, 1000, row);
