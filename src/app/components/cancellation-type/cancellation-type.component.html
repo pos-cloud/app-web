@@ -21,7 +21,7 @@
               <div class="row tab-content">
                 <div class="form-group col-md-12">
                   <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                       <label for="origin" class="control-label">Transacción Cancelada</label>
                       <select  class="form-control" formControlName="origin" (change)="getDestinations()">
                         <option *ngFor="let origin of origins"
@@ -35,7 +35,7 @@
                         {{ formErrors.origin }}
                       </div>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label for="destination" class="control-label">Transacción Cancelatoria</label>
                         <select class="form-control" formControlName="destination">
                           <option *ngFor="let destination of destinations"
@@ -48,6 +48,18 @@
                         <div *ngIf="formErrors.destination" class="alert alert-danger">
                           {{ formErrors.destination }}
                         </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="modifyBalance" class="control-label">¿Modifica el saldo?</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="modifyBalance">
+                          <option value="true" [selected]="cancellationType.modifyBalance" [disabled]="readonly">Si</option>
+                          <option value="false" [selected]="!cancellationType.modifyBalance" [disabled]="readonly">No</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Al cancelar la transacción modifica el saldo asignado a la misma?">
+                          <b>?</b>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

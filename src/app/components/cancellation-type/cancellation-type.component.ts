@@ -1,13 +1,13 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 
 import { CancellationTypeService } from '../../services/cancellation-type.service';
 import { TransactionTypeService } from '../../services/transaction-type.service';
 
 import { CancellationType } from '../../models/cancellation-type';
-import { TransactionType, StockMovement } from '../../models/transaction-type';
+import { TransactionType } from '../../models/transaction-type';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -35,7 +35,6 @@ export class CancellationTypeComponent implements OnInit {
   public formErrors = {
     'origin': '',
     'destination': '',
-    
   };
 
   public validationMessages = {
@@ -101,6 +100,7 @@ export class CancellationTypeComponent implements OnInit {
   public setValueForm(): void {
 
     if (!this.cancellationType._id) { this.cancellationType._id = ''; }
+    if (this.cancellationType.modifyBalance === undefined) { this.cancellationType.modifyBalance = true; }
 
     let origin;
     if (!this.cancellationType.origin) {
@@ -128,6 +128,7 @@ export class CancellationTypeComponent implements OnInit {
       '_id': this.cancellationType._id,
       'origin': origin,
       'destination': destination,
+      'modifyBalance': this.cancellationType.modifyBalance,
     };
     this.cancellationTypeForm.setValue(values);
   }
@@ -187,13 +188,19 @@ export class CancellationTypeComponent implements OnInit {
   public buildForm(): void {
 
     this.cancellationTypeForm = this._fb.group({
-      '_id' : [this.cancellationType._id, []],
+      '_id' : [this.cancellationType._id, [   
+        ]
+      ],
       'origin': [this.cancellationType.origin, [
-        Validators.required
+          Validators.required
         ]
       ],
       'destination': [this.cancellationType.destination, [
-        Validators.required
+          Validators.required
+        ]
+      ],
+      'modifyBalance': [this.cancellationType.modifyBalance, [
+          Validators.required
         ]
       ]
     });

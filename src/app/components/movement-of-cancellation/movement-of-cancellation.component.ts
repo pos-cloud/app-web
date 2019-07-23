@@ -193,7 +193,8 @@ export class MovementOfCancellationComponent implements OnInit {
     let project = {
       "origin._id": 1,
       "destination._id": 1,
-      "operationType" : 1
+      "operationType" : 1,
+      "modifyBalance" : 1
     };
 
     this._cancellationTypeService.getCancellationTypes(
@@ -433,10 +434,27 @@ export class MovementOfCancellationComponent implements OnInit {
       let movementOfCancellation = new MovementOfCancellation();
       movementOfCancellation.transactionOrigin = transactionSelected;
       movementOfCancellation.transactionDestination = this.transactionDestination;
-      movementOfCancellation.balance = transactionSelected.balance;
-      this.balanceSelected += movementOfCancellation.balance;
+      if(this.modifyBalance(transactionSelected)) {
+        movementOfCancellation.balance = transactionSelected.balance;
+      } else {
+        movementOfCancellation.balance = 0;
+      }
+      this.balanceSelected += transactionSelected.balance;
       this.movementsOfCancellations.push(movementOfCancellation);
     }
+  }
+
+  public modifyBalance(transaction: Transaction) {
+  
+    let modify: boolean = false;
+
+    for(let canc of this.cancellationTypes) {
+      if(canc.origin._id.toString() === transaction.type._id) {
+        modify = canc.modifyBalance;    
+      }
+    }
+
+    return modify;
   }
 
   public deleteTransactionSelected(transaction: Transaction): void {
@@ -475,8 +493,8 @@ export class MovementOfCancellationComponent implements OnInit {
 
     if(this.movementsOfCancellations.length > 0) {
       for(let mov of this.movementsOfCancellations) {
-        if(mov.balance > 0) {
-          if(mov.balance <= mov.transactionOrigin.balance) {
+        if(mov.balance > 0 || !this.modifyBalance(mov.transactionOrigin)) {
+          if((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
             await this.getMovementOfArticles(mov.transactionOrigin).then(
               async movementsOfArticles => {
                 if(movementsOfArticles && movementsOfArticles.length > 0) {
