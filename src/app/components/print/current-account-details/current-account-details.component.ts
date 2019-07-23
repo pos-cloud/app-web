@@ -71,9 +71,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
     }
     
     match += `"company.type" : "${this.companyType}",
-              "balance" : { "$ne" : 0 },
+              "balance" : { "$gt" : 0 },
               "state" : "Cerrado",
-              "type.currentAccount" : "Si",
+              "type.currentAccount" : "Si" ,
               "company.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
 
@@ -106,7 +106,10 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "expirationDate" : { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: timezone }},
       "totalPrice" : 1,
       "balance" :1 ,
-      "state" : 1
+      "state" : 1,
+      "operationType" :1,
+      "type.labelPrint" : 1,
+      "type.movement" :1
     }
 
     let group = {
@@ -141,25 +144,30 @@ export class CurrentAccountDetailsComponent implements OnInit {
   }
 
   public print() : void {
-
+    let page = 1;
     let row = 15;
     this.doc.setFontSize(this.fontSizes.extraLarge)
     this.doc.text(5, row, 'Resumen de cuenta de ' + this.companyType)
     row += 5;
+    this.doc.setFontSize(this.fontSizes.large)
+    this.doc.text(270, 200, "Hoja:" + page)
     for(var i = 0; i < this.items.length; i++){
-      this.doc.setFontSize(this.fontSizes.large)
       this.doc.setLineWidth(1)
       this.doc.line(0, row, 1000, row)
       row += 5;
+      this.doc.setFontSize(this.fontSizes.large)
       this.doc.text(5,row,this.items[i]._id.company.name)
       row += 5;
       this.doc.setFontSize(this.fontSizes.normal)
+      this.doc.text(5,row,"Dirección:")
       if(this.items[i]._id.company.address){
         this.doc.text(5,row,"Dirección:"+this.items[i]._id.company.address)
       }
+      this.doc.text(100,row,"Ciudad:")
       if(this.items[i]._id.company.city){
         this.doc.text(100,row,"Ciudad:"+this.items[i]._id.company.city)
       }
+      this.doc.text(200,row,"Teléfono:")
       if(this.items[i]._id.company.phones){
         this.doc.text(200,row,"Teléfono:"+this.items[i]._id.company.phones)
       }
@@ -167,6 +175,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       if(this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
         this.doc.text(5,row,this.items[i]._id.company.identificationType.name+":"+this.items[i]._id.company.identificationValue);
       }
+      this.doc.text(100,row,"Condición de IVA:")
       if(this.items[i]._id.company.vatCondition){
         this.doc.text(100,row,"Condición de IVA:"+this.items[i]._id.company.vatCondition.description);
       }
@@ -189,7 +198,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
       let total;
       for(let transaction of this.items[i].transactions) {
         this.doc.text(5,row,transaction.endDate);
-        this.doc.text(30,row,transaction.type.name);
+        if(transaction.type.labelPrint){
+          this.doc.text(30,row,transaction.type.labelPrint);
+        } else {
+          this.doc.text(30,row,transaction.type.name);
+        }
         this.doc.text(75,row,this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
         if(transaction.expirationDate){
           this.doc.text(120,row,transaction.expirationDate);
@@ -199,8 +212,24 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
         row += 5;
 
-        totalPrice = totalPrice + transaction.totalPrice;
-        balance = balance + transaction.balance;
+        if(transaction.type.movement === "Entrada"){
+          totalPrice = totalPrice + transaction.totalPrice;
+          balance = balance + transaction.balance;
+        } else {
+          totalPrice = totalPrice - transaction.totalPrice;
+          balance = balance - transaction.balance;
+        }
+        
+
+        if(row > 155){
+          page += 1;
+          this.doc.addPage();
+          this.doc.setFontSize(this.fontSizes.large)
+          this.doc.text(270, 200, "Hoja:" + page)
+          this.doc.setFontSize(this.fontSizes.normal)
+          row = 15;
+        }
+
       }
 
       this.doc.setFontType("bold");
@@ -209,8 +238,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
       this.doc.setFontType("normal");
       row += 5;
-      if(row > 145){
+      if(row > 155){
+        page += 1;
         this.doc.addPage();
+        this.doc.setFontSize(this.fontSizes.large)
+        this.doc.text(270, 200, "Hoja:" + page)
+        this.doc.setFontSize(this.fontSizes.normal)
+
         row = 15;
       }
     }
