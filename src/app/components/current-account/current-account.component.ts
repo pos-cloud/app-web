@@ -60,7 +60,7 @@ export class CurrentAccountComponent implements OnInit {
   public detailsPaymentMethod: boolean = false;
   public showPaymentMethod: boolean = false;
   public config: Config;
-  public invertedView: boolean = true;
+  public invertedView: boolean = false;
   public transactionMovement: TransactionMovement;
 
   constructor(
@@ -89,7 +89,12 @@ export class CurrentAccountComponent implements OnInit {
     await this._configService.getConfig.subscribe(
       config => {
         this.config = config;
-        this.detailsPaymentMethod = this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod;
+        this.detailsPaymentMethod = this.config.reports.summaryOfAccounts.detailsPaymentMethod;
+        if (pathLocation[3] === 'cliente') {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
+        } else {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider
+        }
       }
     );
 

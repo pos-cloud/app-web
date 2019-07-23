@@ -36,8 +36,9 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public roundNumber = new RoundNumberPipe();
-  public invertedView: boolean = true;
+  public invertedView: boolean = false;
   public transactionMovement: TransactionMovement;
+  public config: Config;
 
   constructor(
     public _companyService: CompanyService,
@@ -51,13 +52,10 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     this.endDate = moment().format('YYYY-MM-DD');
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    if(this.invertedView) {
-      this.orderTerm = ['balance'];
-    }
     if (!this.filterCompanyType) {
       if (pathLocation[3] === "cliente") {
         this.filterCompanyType = CompanyType.Client;
@@ -65,11 +63,22 @@ export class ListSummaryOfAccountsComponent implements OnInit {
         this.filterCompanyType = CompanyType.Provider;
       }
     }
-    if(this.filterCompanyType === CompanyType.Client) {
-      this.transactionMovement = TransactionMovement.Sale;
-    } else {
-      this.transactionMovement = TransactionMovement.Purchase;
-    }
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+        if (this.filterCompanyType === CompanyType.Client) {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
+          this.transactionMovement = TransactionMovement.Sale;
+        } else {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider;
+          this.transactionMovement = TransactionMovement.Purchase;
+        }
+        if(this.invertedView) {
+          this.orderTerm = ['balance'];
+        }
+      }
+    );
+    
     this.getSummary();
   }
 
