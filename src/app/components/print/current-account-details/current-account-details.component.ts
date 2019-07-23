@@ -209,7 +209,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
       this.doc.setFontType("normal");
       row += 5;
-      if(row > 150){
+      if(row > 145){
         this.doc.addPage();
         row = 15;
       }
