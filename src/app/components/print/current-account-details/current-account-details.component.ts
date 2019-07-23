@@ -142,7 +142,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     let row = 15;
     this.doc.setFontSize(this.fontSizes.extraLarge)
-    this.doc.text(5, row, 'Resumen de cuenta')
+    this.doc.text(5, row, 'Resumen de cuenta de ' + this.companyType)
     row += 5;
     for(var i = 0; i < this.items.length; i++){
       this.doc.setFontSize(this.fontSizes.large)
@@ -175,7 +175,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(5,row,"Fecha");
       this.doc.text(30,row,"Tipo");
       this.doc.text(75,row,"Comprobante");
-      this.doc.text(120,row,"Fecha Ven");
+      this.doc.text(120,row,"Fecha Vencimiento");
       this.doc.text(155,row,"Importe");
       this.doc.text(180,row,"Saldo");
       row += 3;
