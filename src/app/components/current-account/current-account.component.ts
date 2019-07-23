@@ -57,6 +57,7 @@ export class CurrentAccountComponent implements OnInit {
   public userCountry: string;
   public detailsPaymentMethod: boolean = false;
   public showPaymentMethod: boolean = false;
+  public config: Config;
 
   constructor(
     public _transactionService: TransactionService,
@@ -75,11 +76,19 @@ export class CurrentAccountComponent implements OnInit {
     this.endDate = moment().format('YYYY-MM-DD');
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+        this.detailsPaymentMethod = this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod;
+      }
+    );
+
     if (pathLocation[4]) {
       this.getCompany(pathLocation[4]);
     } else {
@@ -99,7 +108,7 @@ export class CurrentAccountComponent implements OnInit {
     if(typeof this.detailsPaymentMethod !== 'boolean') {
       this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
     }
-    
+    console.log(this.detailsPaymentMethod);
     let query = {
       company: this.companySelected._id,
       startDate: this.startDate + " 00:00:00" + timezone,

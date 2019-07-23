@@ -295,6 +295,9 @@ export class ConfigComponent implements OnInit {
       ],
       'company.allowCurrentAccount.default' : [ this.config.company.allowCurrentAccount.default, [
         ]
+      ],
+      'reports.summaryOfAccountsByClient.detailsPaymentMethod' : [ this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod, [
+        ]
       ]
     });
 
@@ -615,6 +618,7 @@ export class ConfigComponent implements OnInit {
     if (!this.config.article.code.validators.maxLength) this.config.article.code.validators.maxLength = 10;
     if (!this.config.company.allowCurrentAccount.default) this.config.company.allowCurrentAccount.default = false;
     if (!this.config.article.printLabel.value) this.config.article.printLabel.value = 'code';
+    if (!this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod) this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod = false;
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
@@ -657,7 +661,8 @@ export class ConfigComponent implements OnInit {
       'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
       'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
       'company.vatCondition.default': vatConfitionDefault,
-      'article.printLabel.value': this.config.article.printLabel.value
+      'article.printLabel.value': this.config.article.printLabel.value,
+      'reports.summaryOfAccountsByClient.detailsPaymentMethod': this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod
     });
   }
 
