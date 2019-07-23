@@ -20,7 +20,7 @@ import { MovementOfCashService } from './../../services/movement-of-cash.service
 
 //Componentes
 import { ListCompaniesComponent } from 'app/components/list-companies/list-companies.component';
-import { PrintComponent } from 'app/components/print/print.component';
+import { PrintComponent } from 'app/components/print/print/print.component';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';

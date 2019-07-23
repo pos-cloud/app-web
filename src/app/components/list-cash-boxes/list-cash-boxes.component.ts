@@ -6,7 +6,7 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import { CashBox } from './../../models/cash-box';
 import { CashBoxService } from './../../services/cash-box.service';
 
-import { PrintComponent } from './../../components/print/print.component';
+import { PrintComponent } from '../print/print/print.component';
 import { TransactionTypeService } from 'app/services/transaction-type.service';
 import { Printer } from 'app/models/printer';
 

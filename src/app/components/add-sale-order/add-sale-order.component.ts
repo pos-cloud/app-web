@@ -38,7 +38,7 @@ import { TaxService } from '../../services/tax.service';
 import { ListCompaniesComponent } from './../list-companies/list-companies.component';
 import { AddMovementOfArticleComponent } from './../add-movement-of-article/add-movement-of-article.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';
-import { PrintComponent } from './../../components/print/print.component';
+import { PrintComponent } from '../print/print/print.component';
 import { DeleteTransactionComponent } from '../delete-transaction/delete-transaction.component';
 import { AddMovementOfCashComponent } from '../add-movement-of-cash/add-movement-of-cash.component';
 import { ApplyDiscountComponent } from '../apply-discount/apply-discount.component';

@@ -12,7 +12,7 @@ import { ConfigService } from '../../services/config.service';
 import { CompanyService } from './../../services/company.service';
 
 
-import { PrintComponent } from './../../components/print/print.component'
+import { PrintComponent } from '../print/print/print.component'
 import { DateFormatPipe } from 'app/pipes/date-format.pipe';
 import { Taxes } from 'app/models/taxes';
 import { TaxClassification } from 'app/models/tax';

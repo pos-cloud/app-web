@@ -12,6 +12,7 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
 import { TransactionMovement } from 'app/models/transaction-type';
+import { CurrentAccountDetailsComponent } from '../print/current-account-details/current-account-details.component';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
@@ -39,6 +40,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public invertedView: boolean = false;
   public transactionMovement: TransactionMovement;
   public config: Config;
+  public filterCompanyEmployee;
 
   constructor(
     public _companyService: CompanyService,
@@ -158,6 +160,20 @@ export class ListSummaryOfAccountsComponent implements OnInit {
 
   public hideMessage():void {
     this.alertMessage = '';
+  }
+
+  public openModal(op : string){
+    
+    let modalRef;
+    switch (op) {
+      case 'print':
+        modalRef = this._modalService.open(CurrentAccountDetailsComponent);
+        modalRef.componentInstance.companyType = this.filterCompanyType;
+        if(this.filterCompanyEmployee){
+          modalRef.componentInstance.employee = this.filterCompanyEmployee;
+        }
+        break;
+    }
   }
 
 }

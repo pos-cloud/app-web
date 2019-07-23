@@ -16,7 +16,7 @@ import { ArticleService } from './../../services/article.service';
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
 import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
 import { ImportComponent } from './../../components/import/import.component';
-import { PrintComponent } from 'app/components/print/print.component';
+import { PrintComponent } from 'app/components/print/print/print.component';
 
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Printer, PrinterPrintIn } from '../../models/printer';
@@ -28,7 +28,7 @@ import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
 import { User } from 'app/models/user';
-import { PrintPriceListComponent } from '../print-price-list/print-price-list.component';
+import { PrintPriceListComponent } from '../print/print-price-list/print-price-list.component';
 
 @Component({
   selector: 'app-list-articles',

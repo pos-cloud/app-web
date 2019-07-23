@@ -22,7 +22,7 @@ import { TransactionService } from '../../services/transaction.service';
 import { TransactionTypeService } from '../../services/transaction-type.service';
 
 //Componentes
-import { PrintComponent } from './../../components/print/print.component';
+import { PrintComponent } from '../print/print/print.component';
 import { TransactionType } from 'app/models/transaction-type';
 import { Config } from 'app/app.config';
 

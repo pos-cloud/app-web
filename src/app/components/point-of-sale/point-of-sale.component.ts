@@ -16,7 +16,7 @@ import { TransactionTypeService } from './../../services/transaction-type.servic
 import { PrinterService } from './../../services/printer.service';
 
 import { AddTransactionComponent } from './../add-transaction/add-transaction.component';
-import { PrintComponent } from './../print/print.component';
+import { PrintComponent } from '../print/print/print.component';
 import { DeleteTransactionComponent } from './../delete-transaction/delete-transaction.component';
 import { AddMovementOfCashComponent } from './../add-movement-of-cash/add-movement-of-cash.component';
 import { SelectEmployeeComponent } from './../select-employee/select-employee.component';

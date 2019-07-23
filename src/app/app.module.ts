@@ -107,7 +107,7 @@ import { AddTransactionComponent } from './components/add-transaction/add-transa
 import { CurrentAccountComponent } from './components/current-account/current-account.component';
 import { SendEmailComponent } from './components/send-email/send-email.component';
 import { SelectEmployeeComponent } from './components/select-employee/select-employee.component';
-import { PrintComponent } from './components/print/print.component';
+import { PrintComponent } from './components/print/print/print.component';
 import { ViewTransactionComponent } from './components/view-transaction/view-transaction.component';
 import { ListTurnsComponent } from './components/list-turns/list-turns.component';
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
@@ -245,8 +245,9 @@ import { TransportComponent } from './components/transport/transport.component';
 import { TransportService } from './services/transport.service';
 import { ListTransportComponent } from './components/list-transports/list-transports.component';
 import { SelectTransportComponent } from './components/select-transport/select-transport.component';
-import { PrintPriceListComponent } from './components/print-price-list/print-price-list.component';
+import { PrintPriceListComponent } from './components/print/print-price-list/print-price-list.component';
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
+import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -423,7 +424,8 @@ import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.c
     ListTransportComponent,
     SelectTransportComponent,
     PrintPriceListComponent,
-    ListCashBoxComponent
+    ListCashBoxComponent,
+    CurrentAccountDetailsComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -585,7 +587,8 @@ import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.c
     TransportComponent,
     SelectTransportComponent,
     PrintPriceListComponent,
-    ListCashBoxesComponent
+    ListCashBoxesComponent,
+    CurrentAccountDetailsComponent
   ],
   imports: [
     BrowserModule,

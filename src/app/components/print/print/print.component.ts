@@ -2,19 +2,19 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { AuthService } from './../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 
 //Modelos
-import { Transaction } from './../../models/transaction';
-import { MovementOfArticle } from './../../models/movement-of-article';
-import { MovementOfCash } from './../../models/movement-of-cash';
-import { Turn } from './../../models/turn';
-import { Printer, PrinterPrintIn, PrinterType } from './../../models/printer';
-import { Company } from './../../models/company';
-import { Config } from './../../app.config';
-import { TransactionType, TransactionMovement, Movements } from './../../models/transaction-type';
-import { ArticleStock } from './../../models/article-stock';
-import { Article } from './../../models/article';
+import { Transaction } from '../../../models/transaction';
+import { MovementOfArticle } from '../../../models/movement-of-article';
+import { MovementOfCash } from '../../../models/movement-of-cash';
+import { Turn } from '../../../models/turn';
+import { Printer, PrinterPrintIn, PrinterType } from '../../../models/printer';
+import { Company } from '../../../models/company';
+import { Config } from '../../../app.config';
+import { TransactionType, TransactionMovement, Movements } from '../../../models/transaction-type';
+import { ArticleStock } from '../../../models/article-stock';
+import { Article } from '../../../models/article';
 
 
 //Paquetes de terceros
@@ -22,23 +22,23 @@ import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-boots
 import * as jsPDF from 'jspdf';
 
 //Servicios
-import { TurnService } from './../../services/turn.service';
-import { PrinterService } from './../../services/printer.service';
-import { PrintService } from './../../services/print.service';
-import { TransactionService } from './../../services/transaction.service';
-import { MovementOfArticleService } from './../../services/movement-of-article.service';
-import { ConfigService } from './../../services/config.service';
-import { TransactionTypeService } from './../../services/transaction-type.service';
-import { ArticleStockService } from './../../services/article-stock.service';
-import { ArticleService } from './../../services/article.service';
-import { MovementOfCashService } from './../../services/movement-of-cash.service';
+import { TurnService } from '../../../services/turn.service';
+import { PrinterService } from '../../../services/printer.service';
+import { PrintService } from '../../../services/print.service';
+import { TransactionService } from '../../../services/transaction.service';
+import { MovementOfArticleService } from '../../../services/movement-of-article.service';
+import { ConfigService } from '../../../services/config.service';
+import { TransactionTypeService } from '../../../services/transaction-type.service';
+import { ArticleStockService } from '../../../services/article-stock.service';
+import { ArticleService } from '../../../services/article.service';
+import { MovementOfCashService } from '../../../services/movement-of-cash.service';
 
 //Pipes
 import { DeprecatedDecimalPipe } from '@angular/common';
-import { DateFormatPipe } from './../../pipes/date-format.pipe';
-import { RoundNumberPipe } from './../../pipes/round-number.pipe';
-import { CashBox } from '../../models/cash-box';
-import { CashBoxService } from '../../services/cash-box.service';
+import { DateFormatPipe } from '../../../pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../pipes/round-number.pipe';
+import { CashBox } from '../../../models/cash-box';
+import { CashBoxService } from '../../../services/cash-box.service';
 import { TaxClassification } from 'app/models/tax';
 import { Taxes } from 'app/models/taxes';
 import { ClaimService } from 'app/services/claim.service';
