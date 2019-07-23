@@ -1,27 +1,24 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-
 import * as jsPDF from 'jspdf';
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateFormatPipe } from './../../../pipes/date-format.pipe';
 import { RoundNumberPipe } from './../../../pipes/round-number.pipe';
 import { TransactionService } from 'app/services/transaction.service';
-import { Transaction } from 'app/models/transaction';
-
 import { Config } from './../../../app.config';
-
+import { CompanyType } from 'app/models/company';
 
 @Component({
   selector: 'app-current-account-details',
   templateUrl: './current-account-details.component.html',
   styleUrls: ['./current-account-details.component.css']
 })
+
 export class CurrentAccountDetailsComponent implements OnInit {
 
-  @Input() companyType;
-  @Input() employee;
+  @Input() companyType: CompanyType;
+  @Input() employee: string;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -31,9 +28,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
   public pdfURL;
   public config;
   public roundNumber = new RoundNumberPipe();
-  public pageWidth;
-  public pageHigh;
-  public withImage = false;
+  public pageWidth: number;
+  public pageHigh: number;
+  public withImage: boolean = false;
   public items = [];
 
   public fontSizes = JSON.parse(`{"xsmall" : 5,
@@ -46,21 +43,17 @@ export class CurrentAccountDetailsComponent implements OnInit {
     public _transactionService : TransactionService,
     public _router: Router,
     private domSanitizer: DomSanitizer
-  ) 
-  { 
+  ) { 
     this.pageWidth = 210 * 100 / 35.27751646284102;
     this.pageHigh = 297 * 100 / 35.27751646284102;
   }
 
-  async ngOnInit() {
+  public ngOnInit(): void {
 
-    console.log("entro");
-
-   let pathLocation: string[] = this._router.url.split('/');
-   this.userType = pathLocation[1];
-   this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
-   this.getTransactions()
-
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
+    this.getTransactions()
   }
 
   ngAfterViewInit() {
@@ -73,15 +66,13 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     let match = `{`;
 
-    if(this.employee){
-
+    if(this.employee ){
       match += `"company.employee.name" : "${this.employee}",`
     }
     
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$ne" : 0 },
               "operationType" : { "$ne" : "D" } }`;
-
 
     match = JSON.parse(match);
 
@@ -129,7 +120,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
         0 // SKIP
     ).subscribe(
       result => {
-        if(result){
+        if(result) {
           this.items = result;
           this.print();
           this.loading = false;
@@ -167,57 +158,54 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(200,row,"Teléfono:"+this.items[i]._id.company.phones)
       }
       row += 5;
-      if(this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue){
-        this.doc.text(5,row,this.items[i]._id.company.identificationType.name+":"+this.items[i]._id.company.identificationValue)
+      if(this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
+        this.doc.text(5,row,this.items[i]._id.company.identificationType.name+":"+this.items[i]._id.company.identificationValue);
       }
       if(this.items[i]._id.company.vatCondition){
-        this.doc.text(100,row,"Condición de IVA:"+this.items[i]._id.company.vatCondition.description)
+        this.doc.text(100,row,"Condición de IVA:"+this.items[i]._id.company.vatCondition.description);
       }
       row += 5;
-      this.doc.setLineWidth(0.5)
-      this.doc.line(0, row, 1000, row)
+      this.doc.setLineWidth(0.5);
+      this.doc.line(0, row, 1000, row);
       row += 5;
-      this.doc.text(5,row,"Fecha")
-      this.doc.text(30,row,"Tipo")
-      this.doc.text(75,row,"Comprobante")
-      this.doc.text(120,row,"Fecha Ven")
-      this.doc.text(155,row,"Importe")
-      this.doc.text(180,row,"Saldo")
+      this.doc.text(5,row,"Fecha");
+      this.doc.text(30,row,"Tipo");
+      this.doc.text(75,row,"Comprobante");
+      this.doc.text(120,row,"Fecha Ven");
+      this.doc.text(155,row,"Importe");
+      this.doc.text(180,row,"Saldo");
       row += 3;
       this.doc.setLineWidth(0.5)
       this.doc.line(0, row, 1000, row)
       row += 5
-      let totalPrice = 0
-      let balance = 0
-      let total
-      for(let transaction of this.items[i].transactions){
-        this.doc.text(5,row,transaction.endDate)
-        this.doc.text(30,row,transaction.type.name)
-        this.doc.text(75,row,this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8))
-        this.doc.text(120,row,transaction.expirationDate)
-        this.doc.text(155,row,"$" + this.roundNumber.transform(transaction.totalPrice).toString())
-        this.doc.text(180,row,"$" + this.roundNumber.transform(transaction.balance).toString())
-        row += 5
+      let totalPrice = 0;
+      let balance = 0;
+      let total;
+      for(let transaction of this.items[i].transactions) {
+        this.doc.text(5,row,transaction.endDate);
+        this.doc.text(30,row,transaction.type.name);
+        this.doc.text(75,row,this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
+        this.doc.text(120,row,transaction.expirationDate);
+        this.doc.text(155,row, "$" + this.roundNumber.transform(transaction.totalPrice).toString());
+        if(!transaction.balance) transaction.balance = 0;
+        this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
+        row += 5;
 
-        totalPrice = totalPrice + transaction.totalPrice
-        balance = balance + transaction.balance
-
+        totalPrice = totalPrice + transaction.totalPrice;
+        balance = balance + transaction.balance;
       }
 
       this.doc.setFontType("bold");
-      this.doc.text(120,row,"Total")
-      this.doc.text(155,row,"$" +this.roundNumber.transform(totalPrice).toString())
-      this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString())
+      this.doc.text(120,row,"Total");
+      this.doc.text(155,row,"$" +this.roundNumber.transform(totalPrice).toString());
+      this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
       this.doc.setFontType("normal");
       row += 5;
       if(row > 150){
         this.doc.addPage();
         row = 15;
       }
-      
     }
-      
-
     this.finishImpression();
   }
 
@@ -225,7 +213,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
     this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
-
   }
 
   public centerText(lMargin, rMargin, pdfInMM, startPdf, height, text): void {

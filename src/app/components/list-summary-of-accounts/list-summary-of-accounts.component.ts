@@ -40,7 +40,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public invertedView: boolean = false;
   public transactionMovement: TransactionMovement;
   public config: Config;
-  public filterCompanyEmployee;
+  public filterCompanyEmployee: string;
 
   constructor(
     public _companyService: CompanyService,
@@ -169,7 +169,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       case 'print':
         modalRef = this._modalService.open(CurrentAccountDetailsComponent);
         modalRef.componentInstance.companyType = this.filterCompanyType;
-        if(this.filterCompanyEmployee){
+        if(this.filterCompanyEmployee) {
           modalRef.componentInstance.employee = this.filterCompanyEmployee;
         }
         break;
