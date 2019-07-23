@@ -53,8 +53,10 @@ export class Config {
 		}
     };
     public reports: {
-		summaryOfAccountsByClient: {
-			detailsPaymentMethod: boolean
+		summaryOfAccounts: {
+			detailsPaymentMethod: boolean,
+			invertedViewClient: boolean,
+			invertedViewProvider: boolean
 		}
 	}
 

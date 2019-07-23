@@ -110,7 +110,6 @@ export class SendEmailComponent implements OnInit {
 
     this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
       result => {
-        console.log(result);
         if (!result) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
         } else {

@@ -300,7 +300,6 @@ export class MovementOfCancellationComponent implements OnInit {
         0 // SKIP
     ).subscribe(
       async result => {
-        console.log(result);
         this.loading = false;
         if (result && result.length > 0 && result[0].transactions) {
             this.transactions = result[0].transactions;

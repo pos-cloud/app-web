@@ -39,12 +39,12 @@
             <thead>
               <tr>
                 <th></th>
-                <th class="align-center" (click)="orderBy('_id','companyName')">Nombre</th>
-                <th class="align-center" (click)="orderBy('_id','companyType')">Tipo</th>
-                <th class="align-center" (click)="orderBy('_id','identificationValue')">Identificador</th>
-                <th class="align-center" (click)="orderBy('_id','companyAddress')">Dirección</th>
-                <th class="align-center" (click)="orderBy('_id','companyPhones')">Teléfono</th>
-                <th class="align-center" (click)="orderBy('_id','companyEmails')">Email</th>
+                <th class="align-center" (click)="orderBy('companyName')">Nombre</th>
+                <th class="align-center" (click)="orderBy('companyType')">Tipo</th>
+                <th class="align-center" (click)="orderBy('identificationValue')">Identificador</th>
+                <th class="align-center" (click)="orderBy('companyAddress')">Dirección</th>
+                <th class="align-center" (click)="orderBy('companyPhones')">Teléfono</th>
+                <th class="align-center" (click)="orderBy('companyEmails')">Email</th>
                 <th class="align-center" (click)="orderBy('balance')">Saldo</th>
               </tr>
               <tr *ngIf="areFiltersVisible" class="filters">
@@ -59,12 +59,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of items | filter: filterCompanyName:'companyName':'_id'
-                                            | filter: filterCompanyType:'companyType':'_id'
-                                            | filter: filterIdentificationValue:'identificationValue':'_id'
-                                            | filter: filterCompanyAddress:'companyAddress':'_id'
-                                            | filter: filterCompanyPhones:'companyPhones':'_id'
-                                            | filter: filterCompanyEmails:'companyEmails':'_id'
+              <tr align="center" *ngIf="loading">
+                <td colspan="9">Cargando...</td>
+              </tr>
+              <tr *ngFor="let item of items | filter: filterCompanyName:'companyName'
+                                            | filter: filterIdentificationValue:'identificationValue'
+                                            | filter: filterCompanyAddress:'companyAddress'
+                                            | filter: filterCompanyPhones:'companyPhones'
+                                            | filter: filterCompanyEmails:'companyEmails'
                                             | filter: filterBalance:'balance'
                                             | orderBy: orderTerm: propertyTerm
                                             | paginate: { itemsPerPage: itemsPerPage,
@@ -73,15 +75,15 @@
                                                         }"
                   [ngClass]="{'credit':item.balance>0,'debit':item.balance<0}">
                 <td align="left" width="130">
-                  <button type="button" class="btn btn-success  btn-sm" (click)="viewDetailCureentAccount(item._id.company)" title="Ver"><i class="fa fa-eye"></i></button>
-                  <a *ngIf="item._id.companyPhones" class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{item._id.companyPhones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
+                  <button type="button" class="btn btn-success  btn-sm" (click)="viewDetailCureentAccount(item._id.companyId)" title="Ver"><i class="fa fa-eye"></i></button>
+                  <a *ngIf="item.companyPhones" class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{item.companyPhones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
                 </td>
-                <td class="flat">{{ item._id.companyName }}</td>
-                <td class="flat">{{ item._id.companyType }}</td>
-                <td class="flat align-center">{{ item._id.identificationValue }}</td>
-                <td class="flat">{{ item._id.companyAddress }}</td>
-                <td class="flat">{{ item._id.companyPhones }}</td>
-                <td class="flat">{{ item._id.companyEmails }}</td>
+                <td class="flat">{{ item.companyName }}</td>
+                <td class="flat">{{ item.companyType }}</td>
+                <td class="flat align-center">{{ item.identificationValue }}</td>
+                <td class="flat">{{ item.companyAddress }}</td>
+                <td class="flat">{{ item.companyPhones }}</td>
+                <td class="flat">{{ item.companyEmails }}</td>
                 <td class="flat align-right" *ngIf="item.balance>=0">
                   <strong>{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                 </td>
@@ -106,12 +108,12 @@
               <td>
                 <b>
                   ${{ calculateTotal(items
-                  | filter: filterCompanyName:'companyName':'_id'
-                  | filter: filterCompanyType:'companyType':'_id'
-                  | filter: filterIdentificationValue:'identificationValue':'_id'
-                  | filter: filterCompanyAddress:'companyAddress':'_id'
-                  | filter: filterCompanyPhones:'companyPhones':'_id'
-                  | filter: filterCompanyEmails:'companyEmails':'_id'
+                  | filter: filterCompanyName:'companyName'
+                  | filter: filterCompanyType:'companyType'
+                  | filter: filterIdentificationValue:'identificationValue'
+                  | filter: filterCompanyAddress:'companyAddress'
+                  | filter: filterCompanyPhones:'companyPhones'
+                  | filter: filterCompanyEmails:'companyEmails'
                   | filter: filterBalance:'balance'  , 'balance', '1.2-2') }}
                 </b>
               </td>

@@ -11,6 +11,7 @@ import { CompanyType } from '../../models/company';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
+import { TransactionMovement } from 'app/models/transaction-type';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
@@ -27,7 +28,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public items: any[] = new Array();
   public areItemsEmpty: boolean = false;
   public areFiltersVisible: boolean = false;
-  public orderTerm: string[] = ['balance'];
+  public orderTerm: string[] = ['-balance'];
   public propertyTerm: string;
   public itemsPerPage = 10;
   public totalItems = 0;
@@ -35,6 +36,9 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public roundNumber = new RoundNumberPipe();
+  public invertedView: boolean = false;
+  public transactionMovement: TransactionMovement;
+  public config: Config;
 
   constructor(
     public _companyService: CompanyService,
@@ -43,23 +47,38 @@ export class ListSummaryOfAccountsComponent implements OnInit {
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
   ) {
+    this.items = new Array();
     this.startDate = moment('1990-01-01').format('YYYY-MM-DD');
     this.endDate = moment().format('YYYY-MM-DD');
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (!this.filterCompanyType) {
       if (pathLocation[3] === "cliente") {
         this.filterCompanyType = CompanyType.Client;
-        this.orderTerm = ['balance'];
       } else if (pathLocation[3] === "proveedor") {
         this.filterCompanyType = CompanyType.Provider;
-        this.orderTerm = ['-balance'];
       }
     }
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+        if (this.filterCompanyType === CompanyType.Client) {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
+          this.transactionMovement = TransactionMovement.Sale;
+        } else {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider;
+          this.transactionMovement = TransactionMovement.Purchase;
+        }
+        if(this.invertedView) {
+          this.orderTerm = ['balance'];
+        }
+      }
+    );
+    
     this.getSummary();
   }
 
@@ -74,7 +93,10 @@ export class ListSummaryOfAccountsComponent implements OnInit {
 
     let query = {
       startDate: this.startDate + " 00:00:00" + timezone,
-      endDate:  this.endDate + " 23:59:59" + timezone
+      endDate:  this.endDate + " 23:59:59" + timezone,
+      companyType: this.filterCompanyType,
+      transactionMovement: this.transactionMovement,
+      invertedView: this.invertedView
     }
 
     this._companyService.getSummaryOfAccounts(JSON.stringify(query)).subscribe(

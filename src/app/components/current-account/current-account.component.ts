@@ -27,6 +27,8 @@ import { ViewTransactionComponent } from '../view-transaction/view-transaction.c
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
+import { TransactionMovement } from 'app/models/transaction-type';
+import { CompanyType } from 'app/models/payment-method';
 
 @Component({
   selector: 'app-current-account',
@@ -58,6 +60,8 @@ export class CurrentAccountComponent implements OnInit {
   public detailsPaymentMethod: boolean = false;
   public showPaymentMethod: boolean = false;
   public config: Config;
+  public invertedView: boolean = false;
+  public transactionMovement: TransactionMovement;
 
   constructor(
     public _transactionService: TransactionService,
@@ -85,7 +89,12 @@ export class CurrentAccountComponent implements OnInit {
     await this._configService.getConfig.subscribe(
       config => {
         this.config = config;
-        this.detailsPaymentMethod = this.config.reports.summaryOfAccountsByClient.detailsPaymentMethod;
+        this.detailsPaymentMethod = this.config.reports.summaryOfAccounts.detailsPaymentMethod;
+        if (pathLocation[3] === 'cliente') {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewClient;
+        } else {
+          this.invertedView = this.config.reports.summaryOfAccounts.invertedViewProvider
+        }
       }
     );
 
@@ -108,12 +117,14 @@ export class CurrentAccountComponent implements OnInit {
     if(typeof this.detailsPaymentMethod !== 'boolean') {
       this.detailsPaymentMethod = Boolean(JSON.parse(this.detailsPaymentMethod));
     }
-    console.log(this.detailsPaymentMethod);
+    
     let query = {
       company: this.companySelected._id,
       startDate: this.startDate + " 00:00:00" + timezone,
       endDate:  this.endDate + " 23:59:59" + timezone,
-      detailsPaymentMethod: this.detailsPaymentMethod
+      detailsPaymentMethod: this.detailsPaymentMethod,
+      transactionMovement: this.transactionMovement,
+      invertedView: this.invertedView
     }
 
     this._companyService.getSummaryOfAccountsByCompany(JSON.stringify(query)).subscribe(
@@ -149,6 +160,11 @@ export class CurrentAccountComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.companySelected = result.company;
+          if(this.companySelected.type === CompanyType.Client) {
+            this.transactionMovement = TransactionMovement.Sale;
+          } else {
+            this.transactionMovement = TransactionMovement.Purchase;
+          }
           this.getSummary();
         }
         this.loading = false;
@@ -203,6 +219,11 @@ export class CurrentAccountComponent implements OnInit {
           (result) => {
             if (result.company) {
               this.companySelected = result.company;
+              if(this.companySelected.type === CompanyType.Client) {
+                this.transactionMovement = TransactionMovement.Sale;
+              } else {
+                this.transactionMovement = TransactionMovement.Purchase;
+              }
               this.getSummary();
             }
           }, (reason) => {
