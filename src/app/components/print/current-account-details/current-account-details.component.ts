@@ -72,6 +72,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$ne" : 0 },
+              "state" : "Cerrado",
               "operationType" : { "$ne" : "D" } }`;
 
     match = JSON.parse(match);
@@ -100,7 +101,8 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "origin" :1,
       "expirationDate" : { $dateToString: { date: "$expirationDate", format: "%d/%m/%Y", timezone: timezone }},
       "totalPrice" : 1,
-      "balance" :1 
+      "balance" :1 ,
+      "state" : 1
     }
 
     let group = {
@@ -185,7 +187,9 @@ export class CurrentAccountDetailsComponent implements OnInit {
         this.doc.text(5,row,transaction.endDate);
         this.doc.text(30,row,transaction.type.name);
         this.doc.text(75,row,this.padString(transaction.origin, 4) + "-" + transaction.letter + "-" + this.padString(transaction.number, 8));
-        this.doc.text(120,row,transaction.expirationDate);
+        if(transaction.expirationDate){
+          this.doc.text(120,row,transaction.expirationDate);
+        }
         this.doc.text(155,row, "$" + this.roundNumber.transform(transaction.totalPrice).toString());
         if(!transaction.balance) transaction.balance = 0;
         this.doc.text(180,row, "$" + this.roundNumber.transform(transaction.balance).toString());
