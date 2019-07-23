@@ -9,6 +9,7 @@ export class CancellationType {
     public _id: string;
     public origin: TransactionType;
     public destination: TransactionType;
+    public modifyBalance: boolean = true;
     public creationUser: User;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
     public updateUser: User;
