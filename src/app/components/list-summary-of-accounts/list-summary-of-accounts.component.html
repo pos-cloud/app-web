@@ -2,6 +2,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Resúmenes de Cuentas
       <div class="pull-right">
+        <i (click)="openModal('print')" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Imprimir Detalle"> Imprimir Detalle</i>
         <span (click)="areFiltersVisible = !areFiltersVisible">
             <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
         </span>
@@ -40,8 +41,8 @@
               <tr>
                 <th></th>
                 <th class="align-center" (click)="orderBy('_id','companyName')">Nombre</th>
-                <th class="align-center" (click)="orderBy('_id','companyType')">Tipo</th>
                 <th class="align-center" (click)="orderBy('_id','identificationValue')">Identificador</th>
+                <th class="align-center" (click)="orderBy('_id','companyEmployee')">Empleado asignado</th>
                 <th class="align-center" (click)="orderBy('_id','companyAddress')">Dirección</th>
                 <th class="align-center" (click)="orderBy('_id','companyPhones')">Teléfono</th>
                 <th class="align-center" (click)="orderBy('_id','companyEmails')">Email</th>
@@ -50,8 +51,8 @@
               <tr *ngIf="areFiltersVisible" class="filters">
                 <th></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyName" placeholder="Nombre..." ></th>
-                <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyType" placeholder="Tipo..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterIdentificationValue" placeholder="Identificador..." ></th>
+                <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyEmployee" placeholder="Empleado..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyAddress" placeholder="Dirección..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyPhones" placeholder="Teléfono..." ></th>
                 <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyEmails" placeholder="Email..." ></th>
@@ -60,7 +61,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of items | filter: filterCompanyName:'companyName':'_id'
-                                            | filter: filterCompanyType:'companyType':'_id'
+                                            | filter: filterCompanyEmployee:'companyEmployee':'_id'
                                             | filter: filterIdentificationValue:'identificationValue':'_id'
                                             | filter: filterCompanyAddress:'companyAddress':'_id'
                                             | filter: filterCompanyPhones:'companyPhones':'_id'
@@ -77,8 +78,8 @@
                   <a *ngIf="item._id.companyPhones" class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{item._id.companyPhones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
                 </td>
                 <td class="flat">{{ item._id.companyName }}</td>
-                <td class="flat">{{ item._id.companyType }}</td>
                 <td class="flat align-center">{{ item._id.identificationValue }}</td>
+                <td class="flat align-center">{{ item._id.companyEmployee }}</td>
                 <td class="flat">{{ item._id.companyAddress }}</td>
                 <td class="flat">{{ item._id.companyPhones }}</td>
                 <td class="flat">{{ item._id.companyEmails }}</td>
@@ -107,7 +108,7 @@
                 <b>
                   ${{ calculateTotal(items
                   | filter: filterCompanyName:'companyName':'_id'
-                  | filter: filterCompanyType:'companyType':'_id'
+                  | filter: filterCompanyEmployee:'companyEmployee':'_id'
                   | filter: filterIdentificationValue:'identificationValue':'_id'
                   | filter: filterCompanyAddress:'companyAddress':'_id'
                   | filter: filterCompanyPhones:'companyPhones':'_id'

@@ -6,7 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Turn } from './../../models/turn';
 import { TurnService } from './../../services/turn.service';
 
-import { PrintComponent } from './../../components/print/print.component';
+import { PrintComponent } from '../print/print/print.component';
 
 @Component({
   selector: 'app-list-turns',

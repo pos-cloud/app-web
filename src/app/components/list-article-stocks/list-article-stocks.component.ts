@@ -9,7 +9,7 @@ import { ArticleStockService } from './../../services/article-stock.service';
 import { AddArticleStockComponent } from './../../components/add-article-stock/add-article-stock.component';
 import { UpdateArticleStockComponent } from './../../components/update-article-stock/update-article-stock.component';
 
-import { PrintComponent } from 'app/components/print/print.component';
+import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { PrinterPrintIn, Printer } from '../../models/printer';
 

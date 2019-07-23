@@ -7,17 +7,17 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as jsPDF from 'jspdf';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { DateFormatPipe } from './../../pipes/date-format.pipe';
-import { RoundNumberPipe } from './../../pipes/round-number.pipe';
+import { DateFormatPipe } from '../../../pipes/date-format.pipe';
+import { RoundNumberPipe } from '../../../pipes/round-number.pipe';
 
 //model
-import { Make } from "../../models/make";
-import { Category } from "../../models/category";
+import { Make } from "../../../models/make";
+import { Category } from "../../../models/category";
 
 //service
-import { ArticleService } from "../../services/article.service";
-import { MakeService } from './../../services/make.service';
-import { CategoryService } from './../../services/category.service';
+import { ArticleService } from "../../../services/article.service";
+import { MakeService } from '../../../services/make.service';
+import { CategoryService } from '../../../services/category.service';
 import { Article } from 'app/models/article';
 import { ConfigService } from 'app/services/config.service';
 import { Config } from 'app/app.config';

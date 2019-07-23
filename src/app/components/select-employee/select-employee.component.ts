@@ -17,7 +17,7 @@ import { TableService } from './../../services/table.service';
 import { TurnService } from './../../services/turn.service';
 import { TransactionService } from './../../services/transaction.service';
 
-import { PrintComponent } from './../../components/print/print.component';
+import { PrintComponent } from '../print/print/print.component';
 import { EmployeeType } from 'app/models/employee-type';
 import { AuthService } from 'app/services/auth.service';
 import { UserService } from 'app/services/user.service';

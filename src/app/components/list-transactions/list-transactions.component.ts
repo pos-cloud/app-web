@@ -18,7 +18,7 @@ import { ExportCitiComponent } from './../../components/export-citi/export-citi.
 import { ExportIvaComponent } from './../../components/export-iva/export-iva.component';
 
 //Pipes
-import { PrintComponent } from 'app/components/print/print.component';
+import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';

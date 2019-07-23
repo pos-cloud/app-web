@@ -11,6 +11,7 @@ import { CompanyType } from '../../models/company';
 import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { Config } from 'app/app.config';
 import { ConfigService } from 'app/services/config.service';
+import { CurrentAccountDetailsComponent } from '../print/current-account-details/current-account-details.component';
 
 @Component({
   selector: 'app-list-summary-of-accounts',
@@ -35,6 +36,7 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public startDate: string;
   public endDate: string;
   public roundNumber = new RoundNumberPipe();
+  public filterCompanyEmployee;
 
   constructor(
     public _companyService: CompanyService,
@@ -126,6 +128,20 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       }
     }
     return this.roundNumber.transform(total);
+  }
+
+  public openModal(op : string){
+    
+    let modalRef;
+    switch (op) {
+      case 'print':
+        modalRef = this._modalService.open(CurrentAccountDetailsComponent);
+        modalRef.componentInstance.companyType = this.filterCompanyType;
+        if(this.filterCompanyEmployee){
+          modalRef.componentInstance.employee = this.filterCompanyEmployee;
+        }
+        break;
+    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

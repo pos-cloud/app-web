@@ -62,7 +62,7 @@ import { ListBankComponent } from './components/list-bank/list-bank.component'
 import { ListBranchComponent } from './components/list-branches/list-branches.component';
 import { ListOriginsComponent } from './components/list-origins/list-origins.component';
 import { ListTransportComponent } from './components/list-transports/list-transports.component';
-import { PrintComponent } from './components/print/print.component';
+import { PrintComponent } from './components/print/print/print.component';
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
 
 export const _routes: Routes = [
