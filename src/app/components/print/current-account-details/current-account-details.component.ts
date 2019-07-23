@@ -73,6 +73,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$ne" : 0 },
               "state" : "Cerrado",
+              "type.currentAccount" : "Si",
               "company.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
 
@@ -98,6 +99,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "company.operationType" : 1,
       "endDate" :{ $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
       "type.name" :1,
+      "type.currentAccount" : 1,
       "number" : 1,
       "letter" : 1,
       "origin" :1,
