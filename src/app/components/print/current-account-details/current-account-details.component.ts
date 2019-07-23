@@ -73,7 +73,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$ne" : 0 },
               "state" : "Cerrado",
-              "company.operationType" : { "$ne" : "D" }
+              "company.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
 
     match = JSON.parse(match);
