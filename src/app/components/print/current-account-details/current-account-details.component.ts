@@ -73,6 +73,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$ne" : 0 },
               "state" : "Cerrado",
+              "company.operationType" : { "$ne" : "D" }
               "operationType" : { "$ne" : "D" } }`;
 
     match = JSON.parse(match);
@@ -94,6 +95,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "company.identificationValue": 1,
       "company.vatCondition.description":1,
       "company.employee.name" :1,
+      "company.operationType" : 1,
       "endDate" :{ $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
       "type.name" :1,
       "number" : 1,
