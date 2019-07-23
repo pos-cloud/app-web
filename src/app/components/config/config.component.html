@@ -341,16 +341,27 @@
           </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-12">
-              <div class="input-group">
-                <span class="input-group-addon" id="basic-addon1">Código a imprimir en la etiqueta del artículo</span>
-                <select class="form-control" formControlName="article.printLabel.value" name="article.printLabel.value" id="article.printLabel.value">
-                  <option value="code">Código Interno</option>
-                  <option value="barcode">Código de Barras</option>
-                </select>
-              </div>
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Código a imprimir en la etiqueta del artículo</span>
+              <select class="form-control" formControlName="article.printLabel.value" name="article.printLabel.value" id="article.printLabel.value">
+                <option value="code">Código Interno</option>
+                <option value="barcode">Código de Barras</option>
+              </select>
             </div>
           </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Detallar método de pago en el reporte de cuentas corrientes por empresa</span>
+              <select class="form-control" formControlName="reports.summaryOfAccountsByClient.detailsPaymentMethod" name="reports.summaryOfAccountsByClient.detailsPaymentMethod" id="reports.summaryOfAccountsByClient.detailsPaymentMethod">
+                <option value="true">Si</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="form-group col-md-12">
             <button type="submit" class="btn btn-primary" [disabled]="!configFormSystem.valid || loadingSystem">

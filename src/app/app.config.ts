@@ -51,7 +51,12 @@ export class Config {
 		vatCondition: {
 			default: VATCondition
 		}
-	};
+    };
+    public reports: {
+		summaryOfAccountsByClient: {
+			detailsPaymentMethod: boolean
+		}
+	}
 
     constructor() {
         Config.updateApiURL();
