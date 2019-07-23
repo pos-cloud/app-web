@@ -73,7 +73,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     match += `"company.type" : "${this.companyType}",
               "balance" : { "$gt" : 0 },
               "state" : "Cerrado",
-              "type.currentAccount" : "Si",
+              "$or": [{"type.currentAccount" : "Si"}, {"type.currentAccount" : "Cobra"}] ,            
               "company.operationType" : { "$ne" : "D" },
               "operationType" : { "$ne" : "D" } }`;
 
