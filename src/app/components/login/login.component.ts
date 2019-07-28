@@ -148,7 +148,7 @@ export class LoginComponent implements OnInit {
           );
 
           let returnURL = '/';
-          this._route.queryParams.subscribe(params => returnURL = params['return'] || '/forums');
+          this._route.queryParams.subscribe(params => returnURL = params['return'] || '/');
           this._router.navigateByUrl(returnURL);
         }
       },

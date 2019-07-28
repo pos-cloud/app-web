@@ -391,9 +391,13 @@ export class AddMovementOfArticleComponent implements OnInit {
     if (!this.movementOfArticle.salePrice) this.movementOfArticle.salePrice = 0;
     if (!this.movementOfArticle.measure) this.movementOfArticle.measure = "";
     if (!this.movementOfArticle.quantityMeasure) this.movementOfArticle.quantityMeasure = 0;
+    if (!this.movementOfArticle.code) this.movementOfArticle.code = "";
+    if (!this.movementOfArticle.barcode) this.movementOfArticle.barcode = "";
 
     let values = {
       '_id': this.movementOfArticle._id,
+      'code': this.movementOfArticle.code,
+      'barcode': this.movementOfArticle.barcode,
       'description': this.movementOfArticle.description,
       'amount': this.movementOfArticle.amount,
       'notes': this.movementOfArticle.notes,
