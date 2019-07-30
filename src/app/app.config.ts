@@ -58,7 +58,10 @@ export class Config {
 			invertedViewClient: boolean,
 			invertedViewProvider: boolean
 		}
-	}
+	};
+    public tradeBalance: {
+		codePrefix: number
+	};
 
     constructor() {
         Config.updateApiURL();
