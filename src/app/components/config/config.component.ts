@@ -307,6 +307,9 @@ export class ConfigComponent implements OnInit {
       ],
       'tradeBalance.codePrefix': [this.config.tradeBalance.codePrefix, [
         ]
+      ],
+      'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, [
+        ]
       ]
     });
 
@@ -632,6 +635,7 @@ export class ConfigComponent implements OnInit {
     if (!this.config.reports.summaryOfAccounts.invertedViewClient) this.config.reports.summaryOfAccounts.invertedViewClient = false;
     if (!this.config.reports.summaryOfAccounts.invertedViewProvider) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
     if (!this.config.tradeBalance.codePrefix) this.config.tradeBalance.codePrefix = 0;
+    if (!this.config.tradeBalance.numberOfDecimals) this.config.tradeBalance.numberOfDecimals = 0;
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
@@ -678,7 +682,8 @@ export class ConfigComponent implements OnInit {
       'reports.summaryOfAccounts.detailsPaymentMethod': this.config.reports.summaryOfAccounts.detailsPaymentMethod,
       'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
       'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,
-      'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix
+      'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix,
+      'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals
     });
   }
 

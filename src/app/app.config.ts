@@ -60,7 +60,8 @@ export class Config {
 		}
 	};
     public tradeBalance: {
-		codePrefix: number
+        codePrefix: number,
+        numberOfDecimals: number
 	};
 
     constructor() {
