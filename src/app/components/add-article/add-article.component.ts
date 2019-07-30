@@ -193,6 +193,7 @@ export class AddArticleComponent implements OnInit {
         // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
         this.validationMessages.code['maxlength'] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
         this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
+        this.article.isWeigth = this.config.article.isWeigth.default;
       }
     );
 
@@ -323,6 +324,9 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'ecommerceEnabled' : [this.article.ecommerceEnabled, [
+        ]
+      ],
+      'isWeigth' : [this.article.isWeigth, [
         ]
       ],
       'favourite' : [this.article.favourite, [
@@ -990,6 +994,7 @@ export class AddArticleComponent implements OnInit {
     if (!this.article.allowSale === undefined) { this.article.allowSale = true; }
     if (!this.article.allowSaleWithoutStock === undefined) { this.article.allowSaleWithoutStock = false; }
     if (!this.article.ecommerceEnabled === undefined) { this.article.ecommerceEnabled = false; }
+    if (!this.article.isWeigth === undefined) { this.article.isWeigth = false; }
 
     this.article.basePrice = this.roundNumber.transform(this.article.basePrice);
     this.article.costPrice = this.roundNumber.transform(this.article.costPrice);
@@ -1029,6 +1034,7 @@ export class AddArticleComponent implements OnInit {
       'allowPurchase': this.article.allowPurchase,
       'allowSale': this.article.allowSale,
       'allowSaleWithoutStock': this.article.allowSaleWithoutStock,
+      'isWeigth': this.article.isWeigth,
       'allowMeasure': this.article.allowMeasure,
       'ecommerceEnabled': this.article.ecommerceEnabled,
       'favourite': this.article.favourite,

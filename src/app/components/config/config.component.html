@@ -308,7 +308,7 @@
           <div class="form-group col-md-12">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">Longitud de código interno en artículo</span>
-              <input type="text" class="form-control" formControlName="article.code.validators.maxLength" name="article.code.validators.maxLength" id="article.code.validators.maxLength" aria-describedby="basic-addon1">
+              <input type="number" class="form-control" formControlName="article.code.validators.maxLength" name="article.code.validators.maxLength" id="article.code.validators.maxLength" aria-describedby="basic-addon1">
             </div>
           </div>
         </div>
@@ -381,6 +381,33 @@
                 <option value="true">Si</option>
                 <option value="false">No</option>
               </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Valor defecto si el artículo es pesable al dar de alta</span>
+              <select class="form-control" formControlName="article.isWeigth.default" name="article.isWeigth.default" id="article.isWeigth.default">
+                <option value="true">Si</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Prefijo del código de barra de la balanza</span>
+              <input type="number" class="form-control" formControlName="tradeBalance.codePrefix" name="tradeBalance.codePrefix" id="tradeBalance.codePrefix" aria-describedby="basic-addon1">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon1">Número de decimales del código de barra de la balanza</span>
+              <input type="number" class="form-control" formControlName="tradeBalance.numberOfDecimals" name="tradeBalance.numberOfDecimals" id="tradeBalance.numberOfDecimals" aria-describedby="basic-addon1">
             </div>
           </div>
         </div>

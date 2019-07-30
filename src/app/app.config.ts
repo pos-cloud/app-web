@@ -42,6 +42,9 @@ export class Config {
 		},
 		printLabel: {
 			value: string
+		},
+		isWeigth: {
+			default: boolean
 		}
 	};
 	public company: {
@@ -58,7 +61,11 @@ export class Config {
 			invertedViewClient: boolean,
 			invertedViewProvider: boolean
 		}
-	}
+	};
+    public tradeBalance: {
+        codePrefix: number,
+        numberOfDecimals: number
+	};
 
     constructor() {
         Config.updateApiURL();

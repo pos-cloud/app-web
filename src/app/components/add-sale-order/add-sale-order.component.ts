@@ -504,7 +504,12 @@ export class AddSaleOrderComponent {
       this.showCategories();
 
       if (!itemData.article.containsVariants && !itemData.article.allowMeasure) {
-        let movementOfArticle: MovementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
+
+        let movementOfArticle: MovementOfArticle;
+
+        if(!itemData.article.isWeigth) {
+          movementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
+        }
 
         if (!movementOfArticle) {
           movementOfArticle = itemData;

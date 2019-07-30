@@ -42,6 +42,7 @@ export class Article {
   public allowSale: Boolean = true;
   public allowSaleWithoutStock: Boolean = false;
   public allowMeasure: Boolean = false;
+  public isWeigth: Boolean = false;
   public ecommerceEnabled: Boolean = false;
   public favourite: Boolean = false;
   public picture: string = 'default.jpg';

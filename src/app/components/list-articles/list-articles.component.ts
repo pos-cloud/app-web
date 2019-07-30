@@ -31,6 +31,7 @@ import { User } from 'app/models/user';
 import { PrintPriceListComponent } from '../print/print-price-list/print-price-list.component';
 import { TaxService } from 'app/services/tax.service';
 import { Tax } from 'app/models/tax';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-list-articles',
@@ -80,6 +81,7 @@ export class ListArticlesComponent implements OnInit {
   public totalItems: number = 0;
   public filterPipe: FilterPipe = new FilterPipe();
   public filteredArticles: Article[];
+  public config: Config;
 
   constructor(
     private _articleService: ArticleService,
@@ -89,7 +91,8 @@ export class ListArticlesComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     private _printerService: PrinterService,
     private _authService: AuthService,
-    private _taxService: TaxService
+    private _taxService: TaxService,
+    public _configService: ConfigService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -99,7 +102,7 @@ export class ListArticlesComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -108,6 +111,12 @@ export class ListArticlesComponent implements OnInit {
     this._authService.getIdentity.subscribe(
       identity => {
         this.identity = identity;
+      }
+    );
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
       }
     );
 
@@ -181,6 +190,7 @@ export class ListArticlesComponent implements OnInit {
         picture: 1,
         category: 1,
         operationType: 1,
+        isWeigth: 1,
         "make.description": 1,
         "make.visibleSale": 1
       }
@@ -199,7 +209,8 @@ export class ListArticlesComponent implements OnInit {
         'observation' : 1,
         'picture' : 1,
         'operationType': 1,
-        'currency.name': 1
+        'currency.name': 1,
+        isWeigth: { $toString : '$isWeigth' },
       }
 
       // AGRUPAMOS EL RESULTADO
@@ -419,7 +430,7 @@ export class ListArticlesComponent implements OnInit {
     });
   }
 
-  async addItem(articleSelected: Article) {
+  async addItem(articleSelected: Article, salePrice?: number) {
 
     let err: boolean = false;
 
@@ -472,6 +483,7 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
               movementOfArticle.markupPercentage = article.markupPercentage;
               movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
+              if(salePrice) article.salePrice = salePrice; 
               movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice);
               movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
 
@@ -637,6 +649,19 @@ export class ListArticlesComponent implements OnInit {
 
   public filterItem(category?: Category) {
 
+    // GUARDAMOS LE CÓDIGO ORIGINAL PARA LOS PESABLES
+    let originalFilter: string = this.filterArticle;
+
+    // CORTAMOS EL CÓDIGO SI ES PESABLE
+    if(this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+      this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
+      if(this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
+        this.filterArticle = this.filterArticle.slice(this.config.tradeBalance.codePrefix.toString().length, 
+                                                      this.config.tradeBalance.codePrefix.toString().length + this.config.article.code.validators.maxLength);
+      }
+    }
+
+    // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
     if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
       this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
@@ -674,7 +699,18 @@ export class ListArticlesComponent implements OnInit {
               (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
               (article.code && article.code === this.filterArticle))) {
                 this.filterArticle = '';
-                this.addItem(article);
+                if(article.isWeigth && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                  let wholePart = originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length + this.config.article.code.validators.maxLength, 
+                                                          originalFilter.length - this.config.tradeBalance.numberOfDecimals - 1);
+                                                          console.log(wholePart);
+                  let decimalPart = originalFilter.slice(originalFilter.length - this.config.tradeBalance.numberOfDecimals - 1,
+                                                        originalFilter.length - 1);
+                                                        console.log(decimalPart);
+                  let salePrice = parseFloat(wholePart + "." + decimalPart);
+                  this.addItem(article, salePrice);
+                } else {
+                  this.addItem(article);
+                }
         } else {
           this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
           this.eventAddItem.emit(null);

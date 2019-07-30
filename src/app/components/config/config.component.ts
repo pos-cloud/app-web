@@ -290,6 +290,9 @@ export class ConfigComponent implements OnInit {
       'article.printLabel.value' : [ this.config.article.printLabel.value, [
         ]
       ],
+      'article.isWeigth.default' : [ this.config.article.isWeigth.default, [
+        ]
+      ],
       'company.vatCondition.default' : [ this.config.company.vatCondition.default, [
         ]
       ],
@@ -303,6 +306,12 @@ export class ConfigComponent implements OnInit {
         ]
       ],
       'reports.summaryOfAccounts.invertedViewProvider': [this.config.reports.summaryOfAccounts.invertedViewProvider, [
+        ]
+      ],
+      'tradeBalance.codePrefix': [this.config.tradeBalance.codePrefix, [
+        ]
+      ],
+      'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, [
         ]
       ]
     });
@@ -626,8 +635,11 @@ export class ConfigComponent implements OnInit {
     if (!this.config.article.code.validators.maxLength) this.config.article.code.validators.maxLength = 10;
     if (!this.config.company.allowCurrentAccount.default) this.config.company.allowCurrentAccount.default = false;
     if (!this.config.article.printLabel.value) this.config.article.printLabel.value = 'code';
+    if (!this.config.article.isWeigth.default) this.config.article.isWeigth.default = false;
     if (!this.config.reports.summaryOfAccounts.invertedViewClient) this.config.reports.summaryOfAccounts.invertedViewClient = false;
     if (!this.config.reports.summaryOfAccounts.invertedViewProvider) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
+    if (!this.config.tradeBalance.codePrefix) this.config.tradeBalance.codePrefix = 0;
+    if (!this.config.tradeBalance.numberOfDecimals) this.config.tradeBalance.numberOfDecimals = 0;
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
@@ -671,9 +683,12 @@ export class ConfigComponent implements OnInit {
       'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
       'company.vatCondition.default': vatConfitionDefault,
       'article.printLabel.value': this.config.article.printLabel.value,
+      'article.isWeigth.default': this.config.article.isWeigth.default,
       'reports.summaryOfAccounts.detailsPaymentMethod': this.config.reports.summaryOfAccounts.detailsPaymentMethod,
       'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
-      'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider
+      'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,
+      'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix,
+      'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals
     });
   }
 
