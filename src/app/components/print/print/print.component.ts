@@ -42,6 +42,7 @@ import { CashBoxService } from '../../../services/cash-box.service';
 import { TaxClassification } from 'app/models/tax';
 import { Taxes } from 'app/models/taxes';
 import { ClaimService } from 'app/services/claim.service';
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
 
 @Component({
   selector: 'app-print',
@@ -104,6 +105,7 @@ export class PrintComponent implements OnInit {
     public _movementOfArticleService: MovementOfArticleService,
     public _configService: ConfigService,
     public _articleStockService: ArticleStockService,
+    public _movementOfCancellation : MovementOfCancellationService,
     public _articleService: ArticleService,
     public alertConfig: NgbAlertConfig,
     private _authService: AuthService,
@@ -1038,7 +1040,9 @@ export class PrintComponent implements OnInit {
     );
   }
 
-  public toPrintPayment(): void {
+  public async toPrintPayment() {
+
+    var transport = 0;
 
     // Encabezado de la transacción
     this.getHeader(true);
@@ -1099,7 +1103,10 @@ export class PrintComponent implements OnInit {
     // Encabezado de la tabla de Detalle de Productos
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Detalle", 25, 77);
+    this.doc.text("Detalle", 10, 77);
+    this.doc.text("Vencimiento",45,77);
+    this.doc.text("Número",80,77);
+    this.doc.text("Banco", 105,77);
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Total", 185, 77);
       this.doc.setFontType('normal');
@@ -1113,46 +1120,29 @@ export class PrintComponent implements OnInit {
       for (var i = 0; i < this.movementsOfCashes.length; i++) {
 
         if (this.movementsOfCashes[i].type.name) {
-          this.doc.text(this.movementsOfCashes[i].type.name, 25, row);
+          this.doc.text(this.movementsOfCashes[i].type.name, 10, row);
         }
 
         if (this.movementsOfCashes[i].amountPaid) {
           this.doc.text("$ " + this.roundNumber.transform(this.movementsOfCashes[i].amountPaid), 185, row);
         }
 
-        if (this.movementsOfCashes[i].number) {
-          row += 4;
-          this.doc.text("Comprobante: " + this.movementsOfCashes[i].number, 27, row);
-        }
-
         if (this.movementsOfCashes[i].expirationDate) {
-          row += 4;
-          this.doc.text("Vencimiento: " + this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 27, row);
+          this.doc.text(this.dateFormat.transform(this.movementsOfCashes[i].expirationDate, 'DD/MM/YYYY'), 45, row);
+        } else {
+          this.doc.text("-",45,row)
         }
 
+        if (this.movementsOfCashes[i].number) {
+          this.doc.text(this.movementsOfCashes[i].number, 80, row);
+        } else {
+          this.doc.text("-", 80, row);
+        }
+        
         if (this.movementsOfCashes[i].bank){
-          row += 4;
-          this.doc.text("Banco: "+this.movementsOfCashes[i].bank.name, 27, row);
-        }
-
-        if(this.movementsOfCashes[i].titular){
-          row += 4;
-          this.doc.text("Titular: "+this.movementsOfCashes[i].titular, 27, row);
-        }
-
-        if (this.movementsOfCashes[i].CUIT) {
-          row += 4;
-          this.doc.text("CUIT: " + this.movementsOfCashes[i].CUIT, 27, row);
-        }
-
-        if (this.movementsOfCashes[i].deliveredBy) {
-          row += 4;
-          this.doc.text("Entregado Por: " + this.movementsOfCashes[i].deliveredBy, 27, row);
-        }
-
-        if (this.movementsOfCashes[i].receiver) {
-          row += 4;
-          this.doc.text("Recibido Por: " + this.movementsOfCashes[i].receiver, 27, row);
+          this.doc.text(this.movementsOfCashes[i].bank.name, 105, row);
+        } else {
+          this.doc.text("-", 105, row);
         }
 
         if (this.movementsOfCashes[i].observation) {
@@ -1162,7 +1152,99 @@ export class PrintComponent implements OnInit {
         }
 
         row += 8;
+
+        transport = transport + this.movementsOfCashes[i].amountPaid;
+
+
+        if(i%21 == 0 && i != 0 ){
+
+          this.doc.setFontType("bold");
+          this.doc.text("TRANSPORTE:".toString(),25, row);
+          this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
+
+          this.doc.addPage();
+  
+          // Encabezado de la transacción
+          this.getHeader(true);
+          this.getClient();
+  
+          // Numeración de la transacción
+          this.doc.setFontSize(this.fontSizes.extraLarge);
+  
+          if (this.transaction.type.labelPrint &&
+            this.transaction.type.labelPrint !== '') {
+            this.centerText(5, 5, 105, 105, 10, this.transaction.type.labelPrint);
+          } else {
+            this.centerText(5, 5, 105, 105, 10, this.transaction.type.name);
+          }
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.setFontType('bold');
+          this.doc.text("Comp. Nº:", 110, 20);
+          this.doc.setFontType('normal');
+          if(Config.country === 'AR') {
+            this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 10), 130, 20);
+          } else {
+            this.doc.text(this.padString(this.transaction.number, 10), 130, 20);
+          }
+          this.doc.setFontType('bold');
+          this.doc.text("Fecha:", 110, 25);
+          this.doc.setFontType('normal');
+          if (this.transaction.endDate) {
+            this.doc.text(this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 125, 25);
+          } else {
+            this.doc.text(this.dateFormat.transform(this.transaction.startDate, 'DD/MM/YYYY'), 125, 25);
+          }
+  
+          // Letra de transacción
+          // Letra de transacción
+          if (this.transaction.letter && this.transaction.letter !== "") {
+            // Dibujar la linea cortada para la letra
+            this.doc.line(105, 16, 105, 50); //vertical letra
+            this.doc.setFontSize(this.fontSizes.extraLarge);
+            this.doc.setFontType('bold');
+            this.doc.setDrawColor("Black");
+            this.doc.rect(100, 3, 10, 10);
+            this.centerText(5, 5, 210, 0, 10, this.transaction.letter);
+            if (this.transaction.type.codes && Config.country === 'AR') {
+              for (let i = 0; i < this.transaction.type.codes.length; i++) {
+                if (this.transaction.letter === this.transaction.type.codes[i].letter) {
+                  this.doc.setFontSize('8');
+                  this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2), 101, 16);
+                }
+              }
+            }
+          } else {
+            // Dibujar la linea cortada para la letra
+            this.doc.line(105, 0, 105, 50); //vertical letra
+          }
+          this.doc.setFontType('normal');
+          this.doc.setFontSize(this.fontSizes.normal);
+  
+          // Encabezado de la tabla de Detalle de Productos
+          this.doc.setFontType('bold');
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.text("Detalle", 10, 77);
+          this.doc.text("Vencimiento",45,77);
+          this.doc.text("Numero",80,77);
+          this.doc.text("Banco", 105,77);
+          if (this.transaction.type && this.transaction.type.showPrices) {
+            this.doc.text("Total", 185, 77);
+            this.doc.setFontType('normal');
+          }
+  
+          // Detalle de productos
+          var row = 85;
+
+          this.doc.setFontType("bold");
+          this.doc.text("TRANSPORTE:".toString(),25, row);
+          this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
+          this.doc.setFontType("normal");
+
+          row = 95;
+        }
       }
+
+      
     }
 
     if (this.transaction.type && this.transaction.type.showPrices) {
@@ -1179,12 +1261,27 @@ export class PrintComponent implements OnInit {
       this.doc.setFontType('normal');
       this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
+
+      
     }
 
     this.doc.setFontType('bold');
     this.doc.text("Observaciones: "+this.transaction.observation+" "+this.movementsOfCashes[0].observation, 10, 246);
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
+
+    await this.getCancellationsOfMovements(this.transactionId)
+    
+    if(this.transactions){
+      this.doc.setFontType('bold');
+      this.doc.text("Documentos cancelados:",10,260);
+      for (let index = 0; index < this.transactions.length; index++) {
+        this.doc.setFontType('normal');
+        this.doc.text(this.transactions[0].type.name +"   "+ this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, 265);
+        row += 3;
+      }
+    }
+    
 
     this.getGreeting();
     this.getFooter();
@@ -1194,6 +1291,88 @@ export class PrintComponent implements OnInit {
     } else {
       this.getCompanyPicture(10, 5, 80, 40, true);
     }
+  }
+
+  async getCancellationsOfMovements(transactionDestinationViewId) {
+
+    return new Promise((resolve, reject) => {
+    
+      this.loading = true;
+
+      let match;
+  
+      match = { "transactionDestination": { $oid: transactionDestinationViewId} , "operationType": { "$ne": "D" } };
+      
+  
+      // CAMPOS A TRAER
+      let project = {
+        "transactionOrigin": 1,
+        "transactionDestination": 1,
+        "operationType" : 1
+      };
+  
+      this._movementOfCancellation.getMovementsOfCancellations(
+        project, // PROJECT
+        match, // MATCH
+        { order: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(async result => {
+        if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+          for (let index = 0; index < result.movementsOfCancellations.length; index++) {
+            let transaction = new Transaction;
+            
+            transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
+            
+            if(transaction){
+              this.transactions = new Array();
+              this.transactions.push(transaction);
+            } else {
+              resolve(null)
+            }
+          }
+          resolve(true)
+        } else {
+          resolve(null)
+          this.loading = false;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      });
+    });
+  
+   
+  }
+
+  public getTransaction2(transactionId: string): Promise<Transaction> {
+
+    return new Promise<Transaction>((resolve, reject) => {
+
+      this.loading = true;
+
+      this._transactionService.getTransaction(transactionId).subscribe(
+        result => {
+          if (!result.transaction) {
+            this.showMessage(result.message, 'danger', false);
+            this.loading = false;
+            resolve(null);
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            resolve(result.transaction);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+          resolve(null);
+        }
+      );
+    });
   }
 
   public calculateBarcodeAR(): void {
