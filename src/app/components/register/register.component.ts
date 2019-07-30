@@ -117,7 +117,10 @@ export class RegisterComponent implements OnInit {
       ],
       'stock': [false, [
         ]
+      ],
+      'money': [false, [
       ]
+    ]
     });
 
     this.registerForm.valueChanges
@@ -198,6 +201,7 @@ export class RegisterComponent implements OnInit {
       'delivery': this.registerForm.value.delivery,
       'purchase': this.registerForm.value.purchase,
       'stock': this.registerForm.value.stock,
+      'money' : this.registerForm.value.money
     });
   }
 
