@@ -193,6 +193,7 @@ export class AddArticleComponent implements OnInit {
         // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
         this.validationMessages.code['maxlength'] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
         this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
+        this.article.isWeigth = this.config.article.isWeigth.default;
       }
     );
 

@@ -42,6 +42,9 @@ export class Config {
 		},
 		printLabel: {
 			value: string
+		},
+		isWeigth: {
+			default: boolean
 		}
 	};
 	public company: {
