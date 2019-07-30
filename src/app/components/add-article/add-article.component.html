@@ -326,11 +326,11 @@
                   <label for="provider" class="control-label">Proveedor</label>
                     <select class="form-control" formControlName="providers">
                       <option [ngValue]="null" [selected]="!article || !article.providers" [disabled]="readonly"></option>
-                      <option *ngFor="let providers of companies"
-                              [selected]="(article.providers && article.providers._id && providers._id===article.providers._id) ||
-                                          (article.providers && providers._id===article.providers)"
-                              [value]="providers._id">
-                              {{providers.name}}</option>
+                      <option *ngFor="let provider of companies"
+                              [selected]="(article.providers[0] && article.providers[0]._id && provider._id===article.providers[0]._id) ||
+                                          (article.providers[0] && provider._id===article.providers[0])"
+                              [value]="provider._id">
+                              {{provider.name}}</option>
                     </select>
                     <div *ngIf="formErrors.providers" class="alert alert-danger">
                       {{ formErrors.provider }}
