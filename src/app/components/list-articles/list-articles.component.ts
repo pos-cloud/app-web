@@ -29,6 +29,8 @@ import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
 import { User } from 'app/models/user';
 import { PrintPriceListComponent } from '../print/print-price-list/print-price-list.component';
+import { TaxService } from 'app/services/tax.service';
+import { Tax } from 'app/models/tax';
 
 @Component({
   selector: 'app-list-articles',
@@ -80,13 +82,14 @@ export class ListArticlesComponent implements OnInit {
   public filteredArticles: Article[];
 
   constructor(
-    public _articleService: ArticleService,
-    public _router: Router,
-    public _modalService: NgbModal,
+    private _articleService: ArticleService,
+    private _router: Router,
+    private _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _printerService: PrinterService,
-    public _authService: AuthService
+    private _printerService: PrinterService,
+    private _authService: AuthService,
+    private _taxService: TaxService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -418,8 +421,10 @@ export class ListArticlesComponent implements OnInit {
 
   async addItem(articleSelected: Article) {
 
+    let err: boolean = false;
+
     await this.getArticle(articleSelected._id).then(
-      article => {
+      async article => {
         if(article) {
           let movementOfArticle = new MovementOfArticle();
           movementOfArticle.article = article;
@@ -483,7 +488,25 @@ export class ListArticlesComponent implements OnInit {
                 if (article.taxes) {
                   for (let taxAux of article.taxes) {
                     let tax: Taxes = new Taxes();
-                    tax.tax = taxAux.tax;
+                    if(taxAux.tax && taxAux.tax._id) {
+                      tax.tax = taxAux.tax;
+                    } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
+                      console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                      await this.getTaxes(taxAux.tax).then(
+                        taxes => {
+                          if(taxes && taxes.length > 0) {
+                            tax.tax = taxes[0];
+                          } else {
+                            err = true;
+                            this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
+                          }
+                        }
+                      );
+                    } else if(taxAux.tax === null) {
+                      console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                      err = true;
+                      this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
+                    }
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
                     if(tax.percentage && tax.percentage !== 0) {
                       tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
@@ -541,10 +564,33 @@ export class ListArticlesComponent implements OnInit {
             movementOfArticle.salePrice = movementOfArticle.costPrice;
           }
           this.areArticlesVisible = true;
-          this.eventAddItem.emit(movementOfArticle);
+          if(!err) {
+            this.eventAddItem.emit(movementOfArticle);
+          }
         }
       }
     );
+  }
+
+  public getTaxes(query?: string): Promise<Tax[]> {
+
+    return new Promise<Tax[]> ((resolve, reject) => {
+
+      this._taxService.getTaxes(query).subscribe(
+        result => {
+          if (!result.taxes) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            resolve(null);
+          } else {
+            resolve(result.taxes);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public getArticle(articleId: string): Promise<Article> {
