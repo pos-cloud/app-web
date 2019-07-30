@@ -492,7 +492,8 @@ export class ListArticlesComponent implements OnInit {
                       tax.tax = taxAux.tax;
                     } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
                       console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
-                      await this.getTaxes(taxAux.tax).then(
+                      let query = `where="_id":"${taxAux.tax}"`;
+                      await this.getTaxes(query).then(
                         taxes => {
                           if(taxes && taxes.length > 0) {
                             tax.tax = taxes[0];
