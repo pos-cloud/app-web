@@ -600,7 +600,6 @@ export class AddMovementOfCashComponent implements OnInit {
                   this.movementOfCash.receiver = mov.receiver;
                   this.movementOfCash.type = mov.type;
                   this.movementOfCash.statusCheck = StatusCheck.Closed;
-                  this.movementOfCash.type = this.movementOfCashForm.value.paymentMethod;
   
                   if(await this.isValidAmount(true)) {
   
