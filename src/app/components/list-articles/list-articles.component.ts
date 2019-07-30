@@ -550,6 +550,26 @@ export class ListArticlesComponent implements OnInit {
               let taxes: Taxes[] = new Array();
               if (article.taxes) {
                 for (let taxAux of article.taxes) {
+                  if(taxAux.tax && taxAux.tax._id) {
+                    taxAux.tax = taxAux.tax;
+                  } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
+                    console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                    let query = `where="_id":"${taxAux.tax}"`;
+                    await this.getTaxes(query).then(
+                      taxes => {
+                        if(taxes && taxes.length > 0) {
+                          taxAux.tax = taxes[0];
+                        } else {
+                          err = true;
+                          this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
+                        }
+                      }
+                    );
+                  } else if(taxAux.tax === null) {
+                    console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                    err = true;
+                    this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
+                  }
                   taxAux.taxBase = this.roundNumber.transform(taxedAmount);
                   if(taxAux.percentage && taxAux.percentage !== 0) {
                     taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
