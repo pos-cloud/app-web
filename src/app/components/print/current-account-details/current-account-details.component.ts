@@ -52,7 +52,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
+    this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);
     this.getTransactions()
   }
 
@@ -97,6 +97,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "company.vatCondition.description":1,
       "company.employee.name" :1,
       "company.operationType" : 1,
+      "company.state.name" :1,
       "endDate" :{ $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
       "type.name" :1,
       "type.currentAccount" : 1,
@@ -150,7 +151,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
     this.doc.text(5, row, 'Resumen de cuenta de ' + this.companyType)
     row += 5;
     this.doc.setFontSize(this.fontSizes.large)
-    this.doc.text(270, 200, "Hoja:" + page)
+    this.doc.text(180, 280, "Hoja:" + page)
     for(var i = 0; i < this.items.length; i++){
       this.doc.setLineWidth(1)
       this.doc.line(0, row, 1000, row)
@@ -159,19 +160,6 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(5,row,this.items[i]._id.company.name)
       row += 5;
       this.doc.setFontSize(this.fontSizes.normal)
-      this.doc.text(5,row,"Dirección:")
-      if(this.items[i]._id.company.address){
-        this.doc.text(5,row,"Dirección:"+this.items[i]._id.company.address)
-      }
-      this.doc.text(100,row,"Ciudad:")
-      if(this.items[i]._id.company.city){
-        this.doc.text(100,row,"Ciudad:"+this.items[i]._id.company.city)
-      }
-      this.doc.text(200,row,"Teléfono:")
-      if(this.items[i]._id.company.phones){
-        this.doc.text(200,row,"Teléfono:"+this.items[i]._id.company.phones)
-      }
-      row += 5;
       if(this.items[i]._id.company.identificationType && this.items[i]._id.company.identificationValue) {
         this.doc.text(5,row,this.items[i]._id.company.identificationType.name+":"+this.items[i]._id.company.identificationValue);
       }
@@ -185,6 +173,24 @@ export class CurrentAccountDetailsComponent implements OnInit {
         if(this.items[i]._id.company.vatCondition){
           this.doc.text(100,row,"Régimen Fiscal:"+this.items[i]._id.company.vatCondition.description);
         }
+      }
+      row += 5;
+      this.doc.text(5,row,"Dirección:")
+      if(this.items[i]._id.company.address){
+        this.doc.text(5,row,"Dirección:"+this.items[i]._id.company.address)
+      }
+      this.doc.text(100,row,"Ciudad:")
+      if(this.items[i]._id.company.city){
+        this.doc.text(100,row,"Ciudad:"+this.items[i]._id.company.city)
+      }
+      row += 5;
+      this.doc.text(5,row,"Provincia:")
+      if(this.items[i]._id.company.state){
+        this.doc.text(5,row,"Provincia:"+this.items[i]._id.company.state.name)
+      }
+      this.doc.text(100,row,"Teléfono:")
+      if(this.items[i]._id.company.phones){
+        this.doc.text(100,row,"Teléfono:"+this.items[i]._id.company.phones)
       }
       
       row += 5;
@@ -229,11 +235,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
         }
         
 
-        if(row > 155){
+        if(row > 220){
           page += 1;
           this.doc.addPage();
           this.doc.setFontSize(this.fontSizes.large)
-          this.doc.text(270, 200, "Hoja:" + page)
+          this.doc.text(180, 280, "Hoja:" + page)
           this.doc.setFontSize(this.fontSizes.normal)
           row = 15;
         }
@@ -246,11 +252,11 @@ export class CurrentAccountDetailsComponent implements OnInit {
       this.doc.text(180,row,"$" +this.roundNumber.transform(balance).toString());
       this.doc.setFontType("normal");
       row += 5;
-      if(row > 155){
+      if(row > 220){
         page += 1;
         this.doc.addPage();
         this.doc.setFontSize(this.fontSizes.large)
-        this.doc.text(270, 200, "Hoja:" + page)
+        this.doc.text(180, 280, "Hoja:" + page)
         this.doc.setFontSize(this.fontSizes.normal)
 
         row = 15;
