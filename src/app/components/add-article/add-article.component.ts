@@ -755,9 +755,9 @@ export class AddArticleComponent implements OnInit {
 
         if(this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if(field.datatype === ArticleFieldType.Percentage) {
+            if(field.articleField.datatype === ArticleFieldType.Percentage) {
               field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-            } else if(field.datatype === ArticleFieldType.Number) {
+            } else if(field.articleField.datatype === ArticleFieldType.Number) {
               field.amount = parseFloat(field.value);
             }
             if (field.articleField.modifyVAT) {
@@ -792,9 +792,9 @@ export class AddArticleComponent implements OnInit {
 
           if (this.otherFields && this.otherFields.length > 0) {
             for (const field of this.otherFields) {
-              if (field.datatype === ArticleFieldType.Percentage) {
+              if (field.articleField.datatype === ArticleFieldType.Percentage) {
                 field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-              } else if (field.datatype === ArticleFieldType.Number) {
+              } else if (field.articleField.datatype === ArticleFieldType.Number) {
                 field.amount = parseFloat(field.value);
               }
               if (field.articleField.modifyVAT) {
@@ -824,9 +824,9 @@ export class AddArticleComponent implements OnInit {
 
         if (this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if (field.datatype === ArticleFieldType.Percentage) {
+            if (field.articleField.datatype === ArticleFieldType.Percentage) {
               field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-            } else if (field.datatype === ArticleFieldType.Number) {
+            } else if (field.articleField.datatype === ArticleFieldType.Number) {
               field.amount = parseFloat(field.value);
             }
             if (field.articleField.modifyVAT) {
@@ -1222,7 +1222,7 @@ export class AddArticleComponent implements OnInit {
   public addArticleFields(otherFields: ArticleFields[]): void {
     this.otherFields = otherFields;
     for (let index = 0; index < this.otherFields.length; index++) {
-      if(this.otherFields[index].datatype !== ArticleFieldType.String && this.otherFields[index].datatype !== ArticleFieldType.Array ){
+      if(this.otherFields[index].articleField.datatype !== ArticleFieldType.String && this.otherFields[index].articleField.datatype !== ArticleFieldType.Array) {
         this.updatePrices('otherFields');
       }
     }

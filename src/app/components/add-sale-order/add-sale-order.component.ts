@@ -701,9 +701,9 @@ export class AddSaleOrderComponent {
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if (field.datatype === ArticleFieldType.Percentage) {
+        if (field.articleField.datatype === ArticleFieldType.Percentage) {
           field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-        } else if (field.datatype === ArticleFieldType.Number) {
+        } else if (field.articleField.datatype === ArticleFieldType.Number) {
           field.amount = parseFloat(field.value);
         }
         if (field.articleField.modifyVAT) {
@@ -759,9 +759,9 @@ export class AddSaleOrderComponent {
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if (field.datatype === ArticleFieldType.Percentage) {
+        if (field.articleField.datatype === ArticleFieldType.Percentage) {
           field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-        } else if (field.datatype === ArticleFieldType.Number) {
+        } else if (field.articleField.datatype === ArticleFieldType.Number) {
           field.amount = parseFloat(field.value);
         }
         fields.push(field);
