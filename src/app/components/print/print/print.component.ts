@@ -69,6 +69,7 @@ export class PrintComponent implements OnInit {
   @Input() articles: Article[];
   @Input() printer: Printer;
   @Input() transactionId: string;
+  @Input() source : string;
   public loading: boolean;
   public pathLocation: string[];
   public alertMessage: string = '';
@@ -1243,45 +1244,43 @@ export class PrintComponent implements OnInit {
           row = 95;
         }
       }
-
       
     }
 
-    if (this.transaction.type && this.transaction.type.showPrices) {
+    this.doc.setFontSize(this.fontSizes.extraLarge);
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(this.fontSizes.large);
+    this.doc.text("Total:", 147, row);
+    this.doc.setFontType('normal');
+    this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, row);
+    this.doc.setFontSize(this.fontSizes.normal);
+    row += 5;
 
-      let rowTotals = 247;
+
+    await this.getCancellationsOfMovements(this.transactionId)
+    
+    if(this.transactions){
       this.doc.setFontType('bold');
-
-
-      rowTotals += 8;
-      this.doc.setFontSize(this.fontSizes.extraLarge);
-      this.doc.setFontType('bold');
-      this.doc.setFontSize(this.fontSizes.large);
-      this.doc.text("Total:", 147, rowTotals);
-      this.doc.setFontType('normal');
-      this.doc.text("$ " + this.roundNumber.transform(this.transaction.totalPrice), 180, rowTotals);
       this.doc.setFontSize(this.fontSizes.normal);
-
-      
+      this.doc.line(0, row, 100, row)
+      row +=5
+      this.doc.text("Comprobantes cancelados",10,row);
+      this.doc.text("Total",80,row);
+      row +=3
+      this.doc.line(0, row, 100, row)
+      row +=5
+      for (let index = 0; index < this.transactions.length; index++) {
+        this.doc.setFontType('normal');
+        this.doc.text(this.transactions[index].type.name +"   "+ this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, row);
+        this.doc.text("$ " + this.roundNumber.transform(this.transactions[index].totalPrice), 80, row);
+        row += 8;
+      }
     }
 
     this.doc.setFontType('bold');
     this.doc.text("Observaciones: "+this.transaction.observation+" "+this.movementsOfCashes[0].observation, 10, 246);
     this.doc.setFontType('normal');
     this.doc.text('', 38, 250);
-
-    await this.getCancellationsOfMovements(this.transactionId)
-    
-    if(this.transactions){
-      this.doc.setFontType('bold');
-      this.doc.text("Documentos cancelados:",10,260);
-      for (let index = 0; index < this.transactions.length; index++) {
-        this.doc.setFontType('normal');
-        this.doc.text(this.transactions[0].type.name +"   "+ this.padString(this.transactions[index].origin, 4) + "-" + this.padString(this.transactions[index].number, 8), 10, 265);
-        row += 3;
-      }
-    }
-    
 
     this.getGreeting();
     this.getFooter();
@@ -1320,13 +1319,12 @@ export class PrintComponent implements OnInit {
         0 // SKIP
       ).subscribe(async result => {
         if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+          this.transactions = new Array();
           for (let index = 0; index < result.movementsOfCancellations.length; index++) {
             let transaction = new Transaction;
-            
             transaction = await this.getTransaction2(result.movementsOfCancellations[index].transactionOrigin)
             
             if(transaction){
-              this.transactions = new Array();
               this.transactions.push(transaction);
             } else {
               resolve(null)
@@ -2796,8 +2794,11 @@ export class PrintComponent implements OnInit {
 
   public finishImpression(): void {
     
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    if(!this.source){
+      this.doc.autoPrint();
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    }
+    
 
     if(this.transaction.type.electronics){
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
@@ -2809,14 +2810,16 @@ export class PrintComponent implements OnInit {
         }
       )
     } else {
-      this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
-        result =>{
-          console.log(result)
-        },
-        error =>{
-          console.log(error)
-        }
-      )
+      if(this.source === "mail"){
+        this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
+          result =>{
+            console.log(result)
+          },
+          error =>{
+            console.log(error)
+          }
+        )
+      }
     }
   }
 

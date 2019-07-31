@@ -430,7 +430,7 @@ export class ListArticlesComponent implements OnInit {
     });
   }
 
-  async addItem(articleSelected: Article, salePrice?: number) {
+  async addItem(articleSelected: Article, amount?: number, salePrice?: number) {
 
     let err: boolean = false;
 
@@ -484,7 +484,8 @@ export class ListArticlesComponent implements OnInit {
               movementOfArticle.markupPercentage = article.markupPercentage;
               movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
               if(salePrice) article.salePrice = salePrice; 
-              movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice);
+              if(amount) movementOfArticle.amount = amount; 
+              movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
               movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
 
               if(article.currency &&
@@ -656,11 +657,13 @@ export class ListArticlesComponent implements OnInit {
     if(this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
       if(this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
-        this.filterArticle = this.filterArticle.slice(this.config.tradeBalance.codePrefix.toString().length, 
-                                                      this.config.tradeBalance.codePrefix.toString().length + this.config.article.code.validators.maxLength);
+        this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length + 
+                                                      this.config.tradeBalance.numberOfQuantity), 
+                                                      (originalFilter.length -
+                                                        this.config.tradeBalance.numberOfDecimals -
+                                                        this.config.tradeBalance.numberOfIntegers - 1)), this.config.article.code.validators.maxLength);
       }
     }
-
     // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
     if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
@@ -700,14 +703,24 @@ export class ListArticlesComponent implements OnInit {
               (article.code && article.code === this.filterArticle))) {
                 this.filterArticle = '';
                 if(article.isWeigth && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                  let wholePart = originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length + this.config.article.code.validators.maxLength, 
-                                                          originalFilter.length - this.config.tradeBalance.numberOfDecimals - 1);
-                                                          console.log(wholePart);
-                  let decimalPart = originalFilter.slice(originalFilter.length - this.config.tradeBalance.numberOfDecimals - 1,
-                                                        originalFilter.length - 1);
-                                                        console.log(decimalPart);
+                  let wholePart = originalFilter.slice((originalFilter.length -
+                                                        this.config.tradeBalance.numberOfDecimals -
+                                                        this.config.tradeBalance.numberOfIntegers - 1)
+                                                        , 
+                                                        (originalFilter.length -
+                                                          this.config.tradeBalance.numberOfDecimals -
+                                                          this.config.tradeBalance.numberOfIntegers - 1) + 
+                                                          this.config.tradeBalance.numberOfIntegers);
+                  let decimalPart = originalFilter.slice((originalFilter.length -
+                                                          this.config.tradeBalance.numberOfDecimals - 1),
+                                                          (originalFilter.length - 1));
                   let salePrice = parseFloat(wholePart + "." + decimalPart);
-                  this.addItem(article, salePrice);
+                  let amount = 1;
+                  if(this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
+                    amount = parseInt(originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length, 
+                                                            this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfQuantity));
+                  }
+                  this.addItem(article, amount, salePrice);
                 } else {
                   this.addItem(article);
                 }
@@ -720,6 +733,13 @@ export class ListArticlesComponent implements OnInit {
         this.eventAddItem.emit(null);
       }
     }
+  }
+
+  public padNumber(n, length) {
+    var n = n.toString();
+    while (n.length < length)
+        n = "0" + n;
+    return n;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

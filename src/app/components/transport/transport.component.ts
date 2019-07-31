@@ -204,10 +204,7 @@ export class TransportComponent implements OnInit {
         Validators.required
         ]
       ],
-      'vatCondition': [this.transport.vatCondition, [
-        Validators.required
-        ]
-      ],
+      'vatCondition': [this.transport.vatCondition, []],
       'identificationType' : [this.transport.identificationType,[]],
       'identificationValue' : [this.transport.identificationValue,[]],
       'address' : [this.transport.address,[]],

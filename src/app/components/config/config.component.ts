@@ -311,6 +311,12 @@ export class ConfigComponent implements OnInit {
       'tradeBalance.codePrefix': [this.config.tradeBalance.codePrefix, [
         ]
       ],
+      'tradeBalance.numberOfQuantity': [this.config.tradeBalance.numberOfQuantity, [
+        ]
+      ],
+      'tradeBalance.numberOfIntegers': [this.config.tradeBalance.numberOfIntegers, [
+        ]
+      ],
       'tradeBalance.numberOfDecimals': [this.config.tradeBalance.numberOfDecimals, [
         ]
       ]
@@ -639,7 +645,9 @@ export class ConfigComponent implements OnInit {
     if (!this.config.reports.summaryOfAccounts.invertedViewClient) this.config.reports.summaryOfAccounts.invertedViewClient = false;
     if (!this.config.reports.summaryOfAccounts.invertedViewProvider) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
     if (!this.config.tradeBalance.codePrefix) this.config.tradeBalance.codePrefix = 0;
-    if (!this.config.tradeBalance.numberOfDecimals) this.config.tradeBalance.numberOfDecimals = 0;
+    if (!this.config.tradeBalance.numberOfQuantity) this.config.tradeBalance.numberOfQuantity = 2;
+    if (!this.config.tradeBalance.numberOfIntegers) this.config.tradeBalance.numberOfIntegers = 3;
+    if (!this.config.tradeBalance.numberOfDecimals) this.config.tradeBalance.numberOfDecimals = 2;
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
@@ -688,6 +696,8 @@ export class ConfigComponent implements OnInit {
       'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
       'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,
       'tradeBalance.codePrefix': this.config.tradeBalance.codePrefix,
+      'tradeBalance.numberOfQuantity': this.config.tradeBalance.numberOfQuantity,
+      'tradeBalance.numberOfIntegers': this.config.tradeBalance.numberOfIntegers,
       'tradeBalance.numberOfDecimals': this.config.tradeBalance.numberOfDecimals
     });
   }

@@ -64,6 +64,8 @@ export class Config {
 	};
     public tradeBalance: {
         codePrefix: number,
+        numberOfQuantity: number,
+        numberOfIntegers: number,
         numberOfDecimals: number
 	};
 

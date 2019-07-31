@@ -1,5 +1,5 @@
 //Paquetes Angular
-import { Component, OnInit, ElementRef, ViewChild, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, ViewChild, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 //Paquetes de terceros
@@ -69,6 +69,7 @@ import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { TransportService } from 'app/services/transport.service';
 import { Transport } from 'app/models/transport';
 import { SelectTransportComponent } from '../select-transport/select-transport.component';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -123,6 +124,7 @@ export class AddSaleOrderComponent {
   public filtersTaxClassification: TaxClassification[];
   public fastPayment: PaymentMethod
   public transports: Transport[];
+  public config: Config;
 
   constructor(
     public _transactionService: TransactionService,
@@ -145,7 +147,8 @@ export class AddSaleOrderComponent {
     public _cancellationTypeService: CancellationTypeService,
     public _currencyService: CurrencyService,
     private _claimService: ClaimService,
-    public _transportService: TransportService
+    public _transportService: TransportService,
+    public _configService: ConfigService
   ) {
     this.transaction = new Transaction();
     this.movementsOfArticles = new Array();
@@ -165,27 +168,32 @@ export class AddSaleOrderComponent {
     } else {
       this.transactionId = pathLocation[8];
     }
-
-    this.userCountry = Config.country;
-    if(this.userCountry === 'MX') {
-      this.getUsesOfCFDI().then(
-        usesOfCFDI => {
-          if(usesOfCFDI) {
-            this.usesOfCFDI = usesOfCFDI;
-          }
-        }
-      );
-      this.getRelationTypes().then(
-        relationTypes => {
-          if(relationTypes) {
-            this.relationTypes = relationTypes;
-          }
-        }
-      );
-    }
   }
 
   async ngOnInit() {
+    
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+        this.userCountry = this.config['country'];
+        if(this.userCountry === 'MX') {
+          this.getUsesOfCFDI().then(
+            usesOfCFDI => {
+              if(usesOfCFDI) {
+                this.usesOfCFDI = usesOfCFDI;
+              }
+            }
+          );
+          this.getRelationTypes().then(
+            relationTypes => {
+              if(relationTypes) {
+                this.relationTypes = relationTypes;
+              }
+            }
+          );
+        }
+      }
+    );
 
     if(this.transactionId) {
       await this.getTransaction().then(
@@ -429,9 +437,9 @@ export class AddSaleOrderComponent {
 
   public changeCurrency(currency: Currency): void {
     this.transaction.currency = currency;
-    if(Config.currency && this.transaction.currency._id !== Config.currency._id) {
+    if(this.config['currency'] && this.transaction.currency._id !== this.config['currency']._id) {
       for(let currency of this.currencies) {
-        if(currency._id !== Config.currency._id) {
+        if(currency._id !== this.config['currency']._id) {
           this.transaction.quotation = currency.quotation;
         }
       }
@@ -519,7 +527,6 @@ export class AddSaleOrderComponent {
           if(this.transaction.type.stockMovement) {
             movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
           }
-          movementOfArticle.amount = 1;
           movementOfArticle.printed = 0;
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
             await this.saveMovementOfArticle(movementOfArticle).then(
@@ -620,7 +627,7 @@ export class AddSaleOrderComponent {
     }
 
     if  (movementOfArticle.article &&
-        Config.modules.stock &&
+        this.config['modules'].stock &&
         this.transaction.type &&
         this.transaction.type.modifyStock &&
         this.transaction.type.stockMovement === StockMovement.Outflows &&
@@ -677,8 +684,8 @@ export class AddSaleOrderComponent {
 
     if( movementOfArticle.article &&
         movementOfArticle.article.currency &&
-        Config.currency &&
-        Config.currency._id !== movementOfArticle.article.currency._id) {
+        this.config['currency'] &&
+        this.config['currency']._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
 
@@ -743,8 +750,8 @@ export class AddSaleOrderComponent {
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
 
       if(movementOfArticle.article.currency &&
-        Config.currency &&
-        Config.currency._id !== movementOfArticle.article.currency._id) {
+        this.config['currency'] &&
+        this.config['currency']._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
       }
     }
@@ -765,8 +772,8 @@ export class AddSaleOrderComponent {
     if (movementOfArticle.article) {
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
       if(movementOfArticle.article.currency &&
-        Config.currency &&
-        Config.currency._id !== movementOfArticle.article.currency._id) {
+        this.config['currency'] &&
+        this.config['currency']._id !== movementOfArticle.article.currency._id) {
           movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
       }
     }
@@ -774,8 +781,8 @@ export class AddSaleOrderComponent {
     movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
     if( movementOfArticle.article &&
         movementOfArticle.article.currency &&
-        Config.currency &&
-        Config.currency._id !== movementOfArticle.article.currency._id) {
+        this.config['currency'] &&
+        this.config['currency']._id !== movementOfArticle.article.currency._id) {
         movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
     }
     movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
@@ -1010,7 +1017,7 @@ export class AddSaleOrderComponent {
               msn = "Ha ocurrido un error al intentar validar la factura. Comuníquese con Soporte Técnico.";
             }
             this.showMessage(msn, 'info', true);
-            let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"database":"' + Config.database + '"}';
+            let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"database":"' + this.config['database'] + '"}';
             this.saveClaim('ERROR FE :' + msn, body);
           } else {
             this.transaction.number = result.number;
@@ -1070,7 +1077,7 @@ export class AddSaleOrderComponent {
           let body ='transaction=' + JSON.stringify(this.transaction) + '&' +
                     'movementsOfArticles=' + JSON.stringify(this.movementsOfArticles) + '&' +
                     'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
-                    'config=' + '{"companyIdentificationValue":"' + Config.companyIdentificationValue + '","vatCondition":' + Config.companyVatCondition.code + ',"companyName":"' + Config.companyName + '","companyPostalCode":"' + Config.companyPostalCode + '","database":"' + Config.database + '"}';
+                    'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"companyName":"' + this.config['companyName'] + '","companyPostalCode":"' + this.config['companyPostalCode'] + '","database":"' + this.config['database'] + '"}';
       
           this.saveClaim('ERROR FE :' + msn, body);
         } else {
@@ -1234,7 +1241,7 @@ export class AddSaleOrderComponent {
 
                   this.assignLetter();
                   if (this.transaction.type.electronics) {
-                    if(Config.country === 'MX') {
+                    if(this.config['country'] === 'MX') {
                       if(!this.transaction.CFDStamp &&
                         !this.transaction.SATStamp &&
                         !this.transaction.stringSAT) {
@@ -1242,7 +1249,7 @@ export class AddSaleOrderComponent {
                       } else {
                         this.finish(); //SE FINALIZA POR ERROR EN LA FE
                       }
-                    } else if (Config.country === 'AR') {
+                    } else if (this.config['country'] === 'AR') {
                       if(!this.transaction.CAE) {
                         this.validateElectronicTransactionAR();
                       } else {
@@ -1482,7 +1489,7 @@ export class AddSaleOrderComponent {
       this.transaction.type.electronics &&
       this.transaction.totalPrice > 5000 &&
       !this.transaction.company &&
-      Config.country === 'AR') {
+      this.config['country'] === 'AR') {
       isValid = false;
       this.showMessage("Debe indentificar al cliente para transacciones electrónicos con monto mayor a $5.000,00.", 'info', true);
     }
@@ -1503,7 +1510,7 @@ export class AddSaleOrderComponent {
       this.transaction.type.fixedOrigin &&
       this.transaction.type.fixedOrigin === 0 &&
       this.transaction.type.electronics &&
-      Config.country === 'MX') {
+      this.config['country'] === 'MX') {
       isValid = false;
       this.showMessage("Debe configurar un punto de venta para transacciones electrónicos. Lo puede hacer en /Configuración/Tipos de Transacción.", 'info', true);
       this.loading = false;
@@ -1555,7 +1562,7 @@ export class AddSaleOrderComponent {
     let isValid: boolean = true;
 
     if (isValid &&
-        Config.modules.stock &&
+        this.config['modules'].stock &&
         this.transaction.type.modifyStock) {
 
           if(await this.areValidMovementOfArticle()) {
@@ -1902,15 +1909,15 @@ export class AddSaleOrderComponent {
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
     } else {
-      if(Config.country === 'AR') {
-        if (Config.companyVatCondition && Config.companyVatCondition.description === "Responsable Inscripto") {
+      if(this.config['country'] === 'AR') {
+        if (this.config['companyVatCondition'] && this.config['companyVatCondition'].description === "Responsable Inscripto") {
           if (this.transaction.company &&
             this.transaction.company.vatCondition) {
             this.transaction.letter = this.transaction.company.vatCondition.transactionLetter;
           } else {
             this.transaction.letter = "B";
           }
-        } else if (Config.companyVatCondition && Config.companyVatCondition.description === "Monotributista") {
+        } else if (this.config['companyVatCondition'] && this.config['companyVatCondition'].description === "Monotributista") {
           this.transaction.letter = "C";
         } else {
           this.transaction.letter = "X";
