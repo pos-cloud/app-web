@@ -673,7 +673,9 @@ export class AddArticleComponent implements OnInit {
         "transaction._id": 1,
         "transaction.quotation": 1,
         "amount": 1,
-        "salePrice" : 1
+        "salePrice" : 1,
+        "costPrice" : 1,
+        "basePrice" : 1
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -697,7 +699,7 @@ export class AddArticleComponent implements OnInit {
       result => {
         if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles.length > 0) {
           let movementOfArticle = result[0].movementsOfArticles[0];
-          this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.salePrice / movementOfArticle.amount);
+          this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.basePrice / movementOfArticle.amount);
           let quotation = 1;
           if(movementOfArticle.transaction && movementOfArticle.transaction.quotation) {
             quotation = movementOfArticle.transaction.quotation;
