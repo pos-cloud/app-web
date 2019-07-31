@@ -3050,13 +3050,7 @@ export class PrintComponent implements OnInit {
       for (let movementOfArticle of this.movementsOfArticles) {
         row += 5;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
-        if (movementOfArticle.article) {
-          if(movementOfArticle.article.posDescription){
-            this.doc.text(movementOfArticle.article.posDescription.slice(0, 18), 13, row);
-          } else {
-          this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
-          }
-        } 
+        this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), width/1.4, row);
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
 
