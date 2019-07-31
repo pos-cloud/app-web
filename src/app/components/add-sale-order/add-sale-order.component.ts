@@ -527,7 +527,6 @@ export class AddSaleOrderComponent {
           if(this.transaction.type.stockMovement) {
             movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
           }
-          movementOfArticle.amount = 1;
           movementOfArticle.printed = 0;
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
             await this.saveMovementOfArticle(movementOfArticle).then(
