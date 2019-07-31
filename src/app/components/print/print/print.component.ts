@@ -69,6 +69,7 @@ export class PrintComponent implements OnInit {
   @Input() articles: Article[];
   @Input() printer: Printer;
   @Input() transactionId: string;
+  @Input() source : string;
   public loading: boolean;
   public pathLocation: string[];
   public alertMessage: string = '';
@@ -2793,8 +2794,11 @@ export class PrintComponent implements OnInit {
 
   public finishImpression(): void {
     
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    if(!this.source){
+      this.doc.autoPrint();
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    }
+    
 
     if(this.transaction.type.electronics){
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
@@ -2806,14 +2810,16 @@ export class PrintComponent implements OnInit {
         }
       )
     } else {
-      this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
-        result =>{
-          console.log(result)
-        },
-        error =>{
-          console.log(error)
-        }
-      )
+      if(this.source === "mail"){
+        this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
+          result =>{
+            console.log(result)
+          },
+          error =>{
+            console.log(error)
+          }
+        )
+      }
     }
   }
 

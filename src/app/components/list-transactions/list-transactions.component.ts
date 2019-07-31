@@ -337,6 +337,23 @@ export class ListTransactionsComponent implements OnInit {
         });
         break;
       case 'send-email':
+        modalRef = this._modalService.open(PrintComponent);
+        modalRef.componentInstance.company = transaction.company;
+        modalRef.componentInstance.transactionId = transaction._id;
+        modalRef.componentInstance.typePrint = 'invoice';
+        modalRef.componentInstance.source = "mail";
+        if (transaction.type.defectPrinter) {
+          modalRef.componentInstance.printer = transaction.type.defectPrinter;
+        } else {
+          if (this.printers && this.printers.length > 0) {
+            for(let printer of this.printers) {
+              if (printer.printIn === PrinterPrintIn.Counter) {
+                modalRef.componentInstance.printer = printer;
+              }
+            }
+          }
+        }
+          
         modalRef = this._modalService.open(SendEmailComponent);
         if(transaction.company && transaction.company.emails) {
           modalRef.componentInstance.emails = transaction.company.emails;
@@ -351,7 +368,7 @@ export class ListTransactionsComponent implements OnInit {
         } else {
           modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar/#/print/others/` + transaction._id;
         }
-        modalRef.result.then((result) => {});
+        
         break;
       default: ;
     }
