@@ -506,7 +506,7 @@ export class AddSaleOrderComponent {
   }
 
   async addItem(itemData: MovementOfArticle) {
-
+    
     if(itemData) {
 
       this.showCategories();
@@ -801,7 +801,7 @@ export class AddSaleOrderComponent {
             tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           } else {
-            tax.taxAmount = taxAux.tax.amount * movementOfArticle.amount;
+            tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -949,7 +949,7 @@ export class AddSaleOrderComponent {
         totalPriceAux += movementOfArticle.salePrice;
       }
     }
-    
+
     if (transactionTaxesAUX) {
       for (let transactionTaxAux of transactionTaxesAUX) {
         let exists: boolean = false;
@@ -968,7 +968,7 @@ export class AddSaleOrderComponent {
     }
 
     this.transaction.taxes = transactionTaxes;
-    
+
     if(oldTaxes && oldTaxes.length > 0) {
       for(let oldTax of oldTaxes) {
         if(oldTax.tax.classification !== TaxClassification.Tax) {
