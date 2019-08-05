@@ -1018,7 +1018,7 @@ export class AddSaleOrderComponent {
             }
             this.showMessage(msn, 'info', true);
             let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"database":"' + this.config['database'] + '"}';
-            this.saveClaim('ERROR FE :' + msn, body);
+            this.saveClaim('ERROR FE ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, body);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1079,7 +1079,7 @@ export class AddSaleOrderComponent {
                     'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
                     'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"companyName":"' + this.config['companyName'] + '","companyPostalCode":"' + this.config['companyPostalCode'] + '","database":"' + this.config['database'] + '"}';
       
-          this.saveClaim('ERROR FE :' + msn, body);
+          this.saveClaim('ERROR FE ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, body);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
