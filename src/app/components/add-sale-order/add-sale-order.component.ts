@@ -506,7 +506,7 @@ export class AddSaleOrderComponent {
   }
 
   async addItem(itemData: MovementOfArticle) {
-
+    
     if(itemData) {
 
       this.showCategories();
@@ -723,7 +723,7 @@ export class AddSaleOrderComponent {
           if(articleTax.percentage && articleTax.percentage !== 0) {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           } else {
-            articleTax.taxAmount = articleTax.tax.amount * movementOfArticle.amount;
+            articleTax.taxAmount = articleTax.taxAmount * movementOfArticle.amount;
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -801,7 +801,7 @@ export class AddSaleOrderComponent {
             tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           } else {
-            tax.taxAmount = taxAux.tax.amount * movementOfArticle.amount;
+            tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -949,7 +949,7 @@ export class AddSaleOrderComponent {
         totalPriceAux += movementOfArticle.salePrice;
       }
     }
-    
+
     if (transactionTaxesAUX) {
       for (let transactionTaxAux of transactionTaxesAUX) {
         let exists: boolean = false;
@@ -968,7 +968,7 @@ export class AddSaleOrderComponent {
     }
 
     this.transaction.taxes = transactionTaxes;
-    
+
     if(oldTaxes && oldTaxes.length > 0) {
       for(let oldTax of oldTaxes) {
         if(oldTax.tax.classification !== TaxClassification.Tax) {
@@ -1018,7 +1018,7 @@ export class AddSaleOrderComponent {
             }
             this.showMessage(msn, 'info', true);
             let body = 'transaction=' + JSON.stringify(this.transaction) + '&' + 'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"database":"' + this.config['database'] + '"}';
-            this.saveClaim('ERROR FE :' + msn, body);
+            this.saveClaim('ERROR FE ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, body);
           } else {
             this.transaction.number = result.number;
             this.transaction.CAE = result.CAE;
@@ -1079,7 +1079,7 @@ export class AddSaleOrderComponent {
                     'movementsOfCashes=' + JSON.stringify(this.movementsOfCashes) + '&' +
                     'config=' + '{"companyIdentificationValue":"' + this.config['companyIdentificationValue'] + '","vatCondition":' + this.config['companyVatCondition'].code + ',"companyName":"' + this.config['companyName'] + '","companyPostalCode":"' + this.config['companyPostalCode'] + '","database":"' + this.config['database'] + '"}';
       
-          this.saveClaim('ERROR FE :' + msn, body);
+          this.saveClaim('ERROR FE ' + moment().format('DD/MM/YYYY HH:mm') + " : " + msn, body);
         } else {
           this.transaction.state = TransactionState.Closed;
           this.transaction.stringSAT = result.stringSAT;
