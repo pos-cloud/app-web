@@ -723,7 +723,7 @@ export class AddSaleOrderComponent {
           if(articleTax.percentage && articleTax.percentage !== 0) {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           } else {
-            articleTax.taxAmount = articleTax.tax.amount * movementOfArticle.amount;
+            articleTax.taxAmount = articleTax.taxAmount * movementOfArticle.amount;
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;

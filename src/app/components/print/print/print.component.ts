@@ -2652,20 +2652,16 @@ export class PrintComponent implements OnInit {
     if(this.transaction.type.electronics){
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
         result =>{
-          console.log(result)
         },
         error =>{
-          console.log(error)
         }
       )
     } else {
       if(this.source === "mail"){
         this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
           result =>{
-            console.log(result)
           },
           error =>{
-            console.log(error)
           }
         )
       }
