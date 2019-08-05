@@ -248,6 +248,7 @@ import { SelectTransportComponent } from './components/select-transport/select-t
 import { PrintPriceListComponent } from './components/print/print-price-list/print-price-list.component';
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
+import { PrintArticlesStockComponent } from './components/print/print-articles-stock/print-articles-stock.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -425,7 +426,8 @@ import { CurrentAccountDetailsComponent } from './components/print/current-accou
     SelectTransportComponent,
     PrintPriceListComponent,
     ListCashBoxComponent,
-    CurrentAccountDetailsComponent
+    CurrentAccountDetailsComponent,
+    PrintArticlesStockComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -588,7 +590,8 @@ import { CurrentAccountDetailsComponent } from './components/print/current-accou
     SelectTransportComponent,
     PrintPriceListComponent,
     ListCashBoxesComponent,
-    CurrentAccountDetailsComponent
+    CurrentAccountDetailsComponent,
+    PrintArticlesStockComponent
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,7 @@ import { UpdateArticleStockComponent } from './../../components/update-article-s
 import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { PrinterPrintIn, Printer } from '../../models/printer';
+import { PrintArticlesStockComponent } from '../print/print-articles-stock/print-articles-stock.component';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -143,15 +144,14 @@ export class ListArticleStocksComponent implements OnInit {
         }
         break;
       case 'print-inventario':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.typePrint = 'inventario';
-        if (this.printers && this.printers.length > 0) {
-          for (let printer of this.printers) {
-            if (printer.printIn === PrinterPrintIn.Counter) {
-              modalRef.componentInstance.printer = printer;
-            }
-          }
-        }
+        modalRef = this._modalService.open(PrintArticlesStockComponent);
+        modalRef.componentInstance.branch = this.filters['branch.number'];
+        modalRef.componentInstance.deposit = this.filters['deposit.name'];
+        modalRef.componentInstance.make = this.filters['article.make.description'];
+        modalRef.componentInstance.category = this.filters['article.category.description'];
+        modalRef.componentInstance.code = this.filters['article.code'];
+        modalRef.componentInstance.barcode = this.filters['article.barcode'];
+        modalRef.componentInstance.description = this.filters['article.description'];
         break;
       default:
         break;
