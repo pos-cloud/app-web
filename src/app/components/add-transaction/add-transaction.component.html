@@ -40,7 +40,7 @@
           </select>
         </div>
       </div>
-      <div class="row" *ngIf="transactionMovement === 'Venta'">
+      <div class="row" *ngIf="transactionMovement === 'Venta' && userType === 'pos'">
         <div class="form-group col-md-12">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" [readonly]="readonly" [focus]="focusEvent"/>
@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transactionMovement && transactionMovement === 'Compra'">
+      <div class="row" *ngIf="transactionMovement && transactionMovement === 'Compra' && userType === 'pos'">
         <div class="form-group col-md-4">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"[readonly]="readonly" />
@@ -89,7 +89,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transaction && transaction.type && transaction.type.tax">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.tax && userType === 'pos' ">
         <div class="form-group col-md-12">
           <label for="VATPeriod" class="control-label">Período de IVA:</label>
           <input type="text" class="form-control" formControlName="VATPeriod" name="VATPeriod" [readonly]="readonly" />
@@ -98,7 +98,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles && userType === 'pos'">
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
@@ -124,21 +124,21 @@
                             [articleTaxes]="taxes"
                             [transaction]="transaction"
                             [filtersTaxClassification]="filtersTaxClassification"
-                            *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles">
+                            *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles && userType === 'pos'">
       </app-add-article-tax>
-      <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company">
+      <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company && userType === 'pos'">
         <div class="col-md-12 center-content">
           <button type="button" class="btn btn-secondary" (click)="openModal('list-cancellations')">
             Buscar Transacciones a Cancelar
           </button>
         </div>
       </div>
-      <div class = "row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles">
+      <div class = "row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && userType === 'pos'">
         <div class = "col-md-12">
             <label for="totalPrice" class="control-label">Importe Total:</label>
         </div>
       </div>
-      <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles">
+      <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && userType === 'pos'">
         <div class="form-group col-md-12" *ngIf="showButtonCancelation && transaction && transaction.company">
           <div class="input-group">
             <span class="input-group-addon">$</span>
@@ -158,6 +158,18 @@
             </div>
           </div>
       </div>
+      <div class="row" *ngIf="userType === 'admin'">
+        <div class = "col-md-12">
+          <label for="balance" class="control-label">Saldo:</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control" formControlName="balance" name="balance" (change)="validateBalance()" [readonly]="readonly"/>
+          </div>
+          <div *ngIf="formErrors.balance" class="alert alert-danger">
+            {{ formErrors.balance }}
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="observation" class="control-label">Observación:</label>
@@ -170,6 +182,7 @@
                               transaction.type.allowEdit && 
                               transaction._id && 
                               transaction._id !== '' &&
+                              transaction.type.electronics === false &&
                               userType === 'admin'">
         <div class="form-group col-md-12">
           <label for="state" class="control-label">Estado</label>

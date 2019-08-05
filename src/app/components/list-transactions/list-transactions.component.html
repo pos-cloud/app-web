@@ -80,12 +80,10 @@
               </button>
               <button type="button"
                       *ngIf="transaction.type.allowEdit &&
-                            (!transaction.type.electronics ||
-                            (transaction.type.electronics &&
-                            transaction.state.toString() !== 'Cerrado'))"
-                            class="btn btn-primary btn-sm"
-                            (click)="openModal('edit', transaction)"
-                            title="Editar"><i class="fa fa-pencil"></i>
+                             transaction.state === 'Cerrado'"
+                      class="btn btn-primary btn-sm"
+                      (click)="openModal('edit', transaction)"
+                      title="Editar"><i class="fa fa-pencil"></i>
               </button>
               <button type="button"
                       *ngIf="transaction.type.allowDelete &&
@@ -103,6 +101,7 @@
                       title="Imprimir"><i class="fa fa-print"></i>
               </button>
               <button type="button"
+                      *ngIf="transaction.state === 'Cerrado'" 
                       class="btn btn-secondary btn-sm" 
                       (click)="openModal('send-email', transaction)"                      
                       title="Enviar"><i class="fa fa-envelope"></i>                     

@@ -231,6 +231,9 @@ export class AddTransactionComponent implements OnInit {
       'VATPeriod': [this.transaction.VATPeriod, [
         ]
       ],
+      'balance': [this.transaction.balance, [
+      ]
+        ],
     });
 
     this.transactionForm.valueChanges
@@ -274,7 +277,8 @@ export class AddTransactionComponent implements OnInit {
       'observation': this.transaction.observation,
       'employeeOpening': employeeOpening,
       'state': this.transaction.state,
-      'VATPeriod': this.transaction.VATPeriod
+      'VATPeriod': this.transaction.VATPeriod,
+      'balance' : this.transaction.balance
     });
   }
 
@@ -330,6 +334,13 @@ export class AddTransactionComponent implements OnInit {
     } else {
       this.activeModal.close('change-company');
     }
+  }
+
+  public validateBalance(){
+    if(this.transactionForm.value.balance > this.transaction.totalPrice){
+      this.showMessage("El saldo no puede ser mayor a: $" + this.transaction.totalPrice , 'danger', false);
+      this.setValuesForm();
+    } 
   }
 
   async openModal(
@@ -426,6 +437,7 @@ export class AddTransactionComponent implements OnInit {
   async addTransaction() {
 
     this.transaction.observation = this.transactionForm.value.observation;
+    this.transaction.balance = this.transactionForm.value.balance;
     this.transaction.employeeOpening = this.transactionForm.value.employeeOpening;
     this.transaction.employeeClosing = this.transactionForm.value.employeeOpening;
 
