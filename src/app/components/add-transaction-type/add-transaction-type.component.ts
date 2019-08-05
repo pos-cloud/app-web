@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { TransactionType, Movements, CurrentAccount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount } from './../../models/transaction-type';
+import { TransactionType, Movements, CurrentAccount, CodeAFIP, TransactionMovement, StockMovement, EntryAmount, PriceType, DescriptionType } from './../../models/transaction-type';
 import { Printer } from './../../models/printer';
 import { EmployeeType } from './../../models/employee-type';
 
@@ -19,6 +19,7 @@ import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
 import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
+import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'app-add-transaction-type',
@@ -32,6 +33,8 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() transactionType: TransactionType;
   public transactionMovements: any[] = [TransactionMovement.Sale, TransactionMovement.Purchase, TransactionMovement.Stock, TransactionMovement.Money];
   public stockMovements: any [] = [StockMovement.Inflows,StockMovement.Outflows,StockMovement.Inventory]
+  public PriceTypes : any [] = [PriceType.Final,PriceType.Base]
+  public DescriptionTypes : any [] = [DescriptionType.Description,DescriptionType.PosDescription,DescriptionType.Code]
   public transactionTypeForm: FormGroup;
   public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
   public alertMessage: string = '';
@@ -313,7 +316,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestTransport': [this.transactionType.requestTransport, [
         ]
       ],
-      'isPreprinted' : [this.transactionType.isPreprinted,[]]
+      'isPreprinted' : [this.transactionType.isPreprinted,[]],
+      'showPriceType' : [this.transactionType.showPriceType,[]],
+      'showDescriptionType' : [this.transactionType.showDescriptionType,[]]
     });
 
     this.transactionTypeForm.valueChanges
@@ -468,6 +473,11 @@ export class AddTransactionTypeComponent implements OnInit {
       }
     }
 
+    if (!this.transactionType.showDescriptionType) this.transactionType.showDescriptionType = DescriptionType.Description;
+    if (!this.transactionType.showPriceType) this.transactionType.showPriceType = PriceType.Final;
+
+
+
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
@@ -509,7 +519,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestCompany': this.transactionType.requestCompany,
       'cashBoxImpact': this.transactionType.cashBoxImpact,
       'requestTransport': this.transactionType.requestTransport,
-      'isPreprinted' : this.transactionType.isPreprinted
+      'isPreprinted' : this.transactionType.isPreprinted,
+      'showDescriptionType' : this.transactionType.showDescriptionType,
+      'showPriceType' : this.transactionType.showPriceType
     });
   }
 

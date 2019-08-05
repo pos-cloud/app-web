@@ -439,6 +439,46 @@
                     </div>
                   </div>
                 </div>
+                <div class = "row">
+                  <div class="form-group col-md-3">
+                    <label for="showPriceType" class="control-label">Monto que muestra?</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="showPriceType">
+                          <option
+                          *ngFor="let priceType of PriceTypes"
+                          [ngValue]="priceType"
+                          [disabled]="readonly">
+                          {{ priceType }}
+                        </option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Cuál es el precio que se muestra a la derecha en mostrador?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <label for="showDescriptionType" class="control-label">Descripción que muestra?</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="showDescriptionType">
+                          <option
+                          *ngFor="let descriptionType of DescriptionTypes"
+                          [ngValue]="descriptionType"
+                          [disabled]="readonly">
+                          {{ descriptionType }}
+                        </option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Cuál la descripción que se muestra a la derecha en mostrador?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </ng-template>

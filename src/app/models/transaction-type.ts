@@ -49,6 +49,8 @@ export class TransactionType {
 	public fastPayment: PaymentMethod;
 	public requestCompany: CompanyType;
 	public isPreprinted : boolean = false;
+	public showPriceType : PriceType = PriceType.Final;
+	public showDescriptionType : DescriptionType = DescriptionType.Description;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
@@ -91,4 +93,15 @@ export enum EntryAmount {
 	CostWithVAT = <any>"Costo con IVA",
 	SaleWithoutVAT = <any>"Venta sin IVA",
 	SaleWithVAT = <any>"Venta con IVA"
+}
+
+export enum PriceType {
+	Base = <any>"Precio Base",
+	Final = <any>"Precio Final",
+}
+
+export enum DescriptionType {
+	Code = <any>"Código",
+	Description = <any>"Descripción",
+	PosDescription = <any> "Descripción Corta"
 }
