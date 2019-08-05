@@ -478,7 +478,7 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'sort="_id":-1&limit=1';
+    let query = `where="type":"${ArticleType.Final}"&sort="_id":-1&limit=1`;
 
     this._articleService.getArticles(query).subscribe(
       result => {
