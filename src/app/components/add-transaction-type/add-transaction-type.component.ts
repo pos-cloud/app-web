@@ -19,7 +19,6 @@ import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
 import { UseOfCFDI } from 'app/models/use-of-CFDI';
 import { UseOfCFDIService } from 'app/services/use-of-CFDI.service';
-import { runInThisContext } from 'vm';
 
 @Component({
   selector: 'app-add-transaction-type',
