@@ -474,10 +474,12 @@ export class ListArticlesComponent implements OnInit {
               let fields: ArticleFields[] = new Array();
               if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
                 for (const field of movementOfArticle.otherFields) {
-                  if (field.datatype === ArticleFieldType.Percentage) {
-                    field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                  } else if (field.datatype === ArticleFieldType.Number) {
-                    field.amount = parseFloat(field.value);
+                  if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+                    if (field.datatype === ArticleFieldType.Percentage) {
+                      field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                    } else if (field.datatype === ArticleFieldType.Number) {
+                      field.amount = parseFloat(field.value);
+                    }
                   }
                   fields.push(field);
                 }
@@ -548,15 +550,17 @@ export class ListArticlesComponent implements OnInit {
             let fields: ArticleFields[] = new Array();
             if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
               for (const field of movementOfArticle.otherFields) {
-                if (field.datatype === ArticleFieldType.Percentage) {
-                  field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                } else if (field.datatype === ArticleFieldType.Number) {
-                  field.amount = parseFloat(field.value);
-                }
-                if (field.articleField.modifyVAT) {
-                  taxedAmount += field.amount;
-                } else {
-                  movementOfArticle.costPrice += field.amount;
+                if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+                  if (field.datatype === ArticleFieldType.Percentage) {
+                    field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                  } else if (field.datatype === ArticleFieldType.Number) {
+                    field.amount = parseFloat(field.value);
+                  }
+                  if (field.articleField.modifyVAT) {
+                    taxedAmount += field.amount;
+                  } else {
+                    movementOfArticle.costPrice += field.amount;
+                  }
                 }
                 fields.push(field);
               }

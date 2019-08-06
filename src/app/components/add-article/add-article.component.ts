@@ -794,15 +794,17 @@ export class AddArticleComponent implements OnInit {
 
           if (this.otherFields && this.otherFields.length > 0) {
             for (const field of this.otherFields) {
-              if (field.datatype === ArticleFieldType.Percentage) {
-                field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-              } else if (field.datatype === ArticleFieldType.Number) {
-                field.amount = parseFloat(field.value);
-              }
-              if (field.articleField.modifyVAT) {
-                taxedAmount += field.amount;
-              } else {
-                this.articleForm.value.costPrice += field.amount;
+              if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+                if (field.datatype === ArticleFieldType.Percentage) {
+                  field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
+                } else if (field.datatype === ArticleFieldType.Number) {
+                  field.amount = parseFloat(field.value);
+                }
+                if (field.articleField.modifyVAT) {
+                  taxedAmount += field.amount;
+                } else {
+                  this.articleForm.value.costPrice += field.amount;
+                }
               }
             }
           }
@@ -826,15 +828,17 @@ export class AddArticleComponent implements OnInit {
 
         if (this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if (field.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-            } else if (field.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-            if (field.articleField.modifyVAT) {
-              taxedAmount += field.amount;
-            } else {
-              this.articleForm.value.costPrice += field.amount;
+            if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+              if (field.datatype === ArticleFieldType.Percentage) {
+                field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
+              } else if (field.datatype === ArticleFieldType.Number) {
+                field.amount = parseFloat(field.value);
+              }
+              if (field.articleField.modifyVAT) {
+                taxedAmount += field.amount;
+              } else {
+                this.articleForm.value.costPrice += field.amount;
+              }
             }
           }
         }
