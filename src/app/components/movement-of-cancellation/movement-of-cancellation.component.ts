@@ -589,7 +589,7 @@ export class MovementOfCancellationComponent implements OnInit {
                     if(tax.percentage && tax.percentage !== 0) {
                       tax.taxAmount = (tax.taxBase * tax.percentage / 100);
                     } else {
-                      tax.taxAmount = tax.tax.amount * movementOfArticle.amount;
+                      tax.taxAmount = tax.taxAmount * movementOfArticle.amount;
                     }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);
                     tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -651,15 +651,17 @@ export class MovementOfCancellationComponent implements OnInit {
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if (field.articleField.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-        } else if (field.articleField.datatype === ArticleFieldType.Number) {
-          field.amount = parseFloat(field.value);
-        }
-        if (field.articleField.modifyVAT) {
-          taxedAmount += field.amount;
-        } else {
-          movementOfArticle.costPrice += field.amount;
+        if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+          if (field.datatype === ArticleFieldType.Percentage) {
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+          } else if (field.datatype === ArticleFieldType.Number) {
+            field.amount = parseFloat(field.value);
+          }
+          if (field.articleField.modifyVAT) {
+            taxedAmount += field.amount;
+          } else {
+            movementOfArticle.costPrice += field.amount;
+          }
         }
         fields.push(field);
       }
@@ -673,7 +675,7 @@ export class MovementOfCancellationComponent implements OnInit {
           if(articleTax.percentage && articleTax.percentage !== 0) {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           } else {
-            articleTax.taxAmount = articleTax.tax.amount * movementOfArticle.amount;
+            articleTax.taxAmount = articleTax.taxAmount * movementOfArticle.amount;
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -709,10 +711,12 @@ export class MovementOfCancellationComponent implements OnInit {
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if (field.articleField.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-        } else if (field.articleField.datatype === ArticleFieldType.Number) {
-          field.amount = parseFloat(field.value);
+        if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+          if (field.datatype === ArticleFieldType.Percentage) {
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+          } else if (field.datatype === ArticleFieldType.Number) {
+            field.amount = parseFloat(field.value);
+          }
         }
         fields.push(field);
       }
@@ -745,7 +749,7 @@ export class MovementOfCancellationComponent implements OnInit {
             tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           } else {
-            tax.taxAmount = tax.tax.amount * movementOfArticle.amount;
+            tax.taxAmount = tax.taxAmount * movementOfArticle.amount;
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);

@@ -49,7 +49,7 @@ export class CancellationTypeService {
         skip: number = 0
     ): Observable<any> {
 
-        const URL = `${Config.apiURL}/cancellation-types`;
+        const URL = `${Config.apiURL}cancellation-types`;
 
         const headers = new HttpHeaders()
             .set('Content-Type', 'application/json')

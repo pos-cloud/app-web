@@ -478,7 +478,7 @@ export class AddArticleComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'sort="_id":-1&limit=1';
+    let query = `where="type":"${ArticleType.Final}"&sort="_id":-1&limit=1`;
 
     this._articleService.getArticles(query).subscribe(
       result => {
@@ -673,7 +673,9 @@ export class AddArticleComponent implements OnInit {
         "transaction._id": 1,
         "transaction.quotation": 1,
         "amount": 1,
-        "salePrice" : 1
+        "salePrice" : 1,
+        "costPrice" : 1,
+        "basePrice" : 1
     };
 
     // AGRUPAMOS EL RESULTADO
@@ -697,7 +699,7 @@ export class AddArticleComponent implements OnInit {
       result => {
         if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles.length > 0) {
           let movementOfArticle = result[0].movementsOfArticles[0];
-          this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.salePrice / movementOfArticle.amount);
+          this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.basePrice / movementOfArticle.amount);
           let quotation = 1;
           if(movementOfArticle.transaction && movementOfArticle.transaction.quotation) {
             quotation = movementOfArticle.transaction.quotation;
@@ -792,15 +794,17 @@ export class AddArticleComponent implements OnInit {
 
           if (this.otherFields && this.otherFields.length > 0) {
             for (const field of this.otherFields) {
-              if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-              } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                field.amount = parseFloat(field.value);
-              }
-              if (field.articleField.modifyVAT) {
-                taxedAmount += field.amount;
-              } else {
-                this.articleForm.value.costPrice += field.amount;
+              if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+                if (field.datatype === ArticleFieldType.Percentage) {
+                  field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
+                } else if (field.datatype === ArticleFieldType.Number) {
+                  field.amount = parseFloat(field.value);
+                }
+                if (field.articleField.modifyVAT) {
+                  taxedAmount += field.amount;
+                } else {
+                  this.articleForm.value.costPrice += field.amount;
+                }
               }
             }
           }
@@ -824,15 +828,17 @@ export class AddArticleComponent implements OnInit {
 
         if (this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if (field.articleField.datatype === ArticleFieldType.Percentage) {
-              field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-            } else if (field.articleField.datatype === ArticleFieldType.Number) {
-              field.amount = parseFloat(field.value);
-            }
-            if (field.articleField.modifyVAT) {
-              taxedAmount += field.amount;
-            } else {
-              this.articleForm.value.costPrice += field.amount;
+            if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+              if (field.datatype === ArticleFieldType.Percentage) {
+                field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
+              } else if (field.datatype === ArticleFieldType.Number) {
+                field.amount = parseFloat(field.value);
+              }
+              if (field.articleField.modifyVAT) {
+                taxedAmount += field.amount;
+              } else {
+                this.articleForm.value.costPrice += field.amount;
+              }
             }
           }
         }

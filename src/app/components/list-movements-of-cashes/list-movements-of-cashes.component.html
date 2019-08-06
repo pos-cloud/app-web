@@ -108,169 +108,180 @@
     </div>
   </section>
   
-  <!--POS-->
-  <section class="container-fluid" *ngIf="userType==='pos'">
-      <div class="center-content" *ngIf="alertMessage !== '' && !areMovementOfCashesEmpty">
-        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-          {{alertMessage}}
-        </ngb-alert>
+<!--POS-->
+<section class="container-fluid" *ngIf="userType==='pos'">
+    <div class="center-content" *ngIf="alertMessage !== '' && !areMovementOfCashesEmpty">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <div class="card card-outline-primary">
+      <div class="card-header bg-primary">Listado de Movimientos de Medios
+        <div class="pull-right">
+          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+          <button class="btn btn-primary fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
+        </div>
       </div>
-      <div class="card card-outline-primary">
-        <div class="card-header bg-primary">Listado de Movimientos de Medios
-          <div class="pull-right">
-            <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-            <button class="btn btn-primary fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
-          </div>
-        </div>
-        <div class="card-block table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>
-                  <i class="fa fa-bars"></i>
-                </th>
-                <th (click)="orderBy('number')">Comprobante</th>
-                <th (click)="orderBy('transaction.type.name')">Tipo</th>
-                <th (click)="orderBy('transaction.type.transactionMovement')">Movimiento</th>
-                <th (click)="orderBy('bank.name')">Banco</th>
-                <th (click)="orderBy('expirationDate')">Vencimiento</th>
-                <th (click)="orderBy('amountPaid')">Importe</th>
-              </tr>
-              <tr class="filters">
-                <th></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getMovementOfCashes()" placeholder="Comprobante..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Tipo..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['bank.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Banco..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']" (keydown.enter)="getMovementOfCashes()" placeholder="Fecha..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" (keydown.enter)="getMovementOfCashes()" placeholder="Importe..."></th>
-  
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let movementOfCash of movementsOfCashes"
-                  [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}">
-                <td align="left" width="130">
-                  <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
-                </td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.number }}</td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.transaction.type.name }}</td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.transaction.type.transactionMovement }}</td>
-                <td *ngIf="movementOfCash.bank" class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.bank.name }}</td>
-                <td *ngIf="!movementOfCash.bank" (click)="selectmovementOfCash(movementOfCash)"></td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.expirationDate }}</td>
-                <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.amountPaid }}</td>
-              </tr>
-              <tr align="center" *ngIf="totalItems === 0 && !loading">
-                <td colspan="15">No se encontraron movimientos</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer">
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>
+                <i class="fa fa-bars"></i>
+              </th>
+              <th (click)="orderBy('number')">Comprobante</th>
+              <th (click)="orderBy('transaction.type.name')">Tipo</th>
+              <th (click)="orderBy('transaction.type.transactionMovement')">Movimiento</th>
+              <th (click)="orderBy('bank.name')">Banco</th>
+              <th (click)="orderBy('expirationDate')">Vencimiento</th>
+              <th (click)="orderBy('amountPaid')">Importe</th>
+            </tr>
+            <tr class="filters">
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getMovementOfCashes()" placeholder="Comprobante..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['bank.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Banco..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']" (keydown.enter)="getMovementOfCashes()" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" (keydown.enter)="getMovementOfCashes()" placeholder="Importe..."></th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let movementOfCash of movementsOfCashes"
+                [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
+              </td>
+              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.number }}</td>
+              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.transaction.type.name }}</td>
+              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.transaction.type.transactionMovement }}</td>
+              <td *ngIf="movementOfCash.bank" class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.bank.name }}</td>
+              <td *ngIf="!movementOfCash.bank" (click)="selectmovementOfCash(movementOfCash)"></td>
+              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.expirationDate }}</td>
+              <td class="flat" (click)="selectmovementOfCash(movementOfCash)">{{movementOfCash.amountPaid }}</td>
+            </tr>
+            <tr align="center" *ngIf="totalItems === 0 && !loading">
+              <td colspan="15">No se encontraron movimientos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+          <div class="row">
+            <div class="col-md-10">
+              <b>Monto Seleccionado: {{ totalAmountSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+            </div>
             <div class="row">
-              <div class="col-md-10">
-                <b>Monto Seleccionado: {{ totalAmountSelected | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
-              </div>
-              <div class="row">
-                <div class="col-md-2">
-                  <button class="btn btn-primary"
-                          (click)="closeModal()">
-                    Aceptar
-                  </button>
-                </div>
+              <div class="col-md-2">
+                <button class="btn btn-primary"
+                        (click)="closeModal()">
+                  Aceptar
+                </button>
               </div>
             </div>
           </div>
-      </div>
-  </section>
-  
-  <!--REPORT-->
-  <section class="container-fluid" *ngIf="userType==='report'">
-      <div class="center-content" *ngIf="alertMessage !== '' && !areMovementOfCashesEmpty">
-        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
-          {{alertMessage}}
-        </ngb-alert>
-      </div>
-      <div class="card card-outline-primary">
-        <div class="card-header bg-primary">Listado de Movimientos de Medios
-          <div class="pull-right">
-            <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-            <span (click)="areFiltersVisible = !areFiltersVisible">
-              <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-            </span>
-          </div>
         </div>
-        <div class="card-block table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>
-                  <i class="fa fa-bars"></i>
-                </th>
-                <th (click)="orderBy('number')">Comprobante</th>
-                <th (click)="orderBy('transaction.type.name')">Tipo</th>
-                <th (click)="orderBy('transaction.type.transactionMovement')">Movimiento</th>
-                <th (click)="orderBy('bank.name')">Banco</th>
-                <th (click)="orderBy('expirationDate')">Vencimiento</th>
-                <th (click)="orderBy('amountPaid')">Importe</th>
-              </tr>
-              <tr *ngIf="areFiltersVisible" class="filters">
-                <th></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getMovementOfCashes()" placeholder="Comprobante..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Tipo..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['bank.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Banco..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']" (keydown.enter)="getMovementOfCashes()" placeholder="Fecha..."></th>
-                <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" (keydown.enter)="getMovementOfCashes()" placeholder="Importe..."></th>
+    </div>
+</section>
   
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: { itemsPerPage: itemsPerPage,
-                                                                                currentPage: currentPage,
-                                                                                totalItems: totalItems
-                                                                              }">
-                <td align="left" width="130">
-                  <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
-                </td>
-                <td class="flat">{{movementOfCash.number }}</td>
-                <td class="flat">{{movementOfCash.transaction.type.name }}</td>
-                <td class="flat">{{movementOfCash.transaction.type.transactionMovement }}</td>
-                <td *ngIf="movementOfCash.bank" class="flat">{{movementOfCash.bank.name }}</td>
-                <td *ngIf="!movementOfCash.bank"></td>
-                <td class="flat">{{movementOfCash.expirationDate }}</td>
-                <td class="flat">{{movementOfCash.amountPaid }}</td>
-              </tr>
-              <tr align="center" *ngIf="totalItems === 0 && !loading">
-                <td colspan="15">No se encontraron movimientos</td>
-              </tr>
-            </tbody>
-          </table>
+<!--REPORT-->
+<section class="container-fluid" *ngIf="userType==='report'">
+    <div class="center-content" *ngIf="alertMessage !== '' && !areMovementOfCashesEmpty">
+      <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+        {{alertMessage}}
+      </ngb-alert>
+    </div>
+    <div class="card card-outline-primary">
+      <div class="card-header bg-primary">Listado de Movimientos de Medios
+        <div class="pull-right">
+          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+          <span (click)="areFiltersVisible = !areFiltersVisible">
+            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+          </span>
         </div>
-        <div class="card-footer bg-primary">
-            <div class="row">
-              <div class="col-md-10">
-                <pagination-controls
-                  class="my-pagination"
-                  (pageChange)="pageChange($event)"
-                  #api
-                  previousLabel="Ant."
-                  nextLabel="Sig."
-                  autoHide="true">
-                </pagination-controls>
-              </div>
-              <div class="form-group col-md-2">
-                <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getMovementOfCashes()">
-                  <option [value]="5">Mostrar 5 Registros</option>
-                  <option [value]="10">Mostrar 10 Registros</option>
-                  <option [value]="15">Mostrar 15 Registros</option>
-                  <option [value]="20">Mostrar 20 Registros</option>
-                  <option [value]="50">Mostrar 50 Registros</option>
-                  <option [value]="100">Mostrar 100 Registros</option>
-                </select>
-              </div>
+      </div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>
+                <i class="fa fa-bars"></i>
+              </th>
+              <th (click)="orderBy('number')">Comprobante</th>
+              <th (click)="orderBy('transaction.type.name')">Tipo</th>
+              <th (click)="orderBy('transaction.type.transactionMovement')">Movimiento</th>
+              <th (click)="orderBy('bank.name')">Banco</th>
+              <th (click)="orderBy('expirationDate')">Vencimiento</th>
+              <th (click)="orderBy('amountPaid')">Importe</th>
+            </tr>
+            <tr *ngIf="areFiltersVisible" class="filters">
+              <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getMovementOfCashes()" placeholder="Comprobante..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Tipo..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['bank.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Banco..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['expirationDate']" (keydown.enter)="getMovementOfCashes()" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filters['amountPaid']" (keydown.enter)="getMovementOfCashes()" placeholder="Importe..."></th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: { itemsPerPage: itemsPerPage,
+                                                                              currentPage: currentPage,
+                                                                              totalItems: totalItems
+                                                                            }">
+              <td align="left" width="130">
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
+              </td>
+              <td class="flat">{{movementOfCash.number }}</td>
+              <td class="flat">{{movementOfCash.transaction.type.name }}</td>
+              <td class="flat">{{movementOfCash.transaction.type.transactionMovement }}</td>
+              <td *ngIf="movementOfCash.bank" class="flat">{{movementOfCash.bank.name }}</td>
+              <td *ngIf="!movementOfCash.bank"></td>
+              <td class="flat">{{movementOfCash.expirationDate }}</td>
+              <td class="flat">{{movementOfCash.amountPaid | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            </tr>
+            <tr align="center" *ngIf="totalItems === 0 && !loading">
+              <td colspan="15">No se encontraron movimientos</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>Cantidad: {{totalItems}}</th>              
+              <th>Total: {{totalAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+          <div class="row">
+            <div class="col-md-10">
+              <pagination-controls
+                class="my-pagination"
+                (pageChange)="pageChange($event)"
+                #api
+                previousLabel="Ant."
+                nextLabel="Sig."
+                autoHide="true">
+              </pagination-controls>
+            </div>
+            <div class="form-group col-md-2">
+              <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getMovementOfCashes()">
+                <option [value]="5">Mostrar 5 Registros</option>
+                <option [value]="10">Mostrar 10 Registros</option>
+                <option [value]="15">Mostrar 15 Registros</option>
+                <option [value]="20">Mostrar 20 Registros</option>
+                <option [value]="50">Mostrar 50 Registros</option>
+                <option [value]="100">Mostrar 100 Registros</option>
+              </select>
             </div>
           </div>
-      </div>
-  </section>
+        </div>
+    </div>
+</section>

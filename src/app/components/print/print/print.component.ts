@@ -29,7 +29,6 @@ import { TransactionService } from '../../../services/transaction.service';
 import { MovementOfArticleService } from '../../../services/movement-of-article.service';
 import { ConfigService } from '../../../services/config.service';
 import { TransactionTypeService } from '../../../services/transaction-type.service';
-import { ArticleStockService } from '../../../services/article-stock.service';
 import { ArticleService } from '../../../services/article.service';
 import { MovementOfCashService } from '../../../services/movement-of-cash.service';
 
@@ -105,11 +104,9 @@ export class PrintComponent implements OnInit {
     public _transactionService: TransactionService,
     public _movementOfArticleService: MovementOfArticleService,
     public _configService: ConfigService,
-    public _articleStockService: ArticleStockService,
     public _movementOfCancellation : MovementOfCancellationService,
     public _articleService: ArticleService,
     public alertConfig: NgbAlertConfig,
-    private _authService: AuthService,
     public _claimService : ClaimService,
     public activeModal: NgbActiveModal,
     public _modalService: NgbModal,
@@ -194,9 +191,7 @@ export class PrintComponent implements OnInit {
               this.toPrintKitchen();
             } else if (this.typePrint === "IVA") {
               this.getVATBook();
-            } else if (this.typePrint === "inventario") {
-              this.getArticleStocksV2();
-            }
+            } 
           }
         }
         this.loading = false;
@@ -208,42 +203,6 @@ export class PrintComponent implements OnInit {
     );
   }
 
-  public getArticleStocksV2() : void {
-
-    this.loading = true;
-
-    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    let project = {
-      "realStock" : 1,
-      "article.code" : 1,
-      "article.description" : 1,
-      "article.make.description" : 1,
-      "article.category.description" : 1,
-      "article.operationType" : 1,
-      "branchDestination.name" : 1,
-      "depositDestination.name" : 1,
-      "operationType" : 1,
-    }
-
-    this._articleStockService.getArticleStocksV2(
-        project, // PROJECT
-        { operationType: { $ne: 'D' } ,'article.operationType': { $ne: 'D' } }, // MATCH
-        { description: 1 }, // SORT
-        {}, // GROUP
-        0, // LIMIT
-        0 // SKIP
-    ).subscribe(
-      result => {
-        if (result && result.articleStocks) {
-          this.toPrintInventario(result.articleStocks);
-        } 
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
-  }
 
   public getTransaction( transactionId : string) : void {
 
@@ -725,116 +684,6 @@ export class PrintComponent implements OnInit {
     // LINEA VERTICAL DERECHA
     this.doc.line(105, rowInitial, 105, rowFinal);
 
-    this.finishImpression();
-  }
-
-  public toPrintInventario(articleStocks: ArticleStock[]): void {
-
-    var row = 15;
-    var margin = 5;
-    this.doc.setFontType('bold');
-
-    this.doc.setFontSize(12);
-    if (this.companyName) {
-      this.doc.text(this.companyName, 5, row);
-    }
-
-    this.doc.setFontType('normal');
-    row += 5;
-    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-    }
-
-    this.doc.setFontType('bold');
-    this.centerText(margin, margin, this.printer.pageWidth, 0, row, "INVENTARIO AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-
-    row += 3;
-    this.doc.line(0, row, 400, row);
-    row += 5;
-
-    // Encabezado de la tabla de Detalle de Productos
-    this.doc.setFontType('bold');
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.text("Código", 5, row);
-    this.doc.text("Descripción", 30, row);
-    this.doc.text("Marca", 100, row);
-    this.doc.text("Rubro", 145, row);
-    this.doc.text("Stock", 195, row);
-    this.doc.setFontType('normal');
-
-    row += 3;
-    this.doc.line(0, row, 400, row);
-    row += 5;
-
-    let page = 1;
-
-    // // Detalle de productos
-    if(articleStocks && articleStocks.length > 0) {
-      for(let articleStock of articleStocks) {
-        if(articleStock.article.code) {
-          this.doc.text(articleStock.article.code, 5, row);
-        }
-        if (articleStock.article.description) {
-          this.doc.text(articleStock.article.description.slice(0, 30), 30, row);
-        }
-        if (articleStock.article.make && articleStock.article.make.description) {
-          this.doc.text(articleStock.article.make.description.slice(0, 18), 100, row);
-        }
-        if (articleStock.article.category && articleStock.article.category.description) {
-          this.doc.text(articleStock.article.category.description.slice(0, 18), 145, row);
-        }
-        if (articleStock.realStock) {
-          this.doc.text(this.roundNumber.transform(articleStock.realStock).toString(), 195, row);
-        }
-        row += 5;
-
-        if (row >= (this.printer.pageHigh - 20)) {
-
-          if(page === 120) {
-            break;
-          }
-          this.doc.addPage();
-
-          var row = 15;
-          var margin = 5;
-          this.doc.setFontType('bold');
-
-          this.doc.setFontSize(12);
-          if (this.companyName) {
-            this.doc.text(this.companyName, 5, row);
-          }
-
-          this.doc.setFontType('normal');
-          row += 5;
-          if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-            this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-            this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-          }
-
-          this.doc.setFontType('bold');
-          this.centerText(margin, margin, this.printer.pageWidth, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-
-          row += 3;
-          this.doc.line(0, row, 400, row);
-          row += 5;
-
-          // Encabezado de la tabla de Detalle de Productos
-          this.doc.setFontType('bold');
-          this.doc.setFontSize(this.fontSizes.normal);
-          this.doc.text("Código", 5, row);
-          this.doc.text("Descripción", 30, row);
-          this.doc.text("Marca", 100, row);
-          this.doc.text("Rubro", 145, row);
-          this.doc.text("Stock", 195, row);
-          this.doc.setFontType('normal');
-
-          row += 3;
-          this.doc.line(0, row, 400, row);
-          row += 5;
-        }
-      }
-    }
     this.finishImpression();
   }
 
@@ -2803,20 +2652,16 @@ export class PrintComponent implements OnInit {
     if(this.transaction.type.electronics){
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
         result =>{
-          console.log(result)
         },
         error =>{
-          console.log(error)
         }
       )
     } else {
       if(this.source === "mail"){
         this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
           result =>{
-            console.log(result)
           },
           error =>{
-            console.log(error)
           }
         )
       }
@@ -3050,13 +2895,7 @@ export class PrintComponent implements OnInit {
       for (let movementOfArticle of this.movementsOfArticles) {
         row += 5;
         this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
-        if (movementOfArticle.article) {
-          if(movementOfArticle.article.posDescription){
-            this.doc.text(movementOfArticle.article.posDescription.slice(0, 18), 13, row);
-          } else {
-          this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
-          }
-        } 
+        this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), width/1.4, row);
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
 
@@ -3097,7 +2936,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(3, 3, 40, 26, true);
+      this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
     }
   }
 

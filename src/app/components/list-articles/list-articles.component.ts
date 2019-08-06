@@ -32,6 +32,8 @@ import { PrintPriceListComponent } from '../print/print-price-list/print-price-l
 import { TaxService } from 'app/services/tax.service';
 import { Tax } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
+import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
+import { ClaimService } from 'app/services/claim.service';
 
 @Component({
   selector: 'app-list-articles',
@@ -92,7 +94,8 @@ export class ListArticlesComponent implements OnInit {
     private _printerService: PrinterService,
     private _authService: AuthService,
     private _taxService: TaxService,
-    public _configService: ConfigService
+    private _configService: ConfigService,
+    private _claimService: ClaimService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -471,10 +474,12 @@ export class ListArticlesComponent implements OnInit {
               let fields: ArticleFields[] = new Array();
               if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
                 for (const field of movementOfArticle.otherFields) {
-                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                    field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                    field.amount = parseFloat(field.value);
+                  if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+                    if (field.datatype === ArticleFieldType.Percentage) {
+                      field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                    } else if (field.datatype === ArticleFieldType.Number) {
+                      field.amount = parseFloat(field.value);
+                    }
                   }
                   fields.push(field);
                 }
@@ -504,7 +509,7 @@ export class ListArticlesComponent implements OnInit {
                     if(taxAux.tax && taxAux.tax._id) {
                       tax.tax = taxAux.tax;
                     } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                      console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                      this.saveClaim('ERROR ARTICLE NULL - LINEA 510 -', JSON.stringify(article));
                       let query = `where="_id":"${taxAux.tax}"`;
                       await this.getTaxes(query).then(
                         taxes => {
@@ -517,7 +522,7 @@ export class ListArticlesComponent implements OnInit {
                         }
                       );
                     } else if(taxAux.tax === null) {
-                      console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                      this.saveClaim('ERROR ARTICLE NULL - LINEA 523 -', JSON.stringify(article));
                       err = true;
                       this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
                     }
@@ -545,15 +550,17 @@ export class ListArticlesComponent implements OnInit {
             let fields: ArticleFields[] = new Array();
             if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
               for (const field of movementOfArticle.otherFields) {
-                if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                  field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                  field.amount = parseFloat(field.value);
-                }
-                if (field.articleField.modifyVAT) {
-                  taxedAmount += field.amount;
-                } else {
-                  movementOfArticle.costPrice += field.amount;
+                if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
+                  if (field.datatype === ArticleFieldType.Percentage) {
+                    field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+                  } else if (field.datatype === ArticleFieldType.Number) {
+                    field.amount = parseFloat(field.value);
+                  }
+                  if (field.articleField.modifyVAT) {
+                    taxedAmount += field.amount;
+                  } else {
+                    movementOfArticle.costPrice += field.amount;
+                  }
                 }
                 fields.push(field);
               }
@@ -566,7 +573,7 @@ export class ListArticlesComponent implements OnInit {
                   if(taxAux.tax && taxAux.tax._id) {
                     taxAux.tax = taxAux.tax;
                   } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                    console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                    this.saveClaim('ERROR ARTICLE NULL - LINEA 572 -', JSON.stringify(article));
                     let query = `where="_id":"${taxAux.tax}"`;
                     await this.getTaxes(query).then(
                       taxes => {
@@ -579,7 +586,7 @@ export class ListArticlesComponent implements OnInit {
                       }
                     );
                   } else if(taxAux.tax === null) {
-                    console.log(article); // DEJAR CONSOLE.LOG ES PARA VERIFICAR CUANDO DA ERROR.
+                    this.saveClaim('ERROR ARTICLE NULL - LINEA 585 -', JSON.stringify(article));
                     err = true;
                     this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
                   }
@@ -740,6 +747,20 @@ export class ListArticlesComponent implements OnInit {
     while (n.length < length)
         n = "0" + n;
     return n;
+  }
+
+  public saveClaim(titulo: string, message: string): void {
+    
+    this.loading = true;
+
+    let claim: Claim = new Claim();
+    claim.description = message;
+    claim.name = titulo;
+    claim.priority = ClaimPriority.High;
+    claim.type = ClaimType.Err;
+    claim.listName = 'ERRORES 500';
+
+    this._claimService.saveClaim(claim).subscribe();
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

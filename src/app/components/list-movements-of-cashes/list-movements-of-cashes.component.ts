@@ -36,6 +36,7 @@ export class ListMovementOfCashesComponent implements OnInit {
   public transactionMovement: string;
   public pathLocation: string[]
   public totalAmountSelected: number = 0;
+  public totalAmount: number = 0;
 
   public currentPage: number = 0;
   public displayedColumns = [
@@ -218,6 +219,7 @@ export class ListMovementOfCashesComponent implements OnInit {
           this.movementsOfCashes = result[0].movementsOfCashes;
           this.totalItems = result[0].count;
           this.areMovementOfCashesEmpty = false;
+          this.calculateTotal();
         } else {
           this.movementsOfCashes = new Array();
           this.totalItems = 0;
@@ -235,6 +237,13 @@ export class ListMovementOfCashesComponent implements OnInit {
   public pageChange(page): void {
     this.currentPage = page;
     this.getMovementOfCashes();
+  }
+
+  public calculateTotal() :void {
+    this.totalAmount = 0;
+    for(let movementofCash of this.movementsOfCashes){
+      this.totalAmount = this.totalAmount + parseFloat(movementofCash.amountPaid.toString());
+    }
   }
 
   public async selectmovementOfCash(movementOfCashSelected: MovementOfCash) {

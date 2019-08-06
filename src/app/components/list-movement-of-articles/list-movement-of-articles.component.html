@@ -43,9 +43,9 @@
           <label for="code" class="control-label">Codigo:</label>
           <input type="text" class="form-control" [value]="articleSelected.code" readonly/>
         </div>
-        <div class="form-group col-md-3" *ngIf="articleSelected">
-          <label for="posDescription" class="control-label">Descripcion:</label>
-          <input type="text" class="form-control" [value]="articleSelected.posDescription" readonly/>
+        <div class="form-group col-md-4" *ngIf="articleSelected">
+          <label for="description" class="control-label">Descripcion:</label>
+          <input type="text" class="form-control" [value]="articleSelected.description" readonly/>
         </div>
         <div class="form-group col-md-2" *ngIf="articleSelected && articleSelected.category">
           <label for="category" class="control-label">Rubro:</label>
@@ -66,12 +66,16 @@
         <div class="form-group col-md-10" *ngIf="!articleSelected">
           <input type="text" class="form-control" value="Seleccione un producto" readonly/>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
           <label for="btn" class="control-label" *ngIf="articleSelected">Acción:</label>
           <span class="form-control cursor-pointer center-content" (click)="openModal('article')">
             Cambiar
           </span>
         </div>
+      </div>
+      <div class = "row">
+
+
       </div>
       <div class="row center-content">
         <table class="table table-hover">
