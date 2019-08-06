@@ -166,31 +166,31 @@ export class CurrentAccountDetailsComponent implements OnInit {
       if(Config.country === 'AR'){
         this.doc.text(100,row,"Condición de IVA:")
         if(this.items[i]._id.company.vatCondition){
-          this.doc.text(100,row,"Condición de IVA:"+this.items[i]._id.company.vatCondition.description);
+          this.doc.text(100+30,row,this.items[i]._id.company.vatCondition.description);
         }
       } else {
         this.doc.text(100,row,"Régimen Fiscal:")
         if(this.items[i]._id.company.vatCondition){
-          this.doc.text(100,row,"Régimen Fiscal:"+this.items[i]._id.company.vatCondition.description);
+          this.doc.text(100+30,row,+this.items[i]._id.company.vatCondition.description);
         }
       }
       row += 5;
       this.doc.text(5,row,"Dirección:")
       if(this.items[i]._id.company.address){
-        this.doc.text(5,row,"Dirección:"+this.items[i]._id.company.address)
+        this.doc.text(5+20,row,this.items[i]._id.company.address)
       }
       this.doc.text(100,row,"Ciudad:")
       if(this.items[i]._id.company.city){
-        this.doc.text(100,row,"Ciudad:"+this.items[i]._id.company.city)
+        this.doc.text(100+20,row,this.items[i]._id.company.city)
       }
       row += 5;
       this.doc.text(5,row,"Provincia:")
       if(this.items[i]._id.company.state){
-        this.doc.text(5,row,"Provincia:"+this.items[i]._id.company.state.name)
+        this.doc.text(5+20,row,this.items[i]._id.company.state.name)
       }
       this.doc.text(100,row,"Teléfono:")
       if(this.items[i]._id.company.phones){
-        this.doc.text(100,row,"Teléfono:"+this.items[i]._id.company.phones)
+        this.doc.text(100+20,row,this.items[i]._id.company.phones)
       }
       
       row += 5;
