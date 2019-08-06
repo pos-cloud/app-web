@@ -120,18 +120,18 @@
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view-transaction', movementsOfArticle)" title="Ver"><i class="fa fa-eye"></i></button>
               </td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.endDate">{{movementsOfArticle.transaction.endDate | dateFormat : 'DD/MM/YYYY' }}</td>
-              <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type.transactionMovement}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type.transactionMovement}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.company">{{movementsOfArticle.transaction.company.name }}</td>
-              <td class="align-center" *ngIf="!movementsOfArticle.transaction.company">Consumidor Final</td>
-              <td class="align-left" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type.name}}</td>
+              <td class="align-center" *ngIf="!movementsOfArticle.transaction.company">-</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.type.name}}</td>
               <td class="align-center" *ngIf="userCountry === 'AR' && movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.origin}}</td>
               <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.letter}}</td>
-              <td class="align-right" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.number}}</td>
-              <td class="align-right" *ngIf="movementsOfArticle.stockMovement === 'Entrada'">{{movementsOfArticle.amount}}</td>
-              <td class="align-right" *ngIf="movementsOfArticle.stockMovement !== 'Entrada'"></td>
-              <td class="align-right" *ngIf="movementsOfArticle.stockMovement === 'Salida'">{{movementsOfArticle.amount}}</td>
-              <td class="align-right" *ngIf="movementsOfArticle.stockMovement !== 'Salida'"></td>
-              <td class="align-right">{{movementsOfArticle.balance}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.transaction.type">{{movementsOfArticle.transaction.number}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.stockMovement === 'Entrada'">{{movementsOfArticle.amount}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.stockMovement !== 'Entrada'"></td>
+              <td class="align-center" *ngIf="movementsOfArticle.stockMovement === 'Salida'">{{movementsOfArticle.amount}}</td>
+              <td class="align-center" *ngIf="movementsOfArticle.stockMovement !== 'Salida'"></td>
+              <td class="align-center">{{movementsOfArticle.balance}}</td>
             </tr>
             <tr align="center" *ngIf="!items || items.length === 0 && !loading">
               <td colspan="11" *ngIf="userCountry === 'AR'">No se encontraron movimientos</td>
