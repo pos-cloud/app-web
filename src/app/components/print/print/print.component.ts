@@ -2936,7 +2936,7 @@ export class PrintComponent implements OnInit {
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
       this.finishImpression();
     } else {
-      this.getCompanyPicture(3, 3, 40, 26, true);
+      this.getCompanyPicture(3, 3, this.printer.pageWidth - 5, 26, true);
     }
   }
 
