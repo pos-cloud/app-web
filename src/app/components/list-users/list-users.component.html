@@ -25,6 +25,7 @@
               <th (click)="orderBy('tokenExpiration')">Minutos de sesión</th>
 	            <th (click)="orderBy('employee','name')">Empleado</th>
 	            <th (click)="orderBy('origin','number')">Punto de venta</th>
+	            <th (click)="orderBy('company','name')">Empresa</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
               <th></th>
@@ -34,6 +35,7 @@
               <th><input type="text" class="form-control" [(ngModel)]= "filterTokenExpiration" placeholder="Minutos de sesión..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterEmployee" placeholder="Empleado..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterOrigin" placeholder="Punto de venta..." ></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterCompany" placeholder="Empresa..." ></th>
             </tr>
           </thead>
           <tbody>
@@ -42,7 +44,8 @@
                                           | filter: filterState:'state'
                                           | filter: filterTokenExpiration:'tokenExpiration'
                                           | filter: filterEmployee:'name':'employee'
-                                          | filter: filterEmployee:'number':'origin'
+                                          | filter: filterOrigin:'number':'origin'
+                                          | filter: filterCompany:'name':'company'
                                           | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,
                                                         currentPage: p,
@@ -68,6 +71,8 @@
               <td *ngIf="!user.employee"></td>
               <td *ngIf="user.origin">{{user.origin.number}}</td>
               <td *ngIf="!user.origin"></td>
+              <td *ngIf="user.company">{{user.company.name}}</td>
+              <td *ngIf="!user.company"></td>
             </tr>
             <tr align="center" *ngIf="areUsersEmpty && !loading">
               <td colspan="7">No se encontraron usuarios</td>
