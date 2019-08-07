@@ -384,6 +384,97 @@
       </div>
     </div>
   </section>
+
+  <!-- PEDIDOS-WEB -->
+  <section class="container-fluid" *ngIf="posType=='pedidos-web'">
+    <div class="row center-content">
+      <div *ngIf="alertMessage !== ''">
+        <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+          {{alertMessage}}
+        </ngb-alert>
+      </div>
+    </div>
+    <div class="card card-outline-primary list-counter">
+      <div class="card-header bg-primary">
+        <span>Pedidos a Confirmar</span>
+        <div class="pull-right">
+          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
+          <span (click)="areFiltersVisible = !areFiltersVisible">
+            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
+          </span>
+        </div>
+      </div>
+      <div class="card-block table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th (click)="orderBy('startDate')">Fecha</th>
+              <th (click)="orderBy('number')">Número</th>
+              <th (click)="orderBy('company','name')" >Cliente</th>
+              <th (click)="orderBy('totalPrice')">Precio Total</th>
+            </tr>
+            <tr *ngIf="areFiltersVisible" class="filters">
+              <th></th>
+              <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
+              <th><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of transactions | filter: filterStartDate:'startDate'
+                                                        | filter: filterNumber:'number'
+                                                        | filter: filterCompany:'name':'company'
+                                                        | filter: filterTotalPrice:'totalPrice'
+                                                        | orderBy: orderTerm: propertyTerm
+                                                        | paginate: { itemsPerPage: itemsPerPage,
+                                                                      currentPage: p,
+                                                                      totalItems: totalItems
+                                                                    }">
+              <td align="left" width="150">
+                <button type="button" class="btn btn-success" (click)="viewTransaction(transaction)"  title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-danger" (click)="cancelTransaction(transaction)" title="Anular"><i class="fa fa-close"></i></button>
+              </td>
+              <td *ngIf="transaction.endDate" >{{transaction.endDate | dateFormat:'DD/MM/YYYY' }}</td>
+              <td *ngIf="!transaction.endDate" >{{transaction.startDate | dateFormat:'DD/MM/YYYY hh:mm:ss' }}</td>
+              <td ><b>{{transaction.number}}</b></td>
+              <td *ngIf="transaction.company" >{{transaction.company.name}}</td>
+              <td *ngIf="!transaction.company" >Consumidor Final</td>
+              <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
+            </tr>
+            <tr align="center" *ngIf="areTransactionsEmpty">
+              <td colspan="7">Aún no hay transacciones pendientes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-primary">
+        <div class="row">
+          <div class="col-md-10">
+            <pagination-controls
+                        class="my-pagination"
+                        (pageChange)="p=$event"
+                        #api
+                        previousLabel="Ant."
+                        nextLabel="Sig."
+                        autoHide="true">
+              </pagination-controls>
+          </div>
+          <div class="form-group col-md-2">
+            <select class="form-control" [(ngModel)]="itemsPerPage">
+              <option [value]="5">Mostrar 5 Registros</option>
+              <option [value]="10">Mostrar 10 Registros</option>
+              <option [value]="15">Mostrar 15 Registros</option>
+              <option [value]="20">Mostrar 20 Registros</option>
+              <option [value]="50">Mostrar 50 Registros</option>
+              <option [value]="100">Mostrar 100 Registros</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
   
   <!--MODAL IMPRESORA-->
   <ng-template #contentPrinters let-c="close" let-d="dismiss">

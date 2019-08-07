@@ -41,14 +41,18 @@ export class ListUsersComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getUsers();
+    if(pathLocation[2] === 'usuarios') {
+      this.getUsers(`where="$and":[{"employee":{ "$exists": true }},{"employee":{ "$ne": null }}]`);
+    } else if(pathLocation[2] === 'usuarios-web') {
+      this.getUsers(`where="$and":[{"company":{ "$exists": true }},{"company":{ "$ne": null }}]`);
+    }
   }
 
-  public getUsers(): void {
+  public getUsers(query?: string): void {
 
     this.loading = true;
 
-    this._userService.getUsers().subscribe(
+    this._userService.getUsers(query).subscribe(
         result => {
 					if (!result.users) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -81,7 +85,13 @@ export class ListUsersComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getUsers();
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    if(pathLocation[2] === 'usuarios') {
+      this.getUsers(`where="employee":{ "$exists": true }`);
+    } else if(pathLocation[2] === 'usuarios-web') {
+      this.getUsers(`where="company":{ "$exists": true }`);
+    }
   }
 
   public openModal(op: string, user:User): void {

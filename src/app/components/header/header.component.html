@@ -46,6 +46,16 @@
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-motorcycle"></i> Delivery</a>
       </li>
+      <li class="nav-item"
+          *ngIf="identity.employee &&
+                identity.employee.type.description !== 'Administrador' &&
+                config.modules.app"
+          (click)="makeVisibleReport(false)">
+        <a  class="nav-link btn"
+            [routerLink]="['pos','pedidos-web']"
+            [routerLinkActive]="['active-primary']">
+          <i class="fa fa-shopping-cart"></i> Pedidos Web</a>
+      </li>
       <!-- MENU ADMINISTRADOR -->
       <li class="nav-item"
           ngbDropdown
@@ -75,6 +85,13 @@
                     [routerLink]="['pos','delivery']"
                     [routerLinkActive]="['active']">
               Delivery
+            </button>
+          </div>
+          <div *ngIf="config.modules.app">
+            <button class="dropdown-item"
+                    [routerLink]="['pos','pedidos-web']"
+                    [routerLinkActive]="['active']">
+              Pedidos Web
             </button>
           </div>
         </div>
@@ -298,14 +315,21 @@
             Generales
           </button>
           <button class="dropdown-item"
-                  [routerLink]="['admin','usuarios']"
-                  [routerLinkActive]="['active']">
-            Usuarios
-          </button>
-          <button class="dropdown-item"
                   [routerLink]="['admin','impresoras']"
                   [routerLinkActive]="['active']">
             Impresoras
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','usuarios']"
+                  [routerLinkActive]="['active']">
+            Usuarios Sistema
+          </button>
+          <button class="dropdown-item"
+                  *ngIf="config.modules.app"
+                  [routerLink]="['admin','usuarios-web']"
+                  [routerLinkActive]="['active']">
+            Usuarios Web
           </button>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item"
