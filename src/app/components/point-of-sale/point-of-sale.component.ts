@@ -394,7 +394,7 @@ export class PointOfSaleComponent implements OnInit {
         this.transactionMovement = TransactionMovement.Money;
       }
 
-      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '"').then(
+      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
         transactionTypes => {
           if (transactionTypes) {
             this.transactionTypes = transactionTypes;
