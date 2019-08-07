@@ -150,9 +150,13 @@ export class AddCompanyComponent  implements OnInit {
     this.getEmployees();
     this.getCountries();
     this.getTransports();
+  }
+
+  async ngOnInit() {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    
     if ( pathLocation[2] === "clientes" ||
       this.companyType && this.companyType === CompanyType.Client) {
       this.types.push(CompanyType.Client);
@@ -161,14 +165,14 @@ export class AddCompanyComponent  implements OnInit {
       this.companyType && this.companyType === CompanyType.Provider) {
       this.types.push(CompanyType.Provider);
       this.company.type = CompanyType.Provider;
+    } else if(pathLocation[3] === 'compra') {
+      this.types.push(CompanyType.Provider);
+      this.company.type = CompanyType.Provider;
     } else {
       this.types.push(CompanyType.Client);
       this.types.push(CompanyType.Provider);
       this.company.type = CompanyType.Client;
     }
-  }
-
-  async ngOnInit() {
 
     this.buildForm();
 

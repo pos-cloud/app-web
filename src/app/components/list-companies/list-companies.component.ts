@@ -71,6 +71,7 @@ export class ListCompaniesComponent implements OnInit {
     this.loading = true;
 
     let pathLocation: string[] = this._router.url.split('/');
+
     if (!this.type) {
       if (pathLocation[2] === "clientes") {
         this.type = CompanyType.Client;
@@ -130,9 +131,7 @@ export class ListCompaniesComponent implements OnInit {
       case 'add' :
         modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
         modalRef.componentInstance.operation = 'add';
-        if (this.type) {
-          modalRef.componentInstance.companyType = this.type;
-        }
+        modalRef.componentInstance.companyType = this.type;
         modalRef.result.then((result) => {
           if(this.userType === 'pos') {
             this.selectCompany(result.company);
