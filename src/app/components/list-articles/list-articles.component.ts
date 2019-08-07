@@ -451,6 +451,7 @@ export class ListArticlesComponent implements OnInit {
           movementOfArticle.barcode = article.barcode;
           movementOfArticle.transaction = this.transaction;
           movementOfArticle.modifyStock = this.transaction.type.modifyStock;
+          movementOfArticle.otherFields = article.otherFields;
           if(this.transaction.type.stockMovement) {
             movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
           }
@@ -474,16 +475,17 @@ export class ListArticlesComponent implements OnInit {
               let fields: ArticleFields[] = new Array();
               if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
                 for (const field of movementOfArticle.otherFields) {
-                  if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
-                    if (field.datatype === ArticleFieldType.Percentage) {
+                  if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) {
+                    if (field.articleField.datatype === ArticleFieldType.Percentage) {
                       field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                    } else if (field.datatype === ArticleFieldType.Number) {
+                    } else if (field.articleField.datatype === ArticleFieldType.Number) {
                       field.amount = parseFloat(field.value);
                     }
                   }
                   fields.push(field);
                 }
               }
+              
               movementOfArticle.otherFields = fields;
               movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
               movementOfArticle.markupPercentage = article.markupPercentage;
@@ -550,10 +552,10 @@ export class ListArticlesComponent implements OnInit {
             let fields: ArticleFields[] = new Array();
             if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
               for (const field of movementOfArticle.otherFields) {
-                if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
-                  if (field.datatype === ArticleFieldType.Percentage) {
+                if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
+                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
                     field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                  } else if (field.datatype === ArticleFieldType.Number) {
+                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
                     field.amount = parseFloat(field.value);
                   }
                   if (field.articleField.modifyVAT) {

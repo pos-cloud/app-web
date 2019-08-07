@@ -107,7 +107,7 @@ export class AddArticleFieldsComponent implements OnInit {
   public changeValues(): void {
 
     this.field.articleField = this.articleFieldsForm.value.articleField;
-    this.field.name = this.field.articleField.name;
+    this.field.articleField.name = this.field.articleField.name;
     this.field.value = this.field.articleField.value;
 
     this.setValueForm();
@@ -137,15 +137,12 @@ export class AddArticleFieldsComponent implements OnInit {
         } else {
           this.hideMessage();
           this.articleFields = result.articleFields;
-
-          for (let index = 0; index < result.articleFields.length; index++) {
-
-            if(result.articleFields[index].datatype === ArticleFieldType.String || result.articleFields[index].datatype === ArticleFieldType.Array) {
-              this.articleFieldsCustom.push(result.articleFields[index]);
+          for (let articleField of this.articleFields) {
+            if(articleField.datatype === ArticleFieldType.String || articleField.datatype === ArticleFieldType.Array) {
+              this.articleFieldsCustom.push(articleField);
             } else {
-              this.articleFieldsPrice.push(result.articleFields[index]);
+              this.articleFieldsPrice.push(articleField);
             }
-            
           }
         }
         this.loading = false;

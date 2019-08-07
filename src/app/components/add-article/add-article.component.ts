@@ -794,10 +794,10 @@ export class AddArticleComponent implements OnInit {
 
           if (this.otherFields && this.otherFields.length > 0) {
             for (const field of this.otherFields) {
-              if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
-                if (field.datatype === ArticleFieldType.Percentage) {
+              if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
+                if (field.articleField.datatype === ArticleFieldType.Percentage) {
                   field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-                } else if (field.datatype === ArticleFieldType.Number) {
+                } else if (field.articleField.datatype === ArticleFieldType.Number) {
                   field.amount = parseFloat(field.value);
                 }
                 if (field.articleField.modifyVAT) {
@@ -828,10 +828,10 @@ export class AddArticleComponent implements OnInit {
 
         if (this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if (field.datatype === ArticleFieldType.Percentage || field.datatype === ArticleFieldType.Number) { 
-              if (field.datatype === ArticleFieldType.Percentage) {
+            if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
+              if (field.articleField.datatype === ArticleFieldType.Percentage) {
                 field.amount = this.roundNumber.transform((this.articleForm.value.basePrice * parseFloat(field.value) / 100));
-              } else if (field.datatype === ArticleFieldType.Number) {
+              } else if (field.articleField.datatype === ArticleFieldType.Number) {
                 field.amount = parseFloat(field.value);
               }
               if (field.articleField.modifyVAT) {
@@ -1226,44 +1226,12 @@ export class AddArticleComponent implements OnInit {
   }
 
   public addArticleFields(otherFields: ArticleFields[]): void {
-    this.otherFields = otherFields;
-    for (let index = 0; index < this.otherFields.length; index++) {
-      if(this.otherFields[index].articleField.datatype !== ArticleFieldType.String && this.otherFields[index].articleField.datatype !== ArticleFieldType.Array) {
-        this.updatePrices('otherFields');
-      }
-    }
-    
+    this.updatePrices('otherFields');
   }
 
   public addStock(articleStock: ArticleStock): void {
     this.articleStock = articleStock;
   }
-
-  // public saveArticleStock(article: Article): void {
-
-  //   this.loading = true;
-
-  //   if (!this.articleStock) {
-  //     this.articleStock = new ArticleStock();
-  //   }
-
-  //   this.articleStock.article = article;
-
-  //   this._articleStockService.saveArticleStock(this.articleStock).subscribe(
-  //     result => {
-  //       if (!result.articleStock) {
-  //         if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-  //       } else {
-  //         this.articleStock = result.articleStock;
-  //       }
-  //       this.loading = false;
-  //     },
-  //     error => {
-  //       this.showMessage(error._body, 'danger', false);
-  //       this.loading = false;
-  //     }
-  //   );
-  // }
 
   public manageVariants(variants: Variant[]): void {
     this.variants = variants;

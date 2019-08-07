@@ -390,7 +390,7 @@ export class PrintPriceListComponent implements OnInit {
             if(article.otherFields && article.otherFields.length > 0 ){
               for (let fields of article.otherFields){
                 row +=5
-                this.doc.text(95, row, fields.name + ":")
+                this.doc.text(95, row, fields.articleField.name + ":")
                 this.doc.text(120, row, fields.value)
               }
             }
