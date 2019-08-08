@@ -64,6 +64,8 @@ import { ListOriginsComponent } from './components/list-origins/list-origins.com
 import { ListTransportComponent } from './components/list-transports/list-transports.component';
 import { PrintComponent } from './components/print/print/print.component';
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
+import { PriceListComponent } from './components/price-list/price-list.component'
+import { ListPriceListsComponent } from './components/list-price-lists/list-price-lists.component';
 
 export const _routes: Routes = [
   { 
@@ -184,6 +186,11 @@ export const _routes: Routes = [
   {
     path: 'admin/countries',
     component: ListCountriesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/price-list',
+    component: ListPriceListsComponent,
     canActivate: [AuthGuard]
   },
   {
