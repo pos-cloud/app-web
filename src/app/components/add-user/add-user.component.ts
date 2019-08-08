@@ -359,7 +359,7 @@ export class AddUserComponent  implements OnInit {
         } else {
           this.user = result.user;
           this.showMessage("El usuario se ha actualizado con éxito.", 'success', false);
-          if (this.user._id === this.user._id){
+          if (this.identity._id === this.user._id) {
             let userStorage = new User();
             userStorage._id = result.user._id;
             userStorage.name = result.user.name;

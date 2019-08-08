@@ -40,7 +40,11 @@
           </select>
         </div>
       </div>
+<<<<<<< HEAD
       <div class="row" *ngIf="transactionMovement === 'Venta' && (posType === 'cuentas-corriente' || posType ==='mostrador')">
+=======
+      <div class="row" *ngIf="transactionMovement === 'Venta' && (userType === 'pos' || posType === 'cuentas-corrientes')">
+>>>>>>> aeb87dfddb0f921904419d2985ec95ee332fa04b
         <div class="form-group col-md-12">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01" [readonly]="readonly" [focus]="focusEvent"/>
@@ -89,7 +93,11 @@
           </div>
         </div>
       </div>
+<<<<<<< HEAD
       <div class="row" *ngIf="transaction && transaction.type && transaction.type.tax && (posType === 'cuentas-corriente' || posType ==='mostrador') ">
+=======
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.tax && (userType === 'pos' || posType === 'cuentas-corrientes') ">
+>>>>>>> aeb87dfddb0f921904419d2985ec95ee332fa04b
         <div class="form-group col-md-12">
           <label for="VATPeriod" class="control-label">Período de IVA:</label>
           <input type="text" class="form-control" formControlName="VATPeriod" name="VATPeriod" [readonly]="readonly" />
@@ -98,7 +106,11 @@
           </div>
         </div>
       </div>
+<<<<<<< HEAD
       <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles && (posType === 'cuentas-corriente' || posType ==='mostrador')">
+=======
+      <div class="row" *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles && (userType === 'pos' || posType === 'cuentas-corrientes')">
+>>>>>>> aeb87dfddb0f921904419d2985ec95ee332fa04b
         <div class="form-group col-md-6">
           <label for="basePrice" class="control-label">Importe Gravado:</label>
           <div class="input-group">
@@ -124,21 +136,35 @@
                             [articleTaxes]="taxes"
                             [transaction]="transaction"
                             [filtersTaxClassification]="filtersTaxClassification"
+<<<<<<< HEAD
                             *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles && (posType === 'cuentas-corrientes' || posType ==='mostrador')">
       </app-add-article-tax>
       <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company && (posType === 'cuentas-corrientes' || posType ==='mostrador')">
+=======
+                            *ngIf="transaction && transaction.type && transaction.type.requestTaxes && !transaction.type.requestArticles && (userType === 'pos' || posType === 'cuentas-corrientes')">
+      </app-add-article-tax>
+      <div class="row" *ngIf="showButtonCancelation && transaction && transaction.company && (userType === 'pos' || posType === 'cuentas-corrientes')">
+>>>>>>> aeb87dfddb0f921904419d2985ec95ee332fa04b
         <div class="col-md-12 center-content">
           <button type="button" class="btn btn-secondary" (click)="openModal('list-cancellations')">
             Buscar Transacciones a Cancelar
           </button>
         </div>
       </div>
+<<<<<<< HEAD
       <div class = "row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && (posType === 'cuentas-corrientes' || posType ==='mostrador')">
+=======
+      <div class = "row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && (userType === 'pos' || posType === 'cuentas-corrientes')">
+>>>>>>> aeb87dfddb0f921904419d2985ec95ee332fa04b
         <div class = "col-md-12">
             <label for="totalPrice" class="control-label">Importe Total:</label>
         </div>
       </div>
+<<<<<<< HEAD
       <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && (posType === 'cuentas-corrientes' || posType ==='mostrador')">
+=======
+      <div class="row" *ngIf="transaction && transaction.type && !transaction.type.requestArticles && (userType === 'pos' || posType === 'cuentas-corrientes')">
+>>>>>>> aeb87dfddb0f921904419d2985ec95ee332fa04b
         <div class="form-group col-md-12" *ngIf="showButtonCancelation && transaction && transaction.company">
           <div class="input-group">
             <span class="input-group-addon">$</span>

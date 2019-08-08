@@ -262,6 +262,11 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'admin/usuarios-web',
+    component: ListUsersComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'admin/metodos-de-pago',
     component: ListPaymentMethodsComponent,
     canActivate: [AuthGuard]
@@ -535,7 +540,12 @@ export const _routes: Routes = [
     path: 'pos/mostrador/compra', 
     component: PointOfSaleComponent,
     canActivate: [AuthGuard]
-   },
+  },
+  { 
+    path: 'pos/pedidos-web', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard]
+  },
   { 
     path: 'pos/mostrador/venta', 
     component: PointOfSaleComponent,

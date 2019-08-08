@@ -32,19 +32,11 @@ export class AddArticleFieldsComponent implements OnInit {
 
   public formErrors = {
     'articleField': '',
-    'name': '',
-    'datatype': '',
     'value': '',
   };
 
   public validationMessages = {
     'articleField': {
-      'required': 'Este campo es requerido.'
-    },
-    'name': {
-      'required': 'Este campo es requerido.'
-    },
-    'datatype': {
       'required': 'Este campo es requerido.'
     },
     'value': {
@@ -82,14 +74,6 @@ export class AddArticleFieldsComponent implements OnInit {
           Validators.required
         ]
       ],
-      'name': [this.field.name, [
-          Validators.required
-        ]
-      ],
-      'datatype': [this.field.datatype, [
-          Validators.required
-        ]
-      ],
       'value': [this.field.value, [
         ]
       ]
@@ -123,8 +107,7 @@ export class AddArticleFieldsComponent implements OnInit {
   public changeValues(): void {
 
     this.field.articleField = this.articleFieldsForm.value.articleField;
-    this.field.name = this.field.articleField.name;
-    this.field.datatype = this.field.articleField.datatype;
+    this.field.articleField.name = this.field.articleField.name;
     this.field.value = this.field.articleField.value;
 
     this.setValueForm();
@@ -133,14 +116,10 @@ export class AddArticleFieldsComponent implements OnInit {
   public setValueForm(): void {
 
     if(!this.field.articleField) { null }
-    if(!this.field.name) { this.field.name = '' }
-    if(!this.field.datatype) { this.field.datatype = null }
     if(!this.field.value) { this.field.value = '' }
 
     const values = {
       'articleField': this.field.articleField,
-      'name': this.field.name,
-      'datatype': this.field.datatype,
       'value' : this.field.value
     };
 
@@ -158,15 +137,12 @@ export class AddArticleFieldsComponent implements OnInit {
         } else {
           this.hideMessage();
           this.articleFields = result.articleFields;
-
-          for (let index = 0; index < result.articleFields.length; index++) {
-
-            if(result.articleFields[index].datatype === ArticleFieldType.String || result.articleFields[index].datatype === ArticleFieldType.Array) {
-              this.articleFieldsCustom.push(result.articleFields[index]);
+          for (let articleField of this.articleFields) {
+            if(articleField.datatype === ArticleFieldType.String || articleField.datatype === ArticleFieldType.Array) {
+              this.articleFieldsCustom.push(articleField);
             } else {
-              this.articleFieldsPrice.push(result.articleFields[index]);
+              this.articleFieldsPrice.push(articleField);
             }
-            
           }
         }
         this.loading = false;

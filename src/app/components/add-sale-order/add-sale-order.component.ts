@@ -701,19 +701,22 @@ export class AddSaleOrderComponent {
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if (field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-        } else if (field.datatype === ArticleFieldType.Number) {
-          field.amount = parseFloat(field.value);
-        }
-        if (field.articleField.modifyVAT) {
-          taxedAmount += field.amount;
-        } else {
-          movementOfArticle.costPrice += field.amount;
+        if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
+          if (field.articleField.datatype === ArticleFieldType.Percentage) {
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+          } else if (field.articleField.datatype === ArticleFieldType.Number) {
+            field.amount = parseFloat(field.value);
+          }
+          if (field.articleField.modifyVAT) {
+            taxedAmount += field.amount;
+          } else {
+            movementOfArticle.costPrice += field.amount;
+          }
         }
         fields.push(field);
       }
     }
+    
     movementOfArticle.otherFields = fields;
     if (movementOfArticle.transaction.type.requestTaxes) {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
@@ -759,10 +762,12 @@ export class AddSaleOrderComponent {
     let fields: ArticleFields[] = new Array();
     if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
       for (const field of movementOfArticle.otherFields) {
-        if (field.datatype === ArticleFieldType.Percentage) {
-          field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-        } else if (field.datatype === ArticleFieldType.Number) {
-          field.amount = parseFloat(field.value);
+        if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
+          if (field.articleField.datatype === ArticleFieldType.Percentage) {
+            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+          } else if (field.articleField.datatype === ArticleFieldType.Number) {
+            field.amount = parseFloat(field.value);
+          }
         }
         fields.push(field);
       }
@@ -810,7 +815,6 @@ export class AddSaleOrderComponent {
       }
       movementOfArticle.taxes = taxes;
     }
-
     return movementOfArticle;
   }
 

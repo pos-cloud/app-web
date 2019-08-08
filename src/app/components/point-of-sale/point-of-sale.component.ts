@@ -107,51 +107,8 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
-
-    if (this.posType === "resto") {
-      this.roomSelected._id = pathLocation[4];
-      this.getRooms();
-    } else if (this.posType === "delivery") {
-      await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
-          }
-        }
-      );
-      this.getOpenTransactions();
-    } else if (this.posType === "mostrador") {
-      if (pathLocation[3] === "venta") {
-        this.transactionMovement = TransactionMovement.Sale;
-      } else if (pathLocation[3] === "compra") {
-        this.transactionMovement = TransactionMovement.Purchase;
-      } else if (pathLocation[3] === "stock") {
-        this.transactionMovement = TransactionMovement.Stock;
-      } else if (pathLocation[3] === "fondo") {
-        this.transactionMovement = TransactionMovement.Money;
-      }
-      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '"').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
-          }
-        }
-      );
-      this.getOpenTransactionsByMovement(this.transactionMovement);
-    } else {
-      if (pathLocation[3] === "cliente") {
-        this.transactionMovement = TransactionMovement.Sale;
-      } else if (pathLocation[3] === "proveedor") {
-        this.transactionMovement = TransactionMovement.Purchase;
-      }
-      await this.getTransactionTypes('where="currentAccount":"Cobra","transactionMovement":"' + this.transactionMovement + '"').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
-          }
-        }
-      );
-    }
+    
+    this.refresh();
   }
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
@@ -382,25 +339,9 @@ export class PointOfSaleComponent implements OnInit {
     );
   }
 
-  public getOpenTransactionsByMovement(transactionMovement: TransactionMovement): void {
+  public getOpenTransactionsByMovement(transactionMovement: TransactionMovement, query: string): void {
 
     this.loading = true;
-
-    let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
-    
-    this._authService.getIdentity.subscribe(
-      identity => {
-        if(identity && identity.origin) {
-          query += `{"branchDestination":"${identity.origin.branch._id}"},`;
-        }
-      }
-    );
-
-    if(this.posType === 'mostrador') {
-      query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
-    } else {
-      query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
-    }
 
     this._transactionService.getTransactionsByMovement(transactionMovement, query).subscribe(
       result => {
@@ -423,16 +364,74 @@ export class PointOfSaleComponent implements OnInit {
     );
   }
 
-  public refresh(): void {
+  async refresh() {
+
     let pathLocation: string[] = this._router.url.split('/');
     if (this.posType === "resto") {
       this.roomSelected._id = pathLocation[4];
       this.getRooms();
     } else if (this.posType === "delivery") {
+      await this.getTransactionTypes('where="$or":[{"cashOpening":true},{"cashClosing":true}]').then(
+        transactionTypes => {
+          if (transactionTypes) {
+            this.transactionTypes = transactionTypes;
+          }
+        }
+      );
       this.getOpenTransactions();
+    } else if (this.posType === "pedidos-web") {
+      this.transactionMovement = TransactionMovement.Sale;
+      let query = `where="state":"${TransactionState.Closed}","madein":"${this.posType}","balance":{"$gt":0}&sort="startDate":-1`;
+      this.getOpenTransactionsByMovement(this.transactionMovement, query);
     } else if (this.posType === "mostrador") {
-      this.getOpenTransactionsByMovement(this.transactionMovement);
+      if (pathLocation[3] === "venta") {
+        this.transactionMovement = TransactionMovement.Sale;
+      } else if (pathLocation[3] === "compra") {
+        this.transactionMovement = TransactionMovement.Purchase;
+      } else if (pathLocation[3] === "stock") {
+        this.transactionMovement = TransactionMovement.Stock;
+      } else if (pathLocation[3] === "fondo") {
+        this.transactionMovement = TransactionMovement.Money;
+      }
+
+      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
+        transactionTypes => {
+          if (transactionTypes) {
+            this.transactionTypes = transactionTypes;
+          }
+        }
+      );
+
+      let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
+      
+      this._authService.getIdentity.subscribe(
+        identity => {
+          if(identity && identity.origin) {
+            query += `{"branchDestination":"${identity.origin.branch._id}"},`;
+          }
+        }
+      );
+  
+      if(this.posType === 'mostrador') {
+        query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
+      } else {
+        query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+      }
+
+      this.getOpenTransactionsByMovement(this.transactionMovement, query);
     } else if (this.posType === "cuentas-corrientes") {
+      if (pathLocation[3] === "cliente") {
+        this.transactionMovement = TransactionMovement.Sale;
+      } else if (pathLocation[3] === "proveedor") {
+        this.transactionMovement = TransactionMovement.Purchase;
+      }
+      await this.getTransactionTypes('where="currentAccount":"Cobra","transactionMovement":"' + this.transactionMovement + '"').then(
+        transactionTypes => {
+          if (transactionTypes) {
+            this.transactionTypes = transactionTypes;
+          }
+        }
+      );
       this.eventRefreshCurrentAccount.emit();
     }
   }

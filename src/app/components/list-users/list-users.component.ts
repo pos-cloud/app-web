@@ -39,16 +39,14 @@ export class ListUsersComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
-    this.userType = pathLocation[1];
-    this.getUsers();
+    this.refresh();
   }
 
-  public getUsers(): void {
+  public getUsers(query?: string): void {
 
     this.loading = true;
 
-    this._userService.getUsers().subscribe(
+    this._userService.getUsers(query).subscribe(
         result => {
 					if (!result.users) {
             if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
@@ -81,7 +79,13 @@ export class ListUsersComponent implements OnInit {
   }
 
   public refresh(): void {
-    this.getUsers();
+    let pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
+    if(pathLocation[2] === 'usuarios') {
+      this.getUsers(`where="$and":[{"employee":{ "$exists": true }},{"employee":{ "$ne": null }}]`);
+    } else if(pathLocation[2] === 'usuarios-web') {
+      this.getUsers(`where="$and":[{"company":{ "$exists": true }},{"company":{ "$ne": null }}]`);
+    }
   }
 
   public openModal(op: string, user:User): void {
@@ -99,9 +103,9 @@ export class ListUsersComponent implements OnInit {
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'add';
         modalRef.result.then((result) => {
-          this.getUsers();
+          this.refresh();
         }, (reason) => {
-          this.getUsers();
+          this.refresh();
         });
         break;
       case 'update' :
@@ -110,9 +114,9 @@ export class ListUsersComponent implements OnInit {
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.operation = 'update';
           modalRef.result.then((result) => {
-            this.getUsers();
+            this.refresh();
           }, (reason) => {
-            this.getUsers();
+            this.refresh();
           });
         break;
       case 'delete' :
@@ -120,7 +124,7 @@ export class ListUsersComponent implements OnInit {
           modalRef.componentInstance.user = user;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {
-              this.getUsers();
+              this.refresh();
             }
           }, (reason) => {
 

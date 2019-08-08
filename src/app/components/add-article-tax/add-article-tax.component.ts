@@ -187,9 +187,9 @@ export class AddArticleTaxComponent implements OnInit {
     
         if(this.otherFields && this.otherFields.length > 0) {
           for (const field of this.otherFields) {
-            if(field.datatype === ArticleFieldType.Percentage) {
+            if(field.articleField.datatype === ArticleFieldType.Percentage) {
               field.amount = this.roundNumber.transform((this.article.basePrice * parseFloat(field.value) / 100));
-            } else if(field.datatype === ArticleFieldType.Number) {
+            } else if(field.articleField.datatype === ArticleFieldType.Number) {
               field.amount = parseFloat(field.value);
             }
             if (field.articleField.modifyVAT) {
