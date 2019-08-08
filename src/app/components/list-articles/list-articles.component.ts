@@ -538,7 +538,13 @@ export class ListArticlesComponent implements OnInit {
                       tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
                       tax.taxAmount = (tax.taxBase * tax.percentage / 100);
                     } else {
-                      tax.taxAmount = taxAux.taxAmount;
+                      if(article.currency &&
+                        Config.currency &&
+                        Config.currency._id !== article.currency._id) {
+                          tax.taxAmount = taxAux.taxAmount * quotation;
+                        } else {
+                          tax.taxAmount = taxAux.taxAmount;
+                        }
                     }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);
                     tax.taxAmount = this.roundNumber.transform(tax.taxAmount);

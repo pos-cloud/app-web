@@ -726,7 +726,7 @@ export class AddSaleOrderComponent {
           if(articleTax.percentage && articleTax.percentage !== 0) {
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           } else {
-            articleTax.taxAmount = articleTax.taxAmount * movementOfArticle.amount;
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount;
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -806,7 +806,7 @@ export class AddSaleOrderComponent {
             tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           } else {
-            tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
+            tax.taxAmount = this.roundNumber.transform((taxAux.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount;
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);
           tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
