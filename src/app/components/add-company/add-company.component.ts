@@ -31,6 +31,8 @@ import { State } from 'app/models/state';
 import { CountryService } from 'app/services/country.service';
 import { TransportService } from 'app/services/transport.service';
 import { Transport } from 'app/models/transport';
+import { PriceList } from 'app/models/price-list';
+import { PriceListService } from 'app/services/price-list.service';
 
 @Component({
   selector: 'app-add-company',
@@ -63,6 +65,7 @@ export class AddCompanyComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public countries : any;
   public transports: Transport;
+  public priceLists: PriceList[];
 
   public formErrors = {
     'code': '',
@@ -136,6 +139,7 @@ export class AddCompanyComponent  implements OnInit {
     public _identificationTypeService: IdentificationTypeService,
     public _countryService : CountryService,
     public _transportService: TransportService,
+    public _priceListService: PriceListService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -150,6 +154,7 @@ export class AddCompanyComponent  implements OnInit {
     this.getEmployees();
     this.getCountries();
     this.getTransports();
+    this.getPriceLists();
   }
 
   async ngOnInit() {
@@ -392,7 +397,8 @@ export class AddCompanyComponent  implements OnInit {
       'flat': [this.company.flat,[]],
       'state': [this.company.state,[]],
       'addressNumber': [this.company.addressNumber,[]],
-      'transport': [this.company.transport,[]]
+      'transport': [this.company.transport,[]],
+      'priceList': [this.company.priceList,[]]
 
     });
 
@@ -444,13 +450,24 @@ export class AddCompanyComponent  implements OnInit {
     if (!this.company.gender && this.genders.length > 0) this.company.gender = null;
     if (!this.company.gender) this.company.gender = null;
 
-    let vatCondition;
+    /*let vatCondition;
     if (!this.company.vatCondition) {
       if (this.vatConditions && this.vatConditions.length > 0) {
         this.company.vatCondition = this.vatConditions[0];
       } else {
         vatCondition = null;
       }
+    } else {
+      if (this.company.vatCondition._id) {
+        vatCondition = this.company.vatCondition._id;
+      } else {
+        vatCondition = this.company.vatCondition;
+      }
+    }*/
+
+    let vatCondition;
+    if (!this.company.vatCondition) {
+      vatCondition = null;
     } else {
       if (this.company.vatCondition._id) {
         vatCondition = this.company.vatCondition._id;
@@ -535,6 +552,17 @@ export class AddCompanyComponent  implements OnInit {
       }
     }
 
+    let priceList;
+    if (!this.company.priceList) {
+      priceList = null;
+    } else {
+      if (this.company.priceList._id) {
+        priceList = this.company.priceList._id;
+      } else {
+        priceList = this.company.priceList;
+      }
+    }
+
     const values = {
       '_id': this.company._id,
       'code': this.company.code,
@@ -560,7 +588,8 @@ export class AddCompanyComponent  implements OnInit {
       'flat' : this.company.flat,
       'group': group,
       'employee' : employee,
-      'transport' : transport
+      'transport' : transport,
+      'priceList' : priceList
     };
 
     this.companyForm.setValue(values);
@@ -720,6 +749,47 @@ export class AddCompanyComponent  implements OnInit {
           this.getStates();
         }
       }
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
+  }
+
+  public getPriceLists(): void {
+    this.loading = true;
+
+    // ORDENAMOS LA CONSULTA
+    let sortAux = { name: 1 };
+    
+    // FILTRAMOS LA CONSULTA
+    let match = { operationType: { $ne: "D" } };
+    
+    // CAMPOS A TRAER
+    let project = {
+      name: 1,
+      operationType: 1
+    };
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {};
+
+    let limit = 0;
+
+    let skip = 0;
+
+    this._priceListService.getPriceListsV2(
+      project, // PROJECT
+      match, // MATCH
+      sortAux, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
+    ).subscribe(result => {
+      if (result && result.priceLists) {
+        this.priceLists = result.priceLists;
+      }
+      this.loading = false;
     },
     error => {
       this.showMessage(error._body, 'danger', false);

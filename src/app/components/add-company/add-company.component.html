@@ -312,6 +312,24 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="priceList" class="control-label">Lista asignada</label>
+                    <select class="form-control" formControlName="priceList" name="priceList" id="priceList" >
+                        <option [ngValue]="null" [selected]="!company || !company.priceList" [disabled]="readonly"></option>
+                              <option *ngFor="let priceList of priceLists"
+                                      [selected]="(company.priceList && company.priceList._id && priceList._id===company.priceList._id) ||
+                                                  (company.priceList && priceList._id===company.priceList)"
+                                      [value]="priceList._id"
+                                      [disabled]="readonly">
+                                      {{priceList.name}}</option>
+  
+                      </select>
+                    <div *ngIf="formErrors.priceList" class="alert alert-danger">
+                      {{ formErrors.priceList }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 					</ng-template>
