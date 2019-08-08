@@ -474,7 +474,7 @@ export class ConfigComponent implements OnInit {
 
   async addConfigCompany() {
     this.config = this.configFormCompany.value;
-    //this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
+    this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
     this.loadingCompany = true;
     await this.updateConfig().then(
       config => {
