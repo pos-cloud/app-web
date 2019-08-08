@@ -432,7 +432,7 @@ export class ConfigComponent implements OnInit {
           let config = result.configs[0];
           this.config = config;
           if (config['companyPicture'] && config['companyPicture'] !== 'default.jpg') {
-            this.imageURL = Config.apiURL + 'get-image-company/' + config['companyPicture'];
+            this.imageURL = Config.apiURL + 'get-image-company/' + config['companyPicture'] + '/' + Config.database;
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }

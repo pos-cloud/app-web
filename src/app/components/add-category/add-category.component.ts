@@ -169,7 +169,7 @@ export class AddCategoryComponent  implements OnInit {
                     resultUpload = result;
                     this.category.picture = resultUpload.category.picture;
                     if (this.category.picture && this.category.picture !== 'default.jpg') {
-                      this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture;
+                      this.imageURL = Config.apiURL + 'get-image-category/' + this.category.picture + "/" + Config.database;
                     } else {
                       this.imageURL = './../../../assets/img/default.jpg';
                     }

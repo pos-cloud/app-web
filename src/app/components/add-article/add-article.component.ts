@@ -85,8 +85,6 @@ export class AddArticleComponent implements OnInit {
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
 
-
-
   public formErrors = {
     'code': '',
     'make': '',
@@ -166,7 +164,7 @@ export class AddArticleComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _currencyService: CurrencyService,
-    public _configService: ConfigService
+    public _configService: ConfigService,
   ) {
     this.article = new Article();
     this.getCurrencies();
@@ -189,7 +187,6 @@ export class AddArticleComponent implements OnInit {
     await this._configService.getConfig.subscribe(
       config => {
         this.config = config;
-
         // AGREGAMOS VALIDACIÓN DE LONGITUD DE CÓDIGO INTERNO
         this.validationMessages.code['maxlength'] = `No puede exceder los ${this.config.article.code.validators.maxLength} carácteres.`;
         this.articleForm.controls['code'].setValidators([Validators.maxLength(this.config.article.code.validators.maxLength)]);
@@ -393,7 +390,7 @@ export class AddArticleComponent implements OnInit {
           this.taxes = this.article.taxes;
           this.otherFields = this.article.otherFields;
           if (this.article.picture && this.article.picture !== 'default.jpg') {
-            this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+            this.imageURL = Config.apiURL + 'get-image-article/'+ this.article.picture +"/"+ Config.database;
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
@@ -1147,7 +1144,7 @@ export class AddArticleComponent implements OnInit {
                   resultUpload = result;
                   this.article.picture = resultUpload.article.picture;
                   if (this.article.picture && this.article.picture !== 'default.jpg') {
-                    this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture;
+                    this.imageURL = Config.apiURL + 'get-image-article/' + this.article.picture + "/" + Config.database;
                   } else {
                     this.imageURL = './../../../assets/img/default.jpg';
                   }
@@ -1191,33 +1188,6 @@ export class AddArticleComponent implements OnInit {
   public fileChangeEvent(fileInput: any): void {
 
     this.filesToUpload = <Array<File>>fileInput.target.files;
-  }
-
-  public makeFileRequest(files: Array<File>) {
-
-    const articleId = this.article._id;
-    return new Promise((resolve, reject) => {
-      const formData: any = new FormData();
-      const xhr: XMLHttpRequest = new XMLHttpRequest();
-
-      if(files && files.length > 0) {
-        for (let i = 0; i < files.length; i++) {
-          formData.append('image', files[i], files[i].name);
-        }
-      }
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            resolve(JSON.parse(xhr.response));
-          } else {
-            reject(xhr.response);
-          }
-        }
-      }
-
-      xhr.open('POST', Config.apiURL + 'upload-image/' + articleId, true);
-      xhr.send(formData);
-    });
   }
 
   public addArticleTaxes(articleTaxes: Taxes[]): void {
