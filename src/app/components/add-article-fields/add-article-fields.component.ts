@@ -155,10 +155,29 @@ export class AddArticleFieldsComponent implements OnInit {
   }
 
   public addArticleFields(): void {
+
     this.field = this.articleFieldsForm.value;
-    this.fields.push(this.field);
-    this.eventAddArticleFields.emit(this.fields);
-    this.field = new ArticleFields();
+
+    if(!this.existsField()) {
+      this.fields.push(this.field);
+      this.eventAddArticleFields.emit(this.fields);
+      this.field = new ArticleFields();
+    } else {
+      this.showMessage("El campo " + this.field.articleField.name + " ya existe.", "info", true);
+    }
+  }
+
+  public existsField(): boolean {
+    
+    let exist: boolean = false;
+
+    for(let field of this.fields) {
+      if(field.articleField._id === this.field.articleField._id) {
+        exist = true;
+      }
+    }
+
+    return exist;
   }
 
   public deleteArticlField(articleField: ArticleFields): void {
