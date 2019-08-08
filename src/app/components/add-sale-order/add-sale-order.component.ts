@@ -125,6 +125,7 @@ export class AddSaleOrderComponent {
   public fastPayment: PaymentMethod
   public transports: Transport[];
   public config: Config;
+  public database;
 
   constructor(
     public _transactionService: TransactionService,
@@ -171,6 +172,8 @@ export class AddSaleOrderComponent {
   }
 
   async ngOnInit() {
+
+    this.database = Config.database;
     
     await this._configService.getConfig.subscribe(
       config => {

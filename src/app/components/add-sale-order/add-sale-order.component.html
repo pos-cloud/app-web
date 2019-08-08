@@ -153,7 +153,7 @@
                   <b>{{ movementOfArticle.amount}}</b>
                 </span>
                 <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture == 'default.jpg' || movementOfArticle.article.picture == undefined)" src="./../../../assets/img/default.jpg" height="50" width="50">
-                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture" height="50" width="50">
+                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
               </td>
               <td *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}
                 <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
