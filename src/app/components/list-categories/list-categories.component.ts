@@ -37,7 +37,7 @@ export class ListCategoriesComponent implements OnInit {
   public loading: boolean = false;
   public itemsPerPage = 10;
   public totalItems = 0;
-
+  public database: string;
   constructor(
     public _categoryService: CategoryService,
     public _router: Router,
@@ -47,6 +47,7 @@ export class ListCategoriesComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.database = Config.database;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (this.userType !== "pos") {

@@ -432,7 +432,7 @@ export class ConfigComponent implements OnInit {
           let config = result.configs[0];
           this.config = config;
           if (config['companyPicture'] && config['companyPicture'] !== 'default.jpg') {
-            this.imageURL = Config.apiURL + 'get-image-company/' + config['companyPicture'];
+            this.imageURL = Config.apiURL + 'get-image-company/' + config['companyPicture'] + '/' + Config.database;
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
@@ -474,7 +474,7 @@ export class ConfigComponent implements OnInit {
 
   async addConfigCompany() {
     this.config = this.configFormCompany.value;
-    this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
+    //this.config['companyStartOfActivity'] = moment(this.config['companyStartOfActivity'], 'DD/MM/YYYY').format('YYYY-MM-DDTHH:mm:ssZ');
     this.loadingCompany = true;
     await this.updateConfig().then(
       config => {

@@ -63,6 +63,7 @@ export class ListArticlesComponent implements OnInit {
   public articleType: ArticleType;
   public listTitle: string;
   public currentPage: number = 0;
+  public database: string;
   public displayedColumns = [
       'type',
       'code',
@@ -107,6 +108,7 @@ export class ListArticlesComponent implements OnInit {
 
   async ngOnInit() {
 
+
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
@@ -122,6 +124,9 @@ export class ListArticlesComponent implements OnInit {
         this.config = config;
       }
     );
+
+    this.database = Config.database;
+
 
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
