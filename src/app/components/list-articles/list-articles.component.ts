@@ -53,7 +53,6 @@ export class ListArticlesComponent implements OnInit {
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
-  @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = false;
   @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
@@ -145,17 +144,13 @@ export class ListArticlesComponent implements OnInit {
 
     /// ORDENAMOS LA CONSULTA
     let sort = {};
-    if(this.userType === 'pos') {
-      sort = { posDescription: 1, description: 1, favourite: -1 };
-    } else {
-      let sortAux;
+    let sortAux;
       if (this.orderTerm[0].charAt(0) === '-') {
           sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
       } else {
           sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
       }
-      sort = JSON.parse(sortAux);
-    }
+    sort = JSON.parse(sortAux);
 
     // FILTRAMOS LA CONSULTA
     let match = `{`;
@@ -168,9 +163,7 @@ export class ListArticlesComponent implements OnInit {
         }
       }
     }
-    if(this.userType === 'pos') {
-       match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
-    } else if(this.userType === 'report') {
+    if(this.userType === 'report') {
       if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
       match += `"$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
     } else {
@@ -184,26 +177,7 @@ export class ListArticlesComponent implements OnInit {
     let skip = 0;
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    if(this.userType === 'pos') {
-
-      project = {
-        type:1,
-        code:1,
-        barcode:1,
-        description:1,
-        posDescription:1,
-        costPrice:1,
-        salePrice:1,
-        observation:1,
-        picture: 1,
-        category: 1,
-        operationType: 1,
-        isWeigth: 1,
-        "make.description": 1,
-        "make.visibleSale": 1
-      }
-    } else {
-      project = {
+    project = {
         'type' : 1,
         'code' : 1,
         'barcode' : 1,
@@ -236,7 +210,6 @@ export class ListArticlesComponent implements OnInit {
               (page * this.itemsPerPage) :
               0 // SKIP
       limit = this.itemsPerPage;
-    }
 
     this._articleService.getArticlesV2(
         project, // PROJECT
@@ -438,187 +411,6 @@ export class ListArticlesComponent implements OnInit {
     });
   }
 
-  async addItem(articleSelected: Article, amount?: number, salePrice?: number) {
-
-    let err: boolean = false;
-
-    await this.getArticle(articleSelected._id).then(
-      async article => {
-        if(article) {
-          let movementOfArticle = new MovementOfArticle();
-          movementOfArticle.article = article;
-          movementOfArticle.code = article.code;
-          movementOfArticle.codeSAT = article.codeSAT;
-          movementOfArticle.description = article.description;
-          movementOfArticle.observation = article.observation;
-          movementOfArticle.make = article.make;
-          movementOfArticle.category = article.category;
-          movementOfArticle.barcode = article.barcode;
-          movementOfArticle.transaction = this.transaction;
-          movementOfArticle.modifyStock = this.transaction.type.modifyStock;
-          movementOfArticle.otherFields = article.otherFields;
-          if(this.transaction.type.stockMovement) {
-            movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
-          }
-
-          let quotation = 1;
-          if(this.transaction.quotation) {
-            quotation = this.transaction.quotation;
-          }
-
-          movementOfArticle.basePrice = this.roundNumber.transform(article.basePrice);
-
-          if(article.currency &&
-            Config.currency &&
-            Config.currency._id !== article.currency._id) {
-            movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
-          }
-
-          if (this.transaction &&
-            this.transaction.type &&
-            this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              let fields: ArticleFields[] = new Array();
-              if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-                for (const field of movementOfArticle.otherFields) {
-                  if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) {
-                    if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                      field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                    } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                      field.amount = parseFloat(field.value);
-                    }
-                  }
-                  fields.push(field);
-                }
-              }
-              
-              movementOfArticle.otherFields = fields;
-              movementOfArticle.costPrice = this.roundNumber.transform(article.costPrice);
-              movementOfArticle.markupPercentage = article.markupPercentage;
-              movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
-              if(salePrice) article.salePrice = salePrice; 
-              if(amount) movementOfArticle.amount = amount; 
-              movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
-              movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
-
-              if(article.currency &&
-                Config.currency &&
-                Config.currency._id !== article.currency._id) {
-                  movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
-                  movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice * quotation);
-                  movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
-                  movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
-              }
-              if (this.transaction.type.requestTaxes) {
-                let taxes: Taxes[] = new Array();
-                if (article.taxes) {
-                  for (let taxAux of article.taxes) {
-                    let tax: Taxes = new Taxes();
-                    if(taxAux.tax && taxAux.tax._id) {
-                      tax.tax = taxAux.tax;
-                    } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                      this.saveClaim('ERROR ARTICLE NULL - LINEA 510 -', JSON.stringify(article));
-                      let query = `where="_id":"${taxAux.tax}"`;
-                      await this.getTaxes(query).then(
-                        taxes => {
-                          if(taxes && taxes.length > 0) {
-                            tax.tax = taxes[0];
-                          } else {
-                            err = true;
-                            this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
-                          }
-                        }
-                      );
-                    } else if(taxAux.tax === null) {
-                      this.saveClaim('ERROR ARTICLE NULL - LINEA 523 -', JSON.stringify(article));
-                      err = true;
-                      this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
-                    }
-                    tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                    if(tax.percentage && tax.percentage !== 0) {
-                      tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-                      tax.taxAmount = (tax.taxBase * tax.percentage / 100);
-                    } else {
-                      tax.taxAmount = taxAux.taxAmount;
-                    }
-                    tax.taxBase = this.roundNumber.transform(tax.taxBase);
-                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
-                    taxes.push(tax);
-                  }
-                }
-                movementOfArticle.taxes = taxes;
-              }
-          } else {
-            movementOfArticle.markupPercentage = 0;
-            movementOfArticle.markupPrice = 0;
-
-            let taxedAmount = movementOfArticle.basePrice;
-            movementOfArticle.costPrice = 0;
-
-            let fields: ArticleFields[] = new Array();
-            if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-              for (const field of movementOfArticle.otherFields) {
-                if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
-                  if (field.articleField.datatype === ArticleFieldType.Percentage) {
-                    field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-                  } else if (field.articleField.datatype === ArticleFieldType.Number) {
-                    field.amount = parseFloat(field.value);
-                  }
-                  if (field.articleField.modifyVAT) {
-                    taxedAmount += field.amount;
-                  } else {
-                    movementOfArticle.costPrice += field.amount;
-                  }
-                }
-                fields.push(field);
-              }
-            }
-            movementOfArticle.otherFields = fields;
-            if(this.transaction.type.requestTaxes) {
-              let taxes: Taxes[] = new Array();
-              if (article.taxes) {
-                for (let taxAux of article.taxes) {
-                  if(taxAux.tax && taxAux.tax._id) {
-                    taxAux.tax = taxAux.tax;
-                  } else if(taxAux.tax && typeof taxAux.tax === 'string' && taxAux.tax != '') {
-                    this.saveClaim('ERROR ARTICLE NULL - LINEA 572 -', JSON.stringify(article));
-                    let query = `where="_id":"${taxAux.tax}"`;
-                    await this.getTaxes(query).then(
-                      taxes => {
-                        if(taxes && taxes.length > 0) {
-                          taxAux.tax = taxes[0];
-                        } else {
-                          err = true;
-                          this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
-                        }
-                      }
-                    );
-                  } else if(taxAux.tax === null) {
-                    this.saveClaim('ERROR ARTICLE NULL - LINEA 585 -', JSON.stringify(article));
-                    err = true;
-                    this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
-                  }
-                  taxAux.taxBase = this.roundNumber.transform(taxedAmount);
-                  if(taxAux.percentage && taxAux.percentage !== 0) {
-                    taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
-                  }
-                  taxes.push(taxAux);
-                  movementOfArticle.costPrice += taxAux.taxAmount;
-                }
-                movementOfArticle.taxes = taxes;
-              }
-            }
-            movementOfArticle.costPrice += this.roundNumber.transform(taxedAmount);
-            movementOfArticle.unitPrice = movementOfArticle.basePrice;
-            movementOfArticle.salePrice = movementOfArticle.costPrice;
-          }
-          this.areArticlesVisible = true;
-          if(!err) {
-            this.eventAddItem.emit(movementOfArticle);
-          }
-        }
-      }
-    );
-  }
 
   public getTaxes(query?: string): Promise<Tax[]> {
 
@@ -660,93 +452,6 @@ export class ListArticlesComponent implements OnInit {
         }
       );
     });
-  }
-
-  public filterItem(category?: Category) {
-
-    // GUARDAMOS LE CÓDIGO ORIGINAL PARA LOS PESABLES
-    let originalFilter: string = this.filterArticle;
-
-    // CORTAMOS EL CÓDIGO SI ES PESABLE
-    if(this.transaction.type.transactionMovement === TransactionMovement.Sale &&
-      this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
-      if(this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
-        this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length + 
-                                                      this.config.tradeBalance.numberOfQuantity), 
-                                                      (originalFilter.length -
-                                                        this.config.tradeBalance.numberOfDecimals -
-                                                        this.config.tradeBalance.numberOfIntegers - 1)), this.config.article.code.validators.maxLength);
-      }
-    }
-    // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
-    if(category) {
-      this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
-      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
-      if (this.filterArticle && this.filterArticle !== "") {
-        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
-      }
-    } else if(this.filterArticle && this.filterArticle !== "") {
-
-      this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
-
-      if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
-
-        this.hideMessage();
-
-        let article;
-        var count = 1;
-
-        if (this.filteredArticles.length === 1) {
-          article = this.filteredArticles[0];
-        } else if (this.filteredArticles.length > 1) {
-          count = 0;
-          for(let art of this.filteredArticles) {
-            if(art.type === ArticleType.Final) {
-              count++;
-              article = art;
-            }
-          }
-        }
-
-        if (  count === 1 &&
-              this.filterArticle &&
-            ( article &&
-              (article.barcode && article.barcode === this.filterArticle) ||
-              (article.description && article.description.toUpperCase() === this.filterArticle.toUpperCase()) ||
-              (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
-              (article.code && article.code === this.filterArticle))) {
-                this.filterArticle = '';
-                if(article.isWeigth && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-                  let wholePart = originalFilter.slice((originalFilter.length -
-                                                        this.config.tradeBalance.numberOfDecimals -
-                                                        this.config.tradeBalance.numberOfIntegers - 1)
-                                                        , 
-                                                        (originalFilter.length -
-                                                          this.config.tradeBalance.numberOfDecimals -
-                                                          this.config.tradeBalance.numberOfIntegers - 1) + 
-                                                          this.config.tradeBalance.numberOfIntegers);
-                  let decimalPart = originalFilter.slice((originalFilter.length -
-                                                          this.config.tradeBalance.numberOfDecimals - 1),
-                                                          (originalFilter.length - 1));
-                  let salePrice = parseFloat(wholePart + "." + decimalPart);
-                  let amount = 1;
-                  if(this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
-                    amount = parseInt(originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length, 
-                                                            this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfQuantity));
-                  }
-                  this.addItem(article, amount, salePrice);
-                } else {
-                  this.addItem(article);
-                }
-        } else {
-          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
-          this.eventAddItem.emit(null);
-        }
-      } else {
-        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
-        this.eventAddItem.emit(null);
-      }
-    }
   }
 
   public padNumber(n, length) {

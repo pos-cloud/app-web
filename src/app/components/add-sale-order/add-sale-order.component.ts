@@ -59,7 +59,6 @@ import { CancellationTypeService } from 'app/services/cancellation-type.service'
 import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
 import { CancellationType } from 'app/models/cancellation-type';
-import { ListArticlesComponent } from '../list-articles/list-articles.component';
 import { ListCategoriesComponent } from '../list-categories/list-categories.component';
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
@@ -70,6 +69,7 @@ import { TransportService } from 'app/services/transport.service';
 import { Transport } from 'app/models/transport';
 import { SelectTransportComponent } from '../select-transport/select-transport.component';
 import { ConfigService } from 'app/services/config.service';
+import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -117,7 +117,7 @@ export class AddSaleOrderComponent {
   public apiURL = Config.apiURL;
   public userCountry: string = 'AR';
   public lastQuotation: number = 1;
-  @ViewChild(ListArticlesComponent, {static: true}) listArticlesComponent: ListArticlesComponent;
+  @ViewChild(ListArticlesPosComponent, {static: true}) listArticlesComponent: ListArticlesPosComponent;
   @ViewChild(ListCategoriesComponent, {static: true}) listCategoriesComponent: ListCategoriesComponent;
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;

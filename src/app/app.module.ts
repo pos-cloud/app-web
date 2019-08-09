@@ -252,6 +252,7 @@ import { CurrentAccountDetailsComponent } from './components/print/current-accou
 import { PrintArticlesStockComponent } from './components/print/print-articles-stock/print-articles-stock.component';
 import { PriceListComponent } from './components/price-list/price-list.component';
 import { ListPriceListsComponent } from './components/list-price-lists/list-price-lists.component';
+import { ListArticlesPosComponent } from './components/list-articles-pos/list-articles-pos.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -432,7 +433,8 @@ import { ListPriceListsComponent } from './components/list-price-lists/list-pric
     CurrentAccountDetailsComponent,
     PrintArticlesStockComponent,
     PriceListComponent,
-    ListPriceListsComponent
+    ListPriceListsComponent,
+    ListArticlesPosComponent
   ],
   entryComponents: [
     HomeComponent,
