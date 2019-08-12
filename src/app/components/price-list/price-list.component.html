@@ -41,9 +41,9 @@
                   <div class="form-group col-md-6">
                     <label for="allowSpecialRules" class="control-label">Permite reglas especiales?</label>
                     <div class="input-group">
-                      <select class="form-control" formControlName="allowSpecialRules" (change)="addRule()">
-                        <option value="true" [selected]="priceList.allowSpecialRules" [disabled]="readonly">Si</option>
-                        <option value="false" [selected]="!priceList.allowSpecialRules" [disabled]="readonly">No</option>
+                      <select class="form-control" formControlName="allowSpecialRules" (change)="addRule()" [(ngModel)]='valueRule'>
+                        <option value="true" [disabled]="readonly">Si</option>
+                        <option value="false" [disabled]="readonly">No</option>
                       </select>
                     </div>
                   </div>
@@ -52,7 +52,7 @@
             </div>
 					</ng-template>
         </ngb-tab>
-        <ngb-tab *ngIf="this.priceListForm.value.allowSpecialRules" title="Reglas Especiales">
+        <ngb-tab *ngIf="valueRule" title="Reglas Especiales">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
               <div formArrayName="rules" *ngFor="let rule of priceListForm.get('rules').controls; let i = index;">

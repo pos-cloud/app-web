@@ -126,7 +126,6 @@ export class ListPriceListsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        console.log(result)
         if (result && result[0] && result[0].priceLists) {
           this.loading = false;
           this.priceLists = result[0].priceLists;

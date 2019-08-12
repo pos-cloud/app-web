@@ -8,6 +8,7 @@ import { Category } from 'app/models/category';
 import { Make } from 'app/models/make';
 import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
+import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-price-list',
@@ -104,16 +105,31 @@ export class PriceListComponent implements OnInit {
     console.log(e)
   }
 
+  public addNewRule(e :any): void {
+    if(this.priceListForm.value.rules.lenght <= 0 && e){
+      const rules = this.priceListForm.controls.rules as FormArray;
+      rules.push(
+        this._fb.group({
+          _id: null,
+          make: null,
+          category: null,
+          percentage: 0
+        })
+      );
+    }
+    
+  }
+
   public addRule(): void {
-    const rules = this.priceListForm.controls.rules as FormArray;
-    rules.push(
-      this._fb.group({
-        _id: null,
-        make: null,
-        category: null,
-        percentage: 0
-      })
-    );
+      const rules = this.priceListForm.controls.rules as FormArray;
+      rules.push(
+        this._fb.group({
+          _id: null,
+          make: null,
+          category: null,
+          percentage: 0
+        })
+      );
   }
 
   deleteRule(index) {

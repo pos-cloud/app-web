@@ -312,7 +312,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="company.type === 'Cliente'">
                   <div class="form-group col-md-12">
                     <label for="priceList" class="control-label">Lista asignada</label>
                     <select class="form-control" formControlName="priceList" name="priceList" id="priceList" >

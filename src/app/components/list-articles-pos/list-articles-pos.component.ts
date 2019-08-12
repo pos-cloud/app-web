@@ -25,6 +25,10 @@ import { Tax } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
+import { PriceList } from 'app/models/price-list';
+import { PriceListService } from 'app/services/price-list.service';
+import { TransactionService } from 'app/services/transaction.service';
+import { CompanyType } from 'app/models/company';
 
 
 @Component({
@@ -37,7 +41,7 @@ import { ClaimService } from 'app/services/claim.service';
 export class ListArticlesPosComponent implements OnInit {
 
   public identity: User;
-  public articles: Article[] = new Array();
+  public articles: Article[];
   public alertMessage: string = '';
   public userType: string = '';
   public orderTerm: string[] = ["description"];
@@ -48,6 +52,7 @@ export class ListArticlesPosComponent implements OnInit {
   @Input() areArticlesVisible: boolean = false;
   @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
+  @Input() transactionId : string
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();
@@ -76,6 +81,7 @@ export class ListArticlesPosComponent implements OnInit {
   public filterPipe: FilterPipe = new FilterPipe();
   public filteredArticles: Article[];
   public config: Config;
+  public stock;
 
   constructor(
     private _articleService: ArticleService,
@@ -85,7 +91,9 @@ export class ListArticlesPosComponent implements OnInit {
     private _authService: AuthService,
     private _taxService: TaxService,
     private _configService: ConfigService,
-    private _claimService: ClaimService
+    private _transactionService : TransactionService,
+    private _claimService: ClaimService,
+    private _priceListService : PriceListService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -126,6 +134,7 @@ export class ListArticlesPosComponent implements OnInit {
       this.articleType = ArticleType.Final;
     }
     this.getArticles();
+
   }
 
   public getArticles(): void {
@@ -150,13 +159,12 @@ export class ListArticlesPosComponent implements OnInit {
     match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
     
     match = JSON.parse(match);
-    let project = {};
     let group = {};
     let limit = 0;
     let skip = 0;
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    project = {
+    let project = {
       type:1,
       code:1,
       barcode:1,
@@ -169,8 +177,11 @@ export class ListArticlesPosComponent implements OnInit {
       category: 1,
       operationType: 1,
       isWeigth: 1,
+      "make._id": 1,
       "make.description": 1,
-      "make.visibleSale": 1
+      "make.visibleSale": 1,
+      priceLists: 1
+      //"articleStocks" : 1
     }
     
 
@@ -184,23 +195,15 @@ export class ListArticlesPosComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        if(this.userType === 'pos') {
-          if (result && result && result.articles) {
-            this.articles = result.articles;
-            this.totalItems = result.count;
-          } else {
-            this.articles = new Array();
-            this.totalItems = 0;
-          }
+        console.log(result);
+        if (result && result && result.articles) {
+          this.articles = result.articles;
+          this.totalItems = result.count;
         } else {
-          if (result && result[0] && result[0].articles) {
-            this.articles = result[0].articles;
-            this.totalItems = result[0].count;
-          } else {
-            this.articles = new Array();
-            this.totalItems = 0;
-          }
+          this.articles = new Array();
+          this.totalItems = 0;
         }
+        
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -214,6 +217,27 @@ export class ListArticlesPosComponent implements OnInit {
     this.activeModal.close({ article: articleSelected });
   }
 
+  public getPriceList(id: string): Promise<PriceList[]> {
+
+    return new Promise<PriceList[]>((resolve, reject) => {
+
+      this._priceListService.getPriceList(id).subscribe(
+        result => {
+          console.log(result)
+          if (!result.priceList) {
+            resolve(null);
+          } else {
+            resolve(result.priceList);
+          }
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
   async addItem(articleSelected: Article, amount?: number, salePrice?: number) {
 
     let err: boolean = false;
@@ -221,6 +245,22 @@ export class ListArticlesPosComponent implements OnInit {
     await this.getArticle(articleSelected._id).then(
       async article => {
         if(article) {
+          let increasePrice = 0;
+          /*if(this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
+            let priceList = await this.getPriceList(this.transaction.company.priceList.toString())
+            if(priceList['allowSpecialRules']){
+              priceList['rules'].forEach(rule => {
+                if(rule){
+                  if(rule['category'] === article.category._id && rule['make'] === article.make._id){
+                    increasePrice = rule['percentage']
+                  }
+                }
+              });
+            } else {
+              increasePrice = priceList['percentage']
+            }
+          }*/
+
           let movementOfArticle = new MovementOfArticle();
           movementOfArticle.article = article;
           movementOfArticle.code = article.code;
@@ -248,6 +288,10 @@ export class ListArticlesPosComponent implements OnInit {
             Config.currency &&
             Config.currency._id !== article.currency._id) {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+          }
+
+          if(increasePrice > 0){
+            movementOfArticle.basePrice = this.roundNumber.transform( movementOfArticle.basePrice + (movementOfArticle.basePrice * increasePrice / 100));
           }
 
           if (this.transaction &&
@@ -284,6 +328,14 @@ export class ListArticlesPosComponent implements OnInit {
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }
+
+              if(increasePrice > 0){
+                  movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice + (movementOfArticle.costPrice *increasePrice / 100));
+                  movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice *increasePrice / 100));
+                  movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice +(movementOfArticle.unitPrice *increasePrice / 100));
+                  movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice +(movementOfArticle.salePrice *increasePrice / 100));
+              }
+
               if (this.transaction.type.requestTaxes) {
                 let taxes: Taxes[] = new Array();
                 if (article.taxes) {
@@ -389,6 +441,7 @@ export class ListArticlesPosComponent implements OnInit {
           }
           this.areArticlesVisible = true;
           if(!err) {
+            console.log(movementOfArticle)
             this.eventAddItem.emit(movementOfArticle);
           }
         }

@@ -16,6 +16,10 @@
             <b> Transporte:</b>
             <span *ngIf="transaction.transport">{{transaction.transport.name}}</span>
         </div>
+        <div class="col-md-2" *ngIf="transaction && transaction.priceList">
+          <b> Lista de Precio:</b>
+          <span *ngIf="transaction.priceList">{{transaction.priceList.name}}</span>
+        </div>
         <div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'">
           <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
           <b *ngIf="transactionMovement === 'Compra'">Proveedor: </b>
@@ -277,7 +281,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <app-list-articles-pos (eventAddItem)="addItem($event)" [transaction]="transaction"></app-list-articles-pos>
+          <app-list-articles-pos (eventAddItem)="addItem($event)" [transaction]="transaction" [transactionId]="transactionId"></app-list-articles-pos>
         </div>
       </div>
       <div class="row">

@@ -5,7 +5,26 @@
         <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction.type && transaction.type.showPrices">
           <span class="badge badge-info">
             <b *ngIf="transaction.type.transactionMovement !== 'Venta'">{{ article.costPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
-            <b *ngIf="transaction.type.transactionMovement === 'Venta'">{{ article.salePrice | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+            <b *ngIf="transaction.type.transactionMovement === 'Venta'"> {{ article.salePrice | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+            <div *ngIf='article.priceLists && transaction && transaction.company && transaction.company.priceList'>  
+              <div *ngFor="let priceList of article.priceLists; let i = index">
+                <div *ngIf="priceList._id === transaction.company.priceList && !priceList.allowSpecialRules">
+                  <b> PL: {{ article.salePrice + (article.salePrice * priceList.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+                </div>
+                <div *ngIf="priceList._id === transaction.company.priceList && priceList.allowSpecialRules">
+                  <div *ngFor="let rule of priceList.rules; let i = index">
+                    <div *ngIf="rule.category === article.category && rule.make === article.make._id">
+                        <b>PL: {{ article.salePrice + (article.salePrice * rule.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--<div *ngFor="let stock of article.articleStocks; let i = index">
+              <div *ngIf="stock.article === article._id">
+                  <b>STK:{{ stock + stock.realStock }}</b>
+              </div>
+            </div>-->
           </span>
         </div>
         <img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120"
