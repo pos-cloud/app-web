@@ -15,6 +15,7 @@ import { Currency } from './currency';
 import { Branch } from './branch';
 import { Deposit } from './deposit';
 import { Transport } from './transport';
+import { PriceList } from './price-list';
 
 export class Transaction {
 
@@ -61,6 +62,7 @@ export class Transaction {
 	public transport: Transport;
 	public turnOpening: Turn;
 	public turnClosing: Turn;
+	public priceList : PriceList;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;

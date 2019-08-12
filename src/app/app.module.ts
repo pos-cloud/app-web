@@ -50,6 +50,7 @@ import { CompanyGroupService } from "./services/company-group.service";
 import { CompanyContactService } from "./services/company-contact.service";
 import { CompanyFieldService } from './services/company-field.service';
 import { BankService } from './services/bank.service';
+import { PriceListService } from './services/price-list.service'
 
 // guards
 import { AuthGuard } from './guards/auth.guard';
@@ -249,6 +250,9 @@ import { PrintPriceListComponent } from './components/print/print-price-list/pri
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
 import { CurrentAccountDetailsComponent } from './components/print/current-account-details/current-account-details.component';
 import { PrintArticlesStockComponent } from './components/print/print-articles-stock/print-articles-stock.component';
+import { PriceListComponent } from './components/price-list/price-list.component';
+import { ListPriceListsComponent } from './components/list-price-lists/list-price-lists.component';
+import { ListArticlesPosComponent } from './components/list-articles-pos/list-articles-pos.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -427,7 +431,10 @@ import { PrintArticlesStockComponent } from './components/print/print-articles-s
     PrintPriceListComponent,
     ListCashBoxComponent,
     CurrentAccountDetailsComponent,
-    PrintArticlesStockComponent
+    PrintArticlesStockComponent,
+    PriceListComponent,
+    ListPriceListsComponent,
+    ListArticlesPosComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -591,7 +598,8 @@ import { PrintArticlesStockComponent } from './components/print/print-articles-s
     PrintPriceListComponent,
     ListCashBoxesComponent,
     CurrentAccountDetailsComponent,
-    PrintArticlesStockComponent
+    PrintArticlesStockComponent,
+    PriceListComponent
   ],
   imports: [
     BrowserModule,
@@ -658,7 +666,8 @@ import { PrintArticlesStockComponent } from './components/print/print-articles-s
     AuthService,
     OriginService,
     ClaimService,
-    TransportService
+    TransportService,
+    PriceListService
   ],
   bootstrap: [AppComponent]
 })

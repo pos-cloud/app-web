@@ -2,7 +2,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticleType } from './../../models/article';
 import { Category } from './../../models/category';
@@ -13,49 +13,46 @@ import { Transaction } from './../../models/transaction';
 
 import { ArticleService } from './../../services/article.service';
 
-import { AddArticleComponent } from './../../components/add-article/add-article.component';
-import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
-import { ImportComponent } from './../../components/import/import.component';
-import { PrintComponent } from 'app/components/print/print/print.component';
-
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
-import { Printer, PrinterPrintIn } from '../../models/printer';
-import { PrinterService } from '../../services/printer.service';
 import { TransactionMovement } from '../../models/transaction-type';
-import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
 import { ArticleFields } from 'app/models/article-fields';
 import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
 import { User } from 'app/models/user';
-import { PrintPriceListComponent } from '../print/print-price-list/print-price-list.component';
 import { TaxService } from 'app/services/tax.service';
 import { Tax } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
+import { PriceList } from 'app/models/price-list';
+import { PriceListService } from 'app/services/price-list.service';
+import { TransactionService } from 'app/services/transaction.service';
+import { CompanyType } from 'app/models/company';
+
 
 @Component({
-  selector: 'app-list-articles',
-  templateUrl: './list-articles.component.html',
-  styleUrls: ['./list-articles.component.scss'],
+  selector: 'app-list-articles-pos',
+  templateUrl: './list-articles-pos.component.html',
+  styleUrls: ['./list-articles-pos.component.scss'],
   providers: [NgbAlertConfig, RoundNumberPipe],
   encapsulation: ViewEncapsulation.None,
 })
-
-export class ListArticlesComponent implements OnInit {
+export class ListArticlesPosComponent implements OnInit {
 
   public identity: User;
-  public articles: Article[] = new Array();
+  public articles: Article[];
   public alertMessage: string = '';
   public userType: string = '';
   public orderTerm: string[] = ["description"];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
+  @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = false;
   @Input() filterArticle: string = '';
   @Input() transaction: Transaction;
+  @Input() transactionId : string
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();
@@ -84,18 +81,19 @@ export class ListArticlesComponent implements OnInit {
   public filterPipe: FilterPipe = new FilterPipe();
   public filteredArticles: Article[];
   public config: Config;
+  public stock;
 
   constructor(
     private _articleService: ArticleService,
     private _router: Router,
-    private _modalService: NgbModal,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    private _printerService: PrinterService,
     private _authService: AuthService,
     private _taxService: TaxService,
     private _configService: ConfigService,
-    private _claimService: ClaimService
+    private _transactionService : TransactionService,
+    private _claimService: ClaimService,
+    private _priceListService : PriceListService
   ) {
     this.filters = new Array();
     this.articles = new Array();
@@ -136,6 +134,7 @@ export class ListArticlesComponent implements OnInit {
       this.articleType = ArticleType.Final;
     }
     this.getArticles();
+
   }
 
   public getArticles(): void {
@@ -143,14 +142,7 @@ export class ListArticlesComponent implements OnInit {
     this.loading = true;
 
     /// ORDENAMOS LA CONSULTA
-    let sort = {};
-    let sortAux;
-      if (this.orderTerm[0].charAt(0) === '-') {
-          sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
-      } else {
-          sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
-      }
-    sort = JSON.parse(sortAux);
+    let sort = { posDescription: 1, description: 1, favourite: -1 };
 
     // FILTRAMOS LA CONSULTA
     let match = `{`;
@@ -163,53 +155,35 @@ export class ListArticlesComponent implements OnInit {
         }
       }
     }
-    if(this.userType === 'report') {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ], "containsVariants": false, "operationType": { "$ne": "D" } }`;
-    } else {
-      if (match.charAt(match.length - 1) === '"' || match.charAt(match.length - 1) === '}') match += `,`;
-      match += `"type": "${this.articleType}", "operationType": { "$ne": "D" } }`;
-    }
+    
+    match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
+    
     match = JSON.parse(match);
-    let project = {};
     let group = {};
     let limit = 0;
     let skip = 0;
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
-    project = {
-        'type' : 1,
-        'code' : 1,
-        'barcode' : 1,
-        'description' : 1,
-        'posDescription' : 1,
-        'containsVariants': 1,
-        'make.description' : 1,
-        'category.description' : 1,
-        'costPrice' : { $toString : '$costPrice' },
-        'salePrice' : { $toString : '$salePrice' },
-        'observation' : 1,
-        'picture' : 1,
-        'operationType': 1,
-        'currency.name': 1,
-        isWeigth: { $toString : '$isWeigth' },
-      }
-
-      // AGRUPAMOS EL RESULTADO
-      group = {
-          _id: null,
-          count: { $sum: 1 },
-          articles: { $push: "$$ROOT" }
-      };
-
-      let page = 0;
-      if(this.currentPage != 0) {
-        page = this.currentPage - 1;
-      }
-      skip = !isNaN(page * this.itemsPerPage) ?
-              (page * this.itemsPerPage) :
-              0 // SKIP
-      limit = this.itemsPerPage;
+    let project = {
+      type:1,
+      code:1,
+      barcode:1,
+      description:1,
+      posDescription:1,
+      costPrice:1,
+      salePrice:1,
+      observation:1,
+      picture: 1,
+      category: 1,
+      operationType: 1,
+      isWeigth: 1,
+      "make._id": 1,
+      "make.description": 1,
+      "make.visibleSale": 1,
+      priceLists: 1
+      //"articleStocks" : 1
+    }
+    
 
     this._articleService.getArticlesV2(
         project, // PROJECT
@@ -221,23 +195,15 @@ export class ListArticlesComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        if(this.userType === 'pos') {
-          if (result && result && result.articles) {
-            this.articles = result.articles;
-            this.totalItems = result.count;
-          } else {
-            this.articles = new Array();
-            this.totalItems = 0;
-          }
+        console.log(result);
+        if (result && result && result.articles) {
+          this.articles = result.articles;
+          this.totalItems = result.count;
         } else {
-          if (result && result[0] && result[0].articles) {
-            this.articles = result[0].articles;
-            this.totalItems = result[0].count;
-          } else {
-            this.articles = new Array();
-            this.totalItems = 0;
-          }
+          this.articles = new Array();
+          this.totalItems = 0;
         }
+        
       },
       error => {
         this.showMessage(error._body, 'danger', false);
@@ -247,164 +213,25 @@ export class ListArticlesComponent implements OnInit {
     );
   }
 
-  public pageChange(page): void {
-      this.currentPage = page;
-      this.getArticles();
-  }
-
   public selectArticle(articleSelected: Article): void {
     this.activeModal.close({ article: articleSelected });
   }
 
-  public orderBy(term: string): void {
+  public getPriceList(id: string): Promise<PriceList[]> {
 
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-" + term;
-    } else {
-      this.orderTerm[0] = term;
-    }
+    return new Promise<PriceList[]>((resolve, reject) => {
 
-    this.getArticles();
-  }
-
-  public refresh(): void {
-    this.getArticles();
-  }
-
-  async openModal(op: string, article?: Article) {
-
-    let modalRef;
-    switch (op) {
-      case 'view':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
-        modalRef.componentInstance.articleId = article._id;
-        modalRef.componentInstance.operation = "view";
-        break;
-      case 'add':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
-        modalRef.componentInstance.operation = "add";
-        modalRef.result.then((result) => {
-          this.getArticles();
-        }, (reason) => {
-          this.getArticles();
-        });
-        break;
-      case 'update':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
-        modalRef.componentInstance.articleId = article._id;
-        modalRef.componentInstance.operation = "update";
-        modalRef.result.then((result) => {
-          this.getArticles();
-        }, (reason) => {
-          this.getArticles();
-        });
-        break;
-      case 'delete':
-        modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg' });
-        modalRef.componentInstance.article = article;
-        modalRef.result.then((result) => {
-          if (result === 'delete_close') {
-            this.getArticles();
-          }
-        }, (reason) => {
-
-        });
-        break;
-        case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
-        let model: any = new Article();
-        model.model = "article";
-        model.primaryKey = "code";
-        model.type = '';
-        model.description = '';
-        model.basePrice = '';
-        model.costPrice = '';
-        model.markupPercentage = '';
-        model.markupPrice = '';
-        model.salePrice = '';
-        model.barcode = '';
-        model.relations = new Array();
-        model.relations.push("make_relation_description");
-        model.relations.push("category_relation_description");
-        model.relations.push("providers_relation_code");
-        model.relations.push("currency_relation_code");
-        modalRef.componentInstance.model = model;
-        modalRef.result.then((result) => {
-          if (result === 'import_close') {
-            this.getArticles();
-          }
-        }, (reason) => {
-
-        });
-        break;
-      case 'print-label':
-
-        await this.getPrinters().then(
-          printers => {
-            let labelPrinter: Printer;
-            if (printers && printers.length > 0) {
-              for (let printer of printers) {
-                if (printer.printIn === PrinterPrintIn.Label) {
-                  labelPrinter = printer;
-                }
-              }
-            }
-
-            if(labelPrinter) {
-              modalRef = this._modalService.open(PrintComponent);
-              if(article) {
-                modalRef.componentInstance.article = article;
-              } else {
-                modalRef.componentInstance.articles = this.articles;
-              }
-              modalRef.componentInstance.typePrint = 'label';
-              modalRef.componentInstance.printer = labelPrinter;
-            } else {
-              this.showMessage('Debe definir un modelo de impresora como etiqueta en el menu Configuración->Impresoras', "info", true);
-            }
-          }
-        );
-        break;
-      case 'print-list':
-        modalRef = this._modalService.open(PrintPriceListComponent);
-        modalRef.result.then((result) => {
-          this.getArticles();
-        }, (reason) => {
-          this.getArticles();
-        });
-        break;
-      case 'update-prices':
-        modalRef = this._modalService.open(UpdateArticlePriceComponent);
-        modalRef.componentInstance.operation = "update-prices";
-        modalRef.result.then((result) => {
-          this.getArticles();
-        }, (reason) => {
-          this.getArticles();
-        });
-        break;
-      default: ;
-    }
-  };
-
-  public getPrinters(): Promise<Printer[]> {
-
-    return new Promise<Printer[]>( async (resolve, reject) => {
-
-      this.loading = true;
-
-      this._printerService.getPrinters().subscribe(
+      this._priceListService.getPriceList(id).subscribe(
         result => {
-          this.loading = false;
-          if (!result.printers) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          console.log(result)
+          if (!result.priceList) {
             resolve(null);
           } else {
-            resolve(result.printers);
+            resolve(result.priceList);
           }
         },
         error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
+          this.showMessage(error._body, "danger", false);
           resolve(null);
         }
       );
@@ -418,6 +245,22 @@ export class ListArticlesComponent implements OnInit {
     await this.getArticle(articleSelected._id).then(
       async article => {
         if(article) {
+          let increasePrice = 0;
+          /*if(this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
+            let priceList = await this.getPriceList(this.transaction.company.priceList.toString())
+            if(priceList['allowSpecialRules']){
+              priceList['rules'].forEach(rule => {
+                if(rule){
+                  if(rule['category'] === article.category._id && rule['make'] === article.make._id){
+                    increasePrice = rule['percentage']
+                  }
+                }
+              });
+            } else {
+              increasePrice = priceList['percentage']
+            }
+          }*/
+
           let movementOfArticle = new MovementOfArticle();
           movementOfArticle.article = article;
           movementOfArticle.code = article.code;
@@ -445,6 +288,10 @@ export class ListArticlesComponent implements OnInit {
             Config.currency &&
             Config.currency._id !== article.currency._id) {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+          }
+
+          if(increasePrice > 0){
+            movementOfArticle.basePrice = this.roundNumber.transform( movementOfArticle.basePrice + (movementOfArticle.basePrice * increasePrice / 100));
           }
 
           if (this.transaction &&
@@ -481,6 +328,14 @@ export class ListArticlesComponent implements OnInit {
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }
+
+              if(increasePrice > 0){
+                  movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice + (movementOfArticle.costPrice *increasePrice / 100));
+                  movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice *increasePrice / 100));
+                  movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice +(movementOfArticle.unitPrice *increasePrice / 100));
+                  movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice +(movementOfArticle.salePrice *increasePrice / 100));
+              }
+
               if (this.transaction.type.requestTaxes) {
                 let taxes: Taxes[] = new Array();
                 if (article.taxes) {
@@ -511,13 +366,7 @@ export class ListArticlesComponent implements OnInit {
                       tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
                       tax.taxAmount = (tax.taxBase * tax.percentage / 100);
                     } else {
-                      if(article.currency &&
-                        Config.currency &&
-                        Config.currency._id !== article.currency._id) {
-                          tax.taxAmount = taxAux.taxAmount * quotation;
-                        } else {
-                          tax.taxAmount = taxAux.taxAmount;
-                        }
+                      tax.taxAmount = taxAux.taxAmount;
                     }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);
                     tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -592,6 +441,7 @@ export class ListArticlesComponent implements OnInit {
           }
           this.areArticlesVisible = true;
           if(!err) {
+            console.log(movementOfArticle)
             this.eventAddItem.emit(movementOfArticle);
           }
         }
@@ -641,6 +491,93 @@ export class ListArticlesComponent implements OnInit {
     });
   }
 
+  public filterItem(category?: Category) {
+
+    // GUARDAMOS LE CÓDIGO ORIGINAL PARA LOS PESABLES
+    let originalFilter: string = this.filterArticle;
+
+    // CORTAMOS EL CÓDIGO SI ES PESABLE
+    if(this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+      this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
+      if(this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
+        this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length + 
+                                                      this.config.tradeBalance.numberOfQuantity), 
+                                                      (originalFilter.length -
+                                                        this.config.tradeBalance.numberOfDecimals -
+                                                        this.config.tradeBalance.numberOfIntegers - 1)), this.config.article.code.validators.maxLength);
+      }
+    }
+    // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
+    if(category) {
+      this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
+      this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
+      if (this.filterArticle && this.filterArticle !== "") {
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, this.filterArticle);
+      }
+    } else if(this.filterArticle && this.filterArticle !== "") {
+
+      this.filteredArticles = this.filterPipe.transform(this.articles, this.filterArticle);
+
+      if (this.filteredArticles && this.filteredArticles.length > 0 && this.articles && this.articles.length >= 2) {
+
+        this.hideMessage();
+
+        let article;
+        var count = 1;
+
+        if (this.filteredArticles.length === 1) {
+          article = this.filteredArticles[0];
+        } else if (this.filteredArticles.length > 1) {
+          count = 0;
+          for(let art of this.filteredArticles) {
+            if(art.type === ArticleType.Final) {
+              count++;
+              article = art;
+            }
+          }
+        }
+
+        if (  count === 1 &&
+              this.filterArticle &&
+            ( article &&
+              (article.barcode && article.barcode === this.filterArticle) ||
+              (article.description && article.description.toUpperCase() === this.filterArticle.toUpperCase()) ||
+              (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
+              (article.code && article.code === this.filterArticle))) {
+                this.filterArticle = '';
+                if(article.isWeigth && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                  let wholePart = originalFilter.slice((originalFilter.length -
+                                                        this.config.tradeBalance.numberOfDecimals -
+                                                        this.config.tradeBalance.numberOfIntegers - 1)
+                                                        , 
+                                                        (originalFilter.length -
+                                                          this.config.tradeBalance.numberOfDecimals -
+                                                          this.config.tradeBalance.numberOfIntegers - 1) + 
+                                                          this.config.tradeBalance.numberOfIntegers);
+                  let decimalPart = originalFilter.slice((originalFilter.length -
+                                                          this.config.tradeBalance.numberOfDecimals - 1),
+                                                          (originalFilter.length - 1));
+                  let salePrice = parseFloat(wholePart + "." + decimalPart);
+                  let amount = 1;
+                  if(this.config.tradeBalance.numberOfQuantity && this.config.tradeBalance.numberOfQuantity != 0) {
+                    amount = parseInt(originalFilter.slice(this.config.tradeBalance.codePrefix.toString().length, 
+                                                            this.config.tradeBalance.codePrefix.toString().length + this.config.tradeBalance.numberOfQuantity));
+                  }
+                  this.addItem(article, amount, salePrice);
+                } else {
+                  this.addItem(article);
+                }
+        } else {
+          this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
+          this.eventAddItem.emit(null);
+        }
+      } else {
+        this.filteredArticles = this.filterPipe.transform(this.filteredArticles, ArticleType.Final.toString(), 'type');
+        this.eventAddItem.emit(null);
+      }
+    }
+  }
+
   public padNumber(n, length) {
     var n = n.toString();
     while (n.length < length)
@@ -672,3 +609,4 @@ export class ListArticlesComponent implements OnInit {
     this.alertMessage = '';
   }
 }
+

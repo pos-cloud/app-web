@@ -59,7 +59,6 @@ import { CancellationTypeService } from 'app/services/cancellation-type.service'
 import { CurrencyService } from 'app/services/currency.service';
 import { Currency } from 'app/models/currency';
 import { CancellationType } from 'app/models/cancellation-type';
-import { ListArticlesComponent } from '../list-articles/list-articles.component';
 import { ListCategoriesComponent } from '../list-categories/list-categories.component';
 import { ImportComponent } from '../import/import.component';
 import { MovementOfCash } from 'app/models/movement-of-cash';
@@ -70,6 +69,9 @@ import { TransportService } from 'app/services/transport.service';
 import { Transport } from 'app/models/transport';
 import { SelectTransportComponent } from '../select-transport/select-transport.component';
 import { ConfigService } from 'app/services/config.service';
+import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos.component';
+import { PriceList } from 'app/models/price-list';
+import { PriceListService } from 'app/services/price-list.service';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -117,7 +119,7 @@ export class AddSaleOrderComponent {
   public apiURL = Config.apiURL;
   public userCountry: string = 'AR';
   public lastQuotation: number = 1;
-  @ViewChild(ListArticlesComponent, {static: true}) listArticlesComponent: ListArticlesComponent;
+  @ViewChild(ListArticlesPosComponent, {static: true}) listArticlesComponent: ListArticlesPosComponent;
   @ViewChild(ListCategoriesComponent, {static: true}) listCategoriesComponent: ListCategoriesComponent;
   public categorySelected: Category;
   public totalTaxesAmount: number = 0;
@@ -126,6 +128,11 @@ export class AddSaleOrderComponent {
   public transports: Transport[];
   public config: Config;
   public database;
+
+  public priceList: PriceList;
+  public newPriceList: PriceList;
+  public increasePrice = 0;
+  public lastIncreasePrice = 0;
 
   constructor(
     public _transactionService: TransactionService,
@@ -149,6 +156,7 @@ export class AddSaleOrderComponent {
     public _currencyService: CurrencyService,
     private _claimService: ClaimService,
     public _transportService: TransportService,
+    public _priceListService : PriceListService,
     public _configService: ConfigService
   ) {
     this.transaction = new Transaction();
@@ -203,6 +211,12 @@ export class AddSaleOrderComponent {
         async transaction => {
           if(transaction) {
             this.transaction = transaction;
+           
+            if(!this.transaction.priceList && this.transaction.company && this.transaction.company.priceList){
+              this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
+              this.priceList = undefined;
+            }
+             
             if(this.transaction.state === TransactionState.Closed ||
               this.transaction.state === TransactionState.Canceled) {
               this.backFinal();
@@ -250,6 +264,26 @@ export class AddSaleOrderComponent {
             resolve(null);
           } else {
             resolve(result.currencies);
+          }
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  public getPriceList(id: string): Promise<PriceList> {
+
+    return new Promise<PriceList>((resolve, reject) => {
+
+      this._priceListService.getPriceList(id).subscribe(
+        result => {
+          if (!result.priceList) {
+            resolve(null);
+          } else {
+            resolve(result.priceList);
           }
         },
         error => {
@@ -544,7 +578,7 @@ export class AddSaleOrderComponent {
           movementOfArticle.amount += 1;
           if(await this.isValidMovementOfArticle(movementOfArticle)) {
             if (movementOfArticle.transaction.type.transactionMovement === TransactionMovement.Sale) {
-              await this.updateMovementOfArticle(this.recalculateSalePrice(movementOfArticle)).then(
+              await this.updateMovementOfArticle(await this.recalculateSalePrice(movementOfArticle)).then(
                 movementOfArticle => {
                   if(movementOfArticle) {
                     this.getMovementsOfTransaction();
@@ -743,82 +777,147 @@ export class AddSaleOrderComponent {
     return movementOfArticle;
   }
 
-  public recalculateSalePrice(movementOfArticle: MovementOfArticle): MovementOfArticle {
+  public recalculateSalePrice(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
-    let quotation = 1;
+    return new Promise<MovementOfArticle>( async (resolve, reject) => {
 
-    if(this.transaction.quotation) {
-      quotation = this.transaction.quotation;
-    }
+      let quotation = 1;
 
-    if (movementOfArticle.article) {
-
-      movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
-
-      if(movementOfArticle.article.currency &&
-        this.config['currency'] &&
-        this.config['currency']._id !== movementOfArticle.article.currency._id) {
-          movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
+      if(this.transaction.quotation) {
+        quotation = this.transaction.quotation;
       }
-    }
-
-    let fields: ArticleFields[] = new Array();
-    if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
-      for (const field of movementOfArticle.otherFields) {
-        if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
-          if (field.articleField.datatype === ArticleFieldType.Percentage) {
-            field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
-          } else if (field.articleField.datatype === ArticleFieldType.Number) {
-            field.amount = parseFloat(field.value);
-          }
+  
+      if (movementOfArticle.article) {
+  
+        movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.article.basePrice * movementOfArticle.amount);
+  
+        if(movementOfArticle.article.currency &&
+          this.config['currency'] &&
+          this.config['currency']._id !== movementOfArticle.article.currency._id) {
+            movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
         }
-        fields.push(field);
-      }
-    }
-    movementOfArticle.otherFields = fields;
 
-    if (movementOfArticle.article) {
-      movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
-      if(movementOfArticle.article.currency &&
-        this.config['currency'] &&
-        this.config['currency']._id !== movementOfArticle.article.currency._id) {
-          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
-      }
-    }
 
-    movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
-    if( movementOfArticle.article &&
-        movementOfArticle.article.currency &&
-        this.config['currency'] &&
-        this.config['currency']._id !== movementOfArticle.article.currency._id) {
-        movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
-    }
-    movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
-    movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
-    movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
-    movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
-    movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
-    if (movementOfArticle.transaction.type.requestTaxes) {
-      let taxes: Taxes[] = new Array();
-      if (movementOfArticle.taxes) {
-        for (let taxAux of movementOfArticle.taxes) {
-          let tax: Taxes = new Taxes();
-          tax.tax = taxAux.tax;
-          tax.percentage = this.roundNumber.transform(taxAux.percentage);
-          if(taxAux.percentage && taxAux.percentage !== 0) {
-            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
-          } else {
-            tax.taxAmount = this.roundNumber.transform((taxAux.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount;
+      }
+  
+      let fields: ArticleFields[] = new Array();
+      if (movementOfArticle.otherFields && movementOfArticle.otherFields.length > 0) {
+        for (const field of movementOfArticle.otherFields) {
+          if (field.articleField.datatype === ArticleFieldType.Percentage || field.articleField.datatype === ArticleFieldType.Number) { 
+            if (field.articleField.datatype === ArticleFieldType.Percentage) {
+              field.amount = this.roundNumber.transform((movementOfArticle.basePrice * parseFloat(field.value) / 100));
+            } else if (field.articleField.datatype === ArticleFieldType.Number) {
+              field.amount = parseFloat(field.value);
+            }
           }
-          tax.taxBase = this.roundNumber.transform(tax.taxBase);
-          tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
-          taxes.push(tax);
+          fields.push(field);
         }
       }
-      movementOfArticle.taxes = taxes;
-    }
-    return movementOfArticle;
+      movementOfArticle.otherFields = fields;
+  
+      if (movementOfArticle.article) {
+        movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.article.costPrice * movementOfArticle.amount);
+        if(movementOfArticle.article.currency &&
+          this.config['currency'] &&
+          this.config['currency']._id !== movementOfArticle.article.currency._id) {
+            movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
+        }
+      }
+  
+      movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + movementOfArticle.transactionDiscountAmount);
+      if( movementOfArticle.article &&
+          movementOfArticle.article.currency &&
+          this.config['currency'] &&
+          this.config['currency']._id !== movementOfArticle.article.currency._id) {
+          movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
+      }
+
+      if(movementOfArticle.article && this.priceList){
+        let increasePrice = 0;
+        if(this.priceList && this.priceList['allowSpecialRules'] && this.priceList['rules'] && this.priceList['rules'].length > 0){
+          this.priceList['rules'].forEach(rule => {
+            if(rule){
+              if(rule['category'] === movementOfArticle.article.category && rule['make'] === movementOfArticle.article.make){
+                increasePrice = rule['percentage']
+              }
+            }
+          });
+        } else {
+          increasePrice = this.priceList['percentage']
+        }
+
+        if(increasePrice > 0){
+          movementOfArticle.basePrice = this.roundNumber.transform( (movementOfArticle.basePrice * 100 ) / (100+increasePrice) );
+          movementOfArticle.costPrice = this.roundNumber.transform( (movementOfArticle.costPrice * 100 ) / (100+increasePrice));
+          movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100+increasePrice) );
+        }
+
+      }
+
+      if(movementOfArticle.article && this.newPriceList){
+        let increasePrice = 0;
+        if(this.newPriceList && this.newPriceList['allowSpecialRules'] && this.newPriceList['rules'] && this.newPriceList['rules'].length > 0){
+          this.newPriceList['rules'].forEach(rule => {
+            if(rule){
+              if(rule['category'] === movementOfArticle.article.category && rule['make'] === movementOfArticle.article.make){
+                increasePrice = rule['percentage']
+              }
+            }
+          });
+        } else {
+          increasePrice = this.newPriceList['percentage']
+        }
+
+        if(increasePrice){
+
+          movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice + (movementOfArticle.basePrice * increasePrice /100));
+          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice + (movementOfArticle.costPrice * increasePrice /100));
+          movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
+        }
+
+      }
+
+      if(this.newPriceList){
+        this.transaction.priceList = this.newPriceList;
+      } else {
+        this.transaction.priceList = null;
+      }
+
+      
+
+      movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
+      movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
+      movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
+      movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
+      movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
+      
+      
+      if (movementOfArticle.transaction.type.requestTaxes) {
+        let taxes: Taxes[] = new Array();
+        if (movementOfArticle.taxes) {
+          for (let taxAux of movementOfArticle.taxes) {
+            let tax: Taxes = new Taxes();
+            tax.tax = taxAux.tax;
+            tax.percentage = this.roundNumber.transform(taxAux.percentage);
+            if(taxAux.percentage && taxAux.percentage !== 0) {
+              tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+              tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+            } else {
+              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
+            }
+            tax.taxBase = this.roundNumber.transform(tax.taxBase);
+            tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
+            taxes.push(tax);
+          }
+        }
+        movementOfArticle.taxes = taxes;
+      }
+
+      resolve(movementOfArticle);
+      
+    });
+
+    
   }
 
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
@@ -885,7 +984,7 @@ export class AddSaleOrderComponent {
       for (let movementOfArticle of this.movementsOfArticles) {
         movementOfArticle.transaction.discountPercent = this.transaction.discountPercent;
         if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-          movementOfArticle = this.recalculateSalePrice(movementOfArticle);
+          movementOfArticle = await this.recalculateSalePrice(movementOfArticle);
         } else {
           movementOfArticle = this.recalculateCostPrice(movementOfArticle);
         }
@@ -1200,12 +1299,27 @@ export class AddSaleOrderComponent {
         }
         modalRef.result.then(async (result) => {
           if (result.company) {
+
+            if(this.transaction.company && this.transaction.company.priceList){
+              this.priceList =  await this.getPriceList(this.transaction.company.priceList.toString());
+            } else {
+              this.priceList = undefined
+            }
             this.transaction.company = result.company;
+            if(this.transaction.company.priceList){
+              this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
+            } else {
+              this.newPriceList = undefined;
+            }
             if(this.transaction.company.transport){
               this.transaction.transport = this.transaction.company.transport;
             } else {
               this.transaction.transport = null;
             }
+            
+            this.updatePrices();
+
+            
             await this.updateTransaction().then(
               transaction => {
                 if(transaction) {
