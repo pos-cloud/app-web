@@ -24,13 +24,11 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('code')">Código</th>
             <th (click)="orderBy('name')">Nombre</th>
             <th (click)="orderBy('percentage')">Porcentaje</th>
           </tr>
           <tr *ngIf="areFiltersVisible" class="filters">
             <th>
-            <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (input)="getTransports()" placeholder="Código..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getTransports()" placeholder="Nombre..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['percentage']" (input)="getTransports()" placeholder="Porcentaje..."></th>
           </tr>
@@ -56,7 +54,6 @@
                       title="Eliminar"><i class="fa fa-trash-o"></i>
               </button>
             </td>
-            <td>{{priceList.code}}</td>
             <td>{{priceList.name}}</td>
             <td>{{priceList.percentage}}</td>
           </tr>

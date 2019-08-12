@@ -32,7 +32,6 @@ export class ListPriceListsComponent implements OnInit {
 
   public currentPage: number = 0;
   public displayedColumns = [
-    "code",
     "name",
     "percentage",
     "allowSpecialRules",
@@ -127,14 +126,16 @@ export class ListPriceListsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
+        console.log(result)
         if (result && result[0] && result[0].priceLists) {
           this.loading = false;
           this.priceLists = result[0].priceLists;
           this.totalItems = result[0].count;
           this.relationOfPriceListEmpty = false;
         } else {
-          this.loading = false;
+          this.priceLists = new Array();
           this.totalItems = 0;
+          this.loading = false;
         }
       },
       error => {

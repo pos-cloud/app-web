@@ -18,16 +18,7 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-4">
-                      <label class="control-label">Código:</label>
-                      <div class="input-group">
-                        <input type="number" class="form-control" formControlName="code" name="code" [focus]="focusEvent" [readonly]="readonly"/>
-                      </div>
-                      <div *ngIf="formErrors.code" class="alert alert-danger">
-                        {{ formErrors.code }}
-                      </div>
-                  </div>
-                  <div class="form-group col-md-8">
+                  <div class="form-group col-md-12">
                     <label for="name" class="control-label">Descripción:</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
@@ -50,13 +41,59 @@
                   <div class="form-group col-md-6">
                     <label for="allowSpecialRules" class="control-label">Permite reglas especiales?</label>
                     <div class="input-group">
-                      <select class="form-control" formControlName="allowSpecialRules">
+                      <select class="form-control" formControlName="allowSpecialRules" (change)="addRule()">
                         <option value="true" [selected]="priceList.allowSpecialRules" [disabled]="readonly">Si</option>
                         <option value="false" [selected]="!priceList.allowSpecialRules" [disabled]="readonly">No</option>
                       </select>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+					</ng-template>
+        </ngb-tab>
+        <ngb-tab *ngIf="this.priceListForm.value.allowSpecialRules" title="Reglas Especiales">
+					<ng-template ngbTabContent>
+            <div class="row tab-content">
+              <div formArrayName="rules" *ngFor="let rule of priceListForm.get('rules').controls; let i = index;">
+                <div [formGroupName]="i">
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Rubro:</label>
+                      <select class="form-control" formControlName="category">
+                        <option *ngFor="let category of categories"
+                                [value]="category._id"
+                                [disabled]="readonly">
+                                {{category.description}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="make" class="control-label">Marca</label>
+                      <select class="form-control" formControlName="make">
+                        <option *ngFor="let make of makes"
+                                [value]="make._id"
+                                [disabled]="readonly">
+                                {{make.description}}</option>
+                      </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                      <label for="percentage" class="control-label">Porcentaje:</label>
+                      <div class="input-group">
+                        <input type="number" class="form-control" formControlName="percentage" name="percentage" id="percentage" [readonly]="readonly"/>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-1">                      
+                        <label class="control-label">Acción:</label>
+                        <button type="button" class="btn btn-success btn-sm" (click)="addRule()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteRule(i)">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </div>
+                  </div>
+                </div> 
               </div>
             </div>
 					</ng-template>

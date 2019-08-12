@@ -1,9 +1,13 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { PriceListService } from 'app/services/price-list.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PriceList } from 'app/models/price-list';
+import { Category } from 'app/models/category';
+import { Make } from 'app/models/make';
+import { CategoryService } from 'app/services/category.service';
+import { MakeService } from 'app/services/make.service';
 
 @Component({
   selector: 'app-price-list',
@@ -19,22 +23,21 @@ export class PriceListComponent implements OnInit {
   
   public priceList: PriceList;
   public priceListForm: FormGroup;
+  public rules: FormArray;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public categories : Category[];
+  public makes : Make[]
   
   public formErrors = {
-    'code': '',
     'name' : '',
     'percentage' : '',
     'allowSpecialRules' : ''
   };
 
   public validationMessages = {
-    'code': {
-      'required': 'Este campo es requerido.'
-    },
     'name': { 
       'required': 'Este campo es requerido.'
      },
@@ -45,11 +48,16 @@ export class PriceListComponent implements OnInit {
 
   constructor(
     public _priceListService: PriceListService,
+    public _categoryService: CategoryService,
+    public _makeService: MakeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) { 
+    this.getCategories();
+    this.getMakes();
+  }
 
   ngOnInit() {
 
@@ -63,21 +71,26 @@ export class PriceListComponent implements OnInit {
     }
 
   }
+  
 
   public buildForm(): void {
 
     this.priceListForm = this._fb.group({
       '_id' : [this.priceList._id, []],
-      'code': [this.priceList.code, [
-        Validators.required
-        ]
-      ],
       'name' : [this.priceList.name,[
       ]],
       'percentage' : [this.priceList.percentage,[
       ]],
       'allowSpecialRules' : [this.priceList.allowSpecialRules,[
-      ]]
+      ]],
+       'rules' : this._fb.array([
+        /*this._fb.group({
+          _id: null,
+          make: null,
+          category: null,
+          percentage: 0
+        })*/
+      ])
     });
 
     this.priceListForm.valueChanges
@@ -86,6 +99,28 @@ export class PriceListComponent implements OnInit {
     this.onValueChanged();
     this.focusEvent.emit(true);
   }
+
+  myClickHandler(e : any){
+    console.log(e)
+  }
+
+  public addRule(): void {
+    const rules = this.priceListForm.controls.rules as FormArray;
+    rules.push(
+      this._fb.group({
+        _id: null,
+        make: null,
+        category: null,
+        percentage: 0
+      })
+    );
+  }
+
+  deleteRule(index) {
+    let control = <FormArray>this.priceListForm.controls.rules;
+    control.removeAt(index)
+  }
+
 
   public onValueChanged(data?: any): void {
 
@@ -129,22 +164,30 @@ export class PriceListComponent implements OnInit {
 
   public setValueForm(): void {
 
-   
     if (!this.priceList._id) { this.priceList._id = ''; }
-    if (!this.priceList.code) { this.priceList.code = 0; }
     if (!this.priceList.name) { this.priceList.name = ''; }
     if (!this.priceList.percentage) { this.priceList.percentage = 0; }
     if (!this.priceList.allowSpecialRules === undefined) { this.priceList.allowSpecialRules = false; }
 
     const values = {
       '_id': this.priceList._id,
-      'code' : this.priceList.code,
       'name': this.priceList.name,
       'percentage' : this.priceList.percentage,
-      'allowSpecialRules' : this.priceList.allowSpecialRules,
-     
+      'allowSpecialRules' : this.priceList.allowSpecialRules
     };
-    this.priceListForm.setValue(values);
+
+    let control = <FormArray>this.priceListForm.controls.rules;
+    this.priceList.rules.forEach(x => {
+      control.push(this._fb.group({ 
+        '_id': x._id, 
+        'percentage': x.percentage,
+        'make' : x.make,
+        'category' : x.category
+      }))
+    })
+
+    this.priceListForm.patchValue(values);
+    
   }
 
   public addPriceList() {
@@ -190,7 +233,11 @@ export class PriceListComponent implements OnInit {
 
     this.loading = true;
 
+    console.log(this.priceListForm.value);
+
     this.priceList = this.priceListForm.value;
+
+    console.log(this.priceList);
 
     this._priceListService.savePriceList(this.priceList).subscribe(
       result => {
@@ -229,6 +276,51 @@ export class PriceListComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getCategories(){
+    this.loading = true;
+
+    let query = 'sort="description":1';
+
+    this._categoryService.getCategories(query).subscribe(
+      result => {
+        if (!result.categories) {
+          this.loading = false;
+          this.categories = new Array();
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.categories = result.categories;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getMakes(){
+    this.loading = true;
+
+    this._makeService.getMakes().subscribe(
+        result => {
+          if (!result.makes) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+            this.makes = new Array();
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            this.makes = result.makes;
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
