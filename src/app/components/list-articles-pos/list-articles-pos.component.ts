@@ -321,8 +321,6 @@ export class ListArticlesPosComponent implements OnInit {
               if(article.currency &&
                 Config.currency &&
                 Config.currency._id !== article.currency._id) {
-                  movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice * quotation);
-                  movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice * quotation);
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }

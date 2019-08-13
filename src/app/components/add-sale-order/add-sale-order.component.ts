@@ -19,7 +19,7 @@ import { Category } from './../../models/category';
 import { Print } from './../../models/print';
 import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Config } from './../../app.config';
-import { CompanyType } from '../../models/company';
+import { CompanyType, Company } from '../../models/company';
 import { MovementOfCancellation } from "../../models/movement-of-cancellation"
 
 //Servicios
@@ -133,6 +133,7 @@ export class AddSaleOrderComponent {
   public newPriceList: PriceList;
   public increasePrice = 0;
   public lastIncreasePrice = 0;
+  public companyOld: Company
 
   constructor(
     public _transactionService: TransactionService,
@@ -847,8 +848,6 @@ export class AddSaleOrderComponent {
         }
 
         if(increasePrice > 0){
-          movementOfArticle.basePrice = this.roundNumber.transform( (movementOfArticle.basePrice * 100 ) / (100+increasePrice) );
-          movementOfArticle.costPrice = this.roundNumber.transform( (movementOfArticle.costPrice * 100 ) / (100+increasePrice));
           movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100+increasePrice) );
         }
 
@@ -869,9 +868,6 @@ export class AddSaleOrderComponent {
         }
 
         if(increasePrice){
-
-          movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice + (movementOfArticle.basePrice * increasePrice /100));
-          movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice + (movementOfArticle.costPrice * increasePrice /100));
           movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
         }
 
@@ -880,12 +876,12 @@ export class AddSaleOrderComponent {
       if(this.newPriceList){
         this.transaction.priceList = this.newPriceList;
         this.updateTransaction();
-        this.newPriceList = null;
-        this.priceList = null
+        if(!this.companyOld){
+          this.priceList = this.newPriceList;
+        }
       } else {
-        this.priceList = null;
+        this.priceList = null
       }
-
       
 
       movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
@@ -1303,11 +1299,12 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
 
-            if(this.transaction.company && this.transaction.company.priceList){
-              this.priceList =  await this.getPriceList(this.transaction.company.priceList.toString());
+            if(this.transaction.priceList){
+              this.priceList =  await this.getPriceList(this.transaction.priceList._id);
             } else {
               this.priceList = undefined
             }
+            this.companyOld = result.company;
             this.transaction.company = result.company;
             if(this.transaction.company.priceList){
               this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
