@@ -144,10 +144,7 @@ export class AddTransactionComponent implements OnInit {
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
     this.buildForm();
-
-    console.log(this.userType);
-    console.log(this.posType)
-
+    
     if (this.transactionId) {
       this.getTransaction();
     }

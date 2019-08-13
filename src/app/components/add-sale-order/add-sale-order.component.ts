@@ -212,9 +212,7 @@ export class AddSaleOrderComponent {
           if(transaction) {
             this.transaction = transaction;
            
-            console.log(this.transaction.priceList)
             if((this.transaction.priceList === null || this.transaction.priceList === undefined) && this.transaction.company && this.transaction.company.priceList){
-              console.log("entro");
               this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
               this.priceList = undefined;
             }

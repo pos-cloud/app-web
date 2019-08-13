@@ -195,7 +195,6 @@ export class ListArticlesPosComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        console.log(result);
         if (result && result && result.articles) {
           this.articles = result.articles;
           this.totalItems = result.count;
@@ -223,7 +222,6 @@ export class ListArticlesPosComponent implements OnInit {
 
       this._priceListService.getPriceList(id).subscribe(
         result => {
-          console.log(result)
           if (!result.priceList) {
             resolve(null);
           } else {
@@ -441,7 +439,6 @@ export class ListArticlesPosComponent implements OnInit {
           }
           this.areArticlesVisible = true;
           if(!err) {
-            console.log(movementOfArticle)
             this.eventAddItem.emit(movementOfArticle);
           }
         }
