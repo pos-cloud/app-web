@@ -212,7 +212,9 @@ export class AddSaleOrderComponent {
           if(transaction) {
             this.transaction = transaction;
            
-            if(!this.transaction.priceList && this.transaction.company && this.transaction.company.priceList){
+            console.log(this.transaction.priceList)
+            if((this.transaction.priceList === null || this.transaction.priceList === undefined) && this.transaction.company && this.transaction.company.priceList){
+              console.log("entro");
               this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
               this.priceList = undefined;
             }
@@ -879,9 +881,11 @@ export class AddSaleOrderComponent {
 
       if(this.newPriceList){
         this.transaction.priceList = this.newPriceList;
+        this.updateTransaction();
         this.newPriceList = null;
+        this.priceList = null
       } else {
-        this.transaction.priceList = null;
+        this.priceList = null;
       }
 
       
