@@ -8,7 +8,6 @@ import { Category } from 'app/models/category';
 import { Make } from 'app/models/make';
 import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
-import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-price-list',
@@ -72,6 +71,10 @@ export class PriceListComponent implements OnInit {
     }
 
   }
+
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
   
 
   public buildForm(): void {
@@ -84,14 +87,7 @@ export class PriceListComponent implements OnInit {
       ]],
       'allowSpecialRules' : [this.priceList.allowSpecialRules,[
       ]],
-       'rules' : this._fb.array([
-        /*this._fb.group({
-          _id: null,
-          make: null,
-          category: null,
-          percentage: 0
-        })*/
-      ])
+       'rules' : this._fb.array([ ])
     });
 
     this.priceListForm.valueChanges
@@ -99,10 +95,6 @@ export class PriceListComponent implements OnInit {
 
     this.onValueChanged();
     this.focusEvent.emit(true);
-  }
-
-  myClickHandler(e : any){
-    console.log(e)
   }
 
   public addNewRule(e :any): void {
@@ -249,11 +241,7 @@ export class PriceListComponent implements OnInit {
 
     this.loading = true;
 
-    console.log(this.priceListForm.value);
-
     this.priceList = this.priceListForm.value;
-
-    console.log(this.priceList);
 
     this._priceListService.savePriceList(this.priceList).subscribe(
       result => {
