@@ -879,6 +879,7 @@ export class AddSaleOrderComponent {
 
       if(this.newPriceList){
         this.transaction.priceList = this.newPriceList;
+        this.newPriceList = null;
       } else {
         this.transaction.priceList = null;
       }
