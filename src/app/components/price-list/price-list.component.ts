@@ -124,7 +124,7 @@ export class PriceListComponent implements OnInit {
     const rules = this.priceListForm.controls.rules as FormArray;
 
     if((ruleForm.value.make == '' || ruleForm.value.make == null) && (ruleForm.value.category == '' || ruleForm.value.category == null)){
-      this.showMessage("No puede dejar vacio Rubro y Marca","danger",true)
+      this.showMessage("No puede seleccionar Todos los Rubro y Todas las Marcas","danger",true)
       valid = false;
     }
 
