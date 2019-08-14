@@ -133,7 +133,7 @@ export class AddSaleOrderComponent {
   public newPriceList: PriceList;
   public increasePrice = 0;
   public lastIncreasePrice = 0;
-  public companyOld: Company
+  public companyOld: boolean = false;
 
   constructor(
     public _transactionService: TransactionService,
@@ -212,10 +212,9 @@ export class AddSaleOrderComponent {
         async transaction => {
           if(transaction) {
             this.transaction = transaction;
-           
-            if((this.transaction.priceList === null || this.transaction.priceList === undefined) && this.transaction.company && this.transaction.company.priceList){
-              this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
-              this.priceList = undefined;
+
+            if(this.transaction.company && this.transaction.company.priceList){
+              this.transaction.priceList = this.transaction.company.priceList;
             }
              
             if(this.transaction.state === TransactionState.Closed ||
@@ -873,23 +872,6 @@ export class AddSaleOrderComponent {
 
       }
 
-      if(this.newPriceList){
-        this.transaction.priceList = this.newPriceList;
-        await this.updateTransaction().then(
-          transaction => {
-            if(transaction) {
-              this.transaction = transaction;
-            }
-          }
-        );
-        if(!this.companyOld){
-          this.priceList = this.newPriceList;
-        }
-      } else {
-        this.priceList = null
-      }
-      
-
       movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
       movementOfArticle.unitPrice -= movementOfArticle.transactionDiscountAmount;
       movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.unitPrice * movementOfArticle.amount);
@@ -1001,6 +983,11 @@ export class AddSaleOrderComponent {
           break;
         }
       }
+
+      this.priceList = null;
+      this.newPriceList = null;
+      
+
     } else {
       isUpdateValid = true;
       totalPriceAux = 0;
@@ -1308,15 +1295,22 @@ export class AddSaleOrderComponent {
             if(this.transaction.priceList){
               this.priceList =  await this.getPriceList(this.transaction.priceList._id);
             } else {
-              this.priceList = undefined
+              this.priceList = undefined;
+              if(result.company.priceList){
+                this.priceList = await this.getPriceList(result.company.priceList.toString())
+              }
             }
-            this.companyOld = result.company;
             this.transaction.company = result.company;
-            if(this.transaction.company.priceList){
-              this.newPriceList = await this.getPriceList(this.transaction.company.priceList.toString())
+
+            if(result.company.priceList){
+              this.companyOld = true;
+              this.newPriceList = await this.getPriceList(result.company.priceList.toString())
+              this.transaction.priceList = this.newPriceList
             } else {
-              this.newPriceList = undefined;
+              this.newPriceList = null;
+              this.transaction.priceList = null;
             }
+
             if(this.transaction.company.transport){
               this.transaction.transport = this.transaction.company.transport;
             } else {
