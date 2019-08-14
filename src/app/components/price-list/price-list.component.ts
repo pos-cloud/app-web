@@ -8,7 +8,6 @@ import { Category } from 'app/models/category';
 import { Make } from 'app/models/make';
 import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
-import { typeWithParameters } from '@angular/compiler/src/render3/util';
 
 @Component({
   selector: 'app-price-list',
@@ -39,17 +38,16 @@ export class PriceListComponent implements OnInit {
   
   public formErrors = {
     'name' : '',
-    'percentage' : '',
     'allowSpecialRules' : ''
   };
 
   public validationMessages = {
     'name': { 
       'required': 'Este campo es requerido.'
-     },
-    'percentage': {  'required': 'Este campo es requerido.'
-      },
-    'allowSpecialRules': { 'required': 'Este campo es requerido.'  }
+    },
+    'allowSpecialRules': { 
+      'required': 'Este campo es requerido.'  
+    }
   };
 
   constructor(
@@ -88,10 +86,12 @@ export class PriceListComponent implements OnInit {
     this.priceListForm = this._fb.group({
       '_id' : [this.priceList._id, []],
       'name' : [this.priceList.name,[
+        Validators.required
       ]],
       'percentage' : [this.priceList.percentage,[
       ]],
       'allowSpecialRules' : [this.priceList.allowSpecialRules,[
+        Validators.required
       ]],
        'rules' : this._fb.array([ ])
     });
@@ -128,8 +128,8 @@ export class PriceListComponent implements OnInit {
       valid = false;
     }
 
-    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null){
-      this.showMessage("El porcentaje no puede ser 0 o vacío","danger",true)
+    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null || ruleForm.value.percentage < 0){
+      this.showMessage("El porcentaje no puede ser 0 o menor","danger",true)
       valid = false;
     }
 
@@ -186,7 +186,7 @@ export class PriceListComponent implements OnInit {
 
     this._priceListService.getPriceList(this.priceListId).subscribe(
       result => {
-        if (!result.priceList) {
+        if (!result.priceList) {  
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.hideMessage();
@@ -209,7 +209,7 @@ export class PriceListComponent implements OnInit {
 
     if (!this.priceList._id) { this.priceList._id = ''; }
     if (!this.priceList.name) { this.priceList.name = ''; }
-    if (!this.priceList.percentage) { this.priceList.percentage = 0; }
+    if (!this.priceList.percentage) { this.priceList.percentage = null; }
     if (!this.priceList.allowSpecialRules === undefined) { this.priceList.allowSpecialRules = false; }
 
     const values = {
