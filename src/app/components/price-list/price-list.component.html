@@ -41,7 +41,7 @@
                   <div class="form-group col-md-6">
                     <label for="allowSpecialRules" class="control-label">Permite reglas especiales?</label>
                     <div class="input-group">
-                      <select class="form-control" formControlName="allowSpecialRules" (change)="addRule()" [(ngModel)]='valueRule'>
+                      <select class="form-control" formControlName="allowSpecialRules" (change)="addRuleNew()">
                         <option value="true" [disabled]="readonly">Si</option>
                         <option value="false" [disabled]="readonly">No</option>
                       </select>
@@ -52,7 +52,7 @@
             </div>
 					</ng-template>
         </ngb-tab>
-        <ngb-tab *ngIf="valueRule === 'true'" title="Reglas Especiales">
+        <ngb-tab *ngIf="viewRules" title="Reglas Especiales">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
               <div formArrayName="rules" *ngFor="let rule of priceListForm.get('rules').controls; let i = index;">
@@ -60,7 +60,9 @@
                   <div class="row">
                     <div class="form-group col-md-4">
                       <label class="control-label">Rubro:</label>
+                      
                       <select class="form-control" formControlName="category">
+                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.category.value" [disabled]="readonly"></option>
                         <option *ngFor="let category of categories"
                                 [value]="category._id"
                                 [disabled]="readonly">
@@ -71,6 +73,7 @@
                     <div class="form-group col-md-4">
                       <label for="make" class="control-label">Marca</label>
                       <select class="form-control" formControlName="make">
+                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.make.value" [disabled]="readonly"></option>
                         <option *ngFor="let make of makes"
                                 [value]="make._id"
                                 [disabled]="readonly">

@@ -840,6 +840,12 @@ export class AddSaleOrderComponent {
               if(rule['category'] === movementOfArticle.article.category && rule['make'] === movementOfArticle.article.make){
                 increasePrice = rule['percentage']
               }
+              if(rule['category'] == null && rule['make'] === movementOfArticle.article.make){
+                increasePrice = rule['percentage']
+              }
+              if(rule['make'] == null && rule['category'] === movementOfArticle.article.category){
+                increasePrice = rule['percentage']
+              }
             }
           });
         } else {
@@ -858,6 +864,12 @@ export class AddSaleOrderComponent {
           this.newPriceList['rules'].forEach(rule => {
             if(rule){
               if(rule['category'] === movementOfArticle.article.category && rule['make'] === movementOfArticle.article.make){
+                increasePrice = rule['percentage']
+              }
+              if(rule['category'] == null && rule['make'] === movementOfArticle.article.make){
+                increasePrice = rule['percentage']
+              }
+              if(rule['make'] == null && rule['category'] === movementOfArticle.article.category){
                 increasePrice = rule['percentage']
               }
             }

@@ -8,6 +8,7 @@ import { Category } from 'app/models/category';
 import { Make } from 'app/models/make';
 import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
+import { typeWithParameters } from '@angular/compiler/src/render3/util';
 
 @Component({
   selector: 'app-price-list',
@@ -30,6 +31,7 @@ export class PriceListComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public categories : Category[];
   public makes : Make[]
+  public viewRules : boolean = false;
   
   public formErrors = {
     'name' : '',
@@ -159,6 +161,9 @@ export class PriceListComponent implements OnInit {
         } else {
           this.hideMessage();
           this.priceList = result.priceList;
+          if(this.priceList.allowSpecialRules){
+            this.viewRules = true;
+          }
           this.setValueForm();
         }
         this.loading = false;
@@ -168,6 +173,15 @@ export class PriceListComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public addRuleNew(): void{
+    if(this.priceListForm.value.allowSpecialRules){
+      this.viewRules = true;
+      this.addRule();
+    } else {
+      this.viewRules = false
+    }
   }
 
   public setValueForm(): void {

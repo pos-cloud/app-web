@@ -246,17 +246,26 @@ export class ListArticlesPosComponent implements OnInit {
           let increasePrice = 0;
           if(this.transaction.priceList && this.transaction.company.type === CompanyType.Client ){
             let priceList = await this.getPriceList(this.transaction.priceList._id)
-            if(priceList['allowSpecialRules']){
-              priceList['rules'].forEach(rule => {
-                if(rule){
-                  if(rule['category'] === article.category._id && rule['make'] === article.make._id){
-                    increasePrice = rule['percentage']
+            if(priceList){
+              if(priceList['allowSpecialRules']){
+                priceList['rules'].forEach(rule => {
+                  if(rule){
+                    if(rule['category'] === article.category._id && rule['make'] === article.make._id){
+                      increasePrice = rule['percentage']
+                    }
+                    if(rule['category'] == null && rule['make'] === article.make._id){
+                      increasePrice = rule['percentage']
+                    }
+                    if(rule['make'] == null && rule['category'] === article.category._id){
+                      increasePrice = rule['percentage']
+                    }
                   }
-                }
-              });
-            } else {
-              increasePrice = priceList['percentage']
+                });
+              } else {
+                increasePrice = priceList['percentage']
+              }
             }
+              
           }
 
           let movementOfArticle = new MovementOfArticle();
@@ -288,9 +297,6 @@ export class ListArticlesPosComponent implements OnInit {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
           }
 
-          if(increasePrice > 0){
-            movementOfArticle.basePrice = this.roundNumber.transform( movementOfArticle.basePrice + (movementOfArticle.basePrice * increasePrice / 100));
-          }
 
           if (this.transaction &&
             this.transaction.type &&
@@ -326,7 +332,6 @@ export class ListArticlesPosComponent implements OnInit {
               }
 
               if(increasePrice > 0){
-                  movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice + (movementOfArticle.costPrice *increasePrice / 100));
                   movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice *increasePrice / 100));
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice +(movementOfArticle.unitPrice *increasePrice / 100));
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice +(movementOfArticle.salePrice *increasePrice / 100));
