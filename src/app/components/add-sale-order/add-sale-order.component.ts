@@ -852,7 +852,7 @@ export class AddSaleOrderComponent {
           increasePrice = this.priceList['percentage']
         }
 
-        if(increasePrice > 0){
+        if(increasePrice != 0){
           movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100+increasePrice) );
         }
 
@@ -878,9 +878,10 @@ export class AddSaleOrderComponent {
           increasePrice = this.newPriceList['percentage']
         }
 
-        if(increasePrice){
+        if(increasePrice != 0){
           movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
         }
+
 
       }
 

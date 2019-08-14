@@ -331,7 +331,7 @@ export class ListArticlesPosComponent implements OnInit {
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice * quotation);
               }
 
-              if(increasePrice > 0){
+              if(increasePrice != 0){
                   movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.markupPrice + (movementOfArticle.markupPrice *increasePrice / 100));
                   movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice +(movementOfArticle.unitPrice *increasePrice / 100));
                   movementOfArticle.salePrice = this.roundNumber.transform(movementOfArticle.salePrice +(movementOfArticle.salePrice *increasePrice / 100));

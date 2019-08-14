@@ -124,12 +124,12 @@ export class PriceListComponent implements OnInit {
     const rules = this.priceListForm.controls.rules as FormArray;
 
     if((ruleForm.value.make == '' || ruleForm.value.make == null) && (ruleForm.value.category == '' || ruleForm.value.category == null)){
-      this.showMessage("No puede seleccionar Todos los Rubro y Todas las Marcas","danger",true)
+      this.showMessage("No puede seleccionar Todos los Rubros y Todas las Marcas","danger",true)
       valid = false;
     }
 
-    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null || ruleForm.value.percentage < 0){
-      this.showMessage("El porcentaje no puede ser 0 o menor","danger",true)
+    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null ){
+      this.showMessage("El porcentaje no puede ser 0","danger",true)
       valid = false;
     }
 

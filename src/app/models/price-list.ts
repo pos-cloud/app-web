@@ -9,7 +9,7 @@ export class PriceList {
 
 	public _id: string;
 	public name: string = '';
-	public percentage: number;
+	public percentage: number = 0;
 	public allowSpecialRules: boolean = false;
 	public rules: [{
 		_id: string;
