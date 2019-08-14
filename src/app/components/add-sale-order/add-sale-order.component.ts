@@ -875,7 +875,13 @@ export class AddSaleOrderComponent {
 
       if(this.newPriceList){
         this.transaction.priceList = this.newPriceList;
-        this.updateTransaction();
+        await this.updateTransaction().then(
+          transaction => {
+            if(transaction) {
+              this.transaction = transaction;
+            }
+          }
+        );
         if(!this.companyOld){
           this.priceList = this.newPriceList;
         }
