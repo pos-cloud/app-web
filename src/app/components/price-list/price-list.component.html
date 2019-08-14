@@ -41,7 +41,7 @@
                   <div class="form-group col-md-6">
                     <label for="allowSpecialRules" class="control-label">Permite reglas especiales?</label>
                     <div class="input-group">
-                      <select class="form-control" formControlName="allowSpecialRules" (change)="addRuleNew()">
+                      <select class="form-control" formControlName="allowSpecialRules">
                         <option value="true" [disabled]="readonly">Si</option>
                         <option value="false" [disabled]="readonly">No</option>
                       </select>
@@ -55,14 +55,52 @@
         <ngb-tab *ngIf="viewRules" title="Reglas Especiales">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
+              <form #ruleForm="ngForm" (ngSubmit)="addRule(ruleForm)">
+                  <div class="row">
+                      <div class="form-group col-md-4">
+                        <label class="control-label">Rubro:</label>
+                        <select  ngModel name="category" class="form-control">
+                          <option [ngValue]="null" [disabled]="readonly">Todos los rubros</option>
+                          <option *ngFor="let category of categories"
+                                  [ngValue]="category._id"
+                                  [disabled]="readonly">
+                                  {{category.description}}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label for="make" class="control-label">Marca</label>
+                        <select class="form-control" ngModel name="make">
+                          <option [ngValue]="null" [disabled]="readonly"> Todas las marcas</option>
+                          <option *ngFor="let make of makes"
+                                  [ngValue]="make._id"
+                                  [disabled]="readonly">
+                                  {{make.description}}</option>
+                        </select>
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label for="percentage" class="control-label">Porcentaje:</label>
+                        <div class="input-group">
+                          <input type="number" class="form-control" ngModel name="percentage" [readonly]="readonly"/>
+                        </div>
+                      </div>
+                      <div class="form-group col-md-1">                      
+                          <label class="control-label">Acción:</label>
+                          <button type="summit" class="btn btn-success btn-sm">
+                              <i class="fa fa-plus"></i>
+                          </button>
+                          {{percentageSelected}}
+                      </div>
+                    </div>
+              </form>  
+              
               <div formArrayName="rules" *ngFor="let rule of priceListForm.get('rules').controls; let i = index;">
                 <div [formGroupName]="i">
                   <div class="row">
                     <div class="form-group col-md-4">
                       <label class="control-label">Rubro:</label>
-                      
                       <select class="form-control" formControlName="category">
-                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.category.value" [disabled]="readonly"></option>
+                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.category.value" [disabled]="readonly">Todos los rubros</option>
                         <option *ngFor="let category of categories"
                                 [value]="category._id"
                                 [disabled]="readonly">
@@ -73,7 +111,7 @@
                     <div class="form-group col-md-4">
                       <label for="make" class="control-label">Marca</label>
                       <select class="form-control" formControlName="make">
-                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.make.value" [disabled]="readonly"></option>
+                        <option [ngValue]="null" [selected]="!priceListForm.controls.rules.controls[i].controls.make.value" [disabled]="readonly">Todos las marcas</option>
                         <option *ngFor="let make of makes"
                                 [value]="make._id"
                                 [disabled]="readonly">
@@ -88,9 +126,6 @@
                     </div>
                     <div class="form-group col-md-1">                      
                         <label class="control-label">Acción:</label>
-                        <button type="button" class="btn btn-success btn-sm" (click)="addRule()">
-                            <i class="fa fa-plus"></i>
-                        </button>
                         <button type="button" class="btn btn-danger btn-sm" (click)="deleteRule(i)">
                             <i class="fa fa-trash-o"></i>
                         </button>

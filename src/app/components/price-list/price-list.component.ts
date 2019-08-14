@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { PriceListService } from 'app/services/price-list.service';
-import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PriceList } from 'app/models/price-list';
@@ -32,6 +32,10 @@ export class PriceListComponent implements OnInit {
   public categories : Category[];
   public makes : Make[]
   public viewRules : boolean = false;
+
+  public categorySelected : Category;
+  public makeSelected : Make;
+  public percentageSelected : number;
   
   public formErrors = {
     'name' : '',
@@ -114,16 +118,42 @@ export class PriceListComponent implements OnInit {
     
   }
 
-  public addRule(): void {
-      const rules = this.priceListForm.controls.rules as FormArray;
+  public addRule(ruleForm: NgForm): void {
+
+    let valid = true;
+    const rules = this.priceListForm.controls.rules as FormArray;
+
+    if((ruleForm.value.make == '' || ruleForm.value.make == null) && (ruleForm.value.category == '' || ruleForm.value.category == null)){
+      this.showMessage("No puede dejar vacio Rubro y Marca","danger",true)
+      valid = false;
+    }
+
+    if(ruleForm.value.percentage == '' || ruleForm.value.percentage == 0 || ruleForm.value.percentage == null){
+      this.showMessage("El porcentaje no puede ser 0 o vacío","danger",true)
+      valid = false;
+    }
+
+    this.priceListForm.controls.rules.value.forEach(element => {
+
+      if(ruleForm.value.make == element.make && ruleForm.value.category == element.category){
+        this.showMessage("Esta regla ya existe","danger",true)
+        valid = false;
+      } 
+
+    });
+
+    if(valid){
       rules.push(
         this._fb.group({
           _id: null,
-          make: null,
-          category: null,
-          percentage: 0
+          make: ruleForm.value.make || null,
+          category: ruleForm.value.category || null,
+          percentage: ruleForm.value.percentage
         })
       );
+      ruleForm.resetForm();
+    }
+      
   }
 
   deleteRule(index) {
@@ -173,15 +203,6 @@ export class PriceListComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  public addRuleNew(): void{
-    if(this.priceListForm.value.allowSpecialRules){
-      this.viewRules = true;
-      this.addRule();
-    } else {
-      this.viewRules = false
-    }
   }
 
   public setValueForm(): void {
