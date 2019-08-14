@@ -1296,9 +1296,6 @@ export class AddSaleOrderComponent {
               this.priceList =  await this.getPriceList(this.transaction.priceList._id);
             } else {
               this.priceList = undefined;
-              if(result.company.priceList){
-                this.priceList = await this.getPriceList(result.company.priceList.toString())
-              }
             }
             this.transaction.company = result.company;
 
