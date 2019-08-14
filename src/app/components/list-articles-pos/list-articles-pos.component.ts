@@ -245,7 +245,7 @@ export class ListArticlesPosComponent implements OnInit {
         if(article) {
           let increasePrice = 0;
           if(this.transaction.priceList && this.transaction.company.type === CompanyType.Client ){
-            let priceList = await this.getPriceList(this.transaction.company.priceList.toString())
+            let priceList = await this.getPriceList(this.transaction.priceList.toString())
             if(priceList['allowSpecialRules']){
               priceList['rules'].forEach(rule => {
                 if(rule){
