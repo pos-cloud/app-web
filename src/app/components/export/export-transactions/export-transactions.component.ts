@@ -169,12 +169,10 @@ export class ExportTransactionsComponent implements OnInit {
       "operationType": { "$ne": "D" }, 
       "type.operationType": { "$ne": "D" }, 
       "state" : "${TransactionState.Closed}",
-      "endDate" : {"$gte": {"$date": "${this.startDate}T00:00:00${timezone}"},"$lte": {"$date": "${this.endDate}T23:59:59${timezone}"}} 
+      "endDate" : {"$gte": {"$date": "${this.exportForm.value.startDate}T00:00:00${timezone}"},"$lte": {"$date": "${this.exportForm.value.endDate}T23:59:59${timezone}"}} 
     }`;
 
     match = JSON.parse(match);
-
-    
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
@@ -248,11 +246,16 @@ export class ExportTransactionsComponent implements OnInit {
       data[index]['Origen'] = this.transactions[index].origin; 
       data[index]['Letra'] = this.transactions[index].letter;
       data[index]['N° Comprobante'] = this.transactions[index].number;
-      if(this.transactionMovement === TransactionMovement.Sale){
-        data[index]['Cliente'] = this.transactions[index].company.name
+      if(this.transactions[index].company){
+        if(this.transactionMovement === TransactionMovement.Sale){
+          data[index]['Cliente'] = this.transactions[index].company.name
+        } else {
+          data[index]['Proveedor'] = this.transactions[index].company.name
+        }
       } else {
-        data[index]['Proveedor'] = this.transactions[index].company.name
+        data[index]['Cliente'] = "Consumidor Final"
       }
+      
       data[index]['Total'] = this.transactions[index].totalPrice
       
     }
