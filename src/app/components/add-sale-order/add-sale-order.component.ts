@@ -1310,6 +1310,9 @@ export class AddSaleOrderComponent {
             } else {
               this.priceList = undefined;
             }
+            if(!this.transaction.company){
+              this.priceList = await this.getPriceList(result.company.priceList.toString())
+            }
             this.transaction.company = result.company;
 
             if(result.company.priceList){
