@@ -6,13 +6,13 @@ import { NgbModal, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-boots
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { TransactionService } from './../../services/transaction.service';
-import { UserService } from '../../services/user.service';
-import { ConfigService } from '../../services/config.service';
-import { CompanyService } from './../../services/company.service';
+import { TransactionService } from '../../../services/transaction.service';
+import { UserService } from '../../../services/user.service';
+import { ConfigService } from '../../../services/config.service';
+import { CompanyService } from '../../../services/company.service';
 
 
-import { PrintComponent } from '../print/print/print.component'
+import { PrintComponent } from '../../print/print/print.component'
 import { DateFormatPipe } from 'app/pipes/date-format.pipe';
 import { Taxes } from 'app/models/taxes';
 import { TaxClassification } from 'app/models/tax';

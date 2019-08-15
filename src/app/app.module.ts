@@ -114,7 +114,7 @@ import { ListTurnsComponent } from './components/list-turns/list-turns.component
 import { ListTransactionTypesComponent } from './components/list-transaction-types/list-transaction-types.component';
 import { AddTransactionTypeComponent } from './components/add-transaction-type/add-transaction-type.component';
 import { DeleteTransactionTypeComponent } from './components/delete-transaction-type/delete-transaction-type.component';
-import { ExportCitiComponent } from './components/export-citi/export-citi.component';
+import { ExportCitiComponent } from './components/export/export-citi/export-citi.component';
 import { UpdateArticleStockComponent } from './components/update-article-stock/update-article-stock.component';
 import { ListArticleStocksComponent } from './components/list-article-stocks/list-article-stocks.component';
 import { AddVariantComponent } from './components/add-variant/add-variant.component';
@@ -179,7 +179,7 @@ import { ListArticleFieldsComponent } from './components/list-article-fields/lis
 import { AddArticleFieldsComponent } from './components/add-article-fields/add-article-fields.component';
 import { ListSummaryOfAccountsComponent } from './components/list-summary-of-accounts/list-summary-of-accounts.component';
 import { ListVATConditionsComponent } from './components/list-vat-conditions/list-vat-conditions.component';
-import { ExportIvaComponent } from './components/export-iva/export-iva.component';
+import { ExportIvaComponent } from './components/export/export-iva/export-iva.component';
 import { ListCompaniesGroupComponent } from './components/list-companies-group/list-companies-group.component';
 import { AddCompanyGroupComponent } from './components/add-company-group/add-company-group.component';
 import { DeleteCompanyGroupComponent } from './components/delete-company-group/delete-company-group.component';
@@ -253,6 +253,7 @@ import { PrintArticlesStockComponent } from './components/print/print-articles-s
 import { PriceListComponent } from './components/price-list/price-list.component';
 import { ListPriceListsComponent } from './components/list-price-lists/list-price-lists.component';
 import { ListArticlesPosComponent } from './components/list-articles-pos/list-articles-pos.component';
+import { ExportTransactionsComponent } from './components/export/export-transactions/export-transactions.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -434,7 +435,8 @@ import { ListArticlesPosComponent } from './components/list-articles-pos/list-ar
     PrintArticlesStockComponent,
     PriceListComponent,
     ListPriceListsComponent,
-    ListArticlesPosComponent
+    ListArticlesPosComponent,
+    ExportTransactionsComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -599,7 +601,8 @@ import { ListArticlesPosComponent } from './components/list-articles-pos/list-ar
     ListCashBoxesComponent,
     CurrentAccountDetailsComponent,
     PrintArticlesStockComponent,
-    PriceListComponent
+    PriceListComponent,
+    ExportTransactionsComponent
   ],
   imports: [
     BrowserModule,

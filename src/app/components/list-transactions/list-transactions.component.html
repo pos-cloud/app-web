@@ -8,6 +8,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
+        <button class= "btn btn-primary" (click)="openModal('export')">Exportar</button>
         <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
         <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
@@ -185,6 +186,7 @@
   <div class="card card-outline-primary">
     <div class="card-header bg-primary">Listado de {{listType}}
       <div class="pull-right">
+        <button class= "btn btn-primary" (click)="openModal('export')">Exportar</button>
         <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
         <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
         <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>

@@ -6,10 +6,10 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { TransactionService } from './../../services/transaction.service';
-import { UserService } from '../../services/user.service';
+import { TransactionService } from '../../../services/transaction.service';
+import { UserService } from '../../../services/user.service';
 
-import { TransactionMovement } from '../../models/transaction-type';
+import { TransactionMovement } from '../../../models/transaction-type';
 import { Config } from 'app/app.config';
 
 @Component({

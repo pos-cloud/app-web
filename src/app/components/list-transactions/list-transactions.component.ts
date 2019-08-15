@@ -14,8 +14,8 @@ import { ConfigService } from './../../services/config.service'
 
 import { DeleteTransactionComponent } from './../../components/delete-transaction/delete-transaction.component';
 import { ViewTransactionComponent } from './../../components/view-transaction/view-transaction.component';
-import { ExportCitiComponent } from './../../components/export-citi/export-citi.component';
-import { ExportIvaComponent } from './../../components/export-iva/export-iva.component';
+import { ExportCitiComponent } from '../export/export-citi/export-citi.component';
+import { ExportIvaComponent } from '../export/export-iva/export-iva.component';
 
 //Pipes
 import { PrintComponent } from 'app/components/print/print/print.component';
@@ -25,6 +25,7 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 import { AddTransactionComponent } from '../add-transaction/add-transaction.component';
 import { AuthService } from 'app/services/auth.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
+import { ExportTransactionsComponent } from '../export/export-transactions/export-transactions.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -201,7 +202,7 @@ export class ListTransactionsComponent implements OnInit {
       origin: { $toString : "$origin" },
       letter: 1,
       number: { $toString : "$number" },
-      endDate: { $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
+      "transaction.endDate": { $dateFromString: { dateString: { $dateToString: { date: "$transaction.endDate", timezone: timezone } }}},
       madein: 1,
       state: 1,
       observation: 1,
@@ -369,6 +370,11 @@ export class ListTransactionsComponent implements OnInit {
           modalRef.componentInstance.body = `Estimado Cliente: Haciendo click en el siguiente link, podrá descargar el comprobante correspondiente http://${Config.database}.poscloud.com.ar:300/api/print/others/` + transaction._id;
         }
         
+        break;
+      case "export":
+        
+        modalRef = this._modalService.open(ExportTransactionsComponent, { size: 'lg' });
+        modalRef.componentInstance.transactionMovement = this.transactionMovement
         break;
       default: ;
     }
