@@ -335,7 +335,7 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path : 'report/kardex-de-productos',
+    path : 'report/kardex-de-productos/:id',
     component : ListMovementOfArticlesComponent,
     canActivate: [AuthGuard]
   },

@@ -89,7 +89,28 @@ export class ListMovementOfArticlesComponent implements OnInit {
     this.userCountry = Config.country;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.openModal('article');
+    if(pathLocation[3] != ':id'){
+      this.getArticle(pathLocation[3].toString());
+    } else {
+      this.openModal('article');
+    }
+  }
+
+  public getArticle( id : string) : void {
+    
+    this._articleService.getArticle(id).subscribe(
+      result => {
+        if (!result.article) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.articleSelected = result.article;
+          this.getSummary()
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+      }
+    );
   }
 
   public getSummary(): void {

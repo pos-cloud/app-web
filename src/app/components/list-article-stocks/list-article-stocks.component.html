@@ -57,6 +57,7 @@
               <button type="button" class="btn btn-secondary btn-sm" title="Imprimir" *ngIf="'articleStock.realStock' >= '0'"  (click)= "openModal('print-label', articleStock )">
                 <i class="fa fa-print"></i>
               </button>
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', articleStock)" title="Ver"><i class="fa fa-eye"></i></button>
             </td>
             <td class="flat" *ngIf="articleStock.branch">{{articleStock.branch.number}}</td>
             <td class="flat" *ngIf="!articleStock.branch"></td>

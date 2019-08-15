@@ -108,9 +108,7 @@ export class ListArticleStocksComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateArticleStockComponent, { size: 'lg' });
-        modalRef.componentInstance.articleStock = articleStock;
-        modalRef.componentInstance.readonly = true;
+        this._router.navigate(['/report/kardex-de-productos/' + articleStock.article._id]);
         break;
       case 'add':
         modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg' }).result.then((result) => {
@@ -195,6 +193,7 @@ export class ListArticleStocksComponent implements OnInit {
       realStock : 1,
       minStock : { $toString: '$minStock' },
       operationType : 1,
+      'article._id' :1,
       'article.code' : { $toString: '$article.code' },
       'article.barcode' : 1,
       'article.description' : 1,
