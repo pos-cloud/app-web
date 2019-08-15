@@ -8,10 +8,10 @@
             <b *ngIf="transaction.type.transactionMovement === 'Venta'"> {{ article.salePrice | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
             <div *ngIf='article.priceLists && transaction && transaction.company && transaction.company.priceList'>  
               <div *ngFor="let priceList of article.priceLists; let i = index">
-                <div *ngIf="priceList._id === transaction.company.priceList && !priceList.allowSpecialRules">
+                <div *ngIf="priceList._id === transaction.company.priceList._id && !priceList.allowSpecialRules">
                   <b> PL: {{ article.salePrice + (article.salePrice * priceList.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                 </div>
-                <div *ngIf="priceList._id === transaction.company.priceList && priceList.allowSpecialRules">
+                <div *ngIf="priceList._id === transaction.company.priceList._id && priceList.allowSpecialRules">
                   <div *ngFor="let rule of priceList.rules; let i = index">
                     <div *ngIf="article.category && article.make && rule.category === article.category && rule.make === article.make._id">
                         <b>PL: {{ article.salePrice + (article.salePrice * rule.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>

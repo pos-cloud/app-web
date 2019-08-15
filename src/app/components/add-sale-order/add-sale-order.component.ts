@@ -213,9 +213,9 @@ export class AddSaleOrderComponent {
           if(transaction) {
             this.transaction = transaction;
 
-            if(this.transaction.company && this.transaction.company.priceList){
+            /*if(this.transaction.company && this.transaction.company.priceList){
               this.transaction.priceList = this.transaction.company.priceList;
-            }
+            }*/
              
             if(this.transaction.state === TransactionState.Closed ||
               this.transaction.state === TransactionState.Canceled) {
@@ -997,6 +997,11 @@ export class AddSaleOrderComponent {
         }
       }
 
+      if(this.newPriceList){
+        this.transaction.priceList = this.newPriceList
+      } else {
+        this.transaction.priceList = this.priceList;
+      }
       this.priceList = null;
       this.newPriceList = null;
       
@@ -1305,23 +1310,15 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
 
-            if(this.transaction.priceList){
-              this.priceList =  await this.getPriceList(this.transaction.priceList._id);
-            } else {
-              this.priceList = undefined;
-            }
-            if(!this.transaction.company){
-              this.priceList = await this.getPriceList(result.company.priceList.toString())
-            }
+            if(this.transaction.company && this.transaction.company.priceList){
+              this.priceList =  await this.getPriceList(this.transaction.company.priceList._id);
+            } 
+
             this.transaction.company = result.company;
 
             if(result.company.priceList){
               this.companyOld = true;
               this.newPriceList = await this.getPriceList(result.company.priceList.toString())
-              this.transaction.priceList = this.newPriceList
-            } else {
-              this.newPriceList = null;
-              this.transaction.priceList = null;
             }
 
             if(this.transaction.company.transport){
