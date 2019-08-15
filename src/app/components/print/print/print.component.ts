@@ -2641,6 +2641,237 @@ export class PrintComponent implements OnInit {
     }
   }
 
+  public toPrintInvoiceRoll(): void {
+
+     //Cabecera del ticket
+    var margin = 5;
+    var row = 5;
+    let width = this.printer.pageWidth;
+ 
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      console.log("entro");
+      this.doc.setFontType('bold');
+      this.doc.setFontSize(this.fontSizes.large);
+      if(this.config[0].companyFantasyName)  {
+        this.centerText(margin, margin, width, 0, row, this.config[0].companyFantasyName);
+      } else {
+        this.centerText(margin, margin, width, 0, row, this.config[0].companyName);
+      }
+      this.doc.setFontType('small');
+      this.doc.setFontSize(this.fontSizes.small);
+      row +=3;
+      this.centerText(margin, margin, width, 0, row, this.config[0].companyAddress);
+      row += 3;
+      this.centerText(margin, margin, width, 0, row, "Tel: " + this.config[0].companyPhone);
+      row += 3;
+      this.centerText(margin,margin,width,0,row, this.config[0].companyVatCondition.description + " - " + this.config[0].companyIdentificationType.name + ":" + this.config[0].companyIdentificationValue)
+      row += 3;
+      this.centerText(margin,margin,width,0,row, "Ingresos Brutos: " + this.config[0].companyGrossIncome)
+      row += 3;
+    } else {
+      row += 15;
+      this.doc.setFontType('small');
+      this.doc.setFontSize(this.fontSizes.small);
+    }
+
+
+    //LADO IZQUIERDO
+    this.doc.line(0, row, width, row);
+    row += 10;
+    this.doc.setFontType('blod')
+    this.doc.setFontSize(30)
+    this.doc.text(20, row, this.transaction.letter)
+    row +=3;
+    this.doc.setFontSize(5)
+    if (this.transaction.type.codes && Config.country === 'AR') {
+      for (let i = 0; i < this.transaction.type.codes.length; i++) {
+        if (this.transaction.letter === this.transaction.type.codes[i].letter) {
+          this.doc.text("Cod:" + this.padString((this.transaction.type.codes[i].code).toString(), 2) , 20, row);
+        }
+      }
+    }
+    row +=3;
+    this.doc.setFontSize(10)
+    this.doc.text("ORIGINAL", 15,row)
+    //LADO DERECHO
+    this.doc.setFontSize(15)
+    this.doc.setFontType('blod')
+    if(this.transaction.type.labelPrint){
+      this.doc.text(this.transaction.type.labelPrint,45,25)
+    } else {
+      this.doc.text(this.transaction.type.name,45,25)
+    }
+    this.doc.setFontSize(8)
+    if(Config.country === 'AR') {
+      this.doc.text("N°:" + this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 45, 30);
+    } else {
+      this.doc.text("N°:" +this.padString(this.transaction.number, 8), 45, 30);
+    }
+    this.doc.text("Fecha:" +this.dateFormat.transform(this.transaction.endDate, 'DD/MM/YYYY'), 45, 35);
+  
+    row += 3;
+    this.doc.line(0, row, width, row);
+    row += 3;
+
+    if(this.transaction.company) {
+      this.doc.setFontType('bold');
+      this.doc.text("Cliente :" + this.transaction.company.name, margin, row);
+      this.doc.setFontType('normal');
+    } else {
+      if(this.transaction.madein == 'resto' || this.transaction.madein == 'mostrador') {
+        this.doc.setFontType('bold');
+        this.doc.text("Cliente : " + "Consumidor Final", margin, row);
+        this.doc.setFontType('normal');
+      }
+    }
+
+
+    row += 3;
+    this.doc.line(0, row, width, row);
+    row += 3;
+
+    if(this.transaction.cashBox){
+      this.doc.text("Caja : " + this.transaction.cashBox.number, margin, row);
+      row += 3;
+      this.doc.line(0, row, width, row);
+      row += 3;
+    }
+
+    this.doc.text("Cant.", margin, row);
+    this.doc.text("Descipción", width/3, row);
+    this.doc.text("P. unitario", 50, row);
+    this.doc.text("Total", width/1.17, row);
+
+    row += 2
+    this.doc.line(0, row, width, row);
+
+
+    if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
+      for (let movementOfArticle of this.movementsOfArticles) {
+        row += 3;
+        this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
+        this.doc.text(movementOfArticle.description.slice(0, 20), 13, row);
+        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), 50, row);
+        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
+
+        if(movementOfArticle.notes && movementOfArticle.notes !== "") {
+          row += 3;
+          this.doc.setFontStyle("italic");
+          this.doc.setTextColor(90, 90, 90);
+          this.doc.text(movementOfArticle.notes, 20, row);
+          this.doc.setFontStyle("normal");
+          this.doc.setTextColor(0, 0, 0);
+        }
+      }
+    }
+
+    row += 3;
+    this.doc.line(0, row, width, row);
+    row += 3;
+    this.doc.setFontStyle('bold');
+    this.doc.setFontSize(10);
+    this.doc.text( "TOTAL $ "+ this.transaction.totalPrice, 50, row);
+    this.doc.setFontStyle("small");
+    row += 3;
+
+    
+    // FORMA DE PAGO
+    if (this.movementsOfCashes && this.movementsOfCashes.length > 0) {
+
+      if(Config.country === 'MX' &&
+        this.transaction.stringSAT &&
+        this.transaction.SATStamp &&
+        this.transaction.CFDStamp) {
+          this.doc.text("Forma de pago: ", 5, row);
+          this.doc.setFontType('small');
+      
+          row += 5;
+
+          for(let movementOfCash of this.movementsOfCashes) {
+            this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, 5, row);
+            this.doc.text(`${movementOfCash.type.name}.`, 5, row);
+            row += 5;
+          }
+      } else {
+        this.doc.text("Forma de pago: ", margin, row);
+        this.doc.setFontType('small');
+    
+        row += 5;
+
+        for(let movementOfCash of this.movementsOfCashes) {
+          this.doc.text(`$ ${parseFloat(this.roundNumber.transform(movementOfCash.amountPaid)).toFixed(2)}`, margin, row);
+          this.doc.text(`${movementOfCash.type.name}.`, 28, row);
+          row += 5;
+        }
+      }
+    }
+
+    // FIN FORMA DE PAGO
+
+    row += 3;
+    this.doc.line(0, row, width, row);
+    row += 4;
+
+
+    if (Config.country === 'AR' &&
+        this.transaction.CAE &&
+        this.transaction.CAEExpirationDate) {
+      this.doc.setFontType('bold');
+      this.doc.text("CAE: " + this.transaction.CAE, margin, row);
+      row += 4;
+      this.doc.text("Fecha Vto: " + this.dateFormat.transform(this.transaction.CAEExpirationDate, "DD/MM/YYYY"), margin, row);
+      let imgdata = 'data:image/png;base64,' + this.barcode64;
+      row += 4;
+      this.doc.addImage(imgdata, 'PNG', margin, row, width - 10, 10);
+
+    } else if (Config.country === 'MX' &&
+              this.transaction.stringSAT &&
+              this.transaction.SATStamp &&
+              this.transaction.CFDStamp) {
+        this.doc.setFontSize(this.fontSizes.small);
+        let row = 270;
+        this.doc.setFontType('bold');
+        this.doc.text("Sello SAT:", 10, row);
+        this.doc.setFontType('normal');
+        this.doc.text(this.transaction.SATStamp.slice(0, 130), 23, row);
+        row += 3;
+        this.doc.text(this.transaction.SATStamp.slice(130, 265), 10, row);
+        row += 3;
+        this.doc.text(this.transaction.SATStamp.slice(265, 400), 10, row);
+        row += 3;
+        this.doc.setFontType('bold');
+        this.doc.text("Cadena Original SAT:", 10, row);
+        this.doc.setFontType('normal');
+        this.doc.text(this.transaction.stringSAT.slice(0, 118), 37, row);
+        row += 3;
+        this.doc.text(this.transaction.stringSAT.slice(118, 255), 10, row);
+        row += 3;
+        this.doc.text(this.transaction.stringSAT.slice(255, 390), 10, row);
+        row += 3;
+        this.doc.text(this.transaction.stringSAT.slice(390, 500), 10, row);
+        this.doc.setFontSize(this.fontSizes.normal);
+
+        let imgdata = 'data:image/png;base64,' + this.barcode64;
+
+        this.doc.addImage(imgdata, 'PNG', margin, row, width - 10, 10);
+      }
+
+    //Pie del ticket
+    this.doc.setFontSize(this.fontSizes.xsmall);
+    row += 15;
+    this.centerText(margin, margin, width, 0, row, "Generado en POSCLOUD.com.ar");
+    this.doc.setTextColor(0, 0, 0);
+
+    if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+      this.finishImpression();
+    } else {
+      this.getCompanyPicture(1, 1, width - 2, 18, true);
+    }
+    
+
+    
+  }
+
   public finishImpression(): void {
     
     if(!this.source){
@@ -3015,7 +3246,11 @@ export class PrintComponent implements OnInit {
             this.toPrintBarcode();
             break;
           case 'invoice':
-            this.toPrintInvoice();
+              if (this.printer.pageWidth < 150) {
+                this.toPrintInvoiceRoll();
+              } else {
+                this.toPrintInvoice();
+              }
             break;
 
           default:
