@@ -2108,6 +2108,7 @@ export class PrintComponent implements OnInit {
 
   public toPrintCurrentAccount(): void {
 
+    let transport = 0;
     let margin = 5;
 
     this.getHeader(false);
@@ -2176,10 +2177,21 @@ export class PrintComponent implements OnInit {
 
           i = 0;
 
+          this.doc.setFontType("bold");
+          this.doc.text("TRANSPORTE:".toString(),25, row);
+          this.doc.text("$"+this.roundNumber.transform(item.balance).toString(), 185, row);
+
           this.getGreeting();
           this.getFooter();
           row = 85;
           this.doc.addPage();
+
+          
+          this.doc.setFontType("bold");
+          this.doc.text("TRANSPORTE:".toString(),25, row);
+          this.doc.text("$"+this.roundNumber.transform(item.balance).toString(), 185, row);
+          row += 5;
+
           this.getHeader(false);
           this.getClient();
 
@@ -2189,13 +2201,7 @@ export class PrintComponent implements OnInit {
           this.doc.text("Fecha", margin, 77);
           this.doc.text("Tipo Comp.", 25, 77);
           this.doc.text("Nro Comprobante.", 53, 77);
-          if(this.params.detailsPaymentMethod) {
-            this.doc.text("Monto", 90, 77);
-            this.doc.text("Método", 110, 77);
-          } else {
-            this.doc.text("Monto", 110, 77);
-          }
-          this.doc.text("Método", 110, 77);
+          this.doc.text("Monto", 110, 77);
           this.doc.text("Debe", 145, 77);
           this.doc.text("Haber", 165, 77);
           this.doc.text("Saldo", 185, 77);
@@ -2206,7 +2212,7 @@ export class PrintComponent implements OnInit {
           this.doc.text("Cuenta Corriente", 140, 10);
 
           // Detalle de comprobantes
-          var row = 85;
+          var row = 95;
 
           this.doc.setFontSize(this.fontSizes.normal);
         }
