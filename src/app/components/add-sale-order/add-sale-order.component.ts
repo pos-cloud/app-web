@@ -213,10 +213,6 @@ export class AddSaleOrderComponent {
           if(transaction) {
             this.transaction = transaction;
 
-            /*if(this.transaction.company && this.transaction.company.priceList){
-              this.transaction.priceList = this.transaction.company.priceList;
-            }*/
-             
             if(this.transaction.state === TransactionState.Closed ||
               this.transaction.state === TransactionState.Canceled) {
               this.backFinal();
@@ -832,6 +828,7 @@ export class AddSaleOrderComponent {
           movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
       }
 
+
       if(movementOfArticle.article && this.priceList){
         let increasePrice = 0;
         if(this.priceList && this.priceList['allowSpecialRules'] && this.priceList['rules'] && this.priceList['rules'].length > 0){
@@ -997,21 +994,15 @@ export class AddSaleOrderComponent {
         }
       }
 
-      if(this.newPriceList){
-        this.transaction.priceList = this.newPriceList
-      } else {
-        this.transaction.priceList = this.priceList;
-      }
-      this.priceList = null;
-      this.newPriceList = null;
-      
-
     } else {
       isUpdateValid = true;
       totalPriceAux = 0;
       this.transaction.discountPercent = 0;
       discountAmountAux = 0;
     }
+
+    this.priceList = null;
+    this.newPriceList = null;    
 
     if(isUpdateValid) {
       this.transaction.totalPrice = totalPriceAux;
@@ -1310,16 +1301,31 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
 
-            if(this.transaction.company && this.transaction.company.priceList){
+            if(!this.transaction.company && result.company.priceList){
+              console.log("entro")
+              this.priceList = undefined
+              this.newPriceList = await this.getPriceList(result.company.priceList);
+            }
+
+            if(this.transaction.company && this.transaction.company.priceList && result.company.priceList){
+              console.log("entro")     
+              this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
+              this.newPriceList = await this.getPriceList(result.company.priceList)
+            }
+
+            if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList){
+              console.log("entro")
+              this.priceList = undefined;
+              this.newPriceList = await this.getPriceList(result.company.priceList);
+            }
+
+            if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList){ 
+              console.log("entro")     
               this.priceList =  await this.getPriceList(this.transaction.company.priceList._id);
-            } 
+              this.newPriceList = undefined;
+            }
 
             this.transaction.company = result.company;
-
-            if(result.company.priceList){
-              this.companyOld = true;
-              this.newPriceList = await this.getPriceList(result.company.priceList.toString())
-            }
 
             if(this.transaction.company.transport){
               this.transaction.transport = this.transaction.company.transport;
