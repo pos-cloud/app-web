@@ -16,9 +16,9 @@
             <b> Transporte:</b>
             <span *ngIf="transaction.transport">{{transaction.transport.name}}</span>
         </div>
-        <div class="col-md-2" *ngIf="transaction && transaction.priceList">
+        <div class="col-md-2" *ngIf="transaction && transaction.company && transaction.company.priceList">
           <b> Lista de Precio:</b>
-          <span *ngIf="transaction.priceList">{{transaction.priceList.name}}</span>
+          <span *ngIf="transaction.company.priceList.name">{{transaction.company.priceList.name}}</span>
         </div>
         <div class="col-md-2" *ngIf="transactionMovement && transactionMovement !=='Stock'">
           <b *ngIf="transactionMovement === 'Venta'">Cliente: </b>
