@@ -932,9 +932,9 @@ export class AddSaleOrderComponent {
     return movementOfArticle;
   }
 
-  public updateMovementOfArticle(movementOfArticle: MovementOfArticle) {
+  public updateMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
-    return new Promise<boolean>( async (resolve, reject) => {
+    return new Promise<MovementOfArticle>( async (resolve, reject) => {
 
       movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice);
       movementOfArticle.costPrice = this.roundNumber.transform(movementOfArticle.costPrice);
