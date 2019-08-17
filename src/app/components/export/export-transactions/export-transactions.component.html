@@ -30,7 +30,7 @@
           <div class="form-group col-md-4">
               <label for="branch" class="control-label">Sucursal</label>
                 <select class="form-control" formControlName="branch">
-                  <option [ngValue]="null" [disabled]="readonly"></option>
+                  <option [ngValue]="null"></option>
                   <option *ngFor="let branch of branches"         
                           [value]="branch._id">
                           {{branch.name}}</option>
@@ -41,7 +41,7 @@
               <div class="form-group col-md-4">
                   <label for="company" class="control-label">Empresa</label>
                     <select class="form-control" formControlName="company">
-                      <option [ngValue]="null" [disabled]="readonly"></option>
+                      <option [ngValue]="null"></option>
                       <option *ngFor="let company of companies"         
                               [value]="company._id">
                               {{company.name}}</option>
@@ -50,7 +50,7 @@
                 <div class="form-group col-md-4">
                     <label for="type" class="control-label">Tipo:</label>
                       <select class="form-control" formControlName="type">
-                        <option [ngValue]="null" [disabled]="readonly"></option>
+                        <option [ngValue]="null"></option>
                         <option *ngFor="let type of types"         
                                 [value]="type._id">
                                 {{type.name}}</option>
@@ -59,7 +59,7 @@
                   <div class="form-group col-md-4">
                       <label for="employee" class="control-label">Empleado:</label>
                         <select class="form-control" formControlName="employee">
-                          <option [ngValue]="null" [disabled]="readonly"></option>
+                          <option [ngValue]="null"></option>
                           <option *ngFor="let employee of employees"         
                                   [value]="employee._id">
                                   {{employee.name}}</option>
