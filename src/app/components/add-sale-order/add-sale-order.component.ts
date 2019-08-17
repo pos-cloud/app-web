@@ -1302,25 +1302,21 @@ export class AddSaleOrderComponent {
           if (result.company) {
 
             if(!this.transaction.company && result.company.priceList){
-              console.log("entro")
               this.priceList = undefined
               this.newPriceList = await this.getPriceList(result.company.priceList);
             }
 
             if(this.transaction.company && this.transaction.company.priceList && result.company.priceList){
-              console.log("entro")     
               this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = await this.getPriceList(result.company.priceList)
             }
 
             if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList){
-              console.log("entro")
               this.priceList = undefined;
               this.newPriceList = await this.getPriceList(result.company.priceList);
             }
 
             if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList){ 
-              console.log("entro")     
               this.priceList =  await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = undefined;
             }
