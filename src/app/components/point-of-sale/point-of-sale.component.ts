@@ -8,7 +8,7 @@ import 'moment/locale/es';
 import { Room } from './../../models/room';
 import { Printer, PrinterPrintIn } from './../../models/printer';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
 
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -42,6 +42,7 @@ import { SelectBranchComponent } from '../select-branch/select-branch.component'
 import { Origin } from 'app/models/origin';
 import { OriginService } from 'app/services/origin.service';
 import { SelectOriginComponent } from '../select-origin/select-origin.component';
+import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -460,6 +461,10 @@ export class PointOfSaleComponent implements OnInit {
     this.transaction = new Transaction();
     this.transaction.type = type;
     this.transaction.table = this.tableSelected;
+
+    if(this.transaction.type.stockMovement === StockMovement.Transfer){
+      this.openModal('deposit');
+    }
 
     if (this.transaction.type.fixedLetter && this.transaction.type.fixedLetter !== '') {
       this.transaction.letter = this.transaction.type.fixedLetter.toUpperCase();
@@ -1016,6 +1021,22 @@ export class PointOfSaleComponent implements OnInit {
           this.refresh();
         });
         break;
+        case 'deposit':
+          modalRef = this._modalService.open(SelectDepositComponent);
+          modalRef.result.then((result) => {
+            if (result && result.origin && result.destination) {
+              this.transaction.depositOrigin = result.origin;
+              this.transaction.depositDestination = result.destination;
+              console.log(this.transaction);
+              this.nextStepTransaction();
+            } else {
+              this.hideMessage();
+            }
+          }, (reason) => {
+            this.hideMessage();
+          });
+        break;
+
       default: ;
     }
   }

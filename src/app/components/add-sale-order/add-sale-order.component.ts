@@ -1826,13 +1826,136 @@ export class AddSaleOrderComponent {
 
       let amountToModify;
 
-      if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
+      switch (this.transaction.type.stockMovement) {
+        case StockMovement.Inflows:
+          amountToModify = movementOfArticle.amount;
+          this._articleStockService.updateRealStock(
+            movementOfArticle.article,
+            this.transaction.depositDestination,
+            amountToModify, 
+            this.transaction.type.stockMovement.toString()
+          ).subscribe(
+            result => {
+              this.loading = false;
+              if (!result.articleStock) {
+                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                resolve(null);
+              } else {
+                resolve(result.articleStock);
+              }
+            },
+            error => {
+              this.loading = false;
+              this.showMessage(error._body, 'danger', false);
+              resolve(null);
+            }
+          );
+          break;
+        case StockMovement.Inventory:
+          amountToModify = movementOfArticle.amount;
+          this._articleStockService.updateRealStock(
+            movementOfArticle.article,
+            this.transaction.depositDestination,
+            amountToModify, 
+            this.transaction.type.stockMovement.toString()
+          ).subscribe(
+            result => {
+              this.loading = false;
+              if (!result.articleStock) {
+                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                resolve(null);
+              } else {
+                resolve(result.articleStock);
+              }
+            },
+            error => {
+              this.loading = false;
+              this.showMessage(error._body, 'danger', false);
+              resolve(null);
+            }
+          );
+          break;
+        case StockMovement.Outflows:
+          amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
+          this._articleStockService.updateRealStock(
+            movementOfArticle.article,
+            this.transaction.depositDestination,
+            amountToModify, 
+            this.transaction.type.stockMovement.toString()
+          ).subscribe(
+            result => {
+              this.loading = false;
+              if (!result.articleStock) {
+                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                resolve(null);
+              } else {
+                resolve(result.articleStock);
+              }
+            },
+            error => {
+              this.loading = false;
+              this.showMessage(error._body, 'danger', false);
+              resolve(null);
+            }
+          );
+          break;
+        case StockMovement.Transfer:
+          console.log(this.transaction.depositOrigin.branch)
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              this.transaction.depositOrigin,
+              movementOfArticle.amount * -1,
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  console.log(result.articleStock)
+                  this._articleStockService.updateRealStock(
+                    movementOfArticle.article,
+                    this.transaction.depositDestination,
+                    movementOfArticle.amount,
+                    this.transaction.type.stockMovement.toString()
+                  ).subscribe(
+                    result => {
+                      this.loading = false;
+                      if (!result.articleStock) {
+                        if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                        resolve(null);
+                      } else {
+                        console.log(result.articleStock)
+                        resolve(result.articleStock);
+                      }
+                    },
+                    error => {
+                      this.loading = false;
+                      this.showMessage(error._body, 'danger', false);
+                      resolve(null);
+                    }
+                  );
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
+                resolve(null);
+              }
+            );
+          break;
+        default:
+          break;
+      }
+
+      /*if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
         amountToModify = movementOfArticle.amount;
       } else {
         amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-      }
+      }*/
 
-      this._articleStockService.updateRealStock(
+      /*this._articleStockService.updateRealStock(
         movementOfArticle.article,
         this.transaction.branchDestination,
         this.transaction.depositDestination,
@@ -1853,7 +1976,7 @@ export class AddSaleOrderComponent {
           this.showMessage(error._body, 'danger', false);
           resolve(null);
         }
-      );
+      );*/
     });
   }
 
