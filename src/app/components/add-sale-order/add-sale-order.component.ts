@@ -549,7 +549,14 @@ export class AddSaleOrderComponent {
         let movementOfArticle: MovementOfArticle;
 
         if(!itemData.article.isWeigth) {
-          movementOfArticle = this.getMovementOfArticleByArticle(itemData.article._id);
+          let query = `where="transaction":"${this.transaction._id}","article":"${itemData.article._id}"`;
+          await this.getMovementsOfArticles(query).then(
+            movementsOfArticles => {
+              if(movementsOfArticles && movementsOfArticles.length > 0) {
+                movementOfArticle = movementsOfArticles[0];
+              }
+            }
+          );
         }
 
         if (!movementOfArticle) {
@@ -611,6 +618,30 @@ export class AddSaleOrderComponent {
       this.showArticles();
     }
   }
+
+  public getMovementsOfArticles(query?: string): Promise<MovementOfArticle[]> {
+
+		return new Promise<MovementOfArticle[]>((resolve, reject) => {
+
+			this.loading = true;
+		
+			this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+				result => {
+					this.loading = false;
+					if (!result.movementsOfArticles) {
+						resolve(null);
+					} else {
+						resolve(result.movementsOfArticles);
+					}
+				},
+				error => {
+					this.loading = false;
+          this.showMessage(error._body, 'danger', false);
+					resolve(null);
+				}
+			);
+		});
+	}
 
   public saveMovementOfArticle(movementOfArticle: MovementOfArticle): Promise<MovementOfArticle> {
 
