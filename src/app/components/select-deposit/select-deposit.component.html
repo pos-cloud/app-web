@@ -12,7 +12,7 @@
 	</div>
 	<form [formGroup]="transferForm" #formTransfer="ngForm" (ngSubmit)="selectTransfer()" autocomplete="off">
 		<div class="modal-body">
-      <div class="row">
+      <div *ngIf="op === 'transfer'" class="row">
         <div class="form-group col-md-6">
             <label for="origin" class="control-label">Origen:</label>
             <select class="form-control" formControlName="origin">
@@ -30,9 +30,19 @@
           </select>
         </div>
       </div>
+      <div *ngIf="op === 'deposit'" class="row">
+        <div class="form-group col-md-6">
+            <label for="deposit" class="control-label">Depósito:</label>
+            <select class="form-control" formControlName="deposit">
+              <option *ngFor="let deposit of deposits"
+                      [value]="deposit._id">
+                      {{deposit.name}}</option>
+            </select>
+        </div>
+      </div>
 		</div>
 		<div class="modal-footer" *ngIf="!readonly">
-			<button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!transferForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
 				<span *ngIf="!loading">Siguiente</span>

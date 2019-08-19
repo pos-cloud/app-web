@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
@@ -11,6 +11,7 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 })
 export class SelectDepositComponent implements OnInit {
 
+  @Input() op : string;
   public transferForm : FormGroup
   public deposits : Deposit[];
   public alertMessage = '';
@@ -31,7 +32,9 @@ export class SelectDepositComponent implements OnInit {
   public buildForm() : void {
     this.transferForm = this._fb.group({
       'origin': [, []],
-      'destination': [, []]
+      'destination': [, []],
+      'deposit': [, []]
+
     })
   }
 
@@ -51,7 +54,7 @@ export class SelectDepositComponent implements OnInit {
   }
 
   public selectTransfer() :void {
-    this.activeModal.close({ origin: this.transferForm.value.origin, destination: this.transferForm.value.destination });
+    this.activeModal.close({ origin: this.transferForm.value.origin, destination: this.transferForm.value.destination, deposit: this.transferForm.value.deposit });
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
