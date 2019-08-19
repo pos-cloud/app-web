@@ -1900,7 +1900,6 @@ export class AddSaleOrderComponent {
           );
           break;
         case StockMovement.Transfer:
-          console.log(this.transaction.depositOrigin.branch)
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
               this.transaction.depositOrigin,
@@ -1913,7 +1912,6 @@ export class AddSaleOrderComponent {
                   if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                   resolve(null);
                 } else {
-                  console.log(result.articleStock)
                   this._articleStockService.updateRealStock(
                     movementOfArticle.article,
                     this.transaction.depositDestination,
@@ -1926,7 +1924,6 @@ export class AddSaleOrderComponent {
                         if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                         resolve(null);
                       } else {
-                        console.log(result.articleStock)
                         resolve(result.articleStock);
                       }
                     },
