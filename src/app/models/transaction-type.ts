@@ -67,7 +67,8 @@ export enum Movements {
 export enum StockMovement {
 	Inflows = <any>"Entrada",
 	Outflows = <any>"Salida",
-	Inventory = <any> "Inventario"
+	Inventory = <any> "Inventario",
+	Transfer = <any> "Transferencia"
 }
 
 export enum CurrentAccount {

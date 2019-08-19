@@ -151,7 +151,6 @@ export class ArticleStockService {
 
 	public updateRealStock(
         article: Article, 
-        branch: Branch, 
         deposit: Deposit, 
         amount: number, 
         stockMovement: string
@@ -164,7 +163,6 @@ export class ArticleStockService {
             .set('Authorization', this._authService.getToken());
 
         return this._http.put(URL, {articleId: article._id, 
-                                    branchId: branch._id, 
                                     depositId: deposit._id, 
                                     amount: amount, 
                                     stockMovement: stockMovement 

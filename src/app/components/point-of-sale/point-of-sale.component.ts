@@ -8,7 +8,7 @@ import 'moment/locale/es';
 import { Room } from './../../models/room';
 import { Printer, PrinterPrintIn } from './../../models/printer';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, StockMovement, Movements } from './../../models/transaction-type';
 
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -42,6 +42,7 @@ import { SelectBranchComponent } from '../select-branch/select-branch.component'
 import { Origin } from 'app/models/origin';
 import { OriginService } from 'app/services/origin.service';
 import { SelectOriginComponent } from '../select-origin/select-origin.component';
+import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -574,6 +575,12 @@ export class PointOfSaleComponent implements OnInit {
               // ASIGNAMOS A LA TRANSACCIÓN LA SUCURSAL DEL PV DEL USUARIO
               this.transaction.branchOrigin = identity.origin.branch;
               this.transaction.branchDestination = identity.origin.branch;
+              if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+                let originAssigned = await this.assignOrigin();
+                resolve(originAssigned);
+              } else {
+                resolve(true);
+              }
               let depositAssigned = await this.assignDeposit();
               if(depositAssigned) {
                 if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
@@ -604,6 +611,12 @@ export class PointOfSaleComponent implements OnInit {
                         let defaultBranch = branches[0];
                         this.transaction.branchOrigin = defaultBranch;
                         this.transaction.branchDestination = defaultBranch;
+                        if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
+                          let originAssigned = await this.assignOrigin();
+                          resolve(originAssigned);
+                        } else {
+                          resolve(true);
+                        }
                         let depositAssigned = await this.assignDeposit();
                         if(depositAssigned) {
                           if (!this.transaction.type.fixedOrigin || this.transaction.type.fixedOrigin === 0 && this.transaction.origin === 0) {
@@ -650,19 +663,30 @@ export class PointOfSaleComponent implements OnInit {
   async assignDeposit(): Promise<boolean> {
 
     return new Promise<boolean>(async (resolve, reject) => {
-      // ASIGNAMOS EL ÚNICO DEPOSITO DE LA LA SUCURSAL
-      await this.getDeposits({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
-        deposits => {
-          if(deposits && deposits.length > 0) {
-            this.transaction.depositOrigin = deposits[0];
-            this.transaction.depositDestination = deposits[0];
-            resolve(true);
+      if(!this.transaction.depositDestination || !this.transaction.depositOrigin){
+        if(this.transaction.type.transactionMovement === TransactionMovement.Stock){
+          if(this.transaction.type.stockMovement === StockMovement.Transfer){
+            this.openModal('transfer')
           } else {
-            this.showMessage("Debe crear un depósito defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
-            resolve(false);
+            this.openModal('deposit')
           }
+        } else {
+          await this.getDeposits({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
+            deposits => {
+              if(deposits && deposits.length > 0) {
+                this.transaction.depositOrigin = deposits[0];
+                this.transaction.depositDestination = deposits[0];
+                resolve(true);
+              } else {
+                this.showMessage("Debe crear un depósito defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
+                resolve(false);
+              }
+            }
+          );
         }
-      );
+      } else {
+        resolve(true)
+      }
     });
   }
 
@@ -696,8 +720,13 @@ export class PointOfSaleComponent implements OnInit {
   async nextStepTransaction() {
 
     if(this.transaction && (!this.transaction._id || this.transaction._id === "")) {
-      let branchAssigned = await this.assignBranch();
-      if(branchAssigned) {
+      let result;
+      if(this.transaction.type.transactionMovement === TransactionMovement.Stock){
+        result = await this.assignDeposit();
+      } else {
+        result = await this.assignBranch();
+      }
+      if(result) {
         await this.getLastTransactionByType().then(
           async transaction => {
             if(transaction) {
@@ -743,10 +772,9 @@ export class PointOfSaleComponent implements OnInit {
         }
       );
 
+
       if( !this.transaction.branchDestination || 
-          !this.transaction.branchOrigin || 
-          !this.transaction.depositOrigin || 
-          !this.transaction.depositDestination) {
+          !this.transaction.branchOrigin) {
             let branchAssigned = await this.assignBranch();
             if(branchAssigned) {
               this.nextStepTransaction();
@@ -1016,6 +1044,46 @@ export class PointOfSaleComponent implements OnInit {
           this.refresh();
         });
         break;
+        case 'transfer':
+          modalRef = this._modalService.open(SelectDepositComponent);
+          modalRef.componentInstance.op = op
+          modalRef.result.then(
+            async (result) => {
+              if (result && result.origin && result.destination) {
+                let depositOrigin = await this.getDeposits({ _id: { $oid: result.origin }, operationType: { $ne: 'D' } });
+                this.transaction.depositOrigin = depositOrigin[0]
+                this.transaction.branchOrigin = depositOrigin[0].branch
+                let depositDestination = await this.getDeposits({ _id: { $oid: result.destination }, operationType: { $ne: 'D' } });
+                this.transaction.depositDestination = depositDestination[0]
+                this.transaction.branchDestination = depositDestination[0].branch
+                this.nextStepTransaction();
+              } else {
+                this.hideMessage();
+              }
+            }, (reason) => {
+              this.hideMessage();
+            });
+        break;
+        case 'deposit':
+          modalRef = this._modalService.open(SelectDepositComponent);
+          modalRef.componentInstance.op = op
+          modalRef.result.then(
+            async (result) => {
+              if (result && result.deposit) {
+                let deposit = await this.getDeposits({ _id: { $oid: result.deposit }, operationType: { $ne: 'D' } });
+                this.transaction.depositOrigin = deposit[0]
+                this.transaction.branchOrigin = deposit[0].branch
+                this.transaction.depositDestination = deposit[0]
+                this.transaction.branchDestination = deposit[0].branch
+                this.nextStepTransaction();
+              } else {
+                this.hideMessage();
+              }
+            }, (reason) => {
+              this.hideMessage();
+            });
+        break;
+
       default: ;
     }
   }
