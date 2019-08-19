@@ -251,13 +251,13 @@ export class ListArticlesPosComponent implements OnInit {
                 priceList['rules'].forEach(rule => {
                   if(rule){
                     if(rule['category'] === article.category._id && rule['make'] === article.make._id){
-                      increasePrice = rule['percentage']
+                      increasePrice = rule['percentage'] + priceList['percentage']
                     }
                     if(rule['category'] == null && rule['make'] === article.make._id){
-                      increasePrice = rule['percentage']
+                      increasePrice = rule['percentage'] + priceList['percentage']
                     }
                     if(rule['make'] == null && rule['category'] === article.category._id){
-                      increasePrice = rule['percentage']
+                      increasePrice = rule['percentage'] + priceList['percentage']
                     }
                   }
                 });
