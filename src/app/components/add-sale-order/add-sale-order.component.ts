@@ -874,6 +874,9 @@ export class AddSaleOrderComponent {
               if(rule['make'] == null && rule['category'] === movementOfArticle.article.category){
                 increasePrice = rule['percentage'] + this.priceList['percentage']
               }
+              if(rule.make !== movementOfArticle.article.make && rule.category !== movementOfArticle.article.category){
+                increasePrice = this.priceList['percentage']
+              }
             }
           });
         } else {
@@ -899,6 +902,9 @@ export class AddSaleOrderComponent {
               }
               if(rule['make'] == null && rule['category'] === movementOfArticle.article.category){
                 increasePrice = rule['percentage'] + this.newPriceList['percentage']
+              }
+              if(rule.make !== movementOfArticle.article.make && rule.category !== movementOfArticle.article.category){
+                increasePrice = this.newPriceList['percentage']
               }
             }
           });

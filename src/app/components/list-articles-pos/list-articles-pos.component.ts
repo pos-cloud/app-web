@@ -29,6 +29,7 @@ import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
 import { TransactionService } from 'app/services/transaction.service';
 import { CompanyType } from 'app/models/company';
+import { isNgContainer } from '@angular/compiler';
 
 
 @Component({
@@ -216,9 +217,9 @@ export class ListArticlesPosComponent implements OnInit {
     this.activeModal.close({ article: articleSelected });
   }
 
-  public getPriceList(id: string): Promise<PriceList[]> {
+  public getPriceList(id: string): Promise<PriceList> {
 
-    return new Promise<PriceList[]>((resolve, reject) => {
+    return new Promise<PriceList>((resolve, reject) => {
 
       this._priceListService.getPriceList(id).subscribe(
         result => {
@@ -247,22 +248,25 @@ export class ListArticlesPosComponent implements OnInit {
           if(this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
             if(priceList){
-              if(priceList['allowSpecialRules']){
-                priceList['rules'].forEach(rule => {
+              if(priceList.allowSpecialRules){
+                priceList.rules.forEach(rule => {
                   if(rule){
-                    if(rule['category'] === article.category._id && rule['make'] === article.make._id){
-                      increasePrice = rule['percentage'] + priceList['percentage']
+                    if(rule.category._id === article.category._id && rule.make._id === article.make._id){
+                      increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule['category'] == null && rule['make'] === article.make._id){
-                      increasePrice = rule['percentage'] + priceList['percentage']
+                    if(rule.category == null && rule.make._id === article.make._id){
+                      increasePrice = rule.percentage + priceList.percentage
                     }
-                    if(rule['make'] == null && rule['category'] === article.category._id){
-                      increasePrice = rule['percentage'] + priceList['percentage']
+                    if(rule.make._id == null && rule.category._id === article.category._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.make._id !== article.make._id && rule.category._id !== article.category._id){
+                      increasePrice = priceList.percentage
                     }
                   }
                 });
               } else {
-                increasePrice = priceList['percentage']
+                increasePrice = priceList.percentage
               }
             }
               
