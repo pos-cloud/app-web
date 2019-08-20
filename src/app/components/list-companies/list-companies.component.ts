@@ -184,6 +184,7 @@ export class ListCompaniesComponent implements OnInit {
         model.emails = '';
         model.birthday = '';
         model.observation = '';
+        model.addressNumber = '';
         model.gender = '';
         model.grossIncome = '';
         modalRef.componentInstance.model = model;
