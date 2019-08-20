@@ -54,7 +54,11 @@ export class SelectDepositComponent implements OnInit {
   }
 
   public selectTransfer() :void {
-    this.activeModal.close({ origin: this.transferForm.value.origin, destination: this.transferForm.value.destination, deposit: this.transferForm.value.deposit });
+    if(this.transferForm.value.origin === this.transferForm.value.destination && this.op === 'transfer'){
+      this.showMessage("No puede seleccionar el mismo deposito de origen y destino",'danger',true)
+    } else {
+      this.activeModal.close({ origin: this.transferForm.value.origin, destination: this.transferForm.value.destination, deposit: this.transferForm.value.deposit });
+    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
