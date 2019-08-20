@@ -311,7 +311,7 @@
               <th (click)="orderBy('employeeClosing','name')" *ngIf="transactionMovement === 'Venta'">Vendedor</th>
               <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Venta'">Cliente</th>
               <th (click)="orderBy('company','name')" *ngIf="transactionMovement === 'Compra'">Proveedor</th>
-              <th (click)="orderBy('totalPrice')" *ngIf="transactionMovement === 'Stock'" >Depósito</th>
+              <th (click)="orderBy('depositOrigin','name')" *ngIf="transactionMovement === 'Stock'" >Depósito</th>
               <th (click)="orderBy('totalPrice')" *ngIf="transactionMovement !== 'Stock'" >Precio Total</th>
             </tr>
             <tr *ngIf="areFiltersVisible" class="filters">
@@ -320,7 +320,7 @@
               <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
               <th *ngIf="transactionMovement === 'Venta'"><input type="text" class="form-control" [(ngModel)]="filterEmployeeClosing" placeholder="Vendedor..."></th>
-              <th *ngIf="transactionMovement !== 'Stock'"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
+              <th *ngIf="(transactionMovement === 'Compra' || transactionMovement === 'Venta')"><input type="text" class="form-control" [(ngModel)]="filterCompany" placeholder="Empresa..."></th>
               <th *ngIf="transactionMovement !== 'Stock'"><input type="text" class="form-control" [(ngModel)]="filterTotalPrice" placeholder="Precio Total..."></th>
               <th *ngIf="transactionMovement === 'Stock'" ><input type="text" class="form-control" [(ngModel)]="filterDeposit" placeholder="Depósito Origen..."></th>
             </tr>
