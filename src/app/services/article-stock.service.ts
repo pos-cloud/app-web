@@ -156,8 +156,6 @@ export class ArticleStockService {
         stockMovement: string
     ): Observable<any> {
 
-        console.log(deposit)
-
         const URL = `${Config.apiURL}amount-stock-by-article`;
 
         const headers = new HttpHeaders()
