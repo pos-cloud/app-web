@@ -188,6 +188,16 @@ export class PriceListComponent implements OnInit {
 
     });
 
+    if(exceptionForm.value.percentage == '' || exceptionForm.value.percentage == 0 || exceptionForm.value.percentage == null ){
+      this.showMessage("El porcentaje no puede ser 0 o vacio","danger",true)
+      valid = false;
+    }
+
+    if(exceptionForm.value.article == '' || exceptionForm.value.article == 0 || exceptionForm.value.article == null ){
+      this.showMessage("Debe seleccionar un producto","danger",true)
+      valid = false;
+    }
+
     if(valid){
       exceptions.push(
         this._fb.group({
