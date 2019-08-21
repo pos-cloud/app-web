@@ -883,6 +883,16 @@ export class AddSaleOrderComponent {
           increasePrice = this.priceList['percentage']
         }
 
+        if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
+          this.priceList.exceptions.forEach(exception =>{
+            if(exception){
+              if(exception.article.toString() === movementOfArticle.article._id){
+                increasePrice = exception.percentage
+              }
+            }
+          })
+        }
+
         if(increasePrice != 0){
           movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100+increasePrice) );
         }
@@ -910,6 +920,16 @@ export class AddSaleOrderComponent {
           });
         } else {
           increasePrice = this.newPriceList['percentage']
+        }
+
+        if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0){
+          this.newPriceList.exceptions.forEach(exception =>{
+            if(exception){
+              if(exception.article.toString() === movementOfArticle.article._id){
+                increasePrice = exception.percentage
+              }
+            }
+          })
         }
 
         if(increasePrice != 0){

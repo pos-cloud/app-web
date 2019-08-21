@@ -249,25 +249,36 @@ export class ListArticlesPosComponent implements OnInit {
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
             if(priceList){
               if(priceList.allowSpecialRules){
-                priceList.rules.forEach(rule => {
-                  if(rule){
-                    if(rule.category._id === article.category._id && rule.make._id === article.make._id){
-                      increasePrice = rule.percentage + priceList.percentage
+                  priceList.rules.forEach(rule => {
+                    if(rule){
+                      if(rule.category.toString() === article.category._id && rule.make.toString() === article.make._id){
+                        increasePrice = rule.percentage + priceList.percentage
+                      }
+                      if(rule.category == null && rule.make.toString() === article.make._id){
+                        increasePrice = rule.percentage + priceList.percentage
+                      }
+                      if(rule.make.toString() == null && rule.category.toString() === article.category._id){
+                        increasePrice = rule.percentage + priceList.percentage
+                      }
+                      if(rule.make.toString() !== article.make._id && rule.category.toString() !== article.category._id){
+                        increasePrice = priceList.percentage
+                      }
                     }
-                    if(rule.category == null && rule.make._id === article.make._id){
-                      increasePrice = rule.percentage + priceList.percentage
+                  });
+                } else {
+                  increasePrice = priceList.percentage
+                }
+
+                if(priceList.exceptions && priceList.exceptions.length > 0){
+                  priceList.exceptions.forEach(exception =>{
+                    if(exception){
+                      if(exception.article.toString() === article._id){
+                        increasePrice = exception.percentage
+                      }
                     }
-                    if(rule.make._id == null && rule.category._id === article.category._id){
-                      increasePrice = rule.percentage + priceList.percentage
-                    }
-                    if(rule.make._id !== article.make._id && rule.category._id !== article.category._id){
-                      increasePrice = priceList.percentage
-                    }
-                  }
-                });
-              } else {
-                increasePrice = priceList.percentage
-              }
+                  })
+                }
+              
             }
               
           }

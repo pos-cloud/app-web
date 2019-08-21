@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import 'moment/locale/es';
 import { Category } from './category';
 import { Make } from './make';
+import { Article } from './article';
 
 export class PriceList {
 
@@ -15,6 +16,11 @@ export class PriceList {
 		_id: string;
 		category: Category;
 		make : Make;
+		percentage: number;
+	}];
+	public exceptions: [{
+		_id: string;
+		article : Article;
 		percentage: number;
 	}];
 	public creationUser: User;

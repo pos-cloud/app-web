@@ -8,6 +8,8 @@ import { Category } from 'app/models/category';
 import { Make } from 'app/models/make';
 import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
+import { ArticleService } from 'app/services/article.service';
+import { Article } from 'app/models/article';
 
 @Component({
   selector: 'app-price-list',
@@ -30,6 +32,7 @@ export class PriceListComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public categories : Category[];
   public makes : Make[]
+  public articles : Article[]
   public viewRules : boolean = false;
 
   public categorySelected : Category;
@@ -54,6 +57,7 @@ export class PriceListComponent implements OnInit {
     public _priceListService: PriceListService,
     public _categoryService: CategoryService,
     public _makeService: MakeService,
+    public _articleService : ArticleService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -61,6 +65,7 @@ export class PriceListComponent implements OnInit {
   ) { 
     this.getCategories();
     this.getMakes();
+    this.getArticles();
   }
 
   ngOnInit() {
@@ -93,7 +98,8 @@ export class PriceListComponent implements OnInit {
       'allowSpecialRules' : [this.priceList.allowSpecialRules,[
         Validators.required
       ]],
-       'rules' : this._fb.array([ ])
+       'rules' : this._fb.array([]),
+       'exceptions' : this._fb.array([])
     });
 
     this.priceListForm.valueChanges
@@ -115,7 +121,19 @@ export class PriceListComponent implements OnInit {
         })
       );
     }
-    
+  }
+
+  public addNewException(e :any): void {
+    if(this.priceListForm.value.exceptions.lenght <= 0 && e){
+      const exceptions = this.priceListForm.controls.exceptions as FormArray;
+      exceptions.push(
+        this._fb.group({
+          _id: null,
+          article: null,
+          percentage: 0
+        })
+      );
+    }
   }
 
   public addRule(ruleForm: NgForm): void {
@@ -156,8 +174,40 @@ export class PriceListComponent implements OnInit {
       
   }
 
+  public addException(exceptionForm: NgForm): void {
+
+    let valid = true;
+    const exceptions = this.priceListForm.controls.exceptions as FormArray;
+
+    this.priceListForm.controls.exceptions.value.forEach(element => {
+
+      if(exceptionForm.value.article == element.article){
+        this.showMessage("Esta excepcion ya existe","danger",true)
+        valid = false;
+      } 
+
+    });
+
+    if(valid){
+      exceptions.push(
+        this._fb.group({
+          _id: null,
+          article: exceptionForm.value.article || null,
+          percentage: exceptionForm.value.percentage
+        })
+      );
+      exceptionForm.resetForm();
+    }
+      
+  }
+
   deleteRule(index) {
     let control = <FormArray>this.priceListForm.controls.rules;
+    control.removeAt(index)
+  }
+
+  deleteException(index) {
+    let control = <FormArray>this.priceListForm.controls.exceptions;
     control.removeAt(index)
   }
 
@@ -219,13 +269,22 @@ export class PriceListComponent implements OnInit {
       'allowSpecialRules' : this.priceList.allowSpecialRules
     };
 
-    let control = <FormArray>this.priceListForm.controls.rules;
+    let rules = <FormArray>this.priceListForm.controls.rules;
     this.priceList.rules.forEach(x => {
-      control.push(this._fb.group({ 
+      rules.push(this._fb.group({ 
         '_id': x._id, 
         'percentage': x.percentage,
         'make' : x.make,
         'category' : x.category
+      }))
+    })
+
+    let exceptions = <FormArray>this.priceListForm.controls.exceptions;
+    this.priceList.exceptions.forEach(x => {
+      exceptions.push(this._fb.group({ 
+        '_id': x._id, 
+        'article' : x.article,
+        'percentage': x.percentage,
       }))
     })
 
@@ -353,6 +412,28 @@ export class PriceListComponent implements OnInit {
             this.hideMessage();
             this.loading = false;
             this.makes = result.makes;
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
+        }
+      );
+  }
+
+  public getArticles(){
+    this.loading = true;
+
+    this._articleService.getArticles().subscribe(
+        result => {
+          if (!result.articles) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+            this.articles = new Array();
+          } else {
+            this.hideMessage();
+            this.loading = false;
+            this.articles = result.articles;
           }
         },
         error => {
