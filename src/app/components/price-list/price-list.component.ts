@@ -279,24 +279,30 @@ export class PriceListComponent implements OnInit {
       'allowSpecialRules' : this.priceList.allowSpecialRules
     };
 
-    let rules = <FormArray>this.priceListForm.controls.rules;
-    this.priceList.rules.forEach(x => {
-      rules.push(this._fb.group({ 
-        '_id': x._id, 
-        'percentage': x.percentage,
-        'make' : x.make,
-        'category' : x.category
-      }))
-    })
+    if(this.priceList.rules && this.priceList.rules.length > 0){
+      let rules = <FormArray>this.priceListForm.controls.rules;
+      this.priceList.rules.forEach(x => {
+        rules.push(this._fb.group({ 
+          '_id': x._id, 
+          'percentage': x.percentage,
+          'make' : x.make,
+          'category' : x.category
+        }))
+      })
+    }
+    
 
-    let exceptions = <FormArray>this.priceListForm.controls.exceptions;
-    this.priceList.exceptions.forEach(x => {
-      exceptions.push(this._fb.group({ 
-        '_id': x._id, 
-        'article' : x.article,
-        'percentage': x.percentage,
-      }))
-    })
+    if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
+      let exceptions = <FormArray>this.priceListForm.controls.exceptions;
+      this.priceList.exceptions.forEach(x => {
+        exceptions.push(this._fb.group({ 
+          '_id': x._id, 
+          'article' : x.article,
+          'percentage': x.percentage,
+        }))
+      })
+    }
+    
 
     this.priceListForm.patchValue(values);
     
