@@ -135,7 +135,6 @@ export class ListArticlesPosComponent implements OnInit {
       this.articleType = ArticleType.Final;
     }
     this.getArticles();
-
   }
 
   public getArticles(): void {
@@ -245,22 +244,23 @@ export class ListArticlesPosComponent implements OnInit {
       async article => {
         if(article) {
           let increasePrice = 0;
+
           if(this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
             if(priceList){
               if(priceList.allowSpecialRules){
                   priceList.rules.forEach(rule => {
                     if(rule){
-                      if(rule.category.toString() === article.category._id && rule.make.toString() === article.make._id){
+                      if(rule.category._id === article.category._id && rule.make._id === article.make._id){
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.category == null && rule.make.toString() === article.make._id){
+                      if(rule.category == null && rule.make._id === article.make._id){
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.make.toString() == null && rule.category.toString() === article.category._id){
+                      if(rule.make == null && rule.category._id === article.category._id){
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.make.toString() !== article.make._id && rule.category.toString() !== article.category._id){
+                      if(rule.make._id !== article.make._id && rule.category._id !== article.category._id){
                         increasePrice = priceList.percentage
                       }
                     }
@@ -272,7 +272,7 @@ export class ListArticlesPosComponent implements OnInit {
                 if(priceList.exceptions && priceList.exceptions.length > 0){
                   priceList.exceptions.forEach(exception =>{
                     if(exception){
-                      if(exception.article.toString() === article._id){
+                      if(exception.article._id === article._id){
                         increasePrice = exception.percentage
                       }
                     }

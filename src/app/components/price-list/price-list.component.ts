@@ -285,8 +285,8 @@ export class PriceListComponent implements OnInit {
         rules.push(this._fb.group({ 
           '_id': x._id, 
           'percentage': x.percentage,
-          'make' : x.make,
-          'category' : x.category
+          'make' : x.make._id,
+          'category' : x.category._id
         }))
       })
     }
@@ -297,7 +297,7 @@ export class PriceListComponent implements OnInit {
       this.priceList.exceptions.forEach(x => {
         exceptions.push(this._fb.group({ 
           '_id': x._id, 
-          'article' : x.article,
+          'article' : x.article._id,
           'percentage': x.percentage,
         }))
       })

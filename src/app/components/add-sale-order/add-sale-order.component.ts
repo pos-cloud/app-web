@@ -861,32 +861,33 @@ export class AddSaleOrderComponent {
 
 
       if(movementOfArticle.article && this.priceList){
+
         let increasePrice = 0;
-        if(this.priceList['allowSpecialRules'] && this.priceList['rules'] && this.priceList['rules'].length > 0){
-          this.priceList['rules'].forEach(rule => {
+        if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0){
+          this.priceList.rules.forEach(rule => {
             if(rule){
-              if(rule['category'] === movementOfArticle.article.category && rule['make'] === movementOfArticle.article.make){
-                increasePrice = rule['percentage'] + this.priceList['percentage']
+              if(rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+                increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule['category'] == null && rule['make'] === movementOfArticle.article.make){
-                increasePrice = rule['percentage'] + this.priceList['percentage']
+              if(rule.category == null && rule.make._id === movementOfArticle.make._id){
+                increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule['make'] == null && rule['category'] === movementOfArticle.article.category){
-                increasePrice = rule['percentage'] + this.priceList['percentage']
+              if(rule.make == null && rule.category._id === movementOfArticle.category._id){
+                increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.make !== movementOfArticle.article.make && rule.category !== movementOfArticle.article.category){
-                increasePrice = this.priceList['percentage']
+              if(rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+                increasePrice = this.priceList.percentage
               }
             }
           });
         } else {
-          increasePrice = this.priceList['percentage']
+          increasePrice = this.priceList.percentage
         }
 
         if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
           this.priceList.exceptions.forEach(exception =>{
             if(exception){
-              if(exception.article.toString() === movementOfArticle.article._id){
+              if(exception.article._id === movementOfArticle.article._id){
                 increasePrice = exception.percentage
               }
             }
@@ -901,31 +902,31 @@ export class AddSaleOrderComponent {
 
       if(movementOfArticle.article && this.newPriceList){
         let increasePrice = 0;
-        if(this.newPriceList['allowSpecialRules'] && this.newPriceList['rules'] && this.newPriceList['rules'].length > 0){
-          this.newPriceList['rules'].forEach(rule => {
+        if(this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0){
+          this.newPriceList.rules.forEach(rule => {
             if(rule){
-              if(rule['category'] === movementOfArticle.article.category && rule['make'] === movementOfArticle.article.make){
-                increasePrice = rule['percentage'] + this.newPriceList['percentage']
+              if(rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+                increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule['category'] == null && rule['make'] === movementOfArticle.article.make){
-                increasePrice = rule['percentage'] + this.newPriceList['percentage']
+              if(rule.category == null && rule.make._id === movementOfArticle.make._id){
+                increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule['make'] == null && rule['category'] === movementOfArticle.article.category){
-                increasePrice = rule['percentage'] + this.newPriceList['percentage']
+              if(rule.make == null && rule.category._id === movementOfArticle.category._id){
+                increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.make !== movementOfArticle.article.make && rule.category !== movementOfArticle.article.category){
-                increasePrice = this.newPriceList['percentage']
+              if(rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+                increasePrice = this.newPriceList.percentage
               }
             }
           });
         } else {
-          increasePrice = this.newPriceList['percentage']
+          increasePrice = this.newPriceList.percentage
         }
 
         if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0){
           this.newPriceList.exceptions.forEach(exception =>{
             if(exception){
-              if(exception.article.toString() === movementOfArticle.article._id){
+              if(exception.article._id === movementOfArticle.article._id){
                 increasePrice = exception.percentage
               }
             }
