@@ -173,7 +173,7 @@ export class ArticleService {
         );
     }
 
-	public updatePrice(query: string): Observable<any> {
+	public updatePrice(query: string,decimal: string): Observable<any> {
 
         const URL = `${Config.apiURL}update-prices`;
 
@@ -181,8 +181,13 @@ export class ArticleService {
             .set('Content-Type', 'application/json')
             .set('Authorization', this._authService.getToken());
 
+        const params = new HttpParams()
+            .set('decimal', decimal);
+
         return this._http.put(URL, query, {
-            headers: headers
+            headers: headers,
+            params: params
+
         }).pipe(
             map(res => {
                 return res;

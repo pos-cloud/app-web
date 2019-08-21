@@ -35,7 +35,8 @@ export class UpdateArticlePriceComponent implements OnInit {
     'make': '',
     'category': '',
     'percentage': '',
-    'field': ''
+    'field': '',
+    'decimal' : '',
   };
 
   public validationMessages = {
@@ -46,6 +47,9 @@ export class UpdateArticlePriceComponent implements OnInit {
       'required':       'Este campo es requerido.'
     },
     'field' : {
+      'required':       'Este campo es requerido.'
+    },
+    'decimal' : {
       'required':       'Este campo es requerido.'
     }
   };
@@ -135,7 +139,8 @@ export class UpdateArticlePriceComponent implements OnInit {
       'field':[, [
           Validators.required
         ]
-      ]
+      ],
+      'decimal': [,[Validators.required]]
     });
 
     this.updatePriceForm.valueChanges
@@ -209,7 +214,7 @@ export class UpdateArticlePriceComponent implements OnInit {
 
       this.loading = true;
       
-      this._articleService.updatePrice(query).subscribe(
+      this._articleService.updatePrice(query,this.updatePriceForm.value.decimal).subscribe(
         result => {
           this.loading = false;
           if (result.status === "Error") {

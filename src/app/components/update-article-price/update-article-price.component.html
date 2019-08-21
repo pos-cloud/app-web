@@ -13,7 +13,7 @@
 	<form [formGroup]="updatePriceForm" #formUpdateArticle="ngForm" (ngSubmit)="updatePrice()" autocomplete="off">	
 		<div class="modal-body">
 			<div class ="row">
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-6">
 					<label for="make" class="control-label">Actualizar por:</label>
 					<select [(ngModel)]= "optionUpdate" class="form-control" formControlName="optionUpdate">
 						<option [value]="'make'" [selected]="'make'">Marca </option>
@@ -22,6 +22,14 @@
 						<option [value]="'all'"> Todos los productos</option>
 					</select>
 				</div>
+				<div class="form-group col-md-6">
+						<label class="control-label">Cantidad de decimales:</label>
+						<select [(ngModel)]= "decimal" class="form-control" formControlName="decimal">
+							<option [value]="'0'">0</option>
+							<option [value]="'1'"> 1 </option>
+							<option [value]="'2'"> 2 </option>
+						</select>
+					</div>
 			</div>
 			<div class="row" *ngIf = "optionUpdate === 'make' || optionUpdate === 'make-category'">
 				<div class="form-group col-md-12">
