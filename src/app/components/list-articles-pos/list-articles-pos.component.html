@@ -12,13 +12,13 @@
 
                   <div *ngIf="priceList.exceptions && priceList.exceptions.length > 0">
                     <div *ngFor="let exception of priceList.exceptions; let i = index">
-                      <div *ngIf="article && article._id === exception.article; else asd"> <!--does not find equality -->
+                      <div *ngIf="article && article._id === exception.article; else checkAllowSpecialRules">
                           <b>PE: {{ article.salePrice + (article.salePrice * exception.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
                       </div>
-                      <ng-template #asd>
+                      <ng-template #checkAllowSpecialRules>
                           <div *ngIf="!priceList.allowSpecialRules">
-                              <b> PL: {{ article.salePrice + (article.salePrice * priceList.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
-                            </div>
+                            <b> PL: {{ article.salePrice + (article.salePrice * priceList.percentage / 100) | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
+                          </div>
                           <div *ngIf="priceList.allowSpecialRules">
                               <div *ngFor="let rule of priceList.rules; let i = index">
                                 <div *ngIf="article.category && article.make && rule.category === article.category && rule.make === article.make._id">
@@ -58,20 +58,10 @@
                             </div>
                           </div>
                       </div>
-                  </div>               <!--eject this-->
-                  
-                  
-
-                  
+                  </div> 
                 </div>
-                
               </div>
-            </div>
-            <!--<div *ngFor="let stock of article.articleStocks; let i = index">
-              <div *ngIf="stock.article === article._id">
-                  <b>STK:{{ stock + stock.realStock }}</b>
-              </div>
-            </div>-->
+            </div>   
           </span>
         </div>
         <img *ngIf="article.picture == 'default.jpg' || article.picture == undefined" src="./../../../assets/img/default.jpg" height="120"
