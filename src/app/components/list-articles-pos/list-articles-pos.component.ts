@@ -335,7 +335,7 @@ export class ListArticlesPosComponent implements OnInit {
               movementOfArticle.markupPercentage = article.markupPercentage;
               movementOfArticle.markupPrice = this.roundNumber.transform(article.markupPrice);
               if(salePrice) article.salePrice = salePrice; 
-              if(amount) movementOfArticle.amount = amount; 
+              if(amount && amount > 0) movementOfArticle.amount = amount; 
               movementOfArticle.unitPrice = this.roundNumber.transform(article.salePrice / movementOfArticle.amount);
               movementOfArticle.salePrice = this.roundNumber.transform(article.salePrice);
 
@@ -560,7 +560,7 @@ export class ListArticlesPosComponent implements OnInit {
               (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
               (article.code && article.code === this.filterArticle))) {
                 this.filterArticle = '';
-                if(article.isWeigth && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
                   let wholePart = originalFilter.slice((originalFilter.length -
                                                         this.config.tradeBalance.numberOfDecimals -
                                                         this.config.tradeBalance.numberOfIntegers - 1)
