@@ -638,16 +638,16 @@ export class ConfigComponent implements OnInit {
       }
     }
 
-    if (!this.config.article.code.validators.maxLength) this.config.article.code.validators.maxLength = 10;
+    if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
     if (!this.config.company.allowCurrentAccount.default) this.config.company.allowCurrentAccount.default = false;
     if (!this.config.article.printLabel.value) this.config.article.printLabel.value = 'code';
     if (!this.config.article.isWeigth.default) this.config.article.isWeigth.default = false;
     if (!this.config.reports.summaryOfAccounts.invertedViewClient) this.config.reports.summaryOfAccounts.invertedViewClient = false;
     if (!this.config.reports.summaryOfAccounts.invertedViewProvider) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
-    if (!this.config.tradeBalance.codePrefix) this.config.tradeBalance.codePrefix = 0;
-    if (!this.config.tradeBalance.numberOfQuantity) this.config.tradeBalance.numberOfQuantity = 2;
-    if (!this.config.tradeBalance.numberOfIntegers) this.config.tradeBalance.numberOfIntegers = 3;
-    if (!this.config.tradeBalance.numberOfDecimals) this.config.tradeBalance.numberOfDecimals = 2;
+    if (this.config.tradeBalance.codePrefix === undefined) this.config.tradeBalance.codePrefix = 0;
+    if (this.config.tradeBalance.numberOfQuantity === undefined) this.config.tradeBalance.numberOfQuantity = 2;
+    if (this.config.tradeBalance.numberOfIntegers === undefined) this.config.tradeBalance.numberOfIntegers = 3;
+    if (this.config.tradeBalance.numberOfDecimals === undefined) this.config.tradeBalance.numberOfDecimals = 2;
 
     let vatConfitionDefault;
     if (!this.config.company.vatCondition.default) {
