@@ -19,12 +19,19 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-12">
-                  <label for="description" class="control-label">Descripción:</label>
-                  <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
-                  <div *ngIf="formErrors.description" class="alert alert-danger">
-                    {{ formErrors.description }}
+                  <div class="form-group col-md-8">
+                    <label for="description" class="control-label">Descripción:</label>
+                    <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent"/>
+                    <div *ngIf="formErrors.description" class="alert alert-danger">
+                      {{ formErrors.description }}
+                    </div>
                   </div>
+                  <div class="form-group col-md-4">
+                    <div class="custom-file">
+                      <label class="custom-file-label btn btn-action" for="customFileLang">Cambiar Imagen</label>
+                      <input type="file" class="custom-file-input" lang="es" accept="image/*" id="customFileLang" (change)="fileChangeEvent($event)"/>
+                      <img [src]="imageURL" height="120" width="120">
+                    </div>
                   </div>
                 </div>
               </div>

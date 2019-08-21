@@ -7,6 +7,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Make } from './../../models/make';
 
 import { MakeService } from './../../services/make.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-update-make',
@@ -24,6 +25,8 @@ export class UpdateMakeComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public filesToUpload: Array<File>;
+  public imageURL: string;
 
   public formErrors = {
     'description': ''
@@ -44,6 +47,14 @@ export class UpdateMakeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    if (this.make.picture && this.make.picture !== 'default.jpg') {
+      this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+    } else {
+      this.imageURL = './../../../assets/img/default.jpg';
+    }
+
+    console.log(this.imageURL)
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
@@ -121,7 +132,27 @@ export class UpdateMakeComponent implements OnInit {
           this.loading = false;
         } else {
           this.make = result.make;
-          this.showMessage("La marca se ha actualizado con éxito.", 'success', false);
+          if (this.filesToUpload) {
+            this._makeService.makeFileRequest(this.make._id, this.filesToUpload)
+              .then(
+                (result) => {
+                  let resultUpload;
+                  resultUpload = result;
+                  this.make.picture = resultUpload.make.picture;
+                  if (this.make.picture && this.make.picture !== 'default.jpg') {
+                    this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+                  } else {
+                    this.imageURL = './../../../assets/img/default.jpg';
+                  }
+                  this.showMessage("La Marca se ha actualizado con éxito.", 'success', false);
+                },
+                (error) => {
+                  this.showMessage(error, 'danger', false);
+                }
+              );
+          } else {
+            this.showMessage("La Marca se ha actualizado con éxito.", 'success', false);
+          }
         }
         this.loading = false;
       },
@@ -130,6 +161,11 @@ export class UpdateMakeComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public fileChangeEvent(fileInput: any){
+
+    this.filesToUpload = <Array<File>>fileInput.target.files;
   }
   
   public showMessage(message: string, type: string, dismissible: boolean): void {

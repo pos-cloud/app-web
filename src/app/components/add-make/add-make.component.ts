@@ -7,6 +7,7 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Make } from './../../models/make';
 
 import { MakeService } from './../../services/make.service';
+import { Config } from 'app/app.config';
 
 @Component({
   selector: 'app-add-make',
@@ -23,7 +24,9 @@ export class AddMakeComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
-  
+  public filesToUpload: Array<File>;
+  public imageURL: string;
+
   public formErrors = {
     'description': ''
   };
@@ -44,6 +47,7 @@ export class AddMakeComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.imageURL = './../../../assets/img/default.jpg';
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.make = new Make ();
@@ -111,9 +115,33 @@ export class AddMakeComponent implements OnInit {
           this.loading = false;
         } else {
           this.make = result.make;
-          this.showMessage("La marca se ha añadido con éxito.", 'success', true);
-          this.make = new Make ();
-          this.buildForm();
+          if (this.filesToUpload) {
+            this._makeService.makeFileRequest(this.make._id, this.filesToUpload)
+                .then(
+                  (result)=>{
+                    let resultUpload;
+                    resultUpload = result;
+                    this.make.picture = resultUpload.make.picture;
+                    if (this.make.picture && this.make.picture !== 'default.jpg') {
+                      this.imageURL = Config.apiURL + 'get-image-make/' + this.make.picture + "/" + Config.database;
+                    } else {
+                      this.imageURL = './../../../assets/img/default.jpg';
+                    }
+                    this.showMessage("La marca se ha añadido con éxito.", 'success', false);
+                    this.make = new Make();
+                    this.filesToUpload = null;
+                    this.buildForm();
+                  },
+                  (error) =>{
+                    this.showMessage(error, 'danger', false);
+                  }
+                );
+          } else {
+            this.showMessage("El rubro se ha añadido con éxito.", 'success', false);
+            this.make = new Make();
+            this.filesToUpload = null;
+            this.buildForm();
+          }
         }
         this.loading = false;
       },
@@ -122,6 +150,11 @@ export class AddMakeComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public fileChangeEvent(fileInput: any){
+
+    this.filesToUpload = <Array<File>>fileInput.target.files;
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
