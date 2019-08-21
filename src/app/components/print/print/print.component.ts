@@ -2300,7 +2300,7 @@ export class PrintComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Cant.", 5, 77);
-    this.doc.text("Código", 18, 77);
+    this.doc.text("Código", 16, 77);
     this.doc.text("Detalle", 45, 77);
     if (this.transaction.type && this.transaction.type.showPrices) {
       this.doc.text("Precio U.", 145, 77);
@@ -2323,7 +2323,7 @@ export class PrintComponent implements OnInit {
           this.doc.text((this.movementsOfArticles[i].amount).toString(), 6, row);
         }
         if (this.movementsOfArticles[i].code) {
-          this.doc.text((this.movementsOfArticles[i].code).toString(), 19, row);
+          this.doc.text((this.movementsOfArticles[i].code).toString().slice(0,15), 15, row);
         }
         if (this.movementsOfArticles[i].description) {
           if( this.movementsOfArticles[i].category &&
