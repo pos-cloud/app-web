@@ -202,7 +202,7 @@ export class ListTransactionsComponent implements OnInit {
       origin: { $toString : "$origin" },
       letter: 1,
       number: { $toString : "$number" },
-      "transaction.endDate": { $dateFromString: { dateString: { $dateToString: { date: "$transaction.endDate", timezone: timezone } }}},
+      endDate: { $dateToString: { date: "$endDate", format: "%d/%m/%Y", timezone: timezone }},
       madein: 1,
       state: 1,
       observation: 1,
@@ -252,6 +252,7 @@ export class ListTransactionsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
+        console.log(result);
         this.loading = false;
         if (result && result[0] && result[0].transactions) {
             this.transactions = result[0].transactions;
