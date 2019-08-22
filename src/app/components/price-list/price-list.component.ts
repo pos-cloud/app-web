@@ -308,9 +308,15 @@ export class PriceListComponent implements OnInit {
     if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
       let exceptions = <FormArray>this.priceListForm.controls.exceptions;
       this.priceList.exceptions.forEach(x => {
+
+        let articleId;
+        if(x.article && x.article._id) {
+          articleId = x.article._id;
+        }
+
         exceptions.push(this._fb.group({ 
           '_id': null, 
-          'article' : x.article._id || null,
+          'article' : articleId,
           'percentage': x.percentage,
         }))
       })
