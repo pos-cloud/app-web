@@ -284,10 +284,10 @@ export class PriceListComponent implements OnInit {
       let rules = <FormArray>this.priceListForm.controls.rules;
       this.priceList.rules.forEach(x => {
         rules.push(this._fb.group({ 
-          '_id': '', 
+          '_id': null, 
           'percentage': x.percentage,
-          'make' : x.make._id,
-          'category' : x.category._id
+          'make' : x.make._id || null,
+          'category' : x.category._id || null
         }))
       })
     }
@@ -297,8 +297,8 @@ export class PriceListComponent implements OnInit {
       let exceptions = <FormArray>this.priceListForm.controls.exceptions;
       this.priceList.exceptions.forEach(x => {
         exceptions.push(this._fb.group({ 
-          '_id': '', 
-          'article' : x.article._id,
+          '_id': null, 
+          'article' : x.article._id || null,
           'percentage': x.percentage,
         }))
       })
