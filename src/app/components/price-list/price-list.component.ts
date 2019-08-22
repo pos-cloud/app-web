@@ -251,6 +251,7 @@ export class PriceListComponent implements OnInit {
         } else {
           this.hideMessage();
           this.priceList = result.priceList;
+          console.log(this.priceList);
           if(this.priceList.allowSpecialRules){
             this.viewRules = true;
           }
@@ -283,7 +284,7 @@ export class PriceListComponent implements OnInit {
       let rules = <FormArray>this.priceListForm.controls.rules;
       this.priceList.rules.forEach(x => {
         rules.push(this._fb.group({ 
-          '_id': x._id, 
+          '_id': '', 
           'percentage': x.percentage,
           'make' : x.make._id,
           'category' : x.category._id
@@ -296,7 +297,7 @@ export class PriceListComponent implements OnInit {
       let exceptions = <FormArray>this.priceListForm.controls.exceptions;
       this.priceList.exceptions.forEach(x => {
         exceptions.push(this._fb.group({ 
-          '_id': x._id, 
+          '_id': '', 
           'article' : x.article._id,
           'percentage': x.percentage,
         }))
