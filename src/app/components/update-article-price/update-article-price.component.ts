@@ -29,6 +29,7 @@ export class UpdateArticlePriceComponent implements OnInit {
   public makes: Make;
   public categories: Category;
   public optionUpdate: string = "make";
+  public decimal = 2;
 
   public formErrors = {
     'optionUpdate': '',
