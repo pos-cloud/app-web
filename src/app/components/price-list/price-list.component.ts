@@ -10,6 +10,7 @@ import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
 import { ArticleService } from 'app/services/article.service';
 import { Article } from 'app/models/article';
+import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-price-list',
@@ -283,11 +284,22 @@ export class PriceListComponent implements OnInit {
     if(this.priceList.rules && this.priceList.rules.length > 0){
       let rules = <FormArray>this.priceListForm.controls.rules;
       this.priceList.rules.forEach(x => {
-        rules.push(this._fb.group({ 
+
+        let categoryId;
+        if(x.category && x.category._id) {
+          categoryId = x.category._id;
+        }
+
+        let makeId;
+        if(x.make && x.make._id) {
+          makeId = x.make._id;
+        }
+
+        rules.push(this._fb.group({
           '_id': null, 
           'percentage': x.percentage,
-          'make' : x.make._id || null,
-          'category' : x.category._id || null
+          'make' : makeId,
+          'category' : categoryId
         }))
       })
     }
