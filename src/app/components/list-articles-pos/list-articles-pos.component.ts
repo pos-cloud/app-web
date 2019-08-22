@@ -247,7 +247,6 @@ export class ListArticlesPosComponent implements OnInit {
 
           if(this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
-            console.log(article)
             if(priceList){
               if(priceList.allowSpecialRules){
                   priceList.rules.forEach(rule => {
@@ -509,6 +508,8 @@ export class ListArticlesPosComponent implements OnInit {
 
   public filterItem(category?: Category) {
 
+    let isCodePrefix: boolean = false;
+
     // GUARDAMOS LE CÓDIGO ORIGINAL PARA LOS PESABLES
     let originalFilter: string = this.filterArticle;
 
@@ -521,7 +522,8 @@ export class ListArticlesPosComponent implements OnInit {
                                                       (originalFilter.length -
                                                         this.config.tradeBalance.numberOfDecimals -
                                                         this.config.tradeBalance.numberOfIntegers - 1)), this.config.article.code.validators.maxLength);
-      }
+          isCodePrefix = true;
+        }
     }
     // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
     if(category) {
@@ -547,8 +549,13 @@ export class ListArticlesPosComponent implements OnInit {
           count = 0;
           for(let art of this.filteredArticles) {
             if(art.type === ArticleType.Final) {
-              count++;
-              article = art;
+              if(isCodePrefix && art.code.toString() === this.filterArticle) {
+                count++;
+                article = art;
+              } else if(!isCodePrefix) {
+                count++;
+                article = art;
+              }
             }
           }
         }
