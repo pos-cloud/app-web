@@ -866,16 +866,16 @@ export class AddSaleOrderComponent {
         if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0){
           this.priceList.rules.forEach(rule => {
             if(rule){
-              if(rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.category == null && rule.make._id === movementOfArticle.make._id){
+              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id){
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.make == null && rule.category._id === movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id){
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
                 increasePrice = this.priceList.percentage
               }
             }
@@ -905,16 +905,16 @@ export class AddSaleOrderComponent {
         if(this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0){
           this.newPriceList.rules.forEach(rule => {
             if(rule){
-              if(rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.category == null && rule.make._id === movementOfArticle.make._id){
+              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id){
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.make == null && rule.category._id === movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id){
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
                 increasePrice = this.newPriceList.percentage
               }
             }

@@ -247,20 +247,21 @@ export class ListArticlesPosComponent implements OnInit {
 
           if(this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
+            console.log(article)
             if(priceList){
               if(priceList.allowSpecialRules){
                   priceList.rules.forEach(rule => {
                     if(rule){
-                      if(rule.category._id === article.category._id && rule.make._id === article.make._id){
+                      if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id){
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.category == null && rule.make._id === article.make._id){
+                      if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id){
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.make == null && rule.category._id === article.category._id){
+                      if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id){
                         increasePrice = rule.percentage + priceList.percentage
                       }
-                      if(rule.make._id !== article.make._id && rule.category._id !== article.category._id){
+                      if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id){
                         increasePrice = priceList.percentage
                       }
                     }
@@ -272,7 +273,7 @@ export class ListArticlesPosComponent implements OnInit {
                 if(priceList.exceptions && priceList.exceptions.length > 0){
                   priceList.exceptions.forEach(exception =>{
                     if(exception){
-                      if(exception.article._id === article._id){
+                      if(article && exception.article && exception.article._id === article._id){
                         increasePrice = exception.percentage
                       }
                     }
