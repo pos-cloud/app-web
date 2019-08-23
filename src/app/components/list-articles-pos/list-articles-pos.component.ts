@@ -549,7 +549,8 @@ export class ListArticlesPosComponent implements OnInit {
           count = 0;
           for(let art of this.filteredArticles) {
             if(art.type === ArticleType.Final) {
-              if(isCodePrefix && art.code.toString() === this.filterArticle) {
+              if(isCodePrefix && 
+                this.padNumber(art.code, this.config.article.code.validators.maxLength) === this.padNumber(this.filterArticle, this.config.article.code.validators.maxLength)) {
                 count++;
                 article = art;
               } else if(!isCodePrefix) {
