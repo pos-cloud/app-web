@@ -41,7 +41,7 @@
         </div>
       </div>
 		</div>
-		<div class="modal-footer" *ngIf="!readonly">
+		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
 			<button type="submit" class="btn btn-primary" [disabled]="!transferForm.valid || loading" >
 				<i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

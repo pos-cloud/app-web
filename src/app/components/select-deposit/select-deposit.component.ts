@@ -15,6 +15,7 @@ export class SelectDepositComponent implements OnInit {
   public transferForm : FormGroup
   public deposits : Deposit[];
   public alertMessage = '';
+  public loading: boolean = false;
 
   constructor(
     public _fb: FormBuilder,
