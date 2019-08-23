@@ -568,7 +568,7 @@ export class ListArticlesPosComponent implements OnInit {
               (article.posDescription && article.posDescription.toUpperCase() === this.filterArticle.toUpperCase()) ||
               (article.code && article.code === this.filterArticle))) {
                 this.filterArticle = '';
-                if(this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+                if(this.transaction.type.transactionMovement === TransactionMovement.Sale && isCodePrefix) {
                   let wholePart = originalFilter.slice((originalFilter.length -
                                                         this.config.tradeBalance.numberOfDecimals -
                                                         this.config.tradeBalance.numberOfIntegers - 1)
