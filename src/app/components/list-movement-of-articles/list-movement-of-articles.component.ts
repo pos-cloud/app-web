@@ -59,6 +59,7 @@ export class ListMovementOfArticlesComponent implements OnInit {
     "transaction.company.name",
     "transaction._id",
     "modifyStock",
+    "salePrice",
     "stockMovement",
     "amount",
   ];
@@ -167,7 +168,8 @@ export class ListMovementOfArticlesComponent implements OnInit {
         "transaction._id": 1,
         "modifyStock": 1,
         "stockMovement": 1,
-        "amount": 1
+        "amount": 1,
+        "salePrice" : { $toString : "$salePrice"} ,
     };
 
     // AGRUPAMOS EL RESULTADO
