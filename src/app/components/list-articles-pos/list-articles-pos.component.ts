@@ -29,7 +29,6 @@ import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
 import { TransactionService } from 'app/services/transaction.service';
 import { CompanyType } from 'app/models/company';
-import { isNgContainer } from '@angular/compiler';
 
 
 @Component({
