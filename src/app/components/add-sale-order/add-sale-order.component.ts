@@ -1755,7 +1755,6 @@ export class AddSaleOrderComponent {
     if (isValid &&
         this.config['modules'].stock &&
         this.transaction.type.modifyStock) {
-
           if(await this.areValidMovementOfArticle()) {
             isValid = await this.processStock();
           } else {
@@ -1853,7 +1852,6 @@ export class AddSaleOrderComponent {
   async processStock(): Promise<boolean> {
 
     let endProcess: boolean = true;
-
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
 
       for(let movementOfArticle of this.movementsOfArticles) {
@@ -1869,6 +1867,7 @@ export class AddSaleOrderComponent {
       }
     } else {
       this.showMessage("No se encuentran productos en la transacción", 'info', true);
+      endProcess = false;
     }
 
     return endProcess;
