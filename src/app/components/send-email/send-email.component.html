@@ -14,7 +14,7 @@
 		<div class="modal-body">
 			<div class = "row">
 				<label for="emails" class="control-label">Destinatarios:</label>
-				<input type="text" class="form-control" formControlName="emails" name="emails" id="emails"/>
+				<input type="text" class="form-control" formControlName="emails" name="emails" id="emails" [focus]="focusEvent"/>
 				<div *ngIf="formErrors.emails" class="alert alert-danger">
 					{{ formErrors.emails }}
 				</div>

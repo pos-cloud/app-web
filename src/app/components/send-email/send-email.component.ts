@@ -64,6 +64,10 @@ export class SendEmailComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+
   public buildForm(): void {
     this.sendEmailForm = this._fb.group({
       'emails': [this.emails, [
@@ -110,16 +114,20 @@ export class SendEmailComponent implements OnInit {
 
     this._serviceEmail.sendEmail(this.sendEmailForm.value).subscribe(
       result => {
-        if (!result) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
-        } else {
+        this.loading = false;
+        if(result.accepted && result.accepted.length > 0) {
           this.showMessage("El email se ha enviado correctamente.", 'success', false);
+        } else if (!result.ok) {
+          this.showMessage(result.error.response, 'info', true);
+        } else if (result.message && result.message !== '') {
+          this.showMessage(result.message, 'info', true);
+        } else {
+          this.showMessage(result, 'info', true);
         }
-        this.loading = false;
       },
-      error => {
-        this.showMessage(error, 'danger', false);
+      err => {
         this.loading = false;
+        this.showMessage(err.error, 'danger', false);
       }
     );
   }

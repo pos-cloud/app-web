@@ -252,7 +252,6 @@ export class ListTransactionsComponent implements OnInit {
         skip // SKIP
     ).subscribe(
       result => {
-        console.log(result);
         this.loading = false;
         if (result && result[0] && result[0].transactions) {
             this.transactions = result[0].transactions;
