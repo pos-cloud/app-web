@@ -179,7 +179,7 @@
             </div>
           </div>
           <div class="row">
-              <div class="form-group col-md-12">
+            <div class="form-group col-md-12">
             <label for="bank" class="control-label">Banco</label>
               <select class="form-control" formControlName="bank">
                   <option *ngFor="let bank of banks"
@@ -187,12 +187,12 @@
                                       (movementOfCash.bank && bank._id===movementOfCash.bank)"
                           [value]="bank._id"
                           [disabled]="readonly">
-                          {{bank.name}}</option>
+                          {{bank.code}} - {{bank.name}}</option>
                 </select>
               <div *ngIf="formErrors.bank" class="alert alert-danger">
                 {{ formErrors.bank }}
               </div>
-              </div>
+            </div>
           </div>
           <div class="row">
             <div class="form-group col-md-6">

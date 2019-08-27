@@ -307,6 +307,7 @@ export class AddMovementOfCashComponent implements OnInit {
     let project = {
       "_id" : 1,
       "name": 1,
+      "code" :1,
       "operationType": 1,
     };
 
