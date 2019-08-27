@@ -1,5 +1,5 @@
 <div class="modal-header">
-	<h4 class="modal-title" *ngIf="operation==='add'">Agregar Producto</h4>
+	<h4 class="modal-title" *ngIf="operation==='add' || operation==='copy'">Agregar Producto</h4>
 	<h4 class="modal-title" *ngIf="operation==='update'">Editar {{ articleType }} {{article.code}} - {{article.description}}</h4>
 	<h4 class="modal-title" *ngIf="operation==='view'">{{ articleType }} {{article.code}} - {{article.description}}</h4>
 	<button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
