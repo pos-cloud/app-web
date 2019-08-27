@@ -394,7 +394,6 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
-          
           this.getLastPricePurchase();
           this.getMakes();
           if(this.article.containsVariants) {

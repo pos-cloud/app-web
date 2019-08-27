@@ -844,7 +844,7 @@ export class AddMovementOfCashComponent implements OnInit {
     return new Promise(async resolve => {
       
       if(this.paymentMethodSelected.checkDetail && !isCopy) {
-        let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}"`;
+        let query = `where="number":"${this.movementOfCashForm.value.number}","type":"${this.paymentMethodSelected._id}","statusCheck":"Disponible"`;
         await this.getMovementsOfCashes(query).then(
           movementsOfCashes => {
             if(movementsOfCashes && movementsOfCashes.length > 0) {
