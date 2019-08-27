@@ -394,12 +394,17 @@ export class AddArticleComponent implements OnInit {
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }
-          this.setValuesForm();
+          
           this.getLastPricePurchase();
           this.getMakes();
           if(this.article.containsVariants) {
             this.getVariantsByArticleParent();
           }
+          if(this.operation === 'copy'){
+            this.article._id = null;
+            this.article.code = '';
+          }
+          this.setValuesForm();
         }
       },
       error => {
@@ -1072,7 +1077,7 @@ export class AddArticleComponent implements OnInit {
         this.article.type = ArticleType.Ingredient;
       }
 
-      if (this.operation === 'add') {
+      if (this.operation === 'add' || this.operation === 'copy') {
         this.saveArticle();
       } else if (this.operation === 'update') {
         this.updateArticle();

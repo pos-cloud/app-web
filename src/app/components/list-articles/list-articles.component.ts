@@ -387,6 +387,16 @@ export class ListArticlesComponent implements OnInit {
           this.getArticles();
         });
         break;
+      case 'copy':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = "copy";
+        modalRef.componentInstance.articleId = article._id
+        modalRef.result.then((result) => {
+          this.getArticles();
+        }, (reason) => {
+          this.getArticles();
+        });
+        break;
       default: ;
     }
   };
