@@ -12,7 +12,7 @@ import { Turn } from '../../../models/turn';
 import { Printer, PrinterPrintIn, PrinterType } from '../../../models/printer';
 import { Company } from '../../../models/company';
 import { Config } from '../../../app.config';
-import { TransactionType, TransactionMovement, Movements } from '../../../models/transaction-type';
+import { TransactionType, TransactionMovement, Movements, DescriptionType } from '../../../models/transaction-type';
 import { ArticleStock } from '../../../models/article-stock';
 import { Article } from '../../../models/article';
 
@@ -2325,34 +2325,75 @@ export class PrintComponent implements OnInit {
         if (this.movementsOfArticles[i].code) {
           this.doc.text((this.movementsOfArticles[i].code).toString().slice(0,15), 15, row);
         }
-        if (this.movementsOfArticles[i].description) {
-          if( this.movementsOfArticles[i].category &&
-              this.movementsOfArticles[i].category.visibleInvoice &&
-              this.movementsOfArticles[i].make &&
-              this.movementsOfArticles[i].make.visibleSale) {
-            if (this.movementsOfArticles[i].category.visibleInvoice &&
-                this.movementsOfArticles[i].make.visibleSale) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' +
-                            this.movementsOfArticles[i].category.description + ' - ' +
-                            this.movementsOfArticles[i].make.description).slice(0, 45), 46, row);
-            } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
-                        !this.movementsOfArticles[i].make.visibleSale) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 45), 46, row);
-            } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 45), 46, row);
-            }
-          } else {
-            if (this.movementsOfArticles[i].category &&
-                this.movementsOfArticles[i].category.visibleInvoice &&
-                this.movementsOfArticles[i].category.visibleInvoice){
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description).slice(0, 45), 46, row);
-            }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
-              this.doc.text((this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description).slice(0, 45), 46, row);
-            } else
-              this.doc.text((this.movementsOfArticles[i].description).slice(0, 45), 46, row);
-          }
 
+        let detalle = ''
+
+        if(this.transaction && this.transaction.type && this.transaction.type.printDescriptionType && this.transaction.type.printDescriptionType === DescriptionType.Description){
+          if (this.movementsOfArticles[i].description) {
+            if( this.movementsOfArticles[i].category &&
+                this.movementsOfArticles[i].category.visibleInvoice &&
+                this.movementsOfArticles[i].make &&
+                this.movementsOfArticles[i].make.visibleSale) {
+              if (this.movementsOfArticles[i].category.visibleInvoice &&
+                  this.movementsOfArticles[i].make.visibleSale) {
+                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description + ' - ' + this.movementsOfArticles[i].make.description
+              } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
+                          !this.movementsOfArticles[i].make.visibleSale) {
+                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
+              } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
+                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
+              }
+            } else {
+              if (this.movementsOfArticles[i].category &&
+                  this.movementsOfArticles[i].category.visibleInvoice &&
+                  this.movementsOfArticles[i].category.visibleInvoice){
+                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].category.description;
+              }else if (this.movementsOfArticles[i].make && this.movementsOfArticles[i].make.visibleSale && this.movementsOfArticles[i].make.visibleSale) {
+                detalle = this.movementsOfArticles[i].description + ' - ' + this.movementsOfArticles[i].make.description;
+              } else
+                detalle = this.movementsOfArticles[i].description;
+            }
+  
+          }
+        } else {
+          if (this.movementsOfArticles[i].article.posDescription) {
+            if( this.movementsOfArticles[i].category &&
+                this.movementsOfArticles[i].category.visibleInvoice &&
+                this.movementsOfArticles[i].make &&
+                this.movementsOfArticles[i].make.visibleSale) {
+              if (this.movementsOfArticles[i].category.visibleInvoice &&
+                  this.movementsOfArticles[i].make.visibleSale) {
+                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' +
+                              this.movementsOfArticles[i].category.description + ' - ' +
+                              this.movementsOfArticles[i].make.description;
+              } else if ( this.movementsOfArticles[i].category.visibleInvoice &&
+                          !this.movementsOfArticles[i].make.visibleSale) {
+                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
+              } else if (this.movementsOfArticles[i].make.visibleSale && !this.movementsOfArticles[i].category.visibleInvoice) {
+                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].make.description;
+              }
+            } else {
+              if (this.movementsOfArticles[i].category &&
+                  this.movementsOfArticles[i].category.visibleInvoice ){
+                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].category.description;
+              }else if (this.movementsOfArticles[i].make && 
+                        this.movementsOfArticles[i].make.visibleSale ) {
+                detalle = this.movementsOfArticles[i].article.posDescription + ' - ' + this.movementsOfArticles[i].make.description;
+              } else
+                detalle = this.movementsOfArticles[i].article.posDescription;
+            }
+  
+          }
         }
+
+        if(this.movementsOfArticles[i].article.otherFields && this.transaction.type.printDescriptionType === DescriptionType.PosDescription){
+          let temp = this.movementsOfArticles[i].article.description.split(' ');
+          detalle += " Talle:" + temp.pop();
+        }
+        
+        this.doc.text(detalle.slice(0, 45), 46, row);
+
+
         if (this.transaction.type && this.transaction.type.showPrices) {
           if(this.transaction.type.requestTaxes  && 
             this.transaction.company &&

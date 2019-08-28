@@ -317,7 +317,9 @@ export class AddTransactionTypeComponent implements OnInit {
       ],
       'isPreprinted' : [this.transactionType.isPreprinted,[]],
       'showPriceType' : [this.transactionType.showPriceType,[]],
-      'showDescriptionType' : [this.transactionType.showDescriptionType,[]]
+      'showDescriptionType' : [this.transactionType.showDescriptionType,[]],
+      'printDescriptionType' : [this.transactionType.printDescriptionType,[]]
+
     });
 
     this.transactionTypeForm.valueChanges
@@ -474,6 +476,7 @@ export class AddTransactionTypeComponent implements OnInit {
 
     if (!this.transactionType.showDescriptionType) this.transactionType.showDescriptionType = DescriptionType.Description;
     if (!this.transactionType.showPriceType) this.transactionType.showPriceType = PriceType.Final;
+    if (!this.transactionType.printDescriptionType) this.transactionType.printDescriptionType = DescriptionType.Description;
 
 
 
@@ -520,7 +523,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'requestTransport': this.transactionType.requestTransport,
       'isPreprinted' : this.transactionType.isPreprinted,
       'showDescriptionType' : this.transactionType.showDescriptionType,
-      'showPriceType' : this.transactionType.showPriceType
+      'showPriceType' : this.transactionType.showPriceType,
+      'printDescriptionType' : this.transactionType.printDescriptionType
     });
   }
 
