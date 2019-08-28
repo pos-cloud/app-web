@@ -724,7 +724,7 @@ export class AddArticleComponent implements OnInit {
     this._unitOfMeasurementService.getUnitsOfMeasurement().subscribe(
       result => {
         if (!result.unitsOfMeasurement) {
-          if (this.operation === 'add') {
+          if (this.operation === 'add' || this.operation === 'copy') {
             this.getLastArticle();
           } else {
             this.setValuesForm();
@@ -732,7 +732,7 @@ export class AddArticleComponent implements OnInit {
         } else {
           this.hideMessage();
           this.unitsOfMeasurement = result.unitsOfMeasurement;
-          if (this.operation === 'add') {
+          if (this.operation === 'add'|| this.operation === 'copy') {
             this.getLastArticle();
           } else {
             this.setValuesForm();
