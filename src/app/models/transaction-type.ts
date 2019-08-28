@@ -52,6 +52,7 @@ export class TransactionType {
 	public showPriceType : PriceType = PriceType.Final;
 	public showDescriptionType : DescriptionType = DescriptionType.Description;
 	public printDescriptionType : DescriptionType = DescriptionType.Description;
+	public printSign : boolean = false;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;

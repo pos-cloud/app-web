@@ -2610,7 +2610,7 @@ export class PrintComponent implements OnInit {
       }
     }
 
-    if(observation && observation !== '') {
+    if(observation && observation !== '' && !this.transaction.type.requestTransport) {
 
       if(Config.country === 'MX' &&
         this.transaction.stringSAT &&
@@ -2630,7 +2630,30 @@ export class PrintComponent implements OnInit {
         this.doc.text(observation.slice(0, 60) + "-", 37, row);
         this.doc.text(observation.slice(60, 140) + "-", margin, row += 4);
       }
+    } else {
+      if(this.transaction.transport){
+        this.doc.setFontType('bold');
+        this.doc.text("TRANSPORTE:", margin, row);
+        this.doc.text("DOMICILIO:", margin, row + 4);
+        this.doc.text("LOCAIDAD:", margin, row + 8);
+        this.doc.text("CUIT:", margin, row + 12);
+        this.doc.text("CANTIDAD DE BULTOS:", margin, row + 16);
+        this.doc.setFontType('normal');
+        this.doc.text(this.transaction.transport.name, margin +30, row);
+        this.doc.text(this.transaction.transport.address, margin+30, row + 4);
+        this.doc.text(this.transaction.transport.city, margin+30, row + 8);
+        this.doc.text(this.transaction.transport.identificationValue, margin+30, row + 12);
+        row += 16; 
+      }
+      
     }
+
+    if(this.transaction.type.printSign){
+      row += 10
+      this.doc.line(70, row, 120, row)
+      this.doc.text("FIRMA CONFORME", 80, row + 5)
+    }
+
 
     // FIN OBSERVATION
 

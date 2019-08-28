@@ -707,6 +707,23 @@
                     </div>
                   </div>
                 </div>
+                <div class  = "row">
+                  <div class="form-group col-md-6">
+                    <label for="printSign" class="control-label">Imprime Firma</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="printSign">
+                        <option value="true" [selected]="transactionType.printSign" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.printSign" >No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Si se imprime para firmar el comprobante">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </ng-template>
