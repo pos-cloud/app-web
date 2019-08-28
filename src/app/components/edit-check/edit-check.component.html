@@ -28,6 +28,45 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="form-group col-md-12">
+          <label for="bank" class="control-label">Banco</label>
+            <select class="form-control" formControlName="bank">
+                <option *ngFor="let bank of banks"
+                        [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
+                                    (movementOfCash.bank && bank._id===movementOfCash.bank)"
+                        [value]="bank._id"
+                        [disabled]="readonly">
+                        {{bank.code}} - {{bank.name}}</option>
+              </select>
+            <div *ngIf="formErrors.bank" class="alert alert-danger">
+              {{ formErrors.bank }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="deliveredBy" class="control-label">Entregado por:</label>
+            <input type="text" class="form-control" name="deliveredBy" formControlName="deliveredBy"/>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="receiver" class="control-label">Destinatario:</label>
+            <input type="text" class="form-control" name="receiver" formControlName="receiver"/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="titular" class="control-label">Titular:</label>
+            <input type="text" class="form-control" name="titular" formControlName="titular"/>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="CUIT" class="control-label">CUIT:</label>
+            <input type="text" class="form-control" name="CUIT" formControlName="CUIT"/>
+            <div *ngIf="formErrors.CUIT" class="alert alert-danger">
+              {{ formErrors.CUIT }}
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>

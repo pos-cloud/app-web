@@ -125,7 +125,7 @@ export class ListMovementOfCashesComponent implements OnInit {
     } else {
       match += `"statusCheck": "${StatusCheck.Available}" }`;
     }
-
+    
     match = JSON.parse(match);
     
     let project = {};

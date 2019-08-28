@@ -5,6 +5,8 @@ import { NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { MovementOfCashService } from 'app/services/movement-of-cash.service';
 import * as moment from 'moment';
 import 'moment/locale/es';
+import { BankService } from 'app/services/bank.service';
+import { Bank } from 'app/models/bank';
 @Component({
   selector: 'app-edit-check',
   templateUrl: './edit-check.component.html',
@@ -20,6 +22,7 @@ export class EditCheckComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public banks : Bank[]
 
   public formErrors = {
     'expirationDate': '',
@@ -39,11 +42,13 @@ export class EditCheckComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-    public _movementOfCashService : MovementOfCashService
+    public _movementOfCashService : MovementOfCashService,
+    public _bankService : BankService
 
   ) { 
+    this.getBanks();
     this.movementOfCash = new MovementOfCash();
-
+    this.banks = new Array;
   }
 
   ngOnInit() {
@@ -58,9 +63,8 @@ export class EditCheckComponent implements OnInit {
   public getMovementOfCash() : void {
     this._movementOfCashService.getMovementOfCash(this.movementOfCashId).subscribe(
       result => {
-        console.log(result)
         if (!result.movementOfCash) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if (result.message && result.message !== '') this.showMessage(result.message, 'success', true);
         } else {
           this.movementOfCash = result.movementOfCash;
           this.setValueForm();
@@ -75,16 +79,24 @@ export class EditCheckComponent implements OnInit {
   }
 
   public setValueForm() : void {
-
-    console.log(this.movementOfCash)
     
     if (!this.movementOfCash.expirationDate) { this.movementOfCash.expirationDate = ''; }
     if (!this.movementOfCash.statusCheck) { this.movementOfCash.statusCheck = StatusCheck.Available; }
+    if (!this.movementOfCash.bank) { this.movementOfCash.bank = null; }
+    if (!this.movementOfCash.deliveredBy) { this.movementOfCash.deliveredBy = '' }
+    if (!this.movementOfCash.receiver) { this.movementOfCash.receiver = '' }
+    if (!this.movementOfCash.titular) { this.movementOfCash.titular = '' }
+    if (!this.movementOfCash.CUIT) { this.movementOfCash.CUIT = '' }
 
     
     this.checkForm.setValue({
       'expirationDate': moment(this.movementOfCash.expirationDate).format('YYYY-MM-DD'),
-      'statusCheck': this.movementOfCash.statusCheck
+      'statusCheck': this.movementOfCash.statusCheck,
+      'bank' : this.movementOfCash.bank,
+      'deliveredBy':this.movementOfCash.deliveredBy,
+      'receiver':this.movementOfCash.receiver,
+      'titular':this.movementOfCash.titular,
+      'CUIT':this.movementOfCash.CUIT,
     });
   }
 
@@ -98,7 +110,12 @@ export class EditCheckComponent implements OnInit {
       'statusCheck': [this.movementOfCash.statusCheck, [
           Validators.required
         ]
-      ]
+      ],
+      'bank' : [this.movementOfCash.bank,[]],
+      'deliveredBy':[this.movementOfCash.deliveredBy,[]],
+      'receiver':[this.movementOfCash.receiver,[]],
+      'titular':[this.movementOfCash.titular,[]],
+      'CUIT':[this.movementOfCash.CUIT,[]],
     });
 
     this.checkForm.valueChanges
@@ -130,6 +147,11 @@ export class EditCheckComponent implements OnInit {
 
     this.movementOfCash.expirationDate = this.checkForm.value.expirationDate;
     this.movementOfCash.statusCheck = this.checkForm.value.statusCheck;
+    this.movementOfCash.bank = this.checkForm.value.bank;
+    this.movementOfCash.deliveredBy = this.checkForm.value.deliveredBy;
+    this.movementOfCash.receiver = this.checkForm.value.receiver;
+    this.movementOfCash.titular = this.checkForm.value.titular;
+    this.movementOfCash.CUIT = this.checkForm.value.CUIT;
 
       this._movementOfCashService.updateMovementOfCash(this.movementOfCash).subscribe(
         result => {
@@ -149,6 +171,37 @@ export class EditCheckComponent implements OnInit {
       )
   }
   
+  public getBanks() {
+    
+    this.loading = true;
+    
+    let project = {
+      "_id" : 1,
+      "name": 1,
+      "code" :1,
+      "operationType": 1,
+    };
+
+    this._bankService.getBanks(
+      project, // PROJECT
+      { "operationType": { "$ne": "D" } }, // MATCH
+      { name: 1 }, // SORT
+      {}, // GROUP
+      0, // LIMIT
+      0 // SKIP
+    ).subscribe(result => {
+      this.loading = false;
+      if (result && result.banks) {
+        this.banks = result.banks;
+      } else {
+        this.banks = new Array();
+      }
+    },
+    error => {
+      this.showMessage(error._body, 'danger', false);
+      this.loading = false;
+    });
+  }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

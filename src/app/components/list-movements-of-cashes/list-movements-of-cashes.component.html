@@ -193,7 +193,7 @@
       </ngb-alert>
     </div>
     <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Listado de Movimientos de Medios
+      <div class="card-header bg-primary">Cartera de Cheques
         <div class="pull-right">
           <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
           <span (click)="areFiltersVisible = !areFiltersVisible">
@@ -233,7 +233,7 @@
                                                                             }">
               <td align="left" width="130">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('edit', movementOfCash)" title="Ver"><i class="fa fa-pencil"></i></button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('edit', movementOfCash)" title="Ver"><i class="fa fa-pencil"></i></button>
 
               </td>
               <td class="flat">{{movementOfCash.number }}</td>
