@@ -233,6 +233,8 @@
                                                                             }">
               <td align="left" width="130">
                 <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', movementOfCash)" title="Ver"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('edit', movementOfCash)" title="Ver"><i class="fa fa-pencil"></i></button>
+
               </td>
               <td class="flat">{{movementOfCash.number }}</td>
               <td class="flat">{{movementOfCash.transaction.type.name }}</td>

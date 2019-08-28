@@ -8,6 +8,7 @@ import { MovementOfCashService } from './../../services/movement-of-cash.service
 import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 import { TransactionState } from 'app/models/transaction';
 import { PaymentMethod } from 'app/models/payment-method';
+import { EditCheckComponent } from '../edit-check/edit-check.component';
 
 @Component({
   selector: 'app-list-movement-of-cash',
@@ -344,6 +345,11 @@ export class ListMovementOfCashesComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
         modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
+        modalRef.componentInstance.readonly = true;
+        break;
+      case 'edit':
+        modalRef = this._modalService.open(EditCheckComponent, { size: 'lg' });
+        modalRef.componentInstance.movementOfCashId = movementOfCash._id;
         modalRef.componentInstance.readonly = true;
         break;
       default: ;

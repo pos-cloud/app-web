@@ -54,8 +54,6 @@ export class UpdateMakeComponent implements OnInit {
       this.imageURL = './../../../assets/img/default.jpg';
     }
 
-    console.log(this.imageURL)
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.buildForm();
