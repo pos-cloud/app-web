@@ -28,7 +28,7 @@ export class UpdateCategoryComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public filesToUpload: Array<File>;
   public imageURL: string;
-
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'order': '',
@@ -52,6 +52,7 @@ export class UpdateCategoryComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     alertConfig.type = 'danger';
     alertConfig.dismissible = true;
   }

@@ -25,7 +25,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public companyTypes: CompanyType[] = [CompanyType.None, CompanyType.Client, CompanyType.Provider];
-
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -45,7 +45,9 @@ export class UpdatePaymentMethodComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
+  }
 
   ngOnInit(): void {
 

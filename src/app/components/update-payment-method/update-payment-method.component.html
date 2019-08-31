@@ -13,7 +13,7 @@
   </div>
   <form [formGroup]="paymentMethodForm" #formUpdatePaymentMethod="ngForm" (ngSubmit)="updatePaymentMethod()" autocomplete="off">
     <div class="modal-body">
-      <ngb-tabset>
+      <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">
           <ng-template ngbTabContent>
             <div class="row">

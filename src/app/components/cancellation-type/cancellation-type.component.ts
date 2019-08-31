@@ -31,6 +31,7 @@ export class CancellationTypeComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'origin': '',
@@ -59,6 +60,7 @@ export class CancellationTypeComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.cancellationType = new CancellationType();
    }
 

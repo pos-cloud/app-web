@@ -49,6 +49,7 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() operation: string;
   public userCountry: string = 'AR';
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'transactionMovement': '',
@@ -80,6 +81,7 @@ export class AddTransactionTypeComponent implements OnInit {
     public _currencyService: CurrencyService,
     public _useOfCFDIService: UseOfCFDIService
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.getCurrencies();
     this.getPaymentMethods();
     this.getEmployeeTypes();

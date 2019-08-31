@@ -12,7 +12,7 @@
   </div>
   <form [formGroup]="transactionTypeForm" #formAddTransactionType="ngForm" (ngSubmit)="addTransactionType()" autocomplete="off">
     <div class="modal-body-lg">
-      <ngb-tabset>
+      <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">
           <ng-template ngbTabContent>
             <div class="row tab-content">

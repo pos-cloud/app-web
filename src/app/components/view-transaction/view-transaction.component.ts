@@ -35,6 +35,7 @@ export class ViewTransactionComponent implements OnInit {
   public orderTerm: string[] = ['expirationDate'];
   public propertyTerm: string;
   public userCountry: string = 'AR';
+  public orientation: string = 'horizontal';
 
   constructor(
     public _transactionService: TransactionService,
@@ -44,6 +45,7 @@ export class ViewTransactionComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public _userService: UserService,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
   }
 
   ngOnInit() {

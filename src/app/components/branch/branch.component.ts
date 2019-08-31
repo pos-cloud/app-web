@@ -32,6 +32,7 @@ export class BranchComponent implements OnInit {
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'number': '',
@@ -56,6 +57,7 @@ export class BranchComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.branch = new Branch();
   }
 

@@ -66,6 +66,7 @@ export class AddCompanyComponent  implements OnInit {
   public countries : any;
   public transports: Transport;
   public priceLists: PriceList[];
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -145,6 +146,7 @@ export class AddCompanyComponent  implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.company = new Company();
     this.types = new Array();
     this.vatConditions = new Array();

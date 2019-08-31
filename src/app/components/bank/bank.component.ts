@@ -32,6 +32,7 @@ export class BankComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public userCountry: string;
   public bankForm: FormGroup;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -58,6 +59,7 @@ export class BankComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.bank = new Bank();
   }
 

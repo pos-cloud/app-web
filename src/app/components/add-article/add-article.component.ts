@@ -84,6 +84,7 @@ export class AddArticleComponent implements OnInit {
   public lastPricePurchase: number = 0.00;
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -166,6 +167,7 @@ export class AddArticleComponent implements OnInit {
     public _currencyService: CurrencyService,
     public _configService: ConfigService,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
     this.getCurrencies();
 

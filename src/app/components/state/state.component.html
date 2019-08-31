@@ -27,7 +27,7 @@
   </div>
   <form [formGroup]="stateForm" #formCancellationType="ngForm" (ngSubmit)="addState()" autocomplete="off">
     <div class="modal-body">
-      <ngb-tabset>
+      <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">
           <ng-template ngbTabContent>
             <div class="row tab-content">

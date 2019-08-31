@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { PriceListService } from 'app/services/price-list.service';
-import { FormBuilder, FormGroup, Validators, FormArray, FormControl, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PriceList } from 'app/models/price-list';
@@ -10,7 +10,6 @@ import { CategoryService } from 'app/services/category.service';
 import { MakeService } from 'app/services/make.service';
 import { ArticleService } from 'app/services/article.service';
 import { Article } from 'app/models/article';
-import { IfStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-price-list',
@@ -23,7 +22,6 @@ export class PriceListComponent implements OnInit {
   @Input() operation: string;
   @Input() readonly: boolean;
   @Input() priceListId : string;
-  
   public priceList: PriceList;
   public priceListForm: FormGroup;
   public rules: FormArray;
@@ -35,10 +33,10 @@ export class PriceListComponent implements OnInit {
   public makes : Make[]
   public articles : Article[]
   public viewRules : boolean = false;
-
   public categorySelected : Category;
   public makeSelected : Make;
   public percentageSelected : number;
+  public orientation: string = 'horizontal';
   
   public formErrors = {
     'name' : '',
@@ -64,6 +62,7 @@ export class PriceListComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
   ) { 
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.getCategories();
     this.getMakes();
     this.getArticles();
