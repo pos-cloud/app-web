@@ -119,7 +119,7 @@ export class ListArticleStocksComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateArticleStockComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateArticleStockComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleStock = articleStock;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {

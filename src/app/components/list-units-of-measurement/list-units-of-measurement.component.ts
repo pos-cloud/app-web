@@ -90,13 +90,13 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.unitOfMeasurementId = unitOfMeasurement._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'add';
         modalRef.result.then((result) => {
           this.getUnitsOfMeasurement();
@@ -105,7 +105,7 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
         });
         break;
       case 'update' :
-        modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUnitOfMeasurementComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.unitOfMeasurementId = unitOfMeasurement._id;
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'update';
@@ -127,7 +127,7 @@ export class ListUnitsOfMeasurementComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new UnitOfMeasurement();
         model.model = "unitOfMeasurement";
         model.primaryKey = "name";

@@ -351,7 +351,7 @@ export class AddTransactionComponent implements OnInit {
 
     switch (op) {
       case 'list-cancellations':
-        modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
+        modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
         modalRef.componentInstance.totalPrice = this.transactionForm.value.totalPrice;
         modalRef.result.then(async (result) => {
@@ -386,7 +386,7 @@ export class AddTransactionComponent implements OnInit {
         });
         break;
       case 'change-company':
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
         if (transaction.type.transactionMovement === TransactionMovement.Purchase) {
           modalRef.componentInstance.type = CompanyType.Provider;
         } else if (transaction.type.transactionMovement === TransactionMovement.Sale) {

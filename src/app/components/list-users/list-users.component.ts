@@ -93,13 +93,13 @@ export class ListUsersComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.userId = user._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'add';
         modalRef.result.then((result) => {
@@ -109,7 +109,7 @@ export class ListUsersComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.userId = user._id;
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.operation = 'update';

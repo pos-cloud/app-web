@@ -294,11 +294,11 @@ export class ListTransactionsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = transaction._id;
         break;
       case 'edit':
-        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = transaction._id;
         modalRef.result.then((result) => {
           if (result.transaction) {
@@ -326,7 +326,7 @@ export class ListTransactionsComponent implements OnInit {
         }
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.op = op;
         modalRef.componentInstance.transactionId = transaction._id;
         modalRef.result.then((result) => {
@@ -373,7 +373,7 @@ export class ListTransactionsComponent implements OnInit {
         break;
       case "export":
         
-        modalRef = this._modalService.open(ExportTransactionsComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ExportTransactionsComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionMovement = this.transactionMovement
         break;
       default: ;

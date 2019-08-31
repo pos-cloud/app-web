@@ -831,7 +831,7 @@ export class PointOfSaleComponent implements OnInit {
 
     switch (op) {
       case 'company':
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.type = this.transaction.type.requestCompany;
         modalRef.result.then(
           async (result) => {
@@ -848,7 +848,7 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'transaction':
 
-        modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionComponent , { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then(
           async (result) => {
@@ -874,7 +874,7 @@ export class PointOfSaleComponent implements OnInit {
       case 'charge':
 
       if (await this.isValidCharge()) {
-        modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transaction = this.transaction;
         modalRef.result.then((result) => {
           if (result.movementsOfCashes) {
@@ -917,11 +917,11 @@ export class PointOfSaleComponent implements OnInit {
         }
         break;
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = this.transaction._id;
         break;
       case 'cancel-transaction':
-        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then((result) => {
           if (result === "delete_close") {
@@ -958,7 +958,7 @@ export class PointOfSaleComponent implements OnInit {
         });
         break;
       case 'cash-box':
-        modalRef = this._modalService.open(CashBoxComponent, { size: 'lg' });
+        modalRef = this._modalService.open(CashBoxComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionType = this.transaction.type;
         modalRef.result.then((result) => {
           if (result && result.cashBox) {

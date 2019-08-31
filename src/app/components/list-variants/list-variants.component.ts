@@ -136,7 +136,7 @@ export class ListVariantsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'delete':
-        modalRef = this._modalService.open(DeleteVariantComponent, { size: 'lg' })
+        modalRef = this._modalService.open(DeleteVariantComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.variant = variant;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

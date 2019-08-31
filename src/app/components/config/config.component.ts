@@ -538,7 +538,7 @@ export class ConfigComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'pay-license':
-        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
+        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg', backdrop: 'static' });
         break;
       default:
         break;

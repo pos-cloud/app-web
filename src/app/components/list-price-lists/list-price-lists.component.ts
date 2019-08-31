@@ -165,7 +165,7 @@ export class ListPriceListsComponent implements OnInit {
     let modalRef
     switch (op) {
       case 'add':
-        modalRef = this._modalService.open(PriceListComponent, { size: 'lg' });
+        modalRef = this._modalService.open(PriceListComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -175,7 +175,7 @@ export class ListPriceListsComponent implements OnInit {
         });
         break;
       case 'edit':
-        modalRef = this._modalService.open(PriceListComponent, { size: 'lg' });
+        modalRef = this._modalService.open(PriceListComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "edit";
         modalRef.componentInstance.priceListId = priceList._id;
         modalRef.componentInstance.readonly = false;
@@ -186,7 +186,7 @@ export class ListPriceListsComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(PriceListComponent, { size: 'lg' });
+        modalRef = this._modalService.open(PriceListComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "delete";
         modalRef.componentInstance.priceListId = priceList._id;
         modalRef.componentInstance.readonly = true;
@@ -197,7 +197,7 @@ export class ListPriceListsComponent implements OnInit {
         });
         break;
       case 'view':
-        modalRef = this._modalService.open(PriceListComponent, { size: 'lg' });
+        modalRef = this._modalService.open(PriceListComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.priceListId = priceList._id;
         modalRef.componentInstance.readonly = true;

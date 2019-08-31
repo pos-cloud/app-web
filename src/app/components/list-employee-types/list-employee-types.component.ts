@@ -90,14 +90,15 @@ export class ListEmployeeTypesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'add' :
-        modalRef = this._modalService.open(AddEmployeeTypeComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddEmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.result.then((result) => {
           this.getEmployeeTypes();
         }, (reason) => {
           this.getEmployeeTypes();
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateEmployeeTypeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(UpdateEmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.employeeType = employeeType;
           modalRef.result.then((result) => {
             if (result === 'save_close') {
@@ -108,7 +109,7 @@ export class ListEmployeeTypesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteEmployeeTypeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteEmployeeTypeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.employeeType = employeeType;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

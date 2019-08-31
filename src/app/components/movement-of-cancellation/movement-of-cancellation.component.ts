@@ -419,7 +419,7 @@ export class MovementOfCancellationComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = transaction._id;
         break;
     }

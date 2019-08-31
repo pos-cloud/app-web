@@ -206,11 +206,11 @@ export class CurrentAccountComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = transactionId;
         break;
       case 'company':
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
         let pathLocation: string[] = this._router.url.split('/');
         let companyType = pathLocation[3].charAt(0).toUpperCase() + pathLocation[3].slice(1);
         modalRef.componentInstance.type = companyType;

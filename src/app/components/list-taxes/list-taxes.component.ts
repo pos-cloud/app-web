@@ -91,13 +91,13 @@ export class ListTaxesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = 'view';
         break;
       case 'add':
-        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.operation = 'add';
         modalRef.result.then((result) => {
@@ -107,7 +107,7 @@ export class ListTaxesComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTaxComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.taxId = tax._id;
         modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.readonly = false;
@@ -130,7 +130,7 @@ export class ListTaxesComponent implements OnInit {
         });
         break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Tax();
         model.model = "tax";
         model.primaryKey = "description";

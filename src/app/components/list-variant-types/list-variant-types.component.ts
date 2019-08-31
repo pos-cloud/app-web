@@ -91,7 +91,7 @@ export class ListVariantTypesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateVariantTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateVariantTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.variantType = variantType;
         modalRef.componentInstance.readonly = true;
         break;
@@ -103,7 +103,7 @@ export class ListVariantTypesComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateVariantTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateVariantTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.variantType = variantType;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {

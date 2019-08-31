@@ -303,13 +303,13 @@ export class ListTransactionTypesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'view';
         modalRef.componentInstance.transactionType = transactionType;
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'add';
         modalRef.result.then((result) => {
           this.getTransactionTypes();
@@ -318,7 +318,7 @@ export class ListTransactionTypesComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddTransactionTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.transactionType = transactionType;
         modalRef.componentInstance.readonly = false;

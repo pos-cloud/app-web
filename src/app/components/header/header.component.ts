@@ -113,7 +113,7 @@ export class HeaderComponent {
     let modalRef;
     switch (op) {
       case 'view-user':
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'view';
         modalRef.componentInstance.readonly = true;
         this._authService.getIdentity.subscribe(
@@ -130,7 +130,7 @@ export class HeaderComponent {
         });
         break;
       case 'update-user':
-        modalRef = this._modalService.open(AddUserComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddUserComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'update';
         modalRef.componentInstance.readonly = false;
         this._authService.getIdentity.subscribe(
@@ -147,7 +147,7 @@ export class HeaderComponent {
         });
         break;
       case 'pay-license':
-        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg' });
+        modalRef = this._modalService.open(LicensePaymentComponent, { size: 'lg', backdrop: 'static' });
         modalRef.result.then((result) => {
 
         }, (reason) => {
@@ -155,7 +155,7 @@ export class HeaderComponent {
         });
         break;
       case 'claim':
-        modalRef = this._modalService.open(ClaimComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ClaimComponent, { size: 'lg', backdrop: 'static' });
         modalRef.result.then((result) => {
 
         }, (reason) => {

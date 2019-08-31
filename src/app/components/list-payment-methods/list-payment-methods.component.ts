@@ -92,7 +92,7 @@ export class ListPaymentMethodsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdatePaymentMethodComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdatePaymentMethodComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.paymentMethod = paymentMethod;
         modalRef.componentInstance.readonly = true;
         break;
@@ -104,7 +104,7 @@ export class ListPaymentMethodsComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdatePaymentMethodComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdatePaymentMethodComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.paymentMethod = paymentMethod;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -125,7 +125,7 @@ export class ListPaymentMethodsComponent implements OnInit {
         });
         break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new PaymentMethod();
         model.model = "paymentMethod";
         model.primaryKey = "description";

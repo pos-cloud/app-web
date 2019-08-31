@@ -93,13 +93,13 @@ export class ListRelationTypesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(AddRelationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddRelationTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.relationTypeId = relationType._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddRelationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddRelationTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -109,7 +109,7 @@ export class ListRelationTypesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(AddRelationTypeComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddRelationTypeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.relationTypeId = relationType._id;
           modalRef.componentInstance.operation = "update";
           modalRef.componentInstance.readonly = false;
@@ -131,7 +131,7 @@ export class ListRelationTypesComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new RelationType();
         model.model = "relationType";
         model.primaryKey = "name";

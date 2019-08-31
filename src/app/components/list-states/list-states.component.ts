@@ -163,7 +163,7 @@ export class ListStatesComponent implements OnInit {
     let modalRef
     switch (op) {
       case 'add':
-        modalRef = this._modalService.open(StateComponent, { size: 'lg' });
+        modalRef = this._modalService.open(StateComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -173,7 +173,7 @@ export class ListStatesComponent implements OnInit {
         });
         break;
       case 'edit':
-        modalRef = this._modalService.open(StateComponent, { size: 'lg' });
+        modalRef = this._modalService.open(StateComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "edit";
         modalRef.componentInstance.stateId = state._id;
         modalRef.componentInstance.readonly = false;
@@ -184,7 +184,7 @@ export class ListStatesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(StateComponent, { size: 'lg' });
+        modalRef = this._modalService.open(StateComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "delete";
         modalRef.componentInstance.stateId = state._id;
         modalRef.componentInstance.readonly = true;
@@ -195,7 +195,7 @@ export class ListStatesComponent implements OnInit {
         });
         break;
       case 'view':
-        modalRef = this._modalService.open(StateComponent, { size: 'lg' });
+        modalRef = this._modalService.open(StateComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.stateId = state._id;
         modalRef.componentInstance.readonly = true;

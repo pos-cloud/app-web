@@ -280,11 +280,11 @@ export class ListCashBoxComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = movementOfCash.transaction._id;
         break;
       case 'cashBox':
-        modalRef = this._modalService.open(ListCashBoxesComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ListCashBoxesComponent, { size: 'lg', backdrop: 'static' });
         modalRef.result.then(
           (result) => {
             if (result.cashBoxId) {

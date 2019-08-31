@@ -165,7 +165,7 @@ export class ListBankComponent implements OnInit {
     let modalRef
     switch (op) {
       case 'add':
-        modalRef = this._modalService.open(BankComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BankComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -175,7 +175,7 @@ export class ListBankComponent implements OnInit {
         });
         break;
       case 'edit':
-        modalRef = this._modalService.open(BankComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BankComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "edit";
         modalRef.componentInstance.bankId = bank._id;
         modalRef.componentInstance.readonly = false;
@@ -186,7 +186,7 @@ export class ListBankComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(BankComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BankComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "delete";
         modalRef.componentInstance.bankId = bank._id;
         modalRef.componentInstance.readonly = true;
@@ -197,7 +197,7 @@ export class ListBankComponent implements OnInit {
         });
         break;
       case 'view':
-        modalRef = this._modalService.open(BankComponent, { size: 'lg' });
+        modalRef = this._modalService.open(BankComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.bankId = bank._id;
         modalRef.componentInstance.readonly = true;

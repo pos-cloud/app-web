@@ -90,13 +90,13 @@ export class ListCurrenciesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(CurrencyComponent, { size: 'lg' });
+        modalRef = this._modalService.open(CurrencyComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.currencyId = currency._id;
         modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(CurrencyComponent, { size: 'lg' });
+        modalRef = this._modalService.open(CurrencyComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -106,7 +106,7 @@ export class ListCurrenciesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(CurrencyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(CurrencyComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.currencyId = currency._id;
           modalRef.componentInstance.operation = "update";
           modalRef.componentInstance.readonly = false;
@@ -119,7 +119,7 @@ export class ListCurrenciesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(CurrencyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(CurrencyComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.operation = "delete";
           modalRef.componentInstance.currencyId = currency._id;
           modalRef.componentInstance.readonly = true;
@@ -132,7 +132,7 @@ export class ListCurrenciesComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Currency();
         model.model = "currency";
         model.primaryKey = "name";

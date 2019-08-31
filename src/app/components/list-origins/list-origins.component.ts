@@ -156,7 +156,7 @@ export class ListOriginsComponent implements OnInit {
     let modalRef
     switch (op) {
       case 'add':
-        modalRef = this._modalService.open(OriginComponent, { size: 'lg' });
+        modalRef = this._modalService.open(OriginComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -166,7 +166,7 @@ export class ListOriginsComponent implements OnInit {
         });
         break;
       case 'edit':
-        modalRef = this._modalService.open(OriginComponent, { size: 'lg' });
+        modalRef = this._modalService.open(OriginComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "update";
         modalRef.componentInstance.originId = origin._id;
         modalRef.componentInstance.readonly = false;
@@ -177,7 +177,7 @@ export class ListOriginsComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(OriginComponent, { size: 'lg' });
+        modalRef = this._modalService.open(OriginComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "delete";
         modalRef.componentInstance.originId = origin._id;
         modalRef.componentInstance.readonly = true;
@@ -188,7 +188,7 @@ export class ListOriginsComponent implements OnInit {
         });
         break;
       case 'view':
-        modalRef = this._modalService.open(OriginComponent, { size: 'lg' });
+        modalRef = this._modalService.open(OriginComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "view";
         modalRef.componentInstance.originId = origin._id;
         modalRef.componentInstance.readonly = true;

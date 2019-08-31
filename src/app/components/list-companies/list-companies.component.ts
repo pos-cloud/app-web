@@ -123,13 +123,13 @@ export class ListCompaniesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view' :
-          modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.companyId = company._id;
           modalRef.componentInstance.readonly = true;
           modalRef.componentInstance.operation = 'view';
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'add';
         modalRef.componentInstance.companyType = this.type;
         modalRef.result.then((result) => {
@@ -143,7 +143,7 @@ export class ListCompaniesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.companyId = company._id;
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.operation = 'update';
@@ -154,7 +154,7 @@ export class ListCompaniesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg' });
+          modalRef = this._modalService.open(DeleteCompanyComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.company = company;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {
@@ -165,7 +165,7 @@ export class ListCompaniesComponent implements OnInit {
           });
         break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Company();
         model.model = "company";
         model.primaryKey = "code";
@@ -207,7 +207,7 @@ export class ListCompaniesComponent implements OnInit {
         let modalRef;
         let emails = '';
 
-        modalRef = this._modalService.open(SendEmailComponent, { size: 'lg' });
+        modalRef = this._modalService.open(SendEmailComponent, { size: 'lg', backdrop: 'static' });
         if(this.companies && this.companies.length > 0) {
           for(let i=0; i < this.companies.length; i++){
             emails += this.companies[i].emails;

@@ -92,7 +92,7 @@ export class ListMakesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateMakeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateMakeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.make = make;
         modalRef.componentInstance.readonly = true;
         break;
@@ -104,7 +104,7 @@ export class ListMakesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateMakeComponent, { size: 'lg' });
+          modalRef = this._modalService.open(UpdateMakeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.make = make;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
@@ -125,7 +125,7 @@ export class ListMakesComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Make();
         model.model = "make";
         model.primaryKey = "description";

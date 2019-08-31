@@ -93,13 +93,13 @@ export class ListIdentificationTypesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(AddIdentificationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddIdentificationTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.identificationTypeId = identificationType._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddIdentificationTypeComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddIdentificationTypeComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -109,7 +109,7 @@ export class ListIdentificationTypesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(AddIdentificationTypeComponent, { size: 'lg' });
+          modalRef = this._modalService.open(AddIdentificationTypeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.identificationTypeId = identificationType._id;
           modalRef.componentInstance.operation = "update";
           modalRef.componentInstance.readonly = false;
@@ -131,7 +131,7 @@ export class ListIdentificationTypesComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new IdentificationType();
         model.model = "identificationType";
         model.primaryKey = "name";

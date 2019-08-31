@@ -92,7 +92,7 @@ export class ListVariantValuesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateVariantValueComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateVariantValueComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.variantValue = variantValue;
         modalRef.componentInstance.readonly = true;
         break;
@@ -104,7 +104,7 @@ export class ListVariantValuesComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateVariantValueComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateVariantValueComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.variantValue = variantValue;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {

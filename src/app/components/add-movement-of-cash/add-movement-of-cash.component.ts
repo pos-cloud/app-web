@@ -490,7 +490,7 @@ export class AddMovementOfCashComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'delete':
-          modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg' });
+          modalRef = this._modalService.open(DeleteMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.movementOfCash = movement;
           modalRef.result.then(async (result) => {
             if (result === 'delete_close') {
@@ -573,7 +573,7 @@ export class AddMovementOfCashComponent implements OnInit {
           });
         break;
       case 'list-movements-of-cashes':
-          modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg' });
+          modalRef = this._modalService.open(ListMovementOfCashesComponent, { size: 'lg', backdrop: 'static' });
           // MANDAMOS LÍMITE DE MONTO A SELECCIONAR
           modalRef.componentInstance.transactionAmount = this.roundNumber.transform(this.transaction.totalPrice - this.movementOfCashForm.value.amountPaid);
           modalRef.componentInstance.paymentMethod = this.paymentMethodSelected;

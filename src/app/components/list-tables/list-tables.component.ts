@@ -138,7 +138,7 @@ export class ListTablesComponent implements OnInit {
 
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.table = this.tableSelected;
         modalRef.componentInstance.readonly = true;
         break;
@@ -150,7 +150,7 @@ export class ListTablesComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateTableComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.table = this.tableSelected;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
@@ -162,7 +162,7 @@ export class ListTablesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg' });
+        modalRef = this._modalService.open(DeleteTableComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.table = this.tableSelected;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

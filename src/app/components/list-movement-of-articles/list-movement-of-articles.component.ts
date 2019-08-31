@@ -247,11 +247,11 @@ export class ListMovementOfArticlesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view-transaction':
-        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ViewTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = movementsOfArticle.transaction._id;
         break;
       case 'article':
-        modalRef = this._modalService.open(ListArticlesComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ListArticlesComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.userType = 'kardex';
         modalRef.result.then(
           (result) => {

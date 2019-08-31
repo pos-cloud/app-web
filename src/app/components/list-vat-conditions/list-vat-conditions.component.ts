@@ -96,13 +96,13 @@ export class ListVATConditionsComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(VATConditionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(VATConditionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.vatCondition = vatCondition;
         modalRef.componentInstance.readonly = true;
           modalRef.componentInstance.op = 'view';
         break;
       case 'add' :
-        modalRef = this._modalService.open(VATConditionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(VATConditionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.readonly = false;
         modalRef.componentInstance.op = 'add';
         modalRef.result.then((result) => {
@@ -112,7 +112,7 @@ export class ListVATConditionsComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(VATConditionComponent, { size: 'lg' });
+          modalRef = this._modalService.open(VATConditionComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.vatCondition = vatCondition;
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.op = 'update';
@@ -134,7 +134,7 @@ export class ListVATConditionsComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new VATCondition();
         model.model = "vatCondition";
         model.primaryKey = "description";

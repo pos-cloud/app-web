@@ -92,7 +92,7 @@ export class ListArticleFieldsComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateArticleFieldComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateArticleFieldComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleField = articleField;
         modalRef.componentInstance.readonly = true;
         break;
@@ -104,7 +104,7 @@ export class ListArticleFieldsComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateArticleFieldComponent, { size: 'lg' });
+          modalRef = this._modalService.open(UpdateArticleFieldComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.articleField = articleField;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
@@ -127,7 +127,7 @@ export class ListArticleFieldsComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new ArticleField();
         model.model = "articleField";
         model.primaryKey = "description";

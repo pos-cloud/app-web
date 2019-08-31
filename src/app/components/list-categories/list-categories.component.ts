@@ -112,7 +112,7 @@ export class ListCategoriesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.category = category;
         modalRef.componentInstance.readonly = true;
         break;
@@ -124,7 +124,7 @@ export class ListCategoriesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg' });
+          modalRef = this._modalService.open(UpdateCategoryComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.category = category;
           modalRef.result.then((result) => {
             this.getCategories();
@@ -145,7 +145,7 @@ export class ListCategoriesComponent implements OnInit {
           });
           break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Category();
         model.model = "category";
         model.primaryKey = "description";

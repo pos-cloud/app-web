@@ -90,7 +90,7 @@ export class ListEmployeesComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view' :
-          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg' });
+          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.employee = employee;
           modalRef.componentInstance.readonly = true;
         break;
@@ -102,7 +102,7 @@ export class ListEmployeesComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg' });
+          modalRef = this._modalService.open(UpdateEmployeeComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.employee = employee;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {

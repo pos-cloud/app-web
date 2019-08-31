@@ -277,12 +277,12 @@ export class ListArticlesComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleId = article._id;
         modalRef.componentInstance.operation = "view";
         break;
       case 'add':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "add";
         modalRef.result.then((result) => {
           this.getArticles();
@@ -291,7 +291,7 @@ export class ListArticlesComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleId = article._id;
         modalRef.componentInstance.operation = "update";
         modalRef.result.then((result) => {
@@ -301,7 +301,7 @@ export class ListArticlesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.article = article;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
@@ -312,7 +312,7 @@ export class ListArticlesComponent implements OnInit {
         });
         break;
         case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         let model: any = new Article();
         model.model = "article";
         model.primaryKey = "code";
@@ -389,7 +389,7 @@ export class ListArticlesComponent implements OnInit {
         });
         break;
       case 'copy':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = "copy";
         modalRef.componentInstance.articleId = article._id
         modalRef.result.then((result) => {

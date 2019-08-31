@@ -1271,7 +1271,7 @@ export class AddSaleOrderComponent {
 
     switch (op) {
       case 'list-cancellations':
-        modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg' });
+        modalRef = this._modalService.open(MovementOfCancellationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionDestinationId = this.transaction._id;
         modalRef.result.then(async (result) => {
           if(result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
@@ -1300,7 +1300,7 @@ export class AddSaleOrderComponent {
         if(this.transaction.type.stockMovement) {
           movementOfArticle.stockMovement = this.transaction.type.stockMovement.toString();
         }
-        modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddMovementOfArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.movementOfArticle = movementOfArticle;
         modalRef.result.then((result) => {
           this.getMovementsOfTransaction();
@@ -1310,7 +1310,7 @@ export class AddSaleOrderComponent {
         break;
       case 'apply_discount':
         if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
-          modalRef = this._modalService.open(ApplyDiscountComponent, { size: 'lg' });
+          modalRef = this._modalService.open(ApplyDiscountComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.amount = this.transaction.totalPrice;
           modalRef.componentInstance.amountToApply = this.transaction.discountAmount;
           modalRef.componentInstance.percentageToApply = this.transaction.discountPercent;
@@ -1327,7 +1327,7 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'cancel':
-        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg' });
+        modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transactionId = this.transaction._id;
         modalRef.result.then(async (result) => {
           if (result === 'delete_close') {
@@ -1350,7 +1350,7 @@ export class AddSaleOrderComponent {
         break;
       case 'add_client':
 
-        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ListCompaniesComponent, { size: 'lg', backdrop: 'static' });
         if (this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
           modalRef.componentInstance.type = CompanyType.Provider;
         } else if (this.transaction.type.transactionMovement === TransactionMovement.Sale) {
@@ -1412,7 +1412,7 @@ export class AddSaleOrderComponent {
           if (this.transaction.type.requestPaymentMethods ||
              fastPayment) {
 
-            modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg' });
+            modalRef = this._modalService.open(AddMovementOfCashComponent, { size: 'lg', backdrop: 'static' });
             modalRef.componentInstance.transaction = this.transaction;
             if (fastPayment) {
               modalRef.componentInstance.fastPayment = fastPayment;
@@ -1610,7 +1610,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'import':
-        modalRef = this._modalService.open(ImportComponent, { size: 'lg' });
+        modalRef = this._modalService.open(ImportComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.transaction = this.transaction._id;
         let model: any = new MovementOfArticle();
         model.model = "movement-of-article";

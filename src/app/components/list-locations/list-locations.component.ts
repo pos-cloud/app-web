@@ -89,7 +89,7 @@ export class ListLocationsComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateLocationComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateLocationComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.location = location;
         modalRef.componentInstance.readonly = true;
         break;
@@ -101,7 +101,7 @@ export class ListLocationsComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdateLocationComponent, { size: 'lg' });
+          modalRef = this._modalService.open(UpdateLocationComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.location = location;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {

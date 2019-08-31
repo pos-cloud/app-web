@@ -156,7 +156,7 @@ export class ReportBirthdayComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg' });
+        modalRef = this._modalService.open(AddCompanyComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.companyId = companyId;
         modalRef.componentInstance.readonly = true;
         break;

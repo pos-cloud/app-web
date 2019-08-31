@@ -89,7 +89,7 @@ export class ListPrintersComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view' :
-          modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+          modalRef = this._modalService.open(PrinterComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.printerId = printer._id;
           modalRef.componentInstance.readonly = true;
           modalRef.componentInstance.operation = 'view';
@@ -100,7 +100,7 @@ export class ListPrintersComponent implements OnInit {
           });
         break;
       case 'add' :
-        modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+        modalRef = this._modalService.open(PrinterComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.operation = 'add';
         modalRef.result.then((result) => {
           this.getPrinters();
@@ -109,7 +109,7 @@ export class ListPrintersComponent implements OnInit {
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+          modalRef = this._modalService.open(PrinterComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.printerId = printer._id;
           modalRef.componentInstance.readonly = false;
           modalRef.componentInstance.operation = 'update';
@@ -120,7 +120,7 @@ export class ListPrintersComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+          modalRef = this._modalService.open(PrinterComponent, { size: 'lg', backdrop: 'static' });
           modalRef.componentInstance.printerId = printer._id;
           modalRef.componentInstance.operation = 'delete';
           modalRef.result.then((result) => {

@@ -91,7 +91,7 @@ export class ListDepositsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdateDepositComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateDepositComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.deposit = deposit;
         modalRef.componentInstance.readonly = true;
         break;
@@ -103,7 +103,7 @@ export class ListDepositsComponent implements OnInit {
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdateDepositComponent, { size: 'lg' });
+        modalRef = this._modalService.open(UpdateDepositComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.deposit = deposit;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
