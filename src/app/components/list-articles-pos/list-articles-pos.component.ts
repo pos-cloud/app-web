@@ -382,6 +382,9 @@ export class ListArticlesPosComponent implements OnInit {
                         tax.taxAmount = taxAux.taxAmount;
                     } else {
                       tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+                      if(tax.taxBase === 0) {
+                        tax.taxBase = movementOfArticle.salePrice;
+                      }
                       tax.taxAmount = (tax.taxBase * tax.percentage / 100);
                     }
                     tax.taxBase = this.roundNumber.transform(tax.taxBase);

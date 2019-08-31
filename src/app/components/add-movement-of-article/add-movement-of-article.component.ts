@@ -601,6 +601,9 @@ export class AddMovementOfArticleComponent implements OnInit {
                 tax.taxAmount = taxAux.taxAmount * this.movementOfArticle.amount;
               } else {
                 tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+                if(tax.taxBase === 0) {
+                  tax.taxBase = this.movementOfArticle.salePrice;
+                }
                 tax.taxAmount = (tax.taxBase * tax.percentage / 100);
               }
               tax.taxBase = this.roundNumber.transform(tax.taxBase);
@@ -993,6 +996,9 @@ export class AddMovementOfArticleComponent implements OnInit {
               tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
             } else {
               tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+              if(tax.taxBase === 0) {
+                tax.taxBase = this.movementOfArticle.salePrice;
+              }
               tax.taxAmount = (tax.taxBase * tax.percentage / 100);
             }
             tax.taxBase = this.roundNumber.transform(tax.taxBase);
