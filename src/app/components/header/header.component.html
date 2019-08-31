@@ -229,6 +229,17 @@
           </button>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item"
+                  [routerLink]="['admin','tipos-de-variantes']"
+                  [routerLinkActive]="['active']">
+            Tipos de Variantes
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','valores-de-variantes']"
+                  [routerLinkActive]="['active']">
+            Valores de Variantes
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item"
                   [routerLink]="['admin','depositos']"
                   [routerLinkActive]="['active']" >
             Depósitos
@@ -237,6 +248,17 @@
                   [routerLink]="['admin','ubicaciones']"
                   [routerLinkActive]="['active']" >
             Ubicaciones
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','campos-de-productos']"
+                  [routerLinkActive]="['active']">
+            Campos de producto
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','unidades-de-medida']"
+                  [routerLinkActive]="['active']">
+            Unidades de Medida
           </button>
         </div>
       </li>
@@ -297,38 +319,11 @@
               Grupo de Empresas
             </button>
           </div>
-        </div>
-      </li>
-      <li class="nav-item"
-          ngbDropdown
-          *ngIf="(identity.employee &&
-                  identity.employee.type.description === 'Administrador')"
-          (click)="makeVisibleReport(false)">
-        <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
-          <i class="fa fa-users"></i> Empleados</a>
-        <div class="dropdown-menu" ngbDropdownMenu>
           <button class="dropdown-item"
-                  [routerLink]="['admin','empleados']"
+                  [routerLink]="['admin','campos-de-empresas']"
                   [routerLinkActive]="['active']">
-            Empleados
+            Campos de empresas
           </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','tipos-de-empleado']"
-                  [routerLinkActive]="['active']">
-            Tipos de Empleado
-          </button>
-          <div *ngIf="config.modules.sale.resto">
-            <button class="dropdown-item"
-                    [routerLink]="['admin','turnos']"
-                    [routerLinkActive]="['active']">
-              Turnos
-            </button>
-          </div>
-          <div *ngIf="config.modules.money">
-            <button class="dropdown-item" [routerLink]="['admin','cajas']" [routerLinkActive]="['active']">
-              Cajas
-            </button>
-          </div>
         </div>
       </li>
       <li class="nav-item"
@@ -390,6 +385,16 @@
                   [routerLink]="['admin','usuarios-web']"
                   [routerLinkActive]="['active']">
             Usuarios Web
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','empleados']"
+                  [routerLinkActive]="['active']">
+            Empleados
+          </button>
+          <button class="dropdown-item"
+                  [routerLink]="['admin','tipos-de-empleado']"
+                  [routerLinkActive]="['active']">
+            Tipos de Empleado
           </button>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item"
@@ -460,33 +465,6 @@
           </button>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item"
-                  [routerLink]="['admin','campos-de-productos']"
-                  [routerLinkActive]="['active']">
-            Campos de producto
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','campos-de-empresas']"
-                  [routerLinkActive]="['active']">
-            Campos de empresas
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','unidades-de-medida']"
-                  [routerLinkActive]="['active']">
-            Unidades de Medida
-          </button>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','tipos-de-variantes']"
-                  [routerLinkActive]="['active']">
-            Tipos de Variantes
-          </button>
-          <button class="dropdown-item"
-                  [routerLink]="['admin','valores-de-variantes']"
-                  [routerLinkActive]="['active']">
-            Valores de Variantes
-          </button>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item"
                   [routerLink]="['admin','states']"
                   [routerLinkActive]="['active']">
             <span *ngIf="config.country === 'AR'">Provincias</span>
@@ -502,6 +480,7 @@
                   [routerLinkActive]="['active']">
             Transportes
           </button>
+          <div class="dropdown-divider"></div>
           <button class="dropdown-item"
                   [routerLink]="['admin','price-list']"
                   [routerLinkActive]="['active']">
