@@ -6,9 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Printer } from './../../models/printer';
 import { PrinterService } from './../../services/printer.service';
 
-import { AddPrinterComponent } from './../../components/add-printer/add-printer.component';
-import { UpdatePrinterComponent } from './../../components/update-printer/update-printer.component';
-import { DeletePrinterComponent } from './../../components/delete-printer/delete-printer.component';
+import { PrinterComponent } from '../printer/printer.component';
 
 @Component({
   selector: 'app-list-printers',
@@ -91,38 +89,44 @@ export class ListPrintersComponent implements OnInit {
     let modalRef;
     switch(op) {
       case 'view' :
-          modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
-          modalRef.componentInstance.printer = printer;
+          modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+          modalRef.componentInstance.printerId = printer._id;
           modalRef.componentInstance.readonly = true;
+          modalRef.componentInstance.operation = 'view';
+          modalRef.result.then((result) => {
+            this.getPrinters();
+          }, (reason) => {
+            this.getPrinters();
+          });
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddPrinterComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+        modalRef.componentInstance.operation = 'add';
+        modalRef.result.then((result) => {
           this.getPrinters();
         }, (reason) => {
           this.getPrinters();
         });
         break;
       case 'update' :
-          modalRef = this._modalService.open(UpdatePrinterComponent, { size: 'lg' });
-          modalRef.componentInstance.printer = printer;
+          modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+          modalRef.componentInstance.printerId = printer._id;
           modalRef.componentInstance.readonly = false;
+          modalRef.componentInstance.operation = 'update';
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getPrinters();
-            }
+            this.getPrinters();
           }, (reason) => {
-
+            this.getPrinters();
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeletePrinterComponent, { size: 'lg' });
-          modalRef.componentInstance.printer = printer;
+          modalRef = this._modalService.open(PrinterComponent, { size: 'lg' });
+          modalRef.componentInstance.printerId = printer._id;
+          modalRef.componentInstance.operation = 'delete';
           modalRef.result.then((result) => {
-            if (result === 'delete_close') {
-              this.getPrinters();
-            }
+            this.getPrinters();
           }, (reason) => {
-
+            this.getPrinters();
           });
         break;
       default : ;

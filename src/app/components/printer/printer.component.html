@@ -1,0 +1,90 @@
+<div class="modal-header">
+  <h4 class="modal-title">Agregar Impresora</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<section class="container-fluid">
+  <div class="center-content" *ngIf="alertMessage !== ''">
+    <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
+      {{alertMessage}}
+    </ngb-alert>
+  </div>
+  <form [formGroup]="printerForm" #formAddPrinter="ngForm" (ngSubmit)="addPrinter()" autocomplete="off">
+    <div class="modal-body">
+      <ngb-tabset>
+        <ngb-tab title="Datos principales">
+          <ng-template ngbTabContent>
+            <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="name" class="control-label">Nombre:</label>
+                  <input type="text" class="form-control" formControlName="name" name="name" id="name" [focus]="focusEvent" />
+                  <div *ngIf="formErrors.name" class="alert alert-danger">
+                    {{ formErrors.name }}
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="type" class="control-label">Tipo:</label>
+                  <select class="form-control" formControlName="type">
+                    <option *ngFor="let type of types" [ngValue]="type">{{type}}</option>
+                  </select>
+                </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="pageSize" class="control-label">Tamaño:</label>
+                <select class="form-control" formControlName="pageSize" (change)="updatePageSize()">
+                  <option *ngFor="let pageSize of pageSizes" [ngValue]="pageSize">{{pageSize}}</option>
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="pageWidth" class="control-label">Ancho de página:</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" formControlName="pageWidth" name="pageWidth" id="pageWidth" aria-describedby="basic-addon1"/>
+                  <span class="input-group-addon" id="basic-addon1">mm</span>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="pageHigh" class="control-label">Alto de página:</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" formControlName="pageHigh" name="pageHigh" id="pageHigh" aria-describedby="basic-addon1"/>
+                  <span class="input-group-addon" id="basic-addon1">mm</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="printIn" class="control-label">Imprime en</label>
+                <select class="form-control" formControlName="printIn">
+                  <option *ngFor="let printIn of printsIn" [ngValue]="printIn">{{printIn}}</option>
+                </select>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Diseño">
+          <ng-template ngbTabContent>
+
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </div>
+      <div class="modal-footer" *ngIf="operation !== 'view'">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading" *ngIf="operation !== 'delete'">
+        <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+      <button type="button" 
+              class="btn btn-danger" 
+              *ngIf="operation === 'delete'" 
+              [disabled]="!printerForm.valid || loading" 
+              (click)="deletePrinter()">
+        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Eliminar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+    </div>
+  </form>
+</section>

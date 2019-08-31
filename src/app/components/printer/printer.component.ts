@@ -1,24 +1,26 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
+import { Printer, PrinterType, PrinterPrintIn } from '../../models/printer';
 
-import { PrinterService } from './../../services/printer.service';
+import { PrinterService } from '../../services/printer.service';
 
 @Component({
-  selector: 'app-update-printer',
-  templateUrl: './update-printer.component.html',
-  styleUrls: ['./update-printer.component.css'],
+  selector: 'app-add-printer',
+  templateUrl: './printer.component.html',
+  styleUrls: ['./printer.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class UpdatePrinterComponent implements OnInit {
+export class PrinterComponent implements OnInit {
 
-  @Input() printer: Printer;
-  @Input() readonly: boolean;
+  @Input() printerId : string;
+  @Input() readonly : boolean;
+  @Input() operation : string;
+  public printer: Printer;
   public types: PrinterType[] = [PrinterType.PDF];
   public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label];
   public printerForm: FormGroup;
@@ -30,6 +32,7 @@ export class UpdatePrinterComponent implements OnInit {
 
   public formErrors = {
     'name': '',
+    'connectionURL': '',
     'type': '',
     'printIn': ''
   };
@@ -38,11 +41,12 @@ export class UpdatePrinterComponent implements OnInit {
     'name': {
       'required': 'Este campo es requerido.'
     },
+    'connectionURL': {
+    },
     'type': {
       'required': 'Este campo es requerido.'
     },
     'printIn': {
-      'required': 'Este campo es requerido.'
     }
   };
 
@@ -51,15 +55,40 @@ export class UpdatePrinterComponent implements OnInit {
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig
+    public alertConfig: NgbAlertConfig,
   ) { }
 
   ngOnInit(): void {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.printer = new Printer();
     this.buildForm();
     this.updatePageSize();
+
+    if (this.printerId) {
+      this.getPrinter();
+    }
+  }
+
+  public getPrinter() : void {
+    
+    this._printerService.getPrinter(this.printerId).subscribe(
+      result => {
+        if (!result.printer) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+        } else {
+          this.hideMessage();
+          this.printer = result.printer;
+          this.setValueForm();
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -69,12 +98,10 @@ export class UpdatePrinterComponent implements OnInit {
   public buildForm(): void {
 
     this.printerForm = this._fb.group({
-      '_id': [this.printer._id, [
-        ]
-      ],
+      '_id': [this.printer._id, []],
       'name': [this.printer.name, [
           Validators.required
-        ]
+        ] 
       ],
       'type': [this.printer.type, [
           Validators.required
@@ -87,10 +114,9 @@ export class UpdatePrinterComponent implements OnInit {
         ]
       ],
       'printIn': [this.printer.printIn, [
-          Validators.required
         ]
       ],
-      'pageSize': ['', [
+      'pageSize': [this.pageSizes[0], [
         ]
       ]
     });
@@ -99,6 +125,7 @@ export class UpdatePrinterComponent implements OnInit {
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
+    this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
@@ -121,8 +148,6 @@ export class UpdatePrinterComponent implements OnInit {
 
   public updatePageSize(): void {
     
-    //http://www.rotisedapsales.com/snr/cloud2/website/jsPDF-master/docs/jspdf.js.html
-
     switch (this.printerForm.value.pageSize) {
       case "A4":
         this.printer.pageWidth = 210;
@@ -159,7 +184,7 @@ export class UpdatePrinterComponent implements OnInit {
     if (!this.printer.printIn) this.printer.printIn = PrinterPrintIn.Counter;
 
     this.printerForm.setValue({
-      '_id': this.printer._id,
+      '_id' : this.printer._id,
       'name': this.printer.name,
       'type': this.printer.type,
       'pageWidth': this.printer.pageWidth,
@@ -169,27 +194,36 @@ export class UpdatePrinterComponent implements OnInit {
     });
   }
 
-  public updatePrinter(): void {
-    if (!this.readonly) {
-      this.loading = true;
-      this.printer = this.printerForm.value;
-      this.saveChanges();
+  public addPrinter(): void {
+    
+    switch (this.operation) {
+      case 'add':
+        this.savePrinter();
+        break;
+      case 'update':
+        this.updatePrinter();
+        break;
+      case 'delete' :
+        this.deletePrinter();
+      default:
+        break;
     }
   }
 
-  public saveChanges(): void {
+  public savePrinter(): void {
 
     this.loading = true;
+    this.printer = this.printerForm.value;
 
-    this._printerService.updatePrinter(this.printer).subscribe(
+    this._printerService.savePrinter(this.printer).subscribe(
       result => {
         if (!result.printer) {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-          this.loading = false;
         } else {
           this.printer = result.printer;
-          this.showMessage("La impresora se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
+          this.showMessage("La impresora se ha añadido con éxito.", 'success', false);
+          this.printer = new Printer();
+          this.buildForm();
         }
         this.loading = false;
       },
@@ -198,6 +232,44 @@ export class UpdatePrinterComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public updatePrinter() : void {
+    
+    this.loading = true;
+    this.printer = this.printerForm.value;
+
+    this._printerService.updatePrinter(this.printer).subscribe(
+      result => {
+        if (!result.printer) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.showMessage("La impresora se ha actualizado con éxito.", 'success', false);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public deletePrinter() : void {
+
+    this.loading = true;
+    this._printerService.deletePrinter(this.printer._id).subscribe(
+      result => {
+        this.activeModal.close('close');
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
