@@ -18,6 +18,7 @@ import { Taxes } from 'app/models/taxes';
 import { TaxClassification } from 'app/models/tax';
 import { RoundNumberPipe } from 'app/pipes/round-number.pipe';
 import { Movements, TransactionMovement } from 'app/models/transaction-type';
+import { PrintVatBookComponent } from 'app/components/print/print-vat-book/print-vat-book.component';
 
 @Component({
   selector: 'app-export-iva',
@@ -112,8 +113,7 @@ export class ExportIvaComponent implements OnInit {
 
   public exportPDF(): void {
 
-    let modalRef = this._modalService.open(PrintComponent);
-    modalRef.componentInstance.typePrint = "IVA";
+    let modalRef = this._modalService.open(PrintVatBookComponent);
     modalRef.componentInstance.params = this.type.replace('s','')+"&"+this.exportIVAForm.value.year+this.exportIVAForm.value.month+"&"+this.exportIVAForm.value.folioNumber;
   }
 

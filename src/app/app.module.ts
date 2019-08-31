@@ -256,6 +256,7 @@ import { ListArticlesPosComponent } from './components/list-articles-pos/list-ar
 import { ExportTransactionsComponent } from './components/export/export-transactions/export-transactions.component';
 import { SelectDepositComponent } from './components/select-deposit/select-deposit.component';
 import { EditCheckComponent } from './components/edit-check/edit-check.component';
+import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -440,7 +441,8 @@ import { EditCheckComponent } from './components/edit-check/edit-check.component
     ListArticlesPosComponent,
     ExportTransactionsComponent,
     SelectDepositComponent,
-    EditCheckComponent
+    EditCheckComponent,
+    PrintVatBookComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -608,7 +610,8 @@ import { EditCheckComponent } from './components/edit-check/edit-check.component
     PriceListComponent,
     ExportTransactionsComponent,
     SelectDepositComponent,
-    EditCheckComponent
+    EditCheckComponent,
+    PrintVatBookComponent
   ],
   imports: [
     BrowserModule,
