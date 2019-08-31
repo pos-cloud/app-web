@@ -596,11 +596,12 @@ export class AddMovementOfArticleComponent implements OnInit {
               let tax: Taxes = new Taxes();
               tax.percentage = this.roundNumber.transform(taxAux.percentage);
               tax.tax = taxAux.tax;
-              if(tax.percentage && tax.percentage !== 0) {
+              if(tax.percentage && tax.percentage === 0 &&
+                tax.taxAmount && tax.taxAmount !== 0) {
+                tax.taxAmount = taxAux.taxAmount * this.movementOfArticle.amount;
+              } else {
                 tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
                 tax.taxAmount = (tax.taxBase * tax.percentage / 100);
-              } else {
-                tax.taxAmount = taxAux.taxAmount * this.movementOfArticle.amount;
               }
               tax.taxBase = this.roundNumber.transform(tax.taxBase);
               tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -987,11 +988,12 @@ export class AddMovementOfArticleComponent implements OnInit {
             let tax: Taxes = new Taxes();
             tax.tax = taxAux.tax;
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            if(tax.percentage && tax.percentage !== 0) {
+            if(tax.percentage && tax.percentage === 0 &&
+              tax.taxAmount && tax.taxAmount !== 0) {
+              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
+            } else {
               tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
               tax.taxAmount = (tax.taxBase * tax.percentage / 100);
-            } else {
-              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
             }
             tax.taxBase = this.roundNumber.transform(tax.taxBase);
             tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
