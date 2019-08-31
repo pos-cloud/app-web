@@ -55,7 +55,7 @@
     <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por empleado</div>
     <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por empleado</div>
       <div class="card-block table-responsive">
-        <table class="table table-hover">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th (click)="orderBy('employee.name')" *ngIf="transactionMovement === 'Venta'">Empleado</th>

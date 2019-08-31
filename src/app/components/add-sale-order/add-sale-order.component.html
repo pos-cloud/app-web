@@ -142,7 +142,7 @@
   <div class="row container-transaction">
     <div class="col-md-4 table-container">
       <div #containerMovementsOfArticles class="articles-container table-responsive">
-        <table class="table table-hover">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th>Cantidad</th>
@@ -188,7 +188,7 @@
         </table>
       </div>
       <div class="row" *ngIf="transaction.type && transaction.type.showPrices">
-        <table class="table table-hover">
+        <table class="table table-striped">
           <tbody>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
                 (click)="openModal('change-taxes')"

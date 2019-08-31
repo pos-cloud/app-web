@@ -3,7 +3,7 @@
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Marcas más vendidas</div>
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Marcas más compradas</div>
   <div class="card-block table-responsive">
-    <table class="table table-hover">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th>Marca </th>
@@ -97,7 +97,7 @@
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Marcas más vendidas</div>
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Marcas más compradas</div>
     <div class="card-block table-responsive">
-      <table class="table table-hover">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th (click)="orderBy('make.description')">Marca</th>

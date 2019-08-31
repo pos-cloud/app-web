@@ -3,7 +3,7 @@
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por cliente</div>
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por proveedor</div>
   <div class="card-block table-responsive">
-    <table class="table table-hover">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th *ngIf="transactionMovement === 'Venta'">Cliente</th>
@@ -97,7 +97,7 @@
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por cliente</div>
   <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por proveedor</div>
     <div class="card-block table-responsive">
-      <table class="table table-hover">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th (click)="orderBy('company.name')" *ngIf="transactionMovement === 'Venta'">Cliente</th>

@@ -109,7 +109,7 @@
         <ng-template ngbTabTitle>Productos</ng-template>
         <ng-template ngbTabContent>
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-striped">
                   <thead>
                     <tr>
                       <th>Cant</th>
@@ -148,7 +148,7 @@
         <ng-template ngbTabTitle>Impuestos</ng-template>
         <ng-template ngbTabContent>
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-striped">
                   <thead>
                     <tr>
                       <th>Impuesto</th>
@@ -172,7 +172,7 @@
       <ngb-tab title="Métodos de Pago" [disabled]="areMovementsOfCashesEmpty">
           <ng-template ngbTabContent>
               <div class="table-responsive">
-                  <table class="table table-hover">
+                  <table class="table table-striped">
                     <thead>
                       <tr>
                         <th>Método</th>
@@ -206,7 +206,7 @@
       <ngb-tab title="AFIP" *ngIf="transaction.type && transaction.type.electronics && userCountry === 'AR'">
         <ng-template ngbTabContent>
           <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th>CAE</th>
@@ -224,7 +224,7 @@
       <ngb-tab title="SAT" *ngIf="transaction.type && transaction.type.electronics && userCountry === 'MX'">
         <ng-template ngbTabContent>
           <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th>Sello SAT</th>
@@ -234,7 +234,7 @@
                 <td>{{transaction.SATStamp}}</td>
               </tbody>
             </table>
-            <table class="table table-hover">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th>Sello CFD</th>
@@ -244,7 +244,7 @@
                 <td>{{transaction.CFDStamp}}</td>
               </tbody>
             </table>
-            <table class="table table-hover">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th>Cadena Original SAT</th>
