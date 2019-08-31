@@ -34,6 +34,7 @@ import { Tax } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
+import { PrintLabelComponent } from '../print/print-label/print-label.component';
 
 @Component({
   selector: 'app-list-articles',
@@ -356,7 +357,7 @@ export class ListArticlesComponent implements OnInit {
             }
 
             if(labelPrinter) {
-              modalRef = this._modalService.open(PrintComponent);
+              modalRef = this._modalService.open(PrintLabelComponent);
               if(article) {
                 modalRef.componentInstance.article = article;
               } else {

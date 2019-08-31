@@ -13,6 +13,7 @@ import { PrintComponent } from 'app/components/print/print/print.component';
 import { PrinterService } from '../../services/printer.service';
 import { PrinterPrintIn, Printer } from '../../models/printer';
 import { PrintArticlesStockComponent } from '../print/print-articles-stock/print-articles-stock.component';
+import { PrintLabelComponent } from '../print/print-label/print-label.component';
 
 @Component({
   selector: 'app-list-article-stocks',
@@ -130,7 +131,7 @@ export class ListArticleStocksComponent implements OnInit {
         });
         break;
       case 'print-label':
-        modalRef = this._modalService.open(PrintComponent);
+        modalRef = this._modalService.open(PrintLabelComponent);
         modalRef.componentInstance.articleStock = articleStock;
         modalRef.componentInstance.typePrint = 'label';
         if (this.printers && this.printers.length > 0) {

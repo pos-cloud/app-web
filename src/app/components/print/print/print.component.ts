@@ -137,9 +137,7 @@ export class PrintComponent implements OnInit {
 
 
     let orientation = "p";
-    if (this.typePrint === "label" || this.typePrint === 'IVA') {
-      orientation = "l";
-    }
+    
     let units = 'mm';
     let pageWidth = this.printer.pageWidth * 100 / 35.27751646284102;
     let pageHigh = this.printer.pageHigh * 100 / 35.27751646284102;
@@ -176,17 +174,6 @@ export class PrintComponent implements OnInit {
               this.toPrintCurrentAccount();
             } else if (this.typePrint === "cash-box") {
               this.getClosingCashBox();
-            } else if (this.typePrint === "label") {
-              let code;
-              if (this.articleStock && this.articleStock.article[this.config[0].article.printLabel.value]) {
-                code = this.articleStock.article[this.config[0].article.printLabel.value];
-                this.getBarcode64('code128?value=' + code, this.typePrint);
-              } else if (this.article && this.article[this.config[0].article.printLabel.value]) {
-                code = this.article[this.config[0].article.printLabel.value];
-                this.getBarcode64('code128?value=' + code, this.typePrint);
-              } else {
-                this.showMessage('Debe completar el código del producto a imprimir.', 'info', true);
-              }
             } else if (this.typePrint === "kitchen") {
               this.toPrintKitchen();
             } 
@@ -226,17 +213,6 @@ export class PrintComponent implements OnInit {
               this.toPrintCurrentAccount();
             } else if (this.typePrint === "cash-box") {
               this.getClosingCashBox();
-            } else if (this.typePrint === "label") {
-              let code;
-              if (this.articleStock && this.articleStock.article[this.config[0].article.printLabel.value]) {
-                code = this.articleStock.article[this.config[0].article.printLabel.value];
-                this.getBarcode64('code128?value=' + code, this.typePrint);
-              } else if (this.article && this.article[this.config[0].article.printLabel.value]) {
-                code = this.article[this.config[0].article.printLabel.value];
-                this.getBarcode64('code128?value=' + code, this.typePrint);
-              } else {
-                this.showMessage('Debe completar el código del producto a imprimir.', 'info', true);
-              }
             } else if (this.typePrint === "kitchen") {
               this.toPrintKitchen();
             } 
@@ -2808,26 +2784,7 @@ export class PrintComponent implements OnInit {
     }
   }
 
-  public toPrintBarcode(): void {
 
-    if (this.articleStock) {
-      this.doc.text(this.articleStock.article.description, 0 , 5);
-      let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh) -2, (this.printer.pageWidth) -5 );
-      for (let index = 0; index < this.articleStock.realStock -1 ; index++) {
-        this.doc.addPage();
-        this.doc.text(this.articleStock.article.description, 0 , 5);
-        let imgdata = 'data:image/png;base64,' + this.barcode64;
-        this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh) -2, (this.printer.pageWidth) -5 );
-      }
-      this.finishImpression();
-    }  else if (this.article) {
-      this.doc.text(this.article.description, 0 , 5);
-      let imgdata = 'data:image/png;base64,' + this.barcode64;
-      this.doc.addImage(imgdata, 'PNG', 1, 5, (this.printer.pageHigh ) -2, (this.printer.pageWidth) -5 );
-      this.finishImpression();
-    }
-  }
 
   public getGreeting() {
 
@@ -2879,9 +2836,7 @@ export class PrintComponent implements OnInit {
       result => {
         this.barcode64 = result.bc64;
         switch (op) {
-          case 'label':
-            this.toPrintBarcode();
-            break;
+          
           case 'invoice':
               if (this.printer.pageWidth < 150) {
                 this.toPrintInvoiceRoll();

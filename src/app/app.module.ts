@@ -257,6 +257,7 @@ import { ExportTransactionsComponent } from './components/export/export-transact
 import { SelectDepositComponent } from './components/select-deposit/select-deposit.component';
 import { EditCheckComponent } from './components/edit-check/edit-check.component';
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
+import { PrintLabelComponent } from './components/print/print-label/print-label.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -442,7 +443,8 @@ import { PrintVatBookComponent } from './components/print/print-vat-book/print-v
     ExportTransactionsComponent,
     SelectDepositComponent,
     EditCheckComponent,
-    PrintVatBookComponent
+    PrintVatBookComponent,
+    PrintLabelComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -611,7 +613,8 @@ import { PrintVatBookComponent } from './components/print/print-vat-book/print-v
     ExportTransactionsComponent,
     SelectDepositComponent,
     EditCheckComponent,
-    PrintVatBookComponent
+    PrintVatBookComponent,
+    PrintLabelComponent
   ],
   imports: [
     BrowserModule,
