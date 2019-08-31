@@ -118,7 +118,10 @@ export class PrinterComponent implements OnInit {
       ],
       'pageSize': [this.pageSizes[0], [
         ]
-      ]
+      ],
+      'orientation' : [this.printer.orientation,[]],
+      'row' : [this.printer.row,[]],
+      'addPag' : [this.printer.addPag,[]]
     });
 
     this.printerForm.valueChanges
@@ -182,6 +185,9 @@ export class PrinterComponent implements OnInit {
     if (!this.printer.pageWidth) this.printer.pageWidth = 0;
     if (!this.printer.pageHigh) this.printer.pageHigh = 0;
     if (!this.printer.printIn) this.printer.printIn = PrinterPrintIn.Counter;
+    if (!this.printer.orientation) this.printer.orientation = '';
+    if (!this.printer.row) this.printer.row = 0;
+    if (!this.printer.addPag) this.printer.addPag = 0;
 
     this.printerForm.setValue({
       '_id' : this.printer._id,
@@ -190,7 +196,10 @@ export class PrinterComponent implements OnInit {
       'pageWidth': this.printer.pageWidth,
       'pageHigh': this.printer.pageHigh,
       'printIn': this.printer.printIn,
-      'pageSize': this.printerForm.value.pageSize
+      'pageSize': this.printerForm.value.pageSize,
+      'orientation' : this.printer.orientation,
+      'row' : this.printer.row,
+      'addPag' : this.printer.addPag
     });
   }
 

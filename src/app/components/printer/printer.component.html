@@ -30,6 +30,32 @@
                   </select>
                 </div>
             </div>
+            <div class = "row">
+              <div class="form-group col-md-4">
+                <label for="orientation" class="control-label">Orientacion:</label>
+                <select class="form-control" formControlName="orientation">
+                    <option value="l" [selected] = "printer.orientation === 'l'">Horizontal</option>
+                    <option value="p" [selected] = "printer.orientation === 'p'">Vertical</option>
+                </select>
+                <div *ngIf="formErrors.orientation" class="alert alert-danger">
+                  {{ formErrors.orientation }}
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="row" class="control-label">Interlineado:</label>
+                <input type="number" class="form-control" formControlName="row" name="row" id="row" />
+                <div *ngIf="formErrors.row" class="alert alert-danger">
+                  {{ formErrors.row }}
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="addPag" class="control-label">Salto de página:</label>
+                <input type="number" class="form-control" formControlName="addPag" name="addPag" id="addPag" />
+                <div *ngIf="formErrors.addPag" class="alert alert-danger">
+                  {{ formErrors.addPag }}
+                </div>
+              </div>
+            </div>
             <div class="row">
               <div class="form-group col-md-4">
                 <label for="pageSize" class="control-label">Tamaño:</label>
@@ -62,11 +88,107 @@
             </div>
           </ng-template>
         </ngb-tab>
-        <ngb-tab title="Diseño">
+        <!--<ngb-tab title="Diseño">
           <ng-template ngbTabContent>
-
+              <div class="row tab-content">
+                  <form #fieldForm="ngForm" (ngSubmit)="addException(fieldForm)">
+                      <div class="row">
+                        <div class="form-group col-md-1">
+                          <label for="type" class="control-label">Tipo:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="type" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                          <label for="label" class="control-label">Label:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="label" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                          <label for="value" class="control-label">Valor:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="value" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                          <label for="font" class="control-label">Fuente:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="font" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="fontType" class="control-label">Tipo:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="fontType" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                          <label for="fontSize" class="control-label">Tamaño:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="fontSize" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                          <label for="positionStartX" class="control-label">pos X:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="positionStartX" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                          <label for="positionStartY" class="control-label">pos Y:</label>
+                          <div class="input-group">
+                            <input type="text" class="form-control" ngModel name="positionStartY" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label for="positionEndX" class="control-label">pos X:</label>
+                            <div class="input-group">
+                              <input type="text" class="form-control" ngModel name="positionEndX" [readonly]="readonly"/>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-1">
+                              <label for="positionEndY" class="control-label">pos Y:</label>
+                              <div class="input-group">
+                                <input type="text" class="form-control" ngModel name="positionEndY" [readonly]="readonly"/>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="splitting" class="control-label">Ancho Palabra:</label>
+                                <div class="input-group">
+                                  <input type="text" class="form-control" ngModel name="splitting" [readonly]="readonly"/>
+                                </div>
+                              </div>
+                              <div class="form-group col-md-1">
+                                  <label for="colour" class="control-label">Color:</label>
+                                  <div class="input-group">
+                                    <input type="text" class="form-control" ngModel name="colour" [readonly]="readonly"/>
+                                  </div>
+                                </div>
+                        <div class="form-group col-md-1">                      
+                            <label class="control-label">Acción:</label>
+                            <button type="summit" class="btn btn-success btn-sm">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                      </div>
+                  </form>  
+                  
+                  <div formArrayName="fields" *ngFor="let field of printerForm.get('fields').controls; let i = index;">
+                    <div [formGroupName]="i">
+                      <div class="row">
+                        
+                        <div class="form-group col-md-1">        
+                          <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
+                              <i class="fa fa-trash-o"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div> 
+                  </div>
+                </div>
           </ng-template>
-        </ngb-tab>
+        </ngb-tab>-->
       </ngb-tabset>
     </div>
       <div class="modal-footer" *ngIf="operation !== 'view'">

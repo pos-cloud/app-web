@@ -21,14 +21,14 @@ export class Printer {
         type : string; //field,line,movArticle,movCash,movCancellation
         label : string;
         value : string;
-        font : string; //courier,times,helvetica
-        fontType : string; //normal,italic,bold,bolditalic
+        font : string; //courier,times,helvetica  solo si es field
+        fontType : string; //normal,italic,bold,bolditalic solo si es field
         fontSize : Number; 
         positionStartX : Number;
         positionStartY : Number;
-        positionEndX : Number;
-        positionEndY : Number;
-        splitting : Number;
+        positionEndX : Number; //line
+        positionEndY : Number; //line
+        splitting : Number; // ancho del string solo si es field
         colour : string // 4,5,9
     }];
 
