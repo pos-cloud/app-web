@@ -123,7 +123,7 @@ export class ListVATConditionsComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteVATConditionComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteVATConditionComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.vatCondition = vatCondition;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

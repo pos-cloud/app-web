@@ -1495,7 +1495,7 @@ export class AddSaleOrderComponent {
         );
 
         if (this.countPrinters() > 1) {
-          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
+          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg', backdrop: 'static' }).result.then((result) => {
             if (result !== "cancel" && result !== '') {
               this.distributeImpressions(result);
             }
@@ -1509,7 +1509,7 @@ export class AddSaleOrderComponent {
         }
         break;
       case 'errorMessage':
-        modalRef = this._modalService.open(this.contentMessage, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(this.contentMessage, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           if (result !== "cancel" && result !== '') {
             this.backFinal();
           }
@@ -1547,7 +1547,7 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'change-taxes':
-        modalRef = this._modalService.open(this.containerTaxes, { size: 'lg' }).result.then(async (result) => {
+        modalRef = this._modalService.open(this.containerTaxes, { size: 'lg', backdrop: 'static' }).result.then(async (result) => {
         }, (reason) => {
         });
         break;

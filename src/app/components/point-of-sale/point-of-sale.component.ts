@@ -901,7 +901,7 @@ export class PointOfSaleComponent implements OnInit {
         break;
       case 'printers':
         if (this.countPrinters() > 1) {
-          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
+          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg', backdrop: 'static' }).result.then((result) => {
             if (result !== "cancel" && result !== '') {
               this.printerSelected = result;
               this.openModal("print");

@@ -98,7 +98,7 @@ export class ListCompanyFieldsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddCompanyFieldComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddCompanyFieldComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getCompanyFields();
         }, (reason) => {
           this.getCompanyFields();
@@ -117,7 +117,7 @@ export class ListCompanyFieldsComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteCompanyFieldComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteCompanyFieldComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.companyField = companyField;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

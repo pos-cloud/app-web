@@ -97,7 +97,7 @@ export class ListArticleFieldsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddArticleFieldComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddArticleFieldComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getArticleFields();
         }, (reason) => {
           this.getArticleFields();
@@ -116,7 +116,7 @@ export class ListArticleFieldsComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteArticleFieldComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteArticleFieldComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.articleField = articleField;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

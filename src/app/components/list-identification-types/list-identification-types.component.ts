@@ -120,7 +120,7 @@ export class ListIdentificationTypesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteIdentificationTypeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteIdentificationTypeComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.identificationType = identificationType;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

@@ -96,7 +96,7 @@ export class ListDepositsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddDepositComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddDepositComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getDeposits();
         }, (reason) => {
           this.getDeposits();
@@ -113,7 +113,7 @@ export class ListDepositsComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteDepositComponent, { size: 'lg' })
+        modalRef = this._modalService.open(DeleteDepositComponent, { size: 'lg', backdrop: 'static' })
         modalRef.componentInstance.deposit = deposit;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

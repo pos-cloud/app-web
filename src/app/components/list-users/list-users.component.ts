@@ -120,7 +120,7 @@ export class ListUsersComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteUserComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteUserComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.user = user;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

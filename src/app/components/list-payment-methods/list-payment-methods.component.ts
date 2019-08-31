@@ -97,7 +97,7 @@ export class ListPaymentMethodsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddPaymentMethodComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddPaymentMethodComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getPaymentMethods();
         }, (reason) => {
           this.getPaymentMethods();
@@ -114,7 +114,7 @@ export class ListPaymentMethodsComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeletePaymentMethodComponent, { size: 'lg' })
+        modalRef = this._modalService.open(DeletePaymentMethodComponent, { size: 'lg', backdrop: 'static' })
         modalRef.componentInstance.paymentMethod = paymentMethod;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

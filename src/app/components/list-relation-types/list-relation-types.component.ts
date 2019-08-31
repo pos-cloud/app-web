@@ -120,7 +120,7 @@ export class ListRelationTypesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteRelationTypeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteRelationTypeComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.relationType = relationType;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

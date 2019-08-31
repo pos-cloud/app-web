@@ -143,7 +143,7 @@ export class ListTablesComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddTableComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddTableComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getTables();
         }, (reason) => {
           this.getTables();

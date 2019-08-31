@@ -97,7 +97,7 @@ export class ListVariantValuesComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddVariantValueComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddVariantValueComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getVariantValues();
         }, (reason) => {
           this.getVariantValues();
@@ -116,7 +116,7 @@ export class ListVariantValuesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteVariantValueComponent, { size: 'lg' })
+        modalRef = this._modalService.open(DeleteVariantValueComponent, { size: 'lg', backdrop: 'static' })
         modalRef.componentInstance.variantValue = variantValue;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

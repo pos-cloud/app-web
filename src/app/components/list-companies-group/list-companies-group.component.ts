@@ -96,7 +96,7 @@ export class ListCompaniesGroupComponent implements OnInit {
           modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddCompanyGroupComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddCompanyGroupComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getCompaniesGroups();
         }, (reason) => {
           this.getCompaniesGroups();
@@ -115,7 +115,7 @@ export class ListCompaniesGroupComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteCompanyGroupComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteCompanyGroupComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.companyGroup = companyGroup;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

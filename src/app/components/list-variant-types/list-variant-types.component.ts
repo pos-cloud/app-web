@@ -96,7 +96,7 @@ export class ListVariantTypesComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddVariantTypeComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddVariantTypeComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getVariantTypes();
         }, (reason) => {
           this.getVariantTypes();
@@ -115,7 +115,7 @@ export class ListVariantTypesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteVariantTypeComponent, { size: 'lg' })
+        modalRef = this._modalService.open(DeleteVariantTypeComponent, { size: 'lg', backdrop: 'static' })
         modalRef.componentInstance.variantType = variantType;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

@@ -94,7 +94,7 @@ export class ListLocationsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddLocationComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddLocationComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getLocations();
         }, (reason) => {
           this.getLocations();
@@ -113,7 +113,7 @@ export class ListLocationsComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteLocationComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteLocationComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.location = location;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {
