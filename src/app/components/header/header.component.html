@@ -526,7 +526,7 @@
           <i class="fa fa-bell"></i>
           <span *ngIf="!readedNotification && config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10" class="badge badge-danger">1</span>
         </a>
-        <div class="dropdown-menu notification-menu" ngbDropdownMenu>
+        <div class="dropdown-menu dropdown-menu-right notification-menu" ngbDropdownMenu>
           <div class="dropdown-item notification-item" *ngIf="config.showLicenseNotification && licenseDays >= 0 && licenseDays <= 10">
             <div class="row">
               <div class="col-md-12">
@@ -559,7 +559,7 @@
         <a class="nav-link btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top">
           <i class="fa fa-user"></i> {{ identity.employee.name }}
         </a>
-        <div class="dropdown-menu" ngbDropdownMenu>
+        <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
             <div>
               <button class="dropdown-item"
                       (click)="openModal('view-user')"
