@@ -377,8 +377,7 @@ export class ListArticlesPosComponent implements OnInit {
                       this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
                     }
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                    if(tax.percentage && tax.percentage === 0 &&
-                      tax.taxAmount && tax.taxAmount !== 0) {
+                    if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
                         tax.taxAmount = taxAux.taxAmount;
                     } else {
                       tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
@@ -445,7 +444,7 @@ export class ListArticlesPosComponent implements OnInit {
                     this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
                   }
                   taxAux.taxBase = this.roundNumber.transform(taxedAmount);
-                  if(taxAux.percentage && taxAux.percentage !== 0) {
+                  if(taxAux.percentage !== 0) {
                     taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
                   }
                   taxes.push(taxAux);

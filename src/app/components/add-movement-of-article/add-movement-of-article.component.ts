@@ -596,15 +596,14 @@ export class AddMovementOfArticleComponent implements OnInit {
               let tax: Taxes = new Taxes();
               tax.percentage = this.roundNumber.transform(taxAux.percentage);
               tax.tax = taxAux.tax;
-              if(tax.percentage && tax.percentage === 0 &&
-                tax.taxAmount && tax.taxAmount !== 0) {
+              if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
                 tax.taxAmount = taxAux.taxAmount * this.movementOfArticle.amount;
               } else {
                 tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
                 if(tax.taxBase === 0) {
                   tax.taxBase = this.movementOfArticle.salePrice;
                 }
-                tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+                tax.taxAmount = (tax.taxBase * tax.percentage / 100); 
               }
               tax.taxBase = this.roundNumber.transform(tax.taxBase);
               tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
@@ -644,10 +643,10 @@ export class AddMovementOfArticleComponent implements OnInit {
         if (articleSelected.taxes) {
           for (let taxAux of articleSelected.taxes) {
             taxAux.taxBase = this.roundNumber.transform(taxedAmount);
-            if(taxAux.percentage && taxAux.percentage !== 0) {
-              taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
-            } else {
+            if(taxAux.percentage === 0 && taxAux.taxAmount !== 0) {
               taxAux.taxAmount = taxAux.tax.amount * this.movementOfArticle.amount;
+            } else {
+              taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
             }
             taxes.push(taxAux);
             this.movementOfArticle.costPrice += taxAux.taxAmount;
@@ -991,8 +990,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             let tax: Taxes = new Taxes();
             tax.tax = taxAux.tax;
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            if(tax.percentage && tax.percentage === 0 &&
-              tax.taxAmount && tax.taxAmount !== 0) {
+            if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
               tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
             } else {
               tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));

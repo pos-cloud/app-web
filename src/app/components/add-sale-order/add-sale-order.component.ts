@@ -954,11 +954,11 @@ export class AddSaleOrderComponent {
             let tax: Taxes = new Taxes();
             tax.tax = taxAux.tax;
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            if(taxAux.percentage && taxAux.percentage !== 0) {
+            if(taxAux.percentage === 0 && taxAux.taxAmount !== 0) {
+              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
+            } else {
               tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
               tax.taxAmount = (tax.taxBase * tax.percentage / 100);
-            } else {
-              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
             }
             tax.taxBase = this.roundNumber.transform(tax.taxBase);
             tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
