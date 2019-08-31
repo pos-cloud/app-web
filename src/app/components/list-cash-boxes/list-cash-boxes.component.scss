@@ -3,7 +3,9 @@ app-list-cash-boxes {
             margin-top: 50px;
             height:80vh;
       }
-      
+td {
+            white-space: nowrap;
+       }      
       .card-header {
             color: white;
       }

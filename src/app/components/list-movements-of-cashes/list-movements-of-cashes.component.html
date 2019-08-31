@@ -72,7 +72,7 @@
               <td class="flat" *ngIf="movementOfCash.bank"> {{movementOfCash.bank.name}}</td>
               <td class="flat" *ngIf="!movementOfCash.bank"></td>
               <td class="flat"> {{movementOfCash.expirationDate}}</td>
-              <td class="flat" >{{movementOfCash.observation}}</td>
+              <td class="flat" >{{movementOfCash.observation | slice:0:10}}</td>
               
             </tr>
             <tr align="center" *ngIf="totalItems === 0 && !loading">

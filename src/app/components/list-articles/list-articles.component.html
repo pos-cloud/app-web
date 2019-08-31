@@ -71,7 +71,7 @@
             <td>{{article.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td *ngIf="article.currency">{{article.currency.name}}</td>
             <td *ngIf="!article.currency"></td>
-            <td>{{article.observation}}</td>
+            <td>{{article.observation | slice:0:10}}</td>
             <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">

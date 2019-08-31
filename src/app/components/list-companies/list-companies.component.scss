@@ -3,7 +3,9 @@ app-list-companies {
             margin-top: 50px;
             height:80vh;
       }
-      
+td {
+            white-space: nowrap;
+       }      
       .center-content {
             margin-top: 30px;
             display: -webkit-flex;

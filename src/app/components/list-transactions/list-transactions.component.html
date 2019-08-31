@@ -73,8 +73,8 @@
                                                                       currentPage: currentPage,
                                                                       totalItems: totalItems
                                                                     }">
-            <td align="left" width="150">
-              <button type="button" 
+            <td class="btn-list">
+              <button type="button"
                       class="btn btn-success  btn-sm" 
                       (click)="openModal('view', transaction)" 
                       title="Ver"><i class="fa fa-eye"></i>
@@ -138,7 +138,7 @@
                 </span>
               </h6>
             </td>
-            <td>{{transaction.observation}}</td>
+            <td>{{transaction.observation | slice:0:10}}</td>
             <td>{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td>{{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
@@ -260,7 +260,7 @@
                 </span>
               </h6>
             </td>
-            <td>{{transaction.observation}}</td>
+            <td>{{transaction.observation | slice:0:10}}</td>
             <td>{{transaction.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td>{{transaction.discountAmount | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
@@ -370,7 +370,7 @@
                 </span>
               </h6>
             </td>
-            <td>{{transaction.observation}}</td>
+            <td>{{transaction.observation | slice:0:10}}</td>
             <td>{{transaction.totalPrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">

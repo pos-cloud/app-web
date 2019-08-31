@@ -93,7 +93,7 @@
               <td>{{company.emails}}</td>
               <td>{{company.birthday | dateFormat:'DD/MM/YYYY'}}</td>
               <td>{{company.allowCurrentAccount}}</td>
-              <td>{{company.observation}}</td>
+              <td>{{company.observation | slice:0:10}}</td>
             </tr>
             <tr align="center" *ngIf="areCompaniesEmpty && !loading">
               <td colspan="15">No se encontraron empresas</td>

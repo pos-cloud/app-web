@@ -2,8 +2,7 @@ app-list-transactions {
       .card {
             margin-top: 50px;
             height:80vh;
-      }
-      
+      }  
       .card-header {
             color: white;
       }
@@ -16,6 +15,9 @@ app-list-transactions {
           box-shadow: 0px 0px 2px;
           border-radius: 5px;
           cursor: pointer;
+       }
+       td {
+            white-space: nowrap;
        }
       
        .center-content {
