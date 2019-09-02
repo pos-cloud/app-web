@@ -18,7 +18,7 @@
             <input type="date" class="form-control" formControlName="expirationDate" name="expirationDate" min="2000-01-01" />
           </div>
 
-          <div class="form-group col-md-6">
+          <!--<div class="form-group col-md-6">
             <label class="control-label">Estado</label>
             <select class="form-control" formControlName="statusCheck">
               <option *ngFor="let statusCheck of statusChecks" [value]="statusCheck" >{{statusCheck}}</option>
@@ -26,7 +26,7 @@
             <div *ngIf="formErrors.statusCheck" class="alert alert-danger">
               {{ formErrors.statusCheck }}
             </div>
-          </div>
+          </div>-->
         </div>
         <div class="row">
           <div class="form-group col-md-12">
@@ -39,9 +39,6 @@
                         [disabled]="readonly">
                         {{bank.code}} - {{bank.name}}</option>
               </select>
-            <div *ngIf="formErrors.bank" class="alert alert-danger">
-              {{ formErrors.bank }}
-            </div>
           </div>
         </div>
         <div class="row">
@@ -62,9 +59,6 @@
           <div class="form-group col-md-6">
             <label for="CUIT" class="control-label">CUIT:</label>
             <input type="text" class="form-control" name="CUIT" formControlName="CUIT"/>
-            <div *ngIf="formErrors.CUIT" class="alert alert-danger">
-              {{ formErrors.CUIT }}
-            </div>
           </div>
         </div>
       </div>
