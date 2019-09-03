@@ -60,6 +60,10 @@ export class EditCheckComponent implements OnInit {
     this.buildForm();
   }
 
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+  
   public getMovementOfCash() : void {
     this._movementOfCashService.getMovementOfCash(this.movementOfCashId).subscribe(
       result => {
