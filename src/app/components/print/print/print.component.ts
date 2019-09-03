@@ -1795,7 +1795,7 @@ export class PrintComponent implements OnInit {
       }
       this.doc.setFontSize(this.fontSizes.normal);
       this.doc.setFontType('bold');
-      this.doc.text("Comp. Nº:", 110, 25);
+      this.doc.text("Comp. Nº:", 110, 25);//
       this.doc.setFontType('normal');
       if(Config.country === 'AR') {
         this.doc.text(this.padString(this.transaction.origin, 4) + "-" + this.padString(this.transaction.number, 8), 130, 25);

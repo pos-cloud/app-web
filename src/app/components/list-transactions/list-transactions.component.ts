@@ -26,6 +26,7 @@ import { AddTransactionComponent } from '../add-transaction/add-transaction.comp
 import { AuthService } from 'app/services/auth.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { ExportTransactionsComponent } from '../export/export-transactions/export-transactions.component';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -324,6 +325,8 @@ export class ListTransactionsComponent implements OnInit {
             }
           }
         }
+        /*modalRef = this._modalService.open(PrintTransactionTypeComponent)
+        modalRef.componentInstance.transactionId = transaction._id*/
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });

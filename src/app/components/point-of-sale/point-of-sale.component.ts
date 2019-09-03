@@ -774,7 +774,9 @@ export class PointOfSaleComponent implements OnInit {
 
 
       if( !this.transaction.branchDestination || 
-          !this.transaction.branchOrigin) {
+          !this.transaction.branchOrigin ||
+          !this.transaction.depositDestination ||
+          !this.transaction.depositOrigin) {
             let branchAssigned = await this.assignBranch();
             if(branchAssigned) {
               this.nextStepTransaction();
