@@ -310,7 +310,7 @@ export class ListTransactionsComponent implements OnInit {
         });
         break;
       case 'print':
-        /*modalRef = this._modalService.open(PrintComponent);
+        modalRef = this._modalService.open(PrintComponent);
         modalRef.componentInstance.company = transaction.company;
         modalRef.componentInstance.transactionId = transaction._id;
         modalRef.componentInstance.typePrint = 'invoice';
@@ -324,9 +324,9 @@ export class ListTransactionsComponent implements OnInit {
               }
             }
           }
-        }*/
-        modalRef = this._modalService.open(PrintTransactionTypeComponent)
-        modalRef.componentInstance.transactionId = transaction._id
+        }
+        /*modalRef = this._modalService.open(PrintTransactionTypeComponent)
+        modalRef.componentInstance.transactionId = transaction._id*/
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
