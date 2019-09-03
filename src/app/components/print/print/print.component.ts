@@ -1929,7 +1929,7 @@ export class PrintComponent implements OnInit {
           }
         }
 
-        if(this.movementsOfArticles[i].article.otherFields && this.transaction.type.printDescriptionType === DescriptionType.PosDescription){
+        if(this.movementsOfArticles[i].otherFields && this.movementsOfArticles[i].otherFields !== null && this.transaction.type.printDescriptionType === DescriptionType.PosDescription){
           let temp = this.movementsOfArticles[i].article.description.split(' ');
           detalle += " Talle:" + temp.pop();
         }
