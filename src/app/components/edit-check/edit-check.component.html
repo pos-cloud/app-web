@@ -35,8 +35,7 @@
                 <option *ngFor="let bank of banks"
                         [selected]="(movementOfCash.bank && movementOfCash.bank._id && bank._id===movementOfCash.bank._id) ||
                                     (movementOfCash.bank && bank._id===movementOfCash.bank)"
-                        [value]="bank._id"
-                        [disabled]="readonly">
+                        [value]="bank._id">
                         {{bank.code}} - {{bank.name}}</option>
               </select>
           </div>
