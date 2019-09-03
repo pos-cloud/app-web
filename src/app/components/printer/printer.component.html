@@ -88,110 +88,155 @@
             </div>
           </ng-template>
         </ngb-tab>
-        <!--<ngb-tab title="Diseño">
+        <ngb-tab title="Diseño">
           <ng-template ngbTabContent>
               <div class="row tab-content">
-                  <form #fieldForm="ngForm" (ngSubmit)="addException(fieldForm)">
+                <div class="col-md-5">
+                  <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
                       <div class="row">
-                        <div class="form-group col-md-1">
+                        <div class="form-group col-md-4">
                           <label for="type" class="control-label">Tipo:</label>
-                          <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="type" [readonly]="readonly"/>
-                          </div>
+                          <select class="form-control" [(ngModel)]="type" name="type" required>
+                            <option value="label" [selected]="label">Etiqueta</option>
+                            <option value="field" [selected]="field">Campo</option>
+                            <option value="line" [selected]="line">Linea</option>
+                          </select>
                         </div>
-                        <div class="form-group col-md-1">
-                          <label for="label" class="control-label">Label:</label>
-                          <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="label" [readonly]="readonly"/>
-                          </div>
-                        </div>
-                        <div class="form-group col-md-1">
+                        <div class="form-group col-md-4" *ngIf="type !=='line'">
                           <label for="value" class="control-label">Valor:</label>
                           <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="value" [readonly]="readonly"/>
+                            <input type="text" class="form-control" ngModel name="value"/>
                           </div>
                         </div>
-                        <div class="form-group col-md-1">
+                        <div class="form-group col-md-4">
+                            <label for="position" class="control-label">Posicion:</label>
+                            <select class="form-control" [(ngModel)]="position" name="position" required>
+                                <option *ngFor="let position of positions"
+                                        [ngValue]="position">
+                                        {{position}}
+                                </option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="row">
+                        <div class="form-group col-md-4" *ngIf="type !=='line'">
                           <label for="font" class="control-label">Fuente:</label>
-                          <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="font" [readonly]="readonly"/>
-                          </div>
+                          <select class="form-control" [(ngModel)]="font" name="font" required>
+                            <option value="default" [selected]="default">Default</option>
+                            <option value="courier" [selected]="courier">Courier</option>
+                            <option value="times" [selected]="times">Times</option>
+                            <option value="helvetica" [selected]="helvetica">Helvetica</option>
+                          </select>
                         </div>
-                        <div class="form-group col-md-1">
-                            <label for="fontType" class="control-label">Tipo:</label>
-                          <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="fontType" [readonly]="readonly"/>
-                          </div>
+                        <div class="form-group col-md-4" *ngIf="type !=='line'">
+                          <label for="fontType" class="control-label">Letra:</label>
+                          <select class="form-control" [(ngModel)]="fontType" name="fontType"  required>
+                            <option value="normal" [selected]="normal">Normal</option>
+                            <option value="italic" [selected]="italic">Italic</option>
+                            <option value="bold" [selected]="bold">Bold</option>                            
+                            <option value="bolditalic" [selected]="bolditalic">Bolditalic</option>
+                          </select>
                         </div>
-                        <div class="form-group col-md-1">
+                        <div class="form-group col-md-4">
                           <label for="fontSize" class="control-label">Tamaño:</label>
                           <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="fontSize" [readonly]="readonly"/>
+                            <input type="number" class="form-control" ngModel name="fontSize" required/>
                           </div>
                         </div>
-                        <div class="form-group col-md-1">
-                          <label for="positionStartX" class="control-label">pos X:</label>
+                      </div>
+                      <div class="row">
+                        <div class="form-group col-md-3">
+                          <label for="positionStartX" class="control-label">X ini:</label>
                           <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="positionStartX" [readonly]="readonly"/>
+                            <input type="number" class="form-control" ngModel name="positionStartX" required/>
                           </div>
                         </div>
-                        <div class="form-group col-md-1">
-                          <label for="positionStartY" class="control-label">pos Y:</label>
+                        <div class="form-group col-md-3">
+                          <label for="positionStartY" class="control-label">Y ini:</label>
                           <div class="input-group">
-                            <input type="text" class="form-control" ngModel name="positionStartY" [readonly]="readonly"/>
+                            <input type="number" class="form-control" ngModel name="positionStartY" required/>
                           </div>
                         </div>
-                        <div class="form-group col-md-1">
-                            <label for="positionEndX" class="control-label">pos X:</label>
+                        <div class="form-group col-md-3" *ngIf="type === 'line'">
+                            <label for="positionEndX" class="control-label">X fin:</label>
                             <div class="input-group">
-                              <input type="text" class="form-control" ngModel name="positionEndX" [readonly]="readonly"/>
+                              <input type="number" class="form-control" ngModel name="positionEndX" required/>
                             </div>
+                        </div>
+                        <div class="form-group col-md-3" *ngIf="type === 'line'">
+                            <label for="positionEndY" class="control-label">Y fin:</label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" ngModel name="positionEndY" required/>
                           </div>
-                          <div class="form-group col-md-1">
-                              <label for="positionEndY" class="control-label">pos Y:</label>
-                              <div class="input-group">
-                                <input type="text" class="form-control" ngModel name="positionEndY" [readonly]="readonly"/>
-                              </div>
+                        </div>
+                        <div class="form-group col-md-3" *ngIf="type !== 'line'">
+                            <label for="splitting" class="control-label">Ancho:</label>
+                            <div class="input-group">
+                              <input type="number" class="form-control" ngModel ng-pattern="^[0-9]+" name="splitting" />
                             </div>
-                            <div class="form-group col-md-1">
-                                <label for="splitting" class="control-label">Ancho Palabra:</label>
-                                <div class="input-group">
-                                  <input type="text" class="form-control" ngModel name="splitting" [readonly]="readonly"/>
-                                </div>
-                              </div>
-                              <div class="form-group col-md-1">
-                                  <label for="colour" class="control-label">Color:</label>
-                                  <div class="input-group">
-                                    <input type="text" class="form-control" ngModel name="colour" [readonly]="readonly"/>
-                                  </div>
-                                </div>
-                        <div class="form-group col-md-1">                      
-                            <label class="control-label">Acción:</label>
-                            <button type="summit" class="btn btn-success btn-sm">
+                        </div>
+                      </div>
+                      <div class="row">
+                          <div class="form-group col-md-5">      
+                            <button type="summit" [disabled]="!fieldForm.valid" class="btn btn-success btn">
                                 <i class="fa fa-plus"></i>
                             </button>
-                        </div>
+                          </div>
+
                       </div>
-                  </form>  
-                  
-                  <div formArrayName="fields" *ngFor="let field of printerForm.get('fields').controls; let i = index;">
-                    <div [formGroupName]="i">
-                      <div class="row">
-                        
-                        <div class="form-group col-md-1">        
-                          <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
-                              <i class="fa fa-trash-o"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div> 
-                  </div>
+                      
+                  </form>
                 </div>
+                <div class="col-md-7">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr class="separation">
+                          <th>Tipo</th>
+                          <th>Valor</th>
+                          <th>Posicion</th>
+                          <th>Fuente</th>
+                          <th>Letra</th>
+                          <th>Tamaño</th>
+                          <th>X ini</th>
+                          <th>Y ini</th>
+                          <th>X fin</th>
+                          <th>Y fin</th>
+                          <th>Ancho</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="separation" *ngFor="let field of printerForm.get('fields').controls; let i = index;">
+                          <td *ngIf="field && field.value">{{field.value.type}}</td>
+                          <td *ngIf="field && field.value">{{field.value.value}}</td>
+                          <td *ngIf="field && field.value">{{field.value.position}}</td>
+                          <td *ngIf="field && field.value">{{field.value.font}}</td>
+                          <td *ngIf="field && field.value">{{field.value.fontType}}</td>
+                          <td *ngIf="field && field.value">{{field.value.fontSize}}</td>
+                          <td *ngIf="field && field.value">{{field.value.positionStartX}}</td>
+                          <td *ngIf="field && field.value">{{field.value.positionStartY}}</td>
+                          <td *ngIf="field && field.value">{{field.value.positionEndX}}</td>
+                          <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
+                          <td *ngIf="field && field.value">{{field.value.splitting}}</td>
+
+                          <td align="right" width="10">
+                              <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
+                                  <i class="fa fa-trash-o"></i>
+                              </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                      </tfoot>
+                    </table>
+                </div>
+                  
+              </div>
           </ng-template>
-        </ngb-tab>-->
+        </ngb-tab>
       </ngb-tabset>
     </div>
-      <div class="modal-footer" *ngIf="operation !== 'view'">
+    <div class="modal-footer" *ngIf="operation !== 'view'">
+      <button type="button" class="btn btn-secondary" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
       <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

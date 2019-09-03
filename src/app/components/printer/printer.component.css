@@ -11,3 +11,12 @@
 .btn {
       cursor: pointer;
 }
+
+.separation th{
+      width:10%;    
+}
+
+.table {
+      display: block;
+      overflow-y: auto;
+}

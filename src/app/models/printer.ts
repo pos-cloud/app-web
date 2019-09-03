@@ -19,8 +19,8 @@ export class Printer {
     public addPag : Number; // addPage()
     public fields : [{
         type : string; //field,line,movArticle,movCash,movCancellation
-        label : string;
-        value : string;
+        label : string; 
+        value : string; //field,movArticle,movCash,movCancellation
         font : string; //courier,times,helvetica  solo si es field
         fontType : string; //normal,italic,bold,bolditalic solo si es field
         fontSize : Number; 
@@ -29,7 +29,8 @@ export class Printer {
         positionEndX : Number; //line
         positionEndY : Number; //line
         splitting : Number; // ancho del string solo si es field
-        colour : string // 4,5,9
+        colour : string; // 4,5,9
+        position : PositionPrint;
     }];
 
     public creationUser: User;
@@ -38,6 +39,20 @@ export class Printer {
     public updateDate: string;
     
     constructor() { }
+}
+
+export enum PositionPrint {
+    Header = <any> "Encabezado",
+    Body = <any> "Cuerpo",
+    Footer = <any> "Pie"
+}
+
+export enum TypeFields {
+    Field = <any> "Etiqueta",
+    Line = <any> "Linea",
+    MovArticle = <any> "Articulo",
+    MovCash = <any> "Dinero",
+    MovCan = <any>"Cancelacion"
 }
 
 export enum PrinterPrintIn {

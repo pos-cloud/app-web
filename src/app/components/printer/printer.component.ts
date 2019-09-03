@@ -1,12 +1,15 @@
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { Printer, PrinterType, PrinterPrintIn } from '../../models/printer';
+import { Printer, PrinterType, PrinterPrintIn, PositionPrint } from '../../models/printer';
 
 import { PrinterService } from '../../services/printer.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import * as jsPDF from 'jspdf';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 
 @Component({
   selector: 'app-add-printer',
@@ -23,12 +26,19 @@ export class PrinterComponent implements OnInit {
   public printer: Printer;
   public types: PrinterType[] = [PrinterType.PDF];
   public printsIn: PrinterPrintIn[] = [PrinterPrintIn.Counter, PrinterPrintIn.Kitchen, PrinterPrintIn.Bar, PrinterPrintIn.Label];
+  public positions: any[] = [PositionPrint.Header, PositionPrint.Body, PositionPrint.Footer];
   public printerForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
   public pageSizes: string[] = ["A4", "Etiqueta", "Roll Paper", "Personalizado"];
+  public pdfURL;
+  public doc;
+
+  public fontSize = 5;
+  public fontType = "normal";
+  public font = "default";
 
   public formErrors = {
     'name': '',
@@ -54,9 +64,13 @@ export class PrinterComponent implements OnInit {
     public _printerService: PrinterService,
     public _fb: FormBuilder,
     public _router: Router,
+    public _modalService: NgbModal,
     public activeModal: NgbActiveModal,
-    public alertConfig: NgbAlertConfig,
-  ) { }
+    public alertConfig: NgbAlertConfig
+
+  ) { 
+    this.doc = new jsPDF();
+  }
 
   ngOnInit(): void {
 
@@ -69,6 +83,16 @@ export class PrinterComponent implements OnInit {
     if (this.printerId) {
       this.getPrinter();
     }
+
+  }
+
+  public buildPDF() : void {
+
+    let modalRef;
+
+    modalRef = this._modalService.open(PrintTransactionTypeComponent)
+    modalRef.componentInstance.origin = "view"
+    modalRef.componentInstance.printer = this.printerForm.value
   }
 
   public getPrinter() : void {
@@ -121,7 +145,8 @@ export class PrinterComponent implements OnInit {
       ],
       'orientation' : [this.printer.orientation,[]],
       'row' : [this.printer.row,[]],
-      'addPag' : [this.printer.addPag,[]]
+      'addPag' : [this.printer.addPag,[]],
+      'fields' : this._fb.array([])
     });
 
     this.printerForm.valueChanges
@@ -129,6 +154,64 @@ export class PrinterComponent implements OnInit {
 
     this.onValueChanged();
     this.focusEvent.emit(true);
+  }
+
+  /*public addNewField(e :any): void {
+    if(this.printerForm.value.fields.lenght <= 0 && e){
+      const fields = this.printerForm.controls.fields as FormArray;
+      fields.push(
+        this._fb.group({
+          _id: null,
+          type: null,
+          label: null,
+          value: 0,
+          font : null,
+          fontType : null,
+          fontSize : null,
+          positionStartX : null,
+          positionStartY : null,
+          positionEndX : null,
+          positionEndY : null,
+          splitting : null,
+          colour : null,
+          position : null
+        })
+      );
+    }
+  }*/
+
+  public addField(fieldForm: NgForm): void {
+
+    let valid = true;
+    const fields = this.printerForm.controls.fields as FormArray;
+
+    if(valid){
+      fields.push(
+        this._fb.group({
+          _id: null,
+          type: fieldForm.value.type,
+          label: fieldForm.value.label,
+          value: fieldForm.value.value,
+          font : fieldForm.value.font,
+          fontType : fieldForm.value.fontType,
+          fontSize : fieldForm.value.fontSize,
+          positionStartX : fieldForm.value.positionStartX,
+          positionStartY : fieldForm.value.positionStartY,
+          positionEndX : fieldForm.value.positionEndX,
+          positionEndY : fieldForm.value.positionEndY,
+          splitting : fieldForm.value.splitting,
+          colour : fieldForm.value.colour,
+          position : fieldForm.value.position
+        })
+      );
+      fieldForm.resetForm();
+    }
+      
+  }
+
+  deleteField(index) {
+    let control = <FormArray>this.printerForm.controls.fields;
+    control.removeAt(index)
   }
 
   public onValueChanged(data?: any): void {
@@ -189,7 +272,7 @@ export class PrinterComponent implements OnInit {
     if (!this.printer.row) this.printer.row = 0;
     if (!this.printer.addPag) this.printer.addPag = 0;
 
-    this.printerForm.setValue({
+    const values = {
       '_id' : this.printer._id,
       'name': this.printer.name,
       'type': this.printer.type,
@@ -200,7 +283,33 @@ export class PrinterComponent implements OnInit {
       'orientation' : this.printer.orientation,
       'row' : this.printer.row,
       'addPag' : this.printer.addPag
-    });
+    }
+
+    if(this.printer.fields && this.printer.fields.length > 0){
+      let fields = <FormArray>this.printerForm.controls.fields;
+      this.printer.fields.forEach(x => {
+
+        fields.push(this._fb.group({ 
+          _id: null,
+          type: x.type,
+          label: x.label,
+          value: x.value,
+          font : x.font,
+          fontType : x.fontType,
+          fontSize : x.fontSize,
+          positionStartX : x.positionStartX,
+          positionStartY : x.positionStartY,
+          positionEndX : x.positionEndX,
+          positionEndY : x.positionEndY,
+          splitting : x.splitting,
+          colour : x.colour,
+          position : x.position
+        }))
+      })
+    }
+
+    this.printerForm.patchValue(values);
+
   }
 
   public addPrinter(): void {
