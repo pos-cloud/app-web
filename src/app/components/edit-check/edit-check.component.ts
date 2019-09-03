@@ -160,7 +160,7 @@ export class EditCheckComponent implements OnInit {
             this.loading = false;
           } else {
             this.movementOfCash = result.movementOfCash;
-            this.showMessage("Se actualizo con exito", 'info', true);
+            this.showMessage("Se actualizo con exito", 'success', true);
           }
           this.loading = false;
         },
