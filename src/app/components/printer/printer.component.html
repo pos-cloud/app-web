@@ -94,6 +94,15 @@
                 <div class="col-md-5">
                   <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
                       <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="position" class="control-label">Posicion:</label>
+                            <select class="form-control" [(ngModel)]="position" name="position" required>
+                              <option *ngFor="let position of positions"
+                                    [ngValue]="position">
+                                    {{position}}
+                            </option>
+                          </select>
+                        </div>
                         <div class="form-group col-md-3">
                           <label for="type" class="control-label">Tipo:</label>
                           <select class="form-control" [(ngModel)]="type" name="type" required>
@@ -108,9 +117,9 @@
                             <option value="company" [selected]="company">Compania</option>
                             <option value="config" [selected]="config">Config</option>
                             <option value="transaction" [selected]="transaction">Transaccion</option>
-                            <option value="movementOfCash" [selected]="movementOfCash">Mov de Dinero</option>
-                            <option value="movementOfArticle" [selected]="movementOfArticle">Mov de Articulo</option>
-                            <option value="movementOfCancellation" [selected]="movementOfCancellation">Mov de Cancelacion</option>
+                            <option *ngIf="position == 'Cuerpo'" value="movementOfCash" [selected]="movementOfCash">Mov de Dinero</option>
+                            <option *ngIf="position == 'Cuerpo'" value="movementOfArticle" [selected]="movementOfArticle">Mov de Articulo</option>
+                            <option *ngIf="position == 'Cuerpo'" value="movementOfCancellation" [selected]="movementOfCancellation">Mov de Cancelacion</option>
                           </select>
                         </div>
                         <div class="form-group col-md-3" *ngIf="type === 'data'">
@@ -127,15 +136,6 @@
                           <div class="input-group">
                             <input type="text" class="form-control" ngModel name="value"/>
                           </div>
-                        </div>
-                        <div class="form-group col-md-4">
-                          <label for="position" class="control-label">Posicion:</label>
-                          <select class="form-control" [(ngModel)]="position" name="position" required>
-                            <option *ngFor="let position of positions"
-                                    [ngValue]="position">
-                                    {{position}}
-                            </option>
-                          </select>
                         </div>
                       </div>
                       <div class="row">
@@ -166,25 +166,25 @@
                       </div>
                       <div class="row">
                         <div class="form-group col-md-3">
-                          <label for="positionStartX" class="control-label">X ini:</label>
+                          <label for="positionStartX" class="control-label">X ini (mm):</label>
                           <div class="input-group">
                             <input type="number" class="form-control" ngModel name="positionStartX" required/>
                           </div>
                         </div>
                         <div class="form-group col-md-3">
-                          <label for="positionStartY" class="control-label">Y ini:</label>
+                          <label for="positionStartY" class="control-label">Y ini (mm):</label>
                           <div class="input-group">
                             <input type="number" class="form-control" ngModel name="positionStartY" required/>
                           </div>
                         </div>
                         <div class="form-group col-md-3" *ngIf="type === 'line'">
-                            <label for="positionEndX" class="control-label">X fin:</label>
+                            <label for="positionEndX" class="control-label">X fin (mm):</label>
                             <div class="input-group">
                               <input type="number" class="form-control" ngModel name="positionEndX" required/>
                             </div>
                         </div>
                         <div class="form-group col-md-3" *ngIf="type === 'line'">
-                            <label for="positionEndY" class="control-label">Y fin:</label>
+                            <label for="positionEndY" class="control-label">Y fin (mm):</label>
                           <div class="input-group">
                             <input type="number" class="form-control" ngModel name="positionEndY" required/>
                           </div>
