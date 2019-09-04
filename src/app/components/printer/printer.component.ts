@@ -98,6 +98,7 @@ export class PrinterComponent implements OnInit {
 
     this._configService.getModel(collection).subscribe(
       result =>{
+        this.documents = new Array();
         if(this.collection === "config"){
           for (let i = 0; i < result.model.length; i++) {
             if(result.model[i].slice(0,7) === 'company'){
@@ -105,7 +106,6 @@ export class PrinterComponent implements OnInit {
             }
           }
         } else {
-
           this.documents = result.model;
         }
       },
