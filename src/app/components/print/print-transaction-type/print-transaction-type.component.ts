@@ -18,6 +18,7 @@ import { MovementOfArticle } from 'app/models/movement-of-article';
 import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
+import { async } from 'q';
 
 
 @Component({
@@ -273,7 +274,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     await this.buildHeader();
 
-    this.printer.fields.forEach(field => {
+    this.printer.fields.forEach(async field => {
       if(field.position === PositionPrint.Body){
         switch (field.type) {
           case 'label':
@@ -289,43 +290,62 @@ export class PrintTransactionTypeComponent implements OnInit {
             this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
             break;
           case 'data':
+            let row = field.positionStartY
             if(field.font !== 'default'){
               this.doc.setFont(field.font)
             }   
             this.doc.setFontType(field.fontType)
             this.doc.setFontSize(field.fontSize)
 
-            if(field.value.split('.')[0] === "movementOfArticle"){
-              this.movementOfArticle.forEach(movementOfArticle => {
+            if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
+              this.movementOfArticle.forEach(async movementOfArticle => {
                 try {
                   this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
                 } catch (e){
                   this.doc.text(field.positionStartX,field.positionStartY,field.value)
                 }
-                field.positionStartY = field.positionStartY + this.printer.row;
+                row = row + this.printer.row;
+                if(row > this.printer.addPag){
+                  this.doc.addPag()
+                  await this.buildHeader()
+                  row = field.positionStartY
+                }
               });
-            } else if(field.value.split('.')[0] === "movementOfCash"){
-              this.movementOfCash.forEach(movementOfCash => {
+            } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
+              this.movementOfCash.forEach(async movementOfCash => {
                 try {
                   this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
                 } catch (e){
                   this.doc.text(field.positionStartX,field.positionStartY,field.value)
                 }
-                field.positionStartY = field.positionStartY + this.printer.row;
+                row = row + this.printer.row;
+                if(row > this.printer.addPag){
+                  this.doc.addPag()
+                  await this.buildHeader()
+                  row = field.positionStartY
+                }
               });
-            } else if(field.value.split('.')[0] === "movementOfCancellation"){
-              this.movementOfCancellation.forEach(movementOfCancellation => {
+            } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation){
+              this.movementOfCancellation.forEach(async movementOfCancellation => {
                 try {
-                  this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
+                  this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
                 } catch (e){
-                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  this.doc.text(field.positionStartX,row,field.value)
                 }
-                field.positionStartY = field.positionStartY + this.printer.row;
+                row = row + this.printer.row;
+                if(row > this.printer.addPag){
+                  this.doc.addPag()
+                  await this.buildHeader()
+                  row = field.positionStartY
+                }
               });
             } else {
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              try {
+                this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
+              } catch (error) {
+                this.doc.text(field.positionStartX,field.positionStartY,'')
+              }
             }
-
             break;
           default:
             break;
