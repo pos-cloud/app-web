@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Printer, PrinterType, PrinterPrintIn, PositionPrint } from '../../models/printer';
+import { Company } from '../../models/company'
 
 import { PrinterService } from '../../services/printer.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import * as jsPDF from 'jspdf';
+
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-add-printer',
@@ -36,6 +37,8 @@ export class PrinterComponent implements OnInit {
   public pdfURL;
   public doc;
 
+  public documents : string[];
+  public collection;
   public fontSize = 5;
   public fontType = "normal";
   public font = "default";
@@ -62,6 +65,7 @@ export class PrinterComponent implements OnInit {
 
   constructor(
     public _printerService: PrinterService,
+    public _configService : ConfigService,
     public _fb: FormBuilder,
     public _router: Router,
     public _modalService: NgbModal,
@@ -69,7 +73,7 @@ export class PrinterComponent implements OnInit {
     public alertConfig: NgbAlertConfig
 
   ) { 
-    this.doc = new jsPDF();
+    this.documents = new Array();
   }
 
   ngOnInit(): void {
@@ -83,6 +87,32 @@ export class PrinterComponent implements OnInit {
     if (this.printerId) {
       this.getPrinter();
     }
+    
+
+
+  }
+
+  public getDocuments() : void {
+
+    let collection = this.collection.replace(/\.?([A-Z])/g, function (x,y){return "-" + y.toLowerCase()}).replace(/^_/, "");
+
+    this._configService.getModel(collection).subscribe(
+      result =>{
+        if(this.collection === "config"){
+          for (let i = 0; i < result.model.length; i++) {
+            if(result.model[i].slice(0,7) === 'company'){
+              this.documents.push(result.model[i])
+            }
+          }
+        } else {
+
+          this.documents = result.model;
+        }
+      },
+      error =>{
+
+      }
+    )
 
   }
 

@@ -88,35 +88,55 @@
             </div>
           </ng-template>
         </ngb-tab>
-        <!--<ngb-tab title="Diseño">
+        <ngb-tab title="Diseño">
           <ng-template ngbTabContent>
               <div class="row tab-content">
                 <div class="col-md-5">
                   <form #fieldForm="ngForm" (ngSubmit)="addField(fieldForm)">
                       <div class="row">
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                           <label for="type" class="control-label">Tipo:</label>
                           <select class="form-control" [(ngModel)]="type" name="type" required>
                             <option value="label" [selected]="label">Etiqueta</option>
-                            <option value="field" [selected]="field">Campo</option>
+                            <option value="data" [selected]="data">Dato</option>
                             <option value="line" [selected]="line">Linea</option>
                           </select>
                         </div>
-                        <div class="form-group col-md-4" *ngIf="type !=='line'">
+                        <div class="form-group col-md-3" *ngIf="type ==='data'">
+                          <label for="collection" class="control-label">Colección:</label>
+                          <select class="form-control" [(ngModel)]="collection" name="collection" (change)="getDocuments()">
+                            <option value="company" [selected]="company">Compania</option>
+                            <option value="config" [selected]="config">Config</option>
+                            <option value="transaction" [selected]="transaction">Transaccion</option>
+                            <option value="movementOfCash" [selected]="movementOfCash">Mov de Dinero</option>
+                            <option value="movementOfArticle" [selected]="movementOfArticle">Mov de Articulo</option>
+                            <option value="movementOfCancellation" [selected]="movementOfCancellation">Mov de Cancelacion</option>
+                          </select>
+                        </div>
+                        <div class="form-group col-md-3" *ngIf="type === 'data'">
+                          <label for="value" class="control-label">Valor:</label>
+                          <select class="form-control" [(ngModel)]="value" name="value">
+                            <option *ngFor="let document of documents"
+                                    [ngValue]="collection+'.'+document">
+                                    {{document}}
+                            </option>
+                          </select>
+                        </div>
+                        <div class="form-group col-md-3" *ngIf="type ==='label'">
                           <label for="value" class="control-label">Valor:</label>
                           <div class="input-group">
                             <input type="text" class="form-control" ngModel name="value"/>
                           </div>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="position" class="control-label">Posicion:</label>
-                            <select class="form-control" [(ngModel)]="position" name="position" required>
-                                <option *ngFor="let position of positions"
-                                        [ngValue]="position">
-                                        {{position}}
-                                </option>
-                              </select>
-                          </div>
+                          <label for="position" class="control-label">Posicion:</label>
+                          <select class="form-control" [(ngModel)]="position" name="position" required>
+                            <option *ngFor="let position of positions"
+                                    [ngValue]="position">
+                                    {{position}}
+                            </option>
+                          </select>
+                        </div>
                       </div>
                       <div class="row">
                         <div class="form-group col-md-4" *ngIf="type !=='line'">
@@ -182,9 +202,7 @@
                                 <i class="fa fa-plus"></i>
                             </button>
                           </div>
-
                       </div>
-                      
                   </form>
                 </div>
                 <div class="col-md-7">
@@ -217,7 +235,6 @@
                           <td *ngIf="field && field.value">{{field.value.positionEndX}}</td>
                           <td *ngIf="field && field.value">{{field.value.positionEndY}}</td>
                           <td *ngIf="field && field.value">{{field.value.splitting}}</td>
-
                           <td align="right" width="10">
                               <button type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
                                   <i class="fa fa-trash-o"></i>
@@ -232,11 +249,11 @@
                   
               </div>
           </ng-template>
-        </ngb-tab>-->
+        </ngb-tab>
       </ngb-tabset>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
-      <!--<button type="button" class="btn btn-secondary" (click)="buildPDF()"><i class="fa fa-eye"></i></button>-->
+      <button type="button" class="btn btn-secondary" (click)="buildPDF()"><i class="fa fa-eye"></i></button>
       <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="!printerForm.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>

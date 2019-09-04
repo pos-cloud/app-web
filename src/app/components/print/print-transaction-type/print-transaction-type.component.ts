@@ -7,6 +7,12 @@ import { Transaction } from 'app/models/transaction';
 import * as jsPDF from 'jspdf';
 import { Printer, PositionPrint } from 'app/models/printer';
 import { resolve } from 'q';
+import { Config } from 'app/app.config';
+import { MovementOfCashService } from 'app/services/movement-of-cash.service';
+import { MovementOfCash } from 'app/models/movement-of-cash';
+import { MovementOfArticle } from 'app/models/movement-of-article';
+import { MovementOfArticleService } from 'app/services/movement-of-article.service';
+import { Company } from 'app/models/company';
 @Component({
   selector: 'app-print-transaction-type',
   templateUrl: './print-transaction-type.component.html',
@@ -18,12 +24,18 @@ export class PrintTransactionTypeComponent implements OnInit {
   @Input() origin : string;
   @Input() printer : Printer;
   public transaction : Transaction;
+  public movementOfCash : MovementOfCash[];
+  public movementOfArticle : MovementOfArticle[];
+  public company : Company;
+  public config : Config;
   public doc;
   public pdfURL;
   public alertMessage;
 
   constructor(
     public _transactionService : TransactionService,
+    public _movementOfCashService : MovementOfCashService,
+    public _movementOfArticleService : MovementOfArticleService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,   
     public _configService: ConfigService,
@@ -31,6 +43,15 @@ export class PrintTransactionTypeComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+
+
+    await this.getConfigApi().then(
+      config => {
+        if(config) {
+          this.config = config
+        }
+      }
+    );
 
     if(this.transactionId){
       this.getTransaction();
@@ -41,8 +62,25 @@ export class PrintTransactionTypeComponent implements OnInit {
     }
   }
 
-  public getTransaction(): void {
+  public getConfigApi(): Promise<Config> {
 
+    return new Promise<Config>((resolve, reject) => {
+      this._configService.getConfigApi().subscribe(
+        result => {
+          if (!result.configs) {
+            resolve(null);
+          } else {
+            resolve(result.configs[0]);
+          }
+        },
+        error => {
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  async getTransaction() {
 
       this._transactionService.getTransaction(this.transactionId).subscribe(
         async result => {
@@ -54,8 +92,16 @@ export class PrintTransactionTypeComponent implements OnInit {
                 this.transaction.type.defectPrinter && 
                 this.transaction.type.defectPrinter.fields && 
                 this.transaction.type.defectPrinter.fields.length > 0) {
+              
+              await this.getMovementOfCashes();
+              await this.getMovementofArticle();
+              //await this.getMovementofCancellation();
+              
               this.printer = this.transaction.type.defectPrinter
+              this.company = this.transaction.company;
+              
               this.buildPrint();
+
             } else {
               this.showMessage("Debe seleccionar la impresora por defecto para Tipo de Transaccion:" + this.transaction.type.name, 'danger', false);
             }
@@ -65,6 +111,54 @@ export class PrintTransactionTypeComponent implements OnInit {
           this.showMessage(error._body, 'danger', false);
         }
       );
+  }
+
+  async getMovementOfCashes() : Promise<boolean> {
+
+    return new Promise<boolean>((resolve, reject) => {
+      let query = 'where="transaction":"' + this.transaction._id + '"';
+  
+      this._movementOfCashService.getMovementsOfCashes(query).subscribe(
+        async result => {
+          if (!result.movementsOfCashes) {
+            this.movementOfCash = new Array();
+            resolve(true)
+          } else {
+            this.movementOfCash = result.movementsOfCashes;
+            resolve(true)
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(false)
+        }
+      );
+    });
+
+  }
+
+  async getMovementofArticle() : Promise<boolean> {
+
+    return new Promise<boolean>((resolve, reject) => {
+
+      let query = 'where="transaction":"' + this.transaction._id + '"';
+
+      this._movementOfArticleService.getMovementsOfArticles(query).subscribe(
+        async result => {
+          if (!result.movementsOfArticles) {
+            this.movementOfArticle = new Array();
+            resolve(true)
+          } else {
+            this.movementOfArticle = result.movementsOfArticles;
+            resolve(true)
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(false)
+        }
+      );
+    });
   }
 
   async buildPrint() {
@@ -84,7 +178,9 @@ export class PrintTransactionTypeComponent implements OnInit {
       if(field.position === PositionPrint.Body){
         switch (field.type) {
           case 'label':
-            this.doc.setFont(field.font)
+            if(field.font !== 'default'){
+              this.doc.setFont(field.font)
+            }   
             this.doc.setFontType(field.fontType)
             this.doc.setFontSize(field.fontSize)
             this.doc.text(field.positionStartX,field.positionStartY,field.value)
@@ -93,14 +189,35 @@ export class PrintTransactionTypeComponent implements OnInit {
             this.doc.setLineWidth(field.fontSize)
             this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
             break;
-          case 'field':
-            if(this.transactionId){
+          case 'data':
+            if(field.font !== 'default'){
               this.doc.setFont(field.font)
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
+            }   
+            this.doc.setFontType(field.fontType)
+            this.doc.setFontSize(field.fontSize)
+
+            if(field.value.split('.')[0] === "movementOfArticle"){
+              this.movementOfArticle.forEach(movementOfArticle => {
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
+                } catch (e){
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                }
+                field.positionStartY = field.positionStartY + this.printer.row;
+              });
+            } else if(field.value.split('.')[0] === "movementOfCash"){
+              this.movementOfCash.forEach(movementOfCash => {
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
+                } catch (e){
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                }
+                field.positionStartY = field.positionStartY + this.printer.row;
+              });
+            } else {
               this.doc.text(field.positionStartX,field.positionStartY,field.value)
             }
-            
+
             break;
           default:
             break;
@@ -114,69 +231,83 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   }
 
-  async buildFooter() {
+  async buildFooter() : Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.printer.fields.forEach(field => {
+        if(field.position === PositionPrint.Footer){
+          switch (field.type) {
+            case 'label':
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              break;
+            case 'line':
+              this.doc.setLineWidth(field.fontSize)
+              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
+              break;
+            case 'data':
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              try {
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value))
+              } catch (e) {
+                this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+      resolve(true)
+    });
+   
+  }
+
+  async buildHeader() : Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.printer.fields.forEach(field => {
+        if(field.position === PositionPrint.Header){
+          switch (field.type) {
+            case 'label':
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }              
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              break;
+            case 'line':
+              this.doc.setLineWidth(field.fontSize)
+              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
+              break;
+            case 'data':
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              try {
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value))
+              } catch (e) {
+                this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+      resolve(true)
+    });
     
-    this.printer.fields.forEach(field => {
-      if(field.position === PositionPrint.Footer){
-        switch (field.type) {
-          case 'label':
-            this.doc.setFont(field.font)
-            this.doc.setFontType(field.fontType)
-            this.doc.setFontSize(field.fontSize)
-            this.doc.text(field.positionStartX,field.positionStartY,field.value)
-            break;
-          case 'line':
-            this.doc.setLineWidth(field.fontSize)
-            this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-            break;
-          case 'field':
-            if(this.transactionId){
-              this.doc.setFont(field.font)
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    });
-    resolve(true)
   }
-
-  async buildHeader() {
-    this.printer.fields.forEach(field => {
-      if(field.position === PositionPrint.Header){
-        switch (field.type) {
-          case 'label':
-            if(field.font !== 'default'){
-              this.doc.setFont(field.font)
-            }              
-            this.doc.setFontType(field.fontType)
-            this.doc.setFontSize(field.fontSize)
-            this.doc.text(field.positionStartX,field.positionStartY,field.value)
-            break;
-          case 'line':
-            this.doc.setLineWidth(field.fontSize)
-            this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-            break;
-          case 'field':
-            if(this.transactionId){
-              this.doc.setFont(field.font)
-              this.doc.setFontType(field.fontType)
-              this.doc.setFontSize(field.fontSize)
-              this.doc.text(field.positionStartX,field.positionStartY,field.value)
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    });
-    resolve(true)
-  }
-
 
   public finishImpression(): void {
 
