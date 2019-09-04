@@ -105,6 +105,12 @@ export class PrinterComponent implements OnInit {
               this.documents.push(result.model[i])
             }
           }
+        } else if(this.collection === "movementOfCancellation"){
+          for (let i = 0; i < result.model.length; i++) {
+            if(result.model[i].slice(0,17) === 'transactionOrigin'){
+              this.documents.push(result.model[i])
+            }
+          }
         } else {
           this.documents = result.model;
         }

@@ -1,18 +1,25 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ConfigService } from 'app/services/config.service';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TransactionService } from 'app/services/transaction.service';
-import { Transaction } from 'app/models/transaction';
 import * as jsPDF from 'jspdf';
-import { Printer, PositionPrint } from 'app/models/printer';
-import { resolve } from 'q';
-import { Config } from 'app/app.config';
+
+//servicios
+import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
+import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { MovementOfCashService } from 'app/services/movement-of-cash.service';
+import { TransactionService } from 'app/services/transaction.service';
+import { ConfigService } from 'app/services/config.service';
+
+//modelos
+import { Printer, PositionPrint } from 'app/models/printer';
+import { Config } from 'app/app.config';
 import { MovementOfCash } from 'app/models/movement-of-cash';
 import { MovementOfArticle } from 'app/models/movement-of-article';
-import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { Company } from 'app/models/company';
+import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
+import { Transaction } from 'app/models/transaction';
+
+
 @Component({
   selector: 'app-print-transaction-type',
   templateUrl: './print-transaction-type.component.html',
@@ -26,6 +33,7 @@ export class PrintTransactionTypeComponent implements OnInit {
   public transaction : Transaction;
   public movementOfCash : MovementOfCash[];
   public movementOfArticle : MovementOfArticle[];
+  public movementOfCancellation : MovementOfCancellation [];
   public company : Company;
   public config : Config;
   public doc;
@@ -36,6 +44,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     public _transactionService : TransactionService,
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
+    public _movementOfCancellationService : MovementOfCancellationService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,   
     public _configService: ConfigService,
@@ -95,7 +104,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               
               await this.getMovementOfCashes();
               await this.getMovementofArticle();
-              //await this.getMovementofCancellation();
+              await this.getMovementofCancellation();
               
               this.printer = this.transaction.type.defectPrinter
               this.company = this.transaction.company;
@@ -111,6 +120,96 @@ export class PrintTransactionTypeComponent implements OnInit {
           this.showMessage(error._body, 'danger', false);
         }
       );
+  }
+
+  async getMovementofCancellation() {
+
+    return new Promise((resolve, reject) => {
+
+      let match;
+  
+      match = { "transactionDestination": { $oid: this.transactionId} , "operationType": { "$ne": "D" } };
+      
+  
+      // CAMPOS A TRAER
+      let project = {
+        "transactionDestination": 1,
+        "operationType" : 1,
+        'transactionOrigin.origin':1,
+        'transactionOrigin.letter':1,
+        'transactionOrigin.number':1,
+        'transactionOrigin.date':1,
+        'transactionOrigin.startDate':1,
+        'transactionOrigin.endDate':1,
+        'transactionOrigin.expirationDate':1,
+        'transactionOrigin.VATPeriod':1,
+        'transactionOrigin.observation':1,
+        'transactionOrigin.basePrice':1,
+        'transactionOrigin.exempt':1,
+        'transactionOrigin.discountAmount':1,
+        'transactionOrigin.discountPercent':1,
+        'transactionOrigin.taxes':1,
+        'transactionOrigin.totalPrice':1,
+        'transactionOrigin.roundingAmount':1,
+        'transactionOrigin.diners':1,
+        'transactionOrigin.state':1,
+        'transactionOrigin.madein':1,
+        'transactionOrigin.balance':1,
+        'transactionOrigin.CAE':1,
+        'transactionOrigin.CAEExpirationDate':1,
+        'transactionOrigin.stringSAT':1,
+        'transactionOrigin.CFDStamp':1,
+        'transactionOrigin.SATStamp':1,
+        'transactionOrigin.UUID':1,
+        'transactionOrigin.currency':1,
+        'transactionOrigin.quotation':1,
+        'transactionOrigin.relationType':1,
+        'transactionOrigin.useOfCFDI':1,
+        'transactionOrigin.type':1,
+        'transactionOrigin.cashBox':1,
+        'transactionOrigin.table':1,
+        'transactionOrigin.employeeOpening':1,
+        'transactionOrigin.employeeClosing':1,
+        'transactionOrigin.branchOrigin':1,
+        'transactionOrigin.branchDestination':1,
+        'transactionOrigin.depositOrigin':1,
+        'transactionOrigin.depositDestination':1,
+        'transactionOrigin.company':1,
+        'transactionOrigin.transport':1,
+        'transactionOrigin.turnOpening':1,
+        'transactionOrigin.turnClosing':1,
+        'transactionOrigin.priceList':1,
+        'transactionOrigin.creationUser':1,
+        'transactionOrigin.creationDate':1,
+        'transactionOrigin.operationType':1,
+        'transactionOrigin.updateUser':1,
+        'transactionOrigin.updateDate':1,
+        'transactionOrigin._id':1,
+      };
+  
+      this._movementOfCancellationService.getMovementsOfCancellations(
+        project, // PROJECT
+        match, // MATCH
+        { order: 1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
+      ).subscribe(async result => {
+        if (result && result.movementsOfCancellations && result.movementsOfCancellations.length > 0) {
+          this.movementOfCancellation = new Array();
+          this.movementOfCancellation = result.movementsOfCancellations
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        resolve(false)
+      });
+    });
+  
+   
   }
 
   async getMovementOfCashes() : Promise<boolean> {
@@ -207,6 +306,15 @@ export class PrintTransactionTypeComponent implements OnInit {
               });
             } else if(field.value.split('.')[0] === "movementOfCash"){
               this.movementOfCash.forEach(movementOfCash => {
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
+                } catch (e){
+                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                }
+                field.positionStartY = field.positionStartY + this.printer.row;
+              });
+            } else if(field.value.split('.')[0] === "movementOfCancellation"){
+              this.movementOfCancellation.forEach(movementOfCancellation => {
                 try {
                   this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
                 } catch (e){
