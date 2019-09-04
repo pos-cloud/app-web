@@ -18,7 +18,6 @@ import { MovementOfArticle } from 'app/models/movement-of-article';
 import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
-import { async } from 'q';
 
 
 @Component({
