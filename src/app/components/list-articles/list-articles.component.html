@@ -27,6 +27,7 @@
             </th>
             <th (click)="orderBy('code')">#</th>
             <th (click)="orderBy('description')">Descripción</th>
+            <th (click)="orderBy('posDescription')">Descripción Corta</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
             <th (click)="orderBy('salePrice')">Precio de Venta</th>
@@ -38,6 +39,7 @@
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (keydown.enter)="getArticles()" placeholder="Precio de Venta..."></th>
@@ -48,7 +50,7 @@
         </thead>
         <tbody>
           <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+            <td colspan="17">Cargando...</td>
           </tr>
           <tr *ngFor="let article of articles | paginate: { itemsPerPage: itemsPerPage,
                                                             currentPage: currentPage,
@@ -64,6 +66,7 @@
             </td>
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
+            <td>{{article.posDescription}}</td>
             <td *ngIf="article.make">{{article.make.description}}</td>
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
@@ -75,7 +78,7 @@
             <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
-            <td colspan="9">No se encontraron productos</td>
+            <td colspan="10">No se encontraron productos</td>
           </tr>
         </tbody>
       </table>
@@ -127,6 +130,7 @@
           <tr>
             <th (click)="orderBy('code')">#</th>
             <th (click)="orderBy('description')">Descripción</th>
+            <th (click)="orderBy('posDescription')">Descripción Corta</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
             <th (click)="orderBy('barcode')">Código de Barra</th>
@@ -134,6 +138,7 @@
           <tr class="filters">
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (keydown.enter)="getArticles()" placeholder="Código de Barra..."></th>
@@ -141,12 +146,13 @@
         </thead>
         <tbody>
           <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+            <td colspan="17">Cargando...</td>
           </tr>
           <tr *ngFor="let article of articles"
             (click)="selectArticle(article)">
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
+            <td>{{article.posDescription}}</td>
             <td *ngIf="article.make">{{article.make.description}}</td>
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
@@ -154,7 +160,7 @@
             <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
-            <td colspan="9">No se encontraron productos</td>
+            <td colspan="10">No se encontraron productos</td>
           </tr>
         </tbody>
       </table>
