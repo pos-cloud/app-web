@@ -15,20 +15,20 @@ export class Printer {
     public printIn: PrinterPrintIn = PrinterPrintIn.Counter;
 
     public orientation : string; //hporizantal vertical
-    public row : Number; //espacio entre filas del for
-    public addPag : Number; // addPage()
+    public row : number; //espacio entre filas del for
+    public addPag : number; // addPage()
     public fields : [{
         type : string; //field,line,movArticle,movCash,movCancellation
         label : string; 
         value : string; //field,movArticle,movCash,movCancellation
         font : string; //courier,times,helvetica  solo si es field
         fontType : string; //normal,italic,bold,bolditalic solo si es field
-        fontSize : Number; 
-        positionStartX : Number;
-        positionStartY : Number;
-        positionEndX : Number; //line
-        positionEndY : Number; //line
-        splitting : Number; // ancho del string solo si es field
+        fontSize : number; 
+        positionStartX : number;
+        positionStartY : number;
+        positionEndX : number; //line
+        positionEndY : number; //line
+        splitting : number; // ancho del string solo si es field
         colour : string; // 4,5,9
         position : PositionPrint;
     }];
