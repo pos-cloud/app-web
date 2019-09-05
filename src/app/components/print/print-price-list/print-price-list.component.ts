@@ -47,6 +47,7 @@ export class PrintPriceListComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public pageWidth;
   public pageHigh;
+  public articleFieldId;
   public withImage = false;
   public articleFields : ArticleField [];
   public articleFieldsValues : []

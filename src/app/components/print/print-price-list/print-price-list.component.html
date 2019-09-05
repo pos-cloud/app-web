@@ -48,7 +48,7 @@
 						<option *ngFor="let articleField of articleFields" [value]="articleField._id" [disabled]="readonly">{{articleField.name}}</option>
 					</select>
 				</div>
-				<div class="form-group col-md-6" *ngIf="articleField !== null">
+				<div class="form-group col-md-6" *ngIf="articleFieldId !== null">
 					<label for="articleFieldsValue" class="control-label">Valores del campo:</label>
 					<select class="form-control" formControlName="articleFieldsValue">
 						<option [ngValue]="null"></option>
