@@ -20,10 +20,7 @@ import { MakeService } from '../../../services/make.service';
 import { CategoryService } from '../../../services/category.service';
 import { Article } from 'app/models/article';
 import { ConfigService } from 'app/services/config.service';
-import { Config } from 'app/app.config';
 import { VariantService } from 'app/services/variant.service';
-import { VariantValue } from 'app/models/variant-value';
-import { Variant} from 'app/models/variant';
 import { ArticleFieldService } from 'app/services/article-field.service';
 import { ArticleField } from 'app/models/article-field';
 
@@ -253,8 +250,6 @@ export class PrintPriceListComponent implements OnInit {
     
     match += `"type" : "Final", "operationType" : { "$ne" : "D" } }`;
 
-    console.log(match)
-
     match = JSON.parse(match);
 
 
@@ -291,7 +286,6 @@ export class PrintPriceListComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
-        console.log(result)
         if (result && result[0] && result[0].articles && result[0].articles.length > 0) {
             this.articles = result[0].articles;
             this.printPriceList();
