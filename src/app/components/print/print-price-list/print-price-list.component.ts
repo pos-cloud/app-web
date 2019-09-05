@@ -24,6 +24,8 @@ import { Config } from 'app/app.config';
 import { VariantService } from 'app/services/variant.service';
 import { VariantValue } from 'app/models/variant-value';
 import { Variant} from 'app/models/variant';
+import { ArticleFieldService } from 'app/services/article-field.service';
+import { ArticleField } from 'app/models/article-field';
 
 @Component({
   selector: 'app-print-price-list',
@@ -49,6 +51,8 @@ export class PrintPriceListComponent implements OnInit {
   public pageWidth;
   public pageHigh;
   public withImage = false;
+  public articleFields : ArticleField [];
+  public articleFieldsValues : []
   public imageURL
   public fontSizes = JSON.parse(`{"xsmall" : 5,
                                   "small" : 7,
@@ -72,7 +76,8 @@ export class PrintPriceListComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _makeService: MakeService,
-    public _categoryService: CategoryService,    
+    public _categoryService: CategoryService,  
+    public _articleFields : ArticleFieldService,  
     public _configService: ConfigService,
     public _variantService: VariantService,
     private domSanitizer: DomSanitizer
@@ -80,6 +85,9 @@ export class PrintPriceListComponent implements OnInit {
   ) { 
     this.pageWidth = 210 * 100 / 35.27751646284102;
     this.pageHigh = 297 * 100 / 35.27751646284102;
+    this.getMakes();
+    this.getCategories();
+    this.getArticleFields();
   }
 
   async ngOnInit() {
@@ -97,7 +105,6 @@ export class PrintPriceListComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getMakes();
     this.buildForm();
     this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);
 
@@ -114,11 +121,10 @@ export class PrintPriceListComponent implements OnInit {
     this._makeService.getMakes('sort="description":1').subscribe(
       result => {
         if (!result.makes) {
-          this.getCategories();
+          this.hideMessage();
         } else {
           this.hideMessage();
           this.makes = result.makes;
-          this.getCategories();
         }
       },
       error => {
@@ -149,13 +155,58 @@ export class PrintPriceListComponent implements OnInit {
     );
   }
 
+  public getArticleFields() : void {
+    
+    this.loading = true;
+
+    this._articleFields.getArticleFields().subscribe(
+      result => {
+        if (!result.articleFields) {
+          this.hideMessage();
+        } else {
+          this.hideMessage();
+          this.articleFields = result.articleFields;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getarticleFieldValue(articleField) : void {
+    
+    this.loading = true;
+    
+    let query = `where="_id":"${articleField}"`;
+
+    this._articleFields.getArticleFields(query).subscribe(
+      result => {
+        if (!result.articleFields) {
+          this.hideMessage();
+        } else {
+          this.hideMessage();
+          this.articleFieldsValues = result.articleFields[0].value.split(';');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
   public buildForm(): void {
 
     this.printPriceListForm = this._fb.group({
       'make': [, []],
       'category': [, []],
-      'withImage' : [,[]]
+      'withImage' : [,[]],
+      'articleField' : [,[]],
+      'articleFieldsValue' : [,[]]
     });
 
     this.printPriceListForm.valueChanges
@@ -195,9 +246,14 @@ export class PrintPriceListComponent implements OnInit {
     if(this.printPriceListForm.value.category !== null){
       match += `"category._id" :  { "$oid" : "${this.printPriceListForm.value.category}" },`
     }
+
+    if(this.printPriceListForm.value.otherFields !== null && this.printPriceListForm.value.articleFieldsValue !== null){
+      match += `"otherFields.value" : "${this.printPriceListForm.value.articleFieldsValue}",`
+    }
     
     match += `"type" : "Final", "operationType" : { "$ne" : "D" } }`;
 
+    console.log(match)
 
     match = JSON.parse(match);
 
@@ -235,6 +291,7 @@ export class PrintPriceListComponent implements OnInit {
     ).subscribe(
       result => {
         this.loading = false;
+        console.log(result)
         if (result && result[0] && result[0].articles && result[0].articles.length > 0) {
             this.articles = result[0].articles;
             this.printPriceList();
@@ -373,8 +430,8 @@ export class PrintPriceListComponent implements OnInit {
             this.doc.setFontType('blod')
             if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
               this.doc.addImage(this.imageURL, 'JPEG', 15, row, 60, 40);
-              row +=5
             }
+            row +=5
             this.doc.setFontSize(this.fontSizes.extraLarge)
             this.doc.text(95, row, article.description)
             row +=5

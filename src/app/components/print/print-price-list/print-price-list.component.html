@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div class="row" >
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-6">
 					<label for="make" class="control-label">Marca</label>
 					<select class="form-control" formControlName="make">
 						<option [ngValue]="null"></option>
@@ -32,17 +32,28 @@
 						{{ formErrors.make }}
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-md-12">
+				<div class="form-group col-md-6">
 					<label for="category" class="control-label">Rubro:</label>
 					<select class="form-control" formControlName="category">
 						<option [ngValue]="null"></option>
 						<option *ngFor="let category of categories" [value]="category._id" [disabled]="readonly">{{category.description}}</option>
 					</select>
-					<div *ngIf="formErrors.category" class="alert alert-danger">
-						{{ formErrors.category }}
-					</div>
+				</div>
+			</div>
+			<div class = "row">
+				<div class="form-group col-md-6">
+					<label for="articleField" class="control-label">Otros campos:</label>
+					<select class="form-control" formControlName="articleField" [(ngModel)]="articleFieldId" (change)="getarticleFieldValue(articleFieldId)">
+						<option [ngValue]="null"></option>
+						<option *ngFor="let articleField of articleFields" [value]="articleField._id" [disabled]="readonly">{{articleField.name}}</option>
+					</select>
+				</div>
+				<div class="form-group col-md-6" *ngIf="articleField !== null">
+					<label for="articleFieldsValue" class="control-label">Valores del campo:</label>
+					<select class="form-control" formControlName="articleFieldsValue">
+						<option [ngValue]="null"></option>
+						<option *ngFor="let articleFieldsValue of articleFieldsValues" [value]="articleFieldsValue" [disabled]="readonly">{{articleFieldsValue}}</option>
+					</select>
 				</div>
 			</div>
 		</div>
