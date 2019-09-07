@@ -20,6 +20,13 @@
 						<option [value]="false">No</option>
 					</select>
 				</div>
+				<div class = "form-group col-md-6">
+					<label for="priceList" class="control-label">Lista de Precio:</label>
+					<select [(ngModel)]="priceList" class="form-control" formControlName="priceList" >
+						<option [ngValue]="null"></option>
+						<option *ngFor="let priceList of priceLists" [value]="priceList._id" [disabled]="readonly">{{priceList.name}}</option>
+					</select>
+				</div>
 			</div>
 			<div class="row" >
 				<div class="form-group col-md-6">
