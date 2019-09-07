@@ -9,9 +9,9 @@
       <span>Listado de Sucursales</span>
       <div class="pull-right">
           <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus">
-            <span>Agregar Sucursal</span>
+            <span>Agregar</span>
           </i></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         
       </div>
     </div>

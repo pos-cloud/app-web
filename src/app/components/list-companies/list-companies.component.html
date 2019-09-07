@@ -8,10 +8,10 @@
     <div class="card-header">Listado de {{type}}es
       <div class="pull-right">
         <!-- <button class="btn" (click)="openEmail()"> Enviar Email </button> -->
-        <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-cloud-upload"></i> Importar</button>
-        <button class="btn" (click)="exportAsXLSX()"><i class="fa fa-cloud-download"></i> Exportar </button>
-        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Empresa</i></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-cloud-upload"></i><span>Importar</span></button>
+        <button class="btn" (click)="exportAsXLSX()"><i class="fa fa-cloud-download"></i>Exportar</button>
         
       </div>
     </div>
@@ -155,9 +155,9 @@
   <div class="card ">
     <div class="card-header">Listado de Empresas
       <div class="pull-right">
-        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Empresa</i></button>
-        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
-        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><i class="fa fa-close"></i><span>Cerrar</span></button>
       </div>
     </div>
       <div class="card-block table-responsive">

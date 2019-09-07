@@ -8,9 +8,9 @@
   <div class="card ">
     <div class="card-header">Listado de {{listType}}
       <div class="pull-right">
-        <button class= "btn" (click)="openModal('export')">Exportar</button>
-        <button class= "btn" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
-        <button class="btn" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
+        <button class= "btn" (click)="openModal('export')"><i class="fa fa-file-excel-o"></i>Exportar</button>
+        <button class= "btn" (click)="exportIVA()" *ngIf="userCountry === 'AR'"><i class="fa fa-book"></i>Exportar IVA</button>
+        <button class="btn" (click)="exportCiti()" *ngIf="userCountry === 'AR'"><i class="fa fa-list"></i>Exportar Régimen de Información</button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
         
       </div>

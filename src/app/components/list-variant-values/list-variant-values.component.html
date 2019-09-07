@@ -7,11 +7,8 @@
   <div class="card ">
     <div class="card-header">Listado de Valores de Variantes
       <div class="pull-right">
-        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Valor de Variante</i></button>
-        <button class="btn" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
-          Actualizar
-        </button>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span>Actualizar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
