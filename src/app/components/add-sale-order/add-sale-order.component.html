@@ -146,7 +146,8 @@
           <thead>
             <tr>
               <th width="90px">Cantidad</th>
-              <th>Descripción</th>
+              <th width="150px" *ngIf="movementsOfArticles.length === 0">Descripción</th>
+              <th  *ngIf="movementsOfArticles.length > 0">Descripción</th>
               <th width="100px" *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
             </tr>
           </thead>
