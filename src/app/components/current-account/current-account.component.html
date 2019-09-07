@@ -1,14 +1,12 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Cuenta Corriente
+  <div class="card ">
+    <div class="card-header">Cuenta Corriente
       <div class="pull-right">
         <app-point-of-sale (eventRefreshCurrentAccount)="refresh()" [company]="companySelected" [totalPrice]="balance"></app-point-of-sale>
         <!-- <button *ngIf="companySelected && companySelected.type === 'Cliente'" class="btn btn-primary" (click)="addTransaction('Cobro')">Cobrar</button>
         <button *ngIf="companySelected && companySelected.type === 'Proveedor'" class="btn btn-primary" (click)="addTransaction('Pago')">Pagar</button> -->
         <button class="btn btn-primary" (click)="openModal('print')"><i class="fa fa-print"></i> Imprimir</button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -102,7 +100,7 @@
               <th class="">Haber</th>
               <th class="">Saldo</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
@@ -178,7 +176,7 @@
         </table>
       </div>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls

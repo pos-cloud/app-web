@@ -1,19 +1,6 @@
 app-point-of-sale {
-      .center-content {
-            display: -webkit-flex;
-            display: flex;
-            -webkit-flex-wrap: wrap;
-            flex-wrap: wrap;
-            -webkit-justify-content: center;
-            justify-content: center;
-      }
-      
-      .card {
-            margin-top: 50px;
-      }
-      
       .margin-top {
-            margin-top: 50px;
+            margin-top: 20px;
       }
       
       .list-delivery {
@@ -21,28 +8,15 @@ app-point-of-sale {
       }
       
       .list-counter {
-            height:80vh;
+            min-height: 85vh;
+            height: auto;
       }
       
-      .card-header {
-            color: white;
-      }
-      
-      .btn {
-            cursor: pointer;
-      }
-      
-      .table {
-          box-shadow: 0px 0px 2px;
-          border-radius: 5px;
-          cursor: pointer;
-       }
-      
-       .tables-container {
+      .tables-container {
           height:70vh;
           padding-left: 50px;
           padding-right: 50px;
-       }
+      }
       
        .btn-turn {
           background: #0275d8;
@@ -72,29 +46,5 @@ app-point-of-sale {
       
       .pos-resto {
           background-color: #FFF;
-      }
-      
-      .my-pagination /deep/ .ngx-pagination {
-          color: white;
-      }
-      
-      ::placeholder {
-            color: #D8D8D8;
-      }
-      
-      .filters {
-            background-color: #F8F8F8;
-      }
-      
-      @media (min-width: 1100px) {
-            .modal-lg {
-                  max-width: 1000px;
-            }
-      }
-      
-      @media (min-width: 1400px) {
-            .modal-lg {
-                  max-width: 1200px;
-            }
       }
 }

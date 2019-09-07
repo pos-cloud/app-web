@@ -1,13 +1,10 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
-    <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Resúmenes de Cuentas
+    <div class="card ">
+      <div class="card-header">Resúmenes de Cuentas
         <div class="pull-right">
             <span (click)="openModal('print')">
-                <i class="btn btn-primary fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle</i>
+                <i class="btn fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle</i>
             </span>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-              <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -51,7 +48,7 @@
                   <th class="align-center" (click)="orderBy('companyEmployee')">Empleado asignado</th>
                   <th class="align-center" (click)="orderBy('balance')">Saldo</th>
                 </tr>
-                <tr *ngIf="areFiltersVisible" class="filters">
+                <tr class="filters">
                   <th></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyName" placeholder="Nombre..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyType" placeholder="Tipo..." ></th>
@@ -131,7 +128,7 @@
         </div>
       </div>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig."

@@ -11,26 +11,7 @@
 img.mediana{
       width: 200px; height: 150px;
 }
-    
-.btn {
-      cursor: pointer;
-}
-    
-.btn-action {
-      width: 100%;
-      border: 1px solid white;
-      padding: 10px;
-      cursor: pointer;
-      background: #0275d8;
-      color: white;
-      height: 40px;
-      margin-top: 30px;
-}
-    
-.btn-action:hover {
-      background: #025aa5;
-}
-    
+
 .tab-content {
       padding-top: 20px;
 }

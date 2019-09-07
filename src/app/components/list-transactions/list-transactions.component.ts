@@ -26,14 +26,13 @@ import { AddTransactionComponent } from '../add-transaction/add-transaction.comp
 import { AuthService } from 'app/services/auth.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { ExportTransactionsComponent } from '../export/export-transactions/export-transactions.component';
-import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 
 @Component({
   selector: 'app-list-transactions',
   templateUrl: './list-transactions.component.html',
   styleUrls: ['./list-transactions.component.scss'],
   providers: [NgbAlertConfig],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.Emulated
 })
 
 export class ListTransactionsComponent implements OnInit {

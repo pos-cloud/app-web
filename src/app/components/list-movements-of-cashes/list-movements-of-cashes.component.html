@@ -5,13 +5,11 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Listado de Movimientos de Medios
+    <div class="card ">
+      <div class="card-header">Listado de Movimientos de Medios
         <div class="pull-right">
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+          
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -34,7 +32,7 @@
               <th (click)="orderBy('observation')">Observación </th>
               
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filters['transaction.endDate']" (keydown.enter)="getMovementOfCashes()" placeholder="Fecha..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filters['transaction.cashBox.number']" (keydown.enter)="getMovementOfCashes()" placeholder="Caja..." ></th>
@@ -81,7 +79,7 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer bg-primary">
+      <div class="card-footer">
         <div class="row">
           <div class="col-md-10">
             <pagination-controls
@@ -115,11 +113,11 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Listado de Movimientos de Medios
+    <div class="card ">
+      <div class="card-header">Listado de Movimientos de Medios
         <div class="pull-right">
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-          <button class="btn btn-primary fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+          <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -192,13 +190,11 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Cartera de Cheques
+    <div class="card ">
+      <div class="card-header">Cartera de Cheques
         <div class="pull-right">
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+          
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -215,7 +211,7 @@
               <th (click)="orderBy('expirationDate')">Vencimiento</th>
               <th (click)="orderBy('amountPaid')">Importe</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getMovementOfCashes()" placeholder="Comprobante..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.name']" (keydown.enter)="getMovementOfCashes()" placeholder="Tipo..."></th>
@@ -261,7 +257,7 @@
           </tfoot>
         </table>
       </div>
-      <div class="card-footer bg-primary">
+      <div class="card-footer">
           <div class="row">
             <div class="col-md-10">
               <pagination-controls

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -14,8 +14,9 @@ import { AuthService } from 'app/services/auth.service';
 @Component({
   selector: 'app-report-best-selling-article',
   templateUrl: './report-best-selling-article.component.html',
-  styleUrls: ['./report-best-selling-article.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./report-best-selling-article.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ReportBestSellingArticleComponent implements OnInit {

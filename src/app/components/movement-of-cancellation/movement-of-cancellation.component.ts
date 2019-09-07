@@ -25,7 +25,7 @@ import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 @Component({
   selector: 'app-movement-of-cancellation',
   templateUrl: './movement-of-cancellation.component.html',
-  styleUrls: ['./movement-of-cancellation.component.css']
+  styleUrls: ['./movement-of-cancellation.component.scss']
 })
 
 export class MovementOfCancellationComponent implements OnInit {

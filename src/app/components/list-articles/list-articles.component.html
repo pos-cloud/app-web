@@ -5,17 +5,15 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de {{ listTitle }}
+  <div class="card ">
+    <div class="card-header">Listado de {{ listTitle }}
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"> Agregar Producto</i></button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <button class="btn btn-primary" (click)="openModal('update-prices',null)"><i class="fa fa-edit"> Actualizar Precios</i></button>
-        <button class="btn btn-primary" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)">Importar productos</button>
-        <button class="btn btn-primary" (click)="openModal('print-list', null)"><i class="fa fa-print"></i> Imprimir Lista</button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"></i>Agregar Producto</button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        <button class="btn" (click)="openModal('update-prices',null)"><i class="fa fa-edit"></i>Actualizar Precios</button>
+        <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-upload"></i>Importar productos</button>
+        <button class="btn" (click)="openModal('print-list', null)"><i class="fa fa-print"></i> Imprimir Lista</button>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -30,12 +28,12 @@
             <th (click)="orderBy('posDescription')">Descripción Corta</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
-            <th (click)="orderBy('salePrice')">Precio de Venta</th>
+            <th (click)="orderBy('salePrice')">Precio Venta</th>
             <th (click)="orderBy('currency.name')">Moneda</th>
             <th (click)="orderBy('observation')">Observation</th>
-            <th (click)="orderBy('barcode')">Código de Barra</th>
+            <th (click)="orderBy('barcode')">Código Barra</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
@@ -83,7 +81,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls
@@ -117,11 +115,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Productos
+  <div class="card ">
+    <div class="card-header">Listado de Productos
       <div class="pull-right">
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <button class="btn btn-primary fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -165,7 +163,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="form-group col-md-2 offset-md-10">
           <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getArticles()">

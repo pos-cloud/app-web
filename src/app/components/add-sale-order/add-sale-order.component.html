@@ -140,14 +140,14 @@
     </div>
   </div>
   <div class="row container-transaction">
-    <div class="col-md-4 table-container">
+    <div class="col-md-5 table-container">
       <div #containerMovementsOfArticles class="articles-container table-responsive">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Cantidad</th>
+              <th width="90px">Cantidad</th>
               <th>Descripción</th>
-              <th *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
+              <th width="100px" *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
             </tr>
           </thead>
           <tbody>
@@ -156,7 +156,6 @@
                 <span class="badge badge-info">
                   <b>{{ movementOfArticle.amount}}</b>
                 </span>
-                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture == 'default.jpg' || movementOfArticle.article.picture == undefined)" src="./../../../assets/img/default.jpg" height="50" width="50">
                 <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
               </td>
               <td *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}
@@ -261,7 +260,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       <div class="row filterArticle">
         <div class="col-md-12">
           <input type="text" class="form-control" [(ngModel)]="filterArticle" (keydown.enter)="filterArticles()" placeholder="Filtrar Productos por Cód. de Barras, Cód. Interno o Descripción y luego presione Enter." [focus]="focusEvent">

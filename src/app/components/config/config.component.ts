@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -24,8 +24,9 @@ import { CurrencyService } from 'app/services/currency.service';
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
-  styleUrls: ['./config.component.css'],
-  providers: [NgbAlertConfig, DateFormatPipe]
+  styleUrls: ['./config.component.scss'],
+  providers: [NgbAlertConfig, DateFormatPipe],
+  encapsulation: ViewEncapsulation.None
 })
 export class ConfigComponent implements OnInit {
 

@@ -17,7 +17,7 @@ import { Movements } from 'app/models/transaction-type';
 @Component({
   selector: 'app-list-cash-box',
   templateUrl: './list-cash-box.component.html',
-  styleUrls: ['./list-cash-box.component.css']
+  styleUrls: ['./list-cash-box.component.scss']
 })
 export class ListCashBoxComponent implements OnInit {
 

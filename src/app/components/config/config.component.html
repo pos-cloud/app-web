@@ -6,8 +6,8 @@
   </div>
   
   <!-- LICENSE -->
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Licencia</div>
+  <div class="card ">
+    <div class="card-header">Licencia</div>
     <div class= 'card-block'>
         <div class= "row">
           <div class="form-group col-md-3">
@@ -24,8 +24,8 @@
   </div>
 
   <!-- COMPANY -->
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Datos de la Empresa</div>
+  <div class="card ">
+    <div class="card-header">Datos de la Empresa</div>
     <div class="card-block">
       <form [formGroup]="configFormCompany" #formAddConfig="ngForm" (ngSubmit)="addConfigCompany()" autocomplete="off">
         <div class="row">
@@ -226,8 +226,8 @@
   </div>
 
   <!-- EMAIL -->
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Email</div>
+  <div class="card ">
+    <div class="card-header">Email</div>
     <div class='card-block'>
       <form [formGroup]="configFormEmail" #formAddEmail="ngForm" (ngSubmit)="addConfigEmail()" autocomplete="off">
         <div class="row">
@@ -274,8 +274,8 @@
   </div>
 
   <!-- AFIP -->
-  <div class="card card-outline-primary" *ngIf="config.country === 'AR'">
-    <div class="card-header bg-primary">Generar Certificado para Factura Electrónica</div>
+  <div class="card " *ngIf="config.country === 'AR'">
+    <div class="card-header">Generar Certificado para Factura Electrónica</div>
     <div class='card-block'>
       <form (ngSubmit)="generateCRS()" autocomplete="off">
         <div class="row">
@@ -300,8 +300,8 @@
   </div>
   
   <!-- SYSTEM -->
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Sistema</div>
+  <div class="card ">
+    <div class="card-header">Sistema</div>
     <div class='card-block'>
       <form [formGroup]="configFormSystem" #formAddConfigSystem="ngForm" (ngSubmit)="addConfigSystem()" autocomplete="off">
         <div class="row">

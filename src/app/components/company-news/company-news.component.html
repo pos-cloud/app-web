@@ -12,12 +12,9 @@
           <th (click)="orderBy('date')">Fecha </th>
           <th (click)="orderBy('news')">Novedad </th>
           <th>
-            <span (click)="areFiltersVisible = !areFiltersVisible">
-              <i class="btn btn-primary btn-sm fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
-            </span>
           </th>
         </tr>
-        <tr *ngIf="areFiltersVisible" class="filters">
+        <tr class="filters">
           <th><input type="date" class="form-control" [(ngModel)]="filterDate" placeholder="Fecha..."></th>
           <th><input type="text" class="form-control" [(ngModel)]="filterNews" placeholder="Filtrar Novedad..."></th>
           <th></th>

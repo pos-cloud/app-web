@@ -51,9 +51,9 @@
           <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
       </div>
     </div>
-    <div class="card card-outline-primary card-large">
-    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Venta'">Ventas por empleado</div>
-    <div class="card-header bg-primary" *ngIf="transactionMovement === 'Compra'">Compras por empleado</div>
+    <div class="card  card-large">
+    <div class="card-header" *ngIf="transactionMovement === 'Venta'">Ventas por empleado</div>
+    <div class="card-header" *ngIf="transactionMovement === 'Compra'">Compras por empleado</div>
       <div class="card-block table-responsive">
         <table class="table table-striped">
           <thead>
@@ -91,7 +91,7 @@
           </tfoot>
         </table>
       </div>
-      <div class="card-footer bg-primary">
+      <div class="card-footer">
       </div>
     </div>
   </section>

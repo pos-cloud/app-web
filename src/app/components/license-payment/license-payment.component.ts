@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,7 +12,7 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
 @Component({
   selector: 'app-license-payment',
   templateUrl: './license-payment.component.html',
-  styleUrls: ['./license-payment.component.css'],
+  styleUrls: ['./license-payment.component.scss'],
   providers: [NgbAlertConfig]
 })
 

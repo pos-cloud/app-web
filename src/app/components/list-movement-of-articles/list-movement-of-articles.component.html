@@ -1,10 +1,8 @@
 <section class="container-fluid" *ngIf="userType=='report'">
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Kardex de Producto
+  <div class="card ">
+    <div class="card-header">Kardex de Producto
       <div class="pull-right">
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -100,7 +98,7 @@
               <th class="">Salida</th>
               <th class="">Stock</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getSummary()" placeholder="Movimiento..."></th>
@@ -155,7 +153,7 @@
         </table>
       </div>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls

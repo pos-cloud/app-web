@@ -1,33 +1,24 @@
 app-add-sale-order {
-      .center-content {
-            display: -webkit-flex;
-            display: flex;
-            -webkit-flex-wrap: wrap;
-            flex-wrap: wrap;
-            -webkit-justify-content: center;
-            justify-content: center;
-      }
-
-      .table {
-            margin-bottom: 0px;
-      }
-      
-      .btn, .pointer {
-            cursor: pointer;
-      }
-      
       .container-message {
-        margin: 0px;
+        margin-top: 68px;
+        background-color: white;
       }
 
       .totals {
             font-size: 15px;
       }
       
-      .articles-container {
-            height:44vh;
-            margin: 0px;
-            padding: 0px;
+      .table-container {
+            .articles-container {
+                  height:44vh;
+                  margin: 0px;
+                  padding: 0px;
+                  font-size: 15px;
+            }
+            .row {
+                  margin: 0px;
+                  padding: 0px;
+            }
       }
       
       .header-transaction, .header-mx {
@@ -35,24 +26,31 @@ app-add-sale-order {
             background: #292B2C;
             color: white;
             margin: 0px;
-      }
-      
-      .btn-action {
-            width: 100%;
-            border: 1px solid white;
-            padding: 10px;
-            cursor: pointer;
-            background: #0275d8;
-            color: white;
-            height: 40px;
+            position: fixed;
+            z-index: 99;
+            min-width: 100%;
+            top: 0px;
       }
       
       .container-transaction {
         margin-right: 0px;
+        background-color: white;
       }
-      
-      .btn-action:hover {
-            background: #025aa5;
+
+      .container-fluid {
+            background-color: white;
+            margin-top: 0px !important;
+            padding: 0px !important;
+      }
+
+      table{
+            table-layout: fixed;
+            width: 33.33333%;
+      }
+        
+      th, td {
+            word-wrap: break-word !important;
+            white-space: normal;
       }
       
       .breadcrumb {
@@ -103,5 +101,15 @@ app-add-sale-order {
             height: 20px;
             position: absolute;
             right: 0px;
+      }
+
+      thead {
+            max-width: 100%;
+            background-color: white;
+            width: 100%;
+      }
+      
+      .table thead th {
+            font-weight: 600;
       }
 }
