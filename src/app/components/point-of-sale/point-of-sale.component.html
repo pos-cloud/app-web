@@ -45,13 +45,13 @@
       <div class="card-header">Pendientes
         <div class="pull-right">
           <div class="btn-group" ngbDropdown>
-            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Administrar caja"><i class="fa fa-plus"> Caja</i></button>
+            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Administrar caja"><i class="fa fa-money"></i><span>Caja</span></button>
             <div class="dropdown-menu" ngbDropdownMenu>
               <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
             </div>
           </div>
-          <button class="btn" (click)="getDefectOrder()"><i class="fa fa-plus"></i>Nuevo Pedido</button>
-          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+          <button class="btn" (click)="getDefectOrder()"><i class="fa fa-plus"></i><span>Nuevo Pedido</span></button>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -291,12 +291,12 @@
         <span>{{transactionMovement}} Pendientes</span>
         <div class="pull-right">
           <div class="btn-group" ngbDropdown>
-            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i class="fa fa-plus"></i>Nuevo</button>
+            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i class="fa fa-plus"></i><span>Nuevo</span></button>
             <div class="dropdown-menu" ngbDropdownMenu>
               <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
             </div>
           </div>
-          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -514,10 +514,7 @@
   
   <!-- BOTON CTA CTE -->
   <div class="btn-group" ngbDropdown *ngIf="posType=='cuentas-corrientes' && transactionTypes && transactionTypes.length > 0">
-    <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">
-      <i class="fa fa-plus">
-      </i>
-      Nuevo 
+    <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i class="fa fa-plus"></i><span>Nuevo</span> 
       <span *ngIf="company && company.type === 'Cliente'">Cobro</span>
       <span *ngIf="company && company.type === 'Proveedor'">Pago</span>
     </button>

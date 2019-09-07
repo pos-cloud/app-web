@@ -132,8 +132,17 @@ td {
       }
 }
 
+/* RESPONSIVE */
+.collapse.show {
+      background-color: white;
+}
+
 @media (max-width: 767px) {
       .container-fluid {
             padding: 20px 5px !important;
+      }
+
+      .card .card-header .btn span {
+            display: none;
       }
 }
