@@ -85,3 +85,14 @@ li > a {
     height: 30px;
   }
 }
+
+/* RESPONSIVE */
+.collapse.show {
+  background-color: white;
+}
+
+@media (max-width: 767px) {
+  .navbar-brand img {
+    margin-top: 10px;
+  }
+}

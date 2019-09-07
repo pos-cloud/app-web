@@ -1,4 +1,3 @@
-
 // ANGULAR
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { Router, NavigationStart, Event as NavigationEvent } from '@angular/router';
