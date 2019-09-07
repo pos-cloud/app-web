@@ -30,6 +30,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let deposit of deposits | filter: filterName:'name'
                                               | filter: filterBranch:'name':'branch'
                                               | filter: filterCapacity:'capacity'

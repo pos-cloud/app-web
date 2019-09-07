@@ -13,7 +13,6 @@
           <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
           Actualizar
         </button>
-        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -33,6 +32,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let variantType of variantTypes | filter: filterName:'name'
                                                       | orderBy: orderTerm: propertyTerm
                                                       | paginate: { itemsPerPage: itemsPerPage,

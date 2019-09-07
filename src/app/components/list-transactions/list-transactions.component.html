@@ -42,7 +42,7 @@
             <th (click)="orderBy('totalPrice')">Total</th>
           </tr>
           <tr class="filters">
-            <th>
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()" placeholder="Tipo..."></th>
             <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (keydown.enter)="getTransactions()" placeholder="POS..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (keydown.enter)="getTransactions()" placeholder="Letra..."></th>
@@ -64,8 +64,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -226,8 +228,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -336,8 +340,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,

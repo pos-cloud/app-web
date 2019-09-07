@@ -48,6 +48,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: {   itemsPerPage: itemsPerPage,
                                                                                 currentPage: currentPage,
                                                                                 totalItems: totalItems
@@ -146,6 +151,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let movementOfCash of movementsOfCashes"
                 [ngClass]="{'row-active':isMovementOfCashSelected(movementOfCash), 'row-inactive':!isMovementOfCashSelected(movementOfCash)}">
               <td align="left" width="130">
@@ -223,6 +233,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let movementOfCash of movementsOfCashes | paginate: { itemsPerPage: itemsPerPage,
                                                                               currentPage: currentPage,
                                                                               totalItems: totalItems

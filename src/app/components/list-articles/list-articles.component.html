@@ -47,8 +47,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="17">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let article of articles | paginate: { itemsPerPage: itemsPerPage,
                                                             currentPage: currentPage,
@@ -131,7 +133,7 @@
             <th (click)="orderBy('posDescription')">Descripción Corta</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
-            <th (click)="orderBy('barcode')">Código de Barra</th>
+            <th (click)="orderBy('barcode')">Código Barra</th>
           </tr>
           <tr class="filters">
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
@@ -143,8 +145,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="17">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let article of articles"
             (click)="selectArticle(article)">

@@ -77,6 +77,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterPendingNumber:'number'
                                                         | filter: filterPendingStartDate:'startDate'
                                                         | filter: filterPendingCompany:'name':'company'
@@ -143,6 +148,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterSendNumber:'number'
                                                         | filter: filterSendStartDate:'startDate'
                                                         | filter: filterSendEndDate:'endDate'
@@ -214,6 +224,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterDeliveredNumber:'number'
                                                         | filter: filterDeliveredStartDate:'startDate'
                                                         | filter: filterDeliveredEndDate:'endDate'
@@ -310,6 +325,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
                                                         | filter: filterStartDate:'startDate'
                                                         | filter: filterNumber:'number'
@@ -410,6 +430,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterStartDate:'startDate'
                                                         | filter: filterNumber:'number'
                                                         | filter: filterCompany:'name':'company'
@@ -490,10 +515,11 @@
   <!-- BOTON CTA CTE -->
   <div class="btn-group" ngbDropdown *ngIf="posType=='cuentas-corrientes' && transactionTypes && transactionTypes.length > 0">
     <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">
-      <i class="fa fa-plus">Nuevo 
-        <span *ngIf="company && company.type === 'Cliente'">Cobro</span>
-        <span *ngIf="company && company.type === 'Proveedor'">Pago</span>
+      <i class="fa fa-plus">
       </i>
+      Nuevo 
+      <span *ngIf="company && company.type === 'Cliente'">Cobro</span>
+      <span *ngIf="company && company.type === 'Proveedor'">Pago</span>
     </button>
     <div class="dropdown-menu" ngbDropdownMenu>
       <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>

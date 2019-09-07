@@ -1,9 +1,6 @@
 <section class="container-fluid" *ngIf="userType=='report'">
   <div class="card ">
     <div class="card-header">Kardex de Producto
-      <div class="pull-right">
-        
-      </div>
     </div>
     <div class="card-block table-responsive">
       <div class="center-content" *ngIf="alertMessage !== ''">
@@ -71,10 +68,6 @@
           </span>
         </div>
       </div>
-      <div class = "row">
-
-
-      </div>
       <div class="row center-content">
         <table class="table table-striped">
           <thead>
@@ -112,6 +105,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let movementsOfArticle of items | paginate: { itemsPerPage: itemsPerPage,
                                                                         currentPage: currentPage,
                                                                         totalItems: totalItems

@@ -32,6 +32,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let location of locations | filter: filterDescription:'description'
                                                   | filter: filterPositionX:'positionX'
                                                   | filter: filterPositionY:'positionY'

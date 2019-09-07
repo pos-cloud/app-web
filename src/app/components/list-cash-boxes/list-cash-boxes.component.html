@@ -32,6 +32,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let cashBox of cashBoxes  | filter: filterNumber:'number'
                                                   | filter: filterOpeningDate:'openingDate'
                                                   | filter: filterClosingDate:'closingDate'

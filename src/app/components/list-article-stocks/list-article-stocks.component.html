@@ -46,6 +46,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let articleStock of articleStocks 
                                                         | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,

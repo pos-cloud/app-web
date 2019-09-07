@@ -25,6 +25,10 @@ body {
       margin-top: 60px;
 }
 
+.container-filter {
+      margin-bottom: 20px;
+}
+
 .modal-content .container-fluid {
       padding: 1.25rem 1.25rem .50rem !important;
       background-color: white;

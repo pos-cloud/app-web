@@ -54,6 +54,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let company of companies  | filter: filterName:'name'
                                                   | filter: filterFantasyName:'fantasyName'
                                                   | filter: filterVATCondition:'description':'vatCondition'
@@ -178,6 +183,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let company of companies  | orderBy: orderTerm: propertyTerm
                                                   | filter: filterCode:'code'
                                                   | filter: filterName:'name'

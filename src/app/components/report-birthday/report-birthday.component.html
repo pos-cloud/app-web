@@ -10,8 +10,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr align="center" *ngIf="loading">
-          <td colspan="4">Cargando...</td>
+        <tr>
+          <td colspan="99" style="padding: 0px">
+            <app-progressbar [loading]="loading"></app-progressbar>
+          </td>
         </tr>
         <tr *ngFor="let company of companies">
           <td align="left" width="130">
@@ -49,8 +51,12 @@
       </select>
     </div>
     <div class="col-md-2" (click)="refresh()">
+        <label for="action" class="control-label">
+            <b>Acción:</b>
+          </label>
       <span class="form-control btn-action center-content">
-        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
+      </span>
     </div>
   </div>
   <div class="card  card-large">
@@ -68,8 +74,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="6">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let company of companies">
             <td align="left" width="150">

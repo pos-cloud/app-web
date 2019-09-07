@@ -61,8 +61,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr align="center" *ngIf="loading">
-                  <td colspan="9">Cargando...</td>
+                <tr>
+                  <td colspan="99" style="padding: 0px">
+                    <app-progressbar [loading]="loading"></app-progressbar>
+                  </td>
                 </tr>
                 <tr *ngFor="let item of items | filter: filterCompanyName:'companyName'
                                               | filter: filterIdentificationValue:'identificationValue'

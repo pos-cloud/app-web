@@ -10,7 +10,6 @@
       <div class="pull-right">
         <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Grupo</i></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
-        
       </div>
     </div>
       <div class="card-block table-responsive">
@@ -26,6 +25,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let companyGroup of companiesGroups | filter: filterDescription:'description'
                                           | orderBy: orderTerm: propertyTerm
                                           | paginate: { itemsPerPage: itemsPerPage,

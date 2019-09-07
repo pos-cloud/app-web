@@ -28,7 +28,7 @@
             <th (click)="orderBy('account')">Cuenta</th>
           </tr>
           <tr class="filters">
-            <th>
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (input)="getBanks()" placeholder="Código..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['agency']" (input)="getBanks()" placeholder="Sucursal..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['name']" (input)="getBanks()" placeholder="Nombre..."></th>
@@ -36,6 +36,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let bank of banks | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
                                                                       totalItems: totalItems
@@ -63,9 +68,6 @@
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron bancos</td>
-          </tr>
-          <tr align="center" *ngIf="loading">
-            <td colspan="4">Cargando...</td>
           </tr>
         </tbody>
       </table>

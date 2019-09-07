@@ -37,6 +37,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let transaction of transactions"
               [ngClass]="{'row-active':isTransactionSelected(transaction), 'row-inactive':!isTransactionSelected(transaction)}">
             <td align="left" width="50">
@@ -62,9 +67,6 @@
           </tr>
           <tr align="center" *ngIf="totalItems === 0 && !loading">
             <td colspan="16">No se encontraron transacciones para cancelar</td>
-          </tr>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
           </tr>
         </tbody>
       </table>
