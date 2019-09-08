@@ -108,7 +108,7 @@
       <h5><b>Comensales: {{amountOfDinersNow}}/{{amountOfDiners}}</b></h5>
     </div>
   </div>
-  <div class="row">
+  <div class="row" style="padding-left: 10px;">
     <div *ngFor="let table of tables | orderBy:[orderTerm] | filter: filterRoom:'description':'room'">
       <div class="itable" [ngClass]="{ 'itable-busy':table.state==='Ocupada' || table.state==='Reservada',
                                         'itable-disabled':table.state==='No Habilitada',
