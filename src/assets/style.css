@@ -120,6 +120,10 @@ td {
       color: white;
 }
 
+.btn-select {
+      width: 400px;
+}
+
 
 @media (min-width: 1100px) {
       .modal-lg {
@@ -145,5 +149,8 @@ td {
 
       .card .card-header .btn span {
             display: none;
+      }
+      .btn-select {
+            width: 100%;
       }
 }

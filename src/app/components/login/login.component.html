@@ -6,11 +6,11 @@
       </div>
     </div>
     <br>
-    <div class="row" align="center">
+    <div class="row center-content">
       <h5>Ingresa a tu cuenta</h5>
     </div>
     <hr>
-    <div class="row" *ngIf="alertMessage !== ''">
+    <div class="row center-content" *ngIf="alertMessage !== ''">
       <div class="center-content">
         <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
           {{alertMessage}}
@@ -21,7 +21,8 @@
       <div class="row">
         <div class="center-content">
           <div class="row" *ngIf="!company">
-            <div class="form-group col-md-12">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
               <label for="company" class="control-label">Negocio:</label>
               <input type="text" class="form-control" formControlName="company" name="company" id="company" [focus]="focusEvent"/>
               <div *ngIf="formErrors.company" class="alert alert-danger">
@@ -30,7 +31,8 @@
             </div>
           </div>
           <div class="row">
-            <div class="form-group col-md-12">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
               <label for="user" class="control-label">Usuario o Email:</label>
               <input type="text" class="form-control" formControlName="user" name="user" id="user" [focus]="focusEvent"/>
               <div *ngIf="formErrors.user" class="alert alert-danger">
@@ -39,7 +41,8 @@
             </div>
           </div>
           <div class="row">
-            <div class="form-group col-md-12">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
               <label for="password" class="control-label">Password:</label>
               <div class="input-group">
                 <input type="password" class="form-control" formControlName="password" name="password" id="password"/>
