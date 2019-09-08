@@ -1,6 +1,6 @@
 app-add-sale-order {
       .container-message {
-        margin-top: 55px;
+        margin-top: 65px;
         background-color: white;
       }
 
@@ -111,5 +111,35 @@ app-add-sale-order {
       
       .table thead th {
             font-weight: 600;
+      }
+
+            
+      /* RESPONSIVE */
+      @media (max-width: 767px) {
+            .header-transaction {
+                  position: relative;
+            }
+
+            .container-message {
+                  margin-top: 0px;
+            }
+
+            .btn-large {
+                  height: 50px;
+                  font-size: 15px;
+                  font-weight: 400;
+            }
+
+            .container-transaction {
+                  .table-container {
+                        padding-right: 0px;
+                  }
+                  .col-md-7, .col-md-11 {
+                        padding-right: 0px !important;
+                        .filterArticle {
+                              margin-right: 0px;
+                        }
+                  }
+            }
       }
 }

@@ -187,7 +187,7 @@
           </tbody>
         </table>
       </div>
-      <div class="row" *ngIf="transaction.type && transaction.type.showPrices">
+      <div class="row table-totals" *ngIf="transaction.type && transaction.type.showPrices">
         <table class="table table-striped">
           <tbody>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
@@ -232,26 +232,26 @@
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
         </div>
         <div  *ngIf="transaction.type && transaction.type.fastPayment"
-              class="col-md-6 btn-action btn-large center-content"
+              class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
               (click)="openModal('charge', null, transaction.type.fastPayment)">
           <span>{{ transaction.type.fastPayment.name }}</span>
         </div>
         <div  *ngIf="transaction.type && transaction.type.fastPayment"
-              class="col-md-6 btn-action btn-large center-content"
+              class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
               (click)="openModal('charge')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
         </div>
       </div>
       <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('add_client')">
+        <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content" (click)="openModal('add_client')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Proveedor</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cliente</span>
         </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
+        <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
           Descuento
         </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel')">
+        <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content" (click)="openModal('cancel')">
           Anular
         </div>
       </div>
