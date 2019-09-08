@@ -1,6 +1,5 @@
 app-add-sale-order {
       .container-message {
-        margin-top: 65px;
         background-color: white;
       }
 
@@ -26,7 +25,6 @@ app-add-sale-order {
             background: #292B2C;
             color: white;
             margin: 0px;
-            position: fixed;
             z-index: 99;
             min-width: 100%;
             top: 0px;
@@ -116,14 +114,6 @@ app-add-sale-order {
             
       /* RESPONSIVE */
       @media (max-width: 767px) {
-            .header-transaction {
-                  position: relative;
-            }
-
-            .container-message {
-                  margin-top: 0px;
-            }
-
             .btn-large {
                   height: 50px;
                   font-size: 15px;
