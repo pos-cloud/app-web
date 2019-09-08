@@ -87,6 +87,7 @@ body {
 th {
       cursor: pointer;
       font-weight: 500;
+      white-space: nowrap;
 }
 
 td {
