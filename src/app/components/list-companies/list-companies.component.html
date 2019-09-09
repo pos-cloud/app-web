@@ -157,7 +157,7 @@
       <div class="pull-right">
         <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
-        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><i class="fa fa-close"></i><span>Cerrar</span></button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span>Cerrar</span></button>
       </div>
     </div>
       <div class="card-block table-responsive">
