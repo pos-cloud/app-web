@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +13,8 @@ import { RoundNumberPipe } from '../../pipes/round-number.pipe';
   selector: 'app-license-payment',
   templateUrl: './license-payment.component.html',
   styleUrls: ['./license-payment.component.scss'],
-  providers: [NgbAlertConfig]
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class LicensePaymentComponent implements OnInit {
