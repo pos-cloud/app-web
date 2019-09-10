@@ -278,7 +278,7 @@ export class CashBoxComponent implements OnInit {
         await this.getTransactions(query).then(
           async transactions => {
             if(transactions) {
-              this.showMessage("No puede cerrar la caja con transacciones abiertas." + transactions[0].type.name + "  " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number, 'info', true);
+              this.showMessage("No puede cerrar la caja la transaccion : " + transactions[0].type.name + "  " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number + "esta abierta.", 'info', true);
             } else {
               await this.getLastTransactionByType().then(
                 transaction => {
