@@ -102,6 +102,8 @@
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getSummary()" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (input)="getSummary()" placeholder="Precio..."></th>
               <th></th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -138,12 +140,11 @@
             </tr>
           </tbody>
           <tfoot>
-            <td colspan="11" class="align-right" *ngIf="userCountry === 'AR'">
-              <strong>Stock Real</strong>
+            <td colspan="10" *ngIf="userCountry === 'AR'">
             </td>
-            <td colspan="10" class="align-right" *ngIf="userCountry !== 'AR'">
-              <strong>Stock Real</strong>
+            <td colspan="9" *ngIf="userCountry !== 'AR'">
             </td>
+            <td><strong>Stock Real</strong></td>
             <td class="align-right">
               <strong>{{balance }}</strong>
             </td>

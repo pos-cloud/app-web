@@ -48,6 +48,10 @@ app-point-of-sale {
 		background-color: #FFF;
 	}
 
+	td {
+		cursor: pointer;
+	}
+
 	/* RESPONSIVE */
 	@media (max-width: 767px) {
 		.tables-container {
