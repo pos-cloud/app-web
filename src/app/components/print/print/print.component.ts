@@ -2262,7 +2262,6 @@ export class PrintComponent implements OnInit {
     let width = this.printer.pageWidth;
  
     if (!this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-      console.log("entro");
       this.doc.setFontType('bold');
       this.doc.setFontSize(this.fontSizes.large);
       if(this.config[0].companyFantasyName)  {

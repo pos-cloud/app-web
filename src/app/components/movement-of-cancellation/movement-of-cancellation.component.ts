@@ -752,7 +752,6 @@ export class MovementOfCancellationComponent implements OnInit {
             if(tax.taxBase === 0) {
               tax.taxBase = movementOfArticle.salePrice;
             }
-            console.log(tax.taxBase);
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);

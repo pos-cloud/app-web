@@ -247,7 +247,11 @@ export class AddSaleOrderComponent {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.focusEvent.emit(true), 1000);
+    setTimeout(() => {
+      if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+        this.focusEvent.emit(true);
+      }
+    }, 1000);
   }
 
   public getCurrencies(): Promise<Currency[]> {
