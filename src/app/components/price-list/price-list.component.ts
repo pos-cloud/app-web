@@ -76,7 +76,7 @@ export class PriceListComponent implements OnInit {
     this.buildForm();
 
     if (this.priceListId) {
-      this.getListPrice();
+      this.getPriceList();
     }
 
   }
@@ -240,7 +240,7 @@ export class PriceListComponent implements OnInit {
     }
   }
 
-  public getListPrice() {
+  public getPriceList() {
 
     this.loading = true;
 
@@ -251,7 +251,6 @@ export class PriceListComponent implements OnInit {
         } else {
           this.hideMessage();
           this.priceList = result.priceList;
-          console.log(this.priceList);
           if(this.priceList.allowSpecialRules){
             this.viewRules = true;
           }
@@ -330,7 +329,7 @@ export class PriceListComponent implements OnInit {
 
     switch (this.operation) {
       case 'add':
-        this.saveListPrice();
+        this.savePriceList();
         break;
       case 'edit':
         this.updatePriceList();
@@ -365,7 +364,7 @@ export class PriceListComponent implements OnInit {
     );
   }
 
-  public saveListPrice() {
+  public savePriceList() {
 
     this.loading = true;
 
