@@ -2329,7 +2329,9 @@ export class AddSaleOrderComponent {
     this.listCategoriesComponent.areCategoriesVisible = true;
     this.listArticlesComponent.areArticlesVisible = false;
     this.listArticlesComponent.filterArticle = this.filterArticle;
-    this.focusEvent.emit(true);
+    if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+        this.focusEvent.emit(true);
+      }
   }
 
   public showArticles(category?: Category): void {
@@ -2341,7 +2343,9 @@ export class AddSaleOrderComponent {
     }
     this.listCategoriesComponent.areCategoriesVisible = false;
     this.listArticlesComponent.areArticlesVisible = true;
-    this.focusEvent.emit(true);
+    if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+        this.focusEvent.emit(true);
+      }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
