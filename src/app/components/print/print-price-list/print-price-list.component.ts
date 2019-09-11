@@ -55,6 +55,7 @@ export class PrintPriceListComponent implements OnInit {
   public withImage = false;
   public articleFields : ArticleField [];
   public priceLists : PriceList [];
+  public priceList;
   public articleFieldsValues : []
   public imageURL
   public fontSizes = JSON.parse(`{"xsmall" : 5,
@@ -229,12 +230,12 @@ export class PrintPriceListComponent implements OnInit {
   public buildForm(): void {
 
     this.printPriceListForm = this._fb.group({
-      'make': [, []],
-      'category': [, []],
-      'withImage' : [,[]],
-      'articleField' : [,[]],
-      'articleFieldsValue' : [,[]],
-      'priceList' : [,[]]
+      'make': ['', []],
+      'category': ['', []],
+      'withImage' : ['',[]],
+      'articleField' : ['',[]],
+      'articleFieldValue' : ['',[]],
+      'priceList' : ['',[]]
 
     });
 
@@ -492,7 +493,6 @@ export class PrintPriceListComponent implements OnInit {
       row +=5;
       if(this.articles && this.articles.length > 0){
         for(let article of this.articles) {
-            count ++
             this.doc.setFontType('blod')
             if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
               this.doc.addImage(this.imageURL, 'JPEG', 15, row+2, 60, 40);
@@ -580,6 +580,7 @@ export class PrintPriceListComponent implements OnInit {
             this.doc.line(0, row, 300, row);
             row +=5
 
+            count++;
             //4 item por pag
             if (count === 5) {
 
