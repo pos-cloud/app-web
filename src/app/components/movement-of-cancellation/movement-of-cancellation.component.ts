@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionMovement } from '../../models/transaction-type'
@@ -25,7 +25,8 @@ import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 @Component({
   selector: 'app-movement-of-cancellation',
   templateUrl: './movement-of-cancellation.component.html',
-  styleUrls: ['./movement-of-cancellation.component.scss']
+  styleUrls: ['./movement-of-cancellation.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class MovementOfCancellationComponent implements OnInit {
