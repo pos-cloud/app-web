@@ -90,6 +90,10 @@ th {
       white-space: nowrap;
 }
 
+.ws-normal {
+      white-space: normal;
+}
+
 td {
       white-space: nowrap;
 }

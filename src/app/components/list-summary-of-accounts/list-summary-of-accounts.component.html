@@ -83,13 +83,13 @@
                     <button type="button" class="btn btn-success  btn-sm" (click)="viewDetailCureentAccount(item._id.companyId)" title="Ver"><i class="fa fa-eye"></i></button>
                     <a *ngIf="item.companyPhones" class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{item.companyPhones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
                   </td>
-                  <td class="flat">{{ item.companyName }}</td>
+                  <td class="flat ws-normal">{{ item.companyName }}</td>
                   <td class="flat">{{ item.companyType }}</td>
                   <td class="flat align-center">{{ item.identificationValue }}</td>
-                  <td class="flat">{{ item.companyAddress }}</td>
-                  <td class="flat">{{ item.companyPhones }}</td>
-                  <td class="flat">{{ item.companyEmails }}</td>
-                  <td class="flat">{{ item.companyEmployee }}</td>
+                  <td class="flat ws-normal">{{ item.companyAddress }}</td>
+                  <td class="flat ws-normal">{{ item.companyPhones }}</td>
+                  <td class="flat ws-normal">{{ item.companyEmails }}</td>
+                  <td class="flat ws-normal">{{ item.companyEmployee }}</td>
                   <td class="flat align-right" *ngIf="item.balance>=0">
                     <strong>{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                   </td>
