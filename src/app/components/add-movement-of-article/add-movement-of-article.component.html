@@ -116,7 +116,7 @@
         {{ errVariant }}
       </div>
       <div class="row">
-        <div class="form-group col-md-12">
+        <div class="form-group col-md-8">
           <label for="unitPrice" class="control-label">Precio Unitario:</label>
           <div class="input-group">
             <span class="input-group-addon">$</span>
@@ -124,6 +124,12 @@
           </div>
           <div *ngIf="formErrors.unitPrice" class="alert alert-danger">
             {{ formErrors.unitPrice }}
+          </div>
+        </div>
+        <div *ngIf="!movementOfArticle.article.containsVariants && movementOfArticle.article.type === 'Final'" class="form-group col-md-4">
+          <label class="control-label">Editar Producto:</label>
+          <div class="input-group">
+            <button type="button" class="btn btn-primary" (click)="openModal('update')" title="Editar"><i class="fa fa-pencil"></i></button>
           </div>
         </div>
       </div>

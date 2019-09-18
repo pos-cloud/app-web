@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Terceros
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 //Models
 import { MovementOfArticle } from '../../models/movement-of-article';
@@ -28,6 +28,7 @@ import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { ConfigService } from 'app/services/config.service';
+import { AddArticleComponent } from '../add-article/add-article.component';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -84,6 +85,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     private _articleStockService: ArticleStockService,
     private _variantService: VariantService,
     private _configService: ConfigService,
+    private _modalService: NgbModal,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -1082,6 +1084,25 @@ export class AddMovementOfArticleComponent implements OnInit {
       }
     );
   }
+
+  async openModal(op: string, article?: Article) {
+
+    let modalRef;
+    switch (op) {
+      case 'update':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.articleId = this.movementOfArticle.article._id;
+        modalRef.componentInstance.operation = "update";
+        modalRef.result.then((result) => {
+
+        }, (reason) => {
+
+        });
+        break;
+      
+      default: ;
+    }
+  };
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

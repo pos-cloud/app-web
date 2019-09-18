@@ -79,7 +79,7 @@ export class AddArticleComponent implements OnInit {
   public hasChanged = false;
   public roundNumber: RoundNumberPipe = new RoundNumberPipe();
   public imageURL: string;
-  public articleType: string;
+  public articleType: ArticleType;
   public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   public lastPricePurchase: number = 0.00;
   public otherFieldsAlfabetico = false;
@@ -174,11 +174,11 @@ export class AddArticleComponent implements OnInit {
     const pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     if (pathLocation[2] === "productos") {
-      this.articleType = "Producto";
+      //this.articleType = "Producto";
       this.article.type = ArticleType.Final;
     } else if (pathLocation[2] === "variantes") {
       this.article.type = ArticleType.Variant;
-      this.articleType = "Variante";
+      //this.articleType = "Variante";
     }
   }
 
@@ -404,6 +404,16 @@ export class AddArticleComponent implements OnInit {
           if(this.operation === 'copy'){
             this.article._id = null;
             this.article.code = '';
+          }
+          switch (this.article.type) {
+            case ArticleType.Final:
+              this.articleType = ArticleType.Final
+              break;
+            case ArticleType.Variant:
+              this.articleType = ArticleType.Variant
+              break;
+            default:
+              break;
           }
           this.setValuesForm();
         }
@@ -1071,6 +1081,7 @@ export class AddArticleComponent implements OnInit {
       }
       this.article.otherFields = this.otherFields;
       this.article.taxes = this.taxes;
+      this.article.type = this.articleType;
 
       const pathLocation: string[] = this._router.url.split('/');
       if (pathLocation[2] === "productos") {
