@@ -265,20 +265,23 @@ export class PrintPriceListComponent implements OnInit {
 
   public getArticles(): void {
 
+    console.log(this.printPriceListForm.value)
+
 
     let match = `{`;
 
-    if(this.printPriceListForm.value.make !== null){
+    if(this.printPriceListForm.value.make){
       match += `"make._id" :  { "$oid" : "${this.printPriceListForm.value.make}" },`
     }
 
-    if(this.printPriceListForm.value.category !== null){
+    if(this.printPriceListForm.value.category){
       match += `"category._id" :  { "$oid" : "${this.printPriceListForm.value.category}" },`
     }
 
-    if(this.printPriceListForm.value.otherFields !== null && this.printPriceListForm.value.articleFieldsValue !== null){
+    if(this.printPriceListForm.value.otherFields && this.printPriceListForm.value.articleFieldsValue){
       match += `"otherFields.value" : "${this.printPriceListForm.value.articleFieldsValue}",`
     }
+
     
     match += `"type" : "Final", "allowSale": true , "operationType" : { "$ne" : "D" } }`;
 
@@ -292,7 +295,6 @@ export class PrintPriceListComponent implements OnInit {
       type:1,
       code:1,
       description:1,
-      posDescription : 1,
       salePrice:1,
       "category._id" : 1,
       "category.description": 1,
@@ -320,9 +322,14 @@ export class PrintPriceListComponent implements OnInit {
         0 // SKIP
     ).subscribe(
       result => {
-        if (result && result[0] && result[0].articles && result[0].articles.length > 0) {
+        if (result && result[0] && result[0].articles) {
             this.articles = result[0].articles;
-            this.printPriceList();
+            if(this.printPriceListForm.value.withImage === false){
+              this.printPriceListWithImagen();
+            } else {
+              this.printPriceListWithoutImagen();
+            }
+            
         } else {
             this.showMessage("No se encontraron articulos", 'danger', false);
             this.articles = null;
@@ -335,66 +342,32 @@ export class PrintPriceListComponent implements OnInit {
     );
   }
 
-  async printPriceList() {
-    
-    this.loading = true;
-    var row = 15;
-    var margin = 5;
-    this.doc.setFontType('bold');
-
-    this.doc.setFontSize(12);
-    if (this.config[0].companyFantasyName) {
-      this.doc.text(this.config[0].companyFantasyName, 5, row);
-    }
-
-    this.doc.setFontType('normal');
-    row += 5;
-    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-    }
-
-    this.doc.setFontType('bold');
-    this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-    row += 3;
-    this.doc.line(0, row, 400, row);
-    
-
-
-    if(this.printPriceListForm.value.withImage == false){
-      row += 5;
-      // Encabezado de la tabla de Detalle de Productos
-      this.doc.setFontType('bold');
-      this.doc.setFontSize(this.fontSizes.normal);
-      this.doc.text("Código", 5, row);
-      this.doc.text("Descripción", 30, row);
-      this.doc.text("Marca", 100, row);
-      this.doc.text("Rubro", 145, row);
-      this.doc.text("Precio", 190, row);
-      this.doc.setFontType('normal');
-
-      row += 3;
-      this.doc.line(0, row, 400, row);
-      row += 5;
-
-      let page = 1;
-
-      // // Detalle de productos
-      if(this.articles && this.articles.length > 0) {
-        for(let article of this.articles) {
-
-          if(article.code) {
-            this.doc.text(article.code, 5, row);
+  async printPriceListWithImagen() {
+    let count = 0;
+    let img;
+    row +=5;
+    if(this.articles && this.articles.length > 0){
+      for(let article of this.articles) {
+          this.doc.setFontType('blod')
+          if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
+            this.doc.addImage(this.imageURL, 'JPEG', 15, row+2, 60, 40);
           }
-          if (article.description) {
-            this.doc.text(article.description.slice(0, 30), 30, row);
+          row +=5
+          this.doc.setFontSize(this.fontSizes.extraLarge)
+          this.doc.text(5, row, article.description)
+          row +=5
+          this.doc.setFontSize(this.fontSizes.normal)
+          if(article.posDescription){
+            this.doc.text(95, row, 'COD: ' + article.posDescription)
           }
-          if (article.make && article.make.description) {
-            this.doc.text(article.make.description.slice(0, 18), 100, row);
+          row +=5
+          this.doc.setFontSize(this.fontSizes.normal)
+          if(article.make){
+            this.doc.text(95, row, 'Marca: ' + article.make.description)
           }
-          if (article.category && article.category.description) {
-            this.doc.text(article.category.description.slice(0, 18), 145, row);
-          }
+          this.doc.text(160, row, 'Precio')
+          this.doc.setFontSize(this.fontSizes.extraLarge)
+          
           let increasePrice = 0;
           if(this.printPriceListForm.value.priceList){
             let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
@@ -432,18 +405,40 @@ export class PrintPriceListComponent implements OnInit {
               
             }
           }
-            if(increasePrice != 0){
-              this.doc.text(150, row + 8,"$" + (this.roundNumber.transform(article.salePrice +(article.salePrice *increasePrice / 100))).toString());
-            } else {
-              this.doc.text(150, row + 8,"$" + (this.roundNumber.transform(article.salePrice)).toString());
+          if(increasePrice != 0){
+            this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice +(article.salePrice *increasePrice / 100))).toString());
+          } else {
+            this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice)).toString());
+          }
+          this.doc.setFontSize(this.fontSizes.normal)
+          row +=5
+          this.doc.text(95, row, 'Categoría: ' + article.category.description)
+          if(article.otherFields && article.otherFields.length > 0 ){
+            for (let fields of article.otherFields){
+              row +=5
+              this.doc.text(95, row, fields.articleField.name + ": " + fields.value)
             }
-          row += 5;
-
-          if (row >= (this.pageHigh - 20)) {
-
-            if(page === 120) {
-              break;
+          }
+          if(article.containsVariants){
+            let variants = await this.getVariants(article._id)
+            for(let variant of variants){
+              row +=5
+              this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
+              let col = 110 + variant["_id"]["type"]["name"].length;
+              for(let value of  variant["value"] ){
+                this.doc.text(col, row , value["description"])
+                col += 5 + value["description"].length;
+              }
             }
+          }
+          row +=20
+          this.doc.line(0, row, 300, row);
+          row +=5
+
+          count++;
+          //4 item por pag
+          if (count === 5) {
+
             this.doc.addPage();
 
             var row = 15;
@@ -467,154 +462,166 @@ export class PrintPriceListComponent implements OnInit {
 
             row += 3;
             this.doc.line(0, row, 400, row);
-            row += 5;
+            count = 0;
+          }
+        
+          
+      }
+    }
+    this.finishImpression();
+  }
 
-            // Encabezado de la tabla de Detalle de Productos
-            this.doc.setFontType('bold');
-            this.doc.setFontSize(this.fontSizes.normal);
-            this.doc.text("Código", 5 , row);
-            this.doc.text("Descripción", 30, row);
-            this.doc.text("Marca", 100, row);
-            this.doc.text("Rubro", 140, row);
-            this.doc.text("Precio", 190, row);
-            this.doc.setFontType('normal');
+  async printPriceListWithoutImagen() {
+    
+    this.loading = true;
+    var row = 15;
+    var margin = 5;
+    this.doc.setFontType('bold');
 
-            row += 3;
-            this.doc.line(0, row, 400, row);
-            row += 5;
+    this.doc.setFontSize(12);
+    if (this.config[0].companyFantasyName) {
+      this.doc.text(this.config[0].companyFantasyName, 5, row);
+    }
+
+    this.doc.setFontType('normal');
+    row += 5;
+    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+    }
+
+    this.doc.setFontType('bold');
+    this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    
+
+
+    row += 5;
+    // Encabezado de la tabla de Detalle de Productos
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.text("Código", 5, row);
+    this.doc.text("Descripción", 30, row);
+    this.doc.text("Marca", 100, row);
+    this.doc.text("Rubro", 145, row);
+    this.doc.text("Precio", 190, row);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    row += 5;
+
+    let page = 1;
+
+    // // Detalle de productos
+    if(this.articles && this.articles.length > 0) {
+      for(let article of this.articles) {
+
+        if(article.code) {
+          this.doc.text(article.code, 5, row);
+        }
+        if (article.description) {
+          this.doc.text(article.description.slice(0, 30), 30, row);
+        }
+        if (article.make && article.make.description) {
+          this.doc.text(article.make.description.slice(0, 18), 100, row);
+        }
+        if (article.category && article.category.description) {
+          this.doc.text(article.category.description.slice(0, 18), 145, row);
+        }
+        let increasePrice = 0;
+        if(this.printPriceListForm.value.priceList){
+          let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
+          if(priceList){
+            if(priceList.allowSpecialRules){
+                priceList.rules.forEach(rule => {
+                  if(rule){
+                    if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id){
+                      increasePrice = priceList.percentage
+                    }
+                  }
+                });
+              } else {
+                increasePrice = priceList.percentage
+              }
+
+              if(priceList.exceptions && priceList.exceptions.length > 0){
+                priceList.exceptions.forEach(exception =>{
+                  if(exception){
+                    if(article && exception.article && exception.article._id === article._id){
+                      increasePrice = exception.percentage
+                    }
+                  }
+                })
+              }
+            
           }
         }
-      }
+          if(increasePrice != 0){
+            this.doc.text(190,row,"$" + (this.roundNumber.transform(article.salePrice +(article.salePrice *increasePrice / 100))).toString());
+          } else {
+            this.doc.text(190,row,"$" + (this.roundNumber.transform(article.salePrice)).toString());
+          }
+        row += 5;
 
-      this.finishImpression();
-    } else {
-      let count = 0;
-      let img;
-      row +=5;
-      if(this.articles && this.articles.length > 0){
-        for(let article of this.articles) {
-            this.doc.setFontType('blod')
-            if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
-              this.doc.addImage(this.imageURL, 'JPEG', 15, row+2, 60, 40);
-            }
-            row +=5
-            this.doc.setFontSize(this.fontSizes.extraLarge)
-            this.doc.text(5, row, article.description)
-            row +=5
-            this.doc.setFontSize(this.fontSizes.normal)
-            if(article.posDescription){
-              this.doc.text(95, row, 'COD: ' + article.posDescription)
-            }
-            row +=5
-            this.doc.setFontSize(this.fontSizes.normal)
-            if(article.make){
-              this.doc.text(95, row, 'Marca: ' + article.make.description)
-            }
-            this.doc.text(160, row, 'Precio')
-            this.doc.setFontSize(this.fontSizes.extraLarge)
-            
-            let increasePrice = 0;
-            if(this.printPriceListForm.value.priceList){
-              let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
-              if(priceList){
-                if(priceList.allowSpecialRules){
-                    priceList.rules.forEach(rule => {
-                      if(rule){
-                        if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id){
-                          increasePrice = rule.percentage + priceList.percentage
-                        }
-                        if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id){
-                          increasePrice = rule.percentage + priceList.percentage
-                        }
-                        if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id){
-                          increasePrice = rule.percentage + priceList.percentage
-                        }
-                        if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id){
-                          increasePrice = priceList.percentage
-                        }
-                      }
-                    });
-                  } else {
-                    increasePrice = priceList.percentage
-                  }
-  
-                  if(priceList.exceptions && priceList.exceptions.length > 0){
-                    priceList.exceptions.forEach(exception =>{
-                      if(exception){
-                        if(article && exception.article && exception.article._id === article._id){
-                          increasePrice = exception.percentage
-                        }
-                      }
-                    })
-                  }
-                
-              }
-            }
-            if(increasePrice != 0){
-              this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice +(article.salePrice *increasePrice / 100))).toString());
-            } else {
-              this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice)).toString());
-            }
-            this.doc.setFontSize(this.fontSizes.normal)
-            row +=5
-            this.doc.text(95, row, 'Categoría: ' + article.category.description)
-            if(article.otherFields && article.otherFields.length > 0 ){
-              for (let fields of article.otherFields){
-                row +=5
-                this.doc.text(95, row, fields.articleField.name + ": " + fields.value)
-              }
-            }
-            if(article.containsVariants){
-              let variants = await this.getVariants(article._id)
-              for(let variant of variants){
-                row +=5
-                this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
-                let col = 110 + variant["_id"]["type"]["name"].length;
-                for(let value of  variant["value"] ){
-                  this.doc.text(col, row , value["description"])
-                  col += 5 + value["description"].length;
-                }
-              }
-            }
-            row +=20
-            this.doc.line(0, row, 300, row);
-            row +=5
+        if (row >= (this.pageHigh - 20)) {
 
-            count++;
-            //4 item por pag
-            if (count === 5) {
+          if(page === 120) {
+            break;
+          }
+          this.doc.addPage();
 
-              this.doc.addPage();
-  
-              var row = 15;
-              var margin = 5;
-              this.doc.setFontType('bold');
-  
-              this.doc.setFontSize(12);
-              if (this.config[0].companyFantasyName) {
-                this.doc.text(this.config[0].companyFantasyName, 5, row);
-              }
-  
-              this.doc.setFontType('normal');
-              row += 5;
-              if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-                this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-                this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-              }
-  
-              this.doc.setFontType('bold');
-              this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-  
-              row += 3;
-              this.doc.line(0, row, 400, row);
-              count = 0;
-            }
-          
-            
+          var row = 15;
+          var margin = 5;
+          this.doc.setFontType('bold');
+
+          this.doc.setFontSize(12);
+          if (this.config[0].companyFantasyName) {
+            this.doc.text(this.config[0].companyFantasyName, 5, row);
+          }
+
+          this.doc.setFontType('normal');
+          row += 5;
+          if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+            this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+            this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+          }
+
+          this.doc.setFontType('bold');
+          this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+
+          // Encabezado de la tabla de Detalle de Productos
+          this.doc.setFontType('bold');
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.text("Código", 5 , row);
+          this.doc.text("Descripción", 30, row);
+          this.doc.text("Marca", 100, row);
+          this.doc.text("Rubro", 140, row);
+          this.doc.text("Precio", 190, row);
+          this.doc.setFontType('normal');
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
         }
       }
-      this.finishImpression();
     }
+
+    this.finishImpression();
   }
 
   async getPicture(picture) {
