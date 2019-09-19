@@ -1085,24 +1085,6 @@ export class AddMovementOfArticleComponent implements OnInit {
     );
   }
 
-  async openModal(op: string, article?: Article) {
-
-    let modalRef;
-    switch (op) {
-      case 'update':
-        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.articleId = this.movementOfArticle.article._id;
-        modalRef.componentInstance.operation = "update";
-        modalRef.result.then((result) => {
-
-        }, (reason) => {
-
-        });
-        break;
-      
-      default: ;
-    }
-  };
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
     this.alertMessage = message;

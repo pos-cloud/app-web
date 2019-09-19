@@ -291,7 +291,7 @@
             </div>
 					</ng-template>
 				</ngb-tab>
-				<ngb-tab title="Variantes" *ngIf="articleType === 'Final'">
+				<ngb-tab title="Variantes" *ngIf="articleType === 'Producto'">
 					<ng-template ngbTabContent>
 						<app-add-variant (eventAddVariants)="manageVariants($event)" [article]="article" [variants]="variants"></app-add-variant>
 					</ng-template>
