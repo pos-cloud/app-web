@@ -265,8 +265,6 @@ export class PrintPriceListComponent implements OnInit {
 
   public getArticles(): void {
 
-    console.log(this.printPriceListForm.value)
-
 
     let match = `{`;
 
@@ -322,7 +320,6 @@ export class PrintPriceListComponent implements OnInit {
         0 // SKIP
     ).subscribe(
       result => {
-        console.log(result);
         if (result && result[0] && result[0].articles) {
             this.articles = result[0].articles;
             if(this.printPriceListForm.value.withImage === false){
