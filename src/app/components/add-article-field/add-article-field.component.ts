@@ -32,11 +32,15 @@ export class AddArticleFieldComponent  implements OnInit {
   public resultUpload;
 
   public formErrors = {
+    'order': '',
     'name': '',
     'value': ''
   };
 
   public validationMessages = {
+    'order': {
+      'required':       'Este campo es requerido.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
     }
@@ -54,7 +58,7 @@ export class AddArticleFieldComponent  implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.articleField = new ArticleField ();
+    this.articleField = new ArticleField();
     this.buildForm();
   }
 
@@ -65,6 +69,10 @@ export class AddArticleFieldComponent  implements OnInit {
   public buildForm(): void {
 
     this.articleFieldForm = this._fb.group({
+      'order': [this.articleField.order, [
+          Validators.required
+        ]
+      ],
       'name': [this.articleField.name, [
           Validators.required
         ]

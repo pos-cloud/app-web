@@ -1,6 +1,7 @@
 export class ArticleField {
 
 	public _id: string;
+	public order: number = 1;
 	public name: string;
 	public datatype: ArticleFieldType = ArticleFieldType.Percentage;
 	public value: string;

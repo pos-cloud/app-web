@@ -18,6 +18,7 @@
           <thead>
             <tr>
               <th><i class="fa fa-bars"></i></th>
+              <th (click)="orderBy('order')">Orden </th>
               <th (click)="orderBy('name')">Nombre </th>
               <th (click)="orderBy('datatype')">Tipo de dato </th>
               <th (click)="orderBy('value')">Valor </th>
@@ -26,6 +27,7 @@
             </tr>
             <tr class="filters">
               <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterOrder" placeholder="Orden..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterName" placeholder="Nombre..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDatatype" placeholder="Tipo de dato..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterValue" placeholder="Valor..." ></th>
@@ -39,7 +41,8 @@
                 <app-progressbar [loading]="loading"></app-progressbar>
               </td>
             </tr>
-            <tr *ngFor="let articleField of articleFields | filter: filterName:'name'
+            <tr *ngFor="let articleField of articleFields | filter: filterOrder:'order'
+                                                          | filter: filterName:'name'
                                                           | filter: filterDatatype:'datatype'
                                                           | filter: filterValue:'value'
                                                           | filter: filterModify:'modify'
@@ -54,6 +57,7 @@
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', articleField)" title="Modificar"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', articleField)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
+              <td class="flat">{{articleField.order}}</td>
               <td class="flat">{{articleField.name}}</td>
               <td class="flat">{{articleField.datatype}}</td>
               <td class="flat">{{articleField.value}}</td>

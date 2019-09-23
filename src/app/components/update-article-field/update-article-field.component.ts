@@ -32,11 +32,15 @@ export class UpdateArticleFieldComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'order': '',
     'name': '',
     'value':''
   };
 
   public validationMessages = {
+    'order': {
+      'required':       'Este campo es requerido.'
+    },
     'name': {
       'required':       'Este campo es requerido.'
     }
@@ -66,6 +70,10 @@ export class UpdateArticleFieldComponent implements OnInit {
 
     this.articleFieldForm = this._fb.group({
       '_id': [this.articleField._id, [
+        ]
+      ],
+      'order': [this.articleField.order, [
+          Validators.required
         ]
       ],
       'name': [this.articleField.name, [
@@ -113,6 +121,7 @@ export class UpdateArticleFieldComponent implements OnInit {
   public setValueForm(): void {
 
     if(!this.articleField._id) { this.articleField._id = '' }
+    if(!this.articleField.order) { this.articleField.order = 1 }
     if(!this.articleField.name) { this.articleField.name = '' }
     if(!this.articleField.datatype) { this.articleField.datatype = ArticleFieldType.Percentage }
     if(this.articleField.modify === undefined) { this.articleField.modify = false }
@@ -120,6 +129,7 @@ export class UpdateArticleFieldComponent implements OnInit {
 
     this.articleFieldForm.setValue({
       '_id':this.articleField._id,
+      'order': this.articleField.order,
       'name': this.articleField.name,
       'datatype': this.articleField.datatype,
       'value': this.articleField.value,
@@ -148,7 +158,6 @@ export class UpdateArticleFieldComponent implements OnInit {
         } else {
           this.articleField = result.articleField;
           this.showMessage("El campo de producto se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

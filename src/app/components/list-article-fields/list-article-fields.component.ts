@@ -108,11 +108,9 @@ export class ListArticleFieldsComponent implements OnInit {
           modalRef.componentInstance.articleField = articleField;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getArticleFields();
-            }
+            this.getArticleFields();
           }, (reason) => {
-
+            this.getArticleFields();
           });
         break;
       case 'delete' :
