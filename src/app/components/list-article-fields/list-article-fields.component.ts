@@ -25,7 +25,7 @@ export class ListArticleFieldsComponent implements OnInit {
   public areArticleFieldsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['order'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;

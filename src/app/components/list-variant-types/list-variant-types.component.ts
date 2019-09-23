@@ -24,7 +24,7 @@ export class ListVariantTypesComponent implements OnInit {
   public areVariantTypesEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['order'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -107,11 +107,9 @@ export class ListVariantTypesComponent implements OnInit {
         modalRef.componentInstance.variantType = variantType;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getVariantTypes();
-          }
+          this.getVariantTypes();
         }, (reason) => {
-
+          this.getVariantTypes();
         });
         break;
       case 'delete':

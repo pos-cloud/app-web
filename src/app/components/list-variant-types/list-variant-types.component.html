@@ -16,13 +16,15 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>
-              <i class="fa fa-bars"></i>
-            </th>
+            <th><i class="fa fa-bars"></i></th>
+            <th (click)="orderBy('order')">Orden </th>
             <th (click)="orderBy('name')">Nombre </th>
           </tr>
           <tr class="filters">
             <th></th>
+            <th>
+              <input type="text" class="form-control" [(ngModel)]="filterOrder" placeholder="Orden...">
+            </th>
             <th>
               <input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Descripción...">
             </th>
@@ -34,7 +36,8 @@
               <app-progressbar [loading]="loading"></app-progressbar>
             </td>
           </tr>
-          <tr *ngFor="let variantType of variantTypes | filter: filterName:'name'
+          <tr *ngFor="let variantType of variantTypes | filter: filterOrder:'order'
+                                                      | filter: filterName:'name'
                                                       | orderBy: orderTerm: propertyTerm
                                                       | paginate: { itemsPerPage: itemsPerPage,
                                                                     currentPage: p,
@@ -51,6 +54,7 @@
                 <i class="fa fa-trash-o"></i>
               </button>
             </td>
+            <td class="flat">{{variantType.order}}</td>
             <td class="flat">{{variantType.name}}</td>
           </tr>
           <tr align="center" *ngIf="areVariantTypesEmpty && !loading">
