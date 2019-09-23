@@ -25,10 +25,14 @@ export class UpdateVariantValueComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'order': '',
     'description': ''
   };
 
   public validationMessages = {
+    'order': {
+      'required': 'Este campo es requerido.'
+    },
     'description': {
       'required': 'Este campo es requerido.'
     }
@@ -47,6 +51,7 @@ export class UpdateVariantValueComponent implements OnInit {
     this.buildForm();
     this.variantValueForm.setValue({
       '_id': this.variantValue._id,
+      'order': this.variantValue.order,
       'description': this.variantValue.description
     });
   }
@@ -59,11 +64,15 @@ export class UpdateVariantValueComponent implements OnInit {
 
     this.variantValueForm = this._fb.group({
       '_id': [this.variantValue._id, [
-      ]
+        ]
+      ],
+      'order': [this.variantValue.order, [
+        Validators.required
+        ]
       ],
       'description': [this.variantValue.description, [
         Validators.required
-      ]
+        ]
       ],
     });
 

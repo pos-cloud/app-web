@@ -13,7 +13,7 @@
   <form [formGroup]="variantValueForm" #formAddVariantValue="ngForm" (ngSubmit)="addVariantValue()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
           <label for="type" class="control-label">Tipo de variante</label>
           <select class="form-control" formControlName="type">
             <option *ngFor="let type of variantTypes" [ngValue]="type">{{type.name}}</option>
@@ -22,9 +22,16 @@
             {{ formErrors.type }}
           </div>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-4">
+          <label for="order" class="control-label">Orden:</label>
+          <input type="text" class="form-control" formControlName="order" name="order" id="order" [focus]="focusEvent" />
+          <div *ngIf="formErrors.order" class="alert alert-danger">
+            {{ formErrors.order }}
+          </div>
+        </div>
+        <div class="form-group col-md-4">
           <label for="description" class="control-label">Valor:</label>
-          <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent" />
+          <input type="text" class="form-control" formControlName="description" name="description" id="description" />
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
           </div>

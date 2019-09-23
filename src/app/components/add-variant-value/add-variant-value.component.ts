@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { VariantValue } from './../../models/variant-value';
 import { VariantType } from './../../models/variant-type';
@@ -28,11 +28,15 @@ export class AddVariantValueComponent implements OnInit {
 
   public formErrors = {
     'type': '',
+    'order': '',
     'description': ''
   };
 
   public validationMessages = {
     'type': {
+      'required': 'Este campo es requerido.'
+    },
+    'order': {
       'required': 'Este campo es requerido.'
     },
     'description': {
@@ -51,7 +55,6 @@ export class AddVariantValueComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let pathLocation: string[] = this._router.url.split('/');
     this.variantValue = new VariantValue();
     this.getVariantTypes();
     this.buildForm();
@@ -65,6 +68,10 @@ export class AddVariantValueComponent implements OnInit {
 
     this.variantValueForm = this._fb.group({
       'type': [this.variantValue.type, [
+          Validators.required
+        ]
+      ],
+      'order': [this.variantValue.order, [
           Validators.required
         ]
       ],
@@ -126,9 +133,11 @@ export class AddVariantValueComponent implements OnInit {
     
     if (!this.variantValue.type) this.variantValue.type = null;
     if (!this.variantValue.description) this.variantValue.description = '';
+    if (!this.variantValue.order) this.variantValue.order = 1;
 
     this.variantValueForm.setValue({
       'type': this.variantValue.type,
+      'order': this.variantValue.order,
       'description': this.variantValue.description
     });
   }

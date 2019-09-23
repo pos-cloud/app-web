@@ -19,16 +19,14 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type','name')">Tipo </th>
+            <th (click)="orderBy('order')">Orden </th>
             <th (click)="orderBy('description')">Descripción </th>
           </tr>
           <tr class="filters">
             <th></th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción...">
-            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterOrder" placeholder="Orden..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
           </tr>
         </thead>
         <tbody>
@@ -38,6 +36,7 @@
             </td>
           </tr>
           <tr *ngFor="let variantValue of variantValues | filter: filterType:'name':'type'
+                                                        | filter: filterOrder:'order'
                                                         | filter: filterDescription:'description'
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
@@ -53,6 +52,7 @@
               </button>
             </td>
             <td class="flat">{{variantValue.type.name}}</td>
+            <td class="flat">{{variantValue.order}}</td>
             <td class="flat">{{variantValue.description}}</td>
           </tr>
           <tr align="center" *ngIf="areVariantValuesEmpty && !loading">
