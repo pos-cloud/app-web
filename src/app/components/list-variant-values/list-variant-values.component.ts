@@ -108,11 +108,9 @@ export class ListVariantValuesComponent implements OnInit {
         modalRef.componentInstance.variantValue = variantValue;
         modalRef.componentInstance.readonly = false;
         modalRef.result.then((result) => {
-          if (result === 'save_close') {
-            this.getVariantValues();
-          }
+          this.getVariantValues();
         }, (reason) => {
-
+          this.getVariantValues();
         });
         break;
       case 'delete':
