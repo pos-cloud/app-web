@@ -18,7 +18,15 @@ import { CompanyType } from 'app/models/company';
 export class CurrentAccountDetailsComponent implements OnInit {
 
   @Input() companyType: CompanyType;
+
   @Input() employee: string;
+  @Input() address : string;
+  @Input() emails : string;
+  @Input() name : string;
+  @Input() identification : string;
+
+
+
   public alertMessage: string = '';
   public userType: string;
   public loading: boolean = false;
@@ -66,8 +74,21 @@ export class CurrentAccountDetailsComponent implements OnInit {
 
     let match = `{`;
 
+
+    if(this.address ){
+      match += `"company.address": { "$regex": "${this.address}", "$options": "i" }, `
+    }
+    if(this.emails ){
+      match += `"company.emails": { "$regex": "${this.emails}", "$options": "i" }, `
+    }
+    if(this.name ){
+      match += `"company.name": { "$regex": "${this.name}", "$options": "i" }, `
+    }
+    if(this.identification ){
+      match += `"company.identificationValue": { "$regex": "${this.identification}", "$options": "i" }, `
+    }
     if(this.employee ){
-      match += `"company.employee.name" : "${this.employee}",`
+      match += `"company.employee.name": { "$regex": "${this.employee}", "$options": "i" }, `
     }
     
     match += `"company.type" : "${this.companyType}",
@@ -78,6 +99,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
               "operationType" : { "$ne" : "D" } }`;
 
     match = JSON.parse(match);
+
 
     let timezone = "-03:00";
     if(Config.timezone && Config.timezone !== '') {
@@ -91,6 +113,7 @@ export class CurrentAccountDetailsComponent implements OnInit {
       "company.address" : 1,
       "company.city" : 1,
       "company.phones" : 1,
+      "company.emails" : 1,
       "company.type" : 1,
       "company.identificationType.name" : 1,
       "company.identificationValue": 1,

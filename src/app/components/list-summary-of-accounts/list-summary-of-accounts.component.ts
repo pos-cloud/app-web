@@ -41,6 +41,10 @@ export class ListSummaryOfAccountsComponent implements OnInit {
   public transactionMovement: TransactionMovement;
   public config: Config;
   public filterCompanyEmployee: string;
+  public filterCompanyEmails : string;
+  public filterCompanyName : string;
+  public filterIdentificationValue : string;
+  public filterCompanyAddress : string;
 
   constructor(
     public _companyService: CompanyService,
@@ -169,9 +173,12 @@ export class ListSummaryOfAccountsComponent implements OnInit {
       case 'print':
         modalRef = this._modalService.open(CurrentAccountDetailsComponent);
         modalRef.componentInstance.companyType = this.filterCompanyType;
-        if(this.filterCompanyEmployee) {
-          modalRef.componentInstance.employee = this.filterCompanyEmployee;
-        }
+        modalRef.componentInstance.employee = this.filterCompanyEmployee;
+        modalRef.componentInstance.address = this.filterCompanyAddress;
+        modalRef.componentInstance.emails = this.filterCompanyEmails;
+        modalRef.componentInstance.name = this.filterCompanyName;
+        modalRef.componentInstance.identification = this.filterIdentificationValue
+        
         break;
     }
   }
