@@ -2686,8 +2686,8 @@ export class PrintComponent implements OnInit {
       for (let movementOfArticle of this.movementsOfArticles) {
         row += 6;
         this.doc.text(movementOfArticle.description.slice(0, 20), margin, row);
-        this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), margin, row +3);
-        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width - 13, row);
+        this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform((movementOfArticle.salePrice+this.transaction.discountAmount)/movementOfArticle.amount).toString(), margin, row +3);
+        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice+this.transaction.discountAmount).toString(), width - 15, row);
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
@@ -2700,9 +2700,16 @@ export class PrintComponent implements OnInit {
       }
     }
 
+
+
     //Pie de la tabla de productos
     row += 5;
     this.doc.line(0, row, 240, row);
+    if(this.transaction.discountAmount > 0){
+      row += 5;
+      this.doc.text("DESCUENTO", margin, row);
+      this.doc.text("- $" + this.roundNumber.transform(this.transaction.discountAmount).toString(), width - 15, row)
+    }
     this.doc.setFontStyle('bold');
     row += 5;
     this.doc.setFontSize(15);
