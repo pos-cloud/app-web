@@ -280,7 +280,7 @@
             </td>
           </tr>
           <tr *ngFor="let item of items">
-            <td class="flat">{{ item._id }}</td>
+            <td class="flat">{{ item._id.name }}</td>
             <td class="flat">{{ item.count }}</td>
             <td class="flat" >{{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>

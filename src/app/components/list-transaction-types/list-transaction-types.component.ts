@@ -228,6 +228,7 @@ export class ListTransactionTypesComponent implements OnInit {
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
       "type.name" : 1,
+      "type.movement" : 1,
       "totalPrice" : 1,
       "operationType" : 1,
       "state" : 1,
@@ -239,9 +240,10 @@ export class ListTransactionTypesComponent implements OnInit {
 
     // AGRUPAMOS EL RESULTADO
     let group = {
-        _id: "$type.name",
+        _id: { name :"$type.name", movement : "$type.movement"},
         count: { $sum: 1 },
-        totalPrice: { $sum: "$totalPrice" },
+        totalPrice: { $sum: "$totalPrice" },        
+        
 
     };
     
@@ -293,7 +295,11 @@ export class ListTransactionTypesComponent implements OnInit {
 
     for (let index = 0; index < this.items.length; index++) {
       this.totalItem = this.totalItem + this.items[index]['count'];
-      this.totalAmount = this.totalAmount + this.items[index]['totalPrice'];
+      if(this.items[index]['_id']['movement'] === "Entrada"){
+        this.totalAmount = this.totalAmount + this.items[index]['totalPrice'];
+      } else {
+        this.totalAmount = this.totalAmount - this.items[index]['totalPrice'];
+      }
     }
   }
 
