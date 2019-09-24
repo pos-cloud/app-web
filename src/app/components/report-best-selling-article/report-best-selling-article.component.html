@@ -9,9 +9,9 @@
       <thead>
         <tr>
           <th>Producto </th>
-          <th >Ítems Vendidos</th>
-            <th>Unidad</th>
-            <th>Monto total </th>
+          <th>Ítems Vendidos</th>
+          <th>Unidad</th>
+          <th>Monto total </th>
         </tr>
       </thead>
       <tbody>
@@ -118,6 +118,9 @@
       <table class="table table-striped">
         <thead>
           <tr>
+            <th>
+              <i class="fa fa-bars"></i>
+            </th>
             <th (click)="orderBy('article.code')">Código</th>
             <th (click)="orderBy('article.description')">Producto</th>
             <th (click)="orderBy('article.category.description')">Categoría</th>
@@ -127,6 +130,7 @@
             <th (click)="orderBy('total')">Monto Total</th>
           </tr>
           <tr class="filters">
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.code']" placeholder="Código..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.description']" placeholder="Producto..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.category.description']" placeholder="Categoría..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
@@ -143,6 +147,9 @@
             </td>
           </tr>
           <tr *ngFor="let item of items">
+            <td align="left" width="50">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
+            </td>
             <td class="flat">{{ item.article.code }}</td>
             <td class="flat">{{ item.article.description }}</td>
             <td class="flat" *ngIf="item.article.category">{{ item.article.category.description }}</td>

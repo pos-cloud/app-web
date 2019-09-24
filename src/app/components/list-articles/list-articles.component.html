@@ -62,7 +62,6 @@
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar" *ngIf="article && article.type && article.type.toString() !== 'Variante'" ><i class="fa fa-trash-o"></i></button>
               <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print-label', article)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
               <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('copy', article)" title="Copiar"><i class="fa fa-copy"></i></button>
-
             </td>
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>

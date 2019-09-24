@@ -10,6 +10,7 @@ import { Config } from 'app/app.config';
 import { Branch } from 'app/models/branch';
 import { BranchService } from 'app/services/branch.service';
 import { AuthService } from 'app/services/auth.service';
+import { AddArticleComponent } from '../add-article/add-article.component';
 
 @Component({
   selector: 'app-report-best-selling-article',
@@ -100,6 +101,18 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
     this.getBestSellingArticle();
   }
+
+  async openModal(op: string, item: any[]) {
+    let modalRef;
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.articleId = item['article']._id;
+        modalRef.componentInstance.operation = "view";
+        break;
+      default: ;
+    }
+  };
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
 
