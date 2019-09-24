@@ -1363,19 +1363,20 @@ export class AddSaleOrderComponent {
         modalRef.result.then(async (result) => {
           if (result.company) {
 
+
             if(!this.transaction.company && result.company.priceList){
               this.priceList = undefined
-              this.newPriceList = await this.getPriceList(result.company.priceList);
+              this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
             if(this.transaction.company && this.transaction.company.priceList && result.company.priceList){
               this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
-              this.newPriceList = await this.getPriceList(result.company.priceList)
+              this.newPriceList = await this.getPriceList(result.company.priceList._id)
             }
 
             if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList){
               this.priceList = undefined;
-              this.newPriceList = await this.getPriceList(result.company.priceList);
+              this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
             if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList){ 
