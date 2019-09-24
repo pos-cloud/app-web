@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { CashBox, CashBoxState } from './../../models/cash-box';
 import { PaymentMethod } from './../../models/payment-method';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
+import { MovementOfCash } from './../../models/movement-of-cash';
 
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
@@ -80,11 +80,20 @@ export class CashBoxComponent implements OnInit {
           this.paymentMethods = paymentMethods;
           this.setValueForm();
           await this.getCashBoxes('where="state":"' + CashBoxState.Open + '"&sort="number":-1&limit=1').then(
-            cashBoxes => {
+            async cashBoxes => {
               if(cashBoxes) {
                 this.cashBox = cashBoxes[0];
                 if (this.transactionType.cashOpening) {
                   this.showMessage("La caja ya se encuentra abierta.", 'info', true);
+                } else if(this.transactionType.cashClosing) {
+                  let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
+                  await this.getTransactions(query).then(
+                    async transactions => {
+                      if(transactions) {
+                        this.showMessage("No puede cerrar la caja. La transacción: " + transactions[0].type.name + " " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number + " se encuentra abierta.", 'info', true);
+                      }
+                    }
+                  );
                 }
               } else {
                 if (this.transactionType.cashOpening) {
@@ -422,7 +431,6 @@ export class CashBoxComponent implements OnInit {
   public getLastTransactionByType(): Promise<Transaction> {
 
     return new Promise<Transaction>((resolve, reject) => {
-
 
       let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
 
