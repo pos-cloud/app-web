@@ -1041,54 +1041,29 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontType('bold');
     this.doc.text("Diferencia de caja:", margin, row += 5);
-    this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
     this.doc.setFontType('normal');
 
-    // this.doc.setFontType('italic');
-    // this.doc.text("Observaciones:", margin, row += 5);
-    // this.doc.setFontType('normal');
+    let max = 0;
+    let arrayMax = [];
+    if(Object.keys(openingAmounts).length > max) { max = Object.keys(openingAmounts).length; arrayMax = openingAmounts };
+    if(Object.keys(inputAmounts).length > max) { max = Object.keys(inputAmounts).length; arrayMax = inputAmounts };
+    if(Object.keys(outputAmounts).length > max) { max = Object.keys(outputAmounts).length; arrayMax = outputAmounts };
+    if(Object.keys(closingAmounts).length > max) { max = Object.keys(closingAmounts).length; arrayMax = closingAmounts };
 
-    // this.doc.setFontType('bold');
-    // this.doc.text("Entradas anuladas:", margin + 5, row += 5);
-    // this.doc.setFontType('normal');
-    // if (Object.keys(inputAmountsCanceled).length > 0) {
-    //   for (let k of Object.keys(inputAmountsCanceled)) {
-    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
-    //     this.doc.text('$ ' + decimalPipe.transform(inputAmountsCanceled[k], '1.2-2'), 60, row);
-    //     this.doc.setFontType('italic');
-    //     if (amountsInputCanceled[k] === 1) {
-    //       this.doc.text(amountsInputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
-    //     } else {
-    //       this.doc.text(amountsInputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
-    //     }
-    //     this.doc.setFontType('normal');
-    //   }
-    // } else {
-    //   this.doc.setFontType('italic');
-    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
-    //   this.doc.setFontType('normal');
-    // }
-
-    // this.doc.setFontType('bold');
-    // this.doc.text("Salidas anuladas:", margin + 5, row += 5);
-    // this.doc.setFontType('normal');
-    // if (Object.keys(outputAmountsCanceled).length > 0) {
-    //   for (let k of Object.keys(outputAmountsCanceled)) {
-    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
-    //     this.doc.text('$ ' + decimalPipe.transform(outputAmountsCanceled[k], '1.2-2'), 60, row);
-    //     this.doc.setFontType('italic');
-    //     if (amountsOutputCanceled[k] === 1) {
-    //       this.doc.text(amountsOutputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
-    //     } else {
-    //       this.doc.text(amountsOutputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
-    //     }
-    //     this.doc.setFontType('normal');
-    //   }
-    // } else {
-    //   this.doc.setFontType('italic');
-    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
-    //   this.doc.setFontType('normal');
-    // }
+    if(Object.keys(arrayMax).length > 0) {
+      for (let k of Object.keys(arrayMax)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        if(!openingAmounts[k]) openingAmounts[k] = 0; 
+        if(!inputAmounts[k]) inputAmounts[k] = 0; 
+        if(!outputAmounts[k]) outputAmounts[k] = 0; 
+        if(!closingAmounts[k]) closingAmounts[k] = 0; 
+        this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]), '1.2-2'), 60, row);
+      }
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
 
     // Pie de la impresión
     this.doc.setFontStyle("normal");
@@ -1334,54 +1309,29 @@ export class PrintComponent implements OnInit {
 
     this.doc.setFontType('bold');
     this.doc.text("Diferencia de caja:", margin, row += 5);
-    this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
     this.doc.setFontType('normal');
 
-    // this.doc.setFontType('italic');
-    // this.doc.text("Observaciones:", margin, row += 5);
-    // this.doc.setFontType('normal');
+    let max = 0;
+    let arrayMax = [];
+    if(Object.keys(openingAmounts).length > max) { max = Object.keys(openingAmounts).length; arrayMax = openingAmounts };
+    if(Object.keys(inputAmounts).length > max) { max = Object.keys(inputAmounts).length; arrayMax = inputAmounts };
+    if(Object.keys(outputAmounts).length > max) { max = Object.keys(outputAmounts).length; arrayMax = outputAmounts };
+    if(Object.keys(closingAmounts).length > max) { max = Object.keys(closingAmounts).length; arrayMax = closingAmounts };
 
-    // this.doc.setFontType('bold');
-    // this.doc.text("Entradas anuladas:", margin + 5, row += 5);
-    // this.doc.setFontType('normal');
-    // if (Object.keys(inputAmountsCanceled).length > 0) {
-    //   for (let k of Object.keys(inputAmountsCanceled)) {
-    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
-    //     this.doc.text('$ ' + decimalPipe.transform(inputAmountsCanceled[k], '1.2-2'), 60, row);
-    //     this.doc.setFontType('italic');
-    //     if (amountsInputCanceled[k] === 1) {
-    //       this.doc.text(amountsInputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
-    //     } else {
-    //       this.doc.text(amountsInputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
-    //     }
-    //     this.doc.setFontType('normal');
-    //   }
-    // } else {
-    //   this.doc.setFontType('italic');
-    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
-    //   this.doc.setFontType('normal');
-    // }
-
-    // this.doc.setFontType('bold');
-    // this.doc.text("Salidas anuladas:", margin + 5, row += 5);
-    // this.doc.setFontType('normal');
-    // if (Object.keys(outputAmountsCanceled).length > 0) {
-    //   for (let k of Object.keys(outputAmountsCanceled)) {
-    //     this.doc.text('- ' + k, margin + 5 + 5, row += 5);
-    //     this.doc.text('$ ' + decimalPipe.transform(outputAmountsCanceled[k], '1.2-2'), 60, row);
-    //     this.doc.setFontType('italic');
-    //     if (amountsOutputCanceled[k] === 1) {
-    //       this.doc.text(amountsOutputCanceled[k] + ' operación', margin + 5 + 10, row += 5);
-    //     } else {
-    //       this.doc.text(amountsOutputCanceled[k] + ' operaciones', margin + 5 + 10, row += 5);
-    //     }
-    //     this.doc.setFontType('normal');
-    //   }
-    // } else {
-    //   this.doc.setFontType('italic');
-    //   this.doc.text('No se encontraron operaciones', margin + 5 + 10, row += 5);
-    //   this.doc.setFontType('normal');
-    // }
+    if(Object.keys(arrayMax).length > 0) {
+      for (let k of Object.keys(arrayMax)) {
+        this.doc.text('- ' + k, margin + 5, row += 5);
+        if(!openingAmounts[k]) openingAmounts[k] = 0; 
+        if(!inputAmounts[k]) inputAmounts[k] = 0; 
+        if(!outputAmounts[k]) outputAmounts[k] = 0; 
+        if(!closingAmounts[k]) closingAmounts[k] = 0; 
+        this.doc.text('$ ' + decimalPipe.transform(closingAmounts[k] - ((openingAmounts[k] + inputAmounts[k]) - outputAmounts[k]), '1.2-2'), 60, row);
+      }
+    }
+    this.doc.setFontType('bold');
+    this.doc.text("Total:", margin + 10, row += 5);
+    this.doc.text('$ ' + decimalPipe.transform(closeCash - ((openCash + input) - output), '1.2-2'), 60, row);
+    this.doc.setFontType('normal');
 
     // Pie de la impresión
     this.doc.setFontStyle("normal");
@@ -2492,7 +2442,7 @@ export class PrintComponent implements OnInit {
     }
     
 
-    if(this.transaction.type.electronics){
+    if(this.transaction && this.transaction.type && this.transaction.type.electronics){
       this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
         result =>{
         },
