@@ -21,6 +21,7 @@ import { ArticleFieldType } from 'app/models/article-field';
 import { Taxes } from 'app/models/taxes';
 import { Config } from 'app/app.config';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movement-of-cancellation',
@@ -64,6 +65,7 @@ export class MovementOfCancellationComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public userCountry: string;
   public balanceSelected: number = 0;
+  public userType: string;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -75,9 +77,12 @@ export class MovementOfCancellationComponent implements OnInit {
     public _modalService: NgbModal,
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
-    public _movementOfCancellationService: MovementOfCancellationService
+    public _movementOfCancellationService: MovementOfCancellationService,
+    public _router: Router,
   ) {
     this.userCountry = Config.country;
+    const pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
     this.filters = new Array();
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
