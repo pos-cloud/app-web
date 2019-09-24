@@ -2675,10 +2675,8 @@ export class PrintComponent implements OnInit {
     row += 3;
     this.doc.line(0, row, width, row);
     row += 5;
-    this.doc.text("Cant.", margin, row);
-    this.doc.text("Desc.", width/3, row);
-    this.doc.text("Precio", width/1.4, row);
-    this.doc.text("Total", width/1.17, row);
+    this.doc.text("Desc.", margin, row);
+    this.doc.text("Total", width - 13, row);
     row += 3;
     this.doc.line(0, row, width, row);
 
@@ -2686,11 +2684,10 @@ export class PrintComponent implements OnInit {
     row +5;
     if (this.movementsOfArticles && this.movementsOfArticles.length > 0) {
       for (let movementOfArticle of this.movementsOfArticles) {
-        row += 5;
-        this.centerText(margin, margin, 15, 0, row, movementOfArticle.amount.toString());
-        this.doc.text(movementOfArticle.description.slice(0, 18), 13, row);
-        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), width/1.4, row);
-        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
+        row += 6;
+        this.doc.text(movementOfArticle.description.slice(0, 20), margin, row);
+        this.doc.text(this.roundNumber.transform(movementOfArticle.amount) + " x " + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), margin, row +3);
+        this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width - 13, row);
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 5;
