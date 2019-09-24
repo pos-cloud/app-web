@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 //Terceros
-import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 //Models
 import { MovementOfArticle } from '../../models/movement-of-article';
@@ -28,7 +28,6 @@ import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { ConfigService } from 'app/services/config.service';
-import { AddArticleComponent } from '../add-article/add-article.component';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -85,7 +84,6 @@ export class AddMovementOfArticleComponent implements OnInit {
     private _articleStockService: ArticleStockService,
     private _variantService: VariantService,
     private _configService: ConfigService,
-    private _modalService: NgbModal,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -264,6 +262,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           this.variants = result.variants;
           this.variantTypes = this.getUniqueValues('type', this.variants);
           this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['name']);
+          this.variantTypes = this.orderByPipe.transform(this.variantTypes, ['order']);
           this.initializeSelectedVariants();
           this.areVariantsEmpty = false;
         }
@@ -295,8 +294,10 @@ export class AddMovementOfArticleComponent implements OnInit {
         variantsToReturn.push(variant);
       }
     }
-
-    return this.orderByPipe.transform(this.getUniqueVariants(variantsToReturn), ['value'], 'description');
+    variantsToReturn = this.getUniqueVariants(variantsToReturn);
+    variantsToReturn = this.orderByPipe.transform(variantsToReturn, ['value'], 'description');
+    variantsToReturn = this.orderByPipe.transform(variantsToReturn, ['value'], 'order');
+    return variantsToReturn;
   }
 
   public getUniqueValues(property: string, array: Array<any>): Array<any> {
