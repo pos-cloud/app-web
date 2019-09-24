@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -54,6 +54,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public branches: Branch[];
   @Input() branchSelectedId: String;
   public allowChangeBranch: boolean;
+  public scrollY: number = 0;
 
   constructor(
     public _articleService: ArticleService,
@@ -103,6 +104,9 @@ export class ReportBestSellingArticleComponent implements OnInit {
   }
 
   async openModal(op: string, item: any[]) {
+
+    this.scrollY = window.scrollY;
+    
     let modalRef;
     switch (op) {
       case 'view':
@@ -110,6 +114,11 @@ export class ReportBestSellingArticleComponent implements OnInit {
         modalRef.componentInstance.articleId = item['article']._id;
         modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
+        modalRef.result.then((result) => {
+          window.scroll(0, this.scrollY);
+        }, (reason) => {
+          window.scroll(0, this.scrollY);
+        });
         break;
       default: ;
     }

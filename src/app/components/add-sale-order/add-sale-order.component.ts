@@ -19,7 +19,7 @@ import { Category } from './../../models/category';
 import { Print } from './../../models/print';
 import { Printer, PrinterType, PrinterPrintIn } from './../../models/printer';
 import { Config } from './../../app.config';
-import { CompanyType, Company } from '../../models/company';
+import { CompanyType } from '../../models/company';
 import { MovementOfCancellation } from "../../models/movement-of-cancellation"
 
 //Servicios
@@ -127,7 +127,7 @@ export class AddSaleOrderComponent {
   public fastPayment: PaymentMethod
   public transports: Transport[];
   public config: Config;
-  public database;
+  public database: string;
 
   public priceList: PriceList;
   public newPriceList: PriceList;
