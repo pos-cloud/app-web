@@ -496,20 +496,22 @@ export class MovementOfCancellationComponent implements OnInit {
       for(let mov of this.movementsOfCancellations) {
         if(mov.balance > 0 || !this.modifyBalance(mov.transactionOrigin)) {
           if((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
-            await this.getMovementOfArticles(mov.transactionOrigin).then(
-              async movementsOfArticles => {
-                if(movementsOfArticles && movementsOfArticles.length > 0) {
-                  await this.saveMovementsOfArticles(movementsOfArticles).then(
-                    movementsOfArticlesSaved => {
-                      if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-                      } else {
-                        endedProcess = false;
+            if(mov.transactionDestination.type.requestArticles) {
+              await this.getMovementOfArticles(mov.transactionOrigin).then(
+                async movementsOfArticles => {
+                  if(movementsOfArticles && movementsOfArticles.length > 0) {
+                    await this.saveMovementsOfArticles(movementsOfArticles).then(
+                      movementsOfArticlesSaved => {
+                        if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
+                        } else {
+                          endedProcess = false;
+                        }
                       }
-                    }
-                  );
+                    );
+                  }
                 }
-              }
-            );
+              );
+            }
           } else {
             endedProcess = false;
             this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma ($ " + mov.transactionOrigin.balance + ").", "info", true);
