@@ -270,6 +270,7 @@ export class ListArticlesComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleId = article._id;
+        modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
       case 'add':
@@ -294,6 +295,7 @@ export class ListArticlesComponent implements OnInit {
       case 'delete':
         modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.article = article;
+        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
             this.getArticles();

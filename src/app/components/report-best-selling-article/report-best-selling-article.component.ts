@@ -108,6 +108,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleId = item['article']._id;
+        modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
       default: ;
