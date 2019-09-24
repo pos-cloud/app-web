@@ -8,7 +8,7 @@ import 'moment/locale/es';
 import { Room } from './../../models/room';
 import { Printer, PrinterPrintIn } from './../../models/printer';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement, StockMovement, Movements } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
 
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -43,6 +43,7 @@ import { Origin } from 'app/models/origin';
 import { OriginService } from 'app/services/origin.service';
 import { SelectOriginComponent } from '../select-origin/select-origin.component';
 import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -76,6 +77,7 @@ export class PointOfSaleComponent implements OnInit {
   public printerSelected: Printer;
   public employeeTypeSelected: EmployeeType;
   public tableSelected: Table;
+  public config: Config;
 
   // CAMPOS TRAIDOS DE LA CUENTA CTE.
   @Input() company: Company;
@@ -96,7 +98,8 @@ export class PointOfSaleComponent implements OnInit {
     private _cashBoxService: CashBoxService,
     private _tableService: TableService,
     private _authService: AuthService,
-    private _originService: OriginService
+    private _originService: OriginService,
+    private _configService: ConfigService
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
@@ -108,6 +111,12 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+      }
+    );
     
     this.refresh();
   }
@@ -481,7 +490,18 @@ export class PointOfSaleComponent implements OnInit {
     if(!type.cashOpening && !type.cashClosing) {
 
       if(Config.modules.money && this.transaction.type.cashBoxImpact) {
-        await this.getCashBoxes('where="state":"' + CashBoxState.Open + '"&sort="number":-1&limit=1').then(
+        let query = 'where="state":"' + CashBoxState.Open + '"';
+        if(this.config.cashBox.perUser) {
+          await this._authService.getIdentity.subscribe(
+            identity => {
+              if(identity && identity.employee) {
+                query += ',"employee":"' + identity.employee._id + '"';
+              }
+            }
+          );
+        }
+        query += '&sort="number":-1&limit=1';
+        await this.getCashBoxes(query).then(
           async cashBoxes => {
             if(cashBoxes) {
               this.transaction.cashBox = cashBoxes[0];

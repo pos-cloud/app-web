@@ -55,6 +55,9 @@ export class Config {
 			default: VATCondition
 		}
     };
+    public cashBox: {
+        perUser: boolean
+	};
     public reports: {
 		summaryOfAccounts: {
 			detailsPaymentMethod: boolean,
