@@ -128,7 +128,7 @@ export class AddVariantComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'sort="name":1';
+    let query = 'sort="name":1,"order":1';
 
     this._variantTypeService.getVariantTypes(query).subscribe(
       result => {
@@ -180,7 +180,7 @@ export class AddVariantComponent implements OnInit {
 
     this.loading = true;
 
-    let query = 'where="type":"' + variantType._id + '"&sort="description":1';
+    let query = 'where="type":"' + variantType._id + '"&sort="order":1,"description":1';
 
     this._variantValueService.getVariantValues(query).subscribe(
       result => {
@@ -231,6 +231,7 @@ export class AddVariantComponent implements OnInit {
         exist = true;
         v.value.push(variant.value);
         v.value = this.orderByPipe.transform(v.value, ['description']);
+        v.value = this.orderByPipe.transform(v.value, ['order']);
       }
     }
 
@@ -240,6 +241,7 @@ export class AddVariantComponent implements OnInit {
         value: [variant.value]
       });
       this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'name');
+      this.variantsByTypes = this.orderByPipe.transform(this.variantsByTypes, ['type'], 'order');
     }
   }
 
