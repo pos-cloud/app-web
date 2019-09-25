@@ -321,7 +321,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'showPriceType' : [this.transactionType.showPriceType,[]],
       'showDescriptionType' : [this.transactionType.showDescriptionType,[]],
       'printDescriptionType' : [this.transactionType.printDescriptionType,[]],
-      'printSign' : [this.transactionType.printSign,[]]
+      'printSign' : [this.transactionType.printSign,[]],
+      'automaticNumbering' : [this.transactionType.automaticNumbering,[]]
 
     });
 
@@ -411,7 +412,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.fiscalCode) this.transactionType.fiscalCode = "";
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
     if (this.transactionType.isPreprinted === undefined) this.transactionType.isPreprinted = false;
-
+    if (this.transactionType.automaticNumbering === undefined) this.transactionType.automaticNumbering = true;
 
     let defectPrinter;
     if (!this.transactionType.defectPrinter) {
@@ -482,8 +483,6 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.printDescriptionType) this.transactionType.printDescriptionType = DescriptionType.Description;
     if (!this.transactionType.printSign) this.transactionType.printSign = false;
 
-
-
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
@@ -515,6 +514,7 @@ export class AddTransactionTypeComponent implements OnInit {
       'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP,
       'showPrices': this.transactionType.showPrices,
+      'automaticNumbering': this.transactionType.automaticNumbering,
       'entryAmount': this.transactionType.entryAmount,
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,

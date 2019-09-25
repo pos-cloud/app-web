@@ -49,6 +49,7 @@ export class TransactionType {
 	public fastPayment: PaymentMethod;
 	public requestCompany: CompanyType;
 	public isPreprinted : boolean = false;
+	public automaticNumbering : boolean = true;
 	public showPriceType : PriceType = PriceType.Final;
 	public showDescriptionType : DescriptionType = DescriptionType.Description;
 	public printDescriptionType : DescriptionType = DescriptionType.Description;

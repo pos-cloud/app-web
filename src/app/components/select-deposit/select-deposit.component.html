@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Seleccionar Depositos</h4>
+  <h4 class="modal-title">Seleccionar Depósitos</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
   <span aria-hidden="true">&times;</span>
   </button>
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div *ngIf="op === 'deposit'" class="row">
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-12">
             <label for="deposit" class="control-label">Depósito:</label>
             <select class="form-control" formControlName="deposit">
               <option *ngFor="let deposit of deposits"

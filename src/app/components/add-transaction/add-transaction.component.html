@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="transactionMovement && transactionMovement === 'Compra'">
+      <div class="row" *ngIf="transaction && transaction.type && !transaction.type.automaticNumbering">
         <div class="form-group col-md-4">
           <label for="date" class="control-label">Fecha:</label>
           <input type="date" class="form-control" formControlName="date" name="date" min="2000-01-01"[readonly]="readonly" />

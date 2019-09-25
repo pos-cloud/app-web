@@ -792,7 +792,6 @@ export class PointOfSaleComponent implements OnInit {
         }
       );
 
-
       if( !this.transaction.branchDestination || 
           !this.transaction.branchOrigin ||
           !this.transaction.depositDestination ||
@@ -814,7 +813,7 @@ export class PointOfSaleComponent implements OnInit {
           this.transaction.company = this.company;
           this.nextStepTransaction();
         }
-      } else if (this.transaction.type.requestArticles && this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
         if (this.posType === 'resto') {
           this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
         } else {
