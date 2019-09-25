@@ -215,7 +215,18 @@ export class AddSaleOrderComponent {
 
             if(this.transaction.state === TransactionState.Closed ||
               this.transaction.state === TransactionState.Canceled) {
-              this.backFinal();
+                if(this.posType === 'resto') {
+                  this.transaction.table.employee = null;
+                  this.transaction.table.state = TableState.Available;
+                  await this.updateTable().then(table => {
+                    if(table) {
+                      this.transaction.table = table;
+                      this.backFinal();
+                    }
+                  });
+                } else {
+                  this.backFinal();
+                }
             } else {
               this.transactionMovement = '' + this.transaction.type.transactionMovement;
               this.filtersTaxClassification = [ TaxClassification.Withholding, TaxClassification.Perception ];
