@@ -1921,7 +1921,7 @@ export class PrintComponent implements OnInit {
 
         row += 8;
 
-        if((i+1)%19 === 0) {
+        if(row > 240){
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
           this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
