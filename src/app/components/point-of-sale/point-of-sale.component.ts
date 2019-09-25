@@ -78,6 +78,7 @@ export class PointOfSaleComponent implements OnInit {
   public employeeTypeSelected: EmployeeType;
   public tableSelected: Table;
   public config: Config;
+  public transactionTypeId: string;
 
   // CAMPOS TRAIDOS DE LA CUENTA CTE.
   @Input() company: Company;
@@ -404,8 +405,13 @@ export class PointOfSaleComponent implements OnInit {
         this.transactionMovement = TransactionMovement.Money;
       }
 
-      if(pathLocation[4] && pathLocation[4] !== '') {
-        this.getTransactionTypes(`where="_id":"${pathLocation[4]}"`).then(
+      // VALIDAMOS QUE SEA POR PRIMERA VEZ
+      if(!this.transactionTypeId) {
+        this.transactionTypeId = pathLocation[4];
+      }
+
+      if(!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
+        this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"`).then(
           transactionTypes => {
             if(transactionTypes) {
               this.addTransaction(transactionTypes[0]);
@@ -925,8 +931,16 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
+          if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+            this.transactionTypeId = this.transaction.type._id;
+            this.transaction = undefined;
+          }
           this.refresh();
         }, (reason) => {
+          if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+            this.transactionTypeId = this.transaction.type._id;
+            this.transaction = undefined;
+          }
           this.refresh();
         });
         break;
@@ -937,9 +951,17 @@ export class PointOfSaleComponent implements OnInit {
               this.printerSelected = result;
               this.openModal("print");
             } else {
+              if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                this.transactionTypeId = this.transaction.type._id;
+                this.transaction = undefined;
+              }
               this.refresh();
             }
           }, (reason) => {
+            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+              this.transactionTypeId = this.transaction.type._id;
+              this.transaction = undefined;
+            }
             this.refresh();
           });
         } else if (this.countPrinters() === 1) {
@@ -1207,6 +1229,7 @@ export class PointOfSaleComponent implements OnInit {
           await this.updateTransaction().then(
             transaction => {
               if(transaction) {
+                this.transaction = transaction;
                 if (this.transaction.type.printable) {
                   if (this.transaction.type.defectPrinter) {
                     this.printerSelected = this.printerSelected;
@@ -1215,6 +1238,10 @@ export class PointOfSaleComponent implements OnInit {
                     this.openModal("printers");
                   }
                 } else {
+                  if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                    this.transactionTypeId = this.transaction.type._id;
+                    this.transaction = undefined;
+                  }
                   this.refresh();
                 }
               }
