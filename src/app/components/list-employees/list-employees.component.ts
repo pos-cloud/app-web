@@ -95,7 +95,7 @@ export class ListEmployeesComponent implements OnInit {
           modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddEmployeeComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddEmployeeComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getEmployees();
         }, (reason) => {
           this.getEmployees();
@@ -114,7 +114,7 @@ export class ListEmployeesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteEmployeeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteEmployeeComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.employee = employee;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

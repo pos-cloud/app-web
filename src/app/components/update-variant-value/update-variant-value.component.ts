@@ -7,6 +7,8 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { VariantValue } from './../../models/variant-value';
 
 import { VariantValueService } from './../../services/variant-value.service';
+import { VariantType } from 'app/models/variant-type';
+import { VariantTypeService } from 'app/services/variant-type.service';
 
 @Component({
   selector: 'app-update-variant-value',
@@ -19,16 +21,25 @@ export class UpdateVariantValueComponent implements OnInit {
 
   @Input() variantValue: VariantValue;
   @Input() readonly: boolean;
+  public variantTypes: VariantType[];
   public variantValueForm: FormGroup;
   public alertMessage: string = '';
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'type': '',
+    'order': '',
     'description': ''
   };
 
   public validationMessages = {
+    'type': {
+      'required': 'Este campo es requerido.'
+    },
+    'order': {
+      'required': 'Este campo es requerido.'
+    },
     'description': {
       'required': 'Este campo es requerido.'
     }
@@ -36,6 +47,7 @@ export class UpdateVariantValueComponent implements OnInit {
 
   constructor(
     public _variantValueService: VariantValueService,
+    public _variantTypeService: VariantTypeService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -44,10 +56,13 @@ export class UpdateVariantValueComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.getVariantTypes();
     this.buildForm();
     this.variantValueForm.setValue({
       '_id': this.variantValue._id,
-      'description': this.variantValue.description
+      'order': this.variantValue.order,
+      'description': this.variantValue.description,
+      'type': this.variantValue.type._id
     });
   }
 
@@ -59,11 +74,19 @@ export class UpdateVariantValueComponent implements OnInit {
 
     this.variantValueForm = this._fb.group({
       '_id': [this.variantValue._id, [
-      ]
+        ]
+      ],
+      'type': [this.variantValue.type, [
+        Validators.required
+        ]
+      ],
+      'order': [this.variantValue.order, [
+        Validators.required
+        ]
       ],
       'description': [this.variantValue.description, [
         Validators.required
-      ]
+        ]
       ],
     });
 
@@ -91,6 +114,29 @@ export class UpdateVariantValueComponent implements OnInit {
     }
   }
 
+  public getVariantTypes(): void {
+
+    this.loading = true;
+
+    this._variantTypeService.getVariantTypes().subscribe(
+      result => {
+        if (!result.variantTypes) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true); 
+          this.loading = false;
+          this.variantTypes = null;
+        } else {
+          this.hideMessage();
+          this.loading = false;
+          this.variantTypes = result.variantTypes;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
   public updateVariantValue(): void {
     if (!this.readonly) {
       this.loading = true;
@@ -111,7 +157,6 @@ export class UpdateVariantValueComponent implements OnInit {
         } else {
           this.variantValue = result.variantValue;
           this.showMessage("El valor de variante se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

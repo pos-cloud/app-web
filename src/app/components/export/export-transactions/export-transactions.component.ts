@@ -256,7 +256,7 @@ export class ExportTransactionsComponent implements OnInit {
         data[index]['Cliente'] = "Consumidor Final"
       }
       
-      data[index]['Total'] = this.transactions[index].totalPrice
+      data[index]['Total'] = this.roundNumber.transform(this.transactions[index].totalPrice)
       
     }
     this._companyService.exportAsExcelFile(data, this.transactionMovement.toString() +" de " + this.startDate + " a " + this.endDate);

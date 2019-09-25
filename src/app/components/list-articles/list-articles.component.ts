@@ -1,14 +1,11 @@
 
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Article, ArticleType } from './../../models/article';
-import { Category } from './../../models/category';
 import { Config } from './../../app.config';
-import { MovementOfArticle } from '../../models/movement-of-article';
-import { Taxes } from './../../models/taxes';
 import { Transaction } from './../../models/transaction';
 
 import { ArticleService } from './../../services/article.service';
@@ -16,15 +13,11 @@ import { ArticleService } from './../../services/article.service';
 import { AddArticleComponent } from './../../components/add-article/add-article.component';
 import { DeleteArticleComponent } from './../../components/delete-article/delete-article.component';
 import { ImportComponent } from './../../components/import/import.component';
-import { PrintComponent } from 'app/components/print/print/print.component';
 
 import { RoundNumberPipe } from './../../pipes/round-number.pipe';
 import { Printer, PrinterPrintIn } from '../../models/printer';
 import { PrinterService } from '../../services/printer.service';
-import { TransactionMovement } from '../../models/transaction-type';
 import { UpdateArticlePriceComponent } from '../update-article-price/update-article-price.component';
-import { ArticleFields } from 'app/models/article-fields';
-import { ArticleFieldType } from 'app/models/article-field';
 import { FilterPipe } from 'app/pipes/filter.pipe';
 import { AuthService } from 'app/services/auth.service';
 import { User } from 'app/models/user';
@@ -108,7 +101,6 @@ export class ListArticlesComponent implements OnInit {
 
   async ngOnInit() {
 
-
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
@@ -126,7 +118,6 @@ export class ListArticlesComponent implements OnInit {
     );
 
     this.database = Config.database;
-
 
     if ('Variantes' === this.listTitle) {
       this.articleType = ArticleType.Variant;
@@ -179,46 +170,46 @@ export class ListArticlesComponent implements OnInit {
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     project = {
-        'type' : 1,
-        'code' : 1,
-        'barcode' : 1,
-        'description' : 1,
-        'posDescription' : 1,
-        'containsVariants': 1,
-        'make.description' : 1,
-        'category.description' : 1,
-        'costPrice' : { $toString : '$costPrice' },
-        'salePrice' : { $toString : '$salePrice' },
-        'observation' : 1,
-        'picture' : 1,
-        'operationType': 1,
-        'currency.name': 1,
-        isWeigth: { $toString : '$isWeigth' },
-      }
+      'type' : 1,
+      'code' : 1,
+      'barcode' : 1,
+      'description' : 1,
+      'posDescription' : 1,
+      'containsVariants': 1,
+      'make.description' : 1,
+      'category.description' : 1,
+      'costPrice' : { $toString : '$costPrice' },
+      'salePrice' : { $toString : '$salePrice' },
+      'observation' : 1,
+      'picture' : 1,
+      'operationType': 1,
+      'currency.name': 1,
+      isWeigth: { $toString : '$isWeigth' },
+    }
 
-      // AGRUPAMOS EL RESULTADO
-      group = {
-          _id: null,
-          count: { $sum: 1 },
-          articles: { $push: "$$ROOT" }
-      };
+    // AGRUPAMOS EL RESULTADO
+    group = {
+        _id: null,
+        count: { $sum: 1 },
+        articles: { $push: "$$ROOT" }
+    };
 
-      let page = 0;
-      if(this.currentPage != 0) {
-        page = this.currentPage - 1;
-      }
-      skip = !isNaN(page * this.itemsPerPage) ?
-              (page * this.itemsPerPage) :
-              0 // SKIP
-      limit = this.itemsPerPage;
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+            0 // SKIP
+    limit = this.itemsPerPage;
 
     this._articleService.getArticlesV2(
-        project, // PROJECT
-        match, // MATCH
-        sort, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+      project, // PROJECT
+      match, // MATCH
+      sort, // SORT
+      group, // GROUP
+      limit, // LIMIT
+      skip // SKIP
     ).subscribe(
       result => {
         this.loading = false;
@@ -279,6 +270,7 @@ export class ListArticlesComponent implements OnInit {
       case 'view':
         modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.articleId = article._id;
+        modalRef.componentInstance.readonly = true;
         modalRef.componentInstance.operation = "view";
         break;
       case 'add':
@@ -303,6 +295,7 @@ export class ListArticlesComponent implements OnInit {
       case 'delete':
         modalRef = this._modalService.open(DeleteArticleComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.article = article;
+        modalRef.componentInstance.readonly = true;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
             this.getArticles();

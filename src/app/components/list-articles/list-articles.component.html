@@ -5,17 +5,15 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de {{ listTitle }}
+  <div class="card ">
+    <div class="card-header">Listado de {{ listTitle }}
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"> Agregar Producto</i></button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <button class="btn btn-primary" (click)="openModal('update-prices',null)"><i class="fa fa-edit"> Actualizar Precios</i></button>
-        <button class="btn btn-primary" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)">Importar productos</button>
-        <button class="btn btn-primary" (click)="openModal('print-list', null)"><i class="fa fa-print"></i> Imprimir Lista</button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn" (click)="openModal('add', null)" *ngIf="articleType && articleType.toString() === 'Final'"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class="btn" (click)="openModal('update-prices',null)"><i class="fa fa-edit"></i><span>Actualizar Precios</span></button>
+        <button class="btn" *ngIf="identity.name === 'soporte'" (click)="openModal('import', null)"><i class="fa fa-upload"></i><span>Importar Productos</span></button>
+        <button class="btn" (click)="openModal('print-list', null)"><i class="fa fa-print"></i><span>Imprimir Lista</span></button>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -27,17 +25,19 @@
             </th>
             <th (click)="orderBy('code')">#</th>
             <th (click)="orderBy('description')">Descripción</th>
+            <th (click)="orderBy('posDescription')">Descripción Corta</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
-            <th (click)="orderBy('salePrice')">Precio de Venta</th>
+            <th (click)="orderBy('salePrice')">Precio Venta</th>
             <th (click)="orderBy('currency.name')">Moneda</th>
-            <th (click)="orderBy('observation')">Observation</th>
-            <th (click)="orderBy('barcode')">Código de Barra</th>
+            <th (click)="orderBy('observation')">Observación</th>
+            <th (click)="orderBy('barcode')">Código Barra</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (keydown.enter)="getArticles()" placeholder="Precio de Venta..."></th>
@@ -47,8 +47,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let article of articles | paginate: { itemsPerPage: itemsPerPage,
                                                             currentPage: currentPage,
@@ -60,10 +62,10 @@
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', article)" title="Eliminar" *ngIf="article && article.type && article.type.toString() !== 'Variante'" ><i class="fa fa-trash-o"></i></button>
               <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('print-label', article)" title="Imprimir Etiqueta"><i class="fa fa-barcode"></i></button>
               <button type="button" class="btn btn-secondary btn-sm" (click)= "openModal('copy', article)" title="Copiar"><i class="fa fa-copy"></i></button>
-
             </td>
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
+            <td>{{article.posDescription}}</td>
             <td *ngIf="article.make">{{article.make.description}}</td>
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
@@ -75,12 +77,12 @@
             <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
-            <td colspan="9">No se encontraron productos</td>
+            <td colspan="10">No se encontraron productos</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls
@@ -114,11 +116,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Productos
+  <div class="card ">
+    <div class="card-header">Listado de Productos
       <div class="pull-right">
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <button class="btn btn-primary fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        <button class="btn fa fa-close" (click)="activeModal.dismiss('close_click')"><span> Cerrar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -127,26 +129,31 @@
           <tr>
             <th (click)="orderBy('code')">#</th>
             <th (click)="orderBy('description')">Descripción</th>
+            <th (click)="orderBy('posDescription')">Descripción Corta</th>
             <th (click)="orderBy('make.description')">Marca</th>
             <th (click)="orderBy('category.description')">Rubro</th>
-            <th (click)="orderBy('barcode')">Código de Barra</th>
+            <th (click)="orderBy('barcode')">Código Barra</th>
           </tr>
           <tr class="filters">
             <th><input type="text" class="form-control" [(ngModel)]="filters['code']" (keydown.enter)="getArticles()" placeholder="#..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['posDescription']" (keydown.enter)="getArticles()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['make.description']" (keydown.enter)="getArticles()" placeholder="Marca..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['category.description']" (keydown.enter)="getArticles()" placeholder="Rubro..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['barcode']" (keydown.enter)="getArticles()" placeholder="Código de Barra..."></th>
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let article of articles"
             (click)="selectArticle(article)">
             <td>{{article.code}}</td>
             <td>{{article.description}}</td>
+            <td>{{article.posDescription}}</td>
             <td *ngIf="article.make">{{article.make.description}}</td>
             <td *ngIf="!article.make"></td>
             <td *ngIf="article.category">{{article.category.description}}</td>
@@ -154,12 +161,12 @@
             <td>{{article.barcode}}</td>
           </tr>
           <tr align="center" *ngIf="(!articles || articles.length === 0) && !loading">
-            <td colspan="9">No se encontraron productos</td>
+            <td colspan="10">No se encontraron productos</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="form-group col-md-2 offset-md-10">
           <select class="form-control"  [(ngModel)]="itemsPerPage" (change)="getArticles()">

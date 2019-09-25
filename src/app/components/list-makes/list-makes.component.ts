@@ -97,7 +97,7 @@ export class ListMakesComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddMakeComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddMakeComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getMakes();
         }, (reason) => {
           this.getMakes();
@@ -114,7 +114,7 @@ export class ListMakesComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteMakeComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteMakeComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.make = make;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

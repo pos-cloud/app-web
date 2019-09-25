@@ -20,6 +20,7 @@ export class PaymentMethod {
 	public cashBoxImpact: boolean;
 	public bankReconciliation: boolean;
 	public company : CompanyType;
+	public observation : string;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;

@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -27,8 +27,8 @@ import { Claim, ClaimPriority, ClaimType } from 'app/models/claim';
 import { ClaimService } from 'app/services/claim.service';
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
-import { TransactionService } from 'app/services/transaction.service';
 import { CompanyType } from 'app/models/company';
+import { TransactionService } from 'app/services/transaction.service';
 
 
 @Component({
@@ -51,37 +51,17 @@ export class ListArticlesPosComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<MovementOfArticle> = new EventEmitter<MovementOfArticle>();
   @Input() areArticlesVisible: boolean = false;
   @Input() filterArticle: string = '';
+  @Input() transactionId: string;
   @Input() transaction: Transaction;
-  @Input() transactionId : string
   public apiURL = Config.apiURL;
   public itemsPerPage = 10;
   public roundNumber = new RoundNumberPipe();
   public articleType: ArticleType;
-  public listTitle: string;
   public currentPage: number = 0;
   public database: string;
-  public displayedColumns = [
-      'type',
-      'code',
-      'barcode',
-      'description',
-      'posDescription',
-      'make.description',
-      'category.description',
-      'category.description',
-      'costPrice',
-      'salePrice',
-      'observation',
-      'picture',
-      'operationType',
-      'currency.name'
-  ];
-  public filters: any[];
-  public totalItems: number = 0;
   public filterPipe: FilterPipe = new FilterPipe();
   public filteredArticles: Article[];
   public config: Config;
-  public stock;
 
   constructor(
     private _articleService: ArticleService,
@@ -91,26 +71,21 @@ export class ListArticlesPosComponent implements OnInit {
     private _authService: AuthService,
     private _taxService: TaxService,
     private _configService: ConfigService,
-    private _transactionService : TransactionService,
     private _claimService: ClaimService,
-    private _priceListService : PriceListService
+    private _priceListService : PriceListService,
+    private _transactionService: TransactionService
   ) {
-    this.filters = new Array();
     this.articles = new Array();
     this.filteredArticles = new Array();
-    for(let field of this.displayedColumns) {
-      this.filters[field] = "";
-    }
   }
 
   async ngOnInit() {
 
-
+    this.database = Config.database;
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.listTitle = pathLocation[2].charAt(0).toUpperCase() + pathLocation[2].slice(1);
 
-    this._authService.getIdentity.subscribe(
+    await this._authService.getIdentity.subscribe(
       identity => {
         this.identity = identity;
       }
@@ -122,97 +97,99 @@ export class ListArticlesPosComponent implements OnInit {
       }
     );
 
-    this.database = Config.database;
-
-
-    if ('Variantes' === this.listTitle) {
-      this.articleType = ArticleType.Variant;
-    } else if ('Ingredientes' === this.listTitle) {
-      this.articleType = ArticleType.Ingredient;
-    } else {
-      // ENTRA CUANDO SE HACE UNA TRANSACCIÓN O EN LA TABLA
-      this.articleType = ArticleType.Final;
+    if((!this.transaction || !this.transaction._id || this.transaction._id === '') && this.transactionId) {
+      await this.getTransaction().then(
+        transaction => {
+          this.transaction = transaction;
+        }
+      );
     }
+
     this.getArticles();
+  }
+
+  public getTransaction(): Promise<Transaction> {
+
+    return new Promise<Transaction>((resolve, reject) => {
+
+      this._transactionService.getTransaction(this.transactionId).subscribe(
+        async result => {
+          if (!result.transaction) {
+            this.showMessage(result.message, 'danger', false);
+            resolve(null);
+          } else {
+            resolve(result.transaction);
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(null);
+        }
+      );
+    });
   }
 
   public getArticles(): void {
     
     this.loading = true;
+    
+    let match = {};
 
-    /// ORDENAMOS LA CONSULTA
-    let sort = { posDescription: 1, description: 1, favourite: -1 };
+    match['$or'] = new Array();
+    match['$or'].push({ type: ArticleType.Final });
+    match['$or'].push({ type: ArticleType.Variant });
+    match['operationType'] = { $ne: "D" };
 
-    // FILTRAMOS LA CONSULTA
-    let match = `{`;
-    for(let i = 0; i < this.displayedColumns.length; i++) {
-      let value = this.filters[this.displayedColumns[i]];
-      if (value && value != "") {
-        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
-        if (i < this.displayedColumns.length - 1) {
-          match += ',';
-        }
-      }
+    if(this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
+      match['allowSale'] = true;
     }
-    
-    match = `{ "$or": [ { "type": "${ArticleType.Final}"}, {"type": "${ArticleType.Variant}" } ] , "operationType": { "$ne": "D" } }`;
-    
-    match = JSON.parse(match);
-    let group = {};
-    let limit = 0;
-    let skip = 0;
+
+    if(this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
+      match['allowPurchase'] = true;
+    }
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
-      type:1,
-      code:1,
-      barcode:1,
-      description:1,
-      posDescription:1,
-      costPrice:1,
-      salePrice:1,
-      observation:1,
+      type: 1,
+      code: 1,
+      barcode: 1,
+      description: 1,
+      posDescription: 1,
+      costPrice: 1,
+      salePrice: 1,
       picture: 1,
       category: 1,
       operationType: 1,
-      isWeigth: 1,
+      allowSale: 1,
+      allowPurchase: 1,
       "make._id": 1,
       "make.description": 1,
       "make.visibleSale": 1,
-      priceLists: 1
-      //"articleStocks" : 1
+      priceLists: 1,
+      favourite: 1
     }
     
-
     this._articleService.getArticlesV2(
         project, // PROJECT
         match, // MATCH
-        sort, // SORT
-        group, // GROUP
-        limit, // LIMIT
-        skip // SKIP
+        { posDescription: 1, description: 1, favourite: -1 }, // SORT
+        {}, // GROUP
+        0, // LIMIT
+        0 // SKIP
     ).subscribe(
       result => {
         this.loading = false;
         if (result && result && result.articles) {
           this.articles = result.articles;
-          this.totalItems = result.count;
         } else {
           this.articles = new Array();
-          this.totalItems = 0;
         }
-        
       },
       error => {
         this.showMessage(error._body, 'danger', false);
         this.loading = false;
-        this.totalItems = 0;
       }
     );
-  }
-
-  public selectArticle(articleSelected: Article): void {
-    this.activeModal.close({ article: articleSelected });
   }
 
   public getPriceList(id: string): Promise<PriceList> {
@@ -244,7 +221,7 @@ export class ListArticlesPosComponent implements OnInit {
         if(article) {
           let increasePrice = 0;
 
-          if(this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ){
+          if(this.transaction && this.transaction.company && this.transaction.company.priceList && this.transaction.company.type === CompanyType.Client ) {
             let priceList = await this.getPriceList(this.transaction.company.priceList._id)
             if(priceList){
               if(priceList.allowSpecialRules){
@@ -516,7 +493,7 @@ export class ListArticlesPosComponent implements OnInit {
     let originalFilter: string = this.filterArticle;
 
     // CORTAMOS EL CÓDIGO SI ES PESABLE
-    if(this.transaction.type.transactionMovement === TransactionMovement.Sale &&
+    if(this.transaction && this.transaction.type.transactionMovement === TransactionMovement.Sale &&
       this.config.tradeBalance.codePrefix && this.config.tradeBalance.codePrefix !== 0) {
       if(this.filterArticle.slice(0, this.config.tradeBalance.codePrefix.toString().length) === this.config.tradeBalance.codePrefix.toString()) {
         this.filterArticle = this.padNumber(this.filterArticle.slice((this.config.tradeBalance.codePrefix.toString().length + 

@@ -118,7 +118,7 @@ export class ListUsesOfCFDIComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteUseOfCFDIComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteUseOfCFDIComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.useOfCFDI = useOfCFDI;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

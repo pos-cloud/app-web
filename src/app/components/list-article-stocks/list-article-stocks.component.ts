@@ -112,7 +112,7 @@ export class ListArticleStocksComponent implements OnInit {
         this._router.navigate(['/report/kardex-de-productos/' + articleStock.article._id]);
         break;
       case 'add':
-        modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddArticleStockComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getArticleStocksV2();
         }, (reason) => {
           this.getArticleStocksV2();

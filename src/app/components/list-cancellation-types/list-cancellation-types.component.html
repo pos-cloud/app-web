@@ -4,14 +4,12 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Tipos de Cancelaciones
+  <div class="card ">
+    <div class="card-header">Listado de Tipos de Cancelaciones
       <div class="pull-right">
-          <button class="btn btn-primary" (click)="openModal('add', null)" ><i class="fa fa-plus"> Agregar Tipo de Cancelación</i></button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+          <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -32,7 +30,7 @@
             <th (click)="orderBy('destination.name')" >Nombre</th>
             <th (click)="orderBy('modifyBalance')">Modifica el Saldo</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['origin.transactionMovement']" (input)="getCancellationTypes()" placeholder="Tipo de Transacción Cancelada..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['origin.name']" (input)="getCancellationTypes()" placeholder="Nombre de Transacción Cancelada..."></th>
@@ -42,8 +40,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="5">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let cancellationType of cancellationTypes | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -76,7 +76,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls

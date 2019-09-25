@@ -2,7 +2,7 @@
   <div class="row" *ngIf="areArticlesVisible" class="articles-list">
     <div *ngFor="let article of filteredArticles">
       <div class="iarticle" (click)="addItem(article)">
-        <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction.type && transaction.type.showPrices">
+        <div class="col-md-2 offset-md-8" align="right" class="number-price" *ngIf="transaction && transaction.type && transaction.type.showPrices">
           <span class="badge badge-info">
             <b *ngIf="transaction.type.transactionMovement !== 'Venta'">{{ article.costPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</b>
             <b *ngIf="transaction.type.transactionMovement === 'Venta'"> {{ article.salePrice | currency:'USD':'symbol-narrow':'1.2-2' }}</b>

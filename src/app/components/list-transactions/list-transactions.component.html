@@ -5,16 +5,13 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de {{listType}}
+  <div class="card ">
+    <div class="card-header">Listado de {{listType}}
       <div class="pull-right">
-        <button class= "btn btn-primary" (click)="openModal('export')">Exportar</button>
-        <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
-        <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        <button class= "btn" (click)="openModal('export')"><i class="fa fa-file-excel-o"></i><span>Exportar</span></button>
+        <button class= "btn" (click)="exportIVA()" *ngIf="userCountry === 'AR'"><i class="fa fa-book"></i><span>Exportar IVA</span></button>
+        <button class="btn" (click)="exportCiti()" *ngIf="userCountry === 'AR'"><i class="fa fa-list"></i><span>Exportar Régimen de Información</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -43,8 +40,8 @@
             <th (click)="orderBy('discountAmount')">Descuento</th>
             <th (click)="orderBy('totalPrice')">Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
-            <th>
+          <tr class="filters">
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()" placeholder="Tipo..."></th>
             <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (keydown.enter)="getTransactions()" placeholder="POS..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['letter']" (keydown.enter)="getTransactions()" placeholder="Letra..."></th>
@@ -66,8 +63,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -149,7 +148,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls
@@ -183,16 +182,14 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de {{listType}}
+  <div class="card ">
+    <div class="card-header">Listado de {{listType}}
       <div class="pull-right">
-        <button class= "btn btn-primary" (click)="openModal('export')">Exportar</button>
-        <button class= "btn btn-primary" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
-        <button class="btn btn-primary" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class= "btn" (click)="openModal('export')">Exportar</button>
+        <button class= "btn" (click)="exportIVA()" *ngIf="userCountry === 'AR'">Exportar IVA</button>
+        <button class="btn" (click)="exportCiti()" *ngIf="userCountry === 'AR'">Exportar Régimen de Información</button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -214,7 +211,7 @@
             <th (click)="orderBy('discountAmount')">Descuento</th>
             <th (click)="orderBy('totalPrice')">Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()" placeholder="Tipo..."></th>
             <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filters['origin']" (keydown.enter)="getTransactions()" placeholder="POS..."></th>
@@ -230,8 +227,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -272,7 +271,7 @@
       </table>
 
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls
@@ -306,13 +305,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de {{listType}}
+  <div class="card ">
+    <div class="card-header">Listado de {{listType}}
       <div class="pull-right">
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -330,7 +327,7 @@
             <th (click)="orderBy('observation')">Observación</th>
             <th (click)="orderBy('totalPrice')">Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['type.name']" (keydown.enter)="getTransactions()"placeholder="Tipo..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['number']" (keydown.enter)="getTransactions()" placeholder="Número..."></th>
@@ -342,8 +339,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="16">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let transaction of transactions | paginate: { itemsPerPage: itemsPerPage,
                                                                       currentPage: currentPage,
@@ -380,7 +379,7 @@
       </table>
 
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls

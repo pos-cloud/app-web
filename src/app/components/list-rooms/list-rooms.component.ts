@@ -96,7 +96,7 @@ export class ListRoomsComponent implements OnInit {
           modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddRoomComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddRoomComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getRooms();
         }, (reason) => {
           this.getRooms();
@@ -115,7 +115,7 @@ export class ListRoomsComponent implements OnInit {
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteRoomComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteRoomComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.room = room;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

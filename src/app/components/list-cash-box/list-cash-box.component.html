@@ -1,10 +1,8 @@
 <section class="container-fluid">
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Detalle de Caja
+  <div class="card ">
+    <div class="card-header">Detalle de Caja
       <div class="pull-right">
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -63,7 +61,7 @@
               <th class="">Salida</th>
               <th class="">Total</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (keydown.enter)="getMovementOfCashes()" placeholder="Movimiento..."></th>
@@ -106,7 +104,7 @@
         </table>
       </div>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls

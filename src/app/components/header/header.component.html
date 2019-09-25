@@ -1,4 +1,4 @@
-<nav class="navbar navbar-toggleable-md bg-faded" *ngIf="!hideMenu && (identity$ | async) as identity">
+<nav class="navbar navbar-toggleable-md" *ngIf="!hideMenu && (identity$ | async) as identity">
   <button class="navbar-toggler navbar-toggler-right"
     type="button"
     data-toggle="collapse"
@@ -11,7 +11,7 @@
     <i class="fa fa-bars"></i>
   </button>
   <span class="navbar-brand btn" (click)="goToHome()">
-    <img width="50" src="assets/img/logo.png">
+    <img width="60" src="assets/img/logo.png">
   </span>
   <div class="collapse navbar-collapse" id="navbarSupportedContent" *ngIf="(config$ | async) as config">
     <ul class="navbar-nav mr-auto">
@@ -162,6 +162,7 @@
                   config.modules.purchase"
           (click)="makeVisibleReport(false)">
         <a  class="nav-link btn"
+            data-toggle="collapse"
             [routerLink]="['pos','mostrador','compra']"
             [routerLinkActive]="['active-primary']">
           <i class="fa fa-clipboard"></i> Compras</a>

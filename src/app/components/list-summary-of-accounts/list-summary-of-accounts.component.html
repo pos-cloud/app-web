@@ -1,13 +1,10 @@
 <section class="container-fluid" *ngIf="userType=='admin'">
-    <div class="card card-outline-primary">
-      <div class="card-header bg-primary">Resúmenes de Cuentas
+    <div class="card ">
+      <div class="card-header">Resúmenes de Cuentas
         <div class="pull-right">
             <span (click)="openModal('print')">
-                <i class="btn btn-primary fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle</i>
+                <i class="btn fa fa-print" data-toggle="tooltip" data-placement="top" title="Imprimir detalle"> Imprimir detalle</i>
             </span>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-              <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -51,7 +48,7 @@
                   <th class="align-center" (click)="orderBy('companyEmployee')">Empleado asignado</th>
                   <th class="align-center" (click)="orderBy('balance')">Saldo</th>
                 </tr>
-                <tr *ngIf="areFiltersVisible" class="filters">
+                <tr class="filters">
                   <th></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyName" placeholder="Nombre..." ></th>
                   <th><input type="text" class="form-control" [(ngModel)]= "filterCompanyType" placeholder="Tipo..." ></th>
@@ -64,8 +61,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr align="center" *ngIf="loading">
-                  <td colspan="9">Cargando...</td>
+                <tr>
+                  <td colspan="99" style="padding: 0px">
+                    <app-progressbar [loading]="loading"></app-progressbar>
+                  </td>
                 </tr>
                 <tr *ngFor="let item of items | filter: filterCompanyName:'companyName'
                                               | filter: filterIdentificationValue:'identificationValue'
@@ -84,13 +83,13 @@
                     <button type="button" class="btn btn-success  btn-sm" (click)="viewDetailCureentAccount(item._id.companyId)" title="Ver"><i class="fa fa-eye"></i></button>
                     <a *ngIf="item.companyPhones" class="btn btn-default btn-sm icon-ws" href="https://web.whatsapp.com/send?phone=54{{item.companyPhones}}&text=''" target="_blank"><i class="fa fa-whatsapp"></i></a>
                   </td>
-                  <td class="flat">{{ item.companyName }}</td>
+                  <td class="flat ws-normal">{{ item.companyName }}</td>
                   <td class="flat">{{ item.companyType }}</td>
                   <td class="flat align-center">{{ item.identificationValue }}</td>
-                  <td class="flat">{{ item.companyAddress }}</td>
-                  <td class="flat">{{ item.companyPhones }}</td>
-                  <td class="flat">{{ item.companyEmails }}</td>
-                  <td class="flat">{{ item.companyEmployee }}</td>
+                  <td class="flat ws-normal">{{ item.companyAddress }}</td>
+                  <td class="flat ws-normal">{{ item.companyPhones }}</td>
+                  <td class="flat ws-normal">{{ item.companyEmails }}</td>
+                  <td class="flat ws-normal">{{ item.companyEmployee }}</td>
                   <td class="flat align-right" *ngIf="item.balance>=0">
                     <strong>{{item.balance | currency:'USD':'symbol-narrow':'1.2-2'}}</strong>
                   </td>
@@ -131,7 +130,7 @@
         </div>
       </div>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig."

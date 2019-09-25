@@ -1,59 +1,11 @@
 .card {
-  margin-top: 50px;
+  margin-top: 20px;
 }
 
 .card-large {
   height:75vh;
 }
 
-.card-header {
-  color: white;
-}
-
 .btn, thead {
     cursor: pointer;
-}
-
-.card-block {
-  padding: 0px;
-}
-
-.container-filter {
-  margin-top: 20px;
-}
-
-.center-content {
-  margin-top: 30px;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-
-.my-pagination /deep/ .ngx-pagination {
-  color: white;
-}
-
-::placeholder {
-  color: #D8D8D8;
-}
-
-.filters {
-  background-color: #F8F8F8;
-}
-
-.btn-action {
-  width: 100%;
-  border: 1px solid white;
-  padding: 10px;
-  cursor: pointer;
-  background: #0275d8;
-  color: white;
-  height: 50px;
-}
-
-.btn-action:hover {
-  background: #025aa5;
 }

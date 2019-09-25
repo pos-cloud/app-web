@@ -12,7 +12,7 @@
   </div>
   <form [formGroup]="makeForm" #formAddMake="ngForm" (ngSubmit)="addMake()" autocomplete="off">
     <div class="modal-body">
-      <ngb-tabset>
+      <ngb-tabset [orientation]="orientation">
         <ngb-tab title="Datos principales">
           <ng-template ngbTabContent>
             <div class="row tab-content">

@@ -20,18 +20,6 @@
         <app-list-tables (eventBackToRoom)="changeRoom($room)" (eventTableSelected)="selectTable($event)" [filterRoom]="roomSelected.description"></app-list-tables>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12 container-btns">
-        <div class="btn center-content btn-turn btn-turn-text" (click)="getEmployeeType('open-turn', 'Mozo')">
-          <b>Abrir
-            <br>Turno</b>
-        </div>
-        <div class="btn center-content btn-turn btn-turn-text" (click)="getEmployeeType('close-turn', 'Mozo')">
-          <b>Cerrar
-            <br>Turno</b>
-        </div>
-      </div>
-    </div>
   </section>
   
   <!-- POS DELIVERY -->
@@ -41,20 +29,17 @@
         {{alertMessage}}
       </ngb-alert>
     </div>
-    <div class="card card-outline-primary list-delivery">
-      <div class="card-header bg-primary">Pendientes
+    <div class="card  list-delivery">
+      <div class="card-header">Pendientes
         <div class="pull-right">
           <div class="btn-group" ngbDropdown>
-            <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Administrar caja"><i class="fa fa-plus"> Caja</i></button>
+            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Administrar caja"><i class="fa fa-money"></i><span>Caja</span></button>
             <div class="dropdown-menu" ngbDropdownMenu>
               <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
             </div>
           </div>
-          <button class="btn btn-primary" (click)="getDefectOrder()"><i class="fa fa-plus"> Nuevo Pedido</i></button>
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
+          <button class="btn" (click)="getDefectOrder()"><i class="fa fa-plus"></i><span>Nuevo Pedido</span></button>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -69,7 +54,7 @@
               <th (click)="orderBy('totalPrice')">Precio Total</th>
               <th></th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th><input type="text" class="form-control" [(ngModel)]="filterPendingNumber" placeholder="Número..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterPendingStartDate" placeholder="Fecha Pedido..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterPendingCompany" placeholder="Cliente..."></th>
@@ -80,6 +65,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterPendingNumber:'number'
                                                         | filter: filterPendingStartDate:'startDate'
                                                         | filter: filterPendingCompany:'name':'company'
@@ -117,11 +107,6 @@
     </div>
     <div class="card card-outline-warning list-delivery">
       <div class="card-header bg-warning">Enviados
-        <div class="pull-right">
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-warning fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
-          </span>
-        </div>
       </div>
       <div class="card-block table-responsive">
         <table class="table table-striped">
@@ -137,7 +122,7 @@
               <th (click)="orderBy('totalPrice')">Precio Total</th>
               <th></th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th><input type="text" class="form-control" [(ngModel)]="filterSendNumber" placeholder="Número..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterSendStartDate" placeholder="Pedido..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterSendEndDate" placeholder="Enviado..."></th>
@@ -151,6 +136,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterSendNumber:'number'
                                                         | filter: filterSendStartDate:'startDate'
                                                         | filter: filterSendEndDate:'endDate'
@@ -193,11 +183,6 @@
     </div>
     <div class="card card-outline-success list-delivery">
       <div class="card-header bg-success">Entregados
-        <div class="pull-right">
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-success fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"></i>
-          </span>
-        </div>
       </div>
       <div class="card-block table-responsive">
         <table class="table table-striped">
@@ -213,7 +198,7 @@
               <th (click)="orderBy('totalPrice')">Precio Total</th>
               <th></th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th><input type="text" class="form-control" [(ngModel)]="filterDeliveredNumber" placeholder="Número..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterDeliveredStartDate" placeholder="Pedido..."></th
                 ><th><input type="date" class="form-control" [(ngModel)]="filterDeliveredEndDate" placeholder="Entregado..."></th>
@@ -227,6 +212,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterDeliveredNumber:'number'
                                                         | filter: filterDeliveredStartDate:'startDate'
                                                         | filter: filterDeliveredEndDate:'endDate'
@@ -284,20 +274,17 @@
         </ngb-alert>
       </div>
     </div>
-    <div class="card card-outline-primary list-counter">
-      <div class="card-header bg-primary">
+    <div class="card  list-counter">
+      <div class="card-header">
         <span>{{transactionMovement}} Pendientes</span>
         <div class="pull-right">
           <div class="btn-group" ngbDropdown>
-            <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i class="fa fa-plus"> Nuevo</i></button>
+            <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i class="fa fa-plus"></i><span>Nuevo</span></button>
             <div class="dropdown-menu" ngbDropdownMenu>
               <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>
             </div>
           </div>
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -314,7 +301,7 @@
               <th (click)="orderBy('depositOrigin','name')" *ngIf="transactionMovement === 'Stock'" >Depósito</th>
               <th (click)="orderBy('totalPrice')" *ngIf="transactionMovement !== 'Stock'" >Precio Total</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
@@ -326,6 +313,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterType:'name':'type'
                                                         | filter: filterStartDate:'startDate'
                                                         | filter: filterNumber:'number'
@@ -364,7 +356,7 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer bg-primary">
+      <div class="card-footer">
         <div class="row">
           <div class="col-md-10">
             <pagination-controls
@@ -400,14 +392,11 @@
         </ngb-alert>
       </div>
     </div>
-    <div class="card card-outline-primary list-counter">
-      <div class="card-header bg-primary">
+    <div class="card  list-counter">
+      <div class="card-header">
         <span>Pedidos a Confirmar</span>
         <div class="pull-right">
-          <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-          <span (click)="areFiltersVisible = !areFiltersVisible">
-            <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-          </span>
+          <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</button>
         </div>
       </div>
       <div class="card-block table-responsive">
@@ -420,7 +409,7 @@
               <th (click)="orderBy('company','name')" >Cliente</th>
               <th (click)="orderBy('totalPrice')">Precio Total</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th><input type="date" class="form-control" [(ngModel)]="filterStartDate" placeholder="Fecha..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filterNumber" placeholder="Número..."></th>
@@ -429,6 +418,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let transaction of transactions | filter: filterStartDate:'startDate'
                                                         | filter: filterNumber:'number'
                                                         | filter: filterCompany:'name':'company'
@@ -455,7 +449,7 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer bg-primary">
+      <div class="card-footer">
         <div class="row">
           <div class="col-md-10">
             <pagination-controls
@@ -508,11 +502,9 @@
   
   <!-- BOTON CTA CTE -->
   <div class="btn-group" ngbDropdown *ngIf="posType=='cuentas-corrientes' && transactionTypes && transactionTypes.length > 0">
-    <button class="btn btn-primary" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante">
-      <i class="fa fa-plus"> Nuevo 
-        <span *ngIf="company && company.type === 'Cliente'">Cobro</span>
-        <span *ngIf="company && company.type === 'Proveedor'">Pago</span>
-      </i>
+    <button class="btn" ngbDropdownToggle data-toggle="tooltip" data-placement="top" title="Crear Nuevo Comprobante"><i class="fa fa-plus"></i><span>Nuevo</span> 
+      <span *ngIf="company && company.type === 'Cliente'">Cobro</span>
+      <span *ngIf="company && company.type === 'Proveedor'">Pago</span>
     </button>
     <div class="dropdown-menu" ngbDropdownMenu>
       <button class="dropdown-item" *ngFor="let transactionType of transactionTypes" (click)="addTransaction(transactionType)">{{transactionType.name}}</button>

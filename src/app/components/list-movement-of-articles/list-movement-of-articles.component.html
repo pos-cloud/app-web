@@ -1,11 +1,6 @@
 <section class="container-fluid" *ngIf="userType=='report'">
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Kardex de Producto
-      <div class="pull-right">
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
-      </div>
+  <div class="card ">
+    <div class="card-header">Kardex de Producto
     </div>
     <div class="card-block table-responsive">
       <div class="center-content" *ngIf="alertMessage !== ''">
@@ -73,10 +68,6 @@
           </span>
         </div>
       </div>
-      <div class = "row">
-
-
-      </div>
       <div class="row center-content">
         <table class="table table-striped">
           <thead>
@@ -100,7 +91,7 @@
               <th class="">Salida</th>
               <th class="">Stock</th>
             </tr>
-            <tr *ngIf="areFiltersVisible" class="filters">
+            <tr class="filters">
               <th></th>
               <th></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.type.transactionMovement']" (input)="getSummary()" placeholder="Movimiento..."></th>
@@ -111,9 +102,16 @@
               <th><input type="text" class="form-control" [(ngModel)]="filters['transaction.number']" (input)="getSummary()" placeholder="Número..."></th>
               <th><input type="text" class="form-control" [(ngModel)]="filters['salePrice']" (input)="getSummary()" placeholder="Precio..."></th>
               <th></th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="99" style="padding: 0px">
+                <app-progressbar [loading]="loading"></app-progressbar>
+              </td>
+            </tr>
             <tr *ngFor="let movementsOfArticle of items | paginate: { itemsPerPage: itemsPerPage,
                                                                         currentPage: currentPage,
                                                                         totalItems: totalItems
@@ -142,12 +140,11 @@
             </tr>
           </tbody>
           <tfoot>
-            <td colspan="11" class="align-right" *ngIf="userCountry === 'AR'">
-              <strong>Stock Real</strong>
+            <td colspan="10" *ngIf="userCountry === 'AR'">
             </td>
-            <td colspan="10" class="align-right" *ngIf="userCountry !== 'AR'">
-              <strong>Stock Real</strong>
+            <td colspan="9" *ngIf="userCountry !== 'AR'">
             </td>
+            <td><strong>Stock Real</strong></td>
             <td class="align-right">
               <strong>{{balance }}</strong>
             </td>
@@ -155,7 +152,7 @@
         </table>
       </div>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls

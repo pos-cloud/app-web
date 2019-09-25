@@ -1,100 +1,62 @@
 app-point-of-sale {
-      .center-content {
-            display: -webkit-flex;
-            display: flex;
-            -webkit-flex-wrap: wrap;
-            flex-wrap: wrap;
-            -webkit-justify-content: center;
-            justify-content: center;
-      }
-      
-      .card {
-            margin-top: 50px;
-      }
-      
-      .margin-top {
-            margin-top: 50px;
-      }
-      
-      .list-delivery {
-            height:33/100vh;
-      }
-      
-      .list-counter {
-            height:80vh;
-      }
-      
-      .card-header {
-            color: white;
-      }
-      
-      .btn {
-            cursor: pointer;
-      }
-      
-      .table {
-          box-shadow: 0px 0px 2px;
-          border-radius: 5px;
-          cursor: pointer;
-       }
-      
-       .tables-container {
-          height:70vh;
-          padding-left: 50px;
-          padding-right: 50px;
-       }
-      
-       .btn-turn {
-          background: #0275d8;
-          width: 100px;
-          height: 100px;
-          margin: 25px;
-          float: left;
-          text-align: center;
-          cursor: pointer;
-          border: 1px solid black;
-          padding-top: 20px;
-          box-shadow: 0px 0px 2px;
-      }
-      
-       .btn-turn:hover {
-          opacity: 0.5;
-       }
-      
-      .btn-turn-text {
-          color: white;
-          font-size: 20px;
-      }
-      
-      .container-btns {
-          padding-left: 50px;
-      }
-      
-      .pos-resto {
-          background-color: #FFF;
-      }
-      
-      .my-pagination /deep/ .ngx-pagination {
-          color: white;
-      }
-      
-      ::placeholder {
-            color: #D8D8D8;
-      }
-      
-      .filters {
-            background-color: #F8F8F8;
-      }
-      
-      @media (min-width: 1100px) {
-            .modal-lg {
-                  max-width: 1000px;
-            }
-      }
-      
-      @media (min-width: 1400px) {
-            .modal-lg {
-                  max-width: 1200px;
-            }
-      }
+	.margin-top {
+			margin-top: 20px;
+	}
+	
+	.list-delivery {
+			height:33/100vh;
+	}
+	
+	.list-counter {
+			min-height: 85vh;
+			height: auto;
+	}
+	
+	.tables-container {
+		height:70vh;
+		padding-left: 50px;
+		padding-right: 50px;
+	}
+	
+	.btn-turn {
+		background: #0275d8;
+		width: 100px;
+		height: 100px;
+		margin: 25px;
+		float: left;
+		text-align: center;
+		cursor: pointer;
+		border: 1px solid black;
+		padding-top: 20px;
+		box-shadow: 0px 0px 2px;
+	}
+	
+	.btn-turn:hover {
+		opacity: 0.5;
+	}
+	
+	.btn-turn-text {
+		color: white;
+		font-size: 20px;
+	}
+	
+	.container-btns {
+		padding-left: 50px;
+	}
+	
+	.pos-resto {
+		background-color: #FFF;
+	}
+
+	td {
+		cursor: pointer;
+	}
+
+	/* RESPONSIVE */
+	@media (max-width: 767px) {
+		.tables-container {
+			padding: 0px;
+			margin: 0px;
+		}
+	}
 }

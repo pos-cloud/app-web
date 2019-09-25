@@ -5,14 +5,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Tipos de transacciones
+  <div class="card ">
+    <div class="card-header">Listado de Tipos de transacciones
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Tipo de transacción</i></button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -35,6 +32,8 @@
             <th (click)="orderBy('modifyStock')">Modifica el stock</th>
             <th (click)="orderBy('stockMovement')">Movimiento de stock</th>
             <th (click)="orderBy('defectOrders')">Para pedidos</th>
+            <th (click)="orderBy('automaticCreation')">Creación Automática</th>
+            <th (click)="orderBy('automaticNumbering')">Numeración Automática</th>
             <th (click)="orderBy('fixedOrigin')" *ngIf="userCountry === 'AR'">Punto de venta fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
             <th (click)="orderBy('electronics')">Electrónico</th>
@@ -56,7 +55,7 @@
             <th (click)="orderBy('fastPayment','name')">Pago rápido</th>
             <th (click)="orderBy('allowAPP')">APP</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterTransactionMovement" placeholder="Movimiento..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAbbreviation" placeholder="Abrev..."></th>
@@ -73,6 +72,8 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyStock" placeholder="Modifica el stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterStockMovement" placeholder="Movimiento de stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAutomaticCreation" placeholder="Creación Automática..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAutomaticNumbering" placeholder="Numeración Automática..."></th>
             <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..." ></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterElectronics" placeholder="Electrónico..."></th>
@@ -111,6 +112,8 @@
                                                               | filter: filterModifyStock:'modifyStock'
                                                               | filter: filterStockMovement:'stockMovement'
                                                               | filter: filterDefectOrders:'defectOrders'
+                                                              | filter: filterAutomaticCreation:'automaticCreation'
+                                                              | filter: filterAutomaticNumbering:'automaticNumbering'
                                                               | filter: filterFixedOrigin:'fixedOrigin'
                                                               | filter: filterFixedLetter:'letter'
                                                               | filter: filterElectronics:'electronics'
@@ -153,6 +156,8 @@
             <td class="flat">{{transactionType.modifyStock}}</td>
             <td class="flat">{{transactionType.stockMovement}}</td>
             <td class="flat">{{transactionType.defectOrders}}</td>
+            <td class="flat">{{transactionType.automaticCreation}}</td>
+            <td class="flat">{{transactionType.automaticNumbering}}</td>
             <td class="flat" *ngIf="userCountry === 'AR'">{{transactionType.fixedOrigin}}</td>
             <td class="flat">{{transactionType.fixedLetter}}</td>
             <td class="flat">{{transactionType.electronics}}</td>
@@ -184,7 +189,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">
@@ -255,14 +260,18 @@
       <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
     </div>
     <div class="col-md-2" (click)="getTransactionTypesV2()">
+        <label for="action" class="control-label">
+            <b>Acción:</b>
+          </label>
       <span class="form-control btn-action center-content">
-        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
+      </span>
     </div>
   </div>
-  <div class="card card-outline-primary card-large">
-  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'venta'">Ventas por tipo de transacción</div>
-  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'compra'">Compras por tipo de transacción</div>
-  <div class="card-header bg-primary" *ngIf="pathLocation[2] === 'fondo'">Fondos por tipo de transacción</div>
+  <div class="card  card-large">
+  <div class="card-header" *ngIf="pathLocation[2] === 'venta'">Ventas por tipo de transacción</div>
+  <div class="card-header" *ngIf="pathLocation[2] === 'compra'">Compras por tipo de transacción</div>
+  <div class="card-header" *ngIf="pathLocation[2] === 'fondo'">Fondos por tipo de transacción</div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
@@ -273,11 +282,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="3">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let item of items">
-            <td class="flat">{{ item._id }}</td>
+            <td class="flat">{{ item._id.name }}</td>
             <td class="flat">{{ item.count }}</td>
             <td class="flat" >{{ item.totalPrice | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
           </tr>
@@ -300,7 +311,7 @@
         </tfoot>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
     </div>
   </div>
 </section>

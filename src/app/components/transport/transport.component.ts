@@ -41,8 +41,8 @@ export class TransportComponent implements OnInit {
   public identificationTypes: IdentificationType[];
   public vatConditions: VATCondition[];
   public countries: Country[];
-  public config : Config
-
+  public config : Config;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'name': '',
@@ -65,6 +65,7 @@ export class TransportComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.transport = new Transport();
     this.getVATConditions();
     this.getIdentificationTypes();

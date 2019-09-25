@@ -351,6 +351,11 @@ export class ListMovementOfCashesComponent implements OnInit {
         modalRef = this._modalService.open(EditCheckComponent, { size: 'lg', backdrop: 'static' });
         modalRef.componentInstance.movementOfCashId = movementOfCash._id;
         modalRef.componentInstance.readonly = true;
+        modalRef.result.then((result) => {
+          this.getMovementOfCashes();
+        }, (reason) => {
+          this.getMovementOfCashes();
+        });
         break;
       default: ;
     }

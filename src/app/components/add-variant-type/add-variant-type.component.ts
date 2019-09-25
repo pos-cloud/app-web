@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { NgbAlertConfig, NgbActiveModal, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { VariantType } from './../../models/variant-type';
 
@@ -25,10 +25,14 @@ export class AddVariantTypeComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'order': '',
     'name': ''
   };
 
   public validationMessages = {
+    'order': {
+      'required': 'Este campo es requerido.'
+    },
     'name': {
       'required': 'Este campo es requerido.'
     }
@@ -57,9 +61,13 @@ export class AddVariantTypeComponent implements OnInit {
   public buildForm(): void {
 
     this.variantTypeForm = this._fb.group({
+      'order': [this.variantType.order, [
+          Validators.required
+        ]
+      ],
       'name': [this.variantType.name, [
-        Validators.required
-      ]
+          Validators.required
+        ]
       ],
     });
 

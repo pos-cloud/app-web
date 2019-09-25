@@ -20,10 +20,13 @@ import { MakeService } from '../../../services/make.service';
 import { CategoryService } from '../../../services/category.service';
 import { Article } from 'app/models/article';
 import { ConfigService } from 'app/services/config.service';
-import { Config } from 'app/app.config';
 import { VariantService } from 'app/services/variant.service';
-import { VariantValue } from 'app/models/variant-value';
-import { Variant} from 'app/models/variant';
+import { ArticleFieldService } from 'app/services/article-field.service';
+import { ArticleField } from 'app/models/article-field';
+import { PriceListService } from 'app/services/price-list.service';
+import { PriceList } from 'app/models/price-list';
+import { ArticleStockService } from 'app/services/article-stock.service';
+import { ArticleStock } from 'app/models/article-stock';
 
 @Component({
   selector: 'app-print-price-list',
@@ -48,8 +51,13 @@ export class PrintPriceListComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public pageWidth;
   public pageHigh;
+  public articleFieldId;
   public withImage = false;
-
+  public articleFields : ArticleField [];
+  public priceLists : PriceList [];
+  public priceList;
+  public articleFieldsValues : []
+  public imageURL
   public fontSizes = JSON.parse(`{"xsmall" : 5,
                                   "small" : 7,
                                   "normal" : 10,
@@ -72,7 +80,10 @@ export class PrintPriceListComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _makeService: MakeService,
-    public _categoryService: CategoryService,    
+    public _categoryService: CategoryService,  
+    public _articleFields : ArticleFieldService,  
+    private _articleStockService: ArticleStockService,
+    public _priceList : PriceListService,
     public _configService: ConfigService,
     public _variantService: VariantService,
     private domSanitizer: DomSanitizer
@@ -80,6 +91,10 @@ export class PrintPriceListComponent implements OnInit {
   ) { 
     this.pageWidth = 210 * 100 / 35.27751646284102;
     this.pageHigh = 297 * 100 / 35.27751646284102;
+    this.getMakes();
+    this.getCategories();
+    this.getArticleFields();
+    this.getPriceLists();
   }
 
   async ngOnInit() {
@@ -97,7 +112,6 @@ export class PrintPriceListComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
-    this.getMakes();
     this.buildForm();
     this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);
 
@@ -114,11 +128,10 @@ export class PrintPriceListComponent implements OnInit {
     this._makeService.getMakes('sort="description":1').subscribe(
       result => {
         if (!result.makes) {
-          this.getCategories();
+          this.hideMessage();
         } else {
           this.hideMessage();
           this.makes = result.makes;
-          this.getCategories();
         }
       },
       error => {
@@ -149,13 +162,81 @@ export class PrintPriceListComponent implements OnInit {
     );
   }
 
+  public getArticleFields() : void {
+    
+    this.loading = true;
+
+    this._articleFields.getArticleFields().subscribe(
+      result => {
+        if (!result.articleFields) {
+          this.hideMessage();
+        } else {
+          this.hideMessage();
+          this.articleFields = result.articleFields;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getPriceLists() : void {
+    
+    this.loading = true;
+
+    this._priceList.getPriceLists().subscribe(
+      result => {
+        if (!result.priceLists) {
+          this.hideMessage();
+        } else {
+          this.hideMessage();
+          this.priceLists = result.priceLists;
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public getarticleFieldValue(articleField) : void {
+    
+    this.loading = true;
+    
+    let query = `where="_id":"${articleField}"`;
+
+    this._articleFields.getArticleFields(query).subscribe(
+      result => {
+        if (!result.articleFields) {
+          this.hideMessage();
+        } else {
+          this.hideMessage();
+          this.articleFieldsValues = result.articleFields[0].value.split(';');
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
 
   public buildForm(): void {
 
     this.printPriceListForm = this._fb.group({
-      'make': [, []],
-      'category': [, []],
-      'withImage' : [,[]]
+      'make': ['', []],
+      'category': ['', []],
+      'withImage' : ['',[]],
+      'articleField' : ['',[]],
+      'articleFieldValue' : ['',[]],
+      'priceList' : ['',[]]
+
     });
 
     this.printPriceListForm.valueChanges
@@ -184,23 +265,27 @@ export class PrintPriceListComponent implements OnInit {
 
   public getArticles(): void {
 
-    this.loading = true;
 
     let match = `{`;
 
-    if(this.printPriceListForm.value.make !== null){
+    if(this.printPriceListForm.value.make){
       match += `"make._id" :  { "$oid" : "${this.printPriceListForm.value.make}" },`
     }
 
-    if(this.printPriceListForm.value.category !== null){
+    if(this.printPriceListForm.value.category){
       match += `"category._id" :  { "$oid" : "${this.printPriceListForm.value.category}" },`
     }
-    
-    match += `"type" : "Final", "operationType" : { "$ne" : "D" } }`;
 
+    if(this.printPriceListForm.value.otherFields && this.printPriceListForm.value.articleFieldsValue){
+      match += `"otherFields.value" : "${this.printPriceListForm.value.articleFieldsValue}",`
+    }
+
+    
+    match += `"type" : "Final", "allowSale": true , "operationType" : { "$ne" : "D" } }`;
 
     match = JSON.parse(match);
 
+    //filtrar por los de stock
 
     // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
     let project = {
@@ -216,6 +301,7 @@ export class PrintPriceListComponent implements OnInit {
       "picture": 1,
       operationType: 1,
       "otherFields": 1,
+      "allowSale" : 1,
       "containsVariants" : 1
     }
 
@@ -234,10 +320,14 @@ export class PrintPriceListComponent implements OnInit {
         0 // SKIP
     ).subscribe(
       result => {
-        this.loading = false;
-        if (result && result[0] && result[0].articles && result[0].articles.length > 0) {
+        if (result && result[0] && result[0].articles) {
             this.articles = result[0].articles;
-            this.printPriceList();
+            if(this.printPriceListForm.value.withImage === false){
+              this.printPriceListWithImagen();
+            } else {
+              this.printPriceListWithoutImagen();
+            }
+            
         } else {
             this.showMessage("No se encontraron articulos", 'danger', false);
             this.articles = null;
@@ -250,76 +340,103 @@ export class PrintPriceListComponent implements OnInit {
     );
   }
 
-  async printPriceList() {
-    
-    var row = 15;
-    var margin = 5;
-    this.doc.setFontType('bold');
-
-    this.doc.setFontSize(12);
-    if (this.config[0].companyFantasyName) {
-      this.doc.text(this.config[0].companyFantasyName, 5, row);
-    }
-
-    this.doc.setFontType('normal');
-    row += 5;
-    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
-      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
-      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
-    }
-
-    this.doc.setFontType('bold');
-    this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
-
-    row += 3;
-    this.doc.line(0, row, 400, row);
-    
-
-
-    if(this.printPriceListForm.value.withImage == false){
-      row += 5;
-      // Encabezado de la tabla de Detalle de Productos
-      this.doc.setFontType('bold');
-      this.doc.setFontSize(this.fontSizes.normal);
-      this.doc.text("Código", 5, row);
-      this.doc.text("Descripción", 30, row);
-      this.doc.text("Marca", 100, row);
-      this.doc.text("Rubro", 145, row);
-      this.doc.text("Precio", 190, row);
-      this.doc.setFontType('normal');
-
-      row += 3;
-      this.doc.line(0, row, 400, row);
-      row += 5;
-
-      let page = 1;
-
-      // // Detalle de productos
-      if(this.articles && this.articles.length > 0) {
-        for(let article of this.articles) {
-
-          if(article.code) {
-            this.doc.text(article.code, 5, row);
+  async printPriceListWithImagen() {
+    let count = 0;
+    let img;
+    row +=5;
+    if(this.articles && this.articles.length > 0){
+      for(let article of this.articles) {
+          this.doc.setFontType('blod')
+          if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
+            this.doc.addImage(this.imageURL, 'JPEG', 15, row+2, 60, 40);
           }
-          if (article.description) {
-            this.doc.text(article.description.slice(0, 30), 30, row);
+          row +=5
+          this.doc.setFontSize(this.fontSizes.extraLarge)
+          this.doc.text(5, row, article.description)
+          row +=5
+          this.doc.setFontSize(this.fontSizes.normal)
+          if(article.posDescription){
+            this.doc.text(95, row, 'COD: ' + article.posDescription)
           }
-          if (article.make && article.make.description) {
-            this.doc.text(article.make.description.slice(0, 18), 100, row);
+          row +=5
+          this.doc.setFontSize(this.fontSizes.normal)
+          if(article.make){
+            this.doc.text(95, row, 'Marca: ' + article.make.description)
           }
-          if (article.category && article.category.description) {
-            this.doc.text(article.category.description.slice(0, 18), 145, row);
-          }
-          if (article.salePrice) {
-            this.doc.text("$" + this.roundNumber.transform(article.salePrice).toString(), 190, row);
-          }
-          row += 5;
+          this.doc.text(160, row, 'Precio')
+          this.doc.setFontSize(this.fontSizes.extraLarge)
+          
+          let increasePrice = 0;
+          if(this.printPriceListForm.value.priceList){
+            let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
+            if(priceList){
+              if(priceList.allowSpecialRules){
+                  priceList.rules.forEach(rule => {
+                    if(rule){
+                      if(rule.category && article.category && rule.make && article.make && rule.category._id === article.category._id && rule.make._id === article.make._id){
+                        increasePrice = rule.percentage + priceList.percentage
+                      }
+                      if(rule.make && article.make && rule.category == null && rule.make._id === article.make._id){
+                        increasePrice = rule.percentage + priceList.percentage
+                      }
+                      if(rule.category && article.category && rule.make == null && rule.category._id === article.category._id){
+                        increasePrice = rule.percentage + priceList.percentage
+                      }
+                      if(rule.category && article.category && rule.make && article.make && rule.make._id !== article.make._id && rule.category._id !== article.category._id){
+                        increasePrice = priceList.percentage
+                      }
+                    }
+                  });
+                } else {
+                  increasePrice = priceList.percentage
+                }
 
-          if (row >= (this.pageHigh - 20)) {
-
-            if(page === 120) {
-              break;
+                if(priceList.exceptions && priceList.exceptions.length > 0){
+                  priceList.exceptions.forEach(exception =>{
+                    if(exception){
+                      if(article && exception.article && exception.article._id === article._id){
+                        increasePrice = exception.percentage
+                      }
+                    }
+                  })
+                }
+              
             }
+          }
+          if(increasePrice != 0){
+            this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice +(article.salePrice *increasePrice / 100))).toString());
+          } else {
+            this.doc.text(160, row + 8,"$" + (this.roundNumber.transform(article.salePrice)).toString());
+          }
+          this.doc.setFontSize(this.fontSizes.normal)
+          row +=5
+          this.doc.text(95, row, 'Categoría: ' + article.category.description)
+          if(article.otherFields && article.otherFields.length > 0 ){
+            for (let fields of article.otherFields){
+              row +=5
+              this.doc.text(95, row, fields.articleField.name + ": " + fields.value)
+            }
+          }
+          if(article.containsVariants){
+            let variants = await this.getVariants(article._id)
+            for(let variant of variants){
+              row +=5
+              this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
+              let col = 110 + variant["_id"]["type"]["name"].length;
+              for(let value of  variant["value"] ){
+                this.doc.text(col, row , value["description"])
+                col += 5 + value["description"].length;
+              }
+            }
+          }
+          row +=20
+          this.doc.line(0, row, 300, row);
+          row +=5
+
+          count++;
+          //4 item por pag
+          if (count === 5) {
+
             this.doc.addPage();
 
             var row = 15;
@@ -343,93 +460,185 @@ export class PrintPriceListComponent implements OnInit {
 
             row += 3;
             this.doc.line(0, row, 400, row);
-            row += 5;
-
-            // Encabezado de la tabla de Detalle de Productos
-            this.doc.setFontType('bold');
-            this.doc.setFontSize(this.fontSizes.normal);
-            this.doc.text("Código", 5 , row);
-            this.doc.text("Descripción", 30, row);
-            this.doc.text("Marca", 100, row);
-            this.doc.text("Rubro", 140, row);
-            this.doc.text("Precio", 190, row);
-            this.doc.setFontType('normal');
-
-            row += 3;
-            this.doc.line(0, row, 400, row);
-            row += 5;
+            count = 0;
           }
-        }
+        
+          
       }
-
-      this.finishImpression();
-    } else {
-      let img;
-      row +=5;
-      if(this.articles && this.articles.length > 0){
-        for(let article of this.articles) {
-            this.doc.setFontType('blod')
-            img = await this.getPicture(article.picture);
-            this.doc.addImage(img, 'JPEG', 15, row, 60, 40);
-            row +=5
-            this.doc.setFontSize(this.fontSizes.extraLarge)
-            this.doc.text(95, row, article.description)
-            row +=5
-            this.doc.setFontSize(this.fontSizes.normal)
-            if(article.make){
-              this.doc.text(95, row, 'Marca:')
-              this.doc.text(120, row, article.make.description)
-            }
-            this.doc.text(150, row, 'Precio')
-            this.doc.setFontSize(this.fontSizes.extraLarge)
-            this.doc.text(150, row + 8,"$" + this.roundNumber.transform(article.salePrice).toString());
-            this.doc.setFontSize(this.fontSizes.normal)
-            row +=5
-            this.doc.text(95, row, 'Categoría:')
-            this.doc.text(120, row, article.category.description)
-            if(article.otherFields && article.otherFields.length > 0 ){
-              for (let fields of article.otherFields){
-                row +=5
-                this.doc.text(95, row, fields.articleField.name + ":")
-                this.doc.text(120, row, fields.value)
-              }
-            }
-            if(article.containsVariants){
-              let variants = await this.getVariants(article._id)
-              for(let variant of variants){
-                row +=5
-                this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
-                let col = 110 + variant["_id"]["type"]["name"].length;
-                for(let value of  variant["value"] ){
-                  this.doc.text(col, row , value["description"])
-                  col += 15 + value["description"].length;
-                }
-              }
-            }
-            row +=20
-            this.doc.line(0, row, 300, row);
-            row +=5
-        }
-      }
-      this.finishImpression();
     }
+    this.finishImpression();
   }
 
-  public getPicture(picture) {
+  async printPriceListWithoutImagen() {
+    
+    this.loading = true;
+    var row = 15;
+    var margin = 5;
+    this.doc.setFontType('bold');
+
+    this.doc.setFontSize(12);
+    if (this.config[0].companyFantasyName) {
+      this.doc.text(this.config[0].companyFantasyName, 5, row);
+    }
+
+    this.doc.setFontType('normal');
+    row += 5;
+    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+    }
+
+    this.doc.setFontType('bold');
+    this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    
+
+
+    row += 5;
+    // Encabezado de la tabla de Detalle de Productos
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(this.fontSizes.normal);
+    this.doc.text("Código", 5, row);
+    this.doc.text("Descripción", 30, row);
+    this.doc.text("Marca", 100, row);
+    this.doc.text("Rubro", 145, row);
+    this.doc.text("Precio", 190, row);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    row += 5;
+
+    let page = 1;
+
+    // // Detalle de productos
+    if(this.articles && this.articles.length > 0) {
+      for (let index = 0; index < this.articles.length; index++) {
+        
+     
+
+        if(this.articles[index].code) {
+          this.doc.text(this.articles[index].code, 5, row);
+        }
+        if (this.articles[index].description) {
+          this.doc.text(this.articles[index].description.slice(0, 30), 30, row);
+        }
+        if (this.articles[index].make && this.articles[index].make.description) {
+          this.doc.text(this.articles[index].make.description.slice(0, 18), 100, row);
+        }
+        if (this.articles[index].category && this.articles[index].category.description) {
+          this.doc.text(this.articles[index].category.description.slice(0, 18), 145, row);
+        }
+        let increasePrice = 0;
+        if(this.printPriceListForm.value.priceList){
+          let priceList = await this.getPriceList(this.printPriceListForm.value.priceList)
+          if(priceList){
+            if(priceList.allowSpecialRules){
+                priceList.rules.forEach(rule => {
+                  if(rule){
+                    if(rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.category._id === this.articles[index].category._id && rule.make._id === this.articles[index].make._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.make && this.articles[index].make && rule.category == null && rule.make._id === this.articles[index].make._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.category && this.articles[index].category && rule.make == null && rule.category._id === this.articles[index].category._id){
+                      increasePrice = rule.percentage + priceList.percentage
+                    }
+                    if(rule.category && this.articles[index].category && rule.make && this.articles[index].make && rule.make._id !== this.articles[index].make._id && rule.category._id !== this.articles[index].category._id){
+                      increasePrice = priceList.percentage
+                    }
+                  }
+                });
+              } else {
+                increasePrice = priceList.percentage
+              }
+
+              if(priceList.exceptions && priceList.exceptions.length > 0){
+                priceList.exceptions.forEach(exception =>{
+                  if(exception){
+                    if(this.articles[index] && exception.article && exception.article._id === this.articles[index]._id){
+                      increasePrice = exception.percentage
+                    }
+                  }
+                })
+              }
+            
+          }
+        }
+          if(increasePrice != 0){
+            this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice +(this.articles[index].salePrice *increasePrice / 100))).toString());
+          } else {
+            this.doc.text(190,row,"$" + (this.roundNumber.transform(this.articles[index].salePrice)).toString());
+          }
+        row += 5;
+
+        if (index%52 === 0 && index != 0) {
+
+          /*if(page === 120) {
+            break;
+          }*/
+          this.doc.addPage();
+
+          var row = 15;
+          var margin = 5;
+          this.doc.setFontType('bold');
+
+          this.doc.setFontSize(12);
+          if (this.config[0].companyFantasyName) {
+            this.doc.text(this.config[0].companyFantasyName, 5, row);
+          }
+
+          this.doc.setFontType('normal');
+          row += 5;
+          if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+            this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+            this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+          }
+
+          this.doc.setFontType('bold');
+          this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+
+          // Encabezado de la tabla de Detalle de Productos
+          this.doc.setFontType('bold');
+          this.doc.setFontSize(this.fontSizes.normal);
+          this.doc.text("Código", 5 , row);
+          this.doc.text("Descripción", 30, row);
+          this.doc.text("Marca", 100, row);
+          this.doc.text("Rubro", 140, row);
+          this.doc.text("Precio", 190, row);
+          this.doc.setFontType('normal');
+
+          row += 3;
+          this.doc.line(0, row, 400, row);
+          row += 5;
+        }
+      }
+    }
+
+    this.finishImpression();
+  }
+
+  async getPicture(picture) {
 
     return new Promise ((resolve, reject) => {
       this._articleService.getPicture(picture).subscribe(
           result => {
             if (!result.imageBase64) {
               this.loading = false;
+              resolve(false)
             } else {
-              let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-              resolve(imageURL);
+              this.imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
+              resolve(true);
             }
-            this.loading = false;
           },
           error => {
-            resolve(error);
+            resolve(false);
           }
       );
     });
@@ -441,10 +650,10 @@ export class PrintPriceListComponent implements OnInit {
       let match = `{"articleParent._id" :  { "$oid" : "${articleId}" },"operationType" : { "$ne" : "D" } }`;
   
       match = JSON.parse(match);
-  
 
       let project = {
         "articleParent._id": 1,
+        "articleChild._id":1,
         operationType : 1,
         "value.description" : 1,
         "type.name" : 1
@@ -456,7 +665,8 @@ export class PrintPriceListComponent implements OnInit {
           "articleParent" : "$articleParent"
         },
         count: { $sum: 1 },
-        value : { "$addToSet" : "$value"}
+        value : { "$addToSet" : { "description" : "$value.description" ,"id": "$articleChild._id" }}
+        
       };
       
 
@@ -479,9 +689,75 @@ export class PrintPriceListComponent implements OnInit {
       )
     });
   }
-    
 
+  public getPriceList(id: string): Promise<PriceList> {
+
+    return new Promise<PriceList>((resolve, reject) => {
+
+      this._priceList.getPriceList(id).subscribe(
+        result => {
+          if (!result.priceList) {
+            resolve(null);
+          } else {
+            resolve(result.priceList);
+          }
+        },
+        error => {
+          this.showMessage(error._body, "danger", false);
+          resolve(null);
+        }
+      );
+    });
+  }
+
+  public getStock (articleId : string) : Promise<boolean> {
+
+    return new Promise<boolean> ((resolve, reject) => {
+
+      this.loading = true;
+
+      let match = `{`;
+      
+      match += `"article._id" : { "$oid" : "${articleId}"},
+                "article.operationType" : { "$ne" : "D" },
+                "operationType" : { "$ne" : "D" } }`;
+  
+      match = JSON.parse(match);
+  
+      // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+      let project = {
+        "realStock" : 1,
+        "article._id" : 1,
+        "article.operationType" : 1,
+        "operationType" : 1,
+      }
+  
+      this._articleStockService.getArticleStocksV2(
+          project, // PROJECT
+          match, // MATCH
+          { description: 1 }, // SORT
+          {}, // GROUP
+          0, // LIMIT
+          0 // SKIP
+      ).subscribe(
+        result => {
+          if (result && result.articleStocks) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          resolve(false)
+        }
+      );
+
+    })
+  }
+    
   public finishImpression(): void {
+
     this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
     this.doc = new jsPDF('p', 'mm', [this.pageWidth, this.pageHigh]);

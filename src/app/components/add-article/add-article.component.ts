@@ -84,6 +84,7 @@ export class AddArticleComponent implements OnInit {
   public lastPricePurchase: number = 0.00;
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -166,6 +167,7 @@ export class AddArticleComponent implements OnInit {
     public _currencyService: CurrencyService,
     public _configService: ConfigService,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.article = new Article();
     this.getCurrencies();
 
@@ -173,9 +175,7 @@ export class AddArticleComponent implements OnInit {
     this.userType = pathLocation[1];
     if (pathLocation[2] === "productos") {
       this.articleType = "Producto";
-      this.article.type = ArticleType.Final;
     } else if (pathLocation[2] === "variantes") {
-      this.article.type = ArticleType.Variant;
       this.articleType = "Variante";
     }
   }
@@ -484,7 +484,6 @@ export class AddArticleComponent implements OnInit {
     this._articleService.getArticles(query).subscribe(
       result => {
         let code = this.padString(1, this.config.article.code.validators.maxLength);
-        let category: Category = new Category();
         if (result.articles) {
           if (result.articles[0]) {
             if (!isNaN(parseInt(result.articles[0].code))) {
@@ -494,12 +493,16 @@ export class AddArticleComponent implements OnInit {
             }
           }
         }
-        if (this.categories[0]) {
-          category = this.categories[0];
+        if(this.operation === 'add'){
+          let category: Category = new Category();
+          if (this.categories[0]) {
+            category = this.categories[0];
+          }
+          this.article.category = category;
         }
-
+        
         this.article.code = this.padString(code, this.config.article.code.validators.maxLength);
-        this.article.category = category;
+        
         this.setValuesForm();
         this.loading = false;
       },

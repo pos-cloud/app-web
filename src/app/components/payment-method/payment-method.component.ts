@@ -1,24 +1,26 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { PaymentMethod, CompanyType } from './../../models/payment-method';
+import { PaymentMethod, CompanyType } from '../../models/payment-method';
 
-import { PaymentMethodService } from './../../services/payment-method.service';
+import { PaymentMethodService } from '../../services/payment-method.service';
 
 @Component({
-  selector: 'app-update-payment-method',
-  templateUrl: './update-payment-method.component.html',
-  styleUrls: ['./update-payment-method.component.css'],
+  selector: 'app-payment-method',
+  templateUrl: './payment-method.component.html',
+  styleUrls: ['./payment-method.component.css'],
   providers: [NgbAlertConfig]
 })
 
-export class UpdatePaymentMethodComponent implements OnInit {
+export class PaymentMethodComponent implements OnInit {
 
-  @Input() paymentMethod: PaymentMethod;
-  @Input() readonly: boolean;
+  @Input() paymentMethodId : string;
+  @Input() readonly : boolean
+  @Input() operation : string;
+  public paymentMethod: PaymentMethod;
   public paymentMethodForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -33,7 +35,9 @@ export class UpdatePaymentMethodComponent implements OnInit {
   };
 
   public validationMessages = {
-    'code': {},
+    'code': {
+      'required': 'Este campo es requerido.'
+    },
     'name': {
       'required': 'Este campo es requerido.'
     }
@@ -51,8 +55,27 @@ export class UpdatePaymentMethodComponent implements OnInit {
 
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
+    this.paymentMethod = new PaymentMethod();
     this.buildForm();
-    this.setValueForm();
+
+    if(this.paymentMethodId){
+      this.getPaymentMetod()
+    }
+  }
+
+  public getPaymentMetod() {
+    this._paymentMethodService.getPaymentMethod(this.paymentMethodId).subscribe(
+      result =>{
+        if(result && result.paymentMethod){
+          this.paymentMethod = result.paymentMethod;
+          this.setValueForm();
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   ngAfterViewInit() {
@@ -62,9 +85,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
   public buildForm(): void {
 
     this.paymentMethodForm = this._fb.group({
-      '_id': [this.paymentMethod._id, [
-        ]
-      ],
+      '_id' : [this.paymentMethod._id, []],
       'code': [this.paymentMethod.code, [
         ]
       ],
@@ -91,15 +112,17 @@ export class UpdatePaymentMethodComponent implements OnInit {
         ]
       ],'company': [this.paymentMethod.company, [
         ]
-      ],'bankReconciliation': [this.paymentMethod.bankReconciliation, [
-      ]
+      ],'observation': [this.paymentMethod.observation, [
         ]
+      ],'bankReconciliation': [this.paymentMethod.bankReconciliation, [
+      ]]
     });
 
     this.paymentMethodForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
 
     this.onValueChanged();
+    this.focusEvent.emit(true);
   }
 
   public onValueChanged(data?: any): void {
@@ -120,6 +143,18 @@ export class UpdatePaymentMethodComponent implements OnInit {
     }
   }
 
+  public addPaymentMethod() {
+
+    switch (this.operation) {
+      case 'add':
+        this.savePaymentMethod();
+        break;
+      case 'update':
+        this.updatePaymentMethod();
+        break;
+    }
+  }
+  
   public setValueForm(): void {
 
     if (!this.paymentMethod._id) this.paymentMethod._id = '';
@@ -136,6 +171,7 @@ export class UpdatePaymentMethodComponent implements OnInit {
     if (this.paymentMethod.cashBoxImpact === undefined) this.paymentMethod.cashBoxImpact = false;
     if (this.paymentMethod.bankReconciliation === undefined) this.paymentMethod.bankReconciliation = false;
     if (!this.paymentMethod.company) this.paymentMethod.company = null;
+    if (!this.paymentMethod.observation) this.paymentMethod.observation = '';
 
 
 
@@ -153,7 +189,8 @@ export class UpdatePaymentMethodComponent implements OnInit {
       'allowToFinance': this.paymentMethod.allowToFinance,
       'cashBoxImpact': this.paymentMethod.cashBoxImpact,
       'bankReconciliation' :this.paymentMethod.bankReconciliation,
-      'company' : this.paymentMethod.company
+      'company' : this.paymentMethod.company,
+      'observation' : this.paymentMethod.observation
     });
   }
 
@@ -177,6 +214,49 @@ export class UpdatePaymentMethodComponent implements OnInit {
         } else {
           this.paymentMethod = result.paymentMethod;
           this.showMessage("El método de pago se ha actualizado con éxito.", 'success', false);
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  
+  public deletePaymentMethod(): void {
+
+    this.loading = true;
+
+    this._paymentMethodService.deletePaymentMethod(this.paymentMethodId).subscribe(
+      result => {
+        this.activeModal.close('delete_close');
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
+  }
+
+  public savePaymentMethod(): void {
+
+    this.paymentMethod = this.paymentMethodForm.value;
+
+    this.loading = true;
+
+    this._paymentMethodService.savePaymentMethod(this.paymentMethod).subscribe(
+      result => {
+        if (!result.paymentMethod) {
+          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          this.loading = false;
+        } else {
+          this.paymentMethod = result.paymentMethod;
+          this.showMessage("El medio de pago se ha añadido con éxito.", 'success', true);
+          this.paymentMethod = new PaymentMethod();
+          this.buildForm();
         }
         this.loading = false;
       },

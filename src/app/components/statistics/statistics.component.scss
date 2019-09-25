@@ -1,0 +1,134 @@
+app-statistics {
+    .card {
+      margin-top: 20px;
+      min-height: auto;
+    }
+    .cardd .card-sub {
+        display: block;
+        margin: 5px 0 10px 0;
+        font-size: .9rem;
+        background: #f7f8fa;
+        color: #575962;
+        padding: 0.85rem 1.5rem;
+        border-radius: 4px;
+      }
+      .cardd .card-category {
+        margin-top: 5px;
+        font-size: 14px;
+        font-weight: 400;
+        color: #9A9A9A;
+        margin-bottom: 0px;
+      }
+      .cardd label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #9A9A9A;
+        margin-bottom: 0px;
+      }
+      .cardd .card-body {
+        padding: 15px 15px 10px 15px;
+      }
+      .cardd .card-footer {
+        background-color: transparent;
+        line-height: 30px;
+        border-top: 1px solid #ebedf2 !important;
+        font-size: 14px;
+      }
+      .cardd .card-action {
+        padding: 30px;
+        background-color: transparent;
+        line-height: 30px;
+        border-top: 1px solid #ebedf2 !important;
+        font-size: 14px;
+      }
+      .cardd .card-footer hr {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      .cardd .card-footer .legend {
+        display: inline-block;
+      }
+      
+      .card-stats .card-category {
+        margin-top: 0px;
+      }
+      .card-stats .icon-big {
+        font-size: 3em;
+        min-height: 64px;
+      }
+      
+      .card-tasks .table thead th {
+        border-top: 1px solid #f4f4f4;
+        background: #fafafa !important;
+      }
+      .card-tasks .table .form-check {
+        padding: 0 0 0 0.75rem !important;
+      }
+      .card-tasks .table .form-check label {
+        margin-bottom: 0px !important;
+      }
+      .card-tasks .table tbody td:first-child, .card-tasks .table thead th:first-child {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+      .card-tasks .table tbody td:last-child, .card-tasks .table thead th:last-child {
+        padding-right: 15px;
+      }
+      .card-tasks .card-body .table td {
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .card-tasks .card-body .table td .btn {
+        font-size: 17px;
+        opacity: 0.7;
+        transition: all .3s;
+      }
+      .card-tasks .card-body .table td:hover .btn {
+        opacity: 1;
+      }
+      
+      .card-default, .card-primary, .card-info, .card-success, .card-warning, .card-danger {
+        color: #ffffff;
+        border: 0px;
+      }
+      
+      .card-default .card-header, .card-primary .card-header, .card-info .card-header, .card-success .card-header, .card-warning .card-header, .card-danger .card-header {
+        border-bottom: transparent !important;
+      }
+      
+      .card-default .card-category, .card-primary .card-category, .card-info .card-category, .card-success .card-category, .card-warning .card-category, .card-danger .card-category, .card-default .card-title, .card-primary .card-title, .card-info .card-title, .card-success .card-title, .card-warning .card-title, .card-danger .card-title, .card-default label, .card-primary label, .card-info label, .card-success label, .card-warning label, .card-danger label {
+        color: #ffffff;
+      }
+      
+      .card-default .icon-big > i, .card-primary .icon-big > i, .card-info .icon-big > i, .card-success .icon-big > i, .card-warning .icon-big > i, .card-danger .icon-big > i {
+        color: #ffffff !important;
+      }
+      
+      .card-default .card-footer, .card-primary .card-footer, .card-info .card-footer, .card-success .card-footer, .card-warning .card-footer, .card-danger .card-footer {
+        border-top: transparent !important;
+      }
+      
+      .card-default {
+        background: #607D8B;
+      }
+      
+      .card-primary {
+        background: #1D62F0;
+      }
+      
+      .card-info {
+        background: #23CCEF;
+      }
+      
+      .card-success {
+        background: #59d05d;
+      }
+      
+      .card-warning {
+        background: #fbad4c;
+      }
+      
+      .card-danger {
+        background: #ff646d;
+      }
+}

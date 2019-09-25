@@ -23,6 +23,7 @@ export class UpdateCompanyGroupComponent implements OnInit {
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'description': ''
@@ -40,7 +41,9 @@ export class UpdateCompanyGroupComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
+  }
 
   ngOnInit(): void {
 

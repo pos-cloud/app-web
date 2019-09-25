@@ -60,6 +60,10 @@ export class EditCheckComponent implements OnInit {
     this.buildForm();
   }
 
+  ngAfterViewInit() {
+    this.focusEvent.emit(true);
+  }
+  
   public getMovementOfCash() : void {
     this._movementOfCashService.getMovementOfCash(this.movementOfCashId).subscribe(
       result => {
@@ -145,7 +149,7 @@ export class EditCheckComponent implements OnInit {
 
   public updateCheck() {
 
-    this.movementOfCash.expirationDate = this.checkForm.value.expirationDate;
+    this.movementOfCash.expirationDate = moment(this.checkForm.value.expirationDate, "YYYY-MM-DD").format("YYYY-MM-DDTHH:mm:ssZ");;
     this.movementOfCash.statusCheck = this.checkForm.value.statusCheck;
     this.movementOfCash.bank = this.checkForm.value.bank;
     this.movementOfCash.deliveredBy = this.checkForm.value.deliveredBy;
@@ -160,7 +164,7 @@ export class EditCheckComponent implements OnInit {
             this.loading = false;
           } else {
             this.movementOfCash = result.movementOfCash;
-            this.showMessage("Se actualizo con exito", 'info', true);
+            this.showMessage("Se actualizo con exito", 'success', true);
           }
           this.loading = false;
         },

@@ -140,14 +140,15 @@
     </div>
   </div>
   <div class="row container-transaction">
-    <div class="col-md-4 table-container">
+    <div class="col-md-5 table-container">
       <div #containerMovementsOfArticles class="articles-container table-responsive">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Cantidad</th>
-              <th>Descripción</th>
-              <th *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
+              <th width="90px">Cantidad</th>
+              <th width="150px" *ngIf="movementsOfArticles.length === 0">Descripción</th>
+              <th  *ngIf="movementsOfArticles.length > 0">Descripción</th>
+              <th width="100px" *ngIf="transaction.type && transaction.type.showPrices">Monto</th>
             </tr>
           </thead>
           <tbody>
@@ -156,7 +157,6 @@
                 <span class="badge badge-info">
                   <b>{{ movementOfArticle.amount}}</b>
                 </span>
-                <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture == 'default.jpg' || movementOfArticle.article.picture == undefined)" src="./../../../assets/img/default.jpg" height="50" width="50">
                 <img *ngIf="movementOfArticle.article && (movementOfArticle.article.picture !== 'default.jpg' && movementOfArticle.article.picture !== undefined)" [src]="apiURL + 'get-image-article/'+movementOfArticle.article.picture + '/' + database" height="50" width="50">
               </td>
               <td *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}
@@ -187,7 +187,7 @@
           </tbody>
         </table>
       </div>
-      <div class="row" *ngIf="transaction.type && transaction.type.showPrices">
+      <div class="row table-totals" *ngIf="transaction.type && transaction.type.showPrices">
         <table class="table table-striped">
           <tbody>
             <tr *ngIf="transactionMovement !== 'Stock' && transaction.type.requestTaxes"
@@ -232,26 +232,26 @@
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
         </div>
         <div  *ngIf="transaction.type && transaction.type.fastPayment"
-              class="col-md-6 btn-action btn-large center-content"
+              class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
               (click)="openModal('charge', null, transaction.type.fastPayment)">
           <span>{{ transaction.type.fastPayment.name }}</span>
         </div>
         <div  *ngIf="transaction.type && transaction.type.fastPayment"
-              class="col-md-6 btn-action btn-large center-content"
+              class="col-md-6 col-sm-6 col-6 btn-action btn-large center-content"
               (click)="openModal('charge')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Pagar</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cobrar</span>
         </div>
       </div>
       <div class="row" *ngIf="transactionMovement && transactionMovement !== 'Stock'">
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('add_client')">
+        <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content" (click)="openModal('add_client')">
           <span *ngIf="transactionMovement && transactionMovement ==='Compra'">Proveedor</span>
           <span *ngIf="transactionMovement && transactionMovement ==='Venta'">Cliente</span>
         </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
+        <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content" (click)="openModal('apply_discount')">
           Descuento
         </div>
-        <div class="col-md-4 btn-action btn-large center-content" (click)="openModal('cancel')">
+        <div class="col-md-4 col-sm-4 col-4 btn-action btn-large center-content" (click)="openModal('cancel')">
           Anular
         </div>
       </div>
@@ -261,7 +261,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       <div class="row filterArticle">
         <div class="col-md-12">
           <input type="text" class="form-control" [(ngModel)]="filterArticle" (keydown.enter)="filterArticles()" placeholder="Filtrar Productos por Cód. de Barras, Cód. Interno o Descripción y luego presione Enter." [focus]="focusEvent">

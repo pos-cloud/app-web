@@ -28,6 +28,7 @@ export class CountryComponent implements OnInit {
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -57,6 +58,7 @@ export class CountryComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.country = new Country();
   }
 

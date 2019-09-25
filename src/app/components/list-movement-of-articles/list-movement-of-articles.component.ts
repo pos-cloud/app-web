@@ -21,7 +21,7 @@ import { TransactionState } from 'app/models/transaction';
 @Component({
   selector: 'app-list-movement-of-articles',
   templateUrl: './list-movement-of-articles.component.html',
-  styleUrls: ['./list-movement-of-articles.component.css']
+  styleUrls: ['./list-movement-of-articles.component.scss']
 })
 
 export class ListMovementOfArticlesComponent implements OnInit {

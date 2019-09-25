@@ -8,7 +8,7 @@ import 'moment/locale/es';
 import { Room } from './../../models/room';
 import { Printer, PrinterPrintIn } from './../../models/printer';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { TransactionType, TransactionMovement, StockMovement, Movements } from './../../models/transaction-type';
+import { TransactionType, TransactionMovement, StockMovement } from './../../models/transaction-type';
 
 import { RoomService } from './../../services/room.service';
 import { TransactionService } from './../../services/transaction.service';
@@ -43,6 +43,7 @@ import { Origin } from 'app/models/origin';
 import { OriginService } from 'app/services/origin.service';
 import { SelectOriginComponent } from '../select-origin/select-origin.component';
 import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -76,6 +77,8 @@ export class PointOfSaleComponent implements OnInit {
   public printerSelected: Printer;
   public employeeTypeSelected: EmployeeType;
   public tableSelected: Table;
+  public config: Config;
+  public transactionTypeId: string;
 
   // CAMPOS TRAIDOS DE LA CUENTA CTE.
   @Input() company: Company;
@@ -96,7 +99,8 @@ export class PointOfSaleComponent implements OnInit {
     private _cashBoxService: CashBoxService,
     private _tableService: TableService,
     private _authService: AuthService,
-    private _originService: OriginService
+    private _originService: OriginService,
+    private _configService: ConfigService
   ) {
     this.roomSelected = new Room();
     this.transactionTypes = new Array();
@@ -108,6 +112,12 @@ export class PointOfSaleComponent implements OnInit {
     let pathLocation: string[] = this._router.url.split('/');
     this.userType = pathLocation[1];
     this.posType = pathLocation[2];
+
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+      }
+    );
     
     this.refresh();
   }
@@ -395,31 +405,46 @@ export class PointOfSaleComponent implements OnInit {
         this.transactionMovement = TransactionMovement.Money;
       }
 
-      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
-          }
-        }
-      );
-
-      let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
-      
-      this._authService.getIdentity.subscribe(
-        identity => {
-          if(identity && identity.origin) {
-            query += `{"branchDestination":"${identity.origin.branch._id}"},`;
-          }
-        }
-      );
-  
-      if(this.posType === 'mostrador') {
-        query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
-      } else {
-        query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+      // VALIDAMOS QUE SEA POR PRIMERA VEZ
+      if(!this.transactionTypeId) {
+        this.transactionTypeId = pathLocation[4];
       }
 
-      this.getOpenTransactionsByMovement(this.transactionMovement, query);
+      if(!this.transaction && this.transactionTypeId && this.transactionTypeId !== '') {
+        this.getTransactionTypes(`where="_id":"${this.transactionTypeId}"`).then(
+          transactionTypes => {
+            if(transactionTypes) {
+              this.addTransaction(transactionTypes[0]);
+            }
+          }
+        );
+      } else {
+        await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
+          transactionTypes => {
+            if (transactionTypes) {
+              this.transactionTypes = transactionTypes;
+            }
+          }
+        );
+  
+        let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
+        
+        this._authService.getIdentity.subscribe(
+          identity => {
+            if(identity && identity.origin) {
+              query += `{"branchDestination":"${identity.origin.branch._id}"},`;
+            }
+          }
+        );
+    
+        if(this.posType === 'mostrador') {
+          query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
+        } else {
+          query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+        }
+  
+        this.getOpenTransactionsByMovement(this.transactionMovement, query);
+      }
     } else if (this.posType === "cuentas-corrientes") {
       if (pathLocation[3] === "cliente") {
         this.transactionMovement = TransactionMovement.Sale;
@@ -481,7 +506,18 @@ export class PointOfSaleComponent implements OnInit {
     if(!type.cashOpening && !type.cashClosing) {
 
       if(Config.modules.money && this.transaction.type.cashBoxImpact) {
-        await this.getCashBoxes('where="state":"' + CashBoxState.Open + '"&sort="number":-1&limit=1').then(
+        let query = 'where="state":"' + CashBoxState.Open + '"';
+        if(this.config.cashBox.perUser) {
+          await this._authService.getIdentity.subscribe(
+            identity => {
+              if(identity && identity.employee) {
+                query += ',"employee":"' + identity.employee._id + '"';
+              }
+            }
+          );
+        }
+        query += '&sort="number":-1&limit=1';
+        await this.getCashBoxes(query).then(
           async cashBoxes => {
             if(cashBoxes) {
               this.transaction.cashBox = cashBoxes[0];
@@ -772,7 +808,6 @@ export class PointOfSaleComponent implements OnInit {
         }
       );
 
-
       if( !this.transaction.branchDestination || 
           !this.transaction.branchOrigin ||
           !this.transaction.depositDestination ||
@@ -794,7 +829,7 @@ export class PointOfSaleComponent implements OnInit {
           this.transaction.company = this.company;
           this.nextStepTransaction();
         }
-      } else if (this.transaction.type.requestArticles && this.transaction.type.transactionMovement !== TransactionMovement.Purchase) {
+      } else if (this.transaction.type.automaticNumbering && this.transaction.type.requestArticles) {
         if (this.posType === 'resto') {
           this._router.navigate(['/pos/resto/salones/' + this.tableSelected.room._id + '/mesas/' + this.tableSelected._id + '/editar-transaccion/' + this.tableSelected.lastTransaction._id]);
         } else {
@@ -896,21 +931,37 @@ export class PointOfSaleComponent implements OnInit {
         modalRef.componentInstance.printer = this.printerSelected;
         modalRef.componentInstance.typePrint = 'invoice';
         modalRef.result.then((result) => {
+          if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+            this.transactionTypeId = this.transaction.type._id;
+            this.transaction = undefined;
+          }
           this.refresh();
         }, (reason) => {
+          if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+            this.transactionTypeId = this.transaction.type._id;
+            this.transaction = undefined;
+          }
           this.refresh();
         });
         break;
       case 'printers':
         if (this.countPrinters() > 1) {
-          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg' }).result.then((result) => {
+          modalRef = this._modalService.open(this.contentPrinters, { size: 'lg', backdrop: 'static' }).result.then((result) => {
             if (result !== "cancel" && result !== '') {
               this.printerSelected = result;
               this.openModal("print");
             } else {
+              if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                this.transactionTypeId = this.transaction.type._id;
+                this.transaction = undefined;
+              }
               this.refresh();
             }
           }, (reason) => {
+            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+              this.transactionTypeId = this.transaction.type._id;
+              this.transaction = undefined;
+            }
             this.refresh();
           });
         } else if (this.countPrinters() === 1) {
@@ -1178,6 +1229,7 @@ export class PointOfSaleComponent implements OnInit {
           await this.updateTransaction().then(
             transaction => {
               if(transaction) {
+                this.transaction = transaction;
                 if (this.transaction.type.printable) {
                   if (this.transaction.type.defectPrinter) {
                     this.printerSelected = this.printerSelected;
@@ -1186,6 +1238,10 @@ export class PointOfSaleComponent implements OnInit {
                     this.openModal("printers");
                   }
                 } else {
+                  if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+                    this.transactionTypeId = this.transaction.type._id;
+                    this.transaction = undefined;
+                  }
                   this.refresh();
                 }
               }

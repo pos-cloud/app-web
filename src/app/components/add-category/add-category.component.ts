@@ -27,6 +27,7 @@ export class AddCategoryComponent  implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public filesToUpload: Array<File>;
   public imageURL: string;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'order': '',
@@ -49,7 +50,9 @@ export class AddCategoryComponent  implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
-  ) { }
+  ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
+  }
 
   ngOnInit(): void {
 

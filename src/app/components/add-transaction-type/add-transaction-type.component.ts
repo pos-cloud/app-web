@@ -49,6 +49,7 @@ export class AddTransactionTypeComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() operation: string;
   public userCountry: string = 'AR';
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'transactionMovement': '',
@@ -80,6 +81,7 @@ export class AddTransactionTypeComponent implements OnInit {
     public _currencyService: CurrencyService,
     public _useOfCFDIService: UseOfCFDIService
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.getCurrencies();
     this.getPaymentMethods();
     this.getEmployeeTypes();
@@ -319,7 +321,9 @@ export class AddTransactionTypeComponent implements OnInit {
       'showPriceType' : [this.transactionType.showPriceType,[]],
       'showDescriptionType' : [this.transactionType.showDescriptionType,[]],
       'printDescriptionType' : [this.transactionType.printDescriptionType,[]],
-      'printSign' : [this.transactionType.printSign,[]]
+      'printSign' : [this.transactionType.printSign,[]],
+      'automaticNumbering' : [this.transactionType.automaticNumbering,[]],
+      'automaticCreation' : [this.transactionType.automaticCreation,[]]
 
     });
 
@@ -409,7 +413,8 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.fiscalCode) this.transactionType.fiscalCode = "";
     if (this.transactionType.printable === undefined) this.transactionType.printable = false;
     if (this.transactionType.isPreprinted === undefined) this.transactionType.isPreprinted = false;
-
+    if (this.transactionType.automaticNumbering === undefined) this.transactionType.automaticNumbering = true;
+    if (this.transactionType.automaticCreation === undefined) this.transactionType.automaticCreation = false;
 
     let defectPrinter;
     if (!this.transactionType.defectPrinter) {
@@ -480,8 +485,6 @@ export class AddTransactionTypeComponent implements OnInit {
     if (!this.transactionType.printDescriptionType) this.transactionType.printDescriptionType = DescriptionType.Description;
     if (!this.transactionType.printSign) this.transactionType.printSign = false;
 
-
-
     this.transactionTypeForm.setValue({
       '_id': this.transactionType._id,
       'transactionMovement': this.transactionType.transactionMovement,
@@ -513,6 +516,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'cashClosing': this.transactionType.cashClosing,
       'allowAPP': this.transactionType.allowAPP,
       'showPrices': this.transactionType.showPrices,
+      'automaticNumbering': this.transactionType.automaticNumbering,
+      'automaticCreation': this.transactionType.automaticCreation,
       'entryAmount': this.transactionType.entryAmount,
       'allowEdit': this.transactionType.allowEdit,
       'allowDelete': this.transactionType.allowDelete,

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -10,12 +10,14 @@ import { Config } from 'app/app.config';
 import { Branch } from 'app/models/branch';
 import { BranchService } from 'app/services/branch.service';
 import { AuthService } from 'app/services/auth.service';
+import { AddArticleComponent } from '../add-article/add-article.component';
 
 @Component({
   selector: 'app-report-best-selling-article',
   templateUrl: './report-best-selling-article.component.html',
-  styleUrls: ['./report-best-selling-article.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./report-best-selling-article.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ReportBestSellingArticleComponent implements OnInit {
@@ -52,6 +54,7 @@ export class ReportBestSellingArticleComponent implements OnInit {
   public branches: Branch[];
   @Input() branchSelectedId: String;
   public allowChangeBranch: boolean;
+  public scrollY: number = 0;
 
   constructor(
     public _articleService: ArticleService,
@@ -99,6 +102,27 @@ export class ReportBestSellingArticleComponent implements OnInit {
 
     this.getBestSellingArticle();
   }
+
+  async openModal(op: string, item: any[]) {
+
+    this.scrollY = window.scrollY;
+    
+    let modalRef;
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.articleId = item['article']._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "view";
+        modalRef.result.then((result) => {
+          window.scroll(0, this.scrollY);
+        }, (reason) => {
+          window.scroll(0, this.scrollY);
+        });
+        break;
+      default: ;
+    }
+  };
 
   public getBranches(match: {} = {}): Promise<Branch[]> {
 

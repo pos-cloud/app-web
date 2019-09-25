@@ -119,7 +119,7 @@ export class ListTaxesComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeleteTaxComponent, { size: 'lg' })
+        modalRef = this._modalService.open(DeleteTaxComponent, { size: 'lg', backdrop: 'static' })
         modalRef.componentInstance.tax = tax;
         modalRef.result.then((result) => {
           if (result === 'delete_close') {

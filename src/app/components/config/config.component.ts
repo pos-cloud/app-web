@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import 'moment/locale/es';
@@ -24,9 +24,11 @@ import { CurrencyService } from 'app/services/currency.service';
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
-  styleUrls: ['./config.component.css'],
-  providers: [NgbAlertConfig, DateFormatPipe]
+  styleUrls: ['./config.component.scss'],
+  providers: [NgbAlertConfig, DateFormatPipe],
+  encapsulation: ViewEncapsulation.None
 })
+
 export class ConfigComponent implements OnInit {
 
   public routeFile:string;
@@ -297,6 +299,9 @@ export class ConfigComponent implements OnInit {
         ]
       ],
       'company.allowCurrentAccount.default' : [ this.config.company.allowCurrentAccount.default, [
+        ]
+      ],
+      'cashBox.perUser' : [ this.config.cashBox.perUser, [
         ]
       ],
       'reports.summaryOfAccounts.detailsPaymentMethod': [this.config.reports.summaryOfAccounts.detailsPaymentMethod, [
@@ -639,11 +644,12 @@ export class ConfigComponent implements OnInit {
     }
 
     if (this.config.article.code.validators.maxLength === undefined) this.config.article.code.validators.maxLength = 10;
-    if (!this.config.company.allowCurrentAccount.default) this.config.company.allowCurrentAccount.default = false;
     if (!this.config.article.printLabel.value) this.config.article.printLabel.value = 'code';
-    if (!this.config.article.isWeigth.default) this.config.article.isWeigth.default = false;
-    if (!this.config.reports.summaryOfAccounts.invertedViewClient) this.config.reports.summaryOfAccounts.invertedViewClient = false;
-    if (!this.config.reports.summaryOfAccounts.invertedViewProvider) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
+    if (this.config.article.isWeigth.default === undefined) this.config.article.isWeigth.default = false;
+    if (this.config.company.allowCurrentAccount.default === undefined) this.config.company.allowCurrentAccount.default = false;
+    if (this.config.cashBox.perUser === undefined) this.config.cashBox.perUser = false;
+    if (this.config.reports.summaryOfAccounts.invertedViewClient === undefined) this.config.reports.summaryOfAccounts.invertedViewClient = false;
+    if (this.config.reports.summaryOfAccounts.invertedViewProvider === undefined) this.config.reports.summaryOfAccounts.invertedViewProvider = false;
     if (this.config.tradeBalance.codePrefix === undefined) this.config.tradeBalance.codePrefix = 0;
     if (this.config.tradeBalance.numberOfQuantity === undefined) this.config.tradeBalance.numberOfQuantity = 2;
     if (this.config.tradeBalance.numberOfIntegers === undefined) this.config.tradeBalance.numberOfIntegers = 3;
@@ -688,10 +694,11 @@ export class ConfigComponent implements OnInit {
     this.configFormSystem.setValue({
       '_id': this.config._id,
       'article.code.validators.maxLength': this.config.article.code.validators.maxLength,
-      'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
-      'company.vatCondition.default': vatConfitionDefault,
       'article.printLabel.value': this.config.article.printLabel.value,
       'article.isWeigth.default': this.config.article.isWeigth.default,
+      'company.allowCurrentAccount.default': this.config.company.allowCurrentAccount.default,
+      'company.vatCondition.default': vatConfitionDefault,
+      'cashBox.perUser': this.config.cashBox.perUser,
       'reports.summaryOfAccounts.detailsPaymentMethod': this.config.reports.summaryOfAccounts.detailsPaymentMethod,
       'reports.summaryOfAccounts.invertedViewClient': this.config.reports.summaryOfAccounts.invertedViewClient,
       'reports.summaryOfAccounts.invertedViewProvider': this.config.reports.summaryOfAccounts.invertedViewProvider,

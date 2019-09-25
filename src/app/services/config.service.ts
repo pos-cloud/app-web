@@ -12,16 +12,16 @@ export class ConfigService {
 
     private config: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-        constructor(
-            public _http: HttpClient,
-            public _authService: AuthService
-        ) { }
+    constructor(
+        public _http: HttpClient,
+        public _authService: AuthService
+    ) { }
 
-        public setConfig(config: any) {
+    public setConfig(config: any) {
         this.config.next(config);
-        }
+    }
 
-        get getConfig() {
+    get getConfig() {
         return this.config.asObservable();
     }
   

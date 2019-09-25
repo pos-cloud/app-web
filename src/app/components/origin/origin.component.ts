@@ -35,6 +35,7 @@ export class OriginComponent implements OnInit {
   public userCountry: string;
   public originForm: FormGroup;
   public branches: Branch[];
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'number': '',
@@ -58,6 +59,7 @@ export class OriginComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.origin = new Origin();
     this.branches = new Array();
   }

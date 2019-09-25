@@ -132,9 +132,7 @@ import { AddTaxComponent } from './components/add-tax/add-tax.component';
 import { DeleteTaxComponent } from './components/delete-tax/delete-tax.component';
 import { ListTaxesComponent } from './components/list-taxes/list-taxes.component';
 import { ApplyDiscountComponent } from './components/apply-discount/apply-discount.component';
-import { AddPaymentMethodComponent } from './components/add-payment-method/add-payment-method.component';
-import { UpdatePaymentMethodComponent } from './components/update-payment-method/update-payment-method.component';
-import { DeletePaymentMethodComponent } from './components/delete-payment-method/delete-payment-method.component';
+import { PaymentMethodComponent } from './components/payment-method/payment-method.component';
 import { ListPaymentMethodsComponent } from './components/list-payment-methods/list-payment-methods.component';
 import { PointOfSaleComponent } from './components/point-of-sale/point-of-sale.component';
 import { LoginComponent } from './components/login/login.component';
@@ -257,6 +255,7 @@ import { EditCheckComponent } from './components/edit-check/edit-check.component
 import { PrintVatBookComponent } from './components/print/print-vat-book/print-vat-book.component';
 import { PrintLabelComponent } from './components/print/print-label/print-label.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
+import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -352,9 +351,7 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
     DeleteTaxComponent,
     ListTaxesComponent,
     ApplyDiscountComponent,
-    AddPaymentMethodComponent,
-    UpdatePaymentMethodComponent,
-    DeletePaymentMethodComponent,
+    PaymentMethodComponent,
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
@@ -442,7 +439,8 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
     EditCheckComponent,
     PrintVatBookComponent,
     PrintLabelComponent,
-    PrintTransactionTypeComponent
+    PrintTransactionTypeComponent,
+    ProgressbarComponent
   ],
   entryComponents: [
     HomeComponent,
@@ -528,9 +526,7 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
     DeleteTaxComponent,
     ListTaxesComponent,
     ApplyDiscountComponent,
-    AddPaymentMethodComponent,
-    UpdatePaymentMethodComponent,
-    DeletePaymentMethodComponent,
+    PaymentMethodComponent,
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
@@ -611,7 +607,8 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
     EditCheckComponent,
     PrintVatBookComponent,
     PrintLabelComponent,
-    PrintTransactionTypeComponent
+    PrintTransactionTypeComponent,
+    ProgressbarComponent
   ],
   imports: [
     BrowserModule,

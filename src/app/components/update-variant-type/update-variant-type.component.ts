@@ -26,10 +26,14 @@ export class UpdateVariantTypeComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
 
   public formErrors = {
+    'order': '',
     'name': ''
   };
 
   public validationMessages = {
+    'order': {
+      'required': 'Este campo es requerido.'
+    },
     'name': {
       'required': 'Este campo es requerido.'
     }
@@ -50,6 +54,7 @@ export class UpdateVariantTypeComponent implements OnInit {
     this.buildForm();
     this.variantTypeForm.setValue({
       '_id': this.variantType._id,
+      'order': this.variantType.order,
       'name': this.variantType.name
     });
   }
@@ -62,11 +67,15 @@ export class UpdateVariantTypeComponent implements OnInit {
 
     this.variantTypeForm = this._fb.group({
       '_id': [this.variantType._id, [
-      ]
+        ]
+      ],
+      'order': [this.variantType.order, [
+          Validators.required
+        ]
       ],
       'name': [this.variantType.name, [
-        Validators.required
-      ]
+          Validators.required
+        ]
       ],
     });
 
@@ -114,7 +123,6 @@ export class UpdateVariantTypeComponent implements OnInit {
         } else {
           this.variantType = result.variantType;
           this.showMessage("El tipo de variante se ha actualizado con éxito.", 'success', false);
-          this.activeModal.close('save_close');
         }
         this.loading = false;
       },

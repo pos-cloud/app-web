@@ -5,14 +5,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Depósitos
+  <div class="card ">
+    <div class="card-header">Listado de Depósitos
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Depósito</i></button>
-        <button class="btn btn-primary fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span> Actualizar</span></button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -24,7 +21,7 @@
             <th (click)="orderBy('name')">Nombre </th>
             <th (click)="orderBy('capacity')">Capacidad </th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterBranch" placeholder="Sucursal..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterName" placeholder="Nombre..."></th>
@@ -32,6 +29,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let deposit of deposits | filter: filterName:'name'
                                               | filter: filterBranch:'name':'branch'
                                               | filter: filterCapacity:'capacity'
@@ -62,7 +64,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">

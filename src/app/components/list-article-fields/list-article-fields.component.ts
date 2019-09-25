@@ -25,7 +25,7 @@ export class ListArticleFieldsComponent implements OnInit {
   public areArticleFieldsEmpty: boolean = true;
   public alertMessage: string = '';
   public userType: string;
-  public orderTerm: string[] = ['name'];
+  public orderTerm: string[] = ['order'];
   public propertyTerm: string;
   public areFiltersVisible: boolean = false;
   public loading: boolean = false;
@@ -97,7 +97,7 @@ export class ListArticleFieldsComponent implements OnInit {
         modalRef.componentInstance.readonly = true;
         break;
       case 'add' :
-        modalRef = this._modalService.open(AddArticleFieldComponent, { size: 'lg' }).result.then((result) => {
+        modalRef = this._modalService.open(AddArticleFieldComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
           this.getArticleFields();
         }, (reason) => {
           this.getArticleFields();
@@ -108,15 +108,13 @@ export class ListArticleFieldsComponent implements OnInit {
           modalRef.componentInstance.articleField = articleField;
           modalRef.componentInstance.readonly = false;
           modalRef.result.then((result) => {
-            if (result === 'save_close') {
-              this.getArticleFields();
-            }
+            this.getArticleFields();
           }, (reason) => {
-
+            this.getArticleFields();
           });
         break;
       case 'delete' :
-          modalRef = this._modalService.open(DeleteArticleFieldComponent, { size: 'lg' })
+          modalRef = this._modalService.open(DeleteArticleFieldComponent, { size: 'lg', backdrop: 'static' })
           modalRef.componentInstance.articleField = articleField;
           modalRef.result.then((result) => {
             if (result === 'delete_close') {

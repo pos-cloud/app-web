@@ -11,7 +11,7 @@ import 'moment/locale/es';
 import { CashBox, CashBoxState } from './../../models/cash-box';
 import { PaymentMethod } from './../../models/payment-method';
 import { Transaction, TransactionState } from './../../models/transaction';
-import { MovementOfCash, StatusCheck } from './../../models/movement-of-cash';
+import { MovementOfCash } from './../../models/movement-of-cash';
 
 //Servicios
 import { PaymentMethodService } from './../../services/payment-method.service';
@@ -19,12 +19,12 @@ import { MovementOfCashService } from '../../services/movement-of-cash.service';
 import { CashBoxService } from '../../services/cash-box.service';
 import { AuthService } from 'app/services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
-import { TransactionTypeService } from '../../services/transaction-type.service';
 
 //Componentes
 import { PrintComponent } from '../print/print/print.component';
 import { TransactionType } from 'app/models/transaction-type';
 import { Config } from 'app/app.config';
+import { ConfigService } from 'app/services/config.service';
 
 @Component({
   selector: 'app-cash-box',
@@ -46,19 +46,20 @@ export class CashBoxComponent implements OnInit {
   public movementsOfCashes: MovementOfCash[];
   public focusEvent = new EventEmitter<boolean>();
   @Input() transactionType: TransactionType;
+  private config: Config;
 
   constructor(
-    public _fb: FormBuilder,
-    public _router: Router,
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _paymentMethodService: PaymentMethodService,
+    private _movementOfCashService: MovementOfCashService,
+    private _cashBoxService: CashBoxService,
+    private _authService: AuthService,
+    private _transactionService: TransactionService,
+    private _configService: ConfigService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
-    public _paymentMethodService: PaymentMethodService,
-    public _movementOfCashService: MovementOfCashService,
-    public _cashBoxService: CashBoxService,
-    public _authService: AuthService,
-    public _transactionService: TransactionService,
-    public _transactionTypeService: TransactionTypeService
   ) {
     this.paymentMethods = new Array();
     this.cashBox = new CashBox();
@@ -74,23 +75,50 @@ export class CashBoxComponent implements OnInit {
     this.posType = pathLocation[2];
     this.transaction.type = this.transactionType;
     this.buildForm();
+    await this._configService.getConfig.subscribe(
+      config => {
+        this.config = config;
+      }
+    );
     await this.getPaymentMethods('where="cashBoxImpact":true').then(
       async paymentMethods => {
         if(paymentMethods) {
           this.paymentMethods = paymentMethods;
           this.setValueForm();
-          await this.getCashBoxes('where="state":"' + CashBoxState.Open + '"&sort="number":-1&limit=1').then(
-            cashBoxes => {
+          let query = 'where="state":"' + CashBoxState.Open + '"';
+          if(this.config.cashBox.perUser) {
+            await this._authService.getIdentity.subscribe(
+              identity => {
+                if(identity && identity.employee) {
+                  query += ',"employee":"' + identity.employee._id + '"';
+                }
+              }
+            );
+          }
+          query += '&sort="number":-1&limit=1';
+          await this.getCashBoxes(query).then(
+            async cashBoxes => {
               if(cashBoxes) {
                 this.cashBox = cashBoxes[0];
                 if (this.transactionType.cashOpening) {
                   this.showMessage("La caja ya se encuentra abierta.", 'info', true);
+                } else if(this.transactionType.cashClosing) {
+                  let query = 'where="$and":[{"state":{"$ne": "' + TransactionState.Closed + '"}},{"state":{"$ne": "' + TransactionState.Canceled + '"}},{"cashBox":"' + this.cashBox._id + '"}]';
+                  await this.getTransactions(query).then(
+                    async transactions => {
+                      if(transactions) {
+                        this.showMessage("No puede cerrar la caja. La transacción: " + transactions[0].type.name + " " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number + " se encuentra abierta.", 'info', true);
+                      }
+                    }
+                  );
                 }
               } else {
                 if (this.transactionType.cashOpening) {
                   this._authService.getIdentity.subscribe(
                     identity => {
-                      this.cashBox.employee = identity.employee;
+                      if(identity && identity.employee) {
+                        this.cashBox.employee = identity.employee;
+                      }
                     }
                   );
                 } else if (this.transactionType.cashClosing) {
@@ -278,7 +306,7 @@ export class CashBoxComponent implements OnInit {
         await this.getTransactions(query).then(
           async transactions => {
             if(transactions) {
-              this.showMessage("No puede cerrar la caja con transacciones abiertas.", 'info', true);
+              this.showMessage("No puede cerrar la caja la transaccion : " + transactions[0].type.name + "  " + transactions[0].origin + "-" + transactions[0].letter + "-" + transactions[0].number + "esta abierta.", 'info', true);
             } else {
               await this.getLastTransactionByType().then(
                 transaction => {
@@ -375,14 +403,12 @@ export class CashBoxComponent implements OnInit {
     this.movementOfCash.type = this.cashBoxForm.value.paymentMethod;
     if(this.movementOfCash.type.cashBoxImpact) {
       this.movementOfCash.amountPaid = this.cashBoxForm.value.amount;
-      //this.movementOfCash.state = MovementOfCashState.Closed;
       let mov = new MovementOfCash();
       mov.date = this.movementOfCash.date;
       mov.quota = this.movementOfCash.quota;
       mov.expirationDate = this.movementOfCash.expirationDate;
       mov.discount = this.movementOfCash.discount;
       mov.surcharge = this.movementOfCash.surcharge;
-      //mov.state = this.movementOfCash.state;
       mov.amountPaid = this.movementOfCash.amountPaid;
       mov.observation = this.movementOfCash.observation;
       mov.type = this.movementOfCash.type;
@@ -422,7 +448,6 @@ export class CashBoxComponent implements OnInit {
   public getLastTransactionByType(): Promise<Transaction> {
 
     return new Promise<Transaction>((resolve, reject) => {
-
 
       let query = 'where="type":"' + this.transaction.type._id + '","origin":"' + 0 + '","letter":"' + this.transaction.letter + '"&sort="number":-1&limit=1';
 

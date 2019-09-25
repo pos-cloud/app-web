@@ -1,6 +1,6 @@
 <!--ESTADISTICAS GENERALES-->
-<div class="card card-outline-primary" *ngIf="listType === 'statistics'">
-  <div class="card-header bg-primary">
+<div class="card " *ngIf="listType === 'statistics'">
+  <div class="card-header">
     <span *ngIf="transactionMovement === 'Venta'">Productos más vendidos</span>
     <span *ngIf="transactionMovement === 'Compra'">Productos más comprados</span>
   </div>
@@ -9,21 +9,22 @@
       <thead>
         <tr>
           <th>Producto </th>
-          <th >Ítems Vendidos</th>
-            <th>Unidad</th>
-            <th>Monto total </th>
+          <th *ngIf="transactionMovement === 'Compra'" >Ítems Comprados</th>
+          <th *ngIf="transactionMovement === 'Venta'" >Ítems Vendidos</th>
+          <th>Unidad</th>
+          <th>Monto total </th>
         </tr>
       </thead>
       <tbody>
-        <tr align="center" *ngIf="loading">
-          <td colspan="4">Cargando...</td>
+        <tr>
+          <td colspan="99" style="padding: 0px">
+            <app-progressbar [loading]="loading"></app-progressbar>
+          </td>
         </tr>
         <tr *ngFor="let item of items">
           <td class="flat">{{ item.article.description }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure}}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta' && !item.article.quantityPerMeasure">{{ item.count * 1 }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure * -1}}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra' && !item.article.quantityPerMeasure">{{ item.count * 1 * -1 }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count * 1 }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * 1 * -1 }}</td>
           <td class="flat" *ngIf="item.article.unitOfMeasurement">{{ item.article.unitOfMeasurement.name }}</td>
           <td class="flat" *ngIf="!item.article.unitOfMeasurement"></td>
           <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
@@ -96,33 +97,40 @@
       <input type="time" class="form-control" name="endTime" [(ngModel)]="endTime" />
     </div>
     <div class="col-md-2" (click)="refresh()">
+        <label for="action" class="control-label">
+            <b>Acción:</b>
+          </label>
       <span class="form-control btn-action center-content">
-        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar</span>
+        <i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i>Actualizar
+      </span>
     </div>
   </div>
-  <div class="card card-outline-primary card-large">
-    <div class="card-header bg-primary">
+  <div class="card  card-large">
+    <div class="card-header">
       <span *ngIf="transactionMovement === 'Venta'">Productos más vendidos</span>
       <span *ngIf="transactionMovement === 'Compra'">Productos más comprados</span>
       <div class="pull-right">
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        
       </div>
     </div>
     <div class="card-block table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
+            <th>
+              <i class="fa fa-bars"></i>
+            </th>
             <th (click)="orderBy('article.code')">Código</th>
             <th (click)="orderBy('article.description')">Producto</th>
             <th (click)="orderBy('article.category.description')">Categoría</th>
             <th (click)="orderBy('article.make.description')">Marca</th>
-            <th (click)="orderBy('count')">Ítems Vendidos</th>
+            <th *ngIf="transactionMovement === 'Compra'" (click)="orderBy('count')">Ítems Comprados</th>
+            <th *ngIf="transactionMovement === 'Venta'" (click)="orderBy('count')">Ítems Vendidos</th>
             <th (click)="orderBy('article.unitOfMeasurement.name')">Unidad</th>
             <th (click)="orderBy('total')">Monto Total</th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
+            <th></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.code']" placeholder="Código..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.description']" placeholder="Producto..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
             <th><input type="text" class="form-control" [(ngModel)]= "filters['article.category.description']" placeholder="Categoría..." (blur)="getBestSellingArticle()" (keyup.enter)="getBestSellingArticle()"></th>
@@ -133,20 +141,23 @@
           </tr>
         </thead>
         <tbody>
-          <tr align="center" *ngIf="loading">
-            <td colspan="7">Cargando...</td>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
           </tr>
           <tr *ngFor="let item of items">
+            <td align="left" width="50">
+              <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', item)" title="Ver"><i class="fa fa-eye"></i></button>
+            </td>
             <td class="flat">{{ item.article.code }}</td>
             <td class="flat">{{ item.article.description }}</td>
             <td class="flat" *ngIf="item.article.category">{{ item.article.category.description }}</td>
             <td class="flat" *ngIf="!item.article.category"></td>
             <td class="flat" *ngIf="item.article.make">{{ item.article.make.description }}</td>
             <td class="flat" *ngIf="!item.article.make"></td> 
-            <td class="flat" *ngIf="transactionMovement === 'Venta' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure}}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Venta' && !item.article.quantityPerMeasure">{{ item.count * 1 }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure * -1}}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra' && !item.article.quantityPerMeasure">{{ item.count * 1 * -1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count * 1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * 1 * -1 }}</td>
             <td class="flat" *ngIf="item.article.unitOfMeasurement">{{ item.article.unitOfMeasurement.name }}</td>
             <td class="flat" *ngIf="!item.article.unitOfMeasurement"></td>
             <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
@@ -165,13 +176,15 @@
             <th></th>
             <th></th>
             <th></th>
+            <th></th>
             <th >{{totalItem}}</th>
+            <th></th>
             <th >{{totalAmount | currency:'USD':'symbol-narrow':'1.2-2' }}</th>
           </tr>
         </tfoot>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
     </div>
   </div>
 </section>

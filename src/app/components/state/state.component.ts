@@ -34,6 +34,7 @@ export class StateComponent implements OnInit {
   public focusEvent = new EventEmitter<boolean>();
   public countries : Country[];
   public userCountry: string;
+  public orientation: string = 'horizontal';
 
   public formErrors = {
     'code': '',
@@ -59,6 +60,7 @@ export class StateComponent implements OnInit {
     public _fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) {
+    if(window.screen.width < 1000) this.orientation = 'vertical';
     this.state = new State();
   }
 

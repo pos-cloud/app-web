@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TransactionMovement } from '../../models/transaction-type'
@@ -21,11 +21,13 @@ import { ArticleFieldType } from 'app/models/article-field';
 import { Taxes } from 'app/models/taxes';
 import { Config } from 'app/app.config';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movement-of-cancellation',
   templateUrl: './movement-of-cancellation.component.html',
-  styleUrls: ['./movement-of-cancellation.component.css']
+  styleUrls: ['./movement-of-cancellation.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class MovementOfCancellationComponent implements OnInit {
@@ -63,6 +65,7 @@ export class MovementOfCancellationComponent implements OnInit {
   public roundNumber = new RoundNumberPipe();
   public userCountry: string;
   public balanceSelected: number = 0;
+  public userType: string;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -74,9 +77,12 @@ export class MovementOfCancellationComponent implements OnInit {
     public _modalService: NgbModal,
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
-    public _movementOfCancellationService: MovementOfCancellationService
+    public _movementOfCancellationService: MovementOfCancellationService,
+    public _router: Router,
   ) {
     this.userCountry = Config.country;
+    const pathLocation: string[] = this._router.url.split('/');
+    this.userType = pathLocation[1];
     this.filters = new Array();
     for(let field of this.displayedColumns) {
       this.filters[field] = "";
@@ -495,20 +501,22 @@ export class MovementOfCancellationComponent implements OnInit {
       for(let mov of this.movementsOfCancellations) {
         if(mov.balance > 0 || !this.modifyBalance(mov.transactionOrigin)) {
           if((mov.balance <= mov.transactionOrigin.balance) || !this.modifyBalance(mov.transactionOrigin)) {
-            await this.getMovementOfArticles(mov.transactionOrigin).then(
-              async movementsOfArticles => {
-                if(movementsOfArticles && movementsOfArticles.length > 0) {
-                  await this.saveMovementsOfArticles(movementsOfArticles).then(
-                    movementsOfArticlesSaved => {
-                      if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
-                      } else {
-                        endedProcess = false;
+            if(mov.transactionDestination.type.requestArticles) {
+              await this.getMovementOfArticles(mov.transactionOrigin).then(
+                async movementsOfArticles => {
+                  if(movementsOfArticles && movementsOfArticles.length > 0) {
+                    await this.saveMovementsOfArticles(movementsOfArticles).then(
+                      movementsOfArticlesSaved => {
+                        if(movementsOfArticlesSaved && movementsOfArticlesSaved.length > 0) {
+                        } else {
+                          endedProcess = false;
+                        }
                       }
-                    }
-                  );
+                    );
+                  }
                 }
-              }
-            );
+              );
+            }
           } else {
             endedProcess = false;
             this.showMessage("El saldo ingresado en la transacción " + mov.transactionOrigin.type.name + " " + mov.transactionOrigin.number + " no puede ser mayor que el saldo restante de la misma ($ " + mov.transactionOrigin.balance + ").", "info", true);
@@ -752,7 +760,6 @@ export class MovementOfCancellationComponent implements OnInit {
             if(tax.taxBase === 0) {
               tax.taxBase = movementOfArticle.salePrice;
             }
-            console.log(tax.taxBase);
             tax.taxAmount = (tax.taxBase * tax.percentage / 100);
           }
           tax.taxBase = this.roundNumber.transform(tax.taxBase);

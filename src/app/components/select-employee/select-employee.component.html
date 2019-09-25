@@ -17,7 +17,7 @@
         <label for="employee" class="control-label" *ngIf="typeEmployee">{{ typeEmployee.description }}:</label>
         <div class="center-content">
           <div class="btn-group-vertical">
-            <button type="button" *ngFor="let employee of employees" class="btn btn-employee" [ngClass]="{'btn-primary':employee._id===employeeSelected._id,
+            <button type="button" *ngFor="let employee of employees" class="btn btn-select" [ngClass]="{'btn-primary':employee._id===employeeSelected._id,
                                     'btn-outline-primary':employee._id!==employeeSelected._id}"
               (click)="employeeSelected = employee">
               {{ employee.name }}

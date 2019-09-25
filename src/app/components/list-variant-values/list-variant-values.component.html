@@ -4,18 +4,11 @@
       {{alertMessage}}
     </ngb-alert>
   </div>
-  <div class="card card-outline-primary">
-    <div class="card-header bg-primary">Listado de Valores de Variantes
+  <div class="card ">
+    <div class="card-header">Listado de Valores de Variantes
       <div class="pull-right">
-        <button class="btn btn-primary" (click)="openModal('add', null)"><i class="fa fa-plus"> Agregar Valor de Variante</i></button>
-        <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
-          <i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i>
-          <span *ngIf="loading">Cargando</span>
-          <span *ngIf="!loading">Actualizar</span>
-        </button>
-        <span (click)="areFiltersVisible = !areFiltersVisible">
-          <i class="btn btn-primary fa fa-filter" data-toggle="tooltip" data-placement="top" title="Aplicar Filtros"> Filtrar</i>
-        </span>
+        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+        <button class="btn" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-spinner fa-spin':loading}"></i><span>Actualizar</span></button>
       </div>
     </div>
     <div class="card-block table-responsive">
@@ -26,20 +19,24 @@
               <i class="fa fa-bars"></i>
             </th>
             <th (click)="orderBy('type','name')">Tipo </th>
+            <th (click)="orderBy('order')">Orden </th>
             <th (click)="orderBy('description')">Descripción </th>
           </tr>
-          <tr *ngIf="areFiltersVisible" class="filters">
+          <tr class="filters">
             <th></th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo...">
-            </th>
-            <th>
-              <input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción...">
-            </th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterType" placeholder="Tipo..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterOrder" placeholder="Orden..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterDescription" placeholder="Descripción..."></th>
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
           <tr *ngFor="let variantValue of variantValues | filter: filterType:'name':'type'
+                                                        | filter: filterOrder:'order'
                                                         | filter: filterDescription:'description'
                                                         | orderBy: orderTerm: propertyTerm
                                                         | paginate: { itemsPerPage: itemsPerPage,
@@ -50,11 +47,13 @@
               <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', variantValue)" title="Ver">
                 <i class="fa fa-eye"></i>
               </button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', variantValue)" title="Modificar"><i class="fa fa-pencil"></i></button>
               <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', variantValue)" title="Eliminar">
                 <i class="fa fa-trash-o"></i>
               </button>
             </td>
             <td class="flat">{{variantValue.type.name}}</td>
+            <td class="flat">{{variantValue.order}}</td>
             <td class="flat">{{variantValue.description}}</td>
           </tr>
           <tr align="center" *ngIf="areVariantValuesEmpty && !loading">
@@ -63,7 +62,7 @@
         </tbody>
       </table>
     </div>
-    <div class="card-footer bg-primary">
+    <div class="card-footer">
       <div class="row">
         <div class="col-md-10">
           <pagination-controls class="my-pagination" (pageChange)="p=$event" #api previousLabel="Ant." nextLabel="Sig." autoHide="true">

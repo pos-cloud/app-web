@@ -1,21 +1,6 @@
-.card {
-  margin-top: 50px;
-  height:80vh;
-}
-
-.card-header {
-  color: white;
-}
-
-.btn, .cursor-pointer {
+.cursor-pointer {
   cursor: pointer;
 }
-
-.table {
-    box-shadow: 0px 0px 2px;
-    border-radius: 5px;
-    cursor: pointer;
- }
 
 .credit {
   background: #dff0d8;
@@ -25,43 +10,8 @@
   background: #F6CECE;
 }
 
-.center-content {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-
-.my-pagination /deep/ .ngx-pagination {
-  color: white;
-}
-
-::placeholder {
-  color: #D8D8D8;
-}
-
-.filters {
-  background-color: #F8F8F8;
-}
-
 .container-filter {
   margin-top: 20px;
-}
-
-.btn-action {
-  width: 100%;
-  border: 1px solid white;
-  padding: 10px;
-  cursor: pointer;
-  background: #0275d8;
-  color: white;
-  height: 45px;
-}
-
-.btn-action:hover {
-  background: #025aa5;
 }
 
 th {
