@@ -1527,11 +1527,11 @@ export class PrintComponent implements OnInit {
             this.hideMessage();
             let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
             this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
-            resolve(true)
             if (finish) {
               this.finishImpression();
               resolve(true)
             }
+            resolve(true)
           }
           this.loading = false;
         }
