@@ -219,6 +219,11 @@ export class AddMovementOfCashComponent implements OnInit {
     if (!this.amountPaid) this.amountPaid = 0.00;
     if (!this.amountDiscount) this.amountDiscount = 0.00;
 
+    if(this.paymentMethodSelected.observation){
+      this.movementOfCash.observation = this.paymentMethodSelected.observation;
+    }
+
+
     let type;
     if (!this.movementOfCash.type) {
       type = null;
