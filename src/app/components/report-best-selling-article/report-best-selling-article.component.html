@@ -23,10 +23,8 @@
         </tr>
         <tr *ngFor="let item of items">
           <td class="flat">{{ item.article.description }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure}}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Venta' && !item.article.quantityPerMeasure">{{ item.count * 1 }}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure * -1}}</td>
-          <td class="flat" *ngIf="transactionMovement === 'Compra' && !item.article.quantityPerMeasure">{{ item.count * 1 * -1 }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count * 1 }}</td>
+          <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * 1 * -1 }}</td>
           <td class="flat" *ngIf="item.article.unitOfMeasurement">{{ item.article.unitOfMeasurement.name }}</td>
           <td class="flat" *ngIf="!item.article.unitOfMeasurement"></td>
           <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
@@ -158,10 +156,8 @@
             <td class="flat" *ngIf="!item.article.category"></td>
             <td class="flat" *ngIf="item.article.make">{{ item.article.make.description }}</td>
             <td class="flat" *ngIf="!item.article.make"></td> 
-            <td class="flat" *ngIf="transactionMovement === 'Venta' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure}}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Venta' && !item.article.quantityPerMeasure">{{ item.count * 1 }}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra' && item.article.quantityPerMeasure">{{ item.count * 1 * item.article.quantityPerMeasure * -1}}</td>
-            <td class="flat" *ngIf="transactionMovement === 'Compra' && !item.article.quantityPerMeasure">{{ item.count * 1 * -1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.count * 1 }}</td>
+            <td class="flat" *ngIf="transactionMovement === 'Compra'">{{ item.count * 1 * -1 }}</td>
             <td class="flat" *ngIf="item.article.unitOfMeasurement">{{ item.article.unitOfMeasurement.name }}</td>
             <td class="flat" *ngIf="!item.article.unitOfMeasurement"></td>
             <td class="flat" *ngIf="transactionMovement === 'Venta'">{{ item.total | currency:'USD':'symbol-narrow':'1.2-2' }}</td>
