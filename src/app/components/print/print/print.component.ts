@@ -1521,8 +1521,8 @@ export class PrintComponent implements OnInit {
             if (finish) {
               this.finishImpression();
             }
-            resolve(true)
             this.loading = false;
+            resolve(true)
           } else {
             this.hideMessage();
             let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
