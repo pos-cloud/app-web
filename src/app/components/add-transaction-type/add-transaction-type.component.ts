@@ -323,7 +323,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'printDescriptionType' : [this.transactionType.printDescriptionType,[]],
       'printSign' : [this.transactionType.printSign,[]],
       'automaticNumbering' : [this.transactionType.automaticNumbering,[]],
-      'automaticCreation' : [this.transactionType.automaticCreation,[]]
+      'automaticCreation' : [this.transactionType.automaticCreation,[]],
+      'readLayout' : [this.transactionType.readLayout,[]]
 
     });
 
@@ -415,6 +416,7 @@ export class AddTransactionTypeComponent implements OnInit {
     if (this.transactionType.isPreprinted === undefined) this.transactionType.isPreprinted = false;
     if (this.transactionType.automaticNumbering === undefined) this.transactionType.automaticNumbering = true;
     if (this.transactionType.automaticCreation === undefined) this.transactionType.automaticCreation = false;
+    if (this.transactionType.readLayout === undefined) this.transactionType.readLayout = false; 
 
     let defectPrinter;
     if (!this.transactionType.defectPrinter) {
@@ -532,8 +534,8 @@ export class AddTransactionTypeComponent implements OnInit {
       'showDescriptionType' : this.transactionType.showDescriptionType,
       'showPriceType' : this.transactionType.showPriceType,
       'printDescriptionType' : this.transactionType.printDescriptionType,
-      'printSign' : this.transactionType.printSign
-
+      'printSign' : this.transactionType.printSign,
+      'readLayout' : this.transactionType.readLayout
     });
   }
 

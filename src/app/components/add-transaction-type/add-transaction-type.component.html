@@ -668,22 +668,7 @@
             <div class="row tab-content">
               <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="printable" class="control-label">Impresión automática</label>
-                    <div class="input-group">
-                      <select class="form-control" formControlName="printable">
-                        <option value="true" [selected]="transactionType.printable" [disabled]="readonly">Si</option>
-                        <option value="false" [selected]="!transactionType.printable" >No</option>
-                      </select>
-                      <button type="button"
-                              class="btn btn-secondary"
-                              placement="right"
-                              ngbPopover="Si se imprime al finalizar la carga de la transacción">
-                        <b>?</b>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6">
+                    <div class="form-group col-md-6">
                     <label for="defectPrinter" class="control-label">Impresora defecto</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="defectPrinter">
@@ -702,6 +687,37 @@
                       </button>
                     </div>
                   </div>
+                  <div class="form-group col-md-3">
+                    <label for="printable" class="control-label">Impresión automática</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="printable">
+                        <option value="true" [selected]="transactionType.printable" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.printable" >No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="Si se imprime al finalizar la carga de la transacción">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="readLayout" class="control-label">Lee diseño?</label>
+                      <div class="input-group">
+                        <select class="form-control" formControlName="readLayout">
+                          <option value="true" [selected]="transactionType.readLayout" [disabled]="readonly">Si</option>
+                          <option value="false" [selected]="!transactionType.readLayout" >No</option>
+                        </select>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                placement="right"
+                                ngbPopover="Lee el diseño cargado en la impresora?">
+                          <b>?</b>
+                        </button>
+                      </div>
+                    </div>
+
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
