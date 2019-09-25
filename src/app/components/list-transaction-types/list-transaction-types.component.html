@@ -32,6 +32,7 @@
             <th (click)="orderBy('modifyStock')">Modifica el stock</th>
             <th (click)="orderBy('stockMovement')">Movimiento de stock</th>
             <th (click)="orderBy('defectOrders')">Para pedidos</th>
+            <th (click)="orderBy('automaticCreation')">Creación Automática</th>
             <th (click)="orderBy('automaticNumbering')">Numeración Automática</th>
             <th (click)="orderBy('fixedOrigin')" *ngIf="userCountry === 'AR'">Punto de venta fijo</th>
             <th (click)="orderBy('fixedLetter')">Letra Fija</th>
@@ -71,6 +72,7 @@
             <th><input type="text" class="form-control" [(ngModel)]="filterModifyStock" placeholder="Modifica el stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterStockMovement" placeholder="Movimiento de stock..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterDefectOrders" placeholder="Para pedidos..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filterAutomaticCreation" placeholder="Creación Automática..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterAutomaticNumbering" placeholder="Numeración Automática..."></th>
             <th *ngIf="userCountry === 'AR'"><input type="text" class="form-control" [(ngModel)]="filterFixedOrigin" placeholder="Punto de venta fijo..." ></th>
             <th><input type="text" class="form-control" [(ngModel)]="filterFixedLetter" placeholder="Letra Fija..."></th>
@@ -110,6 +112,7 @@
                                                               | filter: filterModifyStock:'modifyStock'
                                                               | filter: filterStockMovement:'stockMovement'
                                                               | filter: filterDefectOrders:'defectOrders'
+                                                              | filter: filterAutomaticCreation:'automaticCreation'
                                                               | filter: filterAutomaticNumbering:'automaticNumbering'
                                                               | filter: filterFixedOrigin:'fixedOrigin'
                                                               | filter: filterFixedLetter:'letter'
@@ -153,6 +156,7 @@
             <td class="flat">{{transactionType.modifyStock}}</td>
             <td class="flat">{{transactionType.stockMovement}}</td>
             <td class="flat">{{transactionType.defectOrders}}</td>
+            <td class="flat">{{transactionType.automaticCreation}}</td>
             <td class="flat">{{transactionType.automaticNumbering}}</td>
             <td class="flat" *ngIf="userCountry === 'AR'">{{transactionType.fixedOrigin}}</td>
             <td class="flat">{{transactionType.fixedLetter}}</td>

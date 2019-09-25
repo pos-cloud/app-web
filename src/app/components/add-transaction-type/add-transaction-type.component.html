@@ -61,7 +61,7 @@
                     </div>
                   </div>
                   <div class="form-group col-md-4">
-                    <label for="labelPrint">Impresión</label>
+                    <label for="labelPrint">Nombre en Impresión</label>
                     <div class="input-group">
                       <input type="text" class="form-control" formControlName="labelPrint" name="labelPrint" id="labelPrint" [readonly]="readonly"/>
                       <button type="button" class="btn btn-secondary" placement="right" ngbPopover="¿Como saldrá el nombre de la transacción en la impresión?">
@@ -72,7 +72,7 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="currentAccount" class="control-label">Cuenta Corriente</label>
+                    <label for="currentAccount" class="control-label">Afecta Cuenta Corriente</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="currentAccount">
                         <option value="Si" [selected]="transactionType.currentAccount.toString() === 'Si'" [disabled]="readonly">Si</option>
@@ -116,18 +116,17 @@
                     </div>
                   </div>
                   <div *ngIf="userCountry === 'MX'" class="form-group col-md-3">
-                      <label for="fiscalCode">Código Fiscal</label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
-                        <button type="button"
-                                class="btn btn-secondary"
-                                placement="right"
-                                ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
-                          <b>?</b>
-                        </button>
-                      </div>
+                    <label for="fiscalCode">Código Fiscal</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" formControlName="fiscalCode" name="fiscalCode" id="fiscalCode" [readonly]="readonly"/>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Cuál es el tipo de comprobante según el ente fiscal?">
+                        <b>?</b>
+                      </button>
                     </div>
-                
+                  </div>
                   <div *ngIf="userCountry === 'MX'" class="form-group col-md-3">
                     <label for="defectUseOfCFDI" class="control-label">Uso de CFDI Defecto</label>
                     <div class="input-group">
@@ -145,26 +144,38 @@
                               ngbPopover="Al dar de alta la transacción el Uso de CFDI elegido estará asignado por defecto.">
                         <b>?</b>
                       </button>
-
                     </div>
                   </div>
-
                     <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
-                        <label for="codeA">Código AFIP A</label>
-                        <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>
-                      </div>
-                      <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
-                        <label for="codeB">Código AFIP B</label>
-                        <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"  [readonly]="readonly"/>
-                      </div>
-                      <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
-                        <label for="codeC">Código AFIP C</label>
-                        <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"  [readonly]="readonly"/>
-                      </div>
-                    
+                      <label for="codeA">Código AFIP A</label>
+                      <input type="number" class="form-control" formControlName="codeA" codeA="codeA" id="codeA"  [readonly]="readonly"/>
+                    </div>
+                    <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
+                      <label for="codeB">Código AFIP B</label>
+                      <input type="number" class="form-control" formControlName="codeB" codeB="codeB" id="codeB"  [readonly]="readonly"/>
+                    </div>
+                    <div *ngIf="userCountry === 'AR'" class="form-group col-md-3">
+                      <label for="codeC">Código AFIP C</label>
+                      <input type="number" class="form-control" formControlName="codeC" codeC="codeC" id="codeC"  [readonly]="readonly"/>
+                    </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
+                    <label for="automaticCreation" class="control-label">Crea automáticamente</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="automaticCreation">
+                        <option value="true" [selected]="transactionType.automaticCreation" [disabled]="readonly">Si</option>
+                        <option value="false" [selected]="!transactionType.automaticCreation" [disabled]="readonly">No</option>
+                      </select>
+                      <button type="button"
+                              class="btn btn-secondary"
+                              placement="right"
+                              ngbPopover="¿Crea automáticamente después de finalizar una operación?">
+                        <b>?</b>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-4">
                     <label for="requestTaxes" class="control-label">Pide Impuestos</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="requestTaxes">
@@ -179,7 +190,7 @@
                       </button>
                     </div>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
                     <label for="tax">Afecta Libro de IVA</label>
                     <div class="input-group">
                       <select class="form-control" formControlName="tax">

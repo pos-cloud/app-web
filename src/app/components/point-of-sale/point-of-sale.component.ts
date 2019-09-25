@@ -404,31 +404,41 @@ export class PointOfSaleComponent implements OnInit {
         this.transactionMovement = TransactionMovement.Money;
       }
 
-      await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
-        transactionTypes => {
-          if (transactionTypes) {
-            this.transactionTypes = transactionTypes;
+      if(pathLocation[4] && pathLocation[4] !== '') {
+        this.getTransactionTypes(`where="_id":"${pathLocation[4]}"`).then(
+          transactionTypes => {
+            if(transactionTypes) {
+              this.addTransaction(transactionTypes[0]);
+            }
           }
-        }
-      );
-
-      let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
-      
-      this._authService.getIdentity.subscribe(
-        identity => {
-          if(identity && identity.origin) {
-            query += `{"branchDestination":"${identity.origin.branch._id}"},`;
-          }
-        }
-      );
-  
-      if(this.posType === 'mostrador') {
-        query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
+        );
       } else {
-        query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+        await this.getTransactionTypes('where="transactionMovement":"' + this.transactionMovement + '","allowAPP":false').then(
+          transactionTypes => {
+            if (transactionTypes) {
+              this.transactionTypes = transactionTypes;
+            }
+          }
+        );
+  
+        let query = `where="$and":[{"state":{"$ne": "${TransactionState.Closed}"}},{"state":{"$ne": "${TransactionState.Canceled}"}},`;
+        
+        this._authService.getIdentity.subscribe(
+          identity => {
+            if(identity && identity.origin) {
+              query += `{"branchDestination":"${identity.origin.branch._id}"},`;
+            }
+          }
+        );
+    
+        if(this.posType === 'mostrador') {
+          query += `{"$or":[{"madein":"${this.posType}"},{"madein":"cuentas-corrientes"}]}]&sort="startDate":-1`;
+        } else {
+          query += `{"madein":"${this.posType}"}]&sort="startDate":-1`;
+        }
+  
+        this.getOpenTransactionsByMovement(this.transactionMovement, query);
       }
-
-      this.getOpenTransactionsByMovement(this.transactionMovement, query);
     } else if (this.posType === "cuentas-corrientes") {
       if (pathLocation[3] === "cliente") {
         this.transactionMovement = TransactionMovement.Sale;

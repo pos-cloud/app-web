@@ -2090,11 +2090,23 @@ export class AddSaleOrderComponent {
       }
     } else if (this.posType === "mostrador") {
       if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Purchase) {
-        this._router.navigate(['/pos/' + this.posType + '/compra']);
+        if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+          this._router.navigate(['/pos/' + this.posType + '/compra/' + this.transaction.type._id]);
+        } else {
+          this._router.navigate(['/pos/' + this.posType + '/compra']);
+        }
       } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Sale) {
-        this._router.navigate(['/pos/' + this.posType + '/venta']);
+        if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+          this._router.navigate(['/pos/' + this.posType + '/venta/' + this.transaction.type._id]);
+        } else {
+          this._router.navigate(['/pos/' + this.posType + '/venta']);
+        }
       } else if (this.transaction.type && this.transaction.type.transactionMovement === TransactionMovement.Stock) {
-        this._router.navigate(['/pos/' + this.posType + '/stock']);
+        if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+          this._router.navigate(['/pos/' + this.posType + '/stock/' + this.transaction.type._id]);
+        } else {
+          this._router.navigate(['/pos/' + this.posType + '/stock']);
+        }
       } else {
         this._router.navigate(['/pos/' + this.posType]);
       }

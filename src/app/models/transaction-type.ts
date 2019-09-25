@@ -50,6 +50,7 @@ export class TransactionType {
 	public requestCompany: CompanyType;
 	public isPreprinted : boolean = false;
 	public automaticNumbering : boolean = true;
+	public automaticCreation : boolean = false;
 	public showPriceType : PriceType = PriceType.Final;
 	public showDescriptionType : DescriptionType = DescriptionType.Description;
 	public printDescriptionType : DescriptionType = DescriptionType.Description;

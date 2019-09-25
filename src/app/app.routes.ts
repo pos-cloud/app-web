@@ -544,11 +544,6 @@ export const _routes: Routes = [
     canActivate: [AuthGuard]
   },
   { 
-    path: 'pos/mostrador/compra', 
-    component: PointOfSaleComponent,
-    canActivate: [AuthGuard]
-  },
-  { 
     path: 'pos/pedidos-web', 
     component: PointOfSaleComponent,
     canActivate: [AuthGuard]
@@ -557,17 +552,42 @@ export const _routes: Routes = [
     path: 'pos/mostrador/venta', 
     component: PointOfSaleComponent,
     canActivate: [AuthGuard]
-   },
+  },
+  { 
+    path: 'pos/mostrador/compra', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard]
+  },
   { 
     path: 'pos/mostrador/fondo', 
     component: PointOfSaleComponent,
     canActivate: [AuthGuard]
-   },
+  },
   { 
     path: 'pos/mostrador/stock', 
     component: PointOfSaleComponent,
     canActivate: [AuthGuard]
-   },
+  },
+  { 
+    path: 'pos/mostrador/venta/:type', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'pos/mostrador/compra/:type', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'pos/mostrador/fondo/:type', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'pos/mostrador/stock/:type', 
+    component: PointOfSaleComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: 'pos/mostrador/agregar-transaccion/:type',
     component: AddSaleOrderComponent,
