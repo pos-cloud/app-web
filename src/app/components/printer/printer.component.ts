@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, NgForm, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -15,8 +15,9 @@ import { ConfigService } from 'app/services/config.service';
 @Component({
   selector: 'app-add-printer',
   templateUrl: './printer.component.html',
-  styleUrls: ['./printer.component.css'],
-  providers: [NgbAlertConfig]
+  styleUrls: ['./printer.component.scss'],
+  providers: [NgbAlertConfig],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class PrinterComponent implements OnInit {
@@ -375,7 +376,7 @@ export class PrinterComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
         } else {
           this.printer = result.printer;
-          this.showMessage("La impresora se ha añadido con éxito.", 'success', false);
+          this.showMessage("La impresora se ha añadido con éxito.", 'success', true);
           this.printer = new Printer();
           this.buildForm();
         }
@@ -399,7 +400,7 @@ export class PrinterComponent implements OnInit {
           if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
           this.loading = false;
         } else {
-          this.showMessage("La impresora se ha actualizado con éxito.", 'success', false);
+          this.showMessage("La impresora se ha actualizado con éxito.", 'success', true);
         }
         this.loading = false;
       },

@@ -1,0 +1,26 @@
+app-add-printer{
+      .center-content {
+            margin-top: 30px;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-justify-content: center;
+            justify-content: center;
+      }
+      
+      .btn {
+            cursor: pointer;
+      }
+
+      .separation th{
+            width:10%;    
+      }
+      
+      .table {
+            //display: block;
+            max-width: 100%;
+            overflow-y: auto;
+      }
+      
+}
