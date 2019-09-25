@@ -1402,47 +1402,56 @@ export class PrintComponent implements OnInit {
     this.finishImpression();
   }
 
-  public getHeader(logoPrint: boolean = false): void {
+  async getHeader(logoPrint: boolean = false) {
 
-    this.doc.setDrawColor(110, 110, 110);
+    return new Promise (async (resolve, reject) => {
 
-    // Dibujar lineas horizontales
-    this.doc.line(0, 50, 240, 50);
+      this.doc.setDrawColor(110, 110, 110);
 
-    // Detalle Emisor
-    if (this.config && this.config[0]) {
-      this.doc.setFontSize(this.fontSizes.normal);
-
-      if (this.config[0].companyIdentificationType) {
+      // Dibujar lineas horizontales
+      this.doc.line(0, 50, 240, 50);
+  
+      // Detalle Emisor
+      if (this.config && this.config[0]) {
+        this.doc.setFontSize(this.fontSizes.normal);
+  
+        if (this.config[0].companyIdentificationType) {
+          this.doc.setFontType('bold');
+          this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+          this.doc.setFontType('normal');
+          this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
+        }
+  
+        if(this.config[0].country === 'AR') {
+          this.doc.setFontType('bold');
+          this.doc.text("Ingresos Brutos:", 110, 40);
+          this.doc.setFontType('normal');
+          if (this.config[0].companyGrossIncome) {
+            this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+          }
+        }
+  
         this.doc.setFontType('bold');
-        this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+        this.doc.text("Inicio de Actividades:", 110, 45);
         this.doc.setFontType('normal');
-        this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
-      }
-
-      if(this.config[0].country === 'AR') {
-        this.doc.setFontType('bold');
-        this.doc.text("Ingresos Brutos:", 110, 40);
-        this.doc.setFontType('normal');
-        if (this.config[0].companyGrossIncome) {
-          this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+        if (this.config[0].companyStartOfActivity) {
+          this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+        }
+  
+        // DATOS DE LA EMPRESA O IMAGEN
+        if (!logoPrint || !this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
+          this.getCompanyData();
+        } else {
+          await this.getCompanyPicture(10, 5, 80, 40);
         }
       }
-
-      this.doc.setFontType('bold');
-      this.doc.text("Inicio de Actividades:", 110, 45);
+      this.doc.setFontSize(this.fontSizes.normal);
       this.doc.setFontType('normal');
-      if (this.config[0].companyStartOfActivity) {
-        this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
-      }
+      resolve(true)
 
-      // DATOS DE LA EMPRESA O IMAGEN
-      if (!logoPrint || !this.config[0].companyPicture || this.config[0].companyPicture === 'default.jpg') {
-        this.getCompanyData();
-      }
-    }
-    this.doc.setFontSize(this.fontSizes.normal);
-    this.doc.setFontType('normal');
+    });
+
+   
   }
 
   public getCompanyData(): void {
@@ -1501,28 +1510,34 @@ export class PrintComponent implements OnInit {
     }
   }
 
-  public getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false): void {
+  async getCompanyPicture(lmargin, rmargin, width, height, finish: boolean = false) {
 
-    this.loading = true;
-    this._configService.getCompanyPicture(this.config[0].companyPicture).subscribe(
-      result => {
-        if (!result.imageBase64) {
-          this.getCompanyData();
-          if (finish) {
-            this.finishImpression();
+    return new Promise ((resolve, reject) => {
+      this.loading = true;
+      this._configService.getCompanyPicture(this.config[0].companyPicture).subscribe(
+        result => {
+          if (!result.imageBase64) {
+            this.getCompanyData();
+            if (finish) {
+              this.finishImpression();
+            }
+            resolve(true)
+            this.loading = false;
+          } else {
+            this.hideMessage();
+            let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
+            this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
+            resolve(true)
+            if (finish) {
+              this.finishImpression();
+              resolve(true)
+            }
           }
           this.loading = false;
-        } else {
-          this.hideMessage();
-          let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-          this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);
-          if (finish) {
-            this.finishImpression();
-          }
         }
-        this.loading = false;
-      }
-    );
+      );
+    });
+    
   }
 
   public getClient() {
@@ -1725,14 +1740,54 @@ export class PrintComponent implements OnInit {
     this.finishImpression();
   }
 
-  public toPrintInvoice(): void {
+  async toPrintInvoice() {
 
     var transport =0;
 
     // Encabezado de la transacción
     if(!this.transaction.type.isPreprinted) {
 
-      this.getHeader(true);
+
+      if(this.config[0].companyPicture && this.config[0].companyPicture !== 'default.jpg'){
+        await this.getCompanyPicture(10, 5, 80, 40);
+      } else {
+        this.getCompanyData()
+      }
+
+      // Detalle Emisor
+      this.doc.setDrawColor(110, 110, 110);
+
+      // Dibujar lineas horizontales
+      this.doc.line(0, 50, 240, 50);
+      if (this.config && this.config[0]) {
+        this.doc.setFontSize(this.fontSizes.normal);
+  
+        if (this.config[0].companyIdentificationType) {
+          this.doc.setFontType('bold');
+          this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+          this.doc.setFontType('normal');
+          this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
+        }
+  
+        if(this.config[0].country === 'AR') {
+          this.doc.setFontType('bold');
+          this.doc.text("Ingresos Brutos:", 110, 40);
+          this.doc.setFontType('normal');
+          if (this.config[0].companyGrossIncome) {
+            this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+          }
+        }
+  
+        this.doc.setFontType('bold');
+        this.doc.text("Inicio de Actividades:", 110, 45);
+        this.doc.setFontType('normal');
+        if (this.config[0].companyStartOfActivity) {
+          this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+        }
+      }
+     
+      this.doc.setFontSize(this.fontSizes.normal);
+      this.doc.setFontType('normal');
 
       // Numeración de la transacción
       this.doc.setFontSize(this.fontSizes.extraLarge);
@@ -1925,7 +1980,6 @@ export class PrintComponent implements OnInit {
           this.doc.setFontType("bold");
           this.doc.text("TRANSPORTE:".toString(),25, row);
           this.doc.text(this.roundNumber.transform(transport).toString(), 185, row);
-          this.getCompanyPicture(10, 5, 80, 40);
           row = 95;
           this.doc.addPage();
 
@@ -1936,8 +1990,42 @@ export class PrintComponent implements OnInit {
 
           if(!this.transaction.type.isPreprinted){
 
-            this.getHeader(true);
+            //this.getHeader(true);
           
+            // Detalle Emisor
+            this.doc.setDrawColor(110, 110, 110);
+
+            // Dibujar lineas horizontales
+            this.doc.line(0, 50, 240, 50);
+            if (this.config && this.config[0]) {
+              this.doc.setFontSize(this.fontSizes.normal);
+
+              if (this.config[0].companyIdentificationType) {
+                this.doc.setFontType('bold');
+                this.doc.text(this.config[0].companyIdentificationType.name + ":", 110, 35);
+                this.doc.setFontType('normal');
+                this.doc.text(this.config[0].companyIdentificationValue, 122, 35);
+              }
+
+              if(this.config[0].country === 'AR') {
+                this.doc.setFontType('bold');
+                this.doc.text("Ingresos Brutos:", 110, 40);
+                this.doc.setFontType('normal');
+                if (this.config[0].companyGrossIncome) {
+                  this.doc.text(this.config[0].companyGrossIncome, 140, 40);
+                }
+              }
+
+              this.doc.setFontType('bold');
+              this.doc.text("Inicio de Actividades:", 110, 45);
+              this.doc.setFontType('normal');
+              if (this.config[0].companyStartOfActivity) {
+                this.doc.text(this.dateFormat.transform(this.config[0].companyStartOfActivity, 'DD/MM/YYYY'), 149, 45);
+              }
+            }
+            
+            this.doc.setFontSize(this.fontSizes.normal);
+            this.doc.setFontType('normal');
 
             // Dibujar la linea cortada para la letra
             this.doc.line(105, 13, 105, 50); //vertical letra
