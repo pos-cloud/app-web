@@ -6,9 +6,7 @@ import { NgbModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap';
 import { PaymentMethod } from './../../models/payment-method';
 import { PaymentMethodService } from './../../services/payment-method.service';
 
-import { AddPaymentMethodComponent } from './../../components/add-payment-method/add-payment-method.component';
-import { UpdatePaymentMethodComponent } from './../../components/update-payment-method/update-payment-method.component';
-import { DeletePaymentMethodComponent } from './../../components/delete-payment-method/delete-payment-method.component';
+import { PaymentMethodComponent } from '../payment-method/payment-method.component';
 import { ImportComponent } from './../../components/import/import.component';
 
 @Component({
@@ -92,21 +90,25 @@ export class ListPaymentMethodsComponent implements OnInit {
     let modalRef;
     switch (op) {
       case 'view':
-        modalRef = this._modalService.open(UpdatePaymentMethodComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.paymentMethod = paymentMethod;
+        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.paymentMethodId = paymentMethod._id;
         modalRef.componentInstance.readonly = true;
         break;
       case 'add':
-        modalRef = this._modalService.open(AddPaymentMethodComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
+        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' }).result.then((result) => {
+          modalRef.componentInstance.readonly = false;
+          modalRef.componentInstance.operation = "add";
+
           this.getPaymentMethods();
         }, (reason) => {
           this.getPaymentMethods();
         });
         break;
       case 'update':
-        modalRef = this._modalService.open(UpdatePaymentMethodComponent, { size: 'lg', backdrop: 'static' });
-        modalRef.componentInstance.paymentMethod = paymentMethod;
+        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.paymentMethodId = paymentMethod._id;
         modalRef.componentInstance.readonly = false;
+        modalRef.componentInstance.operation = "update"
         modalRef.result.then((result) => {
           this.getPaymentMethods();
         }, (reason) => {
@@ -114,8 +116,10 @@ export class ListPaymentMethodsComponent implements OnInit {
         });
         break;
       case 'delete':
-        modalRef = this._modalService.open(DeletePaymentMethodComponent, { size: 'lg', backdrop: 'static' })
-        modalRef.componentInstance.paymentMethod = paymentMethod;
+        modalRef = this._modalService.open(PaymentMethodComponent, { size: 'lg', backdrop: 'static' })
+        modalRef.componentInstance.paymentMethodId = paymentMethod._id;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "delete"
         modalRef.result.then((result) => {
           if (result === 'delete_close') {
             this.getPaymentMethods();

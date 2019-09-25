@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Método de Pago</h4>
+  <h4 class="modal-title">Método de Pago</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -15,14 +15,14 @@
       <div class="row">
         <div class="form-group col-md-3">
           <label for="code" class="control-label">Código:</label>
-          <input type="number" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent"/>
+          <input type="number" class="form-control" formControlName="code" name="code" id="code" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.code" class="alert alert-danger">
             {{ formErrors.code }}
           </div>
         </div>
         <div class="form-group col-md-9">
           <label for="name" class="control-label">Nombre:</label>
-          <input type="text" class="form-control" formControlName="name" name="name" id="name"/>
+          <input type="text" class="form-control" formControlName="name" name="name" id="name" [readonly]="readonly"/>
           <div *ngIf="formErrors.name" class="alert alert-danger">
             {{ formErrors.name }}
           </div>
@@ -33,14 +33,14 @@
           <label for="discount" class="control-label">Descuento:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" />
+            <input type="number" class="form-control" formControlName="discount" name="discount" id="discount" [readonly]="readonly" />
           </div>
         </div>
         <div class="form-group col-md-6">
           <label for="surcharge" class="control-label">Recargo:</label>
           <div class="input-group">
             <span class="input-group-addon">%</span>
-            <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge" />
+            <input type="number" class="form-control" formControlName="surcharge" name="surcharge" id="surcharge" [readonly]="readonly"/>
           </div>
         </div>
       </div>
@@ -48,8 +48,8 @@
         <div class="form-group col-md-12">
           <label for="isCurrentAccount" class="control-label">¿Es de tipo cuenta corriente?</label>
           <select class="form-control" formControlName="isCurrentAccount">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
@@ -57,8 +57,8 @@
         <div class="form-group col-md-12">
           <label for="acceptReturned" class="control-label">¿Acepta vuelto?</label>
           <select class="form-control" formControlName="acceptReturned">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
@@ -66,8 +66,8 @@
         <div class="form-group col-md-12">
           <label for="inputAndOuput" class="control-label">¿Es un método de entrada/salida?</label>
           <select class="form-control" formControlName="inputAndOuput">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
@@ -75,8 +75,8 @@
         <div class="form-group col-md-12">
           <label for="checkDetail" class="control-label">¿Pide detalle de cheque?</label>
           <select class="form-control" formControlName="checkDetail">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
@@ -84,26 +84,26 @@
         <div class="form-group col-md-12">
           <label for="cardDetail" class="control-label">¿Pide detalle de tarjeta?</label>
           <select class="form-control" formControlName="cardDetail">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="allowToFinance" class="control-label">¿Permite financiar?</label>
-          <select class="form-control" formControlName="allowToFinance">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+          <select class="form-control" formControlName="allowToFinance" >
+            <option  [disabled]="readonly" value="true">Si</option>
+            <option   [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-12">
           <label for="cashBoxImpact" class="control-label">¿Afecta la caja diaria?</label>
-          <select class="form-control" formControlName="cashBoxImpact">
-            <option value="true">Si</option>
-            <option value="false" selected>No</option>
+          <select class="form-control" formControlName="cashBoxImpact" >
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
           </select>
         </div>
       </div>
@@ -125,17 +125,34 @@
             <div class="form-group col-md-12">
               <label for="bankReconciliation" class="control-label">¿Tiene conciliación?</label>
               <select class="form-control" formControlName="bankReconciliation">
-                <option value="true">Si</option>
-                <option value="false" selected>No</option>
+                <option [disabled]="readonly" value="true">Si</option>
+                <option [disabled]="readonly" value="false" selected>No</option>
               </select>
           </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-12">
+          <label for="observation" class="control-label">Observación</label>
+          <div class="input-group">
+            <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="activeModal.close('cancel')">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="!paymentMethodForm.valid || loading">
+    <div class="modal-footer" *ngIf="operation !== 'view'">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!paymentMethodForm.valid || loading" *ngIf="operation !== 'delete'">
         <i class="fa" [ngClass]="{'fa-save':!loading, 'fa-spinner fa-spin':loading}"></i>
         <span *ngIf="!loading">Guardar</span>
+        <span *ngIf="loading">Espere por favor</span>
+      </button>
+      <button type="button" 
+              class="btn btn-danger" 
+              *ngIf="operation === 'delete'" 
+              [disabled]="!paymentMethodForm.valid || loading" 
+              (click)="deletePaymentMethod()">
+        <i class="fa" [ngClass]="{'fa-trash':!loading, 'fa-spinner fa-spin':loading}"></i>
+        <span *ngIf="!loading">Eliminar</span>
         <span *ngIf="loading">Espere por favor</span>
       </button>
     </div>
