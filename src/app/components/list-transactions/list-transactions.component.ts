@@ -26,6 +26,7 @@ import { AddTransactionComponent } from '../add-transaction/add-transaction.comp
 import { AuthService } from 'app/services/auth.service';
 import { SendEmailComponent } from '../send-email/send-email.component';
 import { ExportTransactionsComponent } from '../export/export-transactions/export-transactions.component';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 
 @Component({
   selector: 'app-list-transactions',
@@ -221,6 +222,7 @@ export class ListTransactionsComponent implements OnInit {
       'type.labelPrint': 1,
       'type.requestArticles': 1,
       'type.allowEdit': 1,
+      'type.readLayout' : 1,
       'type.allowDelete': 1,
       'type.electronics': 1,
       'type.defectPrinter': 1,
@@ -309,23 +311,27 @@ export class ListTransactionsComponent implements OnInit {
         });
         break;
       case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.company = transaction.company;
-        modalRef.componentInstance.transactionId = transaction._id;
-        modalRef.componentInstance.typePrint = 'invoice';
-        if (transaction.type.defectPrinter) {
-          modalRef.componentInstance.printer = transaction.type.defectPrinter;
+        if(transaction.type.readLayout){
+          modalRef = this._modalService.open(PrintTransactionTypeComponent)
+          modalRef.componentInstance.transactionId = transaction._id
         } else {
-          if (this.printers && this.printers.length > 0) {
-            for(let printer of this.printers) {
-              if (printer.printIn === PrinterPrintIn.Counter) {
-                modalRef.componentInstance.printer = printer;
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.company = transaction.company;
+          modalRef.componentInstance.transactionId = transaction._id;
+          modalRef.componentInstance.typePrint = 'invoice';
+          if (transaction.type.defectPrinter) {
+            modalRef.componentInstance.printer = transaction.type.defectPrinter;
+          } else {
+            if (this.printers && this.printers.length > 0) {
+              for(let printer of this.printers) {
+                if (printer.printIn === PrinterPrintIn.Counter) {
+                  modalRef.componentInstance.printer = printer;
+                }
               }
             }
           }
         }
-        /*modalRef = this._modalService.open(PrintTransactionTypeComponent)
-        modalRef.componentInstance.transactionId = transaction._id*/
+
         break;
       case 'delete':
         modalRef = this._modalService.open(DeleteTransactionComponent, { size: 'lg', backdrop: 'static' });
