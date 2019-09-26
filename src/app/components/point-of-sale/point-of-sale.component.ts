@@ -44,6 +44,7 @@ import { OriginService } from 'app/services/origin.service';
 import { SelectOriginComponent } from '../select-origin/select-origin.component';
 import { SelectDepositComponent } from '../select-deposit/select-deposit.component';
 import { ConfigService } from 'app/services/config.service';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 
 @Component({
   selector: 'app-point-of-sale',
@@ -925,24 +926,42 @@ export class PointOfSaleComponent implements OnInit {
         break;
       }
       case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.company = this.transaction.company;
-        modalRef.componentInstance.printer = this.printerSelected;
-        modalRef.componentInstance.typePrint = 'invoice';
-        modalRef.result.then((result) => {
-          if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-            this.transactionTypeId = this.transaction.type._id;
-            this.transaction = undefined;
-          }
-          this.refresh();
-        }, (reason) => {
-          if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
-            this.transactionTypeId = this.transaction.type._id;
-            this.transaction = undefined;
-          }
-          this.refresh();
-        });
+        if(this.transaction.type.readLayout){
+          modalRef = this._modalService.open(PrintTransactionTypeComponent)
+          modalRef.componentInstance.transactionId = this.transaction._id
+          modalRef.result.then((result) => {
+            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+              this.transactionTypeId = this.transaction.type._id;
+              this.transaction = undefined;
+            }
+            this.refresh();
+          }, (reason) => {
+            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+              this.transactionTypeId = this.transaction.type._id;
+              this.transaction = undefined;
+            }
+            this.refresh();
+          });
+        } else {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.company = this.transaction.company;
+          modalRef.componentInstance.printer = this.printerSelected;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.result.then((result) => {
+            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+              this.transactionTypeId = this.transaction.type._id;
+              this.transaction = undefined;
+            }
+            this.refresh();
+          }, (reason) => {
+            if(this.transaction.state === TransactionState.Closed && this.transaction.type.automaticCreation) {
+              this.transactionTypeId = this.transaction.type._id;
+              this.transaction = undefined;
+            }
+            this.refresh();
+          });
+        }
         break;
       case 'printers':
         if (this.countPrinters() > 1) {

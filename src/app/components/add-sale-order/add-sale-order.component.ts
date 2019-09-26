@@ -72,6 +72,7 @@ import { ConfigService } from 'app/services/config.service';
 import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos.component';
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
+import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -1603,15 +1604,24 @@ export class AddSaleOrderComponent {
         });
         break;
       case 'print':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.transactionId = this.transaction._id;
-        modalRef.componentInstance.company = this.transaction.company;
-        modalRef.componentInstance.printer = this.printerSelected;
-        modalRef.componentInstance.typePrint = 'invoice';
-        modalRef.result.then((result) => {
-        }, (reason) => {
-          this.backFinal();
-        });
+        if(this.transaction.type.readLayout){
+          modalRef = this._modalService.open(PrintTransactionTypeComponent)
+          modalRef.componentInstance.transactionId = this.transaction._id
+          modalRef.result.then((result) => {
+          }, (reason) => {
+            this.backFinal();
+          });
+        } else {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.transactionId = this.transaction._id;
+          modalRef.componentInstance.company = this.transaction.company;
+          modalRef.componentInstance.printer = this.printerSelected;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.result.then((result) => {
+          }, (reason) => {
+            this.backFinal();
+          });
+        }
         break;
       case 'printKitchen':
         modalRef = this._modalService.open(PrintComponent);
