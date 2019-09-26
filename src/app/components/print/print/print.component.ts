@@ -1855,9 +1855,13 @@ export class PrintComponent implements OnInit {
       if(this.transaction.type.requestTaxes && 
         this.transaction.company &&
         this.transaction.company.vatCondition.discriminate) {
-        this.doc.text("IVA.", 165, 77);
+          let col = 165
+          this.transaction.taxes.forEach(element => {
+            this.doc.text(element.tax.name, col, 77);
+            col = col + 10;
+          });
       }
-      this.doc.text("Total", 185, 77);
+      this.doc.text("Total", 192, 77);
     }
     this.doc.setFontType('normal');
 
@@ -1946,14 +1950,22 @@ export class PrintComponent implements OnInit {
           if(this.transaction.type.requestTaxes  && 
             this.transaction.company &&
             this.transaction.company.vatCondition.discriminate) {
+              let prUnit = 0;
+              let colum = 165;
             for(let tax of this.movementsOfArticles[i].taxes){
-              this.doc.text("$ " + this.roundNumber.transform(tax.taxBase/this.movementsOfArticles[i].amount,2), 145, row);
-              this.doc.text("% " + this.roundNumber.transform(tax.percentage,2), 165, row);
+                prUnit = prUnit + (tax.taxBase/this.movementsOfArticles[i].amount)
+                if(tax.percentage != 0){
+                  this.doc.text("%" + this.roundNumber.transform(tax.percentage,2), colum, row);
+                } else {
+                  this.doc.text("$" + this.roundNumber.transform(tax.taxAmount,2), colum, row);
+                }
+                colum = colum + 13;
             }
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 185, row);
+            this.doc.text("$ " + this.roundNumber.transform(prUnit,2), 145, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice, 2), 192, row);
           } else {
             this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice/this.movementsOfArticles[i].amount,2), 145, row);
-            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 185, row);
+            this.doc.text("$ " + this.roundNumber.transform(this.movementsOfArticles[i].salePrice,2), 192, row);
           }
           
         }
