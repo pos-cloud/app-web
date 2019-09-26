@@ -354,17 +354,8 @@ export class ListArticlesPosComponent implements OnInit {
                       this.showMessage("Error interno de la aplicación, comunicarse con Soporte.", "danger", false);
                     }
                     tax.percentage = this.roundNumber.transform(taxAux.percentage);
-                    if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
-                        tax.taxAmount = taxAux.taxAmount;
-                    } else {
-                      tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-                      if(tax.taxBase === 0) {
-                        tax.taxBase = movementOfArticle.salePrice;
-                      }
-                      tax.taxAmount = (tax.taxBase * tax.percentage / 100);
-                    }
-                    tax.taxBase = this.roundNumber.transform(tax.taxBase);
-                    tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
+                    tax.taxAmount = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+                    tax.taxBase = this.roundNumber.transform(taxAux.taxBase * movementOfArticle.amount);
                     taxes.push(tax);
                   }
                 }

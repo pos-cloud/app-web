@@ -356,7 +356,7 @@ export class AddSaleOrderComponent {
   }
 
   async changeTransport(transport) {
-    if(transport){
+    if(transport) {
       this.transaction.transport = transport;
     } else {
       this.transaction.transport = null;
@@ -838,8 +838,6 @@ export class AddSaleOrderComponent {
           this.config['currency']._id !== movementOfArticle.article.currency._id) {
             movementOfArticle.basePrice = this.roundNumber.transform(movementOfArticle.basePrice * quotation);
         }
-
-
       }
   
       let fields: ArticleFields[] = new Array();
@@ -874,23 +872,22 @@ export class AddSaleOrderComponent {
           movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice / this.lastQuotation) * quotation);
       }
 
-
-      if(movementOfArticle.article && this.priceList){
+      if(movementOfArticle.article && this.priceList) {
 
         let increasePrice = 0;
-        if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0){
+        if(this.priceList.allowSpecialRules && this.priceList.rules && this.priceList.rules.length > 0) {
           this.priceList.rules.forEach(rule => {
-            if(rule){
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+            if(rule) {
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id){
+              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = rule.percentage + this.priceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
                 increasePrice = this.priceList.percentage
               }
             }
@@ -899,37 +896,36 @@ export class AddSaleOrderComponent {
           increasePrice = this.priceList.percentage
         }
 
-        if(this.priceList.exceptions && this.priceList.exceptions.length > 0){
+        if(this.priceList.exceptions && this.priceList.exceptions.length > 0) {
           this.priceList.exceptions.forEach(exception =>{
-            if(exception){
-              if(exception.article._id === movementOfArticle.article._id){
+            if(exception) {
+              if(exception.article._id === movementOfArticle.article._id) {
                 increasePrice = exception.percentage
               }
             }
           })
         }
 
-        if(increasePrice != 0){
-          movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100+increasePrice) );
+        if(increasePrice != 0) {
+          movementOfArticle.unitPrice = this.roundNumber.transform((movementOfArticle.unitPrice * 100 ) / (100 + increasePrice) );
         }
-
       }
 
-      if(movementOfArticle.article && this.newPriceList){
+      if(movementOfArticle.article && this.newPriceList) {
         let increasePrice = 0;
-        if(this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0){
+        if(this.newPriceList.allowSpecialRules && this.newPriceList.rules && this.newPriceList.rules.length > 0) {
           this.newPriceList.rules.forEach(rule => {
-            if(rule){
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id){
+            if(rule) {
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.category._id === movementOfArticle.category._id && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id){
+              if(rule.make && movementOfArticle.make && rule.category == null && rule.make._id === movementOfArticle.make._id) {
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make == null && rule.category._id === movementOfArticle.category._id) {
                 increasePrice = rule.percentage + this.newPriceList.percentage
               }
-              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id){
+              if(rule.category && movementOfArticle.category && rule.make && movementOfArticle.make && rule.make._id !== movementOfArticle.make._id && rule.category._id !== movementOfArticle.category._id) {
                 increasePrice = this.newPriceList.percentage
               }
             }
@@ -938,21 +934,19 @@ export class AddSaleOrderComponent {
           increasePrice = this.newPriceList.percentage
         }
 
-        if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0){
+        if(this.newPriceList.exceptions && this.newPriceList.exceptions.length > 0) {
           this.newPriceList.exceptions.forEach(exception =>{
-            if(exception){
-              if(exception.article._id === movementOfArticle.article._id){
+            if(exception) {
+              if(exception.article._id === movementOfArticle.article._id) {
                 increasePrice = exception.percentage
               }
             }
           })
         }
 
-        if(increasePrice != 0){
+        if(increasePrice != 0) {
           movementOfArticle.unitPrice = this.roundNumber.transform(movementOfArticle.unitPrice + (movementOfArticle.unitPrice * increasePrice / 100));
         }
-
-
       }
 
       movementOfArticle.transactionDiscountAmount = this.roundNumber.transform((movementOfArticle.unitPrice * movementOfArticle.transaction.discountPercent / 100), 3);
@@ -961,33 +955,35 @@ export class AddSaleOrderComponent {
       movementOfArticle.markupPrice = this.roundNumber.transform(movementOfArticle.salePrice - movementOfArticle.costPrice);
       movementOfArticle.markupPercentage = this.roundNumber.transform((movementOfArticle.markupPrice / movementOfArticle.costPrice * 100), 3);
       
-      
       if (movementOfArticle.transaction.type.requestTaxes) {
         let taxes: Taxes[] = new Array();
         if (movementOfArticle.taxes) {
+          let impInt: number = movementOfArticle.salePrice;
+          for (let taxAux of movementOfArticle.article.taxes) {
+            if(taxAux.percentage === 0) {
+              impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+            }
+          }
           for (let taxAux of movementOfArticle.taxes) {
             let tax: Taxes = new Taxes();
             tax.tax = taxAux.tax;
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
-            if(taxAux.percentage === 0 && taxAux.taxAmount !== 0) {
-              tax.taxAmount = taxAux.taxAmount * movementOfArticle.amount;
+            if(taxAux.percentage === 0) {
+              tax.taxAmount = impInt;
             } else {
-              tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
-              tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+              tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
+              if(tax.taxBase === 0) {
+                tax.taxBase = movementOfArticle.salePrice;
+              }
+              tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
             }
-            tax.taxBase = this.roundNumber.transform(tax.taxBase);
-            tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
             taxes.push(tax);
           }
         }
         movementOfArticle.taxes = taxes;
       }
-
       resolve(movementOfArticle);
-      
     });
-
-    
   }
 
   public getMovementOfArticleByArticle(articleId: string): MovementOfArticle {
@@ -1375,29 +1371,29 @@ export class AddSaleOrderComponent {
           if (result.company) {
 
 
-            if(!this.transaction.company && result.company.priceList){
+            if(!this.transaction.company && result.company.priceList) {
               this.priceList = undefined
               this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if(this.transaction.company && this.transaction.company.priceList && result.company.priceList){
+            if(this.transaction.company && this.transaction.company.priceList && result.company.priceList) {
               this.priceList = await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = await this.getPriceList(result.company.priceList._id)
             }
 
-            if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList){
+            if(this.transaction.company && !this.transaction.company.priceList && result.company.priceList) {
               this.priceList = undefined;
               this.newPriceList = await this.getPriceList(result.company.priceList._id);
             }
 
-            if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList){ 
+            if(result.company.priceList == null && this.transaction.company && this.transaction.company.priceList) { 
               this.priceList =  await this.getPriceList(this.transaction.company.priceList._id);
               this.newPriceList = undefined;
             }
 
             this.transaction.company = result.company;
 
-            if(this.transaction.company.transport){
+            if(this.transaction.company.transport) {
               this.transaction.transport = this.transaction.company.transport;
             } else {
               this.transaction.transport = null;
@@ -1643,7 +1639,7 @@ export class AddSaleOrderComponent {
       case 'change-transport':
         modalRef = this._modalService.open(SelectTransportComponent);
         modalRef.result.then((result) => {
-          if(result && result.transport){
+          if(result && result.transport) {
             this.transaction.transport = result.transport
             this.updateTransaction();
           }
@@ -1671,7 +1667,7 @@ export class AddSaleOrderComponent {
     if(this.transaction.type.requestPaymentMethods && 
       this.fastPayment &&
       this.fastPayment.isCurrentAccount && 
-      !this.transaction.company){
+      !this.transaction.company) {
       isValid = false;
       this.showMessage("Debe seleccionar una empresa para poder efectuarse un pago con el método " + this.fastPayment.name + ".", "info", true);
     }
@@ -1680,7 +1676,7 @@ export class AddSaleOrderComponent {
         this.fastPayment &&
         this.fastPayment.isCurrentAccount && 
         this.transaction.company && 
-        !this.transaction.company.allowCurrentAccount){
+        !this.transaction.company.allowCurrentAccount) {
       isValid = false;
       this.showMessage("La empresa seleccionada no esta habilitada para cobrar con el método " + this.fastPayment.name + ".", "info", true);
     }

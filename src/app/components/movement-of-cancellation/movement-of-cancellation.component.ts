@@ -749,21 +749,25 @@ export class MovementOfCancellationComponent implements OnInit {
     if (this.transactionDestination.type.requestTaxes) {
       let taxes: Taxes[] = new Array();
       if (movementOfArticle.article && movementOfArticle.article.taxes && movementOfArticle.article.taxes.length > 0) {
+        let impInt: number = movementOfArticle.salePrice;
+        for (let taxAux of movementOfArticle.article.taxes) {
+          if(taxAux.percentage === 0) {
+            impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
+          }
+        }
         for (let taxAux of movementOfArticle.article.taxes) {
           let tax: Taxes = new Taxes();
           tax.percentage = this.roundNumber.transform(taxAux.percentage);
           tax.tax = taxAux.tax;
-          if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
-            tax.taxAmount = tax.taxAmount * movementOfArticle.amount;
+          if(tax.percentage === 0) {
+            tax.taxAmount = impInt;
           } else {
-            tax.taxBase = (movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
+            tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
             if(tax.taxBase === 0) {
               tax.taxBase = movementOfArticle.salePrice;
             }
-            tax.taxAmount = (tax.taxBase * tax.percentage / 100);
+            tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
           }
-          tax.taxBase = this.roundNumber.transform(tax.taxBase);
-          tax.taxAmount = this.roundNumber.transform(tax.taxAmount);
           taxes.push(tax);
         }
       }
