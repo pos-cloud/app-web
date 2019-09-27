@@ -159,7 +159,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           let impInt: number = 0;
           for (let taxAux of this.movementOfArticle.article.taxes) {
             if(taxAux.percentage === 0) {
-              impInt = this.roundNumber.transform(taxAux.taxAmount * this.movementOfArticle.amount);
+              impInt = this.roundNumber.transform(taxAux.taxAmount);
             }
           }
           for (const articleTax of this.movementOfArticle.taxes) {
