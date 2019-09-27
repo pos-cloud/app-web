@@ -717,7 +717,7 @@ export class AddMovementOfArticleComponent implements OnInit {
               taxAmount += tax.taxAmount;
           }
         }
-        if(taxAmount > this.movementOfArticle.unitPrice) {
+        if(taxAmount > this.movementOfArticleForm.value.unitPrice) {
           isValid = false;
           this.showMessage("El precio unitario del producto no puede ser menor a la suma de impuestos con monto fijo.", 'info', true);
         }
