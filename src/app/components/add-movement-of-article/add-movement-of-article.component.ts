@@ -144,6 +144,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           for (const articleTax of this.movementOfArticle.taxes) {
             if(articleTax.percentage === 0) {
               articleTax.taxAmount = impInt;
+              articleTax.taxBase = 0;
             } else {
               articleTax.taxBase = this.roundNumber.transform((unitPrice / ((articleTax.percentage / 100) + 1)));
               articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
@@ -163,10 +164,11 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
           }
           for (const articleTax of this.movementOfArticle.taxes) {
-            articleTax.taxBase = unitPrice;
             if(articleTax.percentage === 0) {
               articleTax.taxAmount = impInt;
+              articleTax.taxBase = 0;
             } else {
+              articleTax.taxBase = unitPrice;
               articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
             }
             this.movementOfArticle.unitPrice += (articleTax.taxAmount);
@@ -523,6 +525,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             for (const articleTax of this.movementOfArticle.taxes) {
               if(articleTax.percentage === 0) {
                 articleTax.taxAmount = impInt;
+                articleTax.taxBase = 0;
               } else {
                 articleTax.taxBase = this.roundNumber.transform(((unitPrice - impInt) / ((articleTax.percentage / 100) + 1)));
                 articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
@@ -617,6 +620,7 @@ export class AddMovementOfArticleComponent implements OnInit {
               tax.tax = taxAux.tax;
               if(tax.percentage === 0 && tax.taxAmount && tax.taxAmount !== 0) {
                 tax.taxAmount = taxAux.taxAmount * this.movementOfArticle.amount;
+                tax.taxBase = 0;
               } else {
                 tax.taxBase = (this.movementOfArticle.salePrice / ((tax.percentage / 100) + 1));
                 tax.taxAmount = (tax.taxBase * tax.percentage / 100); 
@@ -658,10 +662,11 @@ export class AddMovementOfArticleComponent implements OnInit {
         let taxes: Taxes[] = new Array();
         if (articleSelected.taxes) {
           for (let taxAux of articleSelected.taxes) {
-            taxAux.taxBase = this.roundNumber.transform(taxedAmount);
             if(taxAux.percentage === 0 && taxAux.taxAmount !== 0) {
               taxAux.taxAmount = taxAux.tax.amount * this.movementOfArticle.amount;
+              taxAux.taxBase = 0;
             } else {
+              taxAux.taxBase = this.roundNumber.transform(taxedAmount);
               taxAux.taxAmount = this.roundNumber.transform((taxAux.taxBase * taxAux.percentage / 100));
             }
             taxes.push(taxAux);
@@ -934,10 +939,11 @@ export class AddMovementOfArticleComponent implements OnInit {
               impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
             }
           }
-          articleTax.taxBase = taxedAmount;
           if(articleTax.percentage === 0) {
             articleTax.taxAmount = impInt;
+            articleTax.taxBase = 0;
           } else {
+            articleTax.taxBase = taxedAmount;
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
@@ -1016,6 +1022,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
             if(tax.percentage === 0) {
               tax.taxAmount = impInt;
+              tax.taxBase = 0;
             } else {
               tax.taxBase = this.roundNumber.transform(((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1)));
               tax.taxAmount = this.roundNumber.transform((tax.taxBase * tax.percentage / 100));

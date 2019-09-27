@@ -806,10 +806,11 @@ export class AddSaleOrderComponent {
               impInt = this.roundNumber.transform(((taxAux.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount);
             }
           }
-          articleTax.taxBase = taxedAmount;
           if(articleTax.percentage === 0) {
             articleTax.taxAmount = impInt;
+            articleTax.taxBase = 0;
           } else {
+            articleTax.taxBase = taxedAmount;
             articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
@@ -975,6 +976,7 @@ export class AddSaleOrderComponent {
             tax.percentage = this.roundNumber.transform(taxAux.percentage);
             if(taxAux.percentage === 0) {
               tax.taxAmount = impInt;
+              tax.taxBase = 0;
             } else {
               tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
               tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
