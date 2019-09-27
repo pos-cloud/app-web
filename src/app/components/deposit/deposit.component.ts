@@ -79,7 +79,6 @@ export class DepositComponent implements OnInit {
   public getDeposit() : void {
     this._depositService.getDeposit(this.depositId).subscribe(
       result => {
-        console.log(result)
         if(result && result.deposit){
           this.deposit = result.deposit;
           this.setValuesForm();
@@ -104,9 +103,8 @@ export class DepositComponent implements OnInit {
         Validators.required
         ]
       ],
-      'capacity' : [this.deposit.capacity, [
-      ]
-    ]
+      'capacity' : [this.deposit.capacity, []],
+      'default' : [this.deposit.default, []]
     });
 
     this.depositForm.valueChanges
@@ -195,7 +193,9 @@ export class DepositComponent implements OnInit {
     if(!this.deposit._id) this.deposit._id = '';
     if(!this.deposit.name) this.deposit.name = '';
     if(!this.deposit.capacity) this.deposit.capacity = 0;
-    
+    if(!this.deposit.default) this.deposit.default = false;
+
+
     let branch;
     if (!this.deposit.branch) {
       branch = null;
@@ -211,7 +211,8 @@ export class DepositComponent implements OnInit {
       '_id': this.deposit._id,
       'name': this.deposit.name,
       'branch': branch,
-      'capacity' : this.deposit.capacity
+      'capacity' : this.deposit.capacity,
+      'default' : this.deposit.default
     });
   }
 

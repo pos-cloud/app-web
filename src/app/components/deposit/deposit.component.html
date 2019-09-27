@@ -40,6 +40,15 @@
           <input type="number" class="form-control" formControlName="capacity" capacity="capacity" id="capacity" [readonly]="readonly"/>
         </div>
       </div>
+      <div class="row">
+        <div class="form-group col-md-4">
+          <label for="default" class="control-label">¿Es deposito primario?</label>
+          <select class="form-control" formControlName="default">
+            <option [disabled]="readonly" value="true">Si</option>
+            <option [disabled]="readonly" value="false" selected>No</option>
+            </select>
+        </div>
+    </div>
     </div>
     <div class="modal-footer" *ngIf="operation !== 'view'">
       <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss('cancel')">Cancelar</button>
