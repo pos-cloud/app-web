@@ -795,17 +795,22 @@ export class AddSaleOrderComponent {
         fields.push(field);
       }
     }
-    
     movementOfArticle.otherFields = fields;
     if (movementOfArticle.transaction.type.requestTaxes) {
       if (movementOfArticle.taxes && movementOfArticle.taxes.length > 0) {
         let taxes: Taxes[] = new Array();
         for (let articleTax of movementOfArticle.taxes) {
+          let impInt: number = 0;
+          for (let taxAux of movementOfArticle.article.taxes) {
+            if(taxAux.percentage === 0) {
+              impInt = this.roundNumber.transform(((taxAux.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount);
+            }
+          }
           articleTax.taxBase = taxedAmount;
-          if(articleTax.percentage && articleTax.percentage !== 0) {
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
+          if(articleTax.percentage === 0) {
+            articleTax.taxAmount = impInt;
           } else {
-            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxAmount / this.lastQuotation) * quotation) * movementOfArticle.amount;
+            articleTax.taxAmount = this.roundNumber.transform((articleTax.taxBase * articleTax.percentage / 100));
           }
           taxes.push(articleTax);
           movementOfArticle.costPrice += articleTax.taxAmount;
@@ -958,7 +963,7 @@ export class AddSaleOrderComponent {
       if (movementOfArticle.transaction.type.requestTaxes) {
         let taxes: Taxes[] = new Array();
         if (movementOfArticle.taxes) {
-          let impInt: number = movementOfArticle.salePrice;
+          let impInt: number = 0;
           for (let taxAux of movementOfArticle.article.taxes) {
             if(taxAux.percentage === 0) {
               impInt = this.roundNumber.transform(taxAux.taxAmount * movementOfArticle.amount);
@@ -972,9 +977,6 @@ export class AddSaleOrderComponent {
               tax.taxAmount = impInt;
             } else {
               tax.taxBase = this.roundNumber.transform((movementOfArticle.salePrice - impInt) / ((tax.percentage / 100) + 1));
-              if(tax.taxBase === 0) {
-                tax.taxBase = movementOfArticle.salePrice;
-              }
               tax.taxAmount = this.roundNumber.transform(tax.taxBase * tax.percentage / 100);
             }
             taxes.push(tax);
