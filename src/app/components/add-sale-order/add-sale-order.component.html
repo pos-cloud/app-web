@@ -162,19 +162,19 @@
               <td *ngIf="transaction.type.showDescriptionType === 'Descripción'">{{movementOfArticle.description}}
                 <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
                 <strong *ngIf="movementOfArticle.notes">
-                  {{movementOfArticle.notes}}
+                  <br>{{movementOfArticle.notes}}
                 </strong>
               </td>
               <td *ngIf="transaction.type.showDescriptionType === 'Descripción Corta'">{{movementOfArticle.article.posDescription}}
                 <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
                 <strong *ngIf="movementOfArticle.notes">
-                  {{movementOfArticle.notes}}
+                  <br>{{movementOfArticle.notes}}
                 </strong>
               </td>
               <td *ngIf="transaction.type.showDescriptionType === 'Código'">{{movementOfArticle.code}}
                 <div *ngIf="movementOfArticle.make && movementOfArticle.make.visibleSale" style="font-size: 13px">{{movementOfArticle.make.description}}</div>
                 <strong *ngIf="movementOfArticle.notes">
-                  {{movementOfArticle.notes}}
+                  <br>{{movementOfArticle.notes}}
                 </strong>
               </td>
               <td *ngIf="transaction.type && transaction.type.showPrices && transaction.type.showPriceType==='Precio Final'">{{movementOfArticle.salePrice | currency:'USD':'symbol-narrow':'1.2-2'}}</td>

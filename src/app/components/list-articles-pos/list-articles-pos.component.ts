@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -495,6 +495,7 @@ export class ListArticlesPosComponent implements OnInit {
           isCodePrefix = true;
         }
     }
+    
     // FILTRA DENTRO DE LA CATEGORIA SI EXISTE
     if(category) {
       this.filteredArticles = this.filterPipe.transform(this.articles, category._id, 'category');
