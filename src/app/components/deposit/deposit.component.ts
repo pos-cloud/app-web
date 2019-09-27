@@ -35,7 +35,8 @@ export class DepositComponent implements OnInit {
   public formErrors = {
     'name': '',
     'capacity': '',
-    'branch': ''
+    'branch': '',
+    'default': ''
   };
 
   public validationMessages = {
