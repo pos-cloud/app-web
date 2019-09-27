@@ -152,10 +152,8 @@ import { RoundNumberPipe } from './pipes/round-number.pipe';
 import { FocusDirective } from './directives/focus.directive';
 import { DeleteMovementOfCashComponent } from './components/delete-movement-of-cash/delete-movement-of-cash.component';
 import { StatisticsComponent } from './components/statistics/statistics.component';
-import { AddDepositComponent } from './components/add-deposit/add-deposit.component';
+import { DepositComponent } from './components/deposit/deposit.component';
 import { ListDepositsComponent } from './components/list-deposits/list-deposits.component';
-import { UpdateDepositComponent } from './components/update-deposit/update-deposit.component';
-import { DeleteDepositComponent } from './components/delete-deposit/delete-deposit.component';
 import { ReportBestSellingArticleComponent } from './components/report-best-selling-article/report-best-selling-article.component';
 import { ReportSalesByPaymentMethodComponent } from './components/report-sales-by-payment-method/report-sales-by-payment-method.component';
 import { ReportSalesByClientComponent } from './components/report-sales-by-client/report-sales-by-client.component';
@@ -355,10 +353,8 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
-    AddDepositComponent,
+    DepositComponent,
     ListDepositsComponent,
-    UpdateDepositComponent,
-    DeleteDepositComponent,
     ReportBestSellingArticleComponent,
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
@@ -530,10 +526,8 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ListPaymentMethodsComponent,
     DeleteMovementOfCashComponent,
     StatisticsComponent,
-    AddDepositComponent,
+    DepositComponent,
     ListDepositsComponent,
-    UpdateDepositComponent,
-    DeleteDepositComponent,
     ReportBestSellingArticleComponent,
     ReportSalesByPaymentMethodComponent,
     ReportSalesByClientComponent,
