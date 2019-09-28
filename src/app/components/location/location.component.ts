@@ -7,6 +7,8 @@ import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from '../../models/location';
 
 import { LocationService } from '../../services/location.service';
+import { Deposit } from 'app/models/deposit';
+import { DepositService } from 'app/services/deposit.service';
 
 @Component({
   selector: 'app-location',
@@ -22,6 +24,7 @@ export class LocationComponent implements OnInit {
   @Input() readonly: boolean;
 
   public location: Location;
+  public deposits : Deposit [];
   public locationForm: FormGroup;
   public alertMessage: string = '';
   public userType: string;
@@ -30,30 +33,28 @@ export class LocationComponent implements OnInit {
 
   public formErrors = {
     'description': '',
-    'positionX' : '',
-    'positionY' : '',
-    'positionZ' : ''
+    'deposit' : '',
   };
 
   public validationMessages = {
     'description': {
       'required': 'Este campo es requerido.'
     },
-    'positionX': { 
+    'deposit': { 
       'required': 'Este campo es requerido.'
-     },
-    'positionY': {  'required': 'Este campo es requerido.'
-      },
-    'positionZ': { 'required': 'Este campo es requerido.'  }
+     }
   };
 
   constructor(
     public _locationService: LocationService,
+    public _depositService : DepositService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    this.getDeposits();
+   }
 
   ngOnInit(): void {
 
@@ -66,6 +67,23 @@ export class LocationComponent implements OnInit {
     if(this.locationId){
       this.getLocation()
     }
+  }
+
+  public getDeposits() : void {
+    this._depositService.getDeposits().subscribe(
+      result =>{
+        if(result && result.deposits){
+          this.deposits = result.deposits;
+        } else {
+          this.showMessage("No se encontraron depositos cargados", 'danger', false);
+          this.loading = false;
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   public getLocation() : void {
@@ -94,7 +112,17 @@ export class LocationComponent implements OnInit {
     if (!this.location.positionX) this.location.positionX = '';
     if (!this.location.positionY) this.location.positionY = '';
     if (!this.location.positionZ) this.location.positionZ = '';
-
+    
+    let deposit;
+    if (!this.location.deposit) {
+      deposit = null;
+    } else {
+      if (this.location.deposit._id) {
+        deposit = this.location.deposit._id;
+      } else {
+        deposit = this.location.deposit;
+      }
+    }
     
     this.locationForm.setValue({
       '_id':this.location._id,
@@ -102,6 +130,7 @@ export class LocationComponent implements OnInit {
       'positionX' : this.location.positionX,
       'positionY' : this.location.positionY,
       'positionZ' : this.location.positionZ,
+      'deposit' : deposit
     });
 
   }
@@ -128,16 +157,11 @@ export class LocationComponent implements OnInit {
 
     this.locationForm = this._fb.group({
       '_id' : [this.location._id,[]],
-      'description': [this.location.description, [
-        Validators.required
-        ]
-      ],
-      'positionX' : [this.location.positionX,[
-      ]],
-      'positionY' : [this.location.positionY,[
-      ]],
-      'positionZ' : [this.location.positionZ,[
-      ]]
+      'description': [this.location.description, [Validators.required]],
+      'positionX' : [this.location.positionX,[]],
+      'positionY' : [this.location.positionY,[]],
+      'positionZ' : [this.location.positionZ,[]],
+      'deposit' : [this.location.deposit,[Validators.required]]
     });
 
     this.locationForm.valueChanges
