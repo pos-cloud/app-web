@@ -1,0 +1,9 @@
+{
+    "article": {
+        "type": "Tipo",
+        "code": "Código",
+        "barcode": "Código de Barras",
+        "description": "Descripción",
+        "posDescription": "Descripción Corta"
+    }
+}

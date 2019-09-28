@@ -2,13 +2,16 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // paquetes de terceros
 import { NgbModule, NgbActiveModal, NgbAlertConfig } from '@ng-bootstrap/ng-bootstrap'; // https://ng-bootstrap.github.io/
 import { NgxPaginationModule } from 'ngx-pagination'; // https://www.npmjs.com/package/ngx-pagination
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // rutas
 import { _routes } from './app.routes';
@@ -254,6 +257,10 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
 
 @NgModule({
   declarations: [
@@ -607,6 +614,14 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     NgbModule.forRoot(),
     NgxPaginationModule,
     HttpClientModule,
+    DragDropModule,
+    TranslateModule.forRoot({
+      loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+      }
+    })
     // SocketIoModule.forRoot(config),
   ],
   providers: [
