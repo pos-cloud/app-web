@@ -160,9 +160,7 @@ import { ReportSalesByClientComponent } from './components/report-sales-by-clien
 import { ReportSalesByMakeComponent } from './components/report-sales-by-make/report-sales-by-make.component';
 import { ReportSalesByCategoryComponent } from './components/report-sales-by-category/report-sales-by-category.component';
 import { CashBoxComponent } from './components/cash-box/cash-box.component';
-import { AddLocationComponent } from './components/add-location/add-location.component';
-import { UpdateLocationComponent } from './components/update-location/update-location.component';
-import { DeleteLocationComponent } from './components/delete-location/delete-location.component';
+import { LocationComponent } from './components/location/location.component';
 import { ListLocationsComponent } from './components/list-locations/list-locations.component';
 import { CompanyNewsComponent } from './components/company-news/company-news.component';
 import { ListMovementOfCashesComponent } from './components/list-movements-of-cashes/list-movements-of-cashes.component';
@@ -363,9 +361,7 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    AddLocationComponent,
-    UpdateLocationComponent,
-    DeleteLocationComponent,
+    LocationComponent,
     ListLocationsComponent,
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
@@ -536,9 +532,7 @@ import { ProgressbarComponent } from './components/progressbar/progressbar.compo
     ReportBirthdayComponent,
     ReportSalesByEmployeeComponent,
     CashBoxComponent,
-    AddLocationComponent,
-    UpdateLocationComponent,
-    DeleteLocationComponent,
+    LocationComponent,
     ListLocationsComponent,
     CompanyNewsComponent,
     ListMovementOfCashesComponent,
