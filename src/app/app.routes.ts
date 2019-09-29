@@ -66,6 +66,7 @@ import { PrintComponent } from './components/print/print/print.component';
 import { ListCashBoxComponent } from './components/list-cash-box/list-cash-box.component';
 import { ListPriceListsComponent } from './components/list-price-lists/list-price-lists.component';
 import { ListArticlesPosComponent } from './components/list-articles-pos/list-articles-pos.component';
+import { ReportsList } from './components/reports-list/reports-list.component';
 
 export const _routes: Routes = [
   { 
@@ -166,6 +167,11 @@ export const _routes: Routes = [
   {
     path: 'admin/productos',
     component: ListArticlesComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin/report-list',
+    component: ReportsList,
     canActivate: [AuthGuard]
   },
   {

@@ -255,6 +255,7 @@ import { PrintVatBookComponent } from './components/print/print-vat-book/print-v
 import { PrintLabelComponent } from './components/print/print-label/print-label.component';
 import { PrintTransactionTypeComponent } from './components/print/print-transaction-type/print-transaction-type.component';
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
+import { ReportsList } from './components/reports-list/reports-list.component';
 
 // const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
 
@@ -439,7 +440,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintVatBookComponent,
     PrintLabelComponent,
     PrintTransactionTypeComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
+    ReportsList
   ],
   entryComponents: [
     HomeComponent,
@@ -603,7 +605,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     PrintVatBookComponent,
     PrintLabelComponent,
     PrintTransactionTypeComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
+    ReportsList
   ],
   imports: [
     BrowserModule,
