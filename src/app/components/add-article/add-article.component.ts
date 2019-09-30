@@ -1158,17 +1158,6 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
-    /*let location;
-    if (!this.article.location) {
-      location = null;
-    } else {
-      if (this.article.location._id) {
-        location = this.article.location._id;
-      } else {
-        location = this.article.location;
-      }
-    }*/
-
     if (!this.article.description) { this.article.description = ''; }
     if (!this.article.posDescription) { this.article.posDescription = ''; }
     if (!this.article.basePrice) { this.article.basePrice = 0.00; }

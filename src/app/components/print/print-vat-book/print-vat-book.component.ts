@@ -13,6 +13,7 @@ import { RoundNumberPipe } from '../../../pipes/round-number.pipe';
 //model
 import { Make } from "../../../models/make";
 import { Category } from "../../../models/category";
+import { IdentificationType } from "../../../models/identification-type"
 
 //service
 import { ArticleService } from "../../../services/article.service";
@@ -29,6 +30,9 @@ import { Transaction } from 'app/models/transaction';
 import { Taxes } from 'app/models/taxes';
 import { TransactionMovement, Movements } from 'app/models/transaction-type';
 import { TaxClassification } from 'app/models/tax';
+import { IdentificationTypeService } from 'app/services/identification-type.service';
+import { VATConditionService } from 'app/services/vat-condition.service';
+import { VATCondition } from 'app/models/vat-condition';
 
 
 @Component({
@@ -40,10 +44,11 @@ export class PrintVatBookComponent implements OnInit {
 
   @Input() params;
 
+  public dataIVA: any = [];
   public transactions: Transaction[];
-
   public printPriceListForm: FormGroup;
   public alertMessage: string = '';
+  public vatConditions : VATCondition[];
   public userType: string;
   public loading: boolean = false;
   public focusEvent = new EventEmitter<boolean>();
@@ -66,6 +71,7 @@ export class PrintVatBookComponent implements OnInit {
 
   constructor(
     public _transactionService : TransactionService,
+    public _vatConditionService : VATConditionService,
     public _fb: FormBuilder,
     public _router: Router,
     public activeModal: NgbActiveModal,
@@ -75,6 +81,7 @@ export class PrintVatBookComponent implements OnInit {
   ) {
     this.pageWidth = 210 * 100 / 35.27751646284102;
     this.pageHigh = 297 * 100 / 35.27751646284102;
+    this.getVATConditions();
    }
 
   async ngOnInit() {
@@ -87,6 +94,32 @@ export class PrintVatBookComponent implements OnInit {
 
     this.doc = new jsPDF('l', 'mm', [this.pageWidth, this.pageHigh]);
     this.getVATBook();
+  }
+
+  public getVATConditions(): void {
+
+    this.loading = true;
+
+    this._vatConditionService.getVATConditions().subscribe(
+      result => {
+        if (!result.vatConditions) {
+        } else {
+          this.vatConditions = result.vatConditions;
+          for (let index = 0; index < this.vatConditions.length; index++) {
+            this.dataIVA[index] = {};
+            this.dataIVA[index]['_id'] = this.vatConditions[index]._id 
+            this.dataIVA[index]['description'] = this.vatConditions[index].description 
+            this.dataIVA[index]['total'] = 0;
+          }
+          
+        }
+        this.loading = false;
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    );
   }
 
   public getVATBook() {
@@ -198,6 +231,16 @@ export class PrintVatBookComponent implements OnInit {
       totalExempt += transaction.exempt;
       totalAmount += transaction.totalPrice;
 
+      
+
+      for (let index = 0; index < this.dataIVA.length; index++) {
+        if(this.dataIVA[index]['_id'] === transaction.company.vatCondition){
+          this.dataIVA[index]['total'] = this.dataIVA[index]['total'] + transaction.totalPrice;
+        }
+      }
+
+
+
       let partialTaxBase: number = 0;
       let partialTaxAmountIVA: number = 0;
       let partialTaxAmountPercep: number = 0;
@@ -290,6 +333,8 @@ export class PrintVatBookComponent implements OnInit {
       } else if (this.roundNumber.transform((partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt))) {
         printTotal = (partialTaxBase + partialTaxAmountIVA + partialTaxAmountPercep + transaction.exempt).toLocaleString('de-DE') + ",00";
       }
+
+      
 
       this.doc.text(printGravado, 150, row);
       this.doc.text(printExempt, 175, row);
@@ -478,6 +523,7 @@ export class PrintVatBookComponent implements OnInit {
 
     row += 3;
     // LINEA HORIZONTAL DEBAJO ENCABEZADO
+
     this.doc.line(10, row, 105, row);
     row += 5;
 
@@ -518,6 +564,55 @@ export class PrintVatBookComponent implements OnInit {
     this.doc.line(10, rowInitial, 10, rowFinal);
     // LINEA VERTICAL DERECHA
     this.doc.line(105, rowInitial, 105, rowFinal);
+
+    row +=5;
+
+    //TOTALES POR REGIMEN
+
+    // LINEA HORIZONTAL ARRIBA ENCABEZADO
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(9);
+    this.doc.text("TOTALES POR REGIMEN", 35, row);
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    // LINEA HORIZONTAL DEBAJO ENCABEZADO
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.doc.setFontType('bold');
+    this.doc.setFontSize(9);
+    this.doc.text("REGIMEN", 15, row);
+    this.doc.text("MONTO", 85, row);
+    this.doc.setFontSize(8);
+    this.doc.setFontType('normal');
+
+    row += 3;
+    // LINEA HORIZONTAL DEBAJO ENCABEZADO
+
+    this.doc.line(10, row, 105, row);
+    row += 5;
+
+    this.dataIVA.forEach(element => {
+      
+      this.doc.text(element['description'], 15, row);
+      this.doc.text(element['total'].toLocaleString('de-DE'), 85, row);
+      row += 5;
+
+    });
+  
+    // LINEA HORIZONTAL FINAL
+    this.doc.line(10, row, 105, row);
+    // LINEA VERTICAL IZQUIERDA
+    rowFinal = row;
+    this.doc.line(10, rowInitial, 10, rowFinal);
+    // LINEA VERTICAL DERECHA
+    this.doc.line(105, rowInitial, 105, rowFinal);
+
 
     this.finishImpression();
   }
