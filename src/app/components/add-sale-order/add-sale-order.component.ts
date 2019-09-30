@@ -72,6 +72,7 @@ import { ConfigService } from 'app/services/config.service';
 import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos.component';
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
+import { Deposit } from 'app/models/deposit';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -1894,79 +1895,101 @@ export class AddSaleOrderComponent {
     return new Promise<boolean>((resolve, reject) => {
 
       let amountToModify;
+      let deposit: Deposit;
+
+      movementOfArticle.article.deposits.forEach(element => {
+          if(element.deposit.branch._id === this.transaction.branchDestination._id){
+            deposit = element.deposit;
+          }
+      });
 
       switch (this.transaction.type.stockMovement) {
         case StockMovement.Inflows:
-          amountToModify = movementOfArticle.amount;
-          this._articleStockService.updateRealStock(
-            movementOfArticle.article,
-            this.transaction.depositDestination,
-            amountToModify, 
-            this.transaction.type.stockMovement.toString()
-          ).subscribe(
-            result => {
-              this.loading = false;
-              if (!result.articleStock) {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if(deposit){
+            amountToModify = movementOfArticle.amount;
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              deposit,
+              amountToModify, 
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.articleStock);
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
                 resolve(null);
-              } else {
-                resolve(result.articleStock);
               }
-            },
-            error => {
-              this.loading = false;
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+            );
+          } else {
+            this.showMessage("Debe asignarle un deposito en Producto -> Stock", 'danger', true);
+            resolve(null);
+          }
           break;
         case StockMovement.Inventory:
-          amountToModify = movementOfArticle.amount;
-          this._articleStockService.updateRealStock(
-            movementOfArticle.article,
-            this.transaction.depositDestination,
-            amountToModify, 
-            this.transaction.type.stockMovement.toString()
-          ).subscribe(
-            result => {
-              this.loading = false;
-              if (!result.articleStock) {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if(deposit){
+            amountToModify = movementOfArticle.amount;
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              deposit,
+              amountToModify, 
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.articleStock);
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
                 resolve(null);
-              } else {
-                resolve(result.articleStock);
               }
-            },
-            error => {
-              this.loading = false;
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+            );
+          } else {
+            this.showMessage("Debe asignarle un deposito en Producto -> Stock", 'danger', true);
+            resolve(null);
+          }
           break;
         case StockMovement.Outflows:
-          amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-          this._articleStockService.updateRealStock(
-            movementOfArticle.article,
-            this.transaction.depositDestination,
-            amountToModify, 
-            this.transaction.type.stockMovement.toString()
-          ).subscribe(
-            result => {
-              this.loading = false;
-              if (!result.articleStock) {
-                if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+          if(deposit){
+            amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
+            this._articleStockService.updateRealStock(
+              movementOfArticle.article,
+              deposit,
+              amountToModify, 
+              this.transaction.type.stockMovement.toString()
+            ).subscribe(
+              result => {
+                this.loading = false;
+                if (!result.articleStock) {
+                  if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+                  resolve(null);
+                } else {
+                  resolve(result.articleStock);
+                }
+              },
+              error => {
+                this.loading = false;
+                this.showMessage(error._body, 'danger', false);
                 resolve(null);
-              } else {
-                resolve(result.articleStock);
               }
-            },
-            error => {
-              this.loading = false;
-              this.showMessage(error._body, 'danger', false);
-              resolve(null);
-            }
-          );
+            );
+          } else {
+            this.showMessage("Debe asignarle un deposito en Producto -> Stock", 'danger', true);
+            resolve(null);
+          }
           break;
         case StockMovement.Transfer:
             this._articleStockService.updateRealStock(
@@ -2015,34 +2038,7 @@ export class AddSaleOrderComponent {
           break;
       }
 
-      /*if (this.transaction.type.stockMovement === StockMovement.Inflows || this.transaction.type.stockMovement === StockMovement.Inventory) {
-        amountToModify = movementOfArticle.amount;
-      } else {
-        amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
-      }*/
 
-      /*this._articleStockService.updateRealStock(
-        movementOfArticle.article,
-        this.transaction.branchDestination,
-        this.transaction.depositDestination,
-        amountToModify, 
-        this.transaction.type.stockMovement.toString()
-      ).subscribe(
-        result => {
-          this.loading = false;
-          if (!result.articleStock) {
-            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
-            resolve(null);
-          } else {
-            resolve(result.articleStock);
-          }
-        },
-        error => {
-          this.loading = false;
-          this.showMessage(error._body, 'danger', false);
-          resolve(null);
-        }
-      );*/
     });
   }
 
