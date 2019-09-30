@@ -73,6 +73,9 @@ import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
 import { Deposit } from 'app/models/deposit';
+import { DepositService } from 'app/services/deposit.service';
+import { async } from '@angular/core/testing';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-add-sale-order',
@@ -149,6 +152,7 @@ export class AddSaleOrderComponent {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
     public _printerService: PrinterService,
+    public _depositService : DepositService,
     public _userService: UserService,
     private _taxService: TaxService,
     public _useOfCFDIService: UseOfCFDIService,
@@ -1892,22 +1896,29 @@ export class AddSaleOrderComponent {
 
   public updateRealStock(movementOfArticle: MovementOfArticle): Promise<boolean> {
 
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>(async(resolve, reject) => {
 
       let amountToModify;
       let deposit: Deposit;
 
-      console.log(movementOfArticle.article)
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0){
+        movementOfArticle.article.deposits.forEach(element => {
+            if(element.deposit.branch._id === this.transaction.branchDestination._id){
+              deposit = element.deposit;
+            }
+        });
+      } else {
+        let deposits : Deposit[] = await this.getDeposits()
 
-      movementOfArticle.article.deposits.forEach(element => {
-          if(element.deposit.branch._id === this.transaction.branchDestination._id){
-            deposit = element.deposit;
+        deposits.forEach(element =>{
+          if(element.branch._id === this.transaction.branchDestination._id && element.default){
+            deposit = element;
           }
-      });
+        })
+      }
 
       switch (this.transaction.type.stockMovement) {
         case StockMovement.Inflows:
-          if(deposit){
             amountToModify = movementOfArticle.amount;
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
@@ -1930,13 +1941,10 @@ export class AddSaleOrderComponent {
                 resolve(null);
               }
             );
-          } else {
-            this.showMessage("Debe asignarle un deposito en Producto -> Stock", 'danger', true);
-            resolve(null);
-          }
+          
           break;
         case StockMovement.Inventory:
-          if(deposit){
+          
             amountToModify = movementOfArticle.amount;
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
@@ -1959,13 +1967,9 @@ export class AddSaleOrderComponent {
                 resolve(null);
               }
             );
-          } else {
-            this.showMessage("Debe asignarle un deposito en Producto -> Stock", 'danger', true);
-            resolve(null);
-          }
+          
           break;
         case StockMovement.Outflows:
-          if(deposit){
             amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
@@ -2035,10 +2039,7 @@ export class AddSaleOrderComponent {
                 resolve(null);
               }
             );
-          } else {
-            this.showMessage("Debe asignarle un deposito en Producto -> Stock", 'danger', true);
-            resolve(null);
-          }
+          
           break;
         case StockMovement.Transfer:
             this._articleStockService.updateRealStock(
@@ -2089,6 +2090,26 @@ export class AddSaleOrderComponent {
 
 
     });
+  }
+
+  public getDeposits(): Promise<Deposit[]> {
+
+    return new Promise<Deposit[]>((resolve, reject) => {
+      this._depositService.getDeposits().subscribe(
+        result =>{
+          if(result && result.deposits){
+            resolve(result.deposits)
+          } else {
+            resolve(null)
+          }
+        },
+        error =>{
+          this.showMessage(error._body, 'info', true);
+          resolve(null)
+        }
+      )
+    })
+    
   }
 
   async close() {
