@@ -1,6 +1,6 @@
 // Angular
 import { Component, OnInit, EventEmitter, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 // Terceros
@@ -42,6 +42,7 @@ import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticleFieldService } from 'app/services/article-field.service';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-add-article',
@@ -57,6 +58,7 @@ export class AddArticleComponent implements OnInit {
   @Input() operation: string;
   @Input() readonly: boolean;
   public articleStock: ArticleStock;
+  public articles : Article [];
   public config: Config;
   public articleForm: FormGroup;
   public currencies: Currency[] = new Array();
@@ -178,6 +180,8 @@ export class AddArticleComponent implements OnInit {
     } else if (pathLocation[2] === "variantes") {
       this.articleType = "Variante";
     }
+
+    this.getArticles();
   }
 
   async ngOnInit() {
@@ -230,6 +234,23 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public getArticles() {
+    this._articleService.getArticles().subscribe(
+      result =>{
+        if(result && result.articles){
+          this.articles = result.articles
+        } else {
+          this.showMessage("No se encontraron articulos", 'danger', false);
+          this.loading = false;
+        }
+      },
+      error =>{
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
   }
 
   ngAfterViewInit() {
@@ -292,15 +313,10 @@ export class AddArticleComponent implements OnInit {
       'unitOfMeasurement': [this.article.unitOfMeasurement, [
         ]
       ],
-      'deposit' : [this.article.deposit, [
-        ]
-      ],
-      'location' : [this.article.location, [
-        ]
-      ],
-      'observation': [this.article.observation, [
-        ]
-      ],
+      'deposits' :  this._fb.array([]),
+      'locations' : this._fb.array([]),
+      'children' : this._fb.array([]),
+      'observation': [this.article.observation, []],
       'barcode': [this.article.barcode, [
         Validators.maxLength(14)
         ]
@@ -355,6 +371,139 @@ export class AddArticleComponent implements OnInit {
       }
     }
   }
+  
+  async addDeposit(depositForm: NgForm) {
+    
+    let valid = true;
+    const deposits = this.articleForm.controls.deposits as FormArray;
+
+    this.articleForm.controls.deposits.value.forEach(element => {
+
+      if(depositForm.value.deposit == element.deposit){
+        valid = false;
+        this.showMessage("El depósito ya existe","danger",true)
+      }
+
+    });
+
+    this.articleForm.controls.deposits.value.forEach(async element => {
+
+      if(await this.getDepositbyID(depositForm.value.deposit) == await this.getDepositbyID(element.deposit)){
+        valid = false;
+        this.showMessage("Solo puede existir un depósito por sucursal","danger",true) 
+
+      }
+    });
+
+    if(depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null ){
+      this.showMessage("Debe seleccionar un depósito","danger",true)
+      valid = false;
+    }
+
+    if(valid){
+      deposits.push(
+        this._fb.group({
+          _id: null,
+          deposit : depositForm.value.deposit,
+          capacity : 0
+        })
+      );
+      depositForm.resetForm();
+    }
+
+      
+  }
+
+  async addLocation(locationForm : NgForm){
+    
+    let valid = true;
+    const locations = this.articleForm.controls.locations as FormArray;
+
+    if(locationForm.value.location == '' || locationForm.value.location == 0 || locationForm.value.location == null ){
+      this.showMessage("Debe seleccionar una ubicación","danger",true)
+      valid = false;
+    }
+
+    if(valid){
+      locations.push(
+        this._fb.group({
+          _id: null,
+          location : locationForm.value.location,
+        })
+      );
+      locationForm.resetForm();
+    }
+  }
+
+  async addChildren(childrenForm : NgForm){
+    
+    let valid = true;
+    const children = this.articleForm.controls.children as FormArray;
+
+    this.articleForm.controls.children.value.forEach(element => {
+
+      if(childrenForm.value.article == element.article){
+        valid = false;
+        this.showMessage("El producto ya existe","danger",true)
+      }
+
+    });
+
+    if(childrenForm.value.quantity == '' || childrenForm.value.quantity == 0 || childrenForm.value.quantity == null ){
+      this.showMessage("El valor no puede ser 0 o vacio","danger",true)
+      valid = false;
+    }
+
+    if(childrenForm.value.article == '' || childrenForm.value.article == 0 || childrenForm.value.article == null ){
+      this.showMessage("Debe seleccionar un producto","danger",true)
+      valid = false;
+    }
+
+    if(valid){
+      children.push(
+        this._fb.group({
+          _id: null,
+          article : childrenForm.value.article,
+          quantity : childrenForm.value.quantity
+        })
+      );
+      childrenForm.resetForm();
+    }
+  }
+
+  async getDepositbyID(id) : Promise<string>{
+    
+    return new Promise<string>((resolve, reject) => {
+
+      this._depositService.getDeposit(id).subscribe(
+          async result => {
+              if(result && result.deposit){
+                resolve(result.deposit.branch._id)
+              } else {
+                resolve(null)
+              }
+          },
+          error => {
+              resolve(null);
+          }
+      );
+  });
+  }
+
+  deleteDeposit(index) {
+    let control = <FormArray>this.articleForm.controls.deposits;
+    control.removeAt(index)
+  }
+
+  deleteLocation(index) {
+    let control = <FormArray>this.articleForm.controls.locations;
+    control.removeAt(index)
+  }
+
+  deleteChildren(index) {
+    let control = <FormArray>this.articleForm.controls.children;
+    control.removeAt(index)
+  }
 
   public getCurrencies(): void {
 
@@ -404,6 +553,9 @@ export class AddArticleComponent implements OnInit {
             this.article.code = '';
           }
           this.setValuesForm();
+          this.setValuesArray();
+          //seteamos array por que set values entra mil veces
+
         }
       },
       error => {
@@ -411,6 +563,68 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  public setValuesArray() : void {
+
+    if(this.article.deposits && this.article.deposits.length > 0){
+      let deposits = this.articleForm.controls.deposits as FormArray;
+      this.article.deposits.forEach(x => {
+
+        let depositId;
+        if(x.deposit && x.deposit._id) {
+          depositId = x.deposit._id;
+        } else {
+          depositId = null;
+        }
+
+        deposits.push(this._fb.group({ 
+          '_id': null,
+          'deposit' : depositId,
+          'capacity' : x.capacity
+        }))
+
+      })
+    }
+
+    if(this.article.locations && this.article.locations.length > 0){
+      let locations = this.articleForm.controls.locations as FormArray;
+      this.article.locations.forEach(x => {
+
+        let locationId;
+        if(x.location && x.location._id) {
+          locationId = x.location._id;
+        } else {
+          locationId = null;
+        }
+
+        locations.push(this._fb.group({ 
+          '_id': null,
+          'location' : locationId
+        }))
+
+      })
+    }
+
+    if(this.article.children && this.article.children.length > 0){
+      let children = this.articleForm.controls.children as FormArray;
+      this.article.children.forEach(x => {
+
+        let articleId;
+        if(x.article && x.article._id) {
+          articleId = x.article._id;
+        } else {
+          articleId = null;
+        }
+
+        children.push(this._fb.group({ 
+          '_id': null,
+          'article' : articleId,
+          'quantity' : x.quantity
+        }))
+
+      })
+    }
   }
 
   public getVariantsByArticleParent(): void {
@@ -944,18 +1158,7 @@ export class AddArticleComponent implements OnInit {
       }
     }
 
-    let deposit;
-    if (!this.article.deposit) {
-      deposit = null;
-    } else {
-      if (this.article.deposit._id) {
-        deposit = this.article.deposit._id;
-      } else {
-        deposit = this.article.deposit;
-      }
-    }
-
-    let location;
+    /*let location;
     if (!this.article.location) {
       location = null;
     } else {
@@ -964,7 +1167,7 @@ export class AddArticleComponent implements OnInit {
       } else {
         location = this.article.location;
       }
-    }
+    }*/
 
     if (!this.article.description) { this.article.description = ''; }
     if (!this.article.posDescription) { this.article.posDescription = ''; }
@@ -1026,8 +1229,6 @@ export class AddArticleComponent implements OnInit {
       'codeSAT': this.article.codeSAT,
       'currency': currency,
       'make': make,
-      'deposit' : deposit,
-      'location' : location,
       'description': this.article.description,
       'posDescription': this.article.posDescription,
       'basePrice': this.article.basePrice,
@@ -1052,7 +1253,8 @@ export class AddArticleComponent implements OnInit {
       'lastPricePurchase' : lastPricePurchase
     };
 
-    this.articleForm.setValue(values);
+
+    this.articleForm.patchValue(values);
   }
 
   public addArticle(): void {

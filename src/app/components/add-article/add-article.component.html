@@ -95,7 +95,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
                     <label for="unitOfMeasurement" class="control-label">Unidad de Medida:</label>
                     <select class="form-control" formControlName="unitOfMeasurement">
                       <option *ngFor="let unitOfMeasurement of unitsOfMeasurement"
@@ -109,7 +109,7 @@
                       {{ formErrors.unitOfMeasurement }}
                     </div>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-4">
                     <label for="quantityPerMeasure" class="control-label">Cantidad:</label>
                     <input type="text" class="form-control" formControlName="quantityPerMeasure" name="quantityPerMeasure" id="quantityPerMeasure"
                       [readonly]="readonly" />
@@ -117,15 +117,25 @@
                       {{ formErrors.quantityPerMeasure }}
                     </div>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-12">
+                  <div class="form-group col-md-4">
                     <label for="printIn" class="control-label">Imprime en:</label>
                     <select class="form-control" formControlName="printIn">
                       <option *ngFor="let printIn of printIns"
                               [ngValue]="printIn"
                               [disabled]="readonly || (article && article.type && article.type.toString() === 'Variante')">{{printIn}}</option>
                     </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <div class="row">
+                      <div class="form-group col-md-12">
+                        <label for="observation" class="control-label">Observación:</label>
+                        <div class="input-group">
+                          <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div *ngIf="config.country === 'MX'" class="row">
@@ -246,48 +256,154 @@
 				<ngb-tab title="Stock">
 					<ng-template ngbTabContent>
 						<!-- <app-add-article-stock [article]="article" (eventAddStock)="addStock($event)"></app-add-article-stock> -->
-            <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="deposit" class="control-label">Depósito:</label>
-                    <select class="form-control" formControlName="deposit">
-                      <option *ngFor="let deposit of deposits" 
-                              [selected]="article.deposit && deposit._id===article.deposit._id" 
-                              [value]="deposit._id" 
-                              [disabled]="readonly">Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</option>
-                    </select>
-                    <div *ngIf="formErrors.deposit" class="alert alert-danger">
-                      {{ formErrors.deposit }}
+          
+                <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label for="deposit" class="control-label">Depósito:</label>
+                            <select class="form-control" ngModel name="deposit">
+                              <option *ngFor="let deposit of deposits" 
+                                      [value]="deposit._id" 
+                                      [disabled]="readonly">Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</option>
+                            </select>
+                            <div *ngIf="formErrors.deposit" class="alert alert-danger">
+                              {{ formErrors.deposit }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">              
+                            <button type="summit" class="btn btn-success btn-sm especial">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                      </div>
+                </form>  
+                      
+
+                <label for="deposit" class="control-label">Depósito Disponibles:</label>
+
+                <div formArrayName="deposits" *ngFor="let depositAux of articleForm.get('deposits').controls; let i = index;">
+                  <div [formGroupName]="i">
+                    <div class = "row">
+                        <div class="form-group col-md-8">
+                            <select class="form-control" formControlName="deposit">
+                              <option *ngFor="let deposit of deposits"
+                                      [value]="deposit._id"
+                                      [disabled]="true">
+                                      Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</option>
+                            </select>
+                          </div>
+                      <div class="form-group col-md-2">        
+                          <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">
+                              <i class="fa fa-trash-o"></i>
+                          </button>
+                      </div>
                     </div>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="location" class="control-label">Ubicación:</label>
-                    <select class="form-control" formControlName="location">
-                      <option *ngFor="let location of locations" [selected]="article.location && location._id===article.location._id" [value]="location._id" [disabled]="readonly">{{location.description}}-{{location.positionX}}-{{location.positionY}}-{{location.positionZ}}</option>
-                    </select>
-                    <div *ngIf="formErrors.location" class="alert alert-danger">
-                      {{ formErrors.location }}
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </div> 
+
+
+
+
+
+                  <form #locationForm="ngForm" (ngSubmit)="addLocation(locationForm)">
+                      <div class="row">
+                          <div class="form-group col-md-8">
+                              <label for="location" class="control-label">Ubicaciones:</label>
+                              <select class="form-control" ngModel name="location">
+                                <option *ngFor="let location of locations" 
+                                        [value]="location._id" 
+                                        [disabled]="readonly">{{location.description}}</option>
+                              </select>
+                              <div *ngIf="formErrors.location" class="alert alert-danger">
+                                {{ formErrors.location }}
+                              </div>
+                          </div>
+                          <div class="form-group col-md-2">              
+                              <button type="summit" class="btn btn-success btn-sm especial">
+                                  <i class="fa fa-plus"></i>
+                              </button>
+                          </div>
+                        </div>
+                  </form>  
+                        
+  
+                  <label for="location" class="control-label">Ubicaciones Disponibles:</label>
+  
+                  <div formArrayName="locations" *ngFor="let locationAux of articleForm.get('locations').controls; let i = index;">
+                    <div [formGroupName]="i">
+                      <div class = "row">
+                          <div class="form-group col-md-8">
+                              <select class="form-control" formControlName="location">
+                                <option *ngFor="let location of locations"
+                                        [value]="location._id"
+                                        [disabled]="true">
+                                        {{location.description}}</option>
+                              </select>
+                            </div>
+                        <div class="form-group col-md-2">        
+                            <button type="button" class="btn btn-danger btn-sm" (click)="deleteLocation(i)">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+          
 					</ng-template>
 				</ngb-tab>
-				<ngb-tab title="Observaciones">
+				<ngb-tab title="Estructura">
 					<ng-template ngbTabContent>
             <div class="row tab-content">
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-12">
-                    <label for="observation" class="control-label">Observación:</label>
-                    <div class="input-group">
-                      <textarea type="text" class="form-control" formControlName="observation" name="observation" id="observation" rows="2" [readonly]="readonly"></textarea>
+
+                <form #childrenForm="ngForm" (ngSubmit)="addChildren(childrenForm)">
+                    <div class="row">
+                        <div class="form-group col-md-8">
+                            <label for="article" class="control-label">Producto:</label>
+                            <select class="form-control" ngModel name="article">
+                              <option *ngFor="let article of articles" 
+                                      [value]="article._id" 
+                                      [disabled]="readonly">{{article.description}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                          <label for="quantity" class="control-label">Cantidad:</label>
+                          <div class="input-group">
+                            <input type="number" class="form-control" ngModel name="quantity" [readonly]="readonly"/>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-1">              
+                            <button type="summit" class="btn btn-success btn-sm especial">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                      </div>
+                </form>  
+
+                <div formArrayName="children" *ngFor="let articleAux of articleForm.get('children').controls; let i = index;">
+                  <div [formGroupName]="i">
+                    <div class = "row">
+                        <div class="form-group col-md-8">
+                            <select class="form-control" formControlName="article">
+                              <option *ngFor="let article of articles"
+                                      [value]="article._id"
+                                      [disabled]="true">
+                                      {{article.description}}</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-3">
+                            <div class="input-group">
+                              <input type="number" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly"/>
+                            </div>
+                          </div>
+                      <div class="form-group col-md-1">        
+                          <button type="button" class="btn btn-danger btn-sm" (click)="deleteChildren(i)">
+                              <i class="fa fa-trash-o"></i>
+                          </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </div> 
+                
             </div>
 					</ng-template>
 				</ngb-tab>

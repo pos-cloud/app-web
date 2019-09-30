@@ -99,7 +99,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.userType = pathLocation[1];
     this.config$ = this._configService.getConfig;
 
-    if (this.movementOfArticle.article) {
+    /*if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
       if(this.movementOfArticle.article.deposit) {
         this.position += `Dep. ${this.movementOfArticle.article.deposit.name} - `;
@@ -119,7 +119,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           }
         );
       }
-    }
+    }*/
     if (this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
     }
