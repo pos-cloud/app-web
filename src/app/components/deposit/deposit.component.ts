@@ -9,6 +9,7 @@ import { Deposit } from '../../models/deposit';
 import { DepositService } from '../../services/deposit.service';
 import { BranchService } from 'app/services/branch.service';
 import { Branch } from 'app/models/branch';
+import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
   selector: 'app-deposit',
@@ -25,6 +26,7 @@ export class DepositComponent implements OnInit {
   @Input() readonly: boolean;
   
   public deposit: Deposit;
+  public deposits : Deposit[];
   public branches: Branch[];
   public depositForm: FormGroup;
   public alertMessage: string = '';
@@ -57,7 +59,9 @@ export class DepositComponent implements OnInit {
     public _router: Router,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    this.getDeposits();
+   }
 
   ngOnInit(): void {
     
@@ -176,6 +180,42 @@ export class DepositComponent implements OnInit {
     );
   }
 
+  public getDeposits() : void {
+    this._depositService.getDeposits().subscribe(
+      result =>{
+        if(result && result.deposits){
+          this.deposits = result.deposits
+        }
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+      }
+    )
+  }
+
+  public isValid() : boolean {
+    
+    let valid = true;
+
+    if(this.deposit.default === null){
+      this.showMessage("Debe seleccionar si es primario", 'danger', true);
+      valid = false;
+    }
+
+    if(this.deposits && this.deposits.length > 0 && this.deposit.default !== null){
+      this.deposits.forEach(element => {
+        if(element.default === this.deposit.default && element.branch._id.toString() === this.deposit.branch.toString()){
+          this.showMessage("Solo puede existir un deposito principal por sucursal", 'danger', true);
+          valid = false;
+        }
+      });
+    }
+
+    
+    return valid
+  }
+
   public addDeposit(): void {
 
     switch (this.operation) {
@@ -224,22 +264,26 @@ export class DepositComponent implements OnInit {
 
     this.loading = true;
 
-    this._depositService.updateDeposit(this.deposit).subscribe(
-      result => {
-        if (!result.deposit) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    if(this.isValid()){
+      this._depositService.updateDeposit(this.deposit).subscribe(
+        result => {
+          if (!result.deposit) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+          } else {
+            this.deposit = result.deposit;
+            this.showMessage("El depósito se ha actualizado con éxito.", 'success', false);
+          }
           this.loading = false;
-        } else {
-          this.deposit = result.deposit;
-          this.showMessage("El depósito se ha actualizado con éxito.", 'success', false);
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.loading = false
+    }
   }
 
   public saveDeposit(): void {
@@ -248,24 +292,28 @@ export class DepositComponent implements OnInit {
 
     this.loading = true;
 
-    this._depositService.saveDeposit(this.deposit).subscribe(
-      result => {
-        if (!result.deposit) {
-          if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+    if(this.isValid()){
+      this._depositService.saveDeposit(this.deposit).subscribe(
+        result => {
+          if (!result.deposit) {
+            if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
+            this.loading = false;
+          } else {
+            this.deposit = result.deposit;
+            this.showMessage("El depósito se ha añadido con éxito.", 'success', true);
+            this.deposit = new Deposit();
+            this.buildForm();
+          }
           this.loading = false;
-        } else {
-          this.deposit = result.deposit;
-          this.showMessage("El depósito se ha añadido con éxito.", 'success', true);
-          this.deposit = new Deposit();
-          this.buildForm();
+        },
+        error => {
+          this.showMessage(error._body, 'danger', false);
+          this.loading = false;
         }
-        this.loading = false;
-      },
-      error => {
-        this.showMessage(error._body, 'danger', false);
-        this.loading = false;
-      }
-    );
+      );
+    } else {
+      this.loading = false
+    }
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {

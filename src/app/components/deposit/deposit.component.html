@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Depósito</h4>
+  <h4 class="modal-title">Depósito</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -44,9 +44,9 @@
         <div class="form-group col-md-4">
           <label for="default" class="control-label">¿Es deposito primario?</label>
           <select class="form-control" formControlName="default">
-            <option [disabled]="readonly" value="true">Si</option>
-            <option [disabled]="readonly" value="false" selected>No</option>
-            </select>
+            <option [disabled]="readonly" [ngValue]="true">Si</option>
+            <option [disabled]="readonly" [ngValue]="false">No</option>
+          </select>
         </div>
     </div>
     </div>
