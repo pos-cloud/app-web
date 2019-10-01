@@ -424,6 +424,15 @@ export class AddArticleComponent implements OnInit {
       valid = false;
     }
 
+    this.articleForm.controls.locations.value.forEach(element => {
+
+      if(locationForm.value.location == element.location){
+        valid = false;
+        this.showMessage("La ubicación ya existe","danger",true)
+      }
+
+    });
+
     if(valid){
       locations.push(
         this._fb.group({
