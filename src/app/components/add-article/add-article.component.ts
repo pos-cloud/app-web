@@ -387,15 +387,6 @@ export class AddArticleComponent implements OnInit {
 
     });
 
-    this.articleForm.controls.deposits.value.forEach(async element => {
-
-      if(await this.getDepositbyID(depositForm.value.deposit) == await this.getDepositbyID(element.deposit)){
-        valid = false;
-        this.showMessage("Solo puede existir un depósito por sucursal","danger",true) 
-
-      }
-    });
-
     if(depositForm.value.deposit == '' || depositForm.value.deposit == 0 || depositForm.value.deposit == null ){
       this.showMessage("Debe seleccionar un depósito","danger",true)
       valid = false;
@@ -481,24 +472,6 @@ export class AddArticleComponent implements OnInit {
     }
   }
 
-  async getDepositbyID(id) : Promise<string>{
-    
-    return new Promise<string>((resolve, reject) => {
-
-      this._depositService.getDeposit(id).subscribe(
-          async result => {
-              if(result && result.deposit){
-                resolve(result.deposit.branch._id)
-              } else {
-                resolve(null)
-              }
-          },
-          error => {
-              resolve(null);
-          }
-      );
-  });
-  }
 
   deleteDeposit(index) {
     let control = <FormArray>this.articleForm.controls.deposits;
@@ -564,7 +537,6 @@ export class AddArticleComponent implements OnInit {
           }
           this.setValuesForm();
           this.setValuesArray();
-          //seteamos array por que set values entra mil veces
 
         }
       },
@@ -581,19 +553,13 @@ export class AddArticleComponent implements OnInit {
       let deposits = this.articleForm.controls.deposits as FormArray;
       this.article.deposits.forEach(x => {
 
-        let depositId;
-        if(x.deposit && x.deposit._id) {
-          depositId = x.deposit._id;
-        } else {
-          depositId = null;
+        if(x.deposit && x.deposit._id && x.deposit.operationType != 'D') {
+          deposits.push(this._fb.group({ 
+            '_id': null,
+            'deposit' : x.deposit._id,
+            'capacity' : x.capacity
+          }))
         }
-
-        deposits.push(this._fb.group({ 
-          '_id': null,
-          'deposit' : depositId,
-          'capacity' : x.capacity
-        }))
-
       })
     }
 
@@ -602,16 +568,13 @@ export class AddArticleComponent implements OnInit {
       this.article.locations.forEach(x => {
 
         let locationId;
-        if(x.location && x.location._id) {
+        if(x.location && x.location._id && x.location.operationType != 'D') {
           locationId = x.location._id;
-        } else {
-          locationId = null;
+          locations.push(this._fb.group({ 
+            '_id': null,
+            'location' : locationId
+          }))
         }
-
-        locations.push(this._fb.group({ 
-          '_id': null,
-          'location' : locationId
-        }))
 
       })
     }
@@ -620,23 +583,16 @@ export class AddArticleComponent implements OnInit {
       let children = this.articleForm.controls.children as FormArray;
       this.article.children.forEach(x => {
 
-        let articleId;
-        if(x.article && x.article._id) {
-          articleId = x.article._id;
-        } else {
-          articleId = null;
+        if(x.article && x.article._id && x.article.operationType != 'D') {
+          children.push(this._fb.group({ 
+            '_id': null,
+            'article' :  x.article._id,
+            'quantity' : x.quantity
+          }))
         }
-
-        children.push(this._fb.group({ 
-          '_id': null,
-          'article' : articleId,
-          'quantity' : x.quantity
-        }))
 
       })
     }
-
-    console.log(this.articleForm.get('deposits'))
   }
 
   public getVariantsByArticleParent(): void {

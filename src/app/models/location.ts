@@ -12,7 +12,7 @@ export class Location {
 	public positionY: string = '';
 	public positionZ: string = '';
 	public deposit : Deposit;
-
+	public operationType: string;
 	public creationUser: User;
 	public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
