@@ -10,7 +10,7 @@ export class Deposit {
     public name: string = '';
     public branch: Branch;
     public capacity: number;
-    public default : boolean;
+    public default : Boolean;
     public operationType : string;
     public creationDate: string = moment().format('YYYY-MM-DDTHH:mm:ssZ');
 	public updateUser: User;
