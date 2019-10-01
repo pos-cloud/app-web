@@ -710,6 +710,9 @@ export class AddSaleOrderComponent {
         this.showMessage("El producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + ") no esta habilitado para la compra", 'info', true);
     }
 
+    console.log(movementOfArticle)
+
+
     if  (movementOfArticle.article &&
         this.config['modules'].stock &&
         this.transaction.type &&
@@ -724,7 +727,7 @@ export class AddSaleOrderComponent {
               if(articleStock) {
                 realStock = articleStock.realStock;
               }
-              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock + " en el Depósito: " + this.transaction.depositOrigin.name, 'info', true);
+              this.showMessage("No tiene el stock suficiente del producto " + movementOfArticle.article.description + " (" + movementOfArticle.article.code + "). Stock Actual: " + realStock , 'info', true);
             }
           }
         );
@@ -736,10 +739,27 @@ export class AddSaleOrderComponent {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
-      let query = `where= "article": "${movementOfArticle.article._id}",
-                          "branch": "${this.transaction.branchOrigin._id}",
-                          "deposit": "${this.transaction.depositOrigin._id}"`;
-                          
+      let depositID;
+      let query;
+
+      if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length > 0){
+        movementOfArticle.article.deposits.forEach(element => {
+          if(element.deposit.branch._id === this.transaction.branchOrigin._id){
+            depositID = element.deposit._id;
+          }
+        });
+      }
+
+      if(depositID){
+        query = `where= "article": "${movementOfArticle.article._id}",
+                        "branch": "${this.transaction.branchOrigin._id}",
+                        "deposit": "${depositID}"`;
+      } else {
+        query = `where= "article": "${movementOfArticle.article._id}",
+                        "branch": "${this.transaction.branchOrigin._id}",
+                        "deposit": "${this.transaction.depositOrigin._id}"`;
+      }
+              
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
           if (!result.articleStocks || result.articleStocks.length <= 0) {
