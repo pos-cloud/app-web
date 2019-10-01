@@ -103,7 +103,7 @@ export class AddMovementOfArticleComponent implements OnInit {
     if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
       let depositArticle : Deposit
-      if(this.movementOfArticle.article.deposits) {
+      if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
         this.movementOfArticle.article.deposits.forEach(element => {
             if(element.deposit.branch === this.movementOfArticle.transaction.depositDestination.branch){
               this.position += `Dep. ${element.deposit.name} - `;
@@ -111,7 +111,7 @@ export class AddMovementOfArticleComponent implements OnInit {
             }
         });
       }
-      if(this.movementOfArticle.article.locations) {
+      if(this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
         this.movementOfArticle.article.locations.forEach(element => {
           if(element.location.deposit === depositArticle){
             this.position += `Ubic. ${element.location.description} - 
