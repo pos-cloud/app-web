@@ -260,7 +260,7 @@
                 <form #depositForm="ngForm" (ngSubmit)="addDeposit(depositForm)">
                     <div class="row">
                         <div class="form-group col-md-8">
-                            <label for="deposit" class="control-label">Depósito:</label>
+                            <label for="deposit" class="control-label">Agregar Depósito:</label>
                             <select class="form-control" ngModel name="deposit">
                               <option *ngFor="let deposit of deposits" 
                                       [value]="deposit._id" 
@@ -279,27 +279,28 @@
                 </form>  
                       
 
-                <label for="deposit" class="control-label">Depósito Disponibles:</label>
-
-                <div formArrayName="deposits" *ngFor="let depositAux of articleForm.get('deposits').controls; let i = index;">
-                  <div [formGroupName]="i">
-                    <div class = "row">
-                        <div class="form-group col-md-8">
-                            <select class="form-control" formControlName="deposit">
-                              <option *ngFor="let deposit of deposits"
-                                      [value]="deposit._id"
-                                      [disabled]="true">
-                                      Sucursal {{deposit.branch.name}} - Depósito {{deposit.name}}</option>
-                            </select>
-                          </div>
-                      <div class="form-group col-md-2">        
-                          <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">
-                              <i class="fa fa-trash-o"></i>
-                          </button>
-                      </div>
-                    </div>
-                    </div>
-                  </div> 
+                <table class="table table-striped">
+                    <thead>
+                      <tr class="separation">
+                        <th>Depósitos Disponibles</th>
+                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="separation" *ngFor="let depositAux of articleForm.get('deposits').controls; let i = index;">
+                        <div *ngFor="let deposit of deposits; let i = index">
+                          <td *ngIf="depositAux && depositAux.value && depositAux.value.deposit &&  depositAux.value.deposit === deposit._id">Sucursal {{deposit.branch.name}} - Deposito {{deposit.name}}</td>
+                        </div>
+                        <td align="right" width="10">
+                            <button type="button" class="btn btn-danger btn-sm" (click)="deleteDeposit(i)">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                  </table>
 
 
 
@@ -308,7 +309,7 @@
                   <form #locationForm="ngForm" (ngSubmit)="addLocation(locationForm)">
                       <div class="row">
                           <div class="form-group col-md-8">
-                              <label for="location" class="control-label">Ubicaciones:</label>
+                              <label for="location" class="control-label">Agregar Ubicación:</label>
                               <select class="form-control" ngModel name="location">
                                 <option *ngFor="let location of locations" 
                                         [value]="location._id" 
@@ -325,29 +326,30 @@
                           </div>
                         </div>
                   </form>  
-                        
-  
-                  <label for="location" class="control-label">Ubicaciones Disponibles:</label>
-  
-                  <div formArrayName="locations" *ngFor="let locationAux of articleForm.get('locations').controls; let i = index;">
-                    <div [formGroupName]="i">
-                      <div class = "row">
-                          <div class="form-group col-md-8">
-                              <select class="form-control" formControlName="location">
-                                <option *ngFor="let location of locations"
-                                        [value]="location._id"
-                                        [disabled]="true">
-                                        {{location.description}}</option>
-                              </select>
-                            </div>
-                        <div class="form-group col-md-2">        
-                            <button type="button" class="btn btn-danger btn-sm" (click)="deleteLocation(i)">
-                                <i class="fa fa-trash-o"></i>
-                            </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div> 
+                    
+                  
+                  <table class="table table-striped">
+                      <thead>
+                        <tr class="separation">
+                          <th>Ubicaciones Disponibles</th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="separation" *ngFor="let locationAux of articleForm.get('locations').controls; let i = index;">
+                          <div *ngFor="let location of locations; let i = index">
+                            <td *ngIf="locationAux && locationAux.value && locationAux.value.location && locationAux.value.location === location._id">{{location.description}}</td>
+                          </div>
+                          <td align="right" width="10">
+                              <button type="button" class="btn btn-danger btn-sm" (click)="deleteLocation(i)">
+                                  <i class="fa fa-trash-o"></i>
+                              </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                      </tfoot>
+                    </table>
           
 					</ng-template>
 				</ngb-tab>
@@ -379,30 +381,37 @@
                       </div>
                 </form>  
 
-                <div formArrayName="children" *ngFor="let articleAux of articleForm.get('children').controls; let i = index;">
-                  <div [formGroupName]="i">
-                    <div class = "row">
-                        <div class="form-group col-md-8">
-                            <select class="form-control" formControlName="article">
-                              <option *ngFor="let article of articles"
-                                      [value]="article._id"
-                                      [disabled]="true">
-                                      {{article.description}}</option>
-                            </select>
-                          </div>
-                          <div class="form-group col-md-3">
-                            <div class="input-group">
-                              <input type="number" class="form-control" formControlName="quantity" name="quantity" id="quantity" [readonly]="readonly"/>
-                            </div>
-                          </div>
-                      <div class="form-group col-md-1">        
-                          <button type="button" class="btn btn-danger btn-sm" (click)="deleteChildren(i)">
-                              <i class="fa fa-trash-o"></i>
-                          </button>
-                      </div>
-                    </div>
-                  </div>
-                </div> 
+                <table class="table table-striped">
+                    <thead>
+                      <tr class="separation">
+                          <th>
+                              <i class="fa fa-bars"></i>
+                            </th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="separation" *ngFor="let articleAux of articleForm.get('children').controls; let i = index;">
+                        <td align="left" width="174">
+                          <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', articleAux.value.article)" title="Ver"><i class="fa fa-eye"></i></button>
+                        </td>
+                        <div *ngFor="let article of articles; let i = index">
+                          <td *ngIf="articleAux && articleAux.value && articleAux.value.article && articleAux.value.article === article._id">{{article.description}}</td>
+                        </div>
+                        <td *ngIf="articleAux && articleAux.value">{{articleAux.value.quantity}}</td>
+                        <td align="right" width="10">
+                            <button type="button" class="btn btn-danger btn-sm" (click)="deleteChildren(i)">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                  </table>
+
+
                 
             </div>
 					</ng-template>

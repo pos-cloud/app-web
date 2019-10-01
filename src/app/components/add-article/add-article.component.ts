@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators, FormArray, NgForm } from '@angular/
 import { Router } from '@angular/router';
 
 // Terceros
-import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertConfig, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Models
 import { Article, ArticlePrintIn, ArticleType } from './../../models/article';
@@ -156,6 +156,7 @@ export class AddArticleComponent implements OnInit {
     public _variantService: VariantService,
     public _depositService: DepositService,
     public _locationService: LocationService,
+    public _modalService : NgbModal,
     public _makeService: MakeService,
     public _categoryService: CategoryService,
     public _companyService : CompanyService,
@@ -634,6 +635,8 @@ export class AddArticleComponent implements OnInit {
 
       })
     }
+
+    console.log(this.articleForm.get('deposits'))
   }
 
   public getVariantsByArticleParent(): void {
@@ -734,6 +737,19 @@ export class AddArticleComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  async openModal(op: string, articleId?: string) {
+
+    let modalRef;
+    switch (op) {
+      case 'view':
+        modalRef = this._modalService.open(AddArticleComponent, { size: 'lg', backdrop: 'static' });
+        modalRef.componentInstance.articleId = articleId;
+        modalRef.componentInstance.readonly = true;
+        modalRef.componentInstance.operation = "view";
+        break;
+    }
   }
 
   public saveArticleStock(): void {
