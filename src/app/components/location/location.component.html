@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Agregar Ubicación</h4>
+  <h4 class="modal-title"> Ubicación</h4>
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('close_click')">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -13,25 +13,25 @@
   <form [formGroup]="locationForm" #formAddLocation="ngForm" (ngSubmit)="addLocation()" autocomplete="off">
     <div class="modal-body">
       <div class="row">
+          <div class="form-group col-md-6">
+              <label for="deposit" class="control-label">Deposito:</label>
+              <select class="form-control" formControlName="deposit">
+                <option *ngFor="let deposit of deposits"
+                        [selected]="location.deposit && deposit._id===location.deposit._id"
+                        [value]="deposit._id"
+                        [disabled]="readonly">
+                        {{deposit.name}}
+                </option>
+              </select>
+              <div *ngIf="formErrors.deposit" class="alert alert-danger">
+                {{ formErrors.deposit }}
+              </div>
+            </div>
         <div class="form-group col-md-6">
           <label for="description" class="control-label">Descripción:</label>
           <input type="text" class="form-control" formControlName="description" name="description" id="description" [focus]="focusEvent" [readonly]="readonly"/>
           <div *ngIf="formErrors.description" class="alert alert-danger">
             {{ formErrors.description }}
-          </div>
-        </div>
-        <div class="form-group col-md-6">
-          <label for="deposit" class="control-label">Deposito:</label>
-          <select class="form-control" formControlName="deposit">
-            <option *ngFor="let deposit of deposits"
-                    [selected]="location.deposit && deposit._id===location.deposit._id"
-                    [value]="deposit._id"
-                    [disabled]="readonly">
-                    {{deposit.name}}
-            </option>
-          </select>
-          <div *ngIf="formErrors.deposit" class="alert alert-danger">
-            {{ formErrors.deposit }}
           </div>
         </div>
       </div>
