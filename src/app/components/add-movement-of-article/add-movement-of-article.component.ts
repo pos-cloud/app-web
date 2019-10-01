@@ -28,6 +28,7 @@ import { ArticleFieldType } from '../../models/article-field';
 import { ArticleFields } from '../../models/article-fields';
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { ConfigService } from 'app/services/config.service';
+import { Deposit } from 'app/models/deposit';
 
 @Component({
   selector: 'app-add-movement-of-article',
@@ -99,16 +100,26 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.userType = pathLocation[1];
     this.config$ = this._configService.getConfig;
 
-    /*if (this.movementOfArticle.article) {
+    if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
-      if(this.movementOfArticle.article.deposit) {
-        this.position += `Dep. ${this.movementOfArticle.article.deposit.name} - `;
+      let depositArticle : Deposit
+      if(this.movementOfArticle.article.deposits) {
+        this.movementOfArticle.article.deposits.forEach(element => {
+            if(element.deposit.branch === this.movementOfArticle.transaction.depositDestination.branch){
+              this.position += `Dep. ${element.deposit.name} - `;
+              depositArticle = element.deposit;
+            }
+        });
       }
-      if(this.movementOfArticle.article.location) {
-        this.position += `Ubic. ${this.movementOfArticle.article.location.description} - 
-                          ${this.movementOfArticle.article.location.positionX} - 
-                          ${this.movementOfArticle.article.location.positionY} - 
-                          ${this.movementOfArticle.article.location.positionZ}`;
+      if(this.movementOfArticle.article.locations) {
+        this.movementOfArticle.article.locations.forEach(element => {
+          if(element.location.deposit === depositArticle){
+            this.position += `Ubic. ${element.location.description} - 
+                                    ${element.location.positionX} - 
+                                    ${element.location.positionY} - 
+                                    ${element.location.positionZ}`;
+          }
+        });
       }
       if(Config.modules && Config.modules.stock && this.movementOfArticle.transaction.type.modifyStock) {
         await this.getArticleStock().then(
@@ -119,7 +130,7 @@ export class AddMovementOfArticleComponent implements OnInit {
           }
         );
       }
-    }*/
+    }
     if (this.movementOfArticle.article && this.containsVariants) {
       this.getVariantsByArticleParent();
     }
