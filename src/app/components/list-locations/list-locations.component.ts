@@ -55,6 +55,7 @@ export class ListLocationsComponent implements OnInit {
             this.areLocationsEmpty = true;
           } else {
             this.hideMessage();
+            console.log(result.locations)
             this.loading = false;
             this.locations = result.locations;
             this.totalItems = this.locations.length;

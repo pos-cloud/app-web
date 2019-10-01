@@ -17,6 +17,7 @@
           <thead>
             <tr>
               <th><i class="fa fa-bars"></i></th>
+              <th (click)="orderBy('deposit','name')">Depósito </th>
               <th (click)="orderBy('description')">Descripción </th>
               <th (click)="orderBy('positionX')">Posición X </th>
               <th (click)="orderBy('positionY')">Posición Y </th>
@@ -24,6 +25,7 @@
             </tr>
             <tr class="filters">
               <th></th>
+              <th><input type="text" class="form-control" [(ngModel)]= "filterDeposit" placeholder="Depósito..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterPositionX" placeholder="Posición X..." ></th>
               <th><input type="text" class="form-control" [(ngModel)]= "filterPositionY" placeholder="Posición Y..." ></th>
@@ -36,7 +38,8 @@
                 <app-progressbar [loading]="loading"></app-progressbar>
               </td>
             </tr>
-            <tr *ngFor="let location of locations | filter: filterDescription:'description'
+            <tr *ngFor="let location of locations | filter: filterDeposit:'name':'deposit'
+                                                  | filter: filterDescription:'description'
                                                   | filter: filterPositionX:'positionX'
                                                   | filter: filterPositionY:'positionY'
                                                   | filter: filterPositionZ:'positionZ'
@@ -50,13 +53,15 @@
                 <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', location)" title="Modificar"><i class="fa fa-pencil"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', location)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
               </td>
+              <td class="flat" *ngIf="location.deposit">{{location.deposit.name}}</td>
+              <td class="flat" *ngIf="!location.deposit"></td>
               <td class="flat">{{location.description}}</td>
               <td class="flat">{{location.positionX}}</td>
               <td class="flat">{{location.positionY}}</td>
               <td class="flat">{{location.positionZ}}</td>
             </tr>
             <tr align="center" *ngIf="areLocationsEmpty && !loading">
-              <td colspan="5">No se encontraron Ubicaciones</td>
+              <td colspan="6">No se encontraron Ubicaciones</td>
             </tr>
           </tbody>
         </table>
