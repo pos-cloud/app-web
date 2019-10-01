@@ -53,6 +53,7 @@ export class ConfigComponent implements OnInit {
   public countries : any;
   public timezones : any;
   public userCountry: string;
+  public apiURL: string;
 
   public formErrors = {
     'emailAccount': '',
@@ -87,6 +88,7 @@ export class ConfigComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal
   ) {
+    this.apiURL = Config.apiURL;
     this.getVatConditions();
     this.getCountries();
     this.getCurrencies();
@@ -125,7 +127,7 @@ export class ConfigComponent implements OnInit {
   }
 
   public upload() {
-    this.makeFileRequest(Config.apiURL + "/upload", [], this.filesToUpload).then((result) => {
+    this.makeFileRequest(this.apiURL + "/upload", [], this.filesToUpload).then((result) => {
     }, (error) => {
         console.error(error);
     });
@@ -437,7 +439,7 @@ export class ConfigComponent implements OnInit {
           let config = result.configs[0];
           this.config = config;
           if (config['companyPicture'] && config['companyPicture'] !== 'default.jpg') {
-            this.imageURL = Config.apiURL + 'get-image-company/' + config['companyPicture'] + '/' + Config.database;
+            this.imageURL = this.apiURL + 'get-image-company/' + config['companyPicture'] + '/' + Config.database;
           } else {
             this.imageURL = './../../../assets/img/default.jpg';
           }

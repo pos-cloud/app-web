@@ -12,6 +12,7 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { PushNotificationComponent } from './../app/components/notification/notification.component';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ToastrModule } from 'ngx-toastr';
 
 // rutas
 import { _routes } from './app.routes';
@@ -257,7 +258,7 @@ import { PrintTransactionTypeComponent } from './components/print/print-transact
 import { ProgressbarComponent } from './components/progressbar/progressbar.component';
 import { ReportsList } from './components/reports-list/reports-list.component';
 
-// const config: SocketIoConfig = { url: "http://localhost:3000", options: {} };
+const configSocket: SocketIoConfig = { url: "http://localhost:300", options: {} };
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -624,8 +625,9 @@ export function HttpLoaderFactory(http: HttpClient) {
           useFactory: HttpLoaderFactory,
           deps: [HttpClient]
       }
-    })
-    // SocketIoModule.forRoot(config),
+    }),
+    SocketIoModule.forRoot(configSocket),
+    ToastrModule.forRoot(),
   ],
   providers: [
     NgbActiveModal,

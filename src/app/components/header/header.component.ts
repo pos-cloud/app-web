@@ -6,7 +6,6 @@ import {mapTo} from 'rxjs/operators';
 
 // DE TERCEROS
 import { NgbModal, NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-// import { Socket } from 'ngx-socket-io';
 
 // MODELS
 import { User } from './../../models/user';
@@ -17,6 +16,9 @@ import { AuthService } from 'app/services/auth.service';
 import { ConfigService } from 'app/services/config.service';
 import { AddUserComponent } from '../add-user/add-user.component';
 import { ClaimComponent } from '../claim/claim.component';
+import { ToastrService } from 'ngx-toastr';
+import { Config } from 'app/app.config';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-header',
@@ -45,7 +47,8 @@ export class HeaderComponent {
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,
     public _modalService: NgbModal,
-    // private socket: Socket,
+    private socket: Socket,
+		private _toastr: ToastrService,
   ) {
     // OCULTAR MENU REPORTE
     this.isReportVisible = false;
@@ -89,16 +92,30 @@ export class HeaderComponent {
         }
       }
     });
-
       // this.sessionTimer = setTimeout(this.logout(), this.identity.tokenExpiration);
       // this.renderer.listen(this.elementRef.nativeElement, 'click', (event) => {
       //   this.sessionCount();
       // });
 
-      // this.socket.emit('init', {
-      //   identity: this.identity,
-      //   database: this._userService.getDatabase()
-      // });
+    this.initSocket();
+  }
+
+  private initSocket(): void {
+    
+    let identity: User = JSON.parse(sessionStorage.getItem('user'));
+
+    if(identity && Config.database && Config.database !== '') {
+      // INICIAMOS SOCKET
+      this.socket.emit('start', {
+        database: Config.database,
+        clientType: 'pos'
+      });
+      
+      // ESCUCHAMOS SOCKET
+      this.socket.on('message', (mnj) => {
+        this.showToast(mnj);
+      });
+    }
   }
 
   public readNotification(): void {
@@ -188,6 +205,27 @@ export class HeaderComponent {
 
   public logout(): void {
     this.makeVisibleReport(false);
+    this.socket.emit('finish');
     this._authService.logoutStorage();
   }
+  
+  public showToast(message: string, type: string = 'success'): void {
+		switch(type) {
+			case 'success':
+				this._toastr.success('', message);
+				break;
+			case 'info':
+				this._toastr.info('', message);
+				break;
+			case 'warning':
+				this._toastr.warning('', message);
+				break;
+			case 'danger':
+				this._toastr.error('', message);
+				break;
+			default:
+				this._toastr.success('', message);
+				break;
+		}
+	}
 }

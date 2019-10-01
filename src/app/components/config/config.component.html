@@ -286,7 +286,7 @@
             </button>
           </div>
           <div class="form-group col-md-2" [hidden]="!cert">
-            <button type="button" class="btn btn-secundary"><a [attr.href]="'http://localhost:3000/api/download-file/' + this.routeFile">Descargar CRS</a></button>
+            <button type="button" class="btn btn-secundary"><a [attr.href]="apiURL + 'download-file/' + routeFile">Descargar CRS</a></button>
           </div>
         </div>
         <div class="row">

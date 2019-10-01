@@ -17,6 +17,9 @@ import { EmployeeService } from './../../services/employee.service';
 import { TableService } from './../../services/table.service';
 import { AuthService } from 'app/services/auth.service';
 import { ConfigService } from 'app/services/config.service';
+import { User } from 'app/models/user';
+import { ToastrService } from 'ngx-toastr';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-login',
@@ -66,7 +69,9 @@ export class LoginComponent implements OnInit {
     public alertConfig: NgbAlertConfig,
     public _router: Router,
     private _configService: ConfigService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private socket: Socket,
+		private _toastr: ToastrService,
     ) {
       this.alertMessage = '';
     }
@@ -139,6 +144,7 @@ export class LoginComponent implements OnInit {
         } else {
           this.showMessage("Ingresando...", 'success', false);
           this._authService.loginStorage(result.user);
+          this.initSocket();
           await this.getConfigApi().then(
             config => {
               if(config) {
@@ -162,6 +168,24 @@ export class LoginComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  private initSocket(): void {
+    
+    let identity: User = JSON.parse(sessionStorage.getItem('user'));
+
+    if(identity && Config.database && Config.database !== '') {
+      // INICIAMOS SOCKET
+      this.socket.emit('start', {
+        database: Config.database,
+        clientType: 'pos'
+      });
+      
+      // ESCUCHAMOS SOCKET
+      this.socket.on('message', (mnj) => {
+        this.showToast(mnj);
+      });
+    }
   }
 
   public getConfigApi(): Promise<Config> {
@@ -219,5 +243,25 @@ export class LoginComponent implements OnInit {
 
   public hideMessage():void {
     this.alertMessage = '';
+  }
+  
+  public showToast(message: string, type: string = 'success'): void {
+		switch(type) {
+			case 'success':
+				this._toastr.success('', message);
+				break;
+			case 'info':
+				this._toastr.info('', message);
+				break;
+			case 'warning':
+				this._toastr.warning('', message);
+				break;
+			case 'danger':
+				this._toastr.error('', message);
+				break;
+			default:
+				this._toastr.success('', message);
+				break;
+		}
   }
 }
