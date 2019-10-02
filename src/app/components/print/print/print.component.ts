@@ -2415,6 +2415,12 @@ export class PrintComponent implements OnInit {
         this.doc.text(movementOfArticle.description.slice(0, 20), 13, row);
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice/movementOfArticle.amount).toString(), 50, row);
         this.doc.text("$" + this.roundNumber.transform(movementOfArticle.salePrice).toString(), width/1.18, row);
+        row +=3;
+        movementOfArticle.article.taxes.forEach(element => {
+          if(element.percentage >= 0){
+            this.doc.text("( IVA: " + this.roundNumber.transform(movementOfArticle.article.taxes[0].percentage).toFixed(2) + " %)",13,row)
+          }
+        });
 
         if(movementOfArticle.notes && movementOfArticle.notes !== "") {
           row += 3;
