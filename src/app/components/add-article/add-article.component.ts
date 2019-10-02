@@ -43,6 +43,7 @@ import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticleFieldService } from 'app/services/article-field.service';
 import { async } from '@angular/core/testing';
+import { resolve } from 'q';
 
 @Component({
   selector: 'app-add-article',
@@ -372,11 +373,40 @@ export class AddArticleComponent implements OnInit {
       }
     }
   }
+
+  public getDeposit(id: string) : Promise<Deposit> {
+
+    return new Promise<Deposit>((resolve, reject) => {
+      this._depositService.getDeposit(id).subscribe(
+        result => {
+          if(result && result.deposit){
+            resolve(result.deposit)
+          } else {
+            resolve(null)
+          }
+        }
+      )
+    })
+  }
   
   async addDeposit(depositForm: NgForm) {
     
     let valid = true;
     const deposits = this.articleForm.controls.deposits as FormArray;
+
+    let deposit = await this.getDeposit(depositForm.value.deposit)
+
+    this.articleForm.controls.deposits.value.forEach(async element => {
+
+      let depositAux = await this.getDeposit(element.deposit);
+
+      if(depositAux.branch._id === deposit.branch._id){
+        valid = false;
+        this.showMessage("Solo puede tener un deposito por sucursal","danger",true)
+      }
+
+    });
+
 
     this.articleForm.controls.deposits.value.forEach(element => {
 
@@ -392,18 +422,19 @@ export class AddArticleComponent implements OnInit {
       valid = false;
     }
 
-    if(valid){
-      deposits.push(
-        this._fb.group({
-          _id: null,
-          deposit : depositForm.value.deposit,
-          capacity : 0
-        })
-      );
-      depositForm.resetForm();
-    }
+    setTimeout(() => {
+      if(valid){
+        deposits.push(
+          this._fb.group({
+            _id: null,
+            deposit : depositForm.value.deposit,
+            capacity : 0
+          })
+        );
+        depositForm.resetForm();
+      }
+    }, 5000);
 
-      
   }
 
   async addLocation(locationForm : NgForm){
