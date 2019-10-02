@@ -1945,13 +1945,12 @@ export class AddSaleOrderComponent {
         })
       }
 
-      if(deposit){
       switch (this.transaction.type.stockMovement) {
         case StockMovement.Inflows:
             amountToModify = movementOfArticle.amount;
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
-              deposit,
+              this.transaction.depositOrigin,
               amountToModify, 
               this.transaction.type.stockMovement.toString()
             ).subscribe(
@@ -1977,7 +1976,7 @@ export class AddSaleOrderComponent {
             amountToModify = movementOfArticle.amount;
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
-              deposit,
+              this.transaction.depositOrigin,
               amountToModify, 
               this.transaction.type.stockMovement.toString()
             ).subscribe(
@@ -2002,7 +2001,7 @@ export class AddSaleOrderComponent {
             amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
-              deposit,
+              this.transaction.depositOrigin,
               amountToModify, 
               this.transaction.type.stockMovement.toString()
             ).subscribe(
@@ -2012,54 +2011,7 @@ export class AddSaleOrderComponent {
                   if (result.message && result.message !== '') this.showMessage(result.message, 'info', true);
                   resolve(null);
                 } else {
-                  if(movementOfArticle.article.children && movementOfArticle.article.children.length > 0){
-
-                    movementOfArticle.article.children.forEach(element => {
-
-                      let valid = true;
-                      let message;
-
-                      let deposit : Deposit
-
-                      element.article.deposits.forEach(element2 => {
-                          if(element2.deposit.branch._id === this.transaction.branchDestination._id){
-                            deposit = element2.deposit
-                          }
-                      });
-
-                      if(deposit){
-                        this._articleStockService.updateRealStock(
-                          element.article,
-                          deposit,
-                          amountToModify*element.quantity,
-                          this.transaction.type.stockMovement.toString()
-                          ).subscribe(
-                            result => {
-                              this.loading = false;
-                              if(result.articleStock){
-                                valid = true;
-                              } else {
-                                valid = false;
-                                message = "El producto" + element.article.description + "no pudo descontar de la estructura"
-                              }
-                            }
-                          )
-                      } else {
-                        message = "El producto" + element.article.description + "no tiene deposito asignado para esta sucursal"
-                        valid = false;
-                      }
-                              
-                      if(valid){
-                        resolve(result.articleStock);
-                      } else {
-                        this.showMessage(message, 'danger', false);
-                        resolve(null)
-                      }
-                    });
-
-                  } else {
-                    resolve(result.articleStock);
-                  }
+                  resolve(result.articleStock);
                 }
               },
               error => {
@@ -2116,10 +2068,7 @@ export class AddSaleOrderComponent {
         default:
           break;
       }
-    } else {
-      this.showMessage("Debe seleccionar un deposito principal", 'info', true);
-      resolve(null)
-    }
+    
 
     
     });
