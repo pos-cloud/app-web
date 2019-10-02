@@ -42,8 +42,6 @@ import { TaxClassification } from 'app/models/tax';
 import { ConfigService } from 'app/services/config.service';
 import { MovementOfArticleService } from 'app/services/movement-of-article.service';
 import { ArticleFieldService } from 'app/services/article-field.service';
-import { async } from '@angular/core/testing';
-import { resolve } from 'q';
 
 @Component({
   selector: 'app-add-article',
@@ -85,6 +83,7 @@ export class AddArticleComponent implements OnInit {
   public articleType: string;
   public filtersTaxClassification: TaxClassification[] = [TaxClassification.Tax];
   public lastPricePurchase: number = 0.00;
+  public lastDatePurchase: string;
   public otherFieldsAlfabetico = false;
   public otherFieldsNumber = false;
   public orientation: string = 'horizontal';
@@ -348,7 +347,8 @@ export class AddArticleComponent implements OnInit {
         ]
       ],
       'providers' : [this.article.providers, []],
-      'lastPricePurchase' : [0.00,[]]
+      'lastPricePurchase' : [0.00,[]],
+      'lastDatePurchase' : [0.00,[]]
     });
 
     this.articleForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -892,12 +892,18 @@ export class AddArticleComponent implements OnInit {
 
     match = JSON.parse(match);
 
+    let timezone = "-03:00";
+    if(Config.timezone && Config.timezone !== '') {
+      timezone = Config.timezone.split('UTC')[1];
+    }
+
     let project = {
         "transaction.state": 1,
         "transaction.operationType": 1,
         "article._id": 1,
         "operationType": 1,
         "transaction.endDate": 1,
+        'endDate': { $dateToString: { date: "$transaction.endDate", format: "%d/%m/%Y", timezone: timezone }},
         "transaction.type.name": 1,
         "transaction.type.transactionMovement" : 1,
         "transaction._id": 1,
@@ -930,6 +936,7 @@ export class AddArticleComponent implements OnInit {
         if(result && result[0] && result[0].movementsOfArticles && result[0].movementsOfArticles.length > 0) {
           let movementOfArticle = result[0].movementsOfArticles[0];
           this.lastPricePurchase = this.roundNumber.transform(movementOfArticle.basePrice / movementOfArticle.amount);
+          this.lastDatePurchase = movementOfArticle['endDate'];
           let quotation = 1;
           if(movementOfArticle.transaction && movementOfArticle.transaction.quotation) {
             quotation = movementOfArticle.transaction.quotation;
