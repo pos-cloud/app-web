@@ -121,7 +121,7 @@ export class PrintArticlesStockComponent implements OnInit {
     this._articleStockService.getArticleStocksV2(
         project, // PROJECT
         match, // MATCH
-        { description: 1 }, // SORT
+        { realStock: 1 }, // SORT
         {}, // GROUP
         0, // LIMIT
         0 // SKIP
@@ -167,9 +167,9 @@ export class PrintArticlesStockComponent implements OnInit {
     this.doc.setFontType('bold');
     this.doc.setFontSize(this.fontSizes.normal);
     this.doc.text("Código", 5, row);
-    this.doc.text("Descripción", 30, row);
-    this.doc.text("Marca", 100, row);
-    this.doc.text("Rubro", 145, row);
+    this.doc.text("Descripción", 40, row);
+    this.doc.text("Marca", 110, row);
+    this.doc.text("Rubro", 165, row);
     this.doc.text("Stock", 195, row);
     this.doc.setFontType('normal');
 
@@ -186,13 +186,13 @@ export class PrintArticlesStockComponent implements OnInit {
           this.doc.text(articleStock.article.code, 5, row);
         }
         if (articleStock.article.description) {
-          this.doc.text(articleStock.article.description.slice(0, 30), 30, row);
+          this.doc.text(articleStock.article.description.slice(0, 30), 40, row);
         }
         if (articleStock.article.make && articleStock.article.make.description) {
-          this.doc.text(articleStock.article.make.description.slice(0, 18), 100, row);
+          this.doc.text(articleStock.article.make.description.slice(0, 18), 110, row);
         }
         if (articleStock.article.category && articleStock.article.category.description) {
-          this.doc.text(articleStock.article.category.description.slice(0, 18), 145, row);
+          this.doc.text(articleStock.article.category.description.slice(0, 10), 165, row);
         }
         if (articleStock.realStock) {
           this.doc.text(this.roundNumber.transform(articleStock.realStock).toString(), 195, row);
@@ -233,9 +233,9 @@ export class PrintArticlesStockComponent implements OnInit {
           this.doc.setFontType('bold');
           this.doc.setFontSize(this.fontSizes.normal);
           this.doc.text("Código", 5, row);
-          this.doc.text("Descripción", 30, row);
-          this.doc.text("Marca", 100, row);
-          this.doc.text("Rubro", 145, row);
+          this.doc.text("Descripción", 40, row);
+          this.doc.text("Marca", 110, row);
+          this.doc.text("Rubro", 165, row);
           this.doc.text("Stock", 195, row);
           this.doc.setFontType('normal');
 
