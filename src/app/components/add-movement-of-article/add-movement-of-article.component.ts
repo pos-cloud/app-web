@@ -756,7 +756,7 @@ export class AddMovementOfArticleComponent implements OnInit {
 
     return new Promise<ArticleStock>((resolve, reject) => {
 
-     /* let depositID;
+      let depositID;
       let query;
 
       if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0){
@@ -773,14 +773,12 @@ export class AddMovementOfArticleComponent implements OnInit {
                         "deposit": "${depositID}"`;
 
       } else {
-       
+        query = `where= "article": "${this.movementOfArticle.article._id}",
+                    "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
+                    "deposit": "${this.movementOfArticle.transaction.depositDestination._id}"`;
+      }
 
-      }*/
 
-
-      let query = `where= "article": "${this.movementOfArticle.article._id}",
-                  "branch": "${this.movementOfArticle.transaction.branchDestination._id}",
-                  "deposit": "${this.movementOfArticle.transaction.depositDestination._id}"`;
 
       this._articleStockService.getArticleStocks(query).subscribe(
         result => {
