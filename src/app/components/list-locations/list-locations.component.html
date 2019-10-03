@@ -1,94 +1,103 @@
-<!--ADMIN-->
-<section class="container-fluid" *ngIf="userType=='admin'">
-  <div class="center-content" *ngIf="alertMessage !== '' && !areMakesEmpty">
+<section class="container-fluid" *ngIf="userType=='admin' ">
+  <div class="center-content" *ngIf="alertMessage !== '' && totalItems > 0">
     <ngb-alert [type]="alertConfig.type" [dismissible]="alertConfig.dismissible" (close)="alertMessage=''">
       {{alertMessage}}
     </ngb-alert>
   </div>
   <div class="card ">
-    <div class="card-header">Listado de Ubicaciones
+    <div class="card-header">
+      <span>Listado de Sucursales</span>
       <div class="pull-right">
-        <button class="btn" (click)="openModal('add', null)"><i class="fa fa-plus"></i><span>Agregar</span></button>
+          <button class="btn" (click)="openModal('add', null)" ><i class="fa fa-plus">
+            <span>Agregar</span>
+          </i></button>
         <button class="btn fa fa-refresh" (click)="refresh()" [disabled]="loading"><i [ngClass]="{'fa fa-refresh fa-spin':loading}"></i><span>Actualizar</span></button>
+        
       </div>
     </div>
-      <div class="card-block table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th><i class="fa fa-bars"></i></th>
-              <th (click)="orderBy('deposit','name')">Depósito </th>
-              <th (click)="orderBy('description')">Descripción </th>
-              <th (click)="orderBy('positionX')">Posición X </th>
-              <th (click)="orderBy('positionY')">Posición Y </th>
-              <th (click)="orderBy('positionZ')">Posición Z </th>
-            </tr>
-            <tr class="filters">
-              <th></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterDeposit" placeholder="Depósito..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterDescription" placeholder="Descripción..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterPositionX" placeholder="Posición X..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterPositionY" placeholder="Posición Y..." ></th>
-              <th><input type="text" class="form-control" [(ngModel)]= "filterPositionZ" placeholder="Posición Z..." ></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colspan="99" style="padding: 0px">
-                <app-progressbar [loading]="loading"></app-progressbar>
-              </td>
-            </tr>
-            <tr *ngFor="let location of locations | filter: filterDeposit:'name':'deposit'
-                                                  | filter: filterDescription:'description'
-                                                  | filter: filterPositionX:'positionX'
-                                                  | filter: filterPositionY:'positionY'
-                                                  | filter: filterPositionZ:'positionZ'
-                                                  | orderBy: orderTerm: propertyTerm
-                                                  | paginate: { itemsPerPage: itemsPerPage,
-                                                                currentPage: p,
-                                                                totalItems: totalItems
-                                                              }">
-              <td align="left" width="130">
-                <button type="button" class="btn btn-success  btn-sm" (click)="openModal('view', location)" title="Ver"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="openModal('update', location)" title="Modificar"><i class="fa fa-pencil"></i></button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="openModal('delete', location)" title="Eliminar"><i class="fa fa-trash-o"></i></button>
-              </td>
-              <td class="flat" *ngIf="location.deposit">{{location.deposit.name}}</td>
-              <td class="flat" *ngIf="!location.deposit"></td>
-              <td class="flat">{{location.description}}</td>
-              <td class="flat">{{location.positionX}}</td>
-              <td class="flat">{{location.positionY}}</td>
-              <td class="flat">{{location.positionZ}}</td>
-            </tr>
-            <tr align="center" *ngIf="areLocationsEmpty && !loading">
-              <td colspan="6">No se encontraron Ubicaciones</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-md-10">
-            <pagination-controls
-                      class="my-pagination"
-                      (pageChange)="p=$event"
-                      #api
-                      previousLabel="Ant."
-                      nextLabel="Sig."
-                      autoHide="true">
-            </pagination-controls>
-          </div>
-          <div class="form-group col-md-2">
-            <select class="form-control" [(ngModel)]="itemsPerPage">
-              <option [value]="5">Mostrar 5 Registros</option>
-              <option [value]="10">Mostrar 10 Registros</option>
-              <option [value]="15">Mostrar 15 Registros</option>
-              <option [value]="20">Mostrar 20 Registros</option>
-              <option [value]="50">Mostrar 50 Registros</option>
-              <option [value]="100">Mostrar 100 Registros</option>
-            </select>
-          </div>
+    <div class="card-block table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+              <i class="fa fa-bars"></i>
+            </th>
+            <th (click)="orderBy('deposit.name')">Deposito</th>
+            <th (click)="orderBy('positionX')">position X</th>
+            <th (click)="orderBy('positionY')">position Y</th>
+            <th (click)="orderBy('positionZ')">position Z</th>
+
+          </tr>
+          <tr class="filters">
+            <th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['deposit.name']" (input)="getLocations()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['positionX']" (input)="getLocations()" placeholder="position X..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['positionY']" (input)="getLocations()" placeholder="positionY..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['positionZ']" (input)="getLocations()" placeholder="positionZ..."></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="99" style="padding: 0px">
+              <app-progressbar [loading]="loading"></app-progressbar>
+            </td>
+          </tr>
+          <tr *ngFor="let location of locations | paginate: { itemsPerPage: itemsPerPage,
+                                                                      currentPage: currentPage,
+                                                                      totalItems: totalItems
+                                                                    }">
+            <td align="left" width="150">
+              <button type="button"
+                      class="btn btn-success  btn-sm" 
+                      (click)="openModal('view', location)" 
+                      title="Ver"><i class="fa fa-eye"></i></button>
+              <button type="button"
+                      class="btn btn-primary btn-sm"
+                      (click)="openModal('edit', location)"
+                      title="Editar"><i class="fa fa-pencil"></i>
+              </button>
+              <button type="button"
+                      class="btn btn-danger btn-sm"
+                      (click)="openModal('delete', location)"
+                      title="Eliminar"><i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+            <td *ngIf="location.deposit">{{location.deposit.name}}</td>
+            <td *ngIf="!location.deposit"></td>
+            <td>{{location.positionX}}</td>
+            <td>{{location.positionY}}</td>
+            <td>{{location.positionZ}}</td>
+          </tr>
+          <tr align="center" *ngIf="totalItems === 0 && !loading">
+            <td colspan="16">No se encontraron ubicaciones</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-md-10">
+          <pagination-controls
+            class="my-pagination"
+            (pageChange)="pageChange($event)"
+            #api
+            previousLabel="Ant."
+            nextLabel="Sig."
+            autoHide="true">
+          </pagination-controls>
+        </div>
+        <div class="form-group col-md-2">
+          <select class="form-control" [(ngModel)]="itemsPerPage" (change)="getLocations()">
+            <option [value]="5">Mostrar 5 Registros</option>
+            <option [value]="10">Mostrar 10 Registros</option>
+            <option [value]="15">Mostrar 15 Registros</option>
+            <option [value]="20">Mostrar 20 Registros</option>
+            <option [value]="50">Mostrar 50 Registros</option>
+            <option [value]="100">Mostrar 100 Registros</option>
+          </select>
         </div>
       </div>
+    </div>
   </div>
 </section>

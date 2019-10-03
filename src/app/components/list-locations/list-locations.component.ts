@@ -28,13 +28,28 @@ export class ListLocationsComponent implements OnInit {
   @Output() eventAddItem: EventEmitter<Location> = new EventEmitter<Location>();
   public itemsPerPage = 10;
   public totalItems = 0;
+  public relationOfBranchEmpty : boolean = true;
+  public currentPage: number = 0;
+  public displayedColumns = [
+    "positionZ",
+    "positionY",
+    "positionX",
+    "deposit.name"
+  ];
+  public filters: any[];
+  public filterValue: string;
 
   constructor(
     public _locationService: LocationService,
     public _router: Router,
     public _modalService: NgbModal,
     public alertConfig: NgbAlertConfig
-  ) { }
+  ) {
+    this.filters = new Array();
+    for(let field of this.displayedColumns) {
+      this.filters[field] = "";
+    }
+   }
 
   ngOnInit() : void {
 
@@ -47,36 +62,97 @@ export class ListLocationsComponent implements OnInit {
 
     this.loading = true;
 
-    this._locationService.getLocations().subscribe(
-        result => {
-          if (!result.locations) {
-            this.loading = false;
-            this.locations = new Array();
-            this.areLocationsEmpty = true;
-          } else {
-            this.hideMessage();
-            console.log(result.locations)
-            this.loading = false;
-            this.locations = result.locations;
-            this.totalItems = this.locations.length;
-            this.areLocationsEmpty = false;
-          }
-        },
-        error => {
-          this.showMessage(error._body, 'danger', false);
-          this.loading = false;
+    /// ORDENAMOS LA CONSULTA
+    let sortAux;
+    if (this.orderTerm[0].charAt(0) === '-') {
+        sortAux = `{ "${this.orderTerm[0].split('-')[1]}" : -1 }`;
+    } else {
+        sortAux = `{ "${this.orderTerm[0]}" : 1 }`;
+    }
+    sortAux = JSON.parse(sortAux);
+
+    // FILTRAMOS LA CONSULTA
+
+    let match = `{`;
+    for(let i = 0; i < this.displayedColumns.length; i++) {
+      let value = this.filters[this.displayedColumns[i]];
+      if (value && value != "") {
+        match += `"${this.displayedColumns[i]}": { "$regex": "${value}", "$options": "i"}`;
+        match += ',';
+      }
+    }
+
+    match += `"operationType": { "$ne": "D" }, "deposit.operationType": { "$ne": "D" } }`;
+
+    match = JSON.parse(match);
+
+    // ARMAMOS EL PROJECT SEGÚN DISPLAYCOLUMNS
+    let project = {
+      positionZ: { $toString: '$number' },
+      positionY: 1,
+      positionX: 1,
+      description : 1,
+      'deposit.name' : 1,
+      'deposit.operationType' : 1,
+      operationType: 1
+    }
+
+    // AGRUPAMOS EL RESULTADO
+    let group = {
+        _id: null,
+        count: { $sum: 1 },
+        locations: { $push: "$$ROOT" }
+    };
+
+    let page = 0;
+    if(this.currentPage != 0) {
+      page = this.currentPage - 1;
+    }
+    let skip = !isNaN(page * this.itemsPerPage) ?
+            (page * this.itemsPerPage) :
+                0 // SKIP
+
+    this._locationService.getLocationsV2(
+        project, // PROJECT
+        match, // MATCH
+        sortAux, // SORT
+        group, // GROUP
+        this.itemsPerPage, // LIMIT
+        skip // SKIP
+    ).subscribe(
+      result => {
+        this.loading = false;
+        if (result && result[0] && result[0].locations) {
+          this.locations = result[0].locations;
+          this.totalItems = result[0].count;
+          this.relationOfBranchEmpty = false;
+        } else {
+          this.locations = new Array();
+          this.totalItems = 0;
+          this.relationOfBranchEmpty = true;
         }
-      );
+      },
+      error => {
+        this.showMessage(error._body, 'danger', false);
+        this.loading = false;
+        this.totalItems = 0;
+      }
+    );
    }
 
-  public orderBy (term: string, property?: string): void {
+  public pageChange(page): void {
+    this.currentPage = page;
+    this.getLocations();
+  }
 
-    if (this.orderTerm[0] === term) {
-      this.orderTerm[0] = "-"+term;
-    } else {
-      this.orderTerm[0] = term;
-    }
-    this.propertyTerm = property;
+  public orderBy(term: string): void {
+
+      if (this.orderTerm[0] === term) {
+        this.orderTerm[0] = "-" + term;
+      } else {
+        this.orderTerm[0] = term;
+      }
+      this.getLocations();
   }
 
   public refresh(): void {
