@@ -710,8 +710,17 @@ export class PointOfSaleComponent implements OnInit {
           await this.getDeposits({ branch: { $oid: this.transaction.branchDestination._id }, operationType: { $ne: 'D' } }).then(
             deposits => {
               if(deposits && deposits.length > 0) {
-                this.transaction.depositOrigin = deposits[0];
-                this.transaction.depositDestination = deposits[0];
+                deposits.forEach(element => {
+                  let deposit : Deposit = element; 
+                  if(deposit && deposit.default){
+                    this.transaction.depositOrigin = deposit;
+                    this.transaction.depositDestination = deposit;
+                  } else {
+                    this.transaction.depositOrigin = deposit;
+                    this.transaction.depositDestination = deposit;
+                  }
+                });
+                
                 resolve(true);
               } else {
                 this.showMessage("Debe crear un depósito defecto para la sucursal " + this.transaction.branchDestination.name, "info", true);
