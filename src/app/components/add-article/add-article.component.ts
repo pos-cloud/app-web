@@ -408,7 +408,6 @@ export class AddArticleComponent implements OnInit {
 
     }
 
-
     this.articleForm.controls.deposits.value.forEach(element => {
 
       if(depositForm.value.deposit == element.deposit){
@@ -482,6 +481,11 @@ export class AddArticleComponent implements OnInit {
 
     if(childrenForm.value.quantity == '' || childrenForm.value.quantity == 0 || childrenForm.value.quantity == null ){
       this.showMessage("El valor no puede ser 0 o vacio","danger",true)
+      valid = false;
+    }
+
+    if(childrenForm.value.quantity <= 0 ){
+      this.showMessage("El valor no puede ser menor a 0","danger",true)
       valid = false;
     }
 
