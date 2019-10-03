@@ -394,10 +394,11 @@ export class AddArticleComponent implements OnInit {
     let valid = true;
     const deposits = this.articleForm.controls.deposits as FormArray;
 
+
     let deposit = await this.getDeposit(depositForm.value.deposit)
 
-    this.articleForm.controls.deposits.value.forEach(async element => {
-
+    for (const element of this.articleForm.controls.deposits.value) {
+      
       let depositAux = await this.getDeposit(element.deposit);
 
       if(depositAux.branch._id === deposit.branch._id){
@@ -405,7 +406,7 @@ export class AddArticleComponent implements OnInit {
         this.showMessage("Solo puede tener un deposito por sucursal","danger",true)
       }
 
-    });
+    }
 
 
     this.articleForm.controls.deposits.value.forEach(element => {
@@ -422,18 +423,16 @@ export class AddArticleComponent implements OnInit {
       valid = false;
     }
 
-    setTimeout(() => {
-      if(valid){
-        deposits.push(
-          this._fb.group({
-            _id: null,
-            deposit : depositForm.value.deposit,
-            capacity : 0
-          })
-        );
-        depositForm.resetForm();
-      }
-    }, 5000);
+    if(valid){
+      deposits.push(
+        this._fb.group({
+          _id: null,
+          deposit : depositForm.value.deposit,
+          capacity : 0
+        })
+      );
+      depositForm.resetForm();
+    }
 
   }
 
