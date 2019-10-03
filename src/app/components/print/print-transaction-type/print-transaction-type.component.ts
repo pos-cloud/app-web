@@ -299,9 +299,9 @@ export class PrintTransactionTypeComponent implements OnInit {
             if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
               this.movementOfArticle.forEach(async movementOfArticle => {
                 try {
-                  this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
+                  this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
                 } catch (e){
-                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  this.doc.text(field.positionStartX,row,field.value)
                 }
                 row = row + this.printer.row;
                 if(row > this.printer.addPag){
@@ -313,9 +313,9 @@ export class PrintTransactionTypeComponent implements OnInit {
             } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
               this.movementOfCash.forEach(async movementOfCash => {
                 try {
-                  this.doc.text(field.positionStartX,field.positionStartY,(eval(field.value)).toString())
+                  this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
                 } catch (e){
-                  this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  this.doc.text(field.positionStartX,row,field.value)
                 }
                 row = row + this.printer.row;
                 if(row > this.printer.addPag){
@@ -382,9 +382,60 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.doc.setFontType(field.fontType)
               this.doc.setFontSize(field.fontSize)
               try {
-                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value))
+                this.doc.text(field.positionStartX,field.positionStartY,eval("this."+field.value).toString())
               } catch (e) {
                 this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              }
+              break;
+            case 'dataSum':
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              
+              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
+                this.movementOfArticle.forEach(async movementOfArticle => {
+                  let sum = 0;
+                  if(typeof eval("this."+field.value) === "number"){
+                    sum = sum + eval("this"+field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                  } catch (e){
+                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  }
+                });
+              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
+                this.movementOfCash.forEach(async movementOfCash => {
+                  let sum = 0;
+                  if(typeof eval("this."+field.value) === "number"){
+                    sum = sum + eval("this"+field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                  } catch (e){
+                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  }
+                });
+              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation){
+                this.movementOfCancellation.forEach(async movementOfCancellation => {
+                  let sum = 0;
+                  if(typeof eval("this."+field.value) === "number"){
+                    sum = sum + eval("this"+field.value);
+                  }
+                  try {
+                    this.doc.text(field.positionStartX,field.positionStartY,sum.toString())
+                  } catch (e){
+                    this.doc.text(field.positionStartX,field.positionStartY,field.value)
+                  }
+                });
+              } else {
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
+                } catch (error) {
+                  this.doc.text(field.positionStartX,field.positionStartY,'')
+                }
               }
               break;
             default:

@@ -108,6 +108,7 @@
                             <select class="form-control" [(ngModel)]="type" name="type" required>
                               <option value="label" [selected]="label">Etiqueta</option>
                               <option value="data" [selected]="data">Dato</option>
+                              <option *ngIf="position === 'Pie'" value="dataSum" [selected]="data">Dato Sumalizado</option>
                               <option value="line" [selected]="line">Linea</option>
                             </select>
                           </div>
