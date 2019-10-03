@@ -1940,19 +1940,13 @@ export class AddSaleOrderComponent {
       let deposit: Deposit;
 
       if(movementOfArticle.article.deposits && movementOfArticle.article.deposits.length >0){
-        movementOfArticle.article.deposits.forEach(element => {
-            if(element.deposit.branch._id === this.transaction.branchDestination._id){
-              deposit = element.deposit;
-            }
-        });
-      } else {
-        let deposits : Deposit[] = await this.getDeposits()
-
-        deposits.forEach(element =>{
-          if(element.branch._id === this.transaction.branchDestination._id && element.default){
-            deposit = element;
+        for (const element of movementOfArticle.article.deposits) {
+          if(element.deposit.branch._id === this.transaction.branchDestination._id){
+            deposit = element.deposit;
           }
-        })
+        }
+      } else {
+        deposit = this.transaction.depositDestination;
       }
 
       switch (this.transaction.type.stockMovement) {
@@ -2082,26 +2076,6 @@ export class AddSaleOrderComponent {
 
     
     });
-  }
-
-  public getDeposits(): Promise<Deposit[]> {
-
-    return new Promise<Deposit[]>((resolve, reject) => {
-      this._depositService.getDeposits().subscribe(
-        result =>{
-          if(result && result.deposits){
-            resolve(result.deposits)
-          } else {
-            resolve(null)
-          }
-        },
-        error =>{
-          this.showMessage(error._body, 'info', true);
-          resolve(null)
-        }
-      )
-    })
-    
   }
 
   async close() {
