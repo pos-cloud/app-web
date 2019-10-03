@@ -72,12 +72,9 @@ import { ConfigService } from 'app/services/config.service';
 import { ListArticlesPosComponent } from '../list-articles-pos/list-articles-pos.component';
 import { PriceList } from 'app/models/price-list';
 import { PriceListService } from 'app/services/price-list.service';
-<<<<<<< HEAD
 import { PrintTransactionTypeComponent } from '../print/print-transaction-type/print-transaction-type.component';
-=======
 import { Deposit } from 'app/models/deposit';
 import { DepositService } from 'app/services/deposit.service';
->>>>>>> testing
 
 @Component({
   selector: 'app-add-sale-order',
