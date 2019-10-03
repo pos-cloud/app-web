@@ -22,7 +22,8 @@
             <th>
               <i class="fa fa-bars"></i>
             </th>
-            <th (click)="orderBy('deposit.name')">Deposito</th>
+            <th (click)="orderBy('deposit.name')">Depósito</th>
+            <th (click)="orderBy('description')">Nombre</th>
             <th (click)="orderBy('positionX')">position X</th>
             <th (click)="orderBy('positionY')">position Y</th>
             <th (click)="orderBy('positionZ')">position Z</th>
@@ -31,6 +32,7 @@
           <tr class="filters">
             <th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['deposit.name']" (input)="getLocations()" placeholder="Nombre..."></th>
+            <th><input type="text" class="form-control" [(ngModel)]="filters['description']" (input)="getLocations()" placeholder="Descripción..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['positionX']" (input)="getLocations()" placeholder="position X..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['positionY']" (input)="getLocations()" placeholder="positionY..."></th>
             <th><input type="text" class="form-control" [(ngModel)]="filters['positionZ']" (input)="getLocations()" placeholder="positionZ..."></th>
@@ -64,6 +66,7 @@
             </td>
             <td *ngIf="location.deposit">{{location.deposit.name}}</td>
             <td *ngIf="!location.deposit"></td>
+            <td>{{location.description}}</td>
             <td>{{location.positionX}}</td>
             <td>{{location.positionY}}</td>
             <td>{{location.positionZ}}</td>
