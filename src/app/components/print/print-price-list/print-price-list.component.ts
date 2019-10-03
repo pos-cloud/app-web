@@ -322,7 +322,7 @@ export class PrintPriceListComponent implements OnInit {
       result => {
         if (result && result[0] && result[0].articles) {
             this.articles = result[0].articles;
-            if(this.printPriceListForm.value.withImage === false){
+            if(this.printPriceListForm.value.withImage){
               this.printPriceListWithImagen();
             } else {
               this.printPriceListWithoutImagen();
@@ -341,14 +341,37 @@ export class PrintPriceListComponent implements OnInit {
   }
 
   async printPriceListWithImagen() {
+
+    this.loading = true;
+    var row = 15;
     let count = 0;
-    let img;
-    row +=5;
+    var margin = 5;
+    this.doc.setFontType('bold');
+
+    this.doc.setFontSize(12);
+    if (this.config[0].companyFantasyName) {
+      this.doc.text(this.config[0].companyFantasyName, 5, row);
+    }
+
+    this.doc.setFontType('normal');
+    row += 5;
+    if (this.config && this.config[0] && this.config[0].companyIdentificationType) {
+      this.doc.text(this.config[0].companyIdentificationType.name + ":", margin, row);
+      this.doc.text(this.config[0].companyIdentificationValue, 25, row);
+    }
+
+    this.doc.setFontType('bold');
+    this.centerText(margin, margin, 210, 0, row, "LISTA DE PRECIOS AL " + this.dateFormat.transform(new Date(), 'DD/MM/YYYY'));
+
+    row += 3;
+    this.doc.line(0, row, 400, row);
+    count = 0;
+
     if(this.articles && this.articles.length > 0){
       for(let article of this.articles) {
           this.doc.setFontType('blod')
           if(article.picture !== 'default.jpg' &&  await this.getPicture(article.picture)){
-            this.doc.addImage(this.imageURL, 'JPEG', 15, row+2, 60, 40);
+            this.doc.addImage(this.imageURL, 'JPEG', 15, row+4, 60, 40);
           }
           row +=5
           this.doc.setFontSize(this.fontSizes.extraLarge)
@@ -423,19 +446,40 @@ export class PrintPriceListComponent implements OnInit {
               row +=5
               this.doc.text(95, row, variant["_id"]["type"]["name"] + ":")
               let col = 110 + variant["_id"]["type"]["name"].length;
-              for(let value of  variant["value"] ){
+              for(let value of variant["value"] ){
                 this.doc.text(col, row , value["description"])
                 col += 5 + value["description"].length;
               }
+              row +=5
+              this.doc.text(95, row, "Stock Disp.:")
+              let col2 = 110 + variant["_id"]["type"]["name"].length;
+              for(let value of variant["value"] ){
+                var stock = await this.getStock(value['id'])
+                if(stock){
+                  this.doc.text(col2, row , stock.toString())
+                } else {
+                  this.doc.text(col2, row , "0")
+                }
+                col2 += 5 + value["description"].length;
+              }
+            }
+          } else {
+            row +=5
+            var stock = await this.getStock(article._id)
+            if(stock){
+              this.doc.text(95, row , "Stock Disp.: "+stock.toString())
+            } else {
+              this.doc.text(95, row , "Stock Disp.: 0")
             }
           }
-          row +=20
+        
+          row +=15
           this.doc.line(0, row, 300, row);
           row +=5
 
           count++;
           //4 item por pag
-          if (count === 5) {
+          if (count === 4) {
 
             this.doc.addPage();
 
@@ -638,7 +682,9 @@ export class PrintPriceListComponent implements OnInit {
             }
           },
           error => {
-            resolve(false);
+            if(error){
+              resolve(false);
+            }
           }
       );
     });
@@ -710,17 +756,16 @@ export class PrintPriceListComponent implements OnInit {
     });
   }
 
-  public getStock (articleId : string) : Promise<boolean> {
+  public getStock (articleId : string) : Promise<string> {
 
-    return new Promise<boolean> ((resolve, reject) => {
+    return new Promise<string> ((resolve, reject) => {
 
       this.loading = true;
 
-      let match = `{`;
       
-      match += `"article._id" : { "$oid" : "${articleId}"},
-                "article.operationType" : { "$ne" : "D" },
-                "operationType" : { "$ne" : "D" } }`;
+       let match = `{"article._id" : { "$oid" : "${articleId}"},
+                    "article.operationType" : { "$ne" : "D" },
+                    "operationType" : { "$ne" : "D" } }`;
   
       match = JSON.parse(match);
   
@@ -741,15 +786,15 @@ export class PrintPriceListComponent implements OnInit {
           0 // SKIP
       ).subscribe(
         result => {
-          if (result && result.articleStocks) {
-            resolve(true)
+          if (result && result.articleStocks && result.articleStocks.length > 0) {
+            resolve(result.articleStocks[0].realStock)
           } else {
-            resolve(false)
+            resolve("0")
           }
         },
         error => {
           this.showMessage(error._body, 'danger', false);
-          resolve(false)
+          resolve("0")
         }
       );
 
