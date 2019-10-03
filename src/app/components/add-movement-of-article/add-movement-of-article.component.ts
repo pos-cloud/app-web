@@ -100,24 +100,28 @@ export class AddMovementOfArticleComponent implements OnInit {
     this.userType = pathLocation[1];
     this.config$ = this._configService.getConfig;
 
+    let depositArticle : Deposit
+
     if (this.movementOfArticle.article) {
       this.containsVariants = this.movementOfArticle.article.containsVariants;
-      let depositArticle : Deposit
+      
       if(this.movementOfArticle.article.deposits && this.movementOfArticle.article.deposits.length > 0) {
         this.movementOfArticle.article.deposits.forEach(element => {
-            if(element.deposit.branch === this.movementOfArticle.transaction.depositDestination.branch) {
+            if(element.deposit.branch._id === this.movementOfArticle.transaction.depositDestination.branch._id) {
               this.position += `Dep. ${element.deposit.name} - `;
               depositArticle = element.deposit;
+            } else {
+              depositArticle = this.movementOfArticle.transaction.depositDestination;
             }
         });
+      } else {
+        depositArticle = this.movementOfArticle.transaction.depositDestination;
       }
+
       if(this.movementOfArticle.article.locations && this.movementOfArticle.article.locations.length > 0) {
         this.movementOfArticle.article.locations.forEach(element => {
-          if(element.location.deposit === depositArticle){
-            this.position += `Ubic. ${element.location.description} - 
-                                    ${element.location.positionX} - 
-                                    ${element.location.positionY} - 
-                                    ${element.location.positionZ}`;
+          if(element.location.deposit._id === depositArticle._id){
+            this.position += `Ubic. ${element.location.description} - ${element.location.positionX} - ${element.location.positionY} - ${element.location.positionZ}`;
           }
         });
       }
