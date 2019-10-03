@@ -204,14 +204,13 @@ export class DepositComponent implements OnInit {
     }
 
     if(this.deposits && this.deposits.length > 0 && this.deposit.default !== null){
-      this.deposits.forEach(element => {
-        if(element.default === this.deposit.default && element.branch._id.toString() === this.deposit.branch.toString()){
+      for (const element of this.deposits) {
+        if(this.deposit.default === true && element.default === this.deposit.default && element.branch._id.toString() === this.deposit.branch.toString()){
           this.showMessage("Solo puede existir un deposito principal por sucursal", 'danger', true);
           valid = false;
         }
-      });
+      }
     }
-
     
     return valid
   }
