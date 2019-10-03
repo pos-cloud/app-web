@@ -20,6 +20,7 @@ import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
 import { async } from 'q';
+import { PrintService } from 'app/services/print.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class PrintTransactionTypeComponent implements OnInit {
   @Input() transactionId : string;
   @Input() origin : string;
   @Input() printer : Printer;
+  @Input() source : string;
   public imageURL : any;
   public transaction : Transaction;
   public movementOfCash : MovementOfCash[];
@@ -48,6 +50,7 @@ export class PrintTransactionTypeComponent implements OnInit {
     public _movementOfCashService : MovementOfCashService,
     public _movementOfArticleService : MovementOfArticleService,
     public _movementOfCancellationService : MovementOfCancellationService,
+    public _printService : PrintService,
     public activeModal: NgbActiveModal,
     public alertConfig: NgbAlertConfig,   
     public _configService: ConfigService,
@@ -281,19 +284,13 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     await this.buildFooter();
 
-    this.printer.fields.forEach(async field => {
-      if(field.type === 'image'){
-        this.getCompanyPicture(eval("this."+field.value),10, 5, 80, 40)
-      }
-    })
-
     this.finishImpression();
 
   }
 
   async buildFooter() : Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.printer.fields.forEach(field => {
+      for (const field of this.printer.fields) {
         if(field.position === PositionPrint.Footer){
           switch (field.type) {
             case 'label':
@@ -375,7 +372,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               break;
           }
         }
-      });
+      }
       resolve(true)
     });
    
@@ -383,7 +380,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   async buildHeader() : Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
-      this.printer.fields.forEach(async field => {
+      for (const field of this.printer.fields) {
         if(field.position === PositionPrint.Header){
           switch (field.type) {
             case 'label':
@@ -397,6 +394,10 @@ export class PrintTransactionTypeComponent implements OnInit {
             case 'line':
               this.doc.setLineWidth(field.fontSize)
               this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
+              break;
+            case 'image':
+                await this.getCompanyPicture(eval("this."+field.value))
+                this.doc.addImage(this.imageURL, 'jpeg', field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY);   
               break;
             case 'data':
               if(field.font !== 'default'){
@@ -414,7 +415,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               break;
           }
         }
-      });
+      }
       resolve(true)
     });
     
@@ -422,7 +423,7 @@ export class PrintTransactionTypeComponent implements OnInit {
 
   async buildBody() : Promise<boolean>{
     return new Promise<boolean>(async(resolve, reject)=>{
-      this.printer.fields.forEach(async field => {
+      for (const field of this.printer.fields) {
         if(field.position === PositionPrint.Body){
           switch (field.type) {
             case 'label':
@@ -499,18 +500,40 @@ export class PrintTransactionTypeComponent implements OnInit {
               break;
           }
         }
-      });
+      }
       resolve(true)
     })
   }
 
   public finishImpression(): void {
 
-    this.doc.autoPrint();
-    this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    if(!this.source){
+      this.doc.autoPrint();
+      this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+    }
+    
+
+    if(this.transaction && this.transaction.type && this.transaction.type.electronics){
+      this._printService.saveFile(this.doc.output('blob'),'invoice',this.transactionId).then(
+        result =>{
+        },
+        error =>{
+        }
+      )
+    } else {
+      if(this.source === "mail"){
+        this._printService.saveFile(this.doc.output('blob'),'others',this.transactionId).then(
+          result =>{
+          },
+          error =>{
+          }
+        )
+      }
+    }
+
   }
 
-  async getCompanyPicture(img,lmargin, rmargin, width, height) {
+  async getCompanyPicture(img) {
 
     return new Promise ((resolve, reject) => {
       this._configService.getCompanyPicture(img).subscribe(
@@ -519,10 +542,7 @@ export class PrintTransactionTypeComponent implements OnInit {
             resolve(false)
           } else {
             let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
-            this.imageURL = imageURL;
-            this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);   
-            this.finishImpression()
-       
+            this.imageURL = imageURL;       
             resolve(true)
           }
         }

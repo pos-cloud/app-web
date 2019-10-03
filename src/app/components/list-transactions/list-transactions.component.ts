@@ -313,7 +313,7 @@ export class ListTransactionsComponent implements OnInit {
       case 'print':
         if(transaction.type.readLayout){
           modalRef = this._modalService.open(PrintTransactionTypeComponent)
-          modalRef.componentInstance.transactionId = transaction._id
+          modalRef.componentInstance.transactionId = transaction._id;
         } else {
           modalRef = this._modalService.open(PrintComponent);
           modalRef.componentInstance.company = transaction.company;
@@ -346,11 +346,17 @@ export class ListTransactionsComponent implements OnInit {
         });
         break;
       case 'send-email':
-        modalRef = this._modalService.open(PrintComponent);
-        modalRef.componentInstance.company = transaction.company;
-        modalRef.componentInstance.transactionId = transaction._id;
-        modalRef.componentInstance.typePrint = 'invoice';
-        modalRef.componentInstance.source = "mail";
+        if(transaction.type.readLayout){
+          modalRef = this._modalService.open(PrintTransactionTypeComponent)
+          modalRef.componentInstance.transactionId = transaction._id; 
+          modalRef.componentInstance.source = "mail";
+        } else {
+          modalRef = this._modalService.open(PrintComponent);
+          modalRef.componentInstance.company = transaction.company;
+          modalRef.componentInstance.transactionId = transaction._id;
+          modalRef.componentInstance.typePrint = 'invoice';
+          modalRef.componentInstance.source = "mail";
+        }
         if (transaction.type.defectPrinter) {
           modalRef.componentInstance.printer = transaction.type.defectPrinter;
         } else {
