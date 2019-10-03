@@ -110,9 +110,10 @@
                               <option value="data" [selected]="data">Dato</option>
                               <option *ngIf="position === 'Pie'" value="dataSum" [selected]="data">Dato Sumalizado</option>
                               <option value="line" [selected]="line">Linea</option>
+                              <option *ngIf="position === 'Encabezado'" value="image" [selected]="line">Imagen</option>
                             </select>
                           </div>
-                          <div class="form-group col-md-3" *ngIf="type ==='data'">
+                          <div class="form-group col-md-3" *ngIf="type ==='data' || type === 'image'">
                             <label for="collection" class="control-label">Colección:</label>
                             <select class="form-control" [(ngModel)]="collection" name="collection" (change)="getDocuments()">
                               <option value="company" [selected]="company">Compania</option>
@@ -123,7 +124,7 @@
                               <option *ngIf="position == 'Cuerpo'" value="movementOfCancellation" [selected]="movementOfCancellation">Mov de Cancelacion</option>
                             </select>
                           </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'data'">
+                          <div class="form-group col-md-3" *ngIf="type === 'data' || type === 'image'">
                             <label for="value" class="control-label">Valor:</label>
                             <select class="form-control" [(ngModel)]="value" name="value">
                               <option *ngFor="let document of documents"
@@ -178,13 +179,13 @@
                               <input type="number" class="form-control" ngModel name="positionStartY" required/>
                             </div>
                           </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'line'">
+                          <div class="form-group col-md-3" *ngIf="type === 'line' || type === 'image'">
                               <label for="positionEndX" class="control-label">X fin (mm):</label>
                               <div class="input-group">
                                 <input type="number" class="form-control" ngModel name="positionEndX" required/>
                               </div>
                           </div>
-                          <div class="form-group col-md-3" *ngIf="type === 'line'">
+                          <div class="form-group col-md-3" *ngIf="type === 'line' || type === 'image'">
                               <label for="positionEndY" class="control-label">Y fin (mm):</label>
                             <div class="input-group">
                               <input type="number" class="form-control" ngModel name="positionEndY" required/>
@@ -228,7 +229,7 @@
                       <tbody>
                         <tr *ngFor="let field of printerForm.get('fields').controls; let i = index;">
                           <td *ngIf="field && field.value">{{field.value.type}}</td>
-                          <td *ngIf="field && field.value">{{field.value.value}}</td>
+                          <td *ngIf="field && field.value">{{field.value.value | slice:0:10}}</td>
                           <td *ngIf="field && field.value">{{field.value.position}}</td>
                           <td *ngIf="field && field.value">{{field.value.font}}</td>
                           <td *ngIf="field && field.value">{{field.value.fontType}}</td>

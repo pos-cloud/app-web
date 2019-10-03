@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbAlertConfig, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as jsPDF from 'jspdf';
+import { Observable, Observer } from 'rxjs';
 
 //servicios
 import { MovementOfCancellationService } from 'app/services/movement-of-cancellation.service';
@@ -18,6 +19,7 @@ import { MovementOfArticle } from 'app/models/movement-of-article';
 import { Company } from 'app/models/company';
 import { MovementOfCancellation } from 'app/models/movement-of-cancellation';
 import { Transaction } from 'app/models/transaction';
+import { async } from 'q';
 
 
 @Component({
@@ -30,6 +32,7 @@ export class PrintTransactionTypeComponent implements OnInit {
   @Input() transactionId : string;
   @Input() origin : string;
   @Input() printer : Printer;
+  public imageURL : any;
   public transaction : Transaction;
   public movementOfCash : MovementOfCash[];
   public movementOfArticle : MovementOfArticle[];
@@ -100,6 +103,7 @@ export class PrintTransactionTypeComponent implements OnInit {
             if( this.transaction.type && 
                 this.transaction.type.defectPrinter && 
                 this.transaction.type.defectPrinter.fields && 
+                this.transaction.type.readLayout &&
                 this.transaction.type.defectPrinter.fields.length > 0) {
               
               await this.getMovementOfCashes();
@@ -112,7 +116,7 @@ export class PrintTransactionTypeComponent implements OnInit {
               this.buildPrint();
 
             } else {
-              this.showMessage("Debe seleccionar la impresora por defecto para Tipo de Transaccion:" + this.transaction.type.name, 'danger', false);
+              this.showMessage("Debe seleccionar Impresora defecto y Lee diseño? en el Tipo de Transaccion:" + this.transaction.type.name, 'danger', false);
             }
           }
         },
@@ -273,86 +277,15 @@ export class PrintTransactionTypeComponent implements OnInit {
 
     await this.buildHeader();
 
-    this.printer.fields.forEach(async field => {
-      if(field.position === PositionPrint.Body){
-        switch (field.type) {
-          case 'label':
-            if(field.font !== 'default'){
-              this.doc.setFont(field.font)
-            }   
-            this.doc.setFontType(field.fontType)
-            this.doc.setFontSize(field.fontSize)
-            this.doc.text(field.positionStartX,field.positionStartY,field.value)
-            break;
-          case 'line':
-            this.doc.setLineWidth(field.fontSize)
-            this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
-            break;
-          case 'data':
-            let row = field.positionStartY
-            if(field.font !== 'default'){
-              this.doc.setFont(field.font)
-            }   
-            this.doc.setFontType(field.fontType)
-            this.doc.setFontSize(field.fontSize)
-
-            if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
-              this.movementOfArticle.forEach(async movementOfArticle => {
-                try {
-                  this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
-                } catch (e){
-                  this.doc.text(field.positionStartX,row,field.value)
-                }
-                row = row + this.printer.row;
-                if(row > this.printer.addPag){
-                  this.doc.addPag()
-                  await this.buildHeader()
-                  row = field.positionStartY
-                }
-              });
-            } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
-              this.movementOfCash.forEach(async movementOfCash => {
-                try {
-                  this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
-                } catch (e){
-                  this.doc.text(field.positionStartX,row,field.value)
-                }
-                row = row + this.printer.row;
-                if(row > this.printer.addPag){
-                  this.doc.addPag()
-                  await this.buildHeader()
-                  row = field.positionStartY
-                }
-              });
-            } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation){
-              this.movementOfCancellation.forEach(async movementOfCancellation => {
-                try {
-                  this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
-                } catch (e){
-                  this.doc.text(field.positionStartX,row,field.value)
-                }
-                row = row + this.printer.row;
-                if(row > this.printer.addPag){
-                  this.doc.addPag()
-                  await this.buildHeader()
-                  row = field.positionStartY
-                }
-              });
-            } else {
-              try {
-                this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
-              } catch (error) {
-                this.doc.text(field.positionStartX,field.positionStartY,'')
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    });
+    await this.buildBody();
 
     await this.buildFooter();
+
+    this.printer.fields.forEach(async field => {
+      if(field.type === 'image'){
+        this.getCompanyPicture(eval("this."+field.value),10, 5, 80, 40)
+      }
+    })
 
     this.finishImpression();
 
@@ -449,8 +382,8 @@ export class PrintTransactionTypeComponent implements OnInit {
   }
 
   async buildHeader() : Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.printer.fields.forEach(field => {
+    return new Promise<boolean>(async (resolve, reject) => {
+      this.printer.fields.forEach(async field => {
         if(field.position === PositionPrint.Header){
           switch (field.type) {
             case 'label':
@@ -487,11 +420,115 @@ export class PrintTransactionTypeComponent implements OnInit {
     
   }
 
+  async buildBody() : Promise<boolean>{
+    return new Promise<boolean>(async(resolve, reject)=>{
+      this.printer.fields.forEach(async field => {
+        if(field.position === PositionPrint.Body){
+          switch (field.type) {
+            case 'label':
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+              this.doc.text(field.positionStartX,field.positionStartY,field.value)
+              break;
+            case 'line':
+              this.doc.setLineWidth(field.fontSize)
+              this.doc.line(field.positionStartX, field.positionStartY, field.positionEndX, field.positionEndY)
+              break;
+            case 'data':
+              let row = field.positionStartY
+              if(field.font !== 'default'){
+                this.doc.setFont(field.font)
+              }   
+              this.doc.setFontType(field.fontType)
+              this.doc.setFontSize(field.fontSize)
+  
+              if(field.value.split('.')[0] === "movementOfArticle" && this.movementOfArticle){
+                this.movementOfArticle.forEach(async movementOfArticle => {
+                  try {
+                    this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
+                  } catch (e){
+                    this.doc.text(field.positionStartX,row,field.value)
+                  }
+                  row = row + this.printer.row;
+                  if(row > this.printer.addPag){
+                    this.doc.addPag()
+                    await this.buildHeader()
+                    row = field.positionStartY
+                  }
+                });
+              } else if(field.value.split('.')[0] === "movementOfCash" && this.movementOfCash){
+                this.movementOfCash.forEach(async movementOfCash => {
+                  try {
+                    this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
+                  } catch (e){
+                    this.doc.text(field.positionStartX,row,field.value)
+                  }
+                  row = row + this.printer.row;
+                  if(row > this.printer.addPag){
+                    this.doc.addPag()
+                    await this.buildHeader()
+                    row = field.positionStartY
+                  }
+                });
+              } else if(field.value.split('.')[0] === "movementOfCancellation" && this.movementOfCancellation){
+                this.movementOfCancellation.forEach(async movementOfCancellation => {
+                  try {
+                    this.doc.text(field.positionStartX,row,(eval(field.value)).toString())
+                  } catch (e){
+                    this.doc.text(field.positionStartX,row,field.value)
+                  }
+                  row = row + this.printer.row;
+                  if(row > this.printer.addPag){
+                    this.doc.addPag()
+                    await this.buildHeader()
+                    row = field.positionStartY
+                  }
+                });
+              } else {
+                try {
+                  this.doc.text(field.positionStartX,field.positionStartY,eval(field.value))
+                } catch (error) {
+                  this.doc.text(field.positionStartX,field.positionStartY,'')
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+      resolve(true)
+    })
+  }
+
   public finishImpression(): void {
 
     this.doc.autoPrint();
     this.pdfURL = this.domSanitizer.bypassSecurityTrustResourceUrl(this.doc.output('bloburl'));
+  }
 
+  async getCompanyPicture(img,lmargin, rmargin, width, height) {
+
+    return new Promise ((resolve, reject) => {
+      this._configService.getCompanyPicture(img).subscribe(
+        result => {
+          if (!result.imageBase64) {
+            resolve(false)
+          } else {
+            let imageURL = 'data:image/jpeg;base64,' + result.imageBase64;
+            this.imageURL = imageURL;
+            this.doc.addImage(imageURL, 'jpeg', lmargin, rmargin, width, height);   
+            this.finishImpression()
+       
+            resolve(true)
+          }
+        }
+      );
+    });
+    
   }
 
   public showMessage(message: string, type: string, dismissible: boolean): void {
