@@ -1960,7 +1960,7 @@ export class AddSaleOrderComponent {
             amountToModify = movementOfArticle.amount;
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
-              this.transaction.depositOrigin,
+              deposit,
               amountToModify, 
               this.transaction.type.stockMovement.toString()
             ).subscribe(
@@ -2011,7 +2011,7 @@ export class AddSaleOrderComponent {
             amountToModify = this.roundNumber.transform(movementOfArticle.amount * -1);
             this._articleStockService.updateRealStock(
               movementOfArticle.article,
-              this.transaction.depositOrigin,
+              deposit,
               amountToModify, 
               this.transaction.type.stockMovement.toString()
             ).subscribe(
